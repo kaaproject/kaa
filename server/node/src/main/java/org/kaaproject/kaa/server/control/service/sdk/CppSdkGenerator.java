@@ -57,75 +57,47 @@ import java.util.Map.Entry;
  */
 public class CppSdkGenerator extends SdkGenerator {
 
-  /**
-   * The Constant LOG.
-   */
-  private static final Logger LOG = LoggerFactory
-      .getLogger(CppSdkGenerator.class);
 
-  /**
-   * The Constant CPP_SDK_DIR.
-   */
+  private static final Logger LOG = LoggerFactory.getLogger(CppSdkGenerator.class);
+
+
   private static final String CPP_SDK_DIR = "sdk/cpp";
 
-  /**
-   * The Constant CPP_SDK_PREFIX.
-   */
+
   private static final String CPP_SDK_PREFIX = "kaa-cpp-ep-sdk-";
 
-  /**
-   * The Constant APPLICATION_TOKEN_VAR.
-   */
+
   private static final String SDK_VAR = "%{application.sdk_token}";
 
-  /**
-   * The Constant SDK_PROFILE_VERSION_VAR.
-   */
+
   private static final String SDK_PROFILE_VERSION_VAR = "%{application.profile_version}";
 
-  /**
-   * The Constant CLIENT_PUB_KEY_LOCATION_VAR.
-   */
+
   private static final String CLIENT_PUB_KEY_LOCATION_VAR = "%{application.public_key_location}";
 
-  /**
-   * The Constant CLIENT_PRIV_KEY_LOCATION_VAR.
-   */
+
   private static final String CLIENT_PRIV_KEY_LOCATION_VAR = "%{application.private_key_location}";
 
-  /**
-   * The Constant CLIENT_STATUS_FILE_LOCATION_VAR.
-   */
-  private static final String CLIENT_STATUS_FILE_LOCATION_VAR = "%{application.status_file_location}";
 
-  /**
-   * The Constant POLLING_PERIOD_SECONDS_VAR.
-   */
+  private static final String CLIENT_STATUS_FILE_LOCATION_VAR =
+      "%{application.status_file_location}";
+
+
   private static final String POLLING_PERIOD_SECONDS_VAR = "%{application.polling_period_seconds}";
 
-  /**
-   * The Constant BOOTSTRAP_SERVERS_INFO_VAR.
-   */
+
   private static final String BOOTSTRAP_SERVERS_INFO_VAR = "%{bootstrap_servers_info}";
 
-  /**
-   * The Constant CONFIG_DATA_DEFAULT_VAR.
-   */
+
   private static final String CONFIG_DATA_DEFAULT_VAR = "%{config.data.default}";
 
-  /**
-   * The Constant BUILD_VERSION.
-   */
+
   private static final String BUILD_VERSION = "%{build.version}";
 
-  /**
-   * The Constant BUILD_COMMIT_HASH.
-   */
+
   private static final String BUILD_COMMIT_HASH = "%{build.commit_hash}";
 
-  /**
-   * The Constant DEFAULT_USER_VERIFIER_TOKEN.
-   */
+
   private static final String DEFAULT_USER_VERIFIER_TOKEN = "%{user_verifier_token}";
 
   private static final String SDK_DEFAULTS_TEMPLATE = "sdk/cpp/KaaDefaults.cpp.template";
@@ -134,7 +106,10 @@ public class CppSdkGenerator extends SdkGenerator {
   private static final String RECORD_CLASS_NAME_VAR = "%{record_class_name}";
 
   private static final String PROFILE_SCHEMA_AVRO_SRC = "avro/profile.avsc";
-  private static final String PROFILE_DEFINITIONS_TEMPLATE = "sdk/cpp/profile/ProfileDefinitions.hpp.template";
+
+  private static final String PROFILE_DEFINITIONS_TEMPLATE =
+      "sdk/cpp/profile/ProfileDefinitions.hpp.template";
+
   private static final String PROFILE_DEFINITIONS_PATH = "kaa/profile/gen/ProfileDefinitions.hpp";
 
   private static final String LOG_SCHEMA_AVRO_SRC = "avro/log.avsc";
@@ -142,12 +117,20 @@ public class CppSdkGenerator extends SdkGenerator {
   private static final String LOG_DEFINITIONS_PATH = "kaa/log/gen/LogDefinitions.hpp";
 
   private static final String NOTIFICATION_SCHEMA_AVRO_SRC = "avro/notification.avsc";
-  private static final String NOTIFICATION_DEFINITIONS_TEMPLATE = "sdk/cpp/notification/NotificationDefinitions.hpp.template";
-  private static final String NOTIFICATION_DEFINITIONS_PATH = "kaa/notification/gen/NotificationDefinitions.hpp";
+
+  private static final String NOTIFICATION_DEFINITIONS_TEMPLATE =
+      "sdk/cpp/notification/NotificationDefinitions.hpp.template";
+
+  private static final String NOTIFICATION_DEFINITIONS_PATH =
+      "kaa/notification/gen/NotificationDefinitions.hpp";
 
   private static final String CONFIGURATION_SCHEMA_AVRO_SRC = "avro/configuration.avsc";
-  private static final String CONFIGURATION_DEFINITIONS_TEMPLATE = "sdk/cpp/configuration/ConfigurationDefinitions.hpp.template";
-  private static final String CONFIGURATION_DEFINITIONS_PATH = "kaa/configuration/gen/ConfigurationDefinitions.hpp";
+
+  private static final String CONFIGURATION_DEFINITIONS_TEMPLATE =
+      "sdk/cpp/configuration/ConfigurationDefinitions.hpp.template";
+
+  private static final String CONFIGURATION_DEFINITIONS_PATH =
+      "kaa/configuration/gen/ConfigurationDefinitions.hpp";
 
   /**
    * Replace string.
@@ -162,7 +145,12 @@ public class CppSdkGenerator extends SdkGenerator {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(java.lang.String, java.util.List, java.lang.String, int, int, int, java.lang.String, java.lang.String, java.lang.String, byte[], java.util.List)
+   * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(
+    * java.lang.String, java.util.List,
+    * java.lang.String, int,
+    * int, int,
+    * java.lang.String, java.lang.String,
+    * java.lang.String, byte[], java.util.List)
    */
   @Override
   public FileData generateSdk(String buildVersion,
@@ -178,12 +166,13 @@ public class CppSdkGenerator extends SdkGenerator {
 
     String sdkToken = sdkProfile.getToken();
     Integer configurationSchemaVersion = sdkProfile.getConfigurationSchemaVersion();
-    Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
+    final Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
     Integer notificationSchemaVersion = sdkProfile.getNotificationSchemaVersion();
     Integer logSchemaVersion = sdkProfile.getLogSchemaVersion();
     String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
 
-    String sdkTemplateLocation = Environment.getServerHomeDir() + "/" + CPP_SDK_DIR + "/" + CPP_SDK_PREFIX + buildVersion + ".tar.gz";
+    String sdkTemplateLocation = Environment.getServerHomeDir() + "/" + CPP_SDK_DIR
+        + "/" + CPP_SDK_PREFIX + buildVersion + ".tar.gz";
 
     LOG.debug("Lookup Java SDK template: {}", sdkTemplateLocation);
 
@@ -193,10 +182,14 @@ public class CppSdkGenerator extends SdkGenerator {
     CompressorInputStream cis = csf.createCompressorInputStream(CompressorStreamFactory.GZIP,
         new FileInputStream(sdkTemplateLocation));
 
-    ArchiveInputStream templateArchive = asf.createArchiveInputStream(ArchiveStreamFactory.TAR, cis);
+    final ArchiveInputStream templateArchive = asf.createArchiveInputStream(
+        ArchiveStreamFactory.TAR, cis
+    );
 
     ByteArrayOutputStream sdkOutput = new ByteArrayOutputStream();
-    CompressorOutputStream cos = csf.createCompressorOutputStream(CompressorStreamFactory.GZIP, sdkOutput);
+    CompressorOutputStream cos = csf.createCompressorOutputStream(CompressorStreamFactory.GZIP,
+        sdkOutput);
+
     ArchiveOutputStream sdkFile = asf.createArchiveOutputStream(ArchiveStreamFactory.TAR, cos);
 
     Map<String, TarEntryData> replacementData = new HashMap<>();
@@ -206,7 +199,9 @@ public class CppSdkGenerator extends SdkGenerator {
     // TODO: remove all version fields and add single sdkToken field
     // create entry for default properties
     TarArchiveEntry entry = new TarArchiveEntry(SDK_DEFAULTS_PATH);
-    byte[] data = generateKaaDefaults(bootstrapNodes, sdkToken, defaultConfigurationData, defaultVerifierToken);
+    byte[] data = generateKaaDefaults(bootstrapNodes, sdkToken, defaultConfigurationData,
+        defaultVerifierToken);
+
     entry.setSize(data.length);
     TarEntryData tarEntry = new TarEntryData(entry, data);
     cppSources.add(tarEntry);
@@ -231,19 +226,19 @@ public class CppSdkGenerator extends SdkGenerator {
       replacementData.put(entryData.getEntry().getName(), entryData);
     }
 
-    ArchiveEntry e = null;
-    while ((e = templateArchive.getNextEntry()) != null) {
-      if (!e.isDirectory()) {
-        if (replacementData.containsKey(e.getName())) {
-          TarEntryData entryData = replacementData.remove(e.getName());
+    ArchiveEntry archiveEntry;
+    while ((archiveEntry = templateArchive.getNextEntry()) != null) {
+      if (!archiveEntry.isDirectory()) {
+        if (replacementData.containsKey(archiveEntry.getName())) {
+          TarEntryData entryData = replacementData.remove(archiveEntry.getName());
           sdkFile.putArchiveEntry(entryData.getEntry());
           sdkFile.write(entryData.getData());
         } else {
-          sdkFile.putArchiveEntry(e);
+          sdkFile.putArchiveEntry(archiveEntry);
           IOUtils.copy(templateArchive, sdkFile);
         }
       } else {
-        sdkFile.putArchiveEntry(e);
+        sdkFile.putArchiveEntry(archiveEntry);
       }
       sdkFile.closeArchiveEntry();
     }
@@ -328,7 +323,8 @@ public class CppSdkGenerator extends SdkGenerator {
 
     kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PUB_KEY_LOCATION_VAR, "key.public");
     kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_PRIV_KEY_LOCATION_VAR, "key.private");
-    kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_STATUS_FILE_LOCATION_VAR, "kaa.status");
+    kaaDefaultsString = replaceVar(kaaDefaultsString, CLIENT_STATUS_FILE_LOCATION_VAR,
+        "kaa.status");
 
     kaaDefaultsString = replaceVar(kaaDefaultsString,
         DEFAULT_USER_VERIFIER_TOKEN,
@@ -360,7 +356,8 @@ public class CppSdkGenerator extends SdkGenerator {
     }
 
     kaaDefaultsString = replaceVar(kaaDefaultsString, BOOTSTRAP_SERVERS_INFO_VAR, bootstrapServers);
-    kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_DATA_DEFAULT_VAR, Base64.encodeBase64String(defaultConfigurationData));
+    kaaDefaultsString = replaceVar(kaaDefaultsString, CONFIG_DATA_DEFAULT_VAR,
+        Base64.encodeBase64String(defaultConfigurationData));
 
     return kaaDefaultsString.getBytes();
   }

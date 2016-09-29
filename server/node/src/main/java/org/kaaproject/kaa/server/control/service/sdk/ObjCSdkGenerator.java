@@ -101,7 +101,9 @@ public class ObjCSdkGenerator extends SdkGenerator {
   private static final String CONFIGURATION_CLASS_VAR = "\\$\\{configuration_class\\}";
   private static final String NOTIFICATION_CLASS_VAR = "\\$\\{notification_class\\}";
   private static final String LOG_RECORD_CLASS_VAR = "\\$\\{log_record_class\\}";
-  private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
+
+  private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR =
+      "\\$\\{default_user_verifier_token\\}";
 
   private static final String PROFILE_NAMESPACE = KAA_SOURCE_PREFIX + "Profile";
   private static final String LOGGING_NAMESPACE = KAA_SOURCE_PREFIX + "Logging";
@@ -120,10 +122,11 @@ public class ObjCSdkGenerator extends SdkGenerator {
                               List<EventFamilyMetadata> eventFamilies,
                               String logSchemaBody) throws Exception {
 
-    String sdkToken = sdkProperties.getToken();
-    String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
+    final String sdkToken = sdkProperties.getToken();
+    final String defaultVerifierToken = sdkProperties.getDefaultVerifierToken();
 
-    String sdkTemplateLocation = System.getProperty("server_home_dir") + "/" + SDK_TEMPLATE_DIR + SDK_PREFIX + buildVersion + ".tar.gz";
+    String sdkTemplateLocation = System.getProperty("server_home_dir")
+        + "/" + SDK_TEMPLATE_DIR + SDK_PREFIX + buildVersion + ".tar.gz";
 
     LOG.debug("Lookup Objective C SDK template: {}", sdkTemplateLocation);
 
@@ -133,10 +136,15 @@ public class ObjCSdkGenerator extends SdkGenerator {
     CompressorInputStream cis = csf.createCompressorInputStream(CompressorStreamFactory.GZIP,
         new FileInputStream(sdkTemplateLocation));
 
-    ArchiveInputStream templateArchive = asf.createArchiveInputStream(ArchiveStreamFactory.TAR, cis);
+    final ArchiveInputStream templateArchive = asf.createArchiveInputStream(
+        ArchiveStreamFactory.TAR,
+        cis
+    );
 
     ByteArrayOutputStream sdkOutput = new ByteArrayOutputStream();
-    CompressorOutputStream cos = csf.createCompressorOutputStream(CompressorStreamFactory.GZIP, sdkOutput);
+    CompressorOutputStream cos = csf.createCompressorOutputStream(CompressorStreamFactory.GZIP,
+        sdkOutput);
+
     ArchiveOutputStream sdkFile = asf.createArchiveOutputStream(ArchiveStreamFactory.TAR, cos);
 
     Map<String, TarEntryData> replacementData = new HashMap<>();
@@ -148,13 +156,15 @@ public class ObjCSdkGenerator extends SdkGenerator {
       Schema profileSchema = new Schema.Parser().parse(profileSchemaBody);
       String profileClassName = PROFILE_NAMESPACE + profileSchema.getName();
 
-      String profileCommonHeader = readResource(PROFILE_TEMPLATE_DIR + PROFILE_COMMON + _H + TEMPLATE_SUFFIX)
+      String profileCommonHeader = readResource(PROFILE_TEMPLATE_DIR + PROFILE_COMMON
+          + _H + TEMPLATE_SUFFIX)
           .replaceAll(PROFILE_CLASS_VAR, profileClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(profileCommonHeader,
           KAA_ROOT + PROFILE_DIR + PROFILE_COMMON + _H));
 
-      String profileCommonSource = readResource(PROFILE_TEMPLATE_DIR + PROFILE_COMMON + _M + TEMPLATE_SUFFIX)
+      String profileCommonSource = readResource(PROFILE_TEMPLATE_DIR + PROFILE_COMMON
+          + _M + TEMPLATE_SUFFIX)
           .replaceAll(PROFILE_CLASS_VAR, profileClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(profileCommonSource,
@@ -181,18 +191,23 @@ public class ObjCSdkGenerator extends SdkGenerator {
       objcSources.add(CommonSdkUtil.tarEntryForSources(logRecordSource,
           KAA_ROOT + LOG_DIR + LOG_RECORD + _M));
 
-      String logCollector = readResource(LOG_TEMPLATE_DIR + LOG_COLLECTOR_INTERFACE + TEMPLATE_SUFFIX)
+      String logCollector = readResource(LOG_TEMPLATE_DIR
+          + LOG_COLLECTOR_INTERFACE + TEMPLATE_SUFFIX)
           .replaceAll(LOG_RECORD_CLASS_VAR, logClassName);
 
-      objcSources.add(CommonSdkUtil.tarEntryForSources(logCollector, KAA_ROOT + LOG_DIR + LOG_COLLECTOR_INTERFACE));
+      objcSources.add(CommonSdkUtil.tarEntryForSources(
+          logCollector, KAA_ROOT + LOG_DIR + LOG_COLLECTOR_INTERFACE
+      ));
 
-      String logCollectorImplHeader = readResource(LOG_TEMPLATE_DIR + LOG_COLLECTOR_SOURCE + _H + TEMPLATE_SUFFIX)
+      String logCollectorImplHeader = readResource(
+          LOG_TEMPLATE_DIR + LOG_COLLECTOR_SOURCE + _H + TEMPLATE_SUFFIX)
           .replaceAll(LOG_RECORD_CLASS_VAR, logClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(logCollectorImplHeader,
           KAA_ROOT + LOG_DIR + LOG_COLLECTOR_SOURCE + _H));
 
-      String logCollectorImplSource = readResource(LOG_TEMPLATE_DIR + LOG_COLLECTOR_SOURCE + _M + TEMPLATE_SUFFIX)
+      String logCollectorImplSource = readResource(
+          LOG_TEMPLATE_DIR + LOG_COLLECTOR_SOURCE + _M + TEMPLATE_SUFFIX)
           .replaceAll(LOG_RECORD_CLASS_VAR, logClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(logCollectorImplSource,
@@ -207,36 +222,45 @@ public class ObjCSdkGenerator extends SdkGenerator {
       Schema configurationSchema = new Schema.Parser().parse(configurationBaseSchemaBody);
       configurationClassName = CONFIGURATION_NAMESPACE + configurationSchema.getName();
 
-      String configurationCommon = readResource(CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_COMMON + TEMPLATE_SUFFIX)
+      String configurationCommon = readResource(
+          CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_COMMON + TEMPLATE_SUFFIX)
           .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
-      objcSources.add(CommonSdkUtil.tarEntryForSources(configurationCommon, KAA_ROOT + CONFIGURATION_DIR + CONFIGURATION_COMMON));
+      objcSources.add(CommonSdkUtil.tarEntryForSources(
+          configurationCommon, KAA_ROOT + CONFIGURATION_DIR + CONFIGURATION_COMMON
+      ));
 
-      String cfManagerImplHeader = readResource(CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_MANAGER_IMPL + _H + TEMPLATE_SUFFIX)
+      String cfManagerImplHeader = readResource(
+          CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_MANAGER_IMPL + _H + TEMPLATE_SUFFIX)
           .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(cfManagerImplHeader,
           KAA_ROOT + CONFIGURATION_DIR + CONFIGURATION_MANAGER_IMPL + _H));
 
-      String cfManagerImplSource = readResource(CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_MANAGER_IMPL + _M + TEMPLATE_SUFFIX)
+      String cfManagerImplSource = readResource(
+          CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_MANAGER_IMPL + _M + TEMPLATE_SUFFIX)
           .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(cfManagerImplSource,
           KAA_ROOT + CONFIGURATION_DIR + CONFIGURATION_MANAGER_IMPL + _M));
 
-      String cfDeserializerHeader = readResource(CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_DESERIALIZER + _H + TEMPLATE_SUFFIX)
+      String cfDeserializerHeader = readResource(
+          CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_DESERIALIZER + _H + TEMPLATE_SUFFIX)
           .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(cfDeserializerHeader,
           KAA_ROOT + CONFIGURATION_DIR + CONFIGURATION_DESERIALIZER + _H));
 
-      String cfDeserializerSource = readResource(CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_DESERIALIZER + _M + TEMPLATE_SUFFIX)
+      String cfDeserializerSource = readResource(
+          CONFIGURATION_TEMPLATE_DIR + CONFIGURATION_DESERIALIZER + _M + TEMPLATE_SUFFIX)
           .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(cfDeserializerSource,
           KAA_ROOT + CONFIGURATION_DIR + CONFIGURATION_DESERIALIZER + _M));
 
-      objcSources.addAll(generateSourcesFromSchema(configurationSchema, CONFIGURATION_GEN, CONFIGURATION_NAMESPACE));
+      objcSources.addAll(
+          generateSourcesFromSchema(configurationSchema, CONFIGURATION_GEN, CONFIGURATION_NAMESPACE)
+      );
     }
 
     if (StringUtils.isNotBlank(notificationSchemaBody)) {
@@ -244,19 +268,23 @@ public class ObjCSdkGenerator extends SdkGenerator {
       Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
       String notificationClassName = NOTIFICATION_NAMESPACE + notificationSchema.getName();
 
-      String nfCommonHeader = readResource(NOTIFICATION_TEMPLATE_DIR + NOTIFICATION_COMMON + _H + TEMPLATE_SUFFIX)
+      String nfCommonHeader = readResource(
+          NOTIFICATION_TEMPLATE_DIR + NOTIFICATION_COMMON + _H + TEMPLATE_SUFFIX)
           .replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(nfCommonHeader,
           KAA_ROOT + NOTIFICATION_DIR + NOTIFICATION_COMMON + _H));
 
-      String nfCommonSource = readResource(NOTIFICATION_TEMPLATE_DIR + NOTIFICATION_COMMON + _M + TEMPLATE_SUFFIX)
+      String nfCommonSource = readResource(
+          NOTIFICATION_TEMPLATE_DIR + NOTIFICATION_COMMON + _M + TEMPLATE_SUFFIX)
           .replaceAll(NOTIFICATION_CLASS_VAR, notificationClassName);
 
       objcSources.add(CommonSdkUtil.tarEntryForSources(nfCommonSource,
           KAA_ROOT + NOTIFICATION_DIR + NOTIFICATION_COMMON + _M));
 
-      objcSources.addAll(generateSourcesFromSchema(notificationSchema, NOTIFICATION_GEN, NOTIFICATION_NAMESPACE));
+      objcSources.addAll(
+          generateSourcesFromSchema(notificationSchema, NOTIFICATION_GEN, NOTIFICATION_NAMESPACE)
+      );
     }
 
     if (eventFamilies != null && !eventFamilies.isEmpty()) {
@@ -269,21 +297,32 @@ public class ObjCSdkGenerator extends SdkGenerator {
 
     objcSources.add(CommonSdkUtil.tarEntryForSources(kaaClient, KAA_ROOT + KAA_CLIENT));
 
-    String baseKaaClientHeader = readResource(SDK_TEMPLATE_DIR + BASE_KAA_CLIENT + _H + TEMPLATE_SUFFIX)
+    String baseKaaClientHeader = readResource(
+        SDK_TEMPLATE_DIR + BASE_KAA_CLIENT + _H + TEMPLATE_SUFFIX)
         .replaceAll(LOG_RECORD_CLASS_VAR, logClassName)
         .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
-    objcSources.add(CommonSdkUtil.tarEntryForSources(baseKaaClientHeader, KAA_ROOT + BASE_KAA_CLIENT + _H));
-    String baseKaaClientSource = readResource(SDK_TEMPLATE_DIR + BASE_KAA_CLIENT + _M + TEMPLATE_SUFFIX)
+    objcSources.add(
+        CommonSdkUtil.tarEntryForSources(baseKaaClientHeader, KAA_ROOT + BASE_KAA_CLIENT + _H)
+    );
+    String baseKaaClientSource = readResource(
+        SDK_TEMPLATE_DIR + BASE_KAA_CLIENT + _M + TEMPLATE_SUFFIX)
         .replaceAll(LOG_RECORD_CLASS_VAR, logClassName)
         .replaceAll(CONFIGURATION_CLASS_VAR, configurationClassName);
 
-    objcSources.add(CommonSdkUtil.tarEntryForSources(baseKaaClientSource, KAA_ROOT + BASE_KAA_CLIENT + _M));
+    objcSources.add(
+        CommonSdkUtil.tarEntryForSources(baseKaaClientSource, KAA_ROOT + BASE_KAA_CLIENT + _M)
+    );
 
-    String tokenVerifier = defaultVerifierToken == null ? "nil" : "@\"" + defaultVerifierToken + "\"";
-    String tokenVerifierSource = readResource(EVENT_TEMPLATE_DIR + USER_VERIFIER_CONSTANTS + TEMPLATE_SUFFIX)
+    String tokenVerifier = defaultVerifierToken == null ? "nil" :
+        "@\"" + defaultVerifierToken + "\"";
+
+    String tokenVerifierSource = readResource(
+        EVENT_TEMPLATE_DIR + USER_VERIFIER_CONSTANTS + TEMPLATE_SUFFIX)
         .replaceAll(DEFAULT_USER_VERIFIER_TOKEN_VAR, tokenVerifier);
-    objcSources.add(CommonSdkUtil.tarEntryForSources(tokenVerifierSource, KAA_ROOT + EVENT_DIR + USER_VERIFIER_CONSTANTS));
+
+    objcSources.add(CommonSdkUtil.tarEntryForSources(tokenVerifierSource, KAA_ROOT + EVENT_DIR
+            + USER_VERIFIER_CONSTANTS));
 
     String kaaDefaultsTemplate = readResource(SDK_TEMPLATE_DIR + KAA_DEFAULTS + TEMPLATE_SUFFIX);
     objcSources.add(generateKaaDefaults(kaaDefaultsTemplate, bootstrapNodes, sdkToken,
@@ -293,19 +332,19 @@ public class ObjCSdkGenerator extends SdkGenerator {
       replacementData.put(entryData.getEntry().getName(), entryData);
     }
 
-    ArchiveEntry e;
-    while ((e = templateArchive.getNextEntry()) != null) {
-      if (!e.isDirectory()) {
-        if (replacementData.containsKey(e.getName())) {
-          TarEntryData entryData = replacementData.remove(e.getName());
+    ArchiveEntry archiveEntry;
+    while ((archiveEntry = templateArchive.getNextEntry()) != null) {
+      if (!archiveEntry.isDirectory()) {
+        if (replacementData.containsKey(archiveEntry.getName())) {
+          TarEntryData entryData = replacementData.remove(archiveEntry.getName());
           sdkFile.putArchiveEntry(entryData.getEntry());
           sdkFile.write(entryData.getData());
         } else {
-          sdkFile.putArchiveEntry(e);
+          sdkFile.putArchiveEntry(archiveEntry);
           IOUtils.copy(templateArchive, sdkFile);
         }
       } else {
-        sdkFile.putArchiveEntry(e);
+        sdkFile.putArchiveEntry(archiveEntry);
       }
       sdkFile.closeArchiveEntry();
     }
@@ -339,8 +378,9 @@ public class ObjCSdkGenerator extends SdkGenerator {
                                            byte[] defaultConfigurationData,
                                            SdkProfileDto profileDto) {
     LOG.debug("Generating kaa defaults");
-    final int PROPERTIES_COUNT = 7;
-    List<String> properties = new ArrayList<>(PROPERTIES_COUNT);
+    final int propertiesCount = 7;
+
+    List<String> properties = new ArrayList<>(propertiesCount);
     properties.add(Version.PROJECT_VERSION);
     properties.add(Version.COMMIT_HASH);
     properties.add(sdkToken);
@@ -349,11 +389,12 @@ public class ObjCSdkGenerator extends SdkGenerator {
 
     properties.add(Base64.encodeBase64String(configurationProtocolSchemaBody.getBytes()));
     properties.add(CommonSdkUtil.bootstrapNodesToString(bootstrapNodes));
-    String source = String.format(template, properties.toArray(new Object[PROPERTIES_COUNT]));
+    String source = String.format(template, properties.toArray(new Object[propertiesCount]));
     return CommonSdkUtil.tarEntryForSources(source, KAA_ROOT + KAA_DEFAULTS);
   }
 
-  private List<TarEntryData> generateSourcesFromSchema(Schema schema, String sourceName, String namespace) {
+  private List<TarEntryData> generateSourcesFromSchema(Schema schema, String sourceName,
+                                                       String namespace) {
     LOG.debug("Generating source with name: " + sourceName);
     List<TarEntryData> tarEntries = new LinkedList<>();
 
@@ -365,10 +406,14 @@ public class ObjCSdkGenerator extends SdkGenerator {
       compiler.setNamespacePrefix(namespace);
       compiler.generate();
 
-      tarEntries.add(CommonSdkUtil.tarEntryForSources(headerStream.toString(), KAA_GEN_FOLDER + sourceName + ".h"));
-      tarEntries.add(CommonSdkUtil.tarEntryForSources(sourceStream.toString(), KAA_GEN_FOLDER + sourceName + ".m"));
-    } catch (Exception e) {
-      LOG.error("Failed to generate ObjectiveC sdk sources", e);
+      tarEntries.add(CommonSdkUtil.tarEntryForSources(headerStream.toString(),
+          KAA_GEN_FOLDER + sourceName + ".h"));
+
+      tarEntries.add(CommonSdkUtil.tarEntryForSources(sourceStream.toString(),
+          KAA_GEN_FOLDER + sourceName + ".m"));
+
+    } catch (Exception ex) {
+      LOG.error("Failed to generate ObjectiveC sdk sources", ex);
     }
 
     return tarEntries;

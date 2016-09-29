@@ -51,7 +51,9 @@ import org.kaaproject.kaa.server.admin.shared.servlet.ServletParams.ProfileType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointProfileViewDto, EndpointProfileView, EndpointProfilePlace> {
+public class EndpointProfileActivity
+    extends AbstractDetailsActivity
+    <EndpointProfileViewDto, EndpointProfileView, EndpointProfilePlace> {
 
   public EndpointProfileActivity(EndpointProfilePlace place, ClientFactory clientFactory) {
     super(place, clientFactory);
@@ -65,25 +67,28 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
   protected void bind(final EventBus eventBus) {
     super.bind(eventBus);
 
-    registrations.add(detailsView.getGroupsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> rowActionEvent) {
-        String id = rowActionEvent.getClickedId();
-        EndpointGroupPlace endpointGroupPlace = new EndpointGroupPlace(place.getApplicationId(), id, false, false);
-        endpointGroupPlace.setPreviousPlace(place);
-        goTo(endpointGroupPlace);
-      }
-    }));
+    registrations.add(detailsView.getGroupsGrid().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> rowActionEvent) {
+            String id = rowActionEvent.getClickedId();
+            EndpointGroupPlace endpointGroupPlace = new EndpointGroupPlace(
+                place.getApplicationId(), id, false, false);
+            endpointGroupPlace.setPreviousPlace(place);
+            goTo(endpointGroupPlace);
+          }
+        }));
 
-    registrations.add(detailsView.getTopicsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> rowActionEvent) {
-        String id = rowActionEvent.getClickedId();
-        TopicPlace topicPlace = new TopicPlace(place.getApplicationId(), id);
-        topicPlace.setPreviousPlace(place);
-        goTo(topicPlace);
-      }
-    }));
+    registrations.add(detailsView.getTopicsGrid().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> rowActionEvent) {
+            String id = rowActionEvent.getClickedId();
+            TopicPlace topicPlace = new TopicPlace(place.getApplicationId(), id);
+            topicPlace.setPreviousPlace(place);
+            goTo(topicPlace);
+          }
+        }));
   }
 
   @Override
@@ -121,11 +126,15 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
     final SdkProfileDto sdkDto = entity.getSdkProfileDto();
     if (sdkDto != null) {
       String sdkName = sdkDto.getName();
-      detailsView.getSdkAnchor().setText((sdkName != null && !sdkName.isEmpty()) ? sdkName : sdkDto.getToken());
+      detailsView.getSdkAnchor()
+          .setText((sdkName != null && !sdkName.isEmpty()) ? sdkName : sdkDto.getToken());
+
       registrations.add(detailsView.getSdkAnchor().addClickHandler(new ClickHandler() {
         @Override
         public void onClick(ClickEvent clickEvent) {
-          SdkProfilePlace sdkProfilePlace = new SdkProfilePlace(place.getApplicationId(), sdkDto.getId());
+          SdkProfilePlace sdkProfilePlace = new SdkProfilePlace(place.getApplicationId(),
+              sdkDto.getId());
+
           sdkProfilePlace.setPreviousPlace(place);
           goTo(sdkProfilePlace);
         }
@@ -160,22 +169,27 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
 
     detailsView.getEndpointProfSchemaName().setText(entity.getProfileSchemaName());
 
-    registrations.add(detailsView.getEndpointProfSchemaName().addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        ProfileSchemaPlace endpointProfSchemaPlace = new ProfileSchemaPlace(place.getApplicationId(), entity
-            .getProfileSchemaVersion().getId());
-        endpointProfSchemaPlace.setPreviousPlace(place);
-        goTo(endpointProfSchemaPlace);
-      }
-    }));
+    registrations.add(detailsView.getEndpointProfSchemaName().addClickHandler(
+        new ClickHandler() {
+          @Override
+          public void onClick(ClickEvent clickEvent) {
+            ProfileSchemaPlace endpointProfSchemaPlace = new ProfileSchemaPlace(
+                place.getApplicationId(),
+                entity.getProfileSchemaVersion().getId());
+            endpointProfSchemaPlace.setPreviousPlace(place);
+            goTo(endpointProfSchemaPlace);
+          }
+        }));
 
-    registrations.add(detailsView.getDownloadEndpointProfileJsonButton().addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent event) {
-        ServletHelper.downloadEndpointProfile(BaseEncoding.base64().encode(entity.getEndpointKeyHash()), ProfileType.CLIENT);
-      }
-    }));
+    registrations.add(detailsView.getDownloadEndpointProfileJsonButton().addClickHandler(
+        new ClickHandler() {
+          @Override
+          public void onClick(ClickEvent event) {
+            ServletHelper.downloadEndpointProfile(
+                BaseEncoding.base64().encode(entity.getEndpointKeyHash()), ProfileType.CLIENT
+            );
+          }
+        }));
 
     detailsView.getEndpointProfForm().setValue(entity.getProfileRecord());
     detailsView.getServerProfForm().setValue(entity.getServerProfileRecord());
@@ -185,42 +199,50 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
     registrations.add(detailsView.getServerProfSchemaName().addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent clickEvent) {
-        ServerProfileSchemaPlace serverProfSchemaPlace = new ServerProfileSchemaPlace(place.getApplicationId(), entity
-            .getServerProfileSchemaVersion().getId());
+        ServerProfileSchemaPlace serverProfSchemaPlace = new ServerProfileSchemaPlace(
+            place.getApplicationId(), entity.getServerProfileSchemaVersion().getId());
         serverProfSchemaPlace.setPreviousPlace(place);
         goTo(serverProfSchemaPlace);
       }
     }));
 
-    registrations.add(detailsView.getDownloadEndpointConfigurationButton().addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        KaaAdmin.getDataSource().findEndpointConfigurationByEndpointKeyHash(BaseEncoding.base64().encode(entity.getEndpointKeyHash()), new BusyAsyncCallback<String>() {
+    registrations.add(detailsView.getDownloadEndpointConfigurationButton().addClickHandler(
+        new ClickHandler() {
           @Override
-          public void onFailureImpl(Throwable throwable) {
-            Utils.handleException(throwable, detailsView);
-          }
+          public void onClick(ClickEvent clickEvent) {
+            KaaAdmin.getDataSource().findEndpointConfigurationByEndpointKeyHash(
+                BaseEncoding.base64().encode(entity.getEndpointKeyHash()),
+                new BusyAsyncCallback<String>() {
+                  @Override
+                  public void onFailureImpl(Throwable throwable) {
+                    Utils.handleException(throwable, detailsView);
+                  }
 
+                  @Override
+                  public void onSuccessImpl(String str) {
+                    ServletHelper.downloadEndpointConfiguration(
+                        BaseEncoding.base64().encode(entity.getEndpointKeyHash()));
+                  }
+                }
+            );
+          }
+        }));
+
+    registrations.add(detailsView.getDownloadServerProfileJsonButton().addClickHandler(
+        new ClickHandler() {
           @Override
-          public void onSuccessImpl(String s) {
-            ServletHelper.downloadEndpointConfiguration(BaseEncoding.base64().encode(entity.getEndpointKeyHash()));
+          public void onClick(ClickEvent event) {
+            ServletHelper.downloadEndpointProfile(
+                BaseEncoding.base64().encode(entity.getEndpointKeyHash()), ProfileType.SERVER);
           }
-        });
-      }
-    }));
-
-    registrations.add(detailsView.getDownloadServerProfileJsonButton().addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent event) {
-        ServletHelper.downloadEndpointProfile(BaseEncoding.base64().encode(entity.getEndpointKeyHash()), ProfileType.SERVER);
-      }
-    }));
+        }));
 
     registrations.add(detailsView.getEditServerProfileButton().addClickHandler(new ClickHandler() {
 
       @Override
       public void onClick(ClickEvent event) {
-        KaaAdmin.getDataSource().getServerProfileSchemaInfosByEndpointKey(place.getEndpointKeyHash(),
+        KaaAdmin.getDataSource().getServerProfileSchemaInfosByEndpointKey(
+            place.getEndpointKeyHash(),
             new BusyAsyncCallback<List<SchemaInfoDto>>() {
               @Override
               public void onFailureImpl(Throwable caught) {
@@ -229,11 +251,13 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
 
               @Override
               public void onSuccessImpl(List<SchemaInfoDto> result) {
-                EditSchemaRecordDialog.Listener editSchemaListener = new EditSchemaRecordDialog.Listener() {
+                EditSchemaRecordDialog.Listener editSchemaListener =
+                    new EditSchemaRecordDialog.Listener() {
 
                   @Override
                   public void onSave(SchemaInfoDto newValue) {
-                    AsyncCallback<EndpointProfileDto> callback = new BusyAsyncCallback<EndpointProfileDto>() {
+                    AsyncCallback<EndpointProfileDto> callback =
+                        new BusyAsyncCallback<EndpointProfileDto>() {
 
                       @Override
                       public void onFailureImpl(Throwable caught) {
@@ -246,15 +270,16 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
                       }
                     };
                     KaaAdmin.getDataSource().updateServerProfile(
-                        BaseEncoding.base64().encode(entity.getEndpointKeyHash()), newValue.getVersion(),
+                        BaseEncoding.base64().encode(entity.getEndpointKeyHash()),
+                        newValue.getVersion(),
                         newValue.getSchemaForm(), callback);
                   }
 
                   @Override
-                  public void onCancel() {
-                  }
+                  public void onCancel() {}
                 };
-                EditSchemaRecordDialog.showEditSchemaRecordDialog(editSchemaListener, Utils.constants.editServerProfile(),
+                EditSchemaRecordDialog.showEditSchemaRecordDialog(editSchemaListener,
+                    Utils.constants.editServerProfile(),
                     result, entity.getServerProfileSchemaVersion().getVersion());
               }
             });
@@ -272,6 +297,6 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
   }
 
   @Override
-  protected void editEntity(EndpointProfileViewDto entity, AsyncCallback<EndpointProfileViewDto> callback) {
-  }
+  protected void editEntity(EndpointProfileViewDto entity,
+                            AsyncCallback<EndpointProfileViewDto> callback) {}
 }

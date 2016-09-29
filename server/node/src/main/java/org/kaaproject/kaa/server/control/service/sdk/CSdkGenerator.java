@@ -82,8 +82,11 @@ public class CSdkGenerator extends SdkGenerator {
 
   private static final String LOGGING_HEADER = KAA_GEN_SOURCE_DIR + "kaa_logging_definitions.h";
   private static final String PROFILE_HEADER = KAA_GEN_SOURCE_DIR + "kaa_profile_definitions.h";
-  private static final String CONFIGURATION_HEADER = KAA_GEN_SOURCE_DIR + "kaa_configuration_definitions.h";
-  private static final String NOTIFICATION_HEADER = KAA_GEN_SOURCE_DIR + "kaa_notification_definitions.h";
+  private static final String CONFIGURATION_HEADER = KAA_GEN_SOURCE_DIR
+      + "kaa_configuration_definitions.h";
+
+  private static final String NOTIFICATION_HEADER = KAA_GEN_SOURCE_DIR
+      + "kaa_notification_definitions.h";
 
   private static final String PROFILE_SOURCE_NAME_PATTERN = "kaa_profile_gen";
   private static final String LOGGING_SOURCE_NAME_PATTERN = "kaa_logging_gen";
@@ -101,17 +104,26 @@ public class CSdkGenerator extends SdkGenerator {
     velocityEngine = new VelocityEngine();
 
     velocityEngine.addProperty("resource.loader", "class, file");
+
     velocityEngine.addProperty("class.resource.loader.class",
         "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+
     velocityEngine.addProperty("file.resource.loader.class",
         "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
     velocityEngine.addProperty("file.resource.loader.path", "/, .");
     velocityEngine.setProperty("runtime.references.strict", true);
-    velocityEngine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+
+    velocityEngine.setProperty("runtime.log.logsystem.class",
+        "org.apache.velocity.runtime.log.NullLogSystem");
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(java.lang.String, java.util.List, java.lang.String, int, int, int, java.lang.String, java.lang.String, java.lang.String, byte[], java.util.List)
+   * @see org.kaaproject.kaa.server.control.service.sdk.SdkGenerator#generateSdk(
+    * java.lang.String, java.util.List,
+    * java.lang.String, int,
+    * int, int,
+    * java.lang.String, java.lang.String,
+    * java.lang.String, byte[], java.util.List)
    */
   @Override
   public FileData generateSdk(String buildVersion,
@@ -129,7 +141,8 @@ public class CSdkGenerator extends SdkGenerator {
     Integer profileSchemaVersion = sdkProfile.getProfileSchemaVersion();
     String defaultVerifierToken = sdkProfile.getDefaultVerifierToken();
 
-    String sdkTemplateLocation = Environment.getServerHomeDir() + "/" + C_SDK_DIR + "/" + C_SDK_PREFIX + buildVersion + ".tar.gz";
+    String sdkTemplateLocation = Environment.getServerHomeDir() + "/" + C_SDK_DIR + "/"
+        + C_SDK_PREFIX + buildVersion + ".tar.gz";
 
     LOG.debug("Lookup C SDK template: {}", sdkTemplateLocation);
 
@@ -139,44 +152,48 @@ public class CSdkGenerator extends SdkGenerator {
     CompressorInputStream cis = csf.createCompressorInputStream(CompressorStreamFactory.GZIP,
         new FileInputStream(sdkTemplateLocation));
 
-    ArchiveInputStream templateArchive = asf.createArchiveInputStream(ArchiveStreamFactory.TAR, cis);
+    final ArchiveInputStream templateArchive = asf.createArchiveInputStream(
+        ArchiveStreamFactory.TAR, cis
+    );
 
     ByteArrayOutputStream sdkOutput = new ByteArrayOutputStream();
-    CompressorOutputStream cos = csf.createCompressorOutputStream(CompressorStreamFactory.GZIP, sdkOutput);
+    CompressorOutputStream cos = csf.createCompressorOutputStream(
+        CompressorStreamFactory.GZIP, sdkOutput);
+
     ArchiveOutputStream sdkFile = asf.createArchiveOutputStream(ArchiveStreamFactory.TAR, cos);
 
-    Map<String, TarEntryData> replacementData = new HashMap<String, TarEntryData>();
+    Map<String, TarEntryData> replacementData = new HashMap<>();
 
-    List<TarEntryData> cSources = new ArrayList<>();
+    List<TarEntryData> sources = new ArrayList<>();
 
     if (!StringUtils.isBlank(profileSchemaBody)) {
-      cSources.addAll(generateProfileSources(profileSchemaBody));
+      sources.addAll(generateProfileSources(profileSchemaBody));
     }
 
     if (!StringUtils.isBlank(logSchemaBody)) {
-      cSources.addAll(generateLogSources(logSchemaBody));
+      sources.addAll(generateLogSources(logSchemaBody));
     }
 
     if (!StringUtils.isBlank(configurationBaseSchemaBody)) {
-      cSources.addAll(generateConfigurationSources(configurationBaseSchemaBody));
+      sources.addAll(generateConfigurationSources(configurationBaseSchemaBody));
     }
 
     if (!StringUtils.isBlank(notificationSchemaBody)) {
-      cSources.addAll(generateNotificationSources(notificationSchemaBody));
+      sources.addAll(generateNotificationSources(notificationSchemaBody));
     }
 
     if (eventFamilies != null && !eventFamilies.isEmpty()) {
-      cSources.addAll(CEventSourcesGenerator.generateEventSources(eventFamilies));
+      sources.addAll(CEventSourcesGenerator.generateEventSources(eventFamilies));
     }
 
-    for (TarEntryData entryData : cSources) {
+    for (TarEntryData entryData : sources) {
       replacementData.put(entryData.getEntry().getName(), entryData);
     }
 
-    ArchiveEntry e = null;
-    while ((e = templateArchive.getNextEntry()) != null) {
-      if (!e.isDirectory()) {
-        if (e.getName().equals(KAA_DEFAULTS_HEADER)) {
+    ArchiveEntry archiveEntry;
+    while ((archiveEntry = templateArchive.getNextEntry()) != null) {
+      if (!archiveEntry.isDirectory()) {
+        if (archiveEntry.getName().equals(KAA_DEFAULTS_HEADER)) {
           // TODO: eliminate schema versions and substitute them for a single sdkToken
           byte[] kaaDefaultsData = generateKaaDefaults(bootstrapNodes, sdkToken,
               profileSchemaVersion,
@@ -188,10 +205,10 @@ public class CSdkGenerator extends SdkGenerator {
           kaaDefaultsEntry.setSize(kaaDefaultsData.length);
           sdkFile.putArchiveEntry(kaaDefaultsEntry);
           sdkFile.write(kaaDefaultsData);
-        } else if (e.getName().equals(KAA_CMAKEGEN)) {
+        } else if (archiveEntry.getName().equals(KAA_CMAKEGEN)) {
           // Ignore duplicate source names
           List<String> sourceNames = new LinkedList<>();
-          for (TarEntryData sourceEntry : cSources) {
+          for (TarEntryData sourceEntry : sources) {
             String fileName = sourceEntry.getEntry().getName();
             if (fileName.endsWith(C_SOURCE_SUFFIX) && !sourceNames.contains(fileName)) {
               sourceNames.add(fileName);
@@ -200,22 +217,23 @@ public class CSdkGenerator extends SdkGenerator {
 
           VelocityContext context = new VelocityContext();
           context.put("sourceNames", sourceNames);
-          String cSourceData = generateSourceFromTemplate(TEMPLATE_DIR + File.separator + "CMakeGen.vm", context);
+          String sourceData = generateSourceFromTemplate(TEMPLATE_DIR
+              + File.separator + "CMakeGen.vm", context);
 
           TarArchiveEntry kaaCMakeEntry = new TarArchiveEntry(KAA_CMAKEGEN);
-          kaaCMakeEntry.setSize(cSourceData.length());
+          kaaCMakeEntry.setSize(sourceData.length());
           sdkFile.putArchiveEntry(kaaCMakeEntry);
-          sdkFile.write(cSourceData.getBytes());
-        } else if (replacementData.containsKey(e.getName())) {
-          TarEntryData entryData = replacementData.remove(e.getName());
+          sdkFile.write(sourceData.getBytes());
+        } else if (replacementData.containsKey(archiveEntry.getName())) {
+          TarEntryData entryData = replacementData.remove(archiveEntry.getName());
           sdkFile.putArchiveEntry(entryData.getEntry());
           sdkFile.write(entryData.getData());
         } else {
-          sdkFile.putArchiveEntry(e);
+          sdkFile.putArchiveEntry(archiveEntry);
           IOUtils.copy(templateArchive, sdkFile);
         }
       } else {
-        sdkFile.putArchiveEntry(e);
+        sdkFile.putArchiveEntry(archiveEntry);
       }
 
       sdkFile.closeArchiveEntry();
@@ -242,21 +260,26 @@ public class CSdkGenerator extends SdkGenerator {
     return sdk;
   }
 
-  private List<TarEntryData> generateSourcesFromSchema(Schema schema, String sourceName, String namespace) {
+  private List<TarEntryData> generateSourcesFromSchema(Schema schema, String sourceName,
+                                                       String namespace) {
     List<TarEntryData> tarEntries = new LinkedList<>();
 
     try (
         OutputStream headerStream = new ByteArrayOutputStream();
-        OutputStream sourceStream = new ByteArrayOutputStream();
+        OutputStream sourceStream = new ByteArrayOutputStream()
     ) {
       Compiler compiler = new CCompiler(schema, sourceName, headerStream, sourceStream);
       compiler.setNamespacePrefix(namespace);
       compiler.generate();
 
-      tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_HEADER_SUFFIX, headerStream.toString()));
-      tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_SOURCE_SUFFIX, sourceStream.toString()));
-    } catch (Exception e) {
-      LOG.error("Failed to generate C sdk sources", e);
+      tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_HEADER_SUFFIX,
+          headerStream.toString()));
+
+      tarEntries.add(createTarEntry(KAA_GEN_SOURCE_DIR + sourceName + C_SOURCE_SUFFIX,
+          sourceStream.toString()));
+
+    } catch (Exception ex) {
+      LOG.error("Failed to generate C sdk sources", ex);
     }
 
     return tarEntries;
@@ -317,7 +340,8 @@ public class CSdkGenerator extends SdkGenerator {
     context.put("Integer", Integer.class);
     context.put("ServerNameUtil", ServerNameUtil.class);
 
-    return generateSourceFromTemplate(TEMPLATE_DIR + File.separator + "kaa_defaults.hvm", context).getBytes();
+    return generateSourceFromTemplate(TEMPLATE_DIR + File.separator
+        + "kaa_defaults.hvm", context).getBytes();
   }
 
   private List<TarEntryData> generateProfileSources(String profileSchemaBody) {
@@ -327,7 +351,8 @@ public class CSdkGenerator extends SdkGenerator {
     tarEntries.add(createTarEntry(PROFILE_HEADER,
         processHeaderTemplate("kaa_profile_definitions.hvm", schema, PROFILE_NAMESPACE)));
 
-    tarEntries.addAll(generateSourcesFromSchema(schema, PROFILE_SOURCE_NAME_PATTERN, PROFILE_NAMESPACE));
+    tarEntries.addAll(generateSourcesFromSchema(schema, PROFILE_SOURCE_NAME_PATTERN,
+        PROFILE_NAMESPACE));
 
     return tarEntries;
   }
@@ -339,7 +364,8 @@ public class CSdkGenerator extends SdkGenerator {
     tarEntries.add(createTarEntry(LOGGING_HEADER,
         processHeaderTemplate("kaa_logging_definitions.hvm", schema, LOGGING_NAMESPACE)));
 
-    tarEntries.addAll(generateSourcesFromSchema(schema, LOGGING_SOURCE_NAME_PATTERN, LOGGING_NAMESPACE));
+    tarEntries.addAll(generateSourcesFromSchema(schema, LOGGING_SOURCE_NAME_PATTERN,
+        LOGGING_NAMESPACE));
 
     return tarEntries;
   }
@@ -348,10 +374,16 @@ public class CSdkGenerator extends SdkGenerator {
     Schema schema = new Schema.Parser().parse(configurationSchemaBody);
     List<TarEntryData> tarEntries = new LinkedList<>();
 
-    tarEntries.add(createTarEntry(CONFIGURATION_HEADER,
-        processHeaderTemplate("kaa_configuration_definitions.hvm", schema, CONFIGURATION_NAMESPACE)));
+    tarEntries.add(
+        createTarEntry(
+            CONFIGURATION_HEADER,
+            processHeaderTemplate("kaa_configuration_definitions.hvm", schema,
+                CONFIGURATION_NAMESPACE)
+        )
+    );
 
-    tarEntries.addAll(generateSourcesFromSchema(schema, CONFIGURATION_SOURCE_NAME_PATTERN, CONFIGURATION_NAMESPACE));
+    tarEntries.addAll(generateSourcesFromSchema(schema,
+        CONFIGURATION_SOURCE_NAME_PATTERN, CONFIGURATION_NAMESPACE));
 
     return tarEntries;
   }
@@ -363,7 +395,8 @@ public class CSdkGenerator extends SdkGenerator {
     tarEntries.add(createTarEntry(NOTIFICATION_HEADER,
         processHeaderTemplate("kaa_notification_definitions.hvm", schema, NOTIFICATION_NAMESPACE)));
 
-    tarEntries.addAll(generateSourcesFromSchema(schema, NOTIFICATION_SOURCE_NAME_PATTERN, NOTIFICATION_NAMESPACE));
+    tarEntries.addAll(generateSourcesFromSchema(schema,
+        NOTIFICATION_SOURCE_NAME_PATTERN, NOTIFICATION_NAMESPACE));
 
     return tarEntries;
   }

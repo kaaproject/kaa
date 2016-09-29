@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -40,22 +41,26 @@ public class EndpointCountRebalancer implements Rebalancer {
   private static final double DEFAULT_MIN_INIT_REDIRECT = 0.75;
   private static final double DEFAULT_MIN_SESSION_REDIRECT = 0.0;
   private final AtomicLong ruleIdSeq = new AtomicLong();
+
   /**
    * Minimum difference between amount of endpoints that need to be present in
-   * order to trigger rebalancing
+   * order to trigger rebalancing.
    */
   @Value("#{properties[loadmgmt_min_diff]}")
   private int minDiff = DEFAULT_MIN_DIFF;
+
   /**
-   * Maximum redirect probability for new sessions
+   * Maximum redirect probability for new sessions.
    */
   @Value("#{properties[loadmgmt_max_init_redirect_probability]}")
   private double maxInitRedirectProbability = DEFAULT_MIN_INIT_REDIRECT;
+
   /**
-   * Maximum redirect probability for existing sessions
+   * Maximum redirect probability for existing sessions.
    */
   @Value("#{properties[loadmgmt_max_session_redirect_probability]}")
   private double maxSessionRedirectProbability = DEFAULT_MIN_SESSION_REDIRECT;
+
   /**
    * Load mgmt data recalculation period.
    */
@@ -63,7 +68,9 @@ public class EndpointCountRebalancer implements Rebalancer {
   private int recalculationPeriod;
 
   @Override
-  public Map<Integer, List<RedirectionRule>> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
+  public Map<Integer, List<RedirectionRule>> recalculate(
+      Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
+
     Map<Integer, List<RedirectionRule>> result = new HashMap<>();
     if (opsServerLoadHistory.isEmpty()) {
       LOG.debug("No ops server load history yet");
@@ -73,12 +80,16 @@ public class EndpointCountRebalancer implements Rebalancer {
       LOG.debug("No rebalancing in standalone mode");
       return result;
     }
-    for (Entry<Integer, OperationsServerLoadHistory> accessPointHistory : opsServerLoadHistory.entrySet()) {
-      LOG.debug("Access point: {} has {} history items", accessPointHistory.getKey(), accessPointHistory.getValue().getHistory().size());
+    Set<Entry<Integer, OperationsServerLoadHistory>> entries = opsServerLoadHistory.entrySet();
+    for (Entry<Integer, OperationsServerLoadHistory> accessPointHistory : entries) {
+      LOG.debug("Access point: {} has {} history items",
+          accessPointHistory.getKey(), accessPointHistory.getValue().getHistory().size());
+
       for (OperationsServerLoad load : accessPointHistory.getValue().getHistory()) {
         LOG.debug("History: {}", load);
       }
     }
+
     int minLoadedOpsServer = getMinLoadedOpsServer(opsServerLoadHistory);
     int minEndpointCount = getLastEndpointCount(opsServerLoadHistory.get(minLoadedOpsServer));
     int maxLoadedOpsServer = getMaxLoadedOpsServer(opsServerLoadHistory);
@@ -88,7 +99,8 @@ public class EndpointCountRebalancer implements Rebalancer {
     int maxDiff = maxEndpointCount - minEndpointCount;
     LOG.info("Max difference between endpoint counts is {}", maxDiff);
     if (maxDiff < minDiff) {
-      LOG.debug("Max endpoint count difference is too small to trigger recalculation. Min required diff is {}", minDiff);
+      LOG.debug("Max endpoint count difference is too small to trigger recalculation. "
+          + "Min required diff is {}", minDiff);
       return result;
     }
 
@@ -113,10 +125,14 @@ public class EndpointCountRebalancer implements Rebalancer {
         if (targetWeight.getValue() < 0) {
           continue;
         }
-        double initRedirectProbability = Math.abs(curWeight) * targetWeight.getValue() * maxInitRedirectProbability;
+        double initRedirectProbability = Math.abs(curWeight)
+            * targetWeight.getValue() * maxInitRedirectProbability;
+
         double sessionRedirectProbability = targetWeight.getValue() * maxSessionRedirectProbability;
         if (initRedirectProbability > 0 || sessionRedirectProbability > 0) {
-          RedirectionRule rule = new RedirectionRule(targetWeight.getKey(), ruleIdSeq.getAndIncrement(), initRedirectProbability,
+
+          RedirectionRule rule = new RedirectionRule(targetWeight.getKey(),
+              ruleIdSeq.getAndIncrement(), initRedirectProbability,
               sessionRedirectProbability, recalculationPeriod * 1000L);
           LOG.debug("Calculated new rule for accessPointId: {} -> {}", opsEntry.getKey(), rule);
           redirectionRules.add(rule);
@@ -128,9 +144,10 @@ public class EndpointCountRebalancer implements Rebalancer {
     return result;
   }
 
-  private Map<Integer, Double> calculateWeights(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory, int targetLoad) {
-    Map<Integer, Double> weights = new LinkedHashMap<>();
+  private Map<Integer, Double> calculateWeights(
+      Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory, int targetLoad) {
 
+    Map<Integer, Double> weights = new LinkedHashMap<>();
     double totalPosWeight = 0;
     double totalNegWeight = 0;
     for (Entry<Integer, OperationsServerLoadHistory> opsEntry : opsServerLoadHistory.entrySet()) {
@@ -150,12 +167,15 @@ public class EndpointCountRebalancer implements Rebalancer {
       } else {
         weightEntry.setValue(weightEntry.getValue() / totalNegWeight);
       }
-      LOG.debug("Calculated redirection weight of {} is {}", weightEntry.getKey(), weightEntry.getValue());
+      LOG.debug("Calculated redirection weight of {} is {}",
+          weightEntry.getKey(), weightEntry.getValue());
     }
     return weights;
   }
 
-  private int getMinLoadedOpsServer(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
+  private int getMinLoadedOpsServer(
+      Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
+
     int result = 0;
     int minCount = Integer.MAX_VALUE;
     for (Entry<Integer, OperationsServerLoadHistory> entry : opsServerLoadHistory.entrySet()) {
@@ -168,7 +188,8 @@ public class EndpointCountRebalancer implements Rebalancer {
     return result;
   }
 
-  private int getMaxLoadedOpsServer(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
+  private int getMaxLoadedOpsServer(
+      Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory) {
     int result = 0;
     int maxCount = Integer.MIN_VALUE;
     for (Entry<Integer, OperationsServerLoadHistory> entry : opsServerLoadHistory.entrySet()) {

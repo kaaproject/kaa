@@ -62,20 +62,31 @@ public class ProfileDownloadServlet extends HttpServlet implements Servlet, Serv
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    SpringBeanAutowiringSupport
+        .processInjectionBasedOnServletContext(this, config.getServletContext());
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+
     String endpointKey = URLDecoder.decode(request.getParameter(ENDPOINT_KEY_PARAMETER), "UTF-8");
-    String profileTypeString = URLDecoder.decode(request.getParameter(PROFILE_TYPE_PARAMETER), "UTF-8");
+    String profileTypeString = URLDecoder.decode(request.getParameter(PROFILE_TYPE_PARAMETER),
+        "UTF-8");
+
     ProfileType profileType = ProfileType.valueOf(profileTypeString);
 
     try {
       EndpointProfileDto profile = profileService.getEndpointProfileByKeyHash(endpointKey);
       String json;
-      String fileName = MessageFormatter.arrayFormat(PROFILE_FILE_NAME_PATTERN,
-          new Object[]{endpointKey, profileType.name().toLowerCase(), System.currentTimeMillis()}).getMessage();
+      String fileName = MessageFormatter
+          .arrayFormat(
+              PROFILE_FILE_NAME_PATTERN,
+              new Object[]{
+                  endpointKey, profileType.name().toLowerCase(), System.currentTimeMillis()
+              })
+          .getMessage();
+
       if (profileType == ProfileType.CLIENT) {
         json = profile.getClientProfileBody();
       } else {
@@ -85,16 +96,21 @@ public class ProfileDownloadServlet extends HttpServlet implements Servlet, Serv
         json = "{}";
       }
       Object jsonObject = FORMATTER.readValue(json, Object.class);
-      byte[] body = FORMATTER.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject).getBytes("UTF-8");
+      byte[] body = FORMATTER
+          .writerWithDefaultPrettyPrinter()
+          .writeValueAsString(jsonObject)
+          .getBytes("UTF-8");
+
       ServletUtils.prepareDisposition(request, response, fileName);
       response.setContentType(JSON);
       response.setContentLength(body.length);
       response.setBufferSize(BUFFER);
       response.getOutputStream().write(body);
       response.flushBuffer();
-    } catch (Exception e) {
-      LOG.error("Unexpected error in ProfileDownloadServlet.doGet: ", e);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: " + e.getMessage());
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in ProfileDownloadServlet.doGet: ", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+          "Unable to get file: " + ex.getMessage());
     }
   }
 }

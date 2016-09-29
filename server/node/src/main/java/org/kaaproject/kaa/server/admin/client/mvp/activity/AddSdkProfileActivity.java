@@ -39,7 +39,8 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
+public class AddSdkProfileActivity
+    extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
 
   private String applicationId;
 
@@ -73,16 +74,8 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
   @Override
   protected void onEntityRetrieved() {
     BusyPopup.showPopup();
-    KaaAdmin.getDataSource().getSchemaVersionsByApplicationId(applicationId, new AsyncCallback<SchemaVersions>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        BusyPopup.hidePopup();
-        Utils.handleException(caught, detailsView);
-      }
-
-      @Override
-      public void onSuccess(final SchemaVersions schemaVersions) {
-        KaaAdmin.getDataSource().getAefMaps(applicationId, new AsyncCallback<List<AefMapInfoDto>>() {
+    KaaAdmin.getDataSource().getSchemaVersionsByApplicationId(applicationId,
+        new AsyncCallback<SchemaVersions>() {
           @Override
           public void onFailure(Throwable caught) {
             BusyPopup.hidePopup();
@@ -90,9 +83,9 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
           }
 
           @Override
-          public void onSuccess(final List<AefMapInfoDto> ecfs) {
-            KaaAdmin.getDataSource().loadUserVerifiers(applicationId,
-                new AsyncCallback<List<UserVerifierDto>>() {
+          public void onSuccess(final SchemaVersions schemaVersions) {
+            KaaAdmin.getDataSource().getAefMaps(applicationId,
+                new AsyncCallback<List<AefMapInfoDto>>() {
                   @Override
                   public void onFailure(Throwable caught) {
                     BusyPopup.hidePopup();
@@ -100,16 +93,27 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
                   }
 
                   @Override
-                  public void onSuccess(
-                      List<UserVerifierDto> userVerifiers) {
-                    BusyPopup.hidePopup();
-                    onInfoRetrieved(schemaVersions, ecfs, userVerifiers);
+                  public void onSuccess(final List<AefMapInfoDto> ecfs) {
+                    KaaAdmin.getDataSource().loadUserVerifiers(applicationId,
+                        new AsyncCallback<List<UserVerifierDto>>() {
+                          @Override
+                          public void onFailure(Throwable caught) {
+                            BusyPopup.hidePopup();
+                            Utils.handleException(caught, detailsView);
+                          }
+
+                          @Override
+                          public void onSuccess(
+                              List<UserVerifierDto> userVerifiers) {
+                            BusyPopup.hidePopup();
+                            onInfoRetrieved(schemaVersions, ecfs, userVerifiers);
+                          }
+                        }
+                    );
                   }
                 });
           }
         });
-      }
-    });
   }
 
   private void onInfoRetrieved(SchemaVersions schemaVersions,
@@ -141,14 +145,14 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
   protected void onSave() {
     entity.setName(detailsView.getName().getValue());
 
-    entity.setConfigurationSchemaVersion(detailsView.getConfigurationSchemaVersion().
-        getValue().getVersion());
-    entity.setProfileSchemaVersion(detailsView.getProfileSchemaVersion().
-        getValue().getVersion());
-    entity.setNotificationSchemaVersion(detailsView.getNotificationSchemaVersion().
-        getValue().getVersion());
-    entity.setLogSchemaVersion(detailsView.getLogSchemaVersion().
-        getValue().getVersion());
+    entity.setConfigurationSchemaVersion(detailsView.getConfigurationSchemaVersion()
+        .getValue().getVersion());
+    entity.setProfileSchemaVersion(detailsView.getProfileSchemaVersion()
+        .getValue().getVersion());
+    entity.setNotificationSchemaVersion(detailsView.getNotificationSchemaVersion()
+        .getValue().getVersion());
+    entity.setLogSchemaVersion(detailsView.getLogSchemaVersion()
+        .getValue().getVersion());
 
   }
 
@@ -172,13 +176,14 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
 
 
     KaaAdmin.getDataSource().validateEcfListInSdkProfile(aefMaps, new AsyncCallback<Void>() {
+
       @Override
       public void onFailure(Throwable caught) {
         Utils.handleException(caught, detailsView);
       }
 
       @Override
-      public void onSuccess(Void aVoid) {
+      public void onSuccess(Void callback) {
         List<String> aefMapIds = new ArrayList<>();
         if (aefMaps != null) {
           for (AefMapInfoDto aefMap : aefMaps) {
@@ -191,24 +196,30 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
               .getValue().getVerifierToken());
         }
         entity = sdkProfileDto;
-        if (!sdkProfileDto.getAefMapIds().isEmpty() && sdkProfileDto.getDefaultVerifierToken() == null) {
+        if (!sdkProfileDto.getAefMapIds().isEmpty()
+            && sdkProfileDto.getDefaultVerifierToken() == null) {
+
           detailsView.setErrorMessage(Utils.constants.specifyVerifier());
         } else {
-          KaaAdmin.getDataSource().addSdkProfile(sdkProfileDto, new BusyAsyncCallback<SdkProfileDto>() {
-            @Override
-            public void onSuccessImpl(SdkProfileDto result) {
-              detailsView.reset();
-              AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
-            }
 
-            @Override
-            public void onFailureImpl(Throwable caught) {
-              Utils.handleException(caught, detailsView);
-            }
-          });
+          KaaAdmin.getDataSource().addSdkProfile(sdkProfileDto,
+              new BusyAsyncCallback<SdkProfileDto>() {
+                @Override
+                public void onSuccessImpl(SdkProfileDto result) {
+                  detailsView.reset();
+                  AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
+                }
+
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                  Utils.handleException(caught, detailsView);
+                }
+              });
         }
       }
+
     });
+
   }
 
   @Override

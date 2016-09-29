@@ -68,7 +68,7 @@ public class DynamicLoadManagerTest {
     assertNotNull(dm.getLoadDistributionService());
     assertNotNull(dm.getDynamicRebalancer());
     verify(ldServiceMock, atLeast(1)).getOpsServerHistoryTTL();
-    assertEquals(300000, dm.getOpsServerHistoryTTL());
+    assertEquals(300000, dm.getOpsServerHistoryTtl());
   }
 
   /**
@@ -177,7 +177,7 @@ public class DynamicLoadManagerTest {
 
 
   /**
-   * Test methods for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#setOpsServerHistoryTTL(long)}.
+   * Test methods for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#setOpsServerHistoryTtl(long)}.
    * and {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#getOpsServerHistoryTTL(long)}
    */
   @Test
@@ -185,8 +185,8 @@ public class DynamicLoadManagerTest {
     DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
     assertNotNull(dm);
     long opsServerHistoryTTL = 123456;
-    dm.setOpsServerHistoryTTL(opsServerHistoryTTL);
-    assertEquals(opsServerHistoryTTL, dm.getOpsServerHistoryTTL());
+    dm.setOpsServerHistoryTtl(opsServerHistoryTTL);
+    assertEquals(opsServerHistoryTTL, dm.getOpsServerHistoryTtl());
   }
 
 }
