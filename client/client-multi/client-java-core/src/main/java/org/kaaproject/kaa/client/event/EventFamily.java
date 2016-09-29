@@ -27,18 +27,18 @@ import java.util.Set;
 public interface EventFamily {
 
   /**
-   * Returns set of supported incoming events in event family
+   * Returns set of supported incoming events in event family.
    *
    * @return set of supported events presented as set event fully qualified names
    */
-  Set<String> getSupportedEventFQNs();
+  Set<String> getSupportedEventFqns();
 
   /**
    * Generic handler of event received from server.
    *
-   * @param eventFQN Fully qualified name of an event
+   * @param eventFqn Fully qualified name of an event
    * @param data     Event data
    * @param source   Event source
    */
-  void onGenericEvent(String eventFQN, byte[] data, String source);
+  void onGenericEvent(String eventFqn, byte[] data, String source);
 }

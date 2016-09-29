@@ -28,12 +28,14 @@
  * registered. </p> <h2>Usage</h2> <p> Attaching current endpoint to user:
  * <pre>
  *  {@code
- *      EndpointRegistrationManager registrationManager = kaaClient.getEndpointRegistrationManager();
+ *      EndpointRegistrationManager registrationManager =
+ *      kaaClient.getEndpointRegistrationManager();
  *      registrationManager.attachUser("userExternalId", "userAccessToken", new
  * UserAuthResultListener() { ... });
  *  }
  *  </pre>
- * To check if this endpoint is attached to user call {@link org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager#isAttachedToUser()}.<br>
+ * To check if this endpoint is attached to user call {@link
+ * org.kaaproject.kaa.client.event.registration.EndpointRegistrationManager#isAttachedToUser()}.<br>
  * <br> Attaching any endpoint to user by its access token:
  * <pre>
  *  {@code
@@ -52,7 +54,8 @@
  * </pre>
  * EndpointKeyHash for endpoint can be received with AttachEndpoint operation provided from
  * Operations server. <br> <br> If current endpoint is assumed to be attached or detached by another
- * endpoint, specific {@link org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback}
+ * endpoint, specific {@link
+ * org.kaaproject.kaa.client.event.registration.AttachEndpointToUserCallback}
  * and {@link org.kaaproject.kaa.client.event.registration.DetachEndpointFromUserCallback} may be
  * specified to receive notification about such event.<br> <br>
  */

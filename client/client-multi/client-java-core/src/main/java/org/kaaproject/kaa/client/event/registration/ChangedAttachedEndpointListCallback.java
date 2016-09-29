@@ -22,13 +22,14 @@ import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import java.util.Map;
 
 /**
- * Callback interface for attached endpoint list change notifications
+ * Callback interface for attached endpoint list change notifications.
  *
  * @author Taras Lemkin
  */
 public interface ChangedAttachedEndpointListCallback {
+
   /**
-   * Callback on attached endpoints list changed
+   * Callback on attached endpoints list changed.
    *
    * @param attachedEndpoints the attached endpoints
    * @see EndpointAccessToken

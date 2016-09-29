@@ -52,9 +52,9 @@ public interface KaaClient extends GenericKaaClient {
   /**
    * Adds new log record to local storage.
    *
-   * @param record A log record object.
-   * @return The {@link RecordFuture} object which allows tracking a delivery status of a log
-   * record.
+   * @param record the log record object.
+   * @return the {@link RecordFuture} object which allows tracking a delivery status of
+   *         a log record
    */
   RecordFuture addLogRecord(Log record);
 

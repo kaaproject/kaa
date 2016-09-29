@@ -44,16 +44,21 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Taras Lemkin
  */
-public class DefaultEndpointRegistrationManager implements EndpointRegistrationManager, EndpointRegistrationProcessor {
+public class DefaultEndpointRegistrationManager implements EndpointRegistrationManager,
+        EndpointRegistrationProcessor {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpointRegistrationManager.class);
+  private static final Logger LOG = LoggerFactory.getLogger(
+          DefaultEndpointRegistrationManager.class);
   private static final Random RANDOM = new Random();
 
   private final KaaClientState state;
-  private final Map<Integer, OnAttachEndpointOperationCallback> endpointAttachListeners = new ConcurrentHashMap<>();
-  private final Map<Integer, OnDetachEndpointOperationCallback> endpointDetachListeners = new ConcurrentHashMap<>();
+  private final Map<Integer, OnAttachEndpointOperationCallback> endpointAttachListeners =
+          new ConcurrentHashMap<>();
+  private final Map<Integer, OnDetachEndpointOperationCallback> endpointDetachListeners =
+          new ConcurrentHashMap<>();
 
-  private final Map<Integer, EndpointAccessToken> attachEndpointRequests = new ConcurrentHashMap<>();
+  private final Map<Integer, EndpointAccessToken> attachEndpointRequests =
+          new ConcurrentHashMap<>();
   private final Map<Integer, EndpointKeyHash> detachEndpointRequests = new ConcurrentHashMap<>();
   private final ExecutorContext executorContext;
   private UserAttachRequest userAttachRequest;
@@ -63,7 +68,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
   private volatile UserTransport userTransport;
   private volatile ProfileTransport profileTransport;
 
-  public DefaultEndpointRegistrationManager(KaaClientState state, ExecutorContext executorContext, UserTransport userTransport,
+  public DefaultEndpointRegistrationManager(KaaClientState state, ExecutorContext executorContext,
+                                            UserTransport userTransport,
                                             ProfileTransport profileTransport) {
     this.userTransport = userTransport;
     this.profileTransport = profileTransport;
@@ -93,7 +99,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
   }
 
   @Override
-  public void attachEndpoint(EndpointAccessToken endpointAccessToken, OnAttachEndpointOperationCallback resultListener) {
+  public void attachEndpoint(EndpointAccessToken endpointAccessToken,
+                             OnAttachEndpointOperationCallback resultListener) {
     int requestId = getRandomInt();
     LOG.info("Going to attach Endpoint by access token: {}", endpointAccessToken);
     attachEndpointRequests.put(requestId, endpointAccessToken);
@@ -106,7 +113,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
   }
 
   @Override
-  public void detachEndpoint(EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) {
+  public void detachEndpoint(
+          EndpointKeyHash endpointKeyHash, OnDetachEndpointOperationCallback resultListener) {
     int requestId = getRandomInt();
     LOG.info("Going to detach Endpoint by endpoint key hash: {}", endpointKeyHash);
     detachEndpointRequests.put(requestId, endpointKeyHash);
@@ -119,16 +127,20 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
   }
 
   @Override
-  public void attachUser(String userExternalId, String userAccessToken, UserAttachCallback callback) {
+  public void attachUser(
+          String userExternalId, String userAccessToken, UserAttachCallback callback) {
     if (UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN != null) {
-      attachUser(UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN, userExternalId, userAccessToken, callback);
+      attachUser(UserVerifierConstants.DEFAULT_USER_VERIFIER_TOKEN, userExternalId,
+              userAccessToken, callback);
     } else {
-      throw new IllegalStateException("Default user verifier was not defined during SDK generation process!");
+      throw new IllegalStateException(
+              "Default user verifier was not defined during SDK generation process!");
     }
   }
 
   @Override
-  public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken, UserAttachCallback callback) {
+  public void attachUser(String userVerifierToken, String userExternalId, String userAccessToken,
+                         UserAttachCallback callback) {
     userAttachRequest = new UserAttachRequest(userVerifierToken, userExternalId, userAccessToken);
     userAttachCallback = callback;
     if (userTransport != null) {
@@ -141,8 +153,10 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
   }
 
   @Override
-  public void onUpdate(List<EndpointAttachResponse> attachResponses, List<EndpointDetachResponse> detachResponses,
-                       final UserAttachResponse userResponse, final UserAttachNotification userAttachNotification,
+  public void onUpdate(List<EndpointAttachResponse> attachResponses,
+                       List<EndpointDetachResponse> detachResponses,
+                       final UserAttachResponse userResponse,
+                       final UserAttachNotification userAttachNotification,
                        final UserDetachNotification userDetachNotification) throws IOException {
     if (userResponse != null) {
       if (userAttachCallback != null) {
@@ -163,7 +177,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
           executorContext.getCallbackExecutor().submit(new Runnable() {
             @Override
             public void run() {
-              callback.onAttachedToUser(userAttachRequest.getUserExternalId(), state.getEndpointAccessToken());
+              callback.onAttachedToUser(userAttachRequest.getUserExternalId(),
+                      state.getEndpointAccessToken());
             }
           });
         }
@@ -173,14 +188,16 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
     if (attachResponses != null && !attachResponses.isEmpty()) {
       for (EndpointAttachResponse attached : attachResponses) {
-        notifyAttachedListener(attached.getResult(), endpointAttachListeners.remove(attached.getRequestId()), new EndpointKeyHash(
+        notifyAttachedListener(attached.getResult(),
+                endpointAttachListeners.remove(attached.getRequestId()), new EndpointKeyHash(
             attached.getEndpointKeyHash()));
         attachEndpointRequests.remove(attached.getRequestId());
       }
     }
     if (detachResponses != null && !detachResponses.isEmpty()) {
       for (EndpointDetachResponse detached : detachResponses) {
-        notifyDetachedListener(detached.getResult(), endpointDetachListeners.remove(detached.getRequestId()));
+        notifyDetachedListener(detached.getResult(),
+                endpointDetachListeners.remove(detached.getRequestId()));
         EndpointKeyHash endpointKeyHash = detachEndpointRequests.remove(detached.getRequestId());
         if (endpointKeyHash != null && detached.getResult() == SyncResponseResultType.SUCCESS) {
           if (endpointKeyHash.equals(state.getEndpointKeyHash())) {
@@ -218,7 +235,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
   }
 
-  private void notifyAttachedListener(final SyncResponseResultType result, final OnAttachEndpointOperationCallback operationCallback,
+  private void notifyAttachedListener(final SyncResponseResultType result,
+                                      final OnAttachEndpointOperationCallback operationCallback,
                                       final EndpointKeyHash keyHash) {
     if (operationCallback != null) {
       executorContext.getCallbackExecutor().submit(new Runnable() {
@@ -230,7 +248,8 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     }
   }
 
-  private void notifyDetachedListener(final SyncResponseResultType result, final OnDetachEndpointOperationCallback operationCallback) {
+  private void notifyDetachedListener(final SyncResponseResultType result,
+                                      final OnDetachEndpointOperationCallback operationCallback) {
     if (operationCallback != null) {
       executorContext.getCallbackExecutor().submit(new Runnable() {
         @Override
