@@ -41,7 +41,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.nio.charset.Charset;
 import java.util.List;
 
-@Api(value = "Configuration", description = "Provides function for manage configuration", basePath = "/kaaAdmin/rest")
+@Api(value = "Configuration",
+    description = "Provides function for manage configuration",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class ConfigurationController extends AbstractAdminController {
 
@@ -55,18 +57,25 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get configuration schemas",
-      notes = "Returns all configuration schemas for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed " +
-          "to perform this operation. The application must be associated with the user who has submitted the request.")
+      notes = "Returns all configuration schemas for the specified application. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed "
+          + "to perform this operation. The application must be associated with the user "
+          + "who has submitted the request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "Application with the specified applicationId does not exist"),
+      @ApiResponse(code = 401, message = "The user is not authenticated or "
+          + "invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the required role "
+          + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+          + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404, message = "Application with the specified "
+          + "applicationId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "configurationSchemas/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken)
       throws KaaAdminServiceException {
     return configurationService.getConfigurationSchemasByApplicationToken(applicationToken);
@@ -80,19 +89,30 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get vacant configuration schemas",
-      notes = "Returns all vacant (not being used by endpoint group configurations) configuration schemas for the specified endpoint group. Only users " +
-          "with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+      notes = "Returns all vacant (not being used by endpoint group configurations) "
+          + "configuration schemas for the specified endpoint group. Only users "
+          + "with the TENANT_DEVELOPER or TENANT_USER "
+          + "role are allowed to request this information.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid endpointGroupId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group to be edited with the specified endpointGroupId does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "vacantConfigurationSchemas/{endpointGroupId}", method = RequestMethod.GET)
+      @ApiResponse(code = 401, message = "The user is not authenticated or "
+          + "invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An endpoint group to be edited with"
+              + " the specified endpointGroupId does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
+  @RequestMapping(value = "vacantConfigurationSchemas/{endpointGroupId}",
+      method = RequestMethod.GET)
   @ResponseBody
   public List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(
-      @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
+      @ApiParam(name = "endpointGroupId",
+          value = "A unique endpoint group identifier",
+          required = true)
       @PathVariable String endpointGroupId)
       throws KaaAdminServiceException {
     return configurationService.getVacantConfigurationSchemasByEndpointGroupId(endpointGroupId);
@@ -106,18 +126,26 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get configuration schema",
-      notes = "Returns a configuration schema by configuration schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed " +
-          "to perform this operation.")
+      notes = "Returns a configuration schema by configuration schema ID. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed "
+          + "to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "The configuration schema with the specified configurationSchemaId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404, message = "The configuration schema with the "
+          + "specified configurationSchemaId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "configurationSchema/{configurationSchemaId}", method = RequestMethod.GET)
+  @RequestMapping(value = "configurationSchema/{configurationSchemaId}",
+      method = RequestMethod.GET)
   @ResponseBody
   public ConfigurationSchemaDto getConfigurationSchema(
-      @ApiParam(name = "configurationSchemaId", value = "A unique configuration schema identifier", required = true)
+      @ApiParam(name = "configurationSchemaId",
+          value = "A unique configuration schema identifier",
+          required = true)
       @PathVariable String configurationSchemaId) throws KaaAdminServiceException {
     return configurationService.getConfigurationSchema(configurationSchemaId);
   }
@@ -130,19 +158,27 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create configuration schema",
-      notes = "Uploads a configuration schema. A unique version number will be generated (incrementally) for the uploaded schema, and the " +
-          "createUsername field of the schema will be set to the name of the user who uploaded it. Only users with the TENANT_DEVELOPER or " +
-          "TENANT_USER role are allowed to perform this operation.")
+      notes = "Uploads a configuration schema. A unique version "
+          + "number will be generated (incrementally) for the uploaded schema, and the "
+          + "createUsername field of the schema will be set to "
+          + "the name of the user who uploaded it. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "Specified configuration schema is not a valid avro schema"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 400,
+          message = "Specified configuration schema is not a valid avro schema"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "saveConfigurationSchema", method = RequestMethod.POST)
   @ResponseBody
   public ConfigurationSchemaDto saveConfigurationSchema(
-      @ApiParam(name = "configurationSchema", value = "ConfigurationSchemaDto body", required = true)
+      @ApiParam(name = "configurationSchema",
+          value = "ConfigurationSchemaDto body",
+          required = true)
       @RequestBody ConfigurationSchemaDto configurationSchema) throws KaaAdminServiceException {
     return configurationService.saveConfigurationSchema(configurationSchema);
   }
@@ -156,24 +192,36 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get configuration records",
-      notes = "Returns all configuration records for the specified endpoint group. Only users with the TENANT_DEVELOPER or TENANT_USER role are " +
-          "allowed to request this information.")
+      notes = "Returns all configuration records for the specified endpoint group. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are "
+          + "allowed to request this information.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid endpointGroupId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An endpoint group with the specified endpointGroupId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "configurationRecords", method = RequestMethod.GET)
   @ResponseBody
   public List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(
-      @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
+      @ApiParam(name = "endpointGroupId",
+          value = "A unique endpoint group identifier",
+          required = true)
       @RequestParam(value = "endpointGroupId") String endpointGroupId,
-      @ApiParam(name = "includeDeprecated", value = "[“true” or ”false”] if “true”, all configuration records will be returned, including deprecated " +
-          "ones. If “false”, only active and inactive configuration records will be returned", required = true)
-      @RequestParam(value = "includeDeprecated") boolean includeDeprecated) throws KaaAdminServiceException {
-    return configurationService.getConfigurationRecordsByEndpointGroupId(endpointGroupId, includeDeprecated);
+      @ApiParam(name = "includeDeprecated",
+          value = "[“true” or ”false”] if “true”, all configuration "
+              + "records will be returned, including deprecated "
+              + "ones. If “false”, only active and inactive configuration "
+              + "records will be returned", required = true)
+      @RequestParam(value = "includeDeprecated") boolean includeDeprecated)
+      throws KaaAdminServiceException {
+    return configurationService.getConfigurationRecordsByEndpointGroupId(
+        endpointGroupId, includeDeprecated);
   }
 
   /**
@@ -185,47 +233,70 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get configuration record",
-      notes = "Returns the configuration record for the specified endpoint group and configuration schema. Only users with the TENANT_DEVELOPER or " +
-          "TENANT_USER role are allowed to request this information.")
+      notes = "Returns the configuration record for the specified endpoint "
+          + "group and configuration schema. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid endpointGroupId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the " +
-          "requested configuration record"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have "
+              + "the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An endpoint group with the specified endpointGroupId does not exist or "
+              + "the endpoint group does not have the "
+              + "requested configuration record"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "configurationRecord", method = RequestMethod.GET)
   @ResponseBody
   public ConfigurationRecordDto getConfigurationRecord(
-      @ApiParam(name = "schemaId", value = "A unique configuration schema identifier", required = true)
+      @ApiParam(name = "schemaId",
+          value = "A unique configuration schema identifier",
+          required = true)
       @RequestParam(value = "schemaId") String schemaId,
-      @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
-      @RequestParam(value = "endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
+      @ApiParam(name = "endpointGroupId",
+          value = "A unique endpoint group identifier",
+          required = true)
+      @RequestParam(value = "endpointGroupId") String endpointGroupId)
+      throws KaaAdminServiceException {
     return configurationService.getConfigurationRecord(schemaId, endpointGroupId);
   }
 
 
   @ApiOperation(value = "Get configuration record body",
-      notes = "Returns the configuration record string body for the specified endpoint group and configuration schema. Only users with the " +
-          "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+      notes = "Returns the configuration record string body for the specified endpoint group "
+          + "and configuration schema. Only users with the "
+          + "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid endpointGroupId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the " +
-          "requested configuration record"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404, message = "An endpoint group with "
+          + "the specified endpointGroupId does not exist or the endpoint group does not have the "
+          + "requested configuration record"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "configurationRecordBody", params = {"schemaId", "endpointGroupId"}, method = RequestMethod.GET)
+  @RequestMapping(value = "configurationRecordBody",
+      params = {"schemaId", "endpointGroupId"},
+      method = RequestMethod.GET)
   @ResponseBody
   @ResponseStatus(HttpStatus.OK)
   public String getConfigurationRecordBody(
-      @ApiParam(name = "schemaId", value = "A unique configuration schema identifier", required = true)
+      @ApiParam(name = "schemaId",
+          value = "A unique configuration schema identifier",
+          required = true)
       @RequestParam(value = "schemaId") String schemaId,
-      @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
+      @ApiParam(name = "endpointGroupId",
+          value = "A unique endpoint group identifier",
+          required = true)
       @RequestParam("endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
-    String response = configurationService.getConfigurationRecord(schemaId, endpointGroupId).getActiveStructureDto().getBody();
+    String response = configurationService.getConfigurationRecord(
+        schemaId, endpointGroupId).getActiveStructureDto().getBody();
     String decodedResponse = new String(response.getBytes(), DECODING_CHARSET);
     return decodedResponse;
   }
@@ -238,21 +309,29 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit configuration",
-      notes = "Creates or updates a configuration. To create configuration you do not need to specify the configuration ID, createUsername field will " +
-          "be set to the name of the user who has uploaded it. To edit the configuration specify the configuration id. If a configuration with the " +
-          "specified ID exists, the configuration will be updated and its modifyUsername will be set to the user who has submitted the request. " +
-          "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Creates or updates a configuration. To create configuration you do not "
+          + "need to specify the configuration ID, createUsername field will "
+          + "be set to the name of the user who has uploaded it. To edit "
+          + "the configuration specify the configuration id. If a configuration with the "
+          + "specified ID exists, the configuration will be updated and its "
+          + "modifyUsername will be set to the user who has submitted the request. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER "
+          + "role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId does not exist or a configuration with the specified " +
-          "configurationId not found"),
+      @ApiResponse(code = 401, message = "The user is not authenticated or "
+          + "invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the required role "
+          + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+          + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId "
+          + "does not exist or a configuration with the specified "
+          + "configurationId not found"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "configuration", method = RequestMethod.POST)
   @ResponseBody
   public ConfigurationDto editConfiguration(
-      @ApiParam(name = "configuration", value = "ConfigurationDto body. Mandatory fields: applicationId, schemaId, endpointGroupId, body", required = true)
+      @ApiParam(name = "configuration", value = "ConfigurationDto body. Mandatory fields: "
+          + "applicationId, schemaId, endpointGroupId, body", required = true)
       @RequestBody ConfigurationDto configuration) throws KaaAdminServiceException {
     return configurationService.editConfiguration(configuration);
   }
@@ -264,21 +343,30 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit user configuration",
-      notes = "Creates or updates a configuration for the specific user under the application. TIf a configuration with the specified user ID does not " +
-          "exist, then it will be created. If a configuration with the specified user ID exists, the configuration will be updated. Only users " +
-          "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Creates or updates a configuration for the specific user under the application. "
+          + "If a configuration with the specified user ID does not "
+          + "exist, then it will be created. If a configuration with the specified user ID exists,"
+          + " the configuration will be updated. Only users "
+          + "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "A user with the specified userId or application with the specified appToken does not exists"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404, message = "A user with the specified userId or "
+          + "application with the specified appToken does not exists"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "userConfiguration", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void editUserConfiguration(
-      @ApiParam(name = "endpointUserConfiguration", value = "EndpointUserConfigurationDto body. Mandatory fields: userId, appToken, schemaVersion, " +
-          "body", required = true)
-      @RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
+      @ApiParam(name = "endpointUserConfiguration",
+          value = "EndpointUserConfigurationDto body. "
+              + "Mandatory fields: userId, appToken, schemaVersion, body",
+          required = true)
+      @RequestBody EndpointUserConfigurationDto endpointUserConfiguration)
+      throws KaaAdminServiceException {
     configurationService.editUserConfiguration(endpointUserConfiguration);
   }
 
@@ -290,19 +378,28 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Activate configuration",
-      notes = "Activates a configuration. Sets the status field of the configuration to ACTIVE, increments the sequenceNumber field value by 1, and " +
-          "sets the activateUsername and activatedTime fields to the name of the user who has submitted the request and the activation time " +
-          "respectively. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Activates a configuration. Sets the status field of the configuration to ACTIVE, "
+          + "increments the sequenceNumber field value by 1, and "
+          + "sets the activateUsername and activatedTime fields to the name of the user "
+          + "who has submitted the request and the activation time "
+          + "respectively. Only users with the TENANT_DEVELOPER or TENANT_USER "
+          + "role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "Configuration with the specified configurationId not found"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "Configuration with the specified configurationId not found"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "activateConfiguration", method = RequestMethod.POST)
   @ResponseBody
   public ConfigurationDto activateConfiguration(
-      @ApiParam(name = "configurationId", value = "A unique configuration identifier", required = true)
+      @ApiParam(name = "configurationId",
+          value = "A unique configuration identifier",
+          required = true)
       @RequestBody String configurationId) throws KaaAdminServiceException {
     return configurationService.activateConfiguration(configurationId);
   }
@@ -315,19 +412,27 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Deactivate configuration",
-      notes = "Deactivates a configuration. Sets the status field of the configuration to DEPRECATED, sets the deactivatedTime field value to the " +
-          "time of the deactivation request, and sets the deactivateUsername field to the name of the user who has submitted the request. " +
-          "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Deactivates a configuration. Sets the status field of the configuration "
+          + "to DEPRECATED, sets the deactivatedTime field value to the "
+          + "time of the deactivation request, and sets the deactivateUsername field to "
+          + "the name of the user who has submitted the request. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed "
+          + "to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "Configuration with the specified configurationId not found"),
+      @ApiResponse(code = 401, message = "The user is not authenticated or "
+          + "invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user "
+          + "does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+          + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "Configuration with the specified configurationId not found"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "deactivateConfiguration", method = RequestMethod.POST)
   @ResponseBody
   public ConfigurationDto deactivateConfiguration(
-      @ApiParam(name = "configurationId", value = "A unique configuration identifier", required = true)
+      @ApiParam(name = "configurationId",
+          value = "A unique configuration identifier",
+          required = true)
       @RequestBody String configurationId) throws KaaAdminServiceException {
     return configurationService.deactivateConfiguration(configurationId);
   }
@@ -340,28 +445,39 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Delete configuration record",
-      notes = "Deletes a configuration record by configuration schema ID and endpoint group ID. Only users with the TENANT_DEVELOPER or TENANT_USER " +
-          "role are allowed to perform this operation.")
+      notes = "Deletes a configuration record by configuration schema ID "
+          + "and endpoint group ID. Only users with the TENANT_DEVELOPER or TENANT_USER "
+          + "role are allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid endpointGroupId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId does not exist or the endpoint group does not have the " +
-          "requested configuration record"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An endpoint group with the specified endpointGroupId does not "
+              + "exist or the endpoint group does not have the "
+              + "requested configuration record"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "delConfigurationRecord", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteConfigurationRecord(
-      @ApiParam(name = "schemaId", value = "A unique configuration schema identifier", required = true)
+      @ApiParam(name = "schemaId",
+          value = "A unique configuration schema identifier",
+          required = true)
       @RequestParam(value = "schemaId") String schemaId,
-      @ApiParam(name = "endpointGroupId", value = "A unique endpoint group identifier", required = true)
-      @RequestParam(value = "endpointGroupId") String endpointGroupId) throws KaaAdminServiceException {
+      @ApiParam(name = "endpointGroupId",
+          value = "A unique endpoint group identifier",
+          required = true)
+      @RequestParam(value = "endpointGroupId") String endpointGroupId)
+      throws KaaAdminServiceException {
     configurationService.deleteConfigurationRecord(schemaId, endpointGroupId);
   }
 
   /**
-   * Get configuration of specific endpoint user bu externalUId
+   * Get configuration of specific endpoint user bu externalUId.
    *
    * @param appToken      the application token
    * @param schemaVersion the schema version
@@ -369,14 +485,19 @@ public class ConfigurationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get endpoint user configuration by external user id",
-      notes = "Get endpoint user configuration by external user id." +
-          " Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform this operation.")
+      notes = "Get endpoint user configuration by external user id."
+          + " Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform "
+          + "this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "The specified url is not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have neither TENANT_DEVELOPER nor TENANT_USER role"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have neither TENANT_DEVELOPER "
+              + "nor TENANT_USER role"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "configuration/{externalUId}/{appToken}/{schemaVersion}", method = RequestMethod.GET)
+  @RequestMapping(value = "configuration/{externalUId}/{appToken}/{schemaVersion}",
+      method = RequestMethod.GET)
   @ResponseBody
   public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
       @ApiParam(name = "externalUId", value = "the external user id", required = true)
@@ -385,27 +506,34 @@ public class ConfigurationController extends AbstractAdminController {
       @PathVariable String appToken,
       @ApiParam(name = "schemaVersion", value = "The schema version", required = true)
       @PathVariable Integer schemaVersion) throws KaaAdminServiceException {
-    return configurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId, appToken, schemaVersion);
+    return configurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+        externalUId, appToken, schemaVersion);
   }
 
   /**
-   * Get configuration of specific endpoint by endpointKeyHash
+   * Get configuration of specific endpoint by endpointKeyHash.
    *
    * @param endpointKeyHash the endpoint key hash
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get configuration of specific endpoint by endpointKeyHash",
-      notes = "Get configuration of specific endpoint by endpointKeyHash." +
-          " Only user with TENANT_DEVELOPER and TENANT_USER roles is allowed to perform this operation.")
+      notes = "Get configuration of specific endpoint by endpointKeyHash."
+          + " Only user with TENANT_DEVELOPER and TENANT_USER roles "
+          + "is allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "The specified url is not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have neither TENANT_DEVELOPER nor TENANT_USER role"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have neither "
+              + "TENANT_DEVELOPER nor TENANT_USER role"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "configuration/{endpointKeyHash}", method = RequestMethod.GET)
   @ResponseBody
   public String findEndpointConfigurationByEndpointKeyHash(
-      @ApiParam(name = "endpointKeyHash", value = "A unique identifier of the endpoint", required = true)
+      @ApiParam(name = "endpointKeyHash",
+          value = "A unique identifier of the endpoint",
+          required = true)
       @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
     return configurationService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash);
   }
