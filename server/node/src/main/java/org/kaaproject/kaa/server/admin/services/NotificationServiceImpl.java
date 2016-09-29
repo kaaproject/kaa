@@ -313,7 +313,7 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(notificationSchema.getCtlSchemaId());
       NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(notificationSchema, toCtlSchemaForm(ctlSchemaDto,
           ConverterType.FORM_AVRO_CONVERTER));
       return notificationSchemaViewDto;

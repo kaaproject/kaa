@@ -71,7 +71,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
       if (schema.getDependencySet() != null) {
         for (CTLSchemaDto dependency : schema.getDependencySet()) {
           CTLSchemaDto schemaFound =
-              controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(
+              controlService.getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(
                   dependency.getMetaInfo().getFqn(), dependency.getVersion(),
                   schema.getMetaInfo().getTenantId(), schema.getMetaInfo().getApplicationId());
           if (schemaFound == null) {
@@ -90,7 +90,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
       CTLSchemaParser parser = new CTLSchemaParser(controlService, schema.getMetaInfo().getTenantId());
       parser.validate(schema);
 
-      CTLSchemaDto result = controlService.saveCTLSchema(schema);
+      CTLSchemaDto result = controlService.saveCtlSchema(schema);
       return result;
     } catch (Exception cause) {
       throw Utils.handleException(cause);
@@ -116,7 +116,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
       checkCTLSchemaVersion(schema.getVersion());
       // Check if the schema body is valid
       parser.validate(schema);
-      CTLSchemaDto result = controlService.saveCTLSchema(schema);
+      CTLSchemaDto result = controlService.saveCtlSchema(schema);
       return result;
     } catch (Exception cause) {
       throw Utils.handleException(cause);
@@ -141,17 +141,17 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
       if (!isEmpty(applicationId)) {
         this.checkApplicationId(applicationId);
       }
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
       Utils.checkNotNull(schemaFound);
       checkCTLSchemaEditScope(schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
-      List<CTLSchemaDto> schemaDependents = controlService.getCTLSchemaDependents(fqn, version, tenantId, applicationId);
+      List<CTLSchemaDto> schemaDependents = controlService.getCtlSchemaDependents(fqn, version, tenantId, applicationId);
       if (schemaDependents != null && !schemaDependents.isEmpty()) {
         String message = "Can't delete the common type version as it is referenced by the following common type(s): "
             + this.asText(schemaDependents);
         throw new IllegalArgumentException(message);
       }
 
-      controlService.deleteCTLSchemaByFqnAndVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+      controlService.deleteCtlSchemaByFqnAndVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
@@ -177,7 +177,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
       if (!isEmpty(applicationId)) {
         this.checkApplicationId(applicationId);
       }
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
       Utils.checkNotNull(schemaFound);
       checkCTLSchemaReadScope(schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
       return schemaFound;
@@ -191,7 +191,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     this.checkAuthority(KaaAuthorityDto.values());
     try {
       this.checkCTLSchemaId(schemaId);
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaById(schemaId);
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaById(schemaId);
       Utils.checkNotNull(schemaFound);
       checkCTLSchemaReadScope(schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
       return schemaFound;
@@ -249,19 +249,19 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
 
     try {
       Set<CTLSchemaDto> dependencies = new HashSet<>();
-      List<Integer> versions = controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId);
+      List<Integer> versions = controlService.getAllCtlSchemaVersionsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId);
 
       if (versions.isEmpty()) {
         throw new KaaAdminServiceException("The requested item was not found!", ServiceErrorCode.ITEM_NOT_FOUND);
       }
 
       // meta info same for all versions
-      CTLSchemaMetaInfoDto ctlSchemaMetaInfo = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, versions.get(0), tenantId, applicationId).getMetaInfo();
+      CTLSchemaMetaInfoDto ctlSchemaMetaInfo = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(fqn, versions.get(0), tenantId, applicationId).getMetaInfo();
       ctlSchemaMetaInfo.setApplicationId(null); //promote to tenant
 
       // get dep of all versions
       for (Integer version : versions) {
-        CTLSchemaDto schema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+        CTLSchemaDto schema = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
         Set<CTLSchemaDto> schemaDependents = schema.getDependencySet();
         dependencies.addAll(schemaDependents.stream()
             .filter(dep -> dep.getMetaInfo().getScope() == CTLSchemaScopeDto.APPLICATION)
@@ -275,7 +275,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
         throw new KaaAdminServiceException(message, ServiceErrorCode.CONFLICT);
       }
 
-      return controlService.updateCTLSchemaMetaInfoScope(ctlSchemaMetaInfo);
+      return controlService.updateCtlSchemaMetaInfoScope(ctlSchemaMetaInfo);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
@@ -285,7 +285,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
   public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.values());
     try {
-      return controlService.getSystemCTLSchemasMetaInfo();
+      return controlService.getSystemCtlSchemasMetaInfo();
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
@@ -296,7 +296,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN, KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       AuthUserDto currentUser = getCurrentUser();
-      return controlService.getAvailableCTLSchemasMetaInfoForTenant(currentUser.getTenantId());
+      return controlService.getAvailableCtlSchemasMetaInfoForTenant(currentUser.getTenantId());
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
@@ -307,8 +307,8 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
     try {
       AuthUserDto currentUser = getCurrentUser();
-      List<CTLSchemaMetaInfoDto> ctlSchemaReferenceDtoListForTenant = controlService.getAvailableCTLSchemasMetaInfoForTenant(currentUser.getTenantId());
-      Set<String> fqnListOfCurrentECF = controlService.getFqnSetForECF(ecfId);
+      List<CTLSchemaMetaInfoDto> ctlSchemaReferenceDtoListForTenant = controlService.getAvailableCtlSchemasMetaInfoForTenant(currentUser.getTenantId());
+      Set<String> fqnListOfCurrentECF = controlService.getFqnSetForEcf(ecfId);
       if (eventClassViewDtoList != null) {
         for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
           String fqn = eventClassViewDto.getCtlSchemaForm().getMetaInfo().getFqn();
@@ -340,7 +340,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     try {
       this.checkApplicationId(applicationId);
       AuthUserDto currentUser = getCurrentUser();
-      return controlService.getAvailableCTLSchemasMetaInfoForApplication(currentUser.getTenantId(), applicationId);
+      return controlService.getAvailableCtlSchemasMetaInfoForApplication(currentUser.getTenantId(), applicationId);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
@@ -361,16 +361,16 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
       this.checkCTLSchemaFqn(fqn);
       this.checkCTLSchemaVersion(version);
       String tenantId = getCurrentUser().getTenantId();
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
       Utils.checkNotNull(schemaFound);
       checkCTLSchemaReadScope(schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
       switch (method) {
         case SHALLOW:
-          return controlService.exportCTLSchemaShallow(schemaFound);
+          return controlService.exportCtlSchemaShallow(schemaFound);
         case FLAT:
-          return controlService.exportCTLSchemaFlat(schemaFound);
+          return controlService.exportCtlSchemaFlat(schemaFound);
         case DEEP:
-          return controlService.exportCTLSchemaDeep(schemaFound);
+          return controlService.exportCtlSchemaDeep(schemaFound);
         default:
           throw new IllegalArgumentException("The export method " + method.name() + " is not currently supported!");
       }
@@ -406,7 +406,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
         Set<CTLSchemaDto> dependencies = new HashSet<>();
         List<FqnVersion> missingDependencies = new ArrayList<>();
         for (FqnVersion fqnVersion : dependenciesList) {
-          CTLSchemaDto dependency = controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto dependency = controlService.getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(
               fqnVersion.getFqnString(), fqnVersion.getVersion(),
               ctlSchema.getMetaInfo().getTenantId(), ctlSchema.getMetaInfo().getApplicationId());
           if (dependency != null) {
@@ -444,7 +444,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     try {
       AuthUserDto currentUser = getCurrentUser();
       List<CtlSchemaReferenceDto> result = new ArrayList<>();
-      List<CTLSchemaMetaInfoDto> availableMetaInfo = controlService.getAvailableCTLSchemasMetaInfoForApplication(currentUser.getTenantId(), applicationId);
+      List<CTLSchemaMetaInfoDto> availableMetaInfo = controlService.getAvailableCtlSchemasMetaInfoForApplication(currentUser.getTenantId(), applicationId);
       for (CTLSchemaMetaInfoDto metaInfo : availableMetaInfo) {
         for (int version : metaInfo.getVersions()) {
           result.add(new CtlSchemaReferenceDto(metaInfo, version));
@@ -462,7 +462,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     checkAuthority(KaaAuthorityDto.values());
     try {
       this.checkCTLSchemaMetaInfoId(metaInfoId);
-      CTLSchemaDto ctlSchema = controlService.getLatestCTLSchemaByMetaInfoId(metaInfoId);
+      CTLSchemaDto ctlSchema = controlService.getLatestCtlSchemaByMetaInfoId(metaInfoId);
       Utils.checkNotNull(ctlSchema);
       checkCTLSchemaReadScope(ctlSchema.getMetaInfo().getTenantId(), ctlSchema.getMetaInfo().getApplicationId());
       return toCtlSchemaForm(ctlSchema, ConverterType.FORM_AVRO_CONVERTER);
@@ -477,7 +477,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
     try {
       this.checkCTLSchemaMetaInfoId(metaInfoId);
       this.checkCTLSchemaVersion(version);
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaByMetaInfoIdAndVer(metaInfoId, version);
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaByMetaInfoIdAndVer(metaInfoId, version);
       Utils.checkNotNull(schemaFound);
       checkCTLSchemaReadScope(schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
       return toCtlSchemaForm(schemaFound, ConverterType.FORM_AVRO_CONVERTER);
@@ -545,7 +545,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
                                        CTLSchemaExportMethod method) throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.values());
     try {
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaById(ctlSchemaId);
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaById(ctlSchemaId);
       Utils.checkNotNull(schemaFound);
       checkCTLSchemaReadScope(schemaFound.getMetaInfo().getTenantId(), schemaFound.getMetaInfo().getApplicationId());
       CtlSchemaExportKey key = new CtlSchemaExportKey(ctlSchemaId, method);
@@ -686,7 +686,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
   public CtlSchemaReferenceDto getLastCtlSchemaReferenceDto(String ctlSchemaId) throws KaaAdminServiceException {
     try {
       if (!isEmpty(ctlSchemaId)) {
-        CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(ctlSchemaId);
+        CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(ctlSchemaId);
         CtlSchemaReferenceDto ctlSchemaReference = getAvailableApplicationCTLSchemaReferences(null).stream().
             filter(ctlSchemaReferenceDto -> ctlSchemaReferenceDto.getMetaInfo().getId().equals(ctlSchemaDto.getMetaInfo().getId())).findFirst().get();
         return ctlSchemaReference;

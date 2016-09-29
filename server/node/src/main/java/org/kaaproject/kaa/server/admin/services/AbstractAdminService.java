@@ -292,8 +292,8 @@ public abstract class AbstractAdminService implements InitializingBean {
   RecordField createRecordFieldFromCtlSchemaAndBody(String ctlSchemaId, String body) throws KaaAdminServiceException {
     try {
       RecordField recordField;
-      CTLSchemaDto ctlSchema = controlService.getCTLSchemaById(ctlSchemaId);
-      Schema schema = controlService.exportCTLSchemaFlatAsSchema(ctlSchema);
+      CTLSchemaDto ctlSchema = controlService.getCtlSchemaById(ctlSchemaId);
+      Schema schema = controlService.exportCtlSchemaFlatAsSchema(ctlSchema);
       if (!isEmpty(body)) {
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
         GenericRecord record = converter.decodeJson(body);
@@ -417,7 +417,7 @@ public abstract class AbstractAdminService implements InitializingBean {
           ctlSchemaForm.getMetaInfo().getApplicationId(), converterType);
       RecordField form = converter.createSchemaFormFromSchema(ctlSchema.getBody());
       ctlSchemaForm.setSchema(form);
-      List<Integer> availableVersions = controlService.getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(
+      List<Integer> availableVersions = controlService.getAllCtlSchemaVersionsByFqnTenantIdAndApplicationId(
           ctlSchema.getMetaInfo().getFqn(), ctlSchema.getMetaInfo().getTenantId(), ctlSchema.getMetaInfo().getApplicationId());
       availableVersions = availableVersions == null ? Collections.<Integer>emptyList() : availableVersions;
       Collections.sort(availableVersions);
@@ -444,7 +444,7 @@ public abstract class AbstractAdminService implements InitializingBean {
 
   private SchemaFormAvroConverter getCtlSchemaConverterForSystem(ConverterType converterType) throws KaaAdminServiceException {
     try {
-      return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForSystem(), converterType);
+      return createSchemaConverterFromCtlTypes(controlService.getAvailableCtlSchemaVersionsForSystem(), converterType);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
@@ -452,7 +452,7 @@ public abstract class AbstractAdminService implements InitializingBean {
 
   private SchemaFormAvroConverter getCtlSchemaConverterForTenant(String tenantId, ConverterType converterType) throws KaaAdminServiceException {
     try {
-      return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForTenant(tenantId), converterType);
+      return createSchemaConverterFromCtlTypes(controlService.getAvailableCtlSchemaVersionsForTenant(tenantId), converterType);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }
@@ -460,7 +460,7 @@ public abstract class AbstractAdminService implements InitializingBean {
 
   private SchemaFormAvroConverter getCtlSchemaConverterForApplication(String tenantId, String applicationId, ConverterType converterType) throws KaaAdminServiceException {
     try {
-      return createSchemaConverterFromCtlTypes(controlService.getAvailableCTLSchemaVersionsForApplication(tenantId, applicationId), converterType);
+      return createSchemaConverterFromCtlTypes(controlService.getAvailableCtlSchemaVersionsForApplication(tenantId, applicationId), converterType);
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }

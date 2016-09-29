@@ -121,7 +121,7 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       LogSchemaDto logSchema = getLogSchema(logSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(logSchema.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(logSchema.getCtlSchemaId());
       LogSchemaViewDto logSchemaViewDto = new LogSchemaViewDto(logSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return logSchemaViewDto;
     } catch (Exception e) {

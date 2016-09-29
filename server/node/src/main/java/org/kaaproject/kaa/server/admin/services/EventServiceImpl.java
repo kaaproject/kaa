@@ -237,7 +237,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER, KaaAuthorityDto.TENANT_ADMIN);
     try {
       EventClassDto eventClassDto = getEventClass(eventClassId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
       EventClassViewDto eventClassViewDto = new EventClassViewDto(eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return eventClassViewDto;
     } catch (Exception e) {
@@ -248,7 +248,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   @Override
   public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto) throws KaaAdminServiceException {
     try {
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
       Utils.checkNotNull(ctlSchemaDto);
       EventClassViewDto eventClassViewDto = new EventClassViewDto(eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return eventClassViewDto;
@@ -276,7 +276,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
       if (isEmpty(ctlSchemaId)) {
         if (eventClassViewDto.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = eventClassViewDto.getExistingMetaInfo();
-          CTLSchemaDto schema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(metaInfo.getMetaInfo().getFqn(),
+          CTLSchemaDto schema = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
@@ -330,7 +330,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   @Override
   public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws KaaAdminServiceException {
     try {
-      controlService.validateECFListInSdkProfile(ecfList);
+      controlService.validateEcfListInSdkProfile(ecfList);
     } catch (Exception e) {
       throw Utils.handleException(e);
     }

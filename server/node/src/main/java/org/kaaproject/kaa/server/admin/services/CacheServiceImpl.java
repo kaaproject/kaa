@@ -122,17 +122,17 @@ public class CacheServiceImpl implements CacheService {
   public FileData getExportedCtlSchema(CtlSchemaExportKey key)
       throws KaaAdminServiceException {
     try {
-      CTLSchemaDto schemaFound = controlService.getCTLSchemaById(key.getCtlSchemaId());
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaById(key.getCtlSchemaId());
       Utils.checkNotNull(schemaFound);
       switch (key.getExportMethod()) {
         case SHALLOW:
-          return controlService.exportCTLSchemaShallow(schemaFound);
+          return controlService.exportCtlSchemaShallow(schemaFound);
         case FLAT:
-          return controlService.exportCTLSchemaFlat(schemaFound);
+          return controlService.exportCtlSchemaFlat(schemaFound);
         case DEEP:
-          return controlService.exportCTLSchemaDeep(schemaFound);
+          return controlService.exportCtlSchemaDeep(schemaFound);
         case LIBRARY:
-          return controlService.exportCTLSchemaFlatAsLibrary(schemaFound);
+          return controlService.exportCtlSchemaFlatAsLibrary(schemaFound);
         default:
           throw new IllegalArgumentException("The export method " + key.getExportMethod().name() + " is not currently supported!");
       }

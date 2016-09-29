@@ -152,7 +152,7 @@ public class CTLSchemaParser {
           String dependencyFqn = child.get(FQN).asText();
           int dependencyVersion = child.get(VERSION).asInt();
 
-          CTLSchemaDto dependency = controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(dependencyFqn, dependencyVersion, tenantId, applicationId);
+          CTLSchemaDto dependency = controlService.getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(dependencyFqn, dependencyVersion, tenantId, applicationId);
           if (dependency != null) {
             dependencies.add(dependency);
           } else {
@@ -184,7 +184,7 @@ public class CTLSchemaParser {
     if (schema.getDependencySet() != null) {
       for (CTLSchemaDto dependency : schema.getDependencySet()) {
         try {
-          CTLSchemaDto dependencySchema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(dependency.getMetaInfo().getFqn(),
+          CTLSchemaDto dependencySchema = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(dependency.getMetaInfo().getFqn(),
               dependency.getVersion(), dependency.getMetaInfo().getTenantId(), dependency.getMetaInfo().getApplicationId());
           if (dependencySchema == null) {
             String message = "Unable to locate dependency \"" + dependency.getMetaInfo().getFqn() + "\" (version " + dependency.getVersion() + ")";
