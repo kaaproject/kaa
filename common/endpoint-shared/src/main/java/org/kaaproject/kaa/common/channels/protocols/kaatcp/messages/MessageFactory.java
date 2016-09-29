@@ -29,11 +29,9 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners.SyncRespons
 /**
  * MessageFactory Class. Used to transform byte stream to specific protocol
  * messages. Typical use:
- *
  * MessageFactory factory = new MessageFactory();
  * factory.registerMessageListener(listener);
  * factory.getFramer().pushBytes(bytes);
- *
  * Where listener instance of class which implements one of protocol message
  * listeners. and bytes - byte[] stream received from TCP/IP.
  *
@@ -116,7 +114,7 @@ public class MessageFactory implements MqttFramelistener {
   }
 
   /**
-   * Private message processor in case of Mqtt frame is KaaSync Message Type
+   * Private message processor in case of Mqtt frame is KaaSync Message Type.
    *
    * @param frame KaaSync object
    */

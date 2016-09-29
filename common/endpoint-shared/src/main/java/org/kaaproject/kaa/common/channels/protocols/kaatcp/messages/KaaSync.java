@@ -52,32 +52,32 @@ public class KaaSync extends MqttFrame {
   public static final byte KAASYNC_ENCRYPTED_FLAG = 0x04;
   public static final byte KAASYNC_VERSION = 0x01;
   private static final int KAASYNC_MESSAGE_TYPE_SHIFT = 4;
-  private static final byte[] FIXED_HEADER_CONST = new byte[]{0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p',
-      KAASYNC_VERSION};
+  private static final byte[] FIXED_HEADER_CONST = new
+          byte[]{0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', KAASYNC_VERSION};
 
 
   /**
-   * message id if used, default 0
+   * message id if used, default 0.
    */
   private int messageId = 0;
 
   /**
-   * Request/Response (bit 0) 1 - request, 0 - response
+   * Request/Response (bit 0) 1 - request, 0 - response.
    */
   private boolean request = false;
 
   /**
-   * Zipped (bit 1) 1 - zepped, 0 - unzipped
+   * Zipped (bit 1) 1 - zepped, 0 - unzipped.
    */
   private boolean zipped = false;
 
   /**
-   * Encrypted(bit 2) 1 - encrypted, 0 - unencrypted
+   * Encrypted(bit 2) 1 - encrypted, 0 - unencrypted.
    */
   private boolean encrypted = false;
 
   /**
-   * KaaSync subcommand message type
+   * KaaSync subcommand message type.
    */
   private KaaSyncMessageType kaaSyncMessageType = KaaSyncMessageType.UNUSED;
 
@@ -120,14 +120,14 @@ public class KaaSync extends MqttFrame {
 
 
   /**
-   * Pack KaaSync variable header
+   * Pack KaaSync variable header.
    */
   protected void packVeriableHeader() {
     buffer.put(FIXED_HEADER_CONST);
-    byte mId1 = (byte) (messageId & 0x0000FF00);
-    buffer.put(mId1);
-    byte mId2 = (byte) (messageId & 0x000000FF);
-    buffer.put(mId2);
+    byte modId1 = (byte) (messageId & 0x0000FF00);
+    buffer.put(modId1);
+    byte modId2 = (byte) (messageId & 0x000000FF);
+    buffer.put(modId2);
 
     byte flags = 0x00;
     if (isRequest()) {
@@ -163,7 +163,7 @@ public class KaaSync extends MqttFrame {
   }
 
   /**
-   * Is avro object is SyncRequest
+   * Is avro object is SyncRequest.
    *
    * @return boolean request
    */
@@ -218,7 +218,7 @@ public class KaaSync extends MqttFrame {
 
 
   /**
-   * Decode KaaSync variable header
+   * Decode KaaSync variable header.
    *
    * @throws KaaTcpProtocolException - if protocol version missmatch
    */
@@ -314,7 +314,8 @@ public class KaaSync extends MqttFrame {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+   * @see
+   * org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
    */
   @Override
   public boolean isNeedCloseConnection() {

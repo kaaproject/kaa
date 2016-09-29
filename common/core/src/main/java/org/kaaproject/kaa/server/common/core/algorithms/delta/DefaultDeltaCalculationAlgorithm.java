@@ -86,8 +86,6 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
    */
   private AvroBinaryDelta resultDelta;
 
-    /* FieldAttribute */
-
   /**
    * Instantiates a new default delta calculator.
    *
@@ -98,8 +96,6 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
     this.deltaSchema = deltaSchema;
     this.baseSchema = baseSchema;
   }
-
-    /* RecordTuple */
 
   /**
    * Gets the full name.
@@ -174,7 +170,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
       List<Schema> itemTypes = arraySchema.getElementType().getTypes();
       return getSchemaByFullName(itemTypes, fullName);
     } else {
-      return arraySchema.getElementType().getFullName().equals(fullName) ? arraySchema.getElementType() : null;
+      return arraySchema.getElementType().getFullName().equals(
+              fullName) ? arraySchema.getElementType() : null;
     }
   }
 
@@ -185,8 +182,10 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
    * @param field the field
    * @throws DeltaCalculatorException the delta calculator exception
    */
-  private static void putUnchanged(GenericRecord delta, String field) throws DeltaCalculatorException {
-    Schema unchangedSchema = getSchemaByFullName(delta, field, KAA_NAMESPACE + "." + UNCHANGED + "T");
+  private static void putUnchanged(GenericRecord delta, String field)
+          throws DeltaCalculatorException {
+    Schema unchangedSchema = getSchemaByFullName(
+            delta, field, KAA_NAMESPACE + "." + UNCHANGED + "T");
     if (unchangedSchema != null) {
       GenericEnumSymbol unchanged = new GenericData.EnumSymbol(unchangedSchema, UNCHANGED);
       delta.put(field, unchanged);
@@ -210,8 +209,9 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
       GenericEnumSymbol reset = new GenericData.EnumSymbol(resetSchema, RESET);
       delta.put(field, reset);
     } else {
-      throw new DeltaCalculatorException(new StringBuilder().append("Failed to find schema for \"reset\" type ")
-          .append(" in ").append(delta.getSchema().getFullName()).append(" field ").append(field).toString());
+      throw new DeltaCalculatorException(new StringBuilder().append(
+              "Failed to find schema for \"reset\" type ").append(" in ").append(
+              delta.getSchema().getFullName()).append(" field ").append(field).toString());
     }
   }
 
@@ -223,7 +223,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
    * @param record the record
    * @return the generic record
    */
-  private static GenericRecord createSubDelta(GenericRecord delta, String field, GenericRecord record) {
+  private static GenericRecord createSubDelta(
+          GenericRecord delta, String field, GenericRecord record) {
     Schema recordType = getSchemaByFullName(delta, field, getFullName(record));
     return recordType == null ? null : new GenericData.Record(recordType);
   }
@@ -238,7 +239,9 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
    * @throws DeltaCalculatorException the delta calculator exception
    */
   private static void fillDeltaArrayFields(GenericRecord delta, Set<String> resetFields,
-                                           Map<String, List<byte[]>> uuidFields, Queue<FieldAttribute> fieldQueue) throws DeltaCalculatorException {
+                                           Map<String, List<byte[]>> uuidFields,
+                                           Queue<FieldAttribute> fieldQueue)
+          throws DeltaCalculatorException {
     List<Schema.Field> fields = delta.getSchema().getFields();
 
     if (fieldQueue.isEmpty()) {
@@ -299,7 +302,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
    * @param array     the array
    * @throws DeltaCalculatorException the delta calculator exception
    */
-  private void addComplexItemToArray(GenericContainer container, GenericArray array) throws DeltaCalculatorException {
+  private void addComplexItemToArray(GenericContainer container, GenericArray array)
+          throws DeltaCalculatorException {
     Schema itemSchema = getSchemaByFullName(array.getSchema(), getFullName(container));
     if (itemSchema.getType() == Type.RECORD) {
       GenericRecord subDelta = new GenericData.Record(itemSchema);
@@ -320,20 +324,23 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
    * @param fieldQueue     the field queue
    * @throws DeltaCalculatorException the delta calculator exception
    */
-  private void processComplexField(GenericRecord delta, String field, GenericContainer newRecordValue,
-                                   GenericContainer oldRecordValue, Queue<FieldAttribute> fieldQueue) throws DeltaCalculatorException {
+  private void processComplexField(
+          GenericRecord delta, String field, GenericContainer newRecordValue,
+          GenericContainer oldRecordValue, Queue<FieldAttribute> fieldQueue)
+          throws DeltaCalculatorException {
     boolean fieldChanged = false;
     if (newRecordValue.getSchema().getType() == Type.RECORD) {
       GenericRecord subDelta = createSubDelta(delta, field, (GenericRecord) newRecordValue);
       if (subDelta != null) {
         boolean hasChanges = false;
-        if (oldRecordValue != null && oldRecordValue.getSchema().getFullName().equals(newRecordValue.getSchema().getFullName())) {
+        if (oldRecordValue != null && oldRecordValue.getSchema().getFullName().equals(
+                newRecordValue.getSchema().getFullName())) {
           FieldAttribute fieldPair = new FieldAttribute(getSchemaByFullName(delta, field,
               getFullName(newRecordValue)), field);
           Queue<FieldAttribute> newFieldQueue = new LinkedList<FieldAttribute>(fieldQueue);
           newFieldQueue.offer(fieldPair);
-          hasChanges = fillDelta(subDelta, (GenericRecord) oldRecordValue, (GenericRecord) newRecordValue,
-              newFieldQueue);
+          hasChanges = fillDelta(subDelta, (GenericRecord) oldRecordValue,
+                  (GenericRecord) newRecordValue, newFieldQueue);
         } else {
           fillDeltaWithoutMerge(subDelta, (GenericRecord) newRecordValue);
           hasChanges = true;
@@ -343,7 +350,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
           fieldChanged = true;
         }
       } else {
-        throw new DeltaCalculatorException(new StringBuilder().append("Failed to find subdelta schema \"")
+        throw new DeltaCalculatorException(
+                new StringBuilder().append("Failed to find subdelta schema \"")
             .append(getFullName(newRecordValue)).append("\"").toString());
       }
     } else if (oldRecordValue == null || field.equals(UUID_FIELD)
@@ -363,7 +371,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
    * @param root  the root
    * @throws DeltaCalculatorException the delta calculator exception
    */
-  private void fillDeltaWithoutMerge(GenericRecord delta, GenericRecord root) throws DeltaCalculatorException {
+  private void fillDeltaWithoutMerge(GenericRecord delta, GenericRecord root)
+          throws DeltaCalculatorException {
     Schema rootSchema = root.getSchema();
     for (Field field : rootSchema.getFields()) {
       Object value = root.get(field.name());
@@ -425,7 +434,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
         if (!newArrayItems.isEmpty()) {
           if (newArrayItems.get(0) instanceof GenericRecord) {
             // Item is a complex type
-            if (oldArrayItems != null && !oldArrayItems.isEmpty() && oldArrayItems.get(0) instanceof GenericRecord) {
+            if (oldArrayItems != null && !oldArrayItems.isEmpty()
+                    && oldArrayItems.get(0) instanceof GenericRecord) {
               for (Object oldItem : oldArrayItems) {
                 GenericRecord oldItemRecord = (GenericRecord) oldItem;
                 Schema oldItemSchema = oldItemRecord.getSchema();
@@ -513,7 +523,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
             }
           }
         } else if (oldArrayItems == null) {
-          delta.put(newField.name(), new GenericData.Array(0, getArraySchema(delta, newField.name())));
+          delta.put(newField.name(),
+                  new GenericData.Array(0, getArraySchema(delta, newField.name())));
           hasChanges = true;
         } else if (!oldArrayItems.isEmpty()) {
           resetFields.add(newField.name());
@@ -533,7 +544,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
         }
       } else if (newValue instanceof GenericContainer) {
         GenericContainer newRecordValue = (GenericContainer) newValue;
-        GenericContainer oldRecordValue = (oldValue instanceof GenericContainer) ? (GenericContainer) oldValue : null;
+        GenericContainer oldRecordValue =
+                (oldValue instanceof GenericContainer) ? (GenericContainer) oldValue : null;
         processComplexField(delta, newField.name(), newRecordValue, oldRecordValue, fieldQueue);
       } else if ((newValue == null && oldValue != null)
           || (newValue != null && !newValue.equals(oldValue))) {
@@ -598,7 +610,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
 
           hasDifferences = !(oldArray.size() == newArray.size());
           if (!hasDifferences) {
-            if (!newArray.isEmpty() && newArray.get(0) instanceof GenericRecord && oldArray.get(0) instanceof GenericRecord) {
+            if (!newArray.isEmpty() && newArray.get(0) instanceof GenericRecord
+                    && oldArray.get(0) instanceof GenericRecord) {
               GenericRecord uuidCheckRecord = (GenericRecord) newArray.get(0);
               Schema uuidCheckSchema = uuidCheckRecord.getSchema();
               if (uuidCheckSchema.getField(UUID_FIELD) != null) {
@@ -647,7 +660,8 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
     if (hasDifferences && !processedRecords.contains(lastUuidRecords)) {
       Schema deltaSubSchema = getDeltaSchemaByFullName(lastUuidRecordName);
       if (deltaSubSchema == null) {
-        throw new DeltaCalculatorException(new StringBuilder().append("Failed to find schema for \"")
+        throw new DeltaCalculatorException(
+                new StringBuilder().append("Failed to find schema for \"")
             .append(lastUuidRecordName).append("\"").toString());
       }
       GenericRecord delta = new GenericData.Record(deltaSubSchema);
@@ -675,12 +689,14 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
   }
 
   @Override
-  public RawBinaryDelta calculate(BaseData newConfigurationBody) throws IOException, DeltaCalculatorException {
+  public RawBinaryDelta calculate(BaseData newConfigurationBody)
+          throws IOException, DeltaCalculatorException {
     GenericRecord newRoot = getRootNode(newConfigurationBody, baseSchema);
     return calculate(newRoot);
   }
 
-  public RawBinaryDelta calculate(GenericRecord oldConfig, GenericRecord newConfig) throws DeltaCalculatorException {
+  public RawBinaryDelta calculate(GenericRecord oldConfig, GenericRecord newConfig)
+          throws DeltaCalculatorException {
     resultDelta = new AvroBinaryDelta(deltaSchema);
     processedRecords = new HashSet<>();
     processDifferences(oldConfig, newConfig);

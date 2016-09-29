@@ -40,7 +40,7 @@ public class ConnAck extends MqttFrame {
   }
 
   /**
-   *
+   * Default constructor.
    */
   public ConnAck() {
     super();
@@ -58,7 +58,7 @@ public class ConnAck extends MqttFrame {
   }
 
   /**
-   * Return ConnAck return code
+   * Return ConnAck return code.
    *
    * @return byte returnCode
    */
@@ -67,7 +67,7 @@ public class ConnAck extends MqttFrame {
   }
 
   /**
-   * Set ConnAck return code
+   * Set ConnAck return code.
    *
    * @param returnCode - ReturnCode
    */
@@ -101,7 +101,8 @@ public class ConnAck extends MqttFrame {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+   * @see
+   * org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
    */
   @Override
   public boolean isNeedCloseConnection() {
@@ -109,7 +110,7 @@ public class ConnAck extends MqttFrame {
   }
 
   /**
-   * CONNACK return code enum
+   * CONNACK                         return code  enum.
    * ACCEPTED                        0x01    Connection Accepted
    * REFUSE_BAD_PROTOCOL             0x02    Connection Refused: unacceptable protocol version
    * REFUSE_ID_REJECT                0x03    Connection Refused: identifier rejected
@@ -135,7 +136,7 @@ public class ConnAck extends MqttFrame {
     }
 
     /**
-     * Return byte representation of ConnAck return code
+     * Return byte representation of ConnAck return code.
      *
      * @return byte returnCode
      */

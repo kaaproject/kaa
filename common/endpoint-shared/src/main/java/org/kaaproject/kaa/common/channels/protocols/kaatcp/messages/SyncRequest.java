@@ -27,6 +27,8 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolExcepti
 public class SyncRequest extends Sync {
 
   /**
+   * Instantiates a new SyncRequest.
+   *
    * @param avroObject the avro object
    * @param isZipped   the is zipped
    * @param isEcrypted the is ecrypted

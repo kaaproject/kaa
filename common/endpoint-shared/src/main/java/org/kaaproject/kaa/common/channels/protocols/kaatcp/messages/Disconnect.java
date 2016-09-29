@@ -51,7 +51,7 @@ public class Disconnect extends MqttFrame {
   }
 
   /**
-   * Return Disconnect reason
+   * Return Disconnect reason.
    *
    * @return byte reason
    */
@@ -60,7 +60,7 @@ public class Disconnect extends MqttFrame {
   }
 
   /**
-   * Set Disconnect reason
+   * Set Disconnect reason.
    *
    * @param reason DisconnectReason
    */
@@ -93,7 +93,8 @@ public class Disconnect extends MqttFrame {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+   * @see
+   * org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
    */
   @Override
   public boolean isNeedCloseConnection() {
@@ -101,10 +102,10 @@ public class Disconnect extends MqttFrame {
   }
 
   /**
-   * DISCONNECT reason
-   * NONE                        0x00    No error
-   * BAD_REQUEST                 0x01    Client sent a corrupted data
-   * INTERNAL_ERROR              0x02    Internal error has been occurred
+   * DISCONNECT             return code     reason.
+   * NONE                   0x00            No error
+   * BAD_REQUEST            0x01            Client sent a corrupted data
+   * INTERNAL_ERROR         0x02            Internal error has been occurred
    */
   public enum DisconnectReason {
     NONE((byte) 0x00),
@@ -119,7 +120,7 @@ public class Disconnect extends MqttFrame {
     }
 
     /**
-     * Return byte representation of ConnAck return code
+     * Return byte representation of ConnAck return code.
      *
      * @return byte returnCode
      */
