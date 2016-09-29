@@ -967,7 +967,7 @@ public class DefaultControlService implements ControlService {
 
               neighborConnectionsSize);
 
-          ControlNode zkNode = controlZKService.getControlZKNode();
+          ControlNode zkNode = controlZKService.getControlZkNode();
           neighbors.setZkNode(
               KaaThriftService.KAA_NODE_SERVICE,
               zkNode.getControlServerInfo().getConnectionInfo(),
@@ -987,7 +987,7 @@ public class DefaultControlService implements ControlService {
     if (resolver == null) {
       synchronized (zkLock) {
         if (resolver == null) {
-          ControlNode zkNode = controlZKService.getControlZKNode();
+          ControlNode zkNode = controlZKService.getControlZkNode();
           resolver = new ConsistentHashResolver(zkNode.getCurrentOperationServerNodes(),
               userHashPartitions);
           zkNode.addListener(new OperationsNodeListener() {

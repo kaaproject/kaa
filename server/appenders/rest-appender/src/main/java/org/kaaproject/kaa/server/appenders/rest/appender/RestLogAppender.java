@@ -65,7 +65,7 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
   private ExecutorService executor;
   private CloseableHttpClient client;
   private HttpHost target;
-  private URI targetURI;
+  private URI targetUri;
   private RestConfig configuration;
   private boolean closed = false;
 
@@ -77,13 +77,15 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
   protected void initFromConfiguration(LogAppenderDto appender, RestConfig configuration) {
     this.configuration = configuration;
     this.executor = Executors.newFixedThreadPool(configuration.getConnectionPoolSize());
-    target = new HttpHost(configuration.getHost(), configuration.getPort(), configuration.getSsl() ? "https" : "http");
+    target = new HttpHost(configuration.getHost(),
+        configuration.getPort(), configuration.getSsl() ? "https" : "http");
     HttpClientBuilder builder = HttpClients.custom();
     if (configuration.getUsername() != null && configuration.getPassword() != null) {
       LOG.info("Adding basic auth credentials provider");
       CredentialsProvider credsProvider = new BasicCredentialsProvider();
-      credsProvider.setCredentials(new AuthScope(target.getHostName(), target.getPort()), new UsernamePasswordCredentials(
-          configuration.getUsername(), configuration.getPassword()));
+      credsProvider.setCredentials(new AuthScope(target.getHostName(), target.getPort()),
+          new UsernamePasswordCredentials(configuration.getUsername(), configuration.getPassword())
+      );
       builder.setDefaultCredentialsProvider(credsProvider);
     }
     if (!configuration.getVerifySslCert()) {
@@ -93,8 +95,8 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
         sslBuilder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslBuilder.build());
         builder.setSSLSocketFactory(sslsf);
-      } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
-        LOG.error("Failed to init socket factory {}", e.getMessage(), e);
+      } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException ex) {
+        LOG.error("Failed to init socket factory {}", ex.getMessage(), ex);
       }
     }
     PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
@@ -105,20 +107,27 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
   }
 
   @Override
-  public void doAppend(LogEventPack logEventPack, RecordHeader header, final LogDeliveryCallback listener) {
+  public void doAppend(LogEventPack logEventPack, RecordHeader header,
+                       final LogDeliveryCallback listener) {
     if (closed) {
       LOG.warn("Attempt to append data to already stopped appender");
       listener.onInternalError();
     }
-    if (targetURI == null) {
+    if (targetUri == null) {
       try {
-        targetURI = new URIBuilder().setHost(target.getHostName()).setPort(target.getPort()).setScheme(target.getSchemeName()).setPath(configuration.getPath()).build();
-      } catch (URISyntaxException e) {
-        LOG.warn("[{}] failed to build request URI", this.getApplicationToken(), e);
+        targetUri = new URIBuilder()
+            .setHost(target.getHostName())
+            .setPort(target.getPort())
+            .setScheme(target.getSchemeName())
+            .setPath(configuration.getPath())
+            .build();
+      } catch (URISyntaxException ex) {
+        LOG.warn("[{}] failed to build request URI", this.getApplicationToken(), ex);
         listener.onInternalError();
       }
     }
-    LOG.trace("[{}] appending {} logs to rest endpoint", this.getApplicationToken(), logEventPack.getEvents().size());
+    LOG.trace("[{}] appending {} logs to rest endpoint",
+        this.getApplicationToken(), logEventPack.getEvents().size());
     final RestConfig configuration = this.configuration;
     try {
       for (final LogEventDto dto : generateLogEvent(logEventPack, header)) {
@@ -127,14 +136,17 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
           @Override
           public void run() {
             try {
-              LOG.trace("[{}] appending {} to rest endpoint", RestLogAppender.this.getApplicationToken(), dto);
+              LOG.trace("[{}] appending {} to rest endpoint",
+                  RestLogAppender.this.getApplicationToken(), dto);
               final HttpRequest request = createRequest(configuration, dto);
-              LOG.trace("[{}] executing {}", RestLogAppender.this.getApplicationToken(), request.getRequestLine());
+              LOG.trace("[{}] executing {}",
+                  RestLogAppender.this.getApplicationToken(), request.getRequestLine());
 
               CloseableHttpResponse response = client.execute(target, request);
               try {
                 int responseCode = response.getStatusLine().getStatusCode();
-                LOG.trace("[{}] received {} response code", RestLogAppender.this.getApplicationToken(), response);
+                LOG.trace("[{}] received {} response code",
+                    RestLogAppender.this.getApplicationToken(), response);
                 if (responseCode >= 200 && responseCode < 400) {
                   LOG.trace("[{}] logs appended successfully", getName());
                   listener.onSuccess();
@@ -145,32 +157,33 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
               } finally {
                 response.close();
               }
-            } catch (IOException e) {
-              LOG.error("[{}] Failed to send log event.", getName(), e);
+            } catch (IOException ex) {
+              LOG.error("[{}] Failed to send log event.", getName(), ex);
               listener.onConnectionError();
-            } catch (Exception e) {
-              LOG.error("[{}] Failed to send log event.", getName(), e);
+            } catch (Exception ex) {
+              LOG.error("[{}] Failed to send log event.", getName(), ex);
               listener.onInternalError();
             }
           }
         });
       }
-    } catch (IOException e) {
-      LOG.error("[{}] Failed to send log events.", getName(), e);
+    } catch (IOException ex) {
+      LOG.error("[{}] Failed to send log events.", getName(), ex);
       listener.onInternalError();
     }
   }
 
-  private HttpRequest createRequest(RestConfig configuration, LogEventDto dto) throws URISyntaxException {
+  private HttpRequest createRequest(RestConfig configuration, LogEventDto dto)
+      throws URISyntaxException {
     String body = buildRequestBody(configuration, dto);
     ContentType contentType = buildContentType(configuration);
     StringEntity entity = new StringEntity(body, contentType);
     final HttpEntityEnclosingRequestBase request;
 
     if (configuration.getMethod() == MethodType.POST) {
-      request = new HttpPost(targetURI);
+      request = new HttpPost(targetUri);
     } else {
-      request = new HttpPut(targetURI);
+      request = new HttpPut(targetUri);
     }
     request.setEntity(entity);
     return request;
@@ -206,8 +219,8 @@ public class RestLogAppender extends AbstractLogAppender<RestConfig> {
       client.close();
       executor.shutdown();
       executor.awaitTermination(5, TimeUnit.SECONDS);
-    } catch (IOException | InterruptedException e) {
-      LOG.error("Failed to close appender: {}", e.getMessage(), e);
+    } catch (IOException | InterruptedException ex) {
+      LOG.error("Failed to close appender: {}", ex.getMessage(), ex);
     }
   }
 }

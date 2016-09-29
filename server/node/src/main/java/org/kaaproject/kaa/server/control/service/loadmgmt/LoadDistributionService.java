@@ -95,7 +95,7 @@ public class LoadDistributionService extends Thread {
     loadManager = new DynamicLoadManager(this);
     if (zkService != null) {
       loadManager.registerListeners();
-      isMaster = zkService.getControlZKNode().isMaster();
+      isMaster = zkService.getControlZkNode().isMaster();
       LOG.trace("Load Distribution Service isMaster " + isMaster);
       operate = true;
       super.start();

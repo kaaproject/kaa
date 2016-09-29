@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.node.service.initialization;
 
+import static org.kaaproject.kaa.server.common.thrift.KaaThriftService.BOOTSTRAP_SERVICE;
+import static org.kaaproject.kaa.server.common.thrift.KaaThriftService.KAA_NODE_SERVICE;
+import static org.kaaproject.kaa.server.common.thrift.KaaThriftService.OPERATIONS_SERVICE;
+
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.server.TServer;
@@ -25,7 +29,6 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
-import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.node.KaaNodeThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
@@ -52,45 +55,37 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class KaaNodeInitializationService extends AbstractInitializationService {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(KaaNodeInitializationService.class);
   private final Set<TSocketWrapper> openedSockets = new HashSet<TSocketWrapper>();
-  /**
-   * The Thrift server.
-   */
+
   private TServer server;
-  /**
-   * The Thrift server executor service.
-   */
+
   private ExecutorService executorService;
-  /**
-   * The kaa node service thrift interface.
-   */
+
   @Autowired
   private KaaNodeThriftService.Iface kaaNodeThriftService;
-  /**
-   * The bootstrap service thrift interface.
-   */
+
   @Autowired
   @Lazy
   private BootstrapThriftService.Iface bootstrapThriftService;
-  /**
-   * The operations service thrift interface.
-   */
+
+
   @Autowired
   @Lazy
   private OperationsThriftService.Iface operationsThriftService;
+
   @Autowired
   @Lazy
   private InitializationService controlInitializationService;
+
   @Autowired
   @Lazy
   private InitializationService bootstrapInitializationService;
+
   @Autowired
   @Lazy
   private InitializationService operationsInitializationService;
+
   @Autowired
   private CuratorFramework zkClient;
 
@@ -109,8 +104,8 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
 
     try {
       thriftStartupLatch.await();
-    } catch (InterruptedException e) {
-      LOG.error("Interrupted while waiting for thrift to start...", e);
+    } catch (InterruptedException ex) {
+      LOG.error("Interrupted while waiting for thrift to start...", ex);
     }
 
     if (waitZkConnection()) {
@@ -126,14 +121,15 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
 
       LOG.info("Kaa Node Server Started.");
     } else {
-      LOG.error("Failed to connect to Zookeeper within {} minutes. Kaa Node Server will be stopped.", getNodeConfig().getZkWaitConnectionTime());
+      LOG.error("Failed to connect to Zookeeper within {} minutes."
+          + " Kaa Node Server will be stopped.", getNodeConfig().getZkWaitConnectionTime());
       stopThrift();
     }
 
     try {
       thriftShutdownLatch.await();
-    } catch (InterruptedException e) {
-      LOG.error("Interrupted while waiting for thrift to stop...", e);
+    } catch (InterruptedException ex) {
+      LOG.error("Interrupted while waiting for thrift to stop...", ex);
     }
 
   }
@@ -144,9 +140,11 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
     }
     try {
       LOG.info("Waiting connection to Zookeeper at ", getNodeConfig().getZkHostPortList());
-      return zkClient.blockUntilConnected(getNodeConfig().getZkWaitConnectionTime(), TimeUnit.MINUTES);
-    } catch (InterruptedException e) {
-      LOG.error("Zookeeper client was interrupted while waiting for connection! ", getNodeConfig().getZkHostPortList(), e);
+      return zkClient.blockUntilConnected(getNodeConfig().getZkWaitConnectionTime(),
+          TimeUnit.MINUTES);
+    } catch (InterruptedException ex) {
+      LOG.error("Zookeeper client was interrupted while waiting for connection! ",
+          getNodeConfig().getZkHostPortList(), ex);
       return false;
     }
   }
@@ -193,7 +191,8 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
   /**
    * Start thrift.
    */
-  private void startThrift(final CountDownLatch thriftStartupLatch, final CountDownLatch thriftShutdownLatch) {
+  private void startThrift(final CountDownLatch thriftStartupLatch,
+                           final CountDownLatch thriftShutdownLatch) {
 
     Runnable thriftRunnable = new Runnable() {
 
@@ -204,23 +203,22 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
         LOG.info("port: " + getNodeConfig().getThriftPort());
 
         try {
-
           TMultiplexedProcessor processor = new TMultiplexedProcessor();
 
-          KaaNodeThriftService.Processor<KaaNodeThriftService.Iface> kaaNodeProcessor = new KaaNodeThriftService.Processor<KaaNodeThriftService.Iface>(
-              kaaNodeThriftService);
-          processor.registerProcessor(KaaThriftService.KAA_NODE_SERVICE.getServiceName(), kaaNodeProcessor);
+          KaaNodeThriftService.Processor<KaaNodeThriftService.Iface> kaaNodeProcessor =
+              new KaaNodeThriftService.Processor<KaaNodeThriftService.Iface>(kaaNodeThriftService);
+          processor.registerProcessor(KAA_NODE_SERVICE.getServiceName(), kaaNodeProcessor);
 
           if (getNodeConfig().isBootstrapServiceEnabled()) {
-            BootstrapThriftService.Processor<BootstrapThriftService.Iface> bootstrapProcessor = new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(
-                bootstrapThriftService);
-            processor.registerProcessor(KaaThriftService.BOOTSTRAP_SERVICE.getServiceName(), bootstrapProcessor);
+            BootstrapThriftService.Processor<BootstrapThriftService.Iface> bootstrapProcessor =
+                new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(bootstrapThriftService);
+            processor.registerProcessor(BOOTSTRAP_SERVICE.getServiceName(), bootstrapProcessor);
           }
 
           if (getNodeConfig().isOperationsServiceEnabled()) {
-            OperationsThriftService.Processor<OperationsThriftService.Iface> operationsProcessor = new OperationsThriftService.Processor<OperationsThriftService.Iface>(
-                operationsThriftService);
-            processor.registerProcessor(KaaThriftService.OPERATIONS_SERVICE.getServiceName(), operationsProcessor);
+            OperationsThriftService.Processor<OperationsThriftService.Iface> operationsProcessor =
+                new OperationsThriftService.Processor<OperationsThriftService.Iface>(operationsThriftService);
+            processor.registerProcessor(OPERATIONS_SERVICE.getServiceName(), operationsProcessor);
           }
 
           TServerTransport serverTransport = createServerSocket();
@@ -246,8 +244,8 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
 
           thriftShutdownLatch.countDown();
 
-        } catch (TTransportException e) {
-          LOG.error("TTransportException", e);
+        } catch (TTransportException ex) {
+          LOG.error("TTransportException", ex);
         } finally {
           if (thriftStartupLatch.getCount() > 0) {
             thriftStartupLatch.countDown();
@@ -271,12 +269,16 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
    * @throws TTransportException the t transport exception
    */
   public TServerTransport createServerSocket() throws TTransportException {
-    return new TServerSocket(new InetSocketAddress(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort())) {
+    return new TServerSocket(
+        new InetSocketAddress(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort())) {
       @Override
       protected TSocket acceptImpl() throws TTransportException {
         ServerSocket serverSocket = getServerSocket();
         if (serverSocket == null) {
-          throw new TTransportException(TTransportException.NOT_OPEN, "No underlying server socket.");
+          throw new TTransportException(
+              TTransportException.NOT_OPEN,
+              "No underlying server socket."
+          );
         }
         try {
           Socket result = serverSocket.accept();
@@ -305,12 +307,14 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
 
     SynchronousQueue<Runnable> executorQueue = // NOSONAR
         new SynchronousQueue<Runnable>();
-    executorService = new ThreadPoolExecutor(args.minWorkerThreads, args.maxWorkerThreads, 60, TimeUnit.SECONDS, executorQueue);
+    executorService = new ThreadPoolExecutor(args.minWorkerThreads, args.maxWorkerThreads,
+        60, TimeUnit.SECONDS, executorQueue);
     args.executorService = executorService;
     return new TThreadPoolServer(args);
   }
 
   class TSocketWrapper extends TSocket {
+
     public TSocketWrapper(Socket socket) throws TTransportException {
       super(socket);
     }

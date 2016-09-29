@@ -21,98 +21,76 @@ package org.kaaproject.kaa.server.node.service.config;
  */
 public class KaaNodeServerConfig {
 
-  /**
-   * Enable control service parameter.
-   */
+
   private boolean controlServiceEnabled;
 
-  /**
-   * Enable bootstrap service parameter.
-   */
+
   private boolean bootstrapServiceEnabled;
 
-  /**
-   * Enable operations service parameter.
-   */
+
   private boolean operationsServiceEnabled;
 
-  /**
-   * The thrift host.
-   */
+
   private String thriftHost;
 
-  /**
-   * The thrift port.
-   */
+
   private int thriftPort;
 
-  /**
-   * The zk enabled.
-   */
+
   private boolean zkEnabled;
 
-  /**
-   * The zk host port list.
-   */
+
   private String zkHostPortList;
 
-  /**
-   * Time to connect to ZK.
-   */
+
   private int zkWaitConnectionTime;
 
-  /**
-   * The zk max retry time.
-   */
+
   private int zkMaxRetryTime;
 
-  /**
-   * The zk sleep time.
-   */
+
   private int zkSleepTime;
 
-  /**
-   * The zk ignore errors.
-   */
+
   private boolean zkIgnoreErrors;
 
   /**
-   * @return true if Control service enabled
+   * @return true if Control service enabled.
    */
   public boolean isControlServiceEnabled() {
     return controlServiceEnabled;
   }
 
   /**
-   * @param controlServiceEnabled set flag to enable/disable Control service
+   * @param controlServiceEnabled set flag to enable/disable Control service.
    */
   public void setControlServiceEnabled(boolean controlServiceEnabled) {
     this.controlServiceEnabled = controlServiceEnabled;
   }
 
   /**
-   * @return true if Bootstrap server enabled
+   * @return true if Bootstrap server enabled.
    */
   public boolean isBootstrapServiceEnabled() {
     return bootstrapServiceEnabled;
   }
 
   /**
-   * @param bootstrapServiceEnabled set flag to enable/disable Bootstrap service
+   * @param bootstrapServiceEnabled set flag to enable/disable Bootstrap service.
    */
   public void setBootstrapServiceEnabled(boolean bootstrapServiceEnabled) {
     this.bootstrapServiceEnabled = bootstrapServiceEnabled;
   }
 
   /**
-   * @return true if Operations server enabled
+   * @return true if Operations server enabled.
    */
   public boolean isOperationsServiceEnabled() {
     return operationsServiceEnabled;
   }
 
   /**
-   * @param operationsServiceEnabled set flag to enable/disable Operations server
+   * @param operationsServiceEnabled set flag to enable/disable Operations server.
    */
   public void setOperationsServiceEnabled(boolean operationsServiceEnabled) {
     this.operationsServiceEnabled = operationsServiceEnabled;
@@ -128,7 +106,7 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param thriftHost the thriftHost to set
+   * @param thriftHost the thriftHost to set.
    */
   public void setThriftHost(String thriftHost) {
     this.thriftHost = thriftHost;
@@ -144,13 +122,14 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param thriftPort the thriftPort to set
+   * @param thriftPort the thriftPort to set.
    */
   public void setThriftPort(int thriftPort) {
     this.thriftPort = thriftPort;
   }
 
   /**
+   * Check status of Zookeeper service.
    * @return the zkEnabled
    */
   public boolean isZkEnabled() {
@@ -158,7 +137,7 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param zkEnabled the zkEnabled to set
+   * @param zkEnabled the zkEnabled to set.
    */
   public void setZkEnabled(boolean zkEnabled) {
     this.zkEnabled = zkEnabled;
@@ -174,7 +153,7 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param zkHostPortList the zkHostPortList to set
+   * @param zkHostPortList the zkHostPortList to set.
    */
   public void setZkHostPortList(String zkHostPortList) {
     this.zkHostPortList = zkHostPortList;
@@ -190,7 +169,7 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param zkWaitConnectionTime the zkWaitConnectionTime to set
+   * @param zkWaitConnectionTime the zkWaitConnectionTime to set.
    */
   public void setZkWaitConnectionTime(int zkWaitConnectionTime) {
     this.zkWaitConnectionTime = zkWaitConnectionTime;
@@ -206,7 +185,7 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param zkMaxRetryTime the zkMaxRetryTime to set
+   * @param zkMaxRetryTime the zkMaxRetryTime to set.
    */
   public void setZkMaxRetryTime(int zkMaxRetryTime) {
     this.zkMaxRetryTime = zkMaxRetryTime;
@@ -222,7 +201,7 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param zkSleepTime the zkSleepTime to set
+   * @param zkSleepTime the zkSleepTime to set.
    */
   public void setZkSleepTime(int zkSleepTime) {
     this.zkSleepTime = zkSleepTime;
@@ -238,7 +217,7 @@ public class KaaNodeServerConfig {
   }
 
   /**
-   * @param zkIgnoreErrors the zkIgnoreErrors to set
+   * @param zkIgnoreErrors the zkIgnoreErrors to set.
    */
   public void setZkIgnoreErrors(boolean zkIgnoreErrors) {
     this.zkIgnoreErrors = zkIgnoreErrors;

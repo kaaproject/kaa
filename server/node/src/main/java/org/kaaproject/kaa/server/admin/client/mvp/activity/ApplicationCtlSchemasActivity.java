@@ -32,7 +32,8 @@ import java.util.Collections;
 
 public class ApplicationCtlSchemasActivity extends CtlSchemasActivity<ApplicationCtlSchemasPlace> {
 
-  public ApplicationCtlSchemasActivity(ApplicationCtlSchemasPlace place, ClientFactory clientFactory) {
+  public ApplicationCtlSchemasActivity(ApplicationCtlSchemasPlace place,
+                                       ClientFactory clientFactory) {
     super(place, CTLSchemaMetaInfoDto.class, clientFactory);
   }
 

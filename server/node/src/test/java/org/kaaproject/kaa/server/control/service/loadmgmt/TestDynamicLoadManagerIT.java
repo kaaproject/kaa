@@ -102,7 +102,7 @@ public class TestDynamicLoadManagerIT {
     when(ldServiceMock.getOpsServerHistoryTTL()).thenReturn(300);
     when(ldServiceMock.getRebalancer()).thenReturn(new EndpointCountRebalancer());
     when(ldServiceMock.getZkService()).thenReturn(zkServiceMock);
-    when(zkServiceMock.getControlZKNode()).thenReturn(pNodeMock);
+    when(zkServiceMock.getControlZkNode()).thenReturn(pNodeMock);
   }
 
   /**

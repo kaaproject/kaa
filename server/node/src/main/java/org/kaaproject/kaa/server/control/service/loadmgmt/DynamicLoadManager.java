@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -137,7 +136,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
    */
   public void registerListeners() {
     LOG.trace("DynamicLoadManager register listeners...");
-    ControlNode pm = getLoadDistributionService().getZkService().getControlZKNode();
+    ControlNode pm = getLoadDistributionService().getZkService().getControlZkNode();
     pm.addListener((OperationsNodeListener) this);
     pm.addListener((BootstrapNodeListener) this);
   }
@@ -148,7 +147,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
    */
   public void deregisterListeners() {
     LOG.trace("DynamicLoadManager deregister listeners...");
-    ControlNode pm = getLoadDistributionService().getZkService().getControlZKNode();
+    ControlNode pm = getLoadDistributionService().getZkService().getControlZkNode();
     pm.removeListener((OperationsNodeListener) this);
     pm.removeListener((BootstrapNodeListener) this);
   }

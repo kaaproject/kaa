@@ -88,20 +88,22 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
   protected void bind(final EventBus eventBus) {
     super.bind(eventBus);
     if (create) {
-      registrations.add(recordView.getEndpointProfileSchema().addValueChangeHandler(new ValueChangeHandler<VersionDto>() {
-        @Override
-        public void onValueChange(ValueChangeEvent<VersionDto> event) {
-          List<VersionDto> newValues = extractServerProfileVersions(event.getValue());
-          updateValues(recordView.getServerProfileSchema(), newValues);
-        }
-      }));
-      registrations.add(recordView.getServerProfileSchema().addValueChangeHandler(new ValueChangeHandler<VersionDto>() {
-        @Override
-        public void onValueChange(ValueChangeEvent<VersionDto> event) {
-          List<VersionDto> newValues = extractEndpointProfileVersions(event.getValue());
-          updateValues(recordView.getEndpointProfileSchema(), newValues);
-        }
-      }));
+      registrations.add(recordView.getEndpointProfileSchema().addValueChangeHandler(
+          new ValueChangeHandler<VersionDto>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<VersionDto> event) {
+              List<VersionDto> newValues = extractServerProfileVersions(event.getValue());
+              updateValues(recordView.getServerProfileSchema(), newValues);
+            }
+          }));
+      registrations.add(recordView.getServerProfileSchema().addValueChangeHandler(
+          new ValueChangeHandler<VersionDto>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<VersionDto> event) {
+              List<VersionDto> newValues = extractEndpointProfileVersions(event.getValue());
+              updateValues(recordView.getEndpointProfileSchema(), newValues);
+            }
+          }));
     }
 
     registrations.add(recordView.getTestFilterButton().addClickHandler(new ClickHandler() {
@@ -142,12 +144,13 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
     Set<VersionDto> endpointProfileVersions = new HashSet<>();
     if (profileVersionPairs != null) {
       for (ProfileVersionPairDto profileVersionPair : profileVersionPairs) {
-        if (serverProfileVersion == null ||
-            profileVersionPair.getServerProfileSchemaVersion() == null ||
-            profileVersionPair.getServerProfileSchemaVersion().intValue() == serverProfileVersion.getVersion()) {
+        if (serverProfileVersion == null
+            || profileVersionPair.getServerProfileSchemaVersion() == null
+            || profileVersionPair.getServerProfileSchemaVersion().intValue()
+            == serverProfileVersion.getVersion()) {
           String schemaId = profileVersionPair.getEndpointProfileSchemaid();
-          int version = profileVersionPair.getEndpointProfileSchemaVersion() != null ?
-              profileVersionPair.getEndpointProfileSchemaVersion().intValue() : -1;
+          int version = profileVersionPair.getEndpointProfileSchemaVersion() != null
+              ? profileVersionPair.getEndpointProfileSchemaVersion().intValue() : -1;
           VersionDto endpointProfileVersion = new VersionDto(schemaId, version);
           endpointProfileVersions.add(endpointProfileVersion);
         }
@@ -162,12 +165,13 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
     Set<VersionDto> serverProfileVersions = new HashSet<>();
     if (profileVersionPairs != null) {
       for (ProfileVersionPairDto profileVersionPair : profileVersionPairs) {
-        if (endpointProfileVersion == null ||
-            profileVersionPair.getEndpointProfileSchemaVersion() == null ||
-            profileVersionPair.getEndpointProfileSchemaVersion().intValue() == endpointProfileVersion.getVersion()) {
+        if (endpointProfileVersion == null
+            || profileVersionPair.getEndpointProfileSchemaVersion() == null
+            || profileVersionPair.getEndpointProfileSchemaVersion().intValue()
+            == endpointProfileVersion.getVersion()) {
           String schemaId = profileVersionPair.getServerProfileSchemaid();
-          int version = profileVersionPair.getServerProfileSchemaVersion() != null ?
-              profileVersionPair.getServerProfileSchemaVersion().intValue() : -1;
+          int version = profileVersionPair.getServerProfileSchemaVersion() != null
+              ? profileVersionPair.getServerProfileSchemaVersion().intValue() : -1;
           VersionDto serverProfileVersion = new VersionDto(schemaId, version);
           serverProfileVersions.add(serverProfileVersion);
         }
@@ -192,7 +196,8 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
           profileVersionPairs = result;
           List<VersionDto> endpointProfileVersions = extractEndpointProfileVersions(null);
           VersionDto endpointProfileVersion = Utils.getMaxSchemaVersions(endpointProfileVersions);
-          List<VersionDto> serverProfileVersions = extractServerProfileVersions(endpointProfileVersion);
+          List<VersionDto> serverProfileVersions =
+              extractServerProfileVersions(endpointProfileVersion);
           VersionDto serverProfileVersion = Utils.getMaxSchemaVersions(serverProfileVersions);
           recordView.getEndpointProfileSchema().setValue(endpointProfileVersion);
           recordView.getServerProfileSchema().setValue(serverProfileVersion);
@@ -203,10 +208,10 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
         }
       });
     } else {
-      String endpointProfileVersion = record.getEndpointProfileSchemaVersion() != null ?
-          record.getEndpointProfileSchemaVersion().intValue() + "" : "";
-      String serverProfileVersion = record.getServerProfileSchemaVersion() != null ?
-          record.getServerProfileSchemaVersion().intValue() + "" : "";
+      Integer versionEnd = record.getEndpointProfileSchemaVersion();
+      Integer versionSer = record.getServerProfileSchemaVersion();
+      String endpointProfileVersion = versionEnd != null ? versionEnd.intValue() + "" : "";
+      String serverProfileVersion = versionSer != null ? versionSer.intValue() + "" : "";
 
       recordView.getEndpointProfileSchemaVersion().setValue(endpointProfileVersion);
       recordView.getServerProfileSchemaVersion().setValue(serverProfileVersion);
@@ -241,10 +246,10 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
       serverProfileSchemaId = recordView.getServerProfileSchema().getValue().getId();
       inactiveStruct.setEndpointProfileSchemaId(endpointProfileSchemaId);
       inactiveStruct.setServerProfileSchemaId(serverProfileSchemaId);
-      Integer endpointProfileSchemaVersion = recordView.getEndpointProfileSchema().getValue().getVersion() > -1 ?
-          new Integer(recordView.getEndpointProfileSchema().getValue().getVersion()) : null;
-      Integer serverProfileSchemaVersion = recordView.getServerProfileSchema().getValue().getVersion() > -1 ?
-          new Integer(recordView.getServerProfileSchema().getValue().getVersion()) : null;
+      Integer versionEnd = recordView.getEndpointProfileSchema().getValue().getVersion();
+      int versionSer = recordView.getServerProfileSchema().getValue().getVersion();
+      Integer endpointProfileSchemaVersion = versionEnd > -1 ? new Integer(versionEnd) : null;
+      Integer serverProfileSchemaVersion = versionSer > -1 ? new Integer(versionSer) : null;
       inactiveStruct.setEndpointProfileSchemaVersion(endpointProfileSchemaVersion);
       inactiveStruct.setServerProfileSchemaVersion(serverProfileSchemaVersion);
     }
@@ -285,7 +290,8 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
   }
 
   @Override
-  protected ProfileFilterPlace getRecordPlaceImpl(String applicationId, String endpointGroupId, boolean create,
+  protected ProfileFilterPlace getRecordPlaceImpl(String applicationId, String endpointGroupId,
+                                                  boolean create,
                                                   boolean showActive, double random) {
     return new ProfileFilterPlace(applicationId, endpointProfileSchemaId, serverProfileSchemaId,
         endpointGroupId, create, showActive, random);

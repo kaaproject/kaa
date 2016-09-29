@@ -57,8 +57,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import java.util.List;
 
 public class EndpointGroupActivity
-    extends
-    AbstractDetailsActivity<EndpointGroupDto, EndpointGroupView, EndpointGroupPlace> {
+    extends AbstractDetailsActivity<EndpointGroupDto, EndpointGroupView, EndpointGroupPlace> {
 
   private String applicationId;
 
@@ -95,123 +94,147 @@ public class EndpointGroupActivity
 
     registrations.add(detailsView.getAddProfileFilterButton().addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
-        KaaAdmin.getDataSource().getVacantProfileSchemas(entityId, new BusyAsyncCallback<List<ProfileVersionPairDto>>() {
-          @Override
-          public void onFailureImpl(Throwable caught) {
-            Utils.handleException(caught, detailsView);
-          }
+        KaaAdmin.getDataSource().getVacantProfileSchemas(entityId,
+            new BusyAsyncCallback<List<ProfileVersionPairDto>>() {
+              @Override
+              public void onFailureImpl(Throwable caught) {
+                Utils.handleException(caught, detailsView);
+              }
 
+              @Override
+              public void onSuccessImpl(List<ProfileVersionPairDto> result) {
+                if (!result.isEmpty()) {
+                  ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(
+                      applicationId, "", "", entityId, true, false, 0);
+                  profileFilterPlace.setPreviousPlace(place);
+                  goTo(profileFilterPlace);
+                } else {
+                  MessageDialog.showMessageDialog(AlertPanel.Type.WARNING,
+                      Utils.constants.noVacantProfileSchemas(),
+                      Utils.messages.noVacantProfileSchemasMessage());
+                }
+              }
+            });
+      }
+    }));
+
+    registrations.add(detailsView.getProfileFiltersGrid().addRowActionHandler(
+        new RowActionEventHandler<ProfileFilterRecordKey>() {
           @Override
-          public void onSuccessImpl(List<ProfileVersionPairDto> result) {
-            if (!result.isEmpty()) {
-              ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(applicationId, "", "", entityId, true, false, 0);
+          public void onRowAction(RowActionEvent<ProfileFilterRecordKey> event) {
+            ProfileFilterRecordKey id = event.getClickedId();
+            if (event.getAction() == RowActionEvent.CLICK) {
+              ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(applicationId,
+                  id.getEndpointProfileSchemaId(),
+                  id.getServerProfileSchemaId(), id.getEndpointGroupId(), false, true, 0);
               profileFilterPlace.setPreviousPlace(place);
               goTo(profileFilterPlace);
-            } else {
-              MessageDialog.showMessageDialog(AlertPanel.Type.WARNING,
-                  Utils.constants.noVacantProfileSchemas(),
-                  Utils.messages.noVacantProfileSchemasMessage());
+            } else if (event.getAction() == RowActionEvent.DELETE) {
+              KaaAdmin.getDataSource().deleteProfileFilterRecord(id.getEndpointProfileSchemaId(),
+                  id.getServerProfileSchemaId(), id.getEndpointGroupId(),
+                  new BusyAsyncCallback<Void>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                      Utils.handleException(caught, detailsView);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(Void result) {
+                    }
+                  });
             }
           }
-        });
-      }
-    }));
+        }));
 
-    registrations.add(detailsView.getProfileFiltersGrid().addRowActionHandler(new RowActionEventHandler<ProfileFilterRecordKey>() {
-      @Override
-      public void onRowAction(RowActionEvent<ProfileFilterRecordKey> event) {
-        ProfileFilterRecordKey id = event.getClickedId();
-        if (event.getAction() == RowActionEvent.CLICK) {
-          ProfileFilterPlace profileFilterPlace = new ProfileFilterPlace(applicationId, id.getEndpointProfileSchemaId(),
-              id.getServerProfileSchemaId(), id.getEndpointGroupId(), false, true, 0);
-          profileFilterPlace.setPreviousPlace(place);
-          goTo(profileFilterPlace);
-        } else if (event.getAction() == RowActionEvent.DELETE) {
-          KaaAdmin.getDataSource().deleteProfileFilterRecord(id.getEndpointProfileSchemaId(), id.getServerProfileSchemaId(), id.getEndpointGroupId(),
-              new BusyAsyncCallback<Void>() {
-                @Override
-                public void onFailureImpl(Throwable caught) {
-                  Utils.handleException(caught, detailsView);
-                }
+    detailsView
+        .getIncludeDeprecatedProfileFilters()
+        .setValue(place.isIncludeDeprecatedProfileFilters());
 
-                @Override
-                public void onSuccessImpl(Void result) {
-                }
-              });
-        }
-      }
-    }));
-
-    detailsView.getIncludeDeprecatedProfileFilters().setValue(place.isIncludeDeprecatedProfileFilters());
-
-    registrations.add(detailsView.getIncludeDeprecatedProfileFilters().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-      @Override
-      public void onValueChange(ValueChangeEvent<Boolean> event) {
-        place.setIncludeDeprecatedProfileFilters(detailsView.getIncludeDeprecatedProfileFilters().getValue());
-        profileFiltersDataProvider.setIncludeDeprecated(detailsView.getIncludeDeprecatedProfileFilters().getValue());
-        profileFiltersDataProvider.reload();
-      }
-    }));
+    registrations.add(detailsView.getIncludeDeprecatedProfileFilters().addValueChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            place.setIncludeDeprecatedProfileFilters(detailsView
+                .getIncludeDeprecatedProfileFilters().getValue());
+            profileFiltersDataProvider.setIncludeDeprecated(detailsView
+                .getIncludeDeprecatedProfileFilters().getValue());
+            profileFiltersDataProvider.reload();
+          }
+        }));
 
     registrations.add(detailsView.getAddConfigurationButton().addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
-        KaaAdmin.getDataSource().getVacantConfigurationSchemaInfos(entityId, new BusyAsyncCallback<List<SchemaInfoDto>>() {
-          @Override
-          public void onFailureImpl(Throwable caught) {
-            Utils.handleException(caught, detailsView);
-          }
+        KaaAdmin.getDataSource().getVacantConfigurationSchemaInfos(entityId,
+            new BusyAsyncCallback<List<SchemaInfoDto>>() {
+              @Override
+              public void onFailureImpl(Throwable caught) {
+                Utils.handleException(caught, detailsView);
+              }
 
+              @Override
+              public void onSuccessImpl(List<SchemaInfoDto> result) {
+                if (!result.isEmpty()) {
+                  ConfigurationPlace configurationPlace = new ConfigurationPlace(
+                      applicationId, "", entityId, true, false, 0);
+                  configurationPlace.setPreviousPlace(place);
+                  goTo(configurationPlace);
+                } else {
+                  MessageDialog.showMessageDialog(AlertPanel.Type.WARNING,
+                      Utils.constants.noVacantConfigurationSchemas(),
+                      Utils.messages.noVacantConfigurationSchemasMessage());
+                }
+              }
+            });
+
+      }
+    }));
+
+    registrations.add(detailsView.getConfigurationsGrid().addRowActionHandler(
+        new RowActionEventHandler<ConfigRecordKey>() {
           @Override
-          public void onSuccessImpl(List<SchemaInfoDto> result) {
-            if (!result.isEmpty()) {
-              ConfigurationPlace configurationPlace = new ConfigurationPlace(applicationId, "", entityId, true, false, 0);
+          public void onRowAction(RowActionEvent<ConfigRecordKey> event) {
+            ConfigRecordKey id = event.getClickedId();
+            if (event.getAction() == RowActionEvent.CLICK) {
+              ConfigurationPlace configurationPlace = new ConfigurationPlace(
+                  applicationId, id.getSchemaId(), id.getEndpointGroupId(), false, true, 0);
               configurationPlace.setPreviousPlace(place);
               goTo(configurationPlace);
-            } else {
-              MessageDialog.showMessageDialog(AlertPanel.Type.WARNING,
-                  Utils.constants.noVacantConfigurationSchemas(),
-                  Utils.messages.noVacantConfigurationSchemasMessage());
+            } else if (event.getAction() == RowActionEvent.DELETE) {
+              KaaAdmin.getDataSource().deleteConfigurationRecord(id.getSchemaId(),
+                  id.getEndpointGroupId(),
+                  new BusyAsyncCallback<Void>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                      Utils.handleException(caught, detailsView);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(Void result) {
+                    }
+                  });
             }
           }
-        });
+        }));
 
-      }
-    }));
+    detailsView
+        .getIncludeDeprecatedConfigurations()
+        .setValue(place.isIncludeDeprecatedConfigurations());
 
-    registrations.add(detailsView.getConfigurationsGrid().addRowActionHandler(new RowActionEventHandler<ConfigRecordKey>() {
-      @Override
-      public void onRowAction(RowActionEvent<ConfigRecordKey> event) {
-        ConfigRecordKey id = event.getClickedId();
-        if (event.getAction() == RowActionEvent.CLICK) {
-          ConfigurationPlace configurationPlace = new ConfigurationPlace(applicationId, id.getSchemaId(), id.getEndpointGroupId(), false, true, 0);
-          configurationPlace.setPreviousPlace(place);
-          goTo(configurationPlace);
-        } else if (event.getAction() == RowActionEvent.DELETE) {
-          KaaAdmin.getDataSource().deleteConfigurationRecord(id.getSchemaId(), id.getEndpointGroupId(),
-              new BusyAsyncCallback<Void>() {
-                @Override
-                public void onFailureImpl(Throwable caught) {
-                  Utils.handleException(caught, detailsView);
-                }
+    registrations.add(detailsView.getIncludeDeprecatedConfigurations().addValueChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            place.setIncludeDeprecatedConfigurations(detailsView
+                .getIncludeDeprecatedConfigurations()
+                .getValue());
 
-                @Override
-                public void onSuccessImpl(Void result) {
-                }
-              });
-        }
-      }
-    }));
+            configurationsDataProvider.setIncludeDeprecated(detailsView
+                .getIncludeDeprecatedConfigurations()
+                .getValue());
 
-    detailsView.getIncludeDeprecatedConfigurations().setValue(place.isIncludeDeprecatedConfigurations());
-
-    registrations.add(detailsView.getIncludeDeprecatedConfigurations().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-      @Override
-      public void onValueChange(ValueChangeEvent<Boolean> event) {
-        place.setIncludeDeprecatedConfigurations(detailsView.getIncludeDeprecatedConfigurations().getValue());
-        configurationsDataProvider.setIncludeDeprecated(detailsView.getIncludeDeprecatedConfigurations().getValue());
-        configurationsDataProvider.reload();
-      }
-    }));
+            configurationsDataProvider.reload();
+          }
+        }));
 
     registrations.add(detailsView.getAddTopicButton().addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
@@ -219,27 +242,28 @@ public class EndpointGroupActivity
       }
     }));
 
-    registrations.add(detailsView.getTopicsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> event) {
-        String id = event.getClickedId();
-        if (event.getAction() == RowActionEvent.CLICK) {
-          //do nothing
-        } else if (event.getAction() == RowActionEvent.DELETE) {
-          KaaAdmin.getDataSource().removeTopicFromEndpointGroup(entityId, id,
-              new BusyAsyncCallback<Void>() {
-                @Override
-                public void onFailureImpl(Throwable caught) {
-                  Utils.handleException(caught, detailsView);
-                }
+    registrations.add(detailsView.getTopicsGrid().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> event) {
+            String id = event.getClickedId();
+            if (event.getAction() == RowActionEvent.CLICK) {
+              //do nothing
+            } else if (event.getAction() == RowActionEvent.DELETE) {
+              KaaAdmin.getDataSource().removeTopicFromEndpointGroup(entityId, id,
+                  new BusyAsyncCallback<Void>() {
+                    @Override
+                    public void onFailureImpl(Throwable caught) {
+                      Utils.handleException(caught, detailsView);
+                    }
 
-                @Override
-                public void onSuccessImpl(Void result) {
-                }
-              });
-        }
-      }
-    }));
+                    @Override
+                    public void onSuccessImpl(Void result) {
+                    }
+                  });
+            }
+          }
+        }));
 
     registrations.add(eventBus.addHandler(DataEvent.getType(), new DataEventHandler() {
       @Override
@@ -247,7 +271,8 @@ public class EndpointGroupActivity
         if (detailsView != null) {
           if (event.checkClass(ProfileFilterDto.class) && profileFiltersDataProvider != null) {
             profileFiltersDataProvider.reload();
-          } else if (event.checkClass(ConfigurationDto.class) && configurationsDataProvider != null) {
+          } else if (event.checkClass(ConfigurationDto.class)
+              && configurationsDataProvider != null) {
             configurationsDataProvider.reload();
           } else if (event.checkClass(TopicDto.class) && topicsDataProvider != null) {
             topicsDataProvider.reload();
@@ -287,7 +312,9 @@ public class EndpointGroupActivity
     }
     detailsView.getDescription().setValue(entity.getDescription());
     detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
-    detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
+    detailsView
+        .getCreatedDateTime()
+        .setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
     if (entity.getWeight() == 0 && !create) {
       detailsView.setReadOnly();
     }
