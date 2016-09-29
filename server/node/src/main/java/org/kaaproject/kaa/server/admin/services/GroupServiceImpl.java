@@ -326,8 +326,8 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
   }
 
   private GenericRecord getDefaultRecordFromCtlSchema(String ctlSchemaId) throws Exception {
-    CTLSchemaDto ctlSchema = controlService.getCTLSchemaById(ctlSchemaId);
-    Schema schema = controlService.exportCTLSchemaFlatAsSchema(ctlSchema);
+    CTLSchemaDto ctlSchema = controlService.getCtlSchemaById(ctlSchemaId);
+    Schema schema = controlService.exportCtlSchemaFlatAsSchema(ctlSchema);
     GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
     GenericRecord defaultRecord = converter.decodeJson(ctlSchema.getDefaultRecord());
     return defaultRecord;

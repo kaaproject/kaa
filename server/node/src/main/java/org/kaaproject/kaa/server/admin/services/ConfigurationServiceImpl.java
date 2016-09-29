@@ -166,7 +166,7 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationSchemaDto confSchema = getConfigurationSchema(configurationSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(confSchema.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(confSchema.getCtlSchemaId());
       return new ConfigurationSchemaViewDto(confSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER));
     } catch (Exception e) {
       throw Utils.handleException(e);

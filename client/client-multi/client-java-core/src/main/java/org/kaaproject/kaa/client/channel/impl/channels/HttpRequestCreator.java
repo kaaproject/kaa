@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.channel.impl.channels;
 
 import org.kaaproject.kaa.common.Constants;
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +64,11 @@ public class HttpRequestCreator {
       }
       LinkedHashMap<String, byte[]> requestEntity = new LinkedHashMap<String, byte[]>(); //NOSONAR
       if (sign) {
-        requestEntity.put(CommonEPConstans.REQUEST_SIGNATURE_ATTR_NAME, signature);
+        requestEntity.put(CommonEpConstans.REQUEST_SIGNATURE_ATTR_NAME, signature);
       }
-      requestEntity.put(CommonEPConstans.REQUEST_KEY_ATTR_NAME, requestKeyEncoded);
-      requestEntity.put(CommonEPConstans.REQUEST_DATA_ATTR_NAME, requestBodyEncoded);
-      requestEntity.put(CommonEPConstans.NEXT_PROTOCOL_ATTR_NAME, nextProtocol);
+      requestEntity.put(CommonEpConstans.REQUEST_KEY_ATTR_NAME, requestKeyEncoded);
+      requestEntity.put(CommonEpConstans.REQUEST_DATA_ATTR_NAME, requestBodyEncoded);
+      requestEntity.put(CommonEpConstans.NEXT_PROTOCOL_ATTR_NAME, nextProtocol);
 
       return requestEntity;
     }

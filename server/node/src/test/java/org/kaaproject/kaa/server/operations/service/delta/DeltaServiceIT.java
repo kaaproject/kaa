@@ -220,7 +220,7 @@ public class DeltaServiceIT extends AbstractTest {
 
     endpointConfiguration = new EndpointConfigurationDto();
     endpointConfiguration.setConfiguration(confDto.getBody().getBytes(UTF_8));
-    endpointConfiguration.setConfigurationHash(EndpointObjectHash.fromSHA1(confDto.getBody()).getData());
+    endpointConfiguration.setConfigurationHash(EndpointObjectHash.fromSha1(confDto.getBody()).getData());
     endpointConfiguration = endpointService.saveEndpointConfiguration(endpointConfiguration);
     assertNotNull(endpointConfiguration);
 
@@ -233,7 +233,7 @@ public class DeltaServiceIT extends AbstractTest {
     endpointProfile.setApplicationId(application.getId());
     endpointProfile.setEndpointKeyHash(UUID.randomUUID().toString().getBytes());
     endpointProfile.setClientProfileBody(PROFILE_JSON);
-    endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());
+    endpointProfile.setProfileHash(EndpointObjectHash.fromSha1(PROFILE_BYTES).getData());
     endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());
     endpointProfile.setConfigurationVersion(CONF_SCHEMA_VERSION);
     endpointProfile.setClientProfileVersion(PROFILE_VERSION);
@@ -250,8 +250,8 @@ public class DeltaServiceIT extends AbstractTest {
 
   @Test
   public void testDeltaServiceNoHistoryDelta() throws Exception {
-    GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSHA1(endpointConfiguration
-        .getConfiguration()), true);
+    GetDeltaRequest request = new GetDeltaRequest(application.getApplicationToken(), EndpointObjectHash.fromSha1(endpointConfiguration
+            .getConfiguration()), true);
     request.setEndpointProfile(endpointProfile);
     GetDeltaResponse response = deltaService.getDelta(request);
     assertNotNull(response);

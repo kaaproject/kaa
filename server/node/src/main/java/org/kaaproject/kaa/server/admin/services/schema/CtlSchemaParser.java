@@ -155,7 +155,7 @@ public class CtlSchemaParser {
           int dependencyVersion = child.get(VERSION).asInt();
 
           CTLSchemaDto dependency =
-              controlService.getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(
+              controlService.getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(
                   dependencyFqn, dependencyVersion, tenantId, applicationId);
           if (dependency != null) {
             dependencies.add(dependency);
@@ -190,7 +190,7 @@ public class CtlSchemaParser {
       for (CTLSchemaDto dependency : schema.getDependencySet()) {
         try {
           CTLSchemaDto dependencySchema =
-              controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+              controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
                   dependency.getMetaInfo().getFqn(), dependency.getVersion(),
                   dependency.getMetaInfo().getTenantId(),
                   dependency.getMetaInfo().getApplicationId());

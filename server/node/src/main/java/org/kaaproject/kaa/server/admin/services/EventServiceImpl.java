@@ -263,7 +263,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
         KaaAuthorityDto.TENANT_ADMIN);
     try {
       EventClassDto eventClassDto = getEventClass(eventClassId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
       EventClassViewDto eventClassViewDto = new EventClassViewDto(
           eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return eventClassViewDto;
@@ -276,7 +276,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto)
       throws KaaAdminServiceException {
     try {
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(eventClassDto.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
       Utils.checkNotNull(ctlSchemaDto);
       EventClassViewDto eventClassViewDto = new EventClassViewDto(
           eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
@@ -306,7 +306,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
       if (isEmpty(ctlSchemaId)) {
         if (eventClassViewDto.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = eventClassViewDto.getExistingMetaInfo();
-          CTLSchemaDto schema = controlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto schema = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
@@ -368,7 +368,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList)
       throws KaaAdminServiceException {
     try {
-      controlService.validateECFListInSdkProfile(ecfList);
+      controlService.validateEcfListInSdkProfile(ecfList);
     } catch (Exception ex) {
       throw Utils.handleException(ex);
     }

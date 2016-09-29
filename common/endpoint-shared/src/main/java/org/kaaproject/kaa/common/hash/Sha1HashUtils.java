@@ -25,10 +25,10 @@ import java.security.NoSuchAlgorithmException;
 
 
 /**
- * The Class SHA1HashUtils.
+ * The Class Sha1HashUtils.
  */
-public abstract class SHA1HashUtils {
-  protected static final Logger LOG = LoggerFactory.getLogger(SHA1HashUtils.class); //NOSONAR
+public abstract class Sha1HashUtils {
+  protected static final Logger LOG = LoggerFactory.getLogger(Sha1HashUtils.class); //NOSONAR
   private static final Charset UTF_8 = Charset.forName("UTF-8");
   /**
    * The Constant digest.
@@ -40,14 +40,14 @@ public abstract class SHA1HashUtils {
     }
   };
 
-  private SHA1HashUtils() {
+  private Sha1HashUtils() {
   }
 
   static MessageDigest forAlgorithm(String algorithm) {
     try {
       return MessageDigest.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException e) {
-      LOG.error("No such algorithm: {}, exception catched: {}", algorithm, e);
+    } catch (NoSuchAlgorithmException ex) {
+      LOG.error("No such algorithm: {}, exception catched: {}", algorithm, ex);
       return null;
     }
   }

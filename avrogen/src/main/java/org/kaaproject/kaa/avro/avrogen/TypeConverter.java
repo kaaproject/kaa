@@ -32,51 +32,64 @@ public class TypeConverter {
     return convertToCType("kaa", schema);
   }
 
+  /**
+   * Convert schema type to the C type.
+   *
+   * @param   namespace the namespace
+   * @param   schema    the schema
+   * @return  the converted schema type
+   */
   public static String convertToCType(String namespace, Schema schema) {
-    String cType = "";
+    String typeC = "";
     switch (schema.getType()) {
       case BOOLEAN:
-        cType = "int8_t";
+        typeC = "int8_t";
         break;
       case INT:
-        cType = "int32_t";
+        typeC = "int32_t";
         break;
       case LONG:
-        cType = "int64_t";
+        typeC = "int64_t";
         break;
       case FLOAT:
-        cType = "float";
+        typeC = "float";
         break;
       case DOUBLE:
-        cType = "double";
+        typeC = "double";
         break;
       case STRING:
-        cType = "kaa_string_t *";
+        typeC = "kaa_string_t *";
         break;
       case BYTES:
       case FIXED:
-        cType = "kaa_bytes_t *";
+        typeC = "kaa_bytes_t *";
         break;
       case ARRAY:
-        cType = "kaa_list_t *";
+        typeC = "kaa_list_t *";
         break;
       case UNION:
-        cType = "kaa_union_t *";
+        typeC = "kaa_union_t *";
         break;
       case ENUM:
-        cType = namespace + "_" + StyleUtils.toLowerUnderScore(schema.getName()) + "_t";
+        typeC = namespace + "_" + StyleUtils.toLowerUnderScore(schema.getName()) + "_t";
         break;
       case RECORD:
-        cType = namespace + "_" + StyleUtils.toLowerUnderScore(schema.getName()) + "_t *";
+        typeC = namespace + "_" + StyleUtils.toLowerUnderScore(schema.getName()) + "_t *";
         break;
       default:
         // TODO: add handling
         break;
     }
 
-    return cType;
+    return typeC;
   }
 
+  /**
+   * Convert schema type to the object C type.
+   *
+   * @param   schema the schema
+   * @return  the converted schema type
+   */
   public static String convertToObjCType(Schema schema) {
     String objCType = "";
     switch (schema.getType()) {
@@ -126,6 +139,13 @@ public class TypeConverter {
     return generateUnionName("", schema);
   }
 
+  /**
+   * Generate union name.
+   *
+   * @param   prefix the prefix to union name
+   * @param   schema the schema
+   * @return  generated union name
+   */
   public static String generateUnionName(String prefix, Schema schema) {
     StringBuilder builder = new StringBuilder(prefix + "_UNION_");
 
@@ -158,12 +178,18 @@ public class TypeConverter {
     return builder.toString();
   }
 
+  /**
+   * Check is record need deal locator.
+   *
+   * @param   schema the input schema
+   * @return  boolean 'true' if record need deal locator
+   */
   public static boolean isRecordNeedDeallocator(Schema schema) {
     if (schema.getType() == Type.RECORD) {
       for (Field f : schema.getFields()) {
         Type type = f.schema().getType();
-        if (type == Type.ARRAY || type == Type.BYTES || type == Type.STRING ||
-            type == Type.FIXED || type == Type.RECORD || type == Type.UNION) {
+        if (type == Type.ARRAY || type == Type.BYTES || type == Type.STRING
+                || type == Type.FIXED || type == Type.RECORD || type == Type.UNION) {
           return true;
         }
       }
@@ -171,10 +197,16 @@ public class TypeConverter {
     return false;
   }
 
+  /**
+   * Check is schema an Avro primitive.
+   *
+   * @param   schema the schema
+   * @return  boolean 'true' if schema is an Avro primitive
+   */
   public static boolean isAvroPrimitive(Schema schema) {
     Type type = schema.getType();
-    return type == Type.BOOLEAN || type == Type.INT || type == Type.LONG ||
-        type == Type.ENUM || type == Type.FLOAT || type == Type.DOUBLE;
+    return type == Type.BOOLEAN || type == Type.INT || type == Type.LONG
+            || type == Type.ENUM || type == Type.FLOAT || type == Type.DOUBLE;
   }
 
   public static boolean isAvroNull(Schema schema) {
@@ -243,6 +275,12 @@ public class TypeConverter {
     return "" + (schema.getTypes().size() - 1);
   }
 
+  /**
+   * Check if the schema contains union.
+   *
+   * @param   schema the schema
+   * @return  boolean 'true' if the schema contains union
+   */
   public static boolean containsUnion(Schema schema) {
     for (Field field : schema.getFields()) {
       if (isAvroUnion(field.schema())) {

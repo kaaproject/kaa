@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
@@ -99,7 +99,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
       joiner.add(id.toString());
     }
     int simpleHash = Arrays.hashCode(ids);
-    EndpointObjectHash complexHash = EndpointObjectHash.fromBytes(SHA1HashUtils.hashToBytes(joiner.toString()));
+    EndpointObjectHash complexHash = EndpointObjectHash.fromBytes(Sha1HashUtils.hashToBytes(joiner.toString()));
     TopicListCacheEntry entry = new TopicListCacheEntry(simpleHash, complexHash, topics);
     cacheService.putTopicList(complexHash, entry);
     LOG.debug("[{}][{}] Calculated new topic list {}", appToken, endpointId, entry);

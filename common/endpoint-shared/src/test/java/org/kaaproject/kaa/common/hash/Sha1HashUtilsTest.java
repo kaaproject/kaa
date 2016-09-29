@@ -19,17 +19,17 @@ package org.kaaproject.kaa.common.hash;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SHA1HashUtilsTest {
+public class Sha1HashUtilsTest {
 
 
   @Test
   public void testExistingDigestAlgorithm() {
-    Assert.assertNotNull(SHA1HashUtils.forAlgorithm("SHA-1"));
+    Assert.assertNotNull(Sha1HashUtils.forAlgorithm("SHA-1"));
   }
 
   @Test
   public void testNotExistingDigestAlgorithm() {
-    Assert.assertNull(SHA1HashUtils.forAlgorithm("SHA-142"));
+    Assert.assertNull(Sha1HashUtils.forAlgorithm("SHA-142"));
   }
 
 }

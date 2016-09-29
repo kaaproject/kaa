@@ -158,9 +158,9 @@ public class DeviceManagementServiceImpl
 
   private void validateServerProfile(ServerProfileSchemaDto serverProfileSchema,
                                      String serverProfileBody) throws Exception {
-    CTLSchemaDto commonType = this.controlService.getCTLSchemaById(
+    CTLSchemaDto commonType = this.controlService.getCtlSchemaById(
         serverProfileSchema.getCtlSchemaId());
-    Schema typeSchema = this.controlService.exportCTLSchemaFlatAsSchema(commonType);
+    Schema typeSchema = this.controlService.exportCtlSchemaFlatAsSchema(commonType);
     try {
       new GenericAvroConverter<GenericRecord>(typeSchema).decodeJson(serverProfileBody);
     } catch (Exception cause) {

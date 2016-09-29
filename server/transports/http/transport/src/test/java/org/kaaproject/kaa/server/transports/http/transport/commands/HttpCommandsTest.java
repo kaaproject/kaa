@@ -22,7 +22,7 @@ import io.netty.handler.codec.http.HttpRequest;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.server.transports.http.transport.messages.NettyHttpSyncMessage;
 import org.kaaproject.kaa.server.transports.http.transport.netty.AbstractCommand;
 import org.mockito.Mockito;
@@ -68,6 +68,6 @@ public class HttpCommandsTest {
 
   @Test
   public void longSyncCommandTest() {
-    Assert.assertEquals(CommonEPConstans.LONG_SYNC_COMMAND, LongSyncCommand.getCommandName());
+    Assert.assertEquals(CommonEpConstans.LONG_SYNC_COMMAND, LongSyncCommand.getCommandName());
   }
 }

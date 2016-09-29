@@ -25,7 +25,7 @@ import java.util.Arrays;
 
 
 /**
- * The class EndpointObjectHash is responsible for hash calculation
+ * The class EndpointObjectHash is responsible for hash calculation.
  *
  * @author Andrew Shvayka
  */
@@ -79,11 +79,11 @@ public final class EndpointObjectHash implements Serializable {
    * @param data the data
    * @return the endpoint object hash
    */
-  public static EndpointObjectHash fromSHA1(String data) {
+  public static EndpointObjectHash fromSha1(String data) {
     if (data == null) {
       return null;
     }
-    return new EndpointObjectHash(SHA1HashUtils.hashToBytes(data));
+    return new EndpointObjectHash(Sha1HashUtils.hashToBytes(data));
   }
 
   /**
@@ -92,11 +92,11 @@ public final class EndpointObjectHash implements Serializable {
    * @param data the data
    * @return the endpoint object hash
    */
-  public static EndpointObjectHash fromSHA1(byte[] data) {
+  public static EndpointObjectHash fromSha1(byte[] data) {
     if (data == null) {
       return null;
     }
-    return new EndpointObjectHash(SHA1HashUtils.hashToBytes(data));
+    return new EndpointObjectHash(Sha1HashUtils.hashToBytes(data));
   }
 
   /**

@@ -80,9 +80,9 @@ public class UserActorMessageProcessorTest {
   private static final String TENANT_ID = "TENANT_ID";
 
   private static final String USER_ID = "USER_ID";
-  private final EndpointObjectHash endpoint1Key = EndpointObjectHash.fromSHA1("endpoint1");
-  private final EndpointObjectHash endpoint2Key = EndpointObjectHash.fromSHA1("endpoint2");
-  private final EndpointObjectHash endpoint3Key = EndpointObjectHash.fromSHA1("endpoint3");
+  private final EndpointObjectHash endpoint1Key = EndpointObjectHash.fromSha1("endpoint1");
+  private final EndpointObjectHash endpoint2Key = EndpointObjectHash.fromSha1("endpoint2");
+  private final EndpointObjectHash endpoint3Key = EndpointObjectHash.fromSha1("endpoint3");
   private LocalUserActorMessageProcessor messageProcessor;
   private List<EventClassFamilyVersion> ecfVersions;
   private EventClassFamilyVersion ecfVersion1;

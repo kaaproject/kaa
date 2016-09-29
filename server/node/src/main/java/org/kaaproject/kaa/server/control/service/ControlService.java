@@ -184,7 +184,8 @@ public interface ControlService {
    * @return the application by application token
    * @throws ControlServiceException the control service exception
    */
-  ApplicationDto getApplicationByApplicationToken(String applicationToken) throws ControlServiceException;
+  ApplicationDto getApplicationByApplicationToken(String applicationToken)
+      throws ControlServiceException;
 
   /**
    * Gets the applications by tenant id.
@@ -219,7 +220,8 @@ public interface ControlService {
    * @return the configuration schemas by application id
    * @throws ControlServiceException the control service exception
    */
-  List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId) throws ControlServiceException;
+  List<ConfigurationSchemaDto> getConfigurationSchemasByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the configuration schema.
@@ -228,7 +230,8 @@ public interface ControlService {
    * @return the configuration schema
    * @throws ControlServiceException the control service exception
    */
-  ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId) throws ControlServiceException;
+  ConfigurationSchemaDto getConfigurationSchema(String configurationSchemaId)
+      throws ControlServiceException;
 
   /**
    * Edits the configuration schema.
@@ -237,7 +240,8 @@ public interface ControlService {
    * @return the configuration schema dto
    * @throws ControlServiceException the control service exception
    */
-  ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema) throws ControlServiceException;
+  ConfigurationSchemaDto editConfigurationSchema(ConfigurationSchemaDto configurationSchema)
+      throws ControlServiceException;
 
   /**
    * Gets the profile schemas by application id.
@@ -246,7 +250,8 @@ public interface ControlService {
    * @return the profile schemas by application id
    * @throws ControlServiceException the control service exception
    */
-  List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
+  List<EndpointProfileSchemaDto> getProfileSchemasByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the profile schema.
@@ -265,7 +270,8 @@ public interface ControlService {
    * @return the profile schema
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
+  EndpointProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId,
+                                                                     int version) throws ControlServiceException;
 
   /**
    * Edits the profile schema.
@@ -274,7 +280,8 @@ public interface ControlService {
    * @return the profile schema dto
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfileSchemaDto editProfileSchema(EndpointProfileSchemaDto profileSchema) throws ControlServiceException;
+  EndpointProfileSchemaDto editProfileSchema(EndpointProfileSchemaDto profileSchema)
+      throws ControlServiceException;
 
   /**
    * Gets the server profile schemas by application id.
@@ -283,7 +290,8 @@ public interface ControlService {
    * @return the server profile schemas by application id
    * @throws ControlServiceException the control service exception
    */
-  List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId) throws ControlServiceException;
+  List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the server profile schema.
@@ -292,7 +300,8 @@ public interface ControlService {
    * @return the server profile schema dto
    * @throws ControlServiceException the control service exception
    */
-  ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId) throws ControlServiceException;
+  ServerProfileSchemaDto getServerProfileSchema(String serverProfileSchemaId)
+      throws ControlServiceException;
 
   /**
    * Gets the server profile schema by application id and server profile
@@ -303,7 +312,8 @@ public interface ControlService {
    * @return the server profile schema
    * @throws ControlServiceException the control service exception
    */
-  ServerProfileSchemaDto getServerProfileSchemaByApplicationIdAndVersion(String applicationId, int version)
+  ServerProfileSchemaDto getServerProfileSchemaByApplicationIdAndVersion(String applicationId,
+                                                                         int version)
       throws ControlServiceException;
 
   /**
@@ -313,7 +323,8 @@ public interface ControlService {
    * @return the server profile schema dto
    * @throws ControlServiceException the control service exception
    */
-  ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema) throws ControlServiceException;
+  ServerProfileSchemaDto saveServerProfileSchema(ServerProfileSchemaDto serverProfileSchema)
+      throws ControlServiceException;
 
   /**
    * Gets the latest created server profile schema for application.
@@ -322,7 +333,8 @@ public interface ControlService {
    * @return the server profile schema dto
    * @throws ControlServiceException the control service exception
    */
-  ServerProfileSchemaDto findLatestServerProfileSchema(String applicationId) throws ControlServiceException;
+  ServerProfileSchemaDto findLatestServerProfileSchema(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the endpoint groups by application id.
@@ -331,7 +343,8 @@ public interface ControlService {
    * @return the endpoint groups by application id
    * @throws ControlServiceException the control service exception
    */
-  List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId) throws ControlServiceException;
+  List<EndpointGroupDto> getEndpointGroupsByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the endpoint group.
@@ -367,7 +380,8 @@ public interface ControlService {
    * @return the endpoint group dto
    * @throws ControlServiceException the control service exception
    */
-  EndpointGroupDto removeTopicsFromEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException;
+  EndpointGroupDto removeTopicsFromEndpointGroup(String endpointGroupId, String topicId)
+      throws ControlServiceException;
 
   /**
    * Adds the topics to endpoint group.
@@ -377,7 +391,8 @@ public interface ControlService {
    * @return the endpoint group dto
    * @throws ControlServiceException the control service exception
    */
-  EndpointGroupDto addTopicsToEndpointGroup(String endpointGroupId, String topicId) throws ControlServiceException;
+  EndpointGroupDto addTopicsToEndpointGroup(String endpointGroupId, String topicId)
+      throws ControlServiceException;
 
   /**
    * Gets the profile filter.
@@ -396,7 +411,8 @@ public interface ControlService {
    * @return the profile filter records by endpoint group id
    * @throws ControlServiceException the control service exception
    */
-  List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated)
+  List<ProfileFilterRecordDto> getProfileFilterRecordsByEndpointGroupId(String endpointGroupId,
+                                                                        boolean includeDeprecated)
       throws ControlServiceException;
 
   /**
@@ -408,7 +424,9 @@ public interface ControlService {
    * @return the profile filter record
    * @throws ControlServiceException the control service exception
    */
-  ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId)
+  ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId,
+                                                String serverProfileSchemaId,
+                                                String endpointGroupId)
       throws ControlServiceException;
 
   /**
@@ -418,7 +436,8 @@ public interface ControlService {
    * @return the vacant profile schemas by endpoint group id
    * @throws ControlServiceException the control service exception
    */
-  List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+  List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(String endpointGroupId)
+      throws ControlServiceException;
 
   /**
    * Edits the profile filter.
@@ -437,7 +456,8 @@ public interface ControlService {
    * @return the configuration records by endpoint group id
    * @throws ControlServiceException the control service exception
    */
-  List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated)
+  List<ConfigurationRecordDto> getConfigurationRecordsByEndpointGroupId(String endpointGroupId,
+                                                                        boolean includeDeprecated)
       throws ControlServiceException;
 
   /**
@@ -448,7 +468,8 @@ public interface ControlService {
    * @return the configuration record
    * @throws ControlServiceException the control service exception
    */
-  ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId) throws ControlServiceException;
+  ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId)
+      throws ControlServiceException;
 
   /**
    * Gets the vacant configuration schemas by endpoint group id.
@@ -457,7 +478,8 @@ public interface ControlService {
    * @return the vacant configuration schemas by endpoint group id
    * @throws ControlServiceException the control service exception
    */
-  List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+  List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId)
+      throws ControlServiceException;
 
   /**
    * Gets the configuration.
@@ -483,7 +505,8 @@ public interface ControlService {
    * @param configuration the configuration
    * @throws ControlServiceException the control service exception
    */
-  void editUserConfiguration(EndpointUserConfigurationDto configuration) throws ControlServiceException;
+  void editUserConfiguration(EndpointUserConfigurationDto configuration)
+      throws ControlServiceException;
 
   /**
    * Activate configuration.
@@ -493,7 +516,8 @@ public interface ControlService {
    * @return the configuration dto
    * @throws ControlServiceException the control service exception
    */
-  ConfigurationDto activateConfiguration(String configurationId, String activatedUsername) throws ControlServiceException;
+  ConfigurationDto activateConfiguration(String configurationId, String activatedUsername)
+      throws ControlServiceException;
 
   /**
    * Deactivate configuration.
@@ -503,7 +527,8 @@ public interface ControlService {
    * @return the configuration dto
    * @throws ControlServiceException the control service exception
    */
-  ConfigurationDto deactivateConfiguration(String configurationId, String deactivatedUsername) throws ControlServiceException;
+  ConfigurationDto deactivateConfiguration(String configurationId, String deactivatedUsername)
+      throws ControlServiceException;
 
   /**
    * Delete configuration record.
@@ -513,7 +538,8 @@ public interface ControlService {
    * @param deactivatedUsername the deactivated username
    * @throws ControlServiceException the control service exception
    */
-  void deleteConfigurationRecord(String schemaId, String endpointGroupId, String deactivatedUsername) throws ControlServiceException;
+  void deleteConfigurationRecord(String schemaId, String endpointGroupId,
+                                 String deactivatedUsername) throws ControlServiceException;
 
   /**
    * Activate profile filter.
@@ -523,7 +549,8 @@ public interface ControlService {
    * @return the profile filter dto
    * @throws ControlServiceException the control service exception
    */
-  ProfileFilterDto activateProfileFilter(String profileFilterId, String activatedUsername) throws ControlServiceException;
+  ProfileFilterDto activateProfileFilter(String profileFilterId, String activatedUsername)
+      throws ControlServiceException;
 
   /**
    * Deactivate profile filter.
@@ -533,7 +560,8 @@ public interface ControlService {
    * @return the profile filter dto
    * @throws ControlServiceException the control service exception
    */
-  ProfileFilterDto deactivateProfileFilter(String profileFilterId, String deactivatedUsername) throws ControlServiceException;
+  ProfileFilterDto deactivateProfileFilter(String profileFilterId, String deactivatedUsername)
+      throws ControlServiceException;
 
   /**
    * Delete profile filter record.
@@ -544,7 +572,8 @@ public interface ControlService {
    * @param deactivatedUsername     the deactivated username
    * @throws ControlServiceException the control service exception
    */
-  void deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId,
+  void deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId,
+                                 String endpointGroupId,
                                  String deactivatedUsername) throws ControlServiceException;
 
   /**
@@ -555,7 +584,8 @@ public interface ControlService {
    * @return the file data
    * @throws ControlServiceException the control service exception
    */
-  FileData generateSdk(SdkProfileDto sdkProperties, SdkPlatform platform) throws ControlServiceException;
+  FileData generateSdk(SdkProfileDto sdkProperties, SdkPlatform platform)
+      throws ControlServiceException;
 
   /**
    * Generate record structure library.
@@ -565,7 +595,8 @@ public interface ControlService {
    * @return the file data
    * @throws ControlServiceException the control service exception
    */
-  FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion) throws ControlServiceException;
+  FileData generateRecordStructureLibrary(String applicationId, int logSchemaVersion)
+      throws ControlServiceException;
 
   /**
    * Edits the notification schema.
@@ -574,7 +605,8 @@ public interface ControlService {
    * @return the notification schema dto
    * @throws ControlServiceException the control service exception
    */
-  NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws ControlServiceException;
+  NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema)
+      throws ControlServiceException;
 
   /**
    * Gets the notification schema.
@@ -583,7 +615,8 @@ public interface ControlService {
    * @return the notification schema
    * @throws ControlServiceException the control service exception
    */
-  NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws ControlServiceException;
+  NotificationSchemaDto getNotificationSchema(String notificationSchemaId)
+      throws ControlServiceException;
 
   /**
    * Gets the notification schemas by app id.
@@ -592,7 +625,8 @@ public interface ControlService {
    * @return the notification schemas by app id
    * @throws ControlServiceException the control service exception
    */
-  List<NotificationSchemaDto> getNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
+  List<NotificationSchemaDto> getNotificationSchemasByAppId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the user notification schemas by app id.
@@ -601,7 +635,8 @@ public interface ControlService {
    * @return the user notification schemas by app id
    * @throws ControlServiceException the control service exception
    */
-  List<VersionDto> getUserNotificationSchemasByAppId(String applicationId) throws ControlServiceException;
+  List<VersionDto> getUserNotificationSchemasByAppId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Find notification schemas by app id and type.
@@ -611,8 +646,8 @@ public interface ControlService {
    * @return the list
    * @throws ControlServiceException the control service exception
    */
-  List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String applicationId, NotificationTypeDto type)
-      throws ControlServiceException;
+  List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(
+      String applicationId, NotificationTypeDto type) throws ControlServiceException;
 
   /**
    * Edits the log schema.
@@ -639,7 +674,8 @@ public interface ControlService {
    * @return the log schemas by application id
    * @throws ControlServiceException the control service exception
    */
-  List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws ControlServiceException;
+  List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the log schema.
@@ -658,7 +694,8 @@ public interface ControlService {
    * @return the log schema by application id and version
    * @throws ControlServiceException the control service exception
    */
-  LogSchemaDto getLogSchemaByApplicationIdAndVersion(String applicationId, int version) throws ControlServiceException;
+  LogSchemaDto getLogSchemaByApplicationIdAndVersion(String applicationId, int version)
+      throws ControlServiceException;
 
   /**
    * Edits the notification.
@@ -730,7 +767,8 @@ public interface ControlService {
    * @return the vacant topic by endpoint group id
    * @throws ControlServiceException the control service exception
    */
-  List<TopicDto> getVacantTopicByEndpointGroupId(String endpointGroupId) throws ControlServiceException;
+  List<TopicDto> getVacantTopicByEndpointGroupId(String endpointGroupId)
+      throws ControlServiceException;
 
   /**
    * Delete topic by id.
@@ -747,7 +785,8 @@ public interface ControlService {
    * @return the unicast notification
    * @throws ControlServiceException the control service exception
    */
-  EndpointNotificationDto getUnicastNotification(String notificationId) throws ControlServiceException;
+  EndpointNotificationDto getUnicastNotification(String notificationId)
+      throws ControlServiceException;
 
   /**
    * Edits the unicast notification.
@@ -756,7 +795,8 @@ public interface ControlService {
    * @return the endpoint notification dto
    * @throws ControlServiceException the control service exception
    */
-  EndpointNotificationDto editUnicastNotification(EndpointNotificationDto notification) throws ControlServiceException;
+  EndpointNotificationDto editUnicastNotification(EndpointNotificationDto notification)
+      throws ControlServiceException;
 
   /**
    * Gets the unicast notifications by key hash.
@@ -765,7 +805,8 @@ public interface ControlService {
    * @return the unicast notifications by key hash
    * @throws ControlServiceException the control service exception
    */
-  List<EndpointNotificationDto> getUnicastNotificationsByKeyHash(byte[] keyhash) throws ControlServiceException;
+  List<EndpointNotificationDto> getUnicastNotificationsByKeyHash(byte[] keyhash)
+      throws ControlServiceException;
 
   /**
    * Gets the configuration schema versions by application id.
@@ -774,7 +815,8 @@ public interface ControlService {
    * @return the configuration schema versions by application id
    * @throws ControlServiceException the control service exception
    */
-  List<VersionDto> getConfigurationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+  List<VersionDto> getConfigurationSchemaVersionsByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the profile schema versions by application id.
@@ -783,7 +825,8 @@ public interface ControlService {
    * @return the profile schema versions by application id
    * @throws ControlServiceException the control service exception
    */
-  List<VersionDto> getProfileSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+  List<VersionDto> getProfileSchemaVersionsByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the notification schema versions by application id.
@@ -792,7 +835,8 @@ public interface ControlService {
    * @return the notification schema versions by application id
    * @throws ControlServiceException the control service exception
    */
-  List<VersionDto> getNotificationSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+  List<VersionDto> getNotificationSchemaVersionsByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the log schema versions by application id.
@@ -801,7 +845,8 @@ public interface ControlService {
    * @return the log schema versions by application id
    * @throws ControlServiceException the control service exception
    */
-  List<VersionDto> getLogSchemaVersionsByApplicationId(String applicationId) throws ControlServiceException;
+  List<VersionDto> getLogSchemaVersionsByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Edits the event class family.
@@ -810,7 +855,8 @@ public interface ControlService {
    * @return the event class family dto
    * @throws ControlServiceException the control service exception
    */
-  EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws ControlServiceException;
+  EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily)
+      throws ControlServiceException;
 
   /**
    * Gets the event class families by tenant id.
@@ -819,7 +865,8 @@ public interface ControlService {
    * @return the event class families by tenant id
    * @throws ControlServiceException the control service exception
    */
-  List<EventClassFamilyDto> getEventClassFamiliesByTenantId(String tenantId) throws ControlServiceException;
+  List<EventClassFamilyDto> getEventClassFamiliesByTenantId(String tenantId)
+      throws ControlServiceException;
 
   /**
    * Gets the event class family.
@@ -837,7 +884,8 @@ public interface ControlService {
    * @return the list of event class family versions
    * @throws ControlServiceException the control service exception
    */
-  List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws ControlServiceException;
+  List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId)
+      throws ControlServiceException;
 
   /**
    * Adds the event class family version to existing ECF.
@@ -847,7 +895,9 @@ public interface ControlService {
    * @param createdUsername         the created username
    * @throws ControlServiceException the control service exception
    */
-  void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername)
+  void addEventClassFamilyVersion(String eventClassFamilyId,
+                                  EventClassFamilyVersionDto eventClassFamilyVersion,
+                                  String createdUsername)
       throws ControlServiceException;
 
   /**
@@ -859,7 +909,8 @@ public interface ControlService {
    * @return the event classes by family id version and type
    * @throws ControlServiceException the control service exception
    */
-  List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type)
+  List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String ecfId, int version,
+                                                              EventClassType type)
       throws ControlServiceException;
 
   /**
@@ -887,7 +938,7 @@ public interface ControlService {
    * @param ecfId string of the event class family id
    * @return list of all FQNs
    */
-  Set<String> getFqnSetForECF(String ecfId) throws ControlServiceException;
+  Set<String> getFqnSetForEcf(String ecfId) throws ControlServiceException;
 
   /**
    * Check passed event class family mappings for Sdk profile.
@@ -896,7 +947,7 @@ public interface ControlService {
    * @param ecfList list of event class family mappings chosen for Sdk profile
    * @throws ControlServiceException the control service exception
    */
-  void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException;
+  void validateEcfListInSdkProfile(List<AefMapInfoDto> ecfList) throws ControlServiceException;
 
   /**
    * Edits the application event family map.
@@ -905,7 +956,8 @@ public interface ControlService {
    * @return the application event family map dto
    * @throws ControlServiceException the control service exception
    */
-  ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap)
+  ApplicationEventFamilyMapDto editApplicationEventFamilyMap(
+      ApplicationEventFamilyMapDto applicationEventFamilyMap)
       throws ControlServiceException;
 
   /**
@@ -915,7 +967,8 @@ public interface ControlService {
    * @return the application event family map
    * @throws ControlServiceException the control service exception
    */
-  ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws ControlServiceException;
+  ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId)
+      throws ControlServiceException;
 
   /**
    * Gets the application event family maps by application id.
@@ -924,7 +977,8 @@ public interface ControlService {
    * @return the application event family maps by application id
    * @throws ControlServiceException the control service exception
    */
-  List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws ControlServiceException;
+  List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(
+      String applicationId) throws ControlServiceException;
 
   /**
    * Gets the vacant event class families by application id.
@@ -933,7 +987,8 @@ public interface ControlService {
    * @return the vacant event class families by application id
    * @throws ControlServiceException the control service exception
    */
-  List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
+  List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the event class families by application id.
@@ -942,7 +997,8 @@ public interface ControlService {
    * @return the event class families by application id
    * @throws ControlServiceException the control service exception
    */
-  List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws ControlServiceException;
+  List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the endpoint users.
@@ -969,7 +1025,8 @@ public interface ControlService {
    * @return the string
    * @throws ControlServiceException the control service exception
    */
-  String generateEndpointUserAccessToken(String externalUid, String tenantId) throws ControlServiceException;
+  String generateEndpointUserAccessToken(String externalUid, String tenantId)
+      throws ControlServiceException;
 
   /**
    * Gets the log appenders by application id.
@@ -978,7 +1035,8 @@ public interface ControlService {
    * @return the log appenders by application id
    * @throws ControlServiceException the control service exception
    */
-  List<LogAppenderDto> getLogAppendersByApplicationId(String applicationId) throws ControlServiceException;
+  List<LogAppenderDto> getLogAppendersByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the log appender.
@@ -1013,7 +1071,8 @@ public interface ControlService {
    * @return the user verifiers by application id
    * @throws ControlServiceException the control service exception
    */
-  List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId) throws ControlServiceException;
+  List<UserVerifierDto> getUserVerifiersByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * Gets the user verifier.
@@ -1049,7 +1108,8 @@ public interface ControlService {
    * @return the record structure schema
    * @throws ControlServiceException the control service exception
    */
-  FileData getRecordStructureSchema(String applicationId, int logSchemaVersion) throws ControlServiceException;
+  FileData getRecordStructureSchema(String applicationId, int logSchemaVersion)
+      throws ControlServiceException;
 
   /**
    * Gets the record structure data.
@@ -1067,7 +1127,8 @@ public interface ControlService {
    * @return the EndpointProfilesBodyDto object.
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException;
+  EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLinkDto)
+      throws ControlServiceException;
 
   /**
    * Gets endpoint profile by endpoint key hash.
@@ -1076,7 +1137,8 @@ public interface ControlService {
    * @return the EndpointProfileDto object.
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfileDto getEndpointProfileByKeyHash(String endpointKeyHash) throws ControlServiceException;
+  EndpointProfileDto getEndpointProfileByKeyHash(String endpointKeyHash)
+      throws ControlServiceException;
 
   /**
    * * Gets endpoint profile body by endpoint key hash.
@@ -1085,7 +1147,8 @@ public interface ControlService {
    * @return the EndpointProfileBodyDto object.
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointKeyHash) throws ControlServiceException;
+  EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointKeyHash)
+      throws ControlServiceException;
 
   /**
    * Gets page of EndpointProfilesBodyDto objects by endpoint group id.
@@ -1094,7 +1157,8 @@ public interface ControlService {
    * @return the EndpointProfilesPageDto object.
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLinkDto) throws ControlServiceException;
+  EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLinkDto)
+      throws ControlServiceException;
 
   /**
    * Updates server profile of endpoint profile
@@ -1105,7 +1169,8 @@ public interface ControlService {
    * @return the updated endpoint profile.
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfileDto updateServerProfile(String endpointKeyHash, int version, String serverProfile) throws ControlServiceException;
+  EndpointProfileDto updateServerProfile(String endpointKeyHash, int version, String serverProfile)
+      throws ControlServiceException;
 
   /**
    * Saves a CTL schema to the database.
@@ -1114,7 +1179,7 @@ public interface ControlService {
    * @return The saved CTL schema
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto saveCTLSchema(CTLSchemaDto schema) throws ControlServiceException;
+  CTLSchemaDto saveCtlSchema(CTLSchemaDto schema) throws ControlServiceException;
 
   /**
    * Deletes a CTL schema from the database by its fully qualified name,
@@ -1126,7 +1191,10 @@ public interface ControlService {
    * @param applicationId An application identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  void deleteCTLSchemaByFqnAndVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
+  void deleteCtlSchemaByFqnAndVersionTenantIdAndApplicationId(String fqn, int version,
+                                                              String tenantId,
+                                                              String applicationId)
+      throws ControlServiceException;
 
   /**
    * Returns a CTL schema by its identifier.
@@ -1135,7 +1203,7 @@ public interface ControlService {
    * @return A CTL schema with the given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto getCTLSchemaById(String schemaId) throws ControlServiceException;
+  CTLSchemaDto getCtlSchemaById(String schemaId) throws ControlServiceException;
 
   /**
    * Returns a CTL schema by its fully qualified name, version number,
@@ -1146,10 +1214,13 @@ public interface ControlService {
    * @param tenantId      A tenant identifier
    * @param applicationId An application identifier
    * @return A CTL schema with the given fully qualified name, version number, tenant and
-   * application identifier
+   *         application identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId)
+  CTLSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
+                                                                int version,
+                                                                String tenantId,
+                                                                String applicationId)
       throws ControlServiceException;
 
   /**
@@ -1159,7 +1230,7 @@ public interface ControlService {
    * @param version    the schema version.
    * @return the CTL schema with the given meta info id and version.
    */
-  CTLSchemaDto getCTLSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version);
+  CTLSchemaDto getCtlSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version);
 
   /**
    * Returns any CTL schema by its fully qualified name, version number,
@@ -1170,10 +1241,12 @@ public interface ControlService {
    * @param tenantId      A tenant identifier
    * @param applicationId An application identifier
    * @return Any CTL schema with the given fully qualified name, version number, tenant and
-   * application identifier
+   *         application identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto getAnyCTLSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
+  CTLSchemaDto getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(
+      String fqn, int version, String tenantId, String applicationId)
+      throws ControlServiceException;
 
   /**
    * Get CTL schema meta infos which are the application level siblings to the CTL
@@ -1184,7 +1257,9 @@ public interface ControlService {
    * @param applicationId the application identifier.
    * @return the CTL schema meta information objects which are the siblings to the given CTL.
    */
-  List<CTLSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+  List<CTLSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn,
+                                                                      String tenantId,
+                                                                      String applicationId);
 
   /**
    * Update existing CTL schema meta info scope by the given CTL schema meta info object.
@@ -1192,7 +1267,7 @@ public interface ControlService {
    * @param ctlSchemaMetaInfo the CTL schema meta info object.
    * @return CTLSchemaMetaInfoDto the updated CTL schema meta info object.
    */
-  CTLSchemaMetaInfoDto updateCTLSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo);
+  CTLSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo);
 
   /**
    * Returns meta information about system CTL schemas.
@@ -1200,22 +1275,24 @@ public interface ControlService {
    * @return Meta information about system CTL schemas
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaMetaInfoDto> getSystemCTLSchemasMetaInfo() throws ControlServiceException;
+  List<CTLSchemaMetaInfoDto> getSystemCtlSchemasMetaInfo() throws ControlServiceException;
 
-  Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForSystem() throws ControlServiceException;
+  Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForSystem() throws ControlServiceException;
 
   /**
-   * Returns meta information about CTL schemas that are available for use by
-   * a tenant with the given identifier
+   * Returns meta information about CTL schemas that are available for use by a tenant with the
+   * given identifier
    *
    * @param tenantId A tenant identifier
    * @return Meta information about CTL schemas that are available for use by a tenant with the
    * given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoForTenant(String tenantId) throws ControlServiceException;
+  List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForTenant(String tenantId)
+      throws ControlServiceException;
 
-  Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForTenant(String tenantId) throws ControlServiceException;
+  Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForTenant(String tenantId)
+      throws ControlServiceException;
 
   /**
    * Returns meta information about CTL schemas that are available for use by
@@ -1224,12 +1301,14 @@ public interface ControlService {
    * @param tenantId A tenant identifier
    * @param appId    An application identifier
    * @return Meta information about CTL schemas that are available for use by a tenant with the
-   * given identifier
+   *         given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaMetaInfoDto> getAvailableCTLSchemasMetaInfoForApplication(String tenantId, String appId) throws ControlServiceException;
+  List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForApplication(
+      String tenantId, String appId) throws ControlServiceException;
 
-  Map<Fqn, List<Integer>> getAvailableCTLSchemaVersionsForApplication(String tenantId, String appId) throws ControlServiceException;
+  Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForApplication(
+      String tenantId, String appId) throws ControlServiceException;
 
   /**
    * Returns CTL schemas that reference a CTL schema with the given
@@ -1239,7 +1318,7 @@ public interface ControlService {
    * @return CTL schemas that reference a CTL schema with the given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaDto> getCTLSchemaDependents(String schemaId) throws ControlServiceException;
+  List<CTLSchemaDto> getCtlSchemaDependents(String schemaId) throws ControlServiceException;
 
   /**
    * Returns CTL schemas that reference a CTL schema with the given fully
@@ -1249,15 +1328,19 @@ public interface ControlService {
    * @param version       A CTL schema version number
    * @param tenantId      A tenant identifier
    * @param applicationId An application identifier
-   * @return CTL schemas that reference a CTL schema with the given fully qualified name, version
-   * number, tenant and application identifier
+   * @return CTL schemas that reference a CTL schema with the given fully qualified name,
+   *         version number, tenant and application identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaDto> getCTLSchemaDependents(String fqn, int version, String tenantId, String applicationId) throws ControlServiceException;
+  List<CTLSchemaDto> getCtlSchemaDependents(String fqn, int version,
+                                            String tenantId,
+                                            String applicationId) throws ControlServiceException;
 
-  CTLSchemaDto getLatestCTLSchemaByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) throws ControlServiceException;
+  CTLSchemaDto getLatestCtlSchemaByFqnTenantIdAndApplicationId(
+      String fqn, String tenantId, String applicationId) throws ControlServiceException;
 
-  List<Integer> getAllCTLSchemaVersionsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) throws ControlServiceException;
+  List<Integer> getAllCtlSchemaVersionsByFqnTenantIdAndApplicationId(
+      String fqn, String tenantId, String applicationId) throws ControlServiceException;
 
   /**
    * Returns the last version of CTL schema with the given meta info id.
@@ -1265,7 +1348,7 @@ public interface ControlService {
    * @param metaInfoId the id of meta info object.
    * @return the latest version of  CTL schema with the given meta info id.
    */
-  CTLSchemaDto getLatestCTLSchemaByMetaInfoId(String metaInfoId);
+  CTLSchemaDto getLatestCtlSchemaByMetaInfoId(String metaInfoId);
 
   /**
    * Exports the body of a CTL schema.
@@ -1274,7 +1357,7 @@ public interface ControlService {
    * @return A file containing the body of a CTL schema
    * @throws ControlServiceException - if an exception occures.
    */
-  FileData exportCTLSchemaShallow(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaShallow(CTLSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema with all dependencies inline,
@@ -1284,7 +1367,7 @@ public interface ControlService {
    * @return A file containing the body of a CTL schema with all dependencies inline, recursively
    * @throws ControlServiceException - if an exception occures.
    */
-  FileData exportCTLSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema as java library with all dependencies
@@ -1292,10 +1375,10 @@ public interface ControlService {
    *
    * @param schema A CTL schema to export
    * @return A java archive file containing compiled classes of a CTL avro schema with all
-   * dependencies inline, recursively
+   *         dependencies inline, recursively
    * @throws ControlServiceException the control service exception
    */
-  FileData exportCTLSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema with all dependencies inline,
@@ -1305,7 +1388,7 @@ public interface ControlService {
    * @return A string containing the body of a CTL schema with all dependencies inline, recursively
    * @throws ControlServiceException - if an exception occures.
    */
-  String exportCTLSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException;
+  String exportCtlSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the CTL schema as avro schema with all dependencies inline,
@@ -1315,7 +1398,7 @@ public interface ControlService {
    * @return An avro schema of a CTL schema with all dependencies inline, recursively
    * @throws ControlServiceException - if an exception occures.
    */
-  Schema exportCTLSchemaFlatAsSchema(CTLSchemaDto schema) throws ControlServiceException;
+  Schema exportCtlSchemaFlatAsSchema(CTLSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema with all dependencies as different
@@ -1323,10 +1406,10 @@ public interface ControlService {
    *
    * @param schema A CTL schema to export
    * @return An archive containing the body of a CTL schema as a file and all dependencies as
-   * different files, recursively.
+   *         different files, recursively.
    * @throws ControlServiceException - if an exception occures.
    */
-  FileData exportCTLSchemaDeep(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaDeep(CTLSchemaDto schema) throws ControlServiceException;
 
   /**
    * Gets SdkProfileDto object by sdk profile id.
@@ -1342,7 +1425,8 @@ public interface ControlService {
    * @return the list sdk profile dto
    * @throws ControlServiceException the control service exception
    */
-  List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws ControlServiceException;
+  List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId)
+      throws ControlServiceException;
 
   /**
    * @param sdkProfileId the sdk profile id
@@ -1390,7 +1474,8 @@ public interface ControlService {
    * @return A list of endpoint profiles for the endpoint user with the given ID.
    * @throws ControlServiceException - if an exception occures.
    */
-  List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(String endpointUserExternalId, String tenantId) throws ControlServiceException;
+  List<EndpointProfileDto> getEndpointProfilesByUserExternalIdAndTenantId(
+      String endpointUserExternalId, String tenantId) throws ControlServiceException;
 
   /**
    * Provides security credentials, allowing an endpoint that uses them to
@@ -1401,7 +1486,8 @@ public interface ControlService {
    * @return The security credentials saved
    * @throws ControlServiceException - if an exception occures.
    */
-  CredentialsDto provisionCredentials(String applicationId, String credentialsBody) throws ControlServiceException;
+  CredentialsDto provisionCredentials(String applicationId, String credentialsBody)
+      throws ControlServiceException;
 
   /**
    * Returns credentials by application ID and credentials ID.
@@ -1411,7 +1497,8 @@ public interface ControlService {
    * @return The credentials found
    * @throws ControlServiceException - if an exception occures.
    */
-  Optional<CredentialsDto> getCredentials(String applicationId, String credentialsId) throws ControlServiceException;
+  Optional<CredentialsDto> getCredentials(String applicationId, String credentialsId)
+      throws ControlServiceException;
 
   /**
    * Revokes security credentials from the corresponding credentials storage.
@@ -1434,7 +1521,8 @@ public interface ControlService {
    * @param credentialsId The credentials ID
    * @throws ControlServiceException - if an exception occures.
    */
-  void onCredentailsRevoked(String applicationId, String credentialsId) throws ControlServiceException;
+  void onCredentailsRevoked(String applicationId, String credentialsId)
+      throws ControlServiceException;
 
   /**
    * Binds credentials to the server-side endpoint profile specified.
@@ -1445,7 +1533,9 @@ public interface ControlService {
    * @param serverProfileBody    The server-side endpoint profile body
    * @throws ControlServiceException - if an exception occures.
    */
-  void provisionRegistration(String applicationId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws ControlServiceException;
+  void provisionRegistration(String applicationId, String credentialsId,
+                             Integer serverProfileVersion,
+                             String serverProfileBody) throws ControlServiceException;
 
   /**
    * Returns the names of credentials services configured.
@@ -1455,11 +1545,14 @@ public interface ControlService {
    */
   List<String> getCredentialsServiceNames() throws ControlServiceException;
 
-  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion, String tenantId);
+  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+      String userId, String appToken, Integer schemaVersion, String tenantId);
 
-  String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
+  String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash)
+      throws KaaAdminServiceException;
 
-  Schema findEndpointConfigurationSchemaByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException;
+  Schema findEndpointConfigurationSchemaByEndpointKeyHash(String endpointKeyHash)
+      throws KaaAdminServiceException;
 
   ConfigurationSchemaDto findConfSchemaByAppIdAndVersion(String applicationId, int version);
 }

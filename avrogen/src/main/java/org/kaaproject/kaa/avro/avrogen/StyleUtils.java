@@ -21,47 +21,64 @@ public class StyleUtils {
   private StyleUtils() {
   }
 
+  /**
+   * Convert to lower underscore format.
+   *
+   * @param   camelCaseName the name in camel case format
+   * @return  the string in lower underscore format
+   */
   public static String toLowerUnderScore(String camelCaseName) {
     StringBuilder convertedName = new StringBuilder();
 
     for (int i = 0; i < camelCaseName.length(); ++i) {
-      char c = camelCaseName.charAt(i);
-      if (Character.isUpperCase(c)) {
-        c = Character.toLowerCase(c);
+      char character = camelCaseName.charAt(i);
+      if (Character.isUpperCase(character)) {
+        character = Character.toLowerCase(character);
         if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length())
             && (Character.isLowerCase(camelCaseName.charAt(i + 1))
             || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
           convertedName.append("_");
         }
-        convertedName.append(c);
+        convertedName.append(character);
       } else {
-        convertedName.append(c);
+        convertedName.append(character);
       }
     }
 
     return convertedName.toString();
   }
 
+  /**
+   * Convert to upper underscore format.
+   *
+   * @param   camelCaseName the input name
+   * @return  the string in upper underscore format
+   */
   public static String toUpperUnderScore(String camelCaseName) {
     StringBuilder convertedName = new StringBuilder();
 
     for (int i = 0; i < camelCaseName.length(); ++i) {
-      char c = camelCaseName.charAt(i);
-      if (Character.isUpperCase(c)) {
-        if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length()) &&
-            (Character.isLowerCase(camelCaseName.charAt(i + 1))
+      char character = camelCaseName.charAt(i);
+      if (Character.isUpperCase(character)) {
+        if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length())
+                && (Character.isLowerCase(camelCaseName.charAt(i + 1))
                 || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
           convertedName.append("_");
         }
-        convertedName.append(c);
+        convertedName.append(character);
       } else {
-        convertedName.append(Character.toUpperCase(c));
+        convertedName.append(Character.toUpperCase(character));
       }
     }
 
     return convertedName.toString();
   }
 
+  /**
+   * Fix camel humps.
+   * @param   name the input name
+   * @return  the string with fixed camel humps
+   */
   public static String fixCamelHumps(String name) {
     if (name == null || name.isEmpty()) {
       throw new IllegalArgumentException("Name couldn't be null or empty");

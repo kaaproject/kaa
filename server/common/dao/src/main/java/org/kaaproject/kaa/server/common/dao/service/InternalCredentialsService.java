@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.common.dao.service;
 import org.apache.commons.lang3.Validate;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.dao.CredentialsService;
 import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 import org.kaaproject.kaa.server.common.dao.impl.CredentialsDao;
@@ -57,7 +57,7 @@ public class InternalCredentialsService implements CredentialsService {
     Validate.notNull(credentials, "Invalid credentials provided!");
     try {
       byte[] credentialsBody = credentials.getCredentialsBody();
-      credentials.setId(Base64Utils.encodeToString(SHA1HashUtils.hashToBytes(credentialsBody)));
+      credentials.setId(Base64Utils.encodeToString(Sha1HashUtils.hashToBytes(credentialsBody)));
       return this.credentialsDao.save(applicationId, credentials).toDto();
     } catch (Exception cause) {
       String message = MessageFormat.format("[{0}] An unexpected exception occured while saving credentials!", applicationId);

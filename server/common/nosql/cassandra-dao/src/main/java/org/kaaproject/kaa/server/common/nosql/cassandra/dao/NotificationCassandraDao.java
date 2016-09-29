@@ -127,10 +127,9 @@ public class NotificationCassandraDao
   }
 
   @Override
-  public List<CassandraNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId,
-                                                                                        int seqNum,
-                                                                                        int sysNfVersion,
-                                                                                        int userNfVersion) {
+  public List<CassandraNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(
+      String topicId, int seqNum, int sysNfVersion, int userNfVersion) {
+
     LOG.debug("Try to find notifications by topic id {} start sequence number {} "
             + "system schema version {} user schema version {}",
         topicId, seqNum, sysNfVersion, userNfVersion);

@@ -377,7 +377,7 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     try {
       NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
       CTLSchemaDto ctlSchemaDto =
-          controlService.getCTLSchemaById(notificationSchema.getCtlSchemaId());
+          controlService.getCtlSchemaById(notificationSchema.getCtlSchemaId());
       NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(
           notificationSchema, toCtlSchemaForm(ctlSchemaDto,
           ConverterType.FORM_AVRO_CONVERTER));
@@ -437,7 +437,5 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       return getNotificationSchemaView(savedNotificationSchema.getId());
     } catch (Exception ex) {
       throw Utils.handleException(ex);
-    }
   }
-
 }

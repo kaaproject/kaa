@@ -68,9 +68,9 @@ public class CredentialsCassandraDao
   public Optional<CassandraCredentials> find(String applicationId, String credentialsId) {
     LOG.debug("Searching credential by applicationID[{}] and credentialsID[{}]",
         applicationId, credentialsId);
-    Select.Where query = select().from(getColumnFamilyName()).
-        where(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
-        and(eq(CREDENTIALS_ID_PROPERTY, credentialsId));
+    Select.Where query = select().from(getColumnFamilyName())
+        .where(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId))
+        .and(eq(CREDENTIALS_ID_PROPERTY, credentialsId));
     return Optional.ofNullable(this.findOneByStatement(query));
   }
 
@@ -82,9 +82,9 @@ public class CredentialsCassandraDao
             + "and credentialsID[{}] to STATUS[{}]",
         applicationId, credentialsId, status.toString());
     Update.Assignments query = update(getColumnFamilyName())
-        .where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
-            and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId)).
-            with(set(CREDENTIALS_STATUS_PROPERTY, status.toString()));
+        .where(eq(CREDENTIALS_ID_PROPERTY, credentialsId))
+        .and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId))
+        .with(set(CREDENTIALS_STATUS_PROPERTY, status.toString()));
     execute(query);
     return find(applicationId, credentialsId);
   }
@@ -93,9 +93,9 @@ public class CredentialsCassandraDao
   public void remove(String applicationId, String credentialsId) {
     LOG.debug("Deleting credential by applicationID[{}] and credentialsID[{}]",
         applicationId, credentialsId);
-    Delete.Where query = delete().from(getColumnFamilyName()).
-        where(eq(CREDENTIALS_ID_PROPERTY, credentialsId)).
-        and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId));
+    Delete.Where query = delete().from(getColumnFamilyName())
+        .where(eq(CREDENTIALS_ID_PROPERTY, credentialsId))
+        .and(eq(CREDENTIALS_APPLICATION_ID_PROPERTY, applicationId));
     execute(query);
   }
 }

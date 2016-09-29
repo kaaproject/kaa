@@ -28,7 +28,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.NotificationService;
 import org.kaaproject.kaa.server.common.dao.TopicService;
@@ -205,7 +205,7 @@ public class DefaultNotificationDeltaServiceTest {
     history.add(new EndpointGroupStateDto(EG3, PF2, null));
     profile.setGroupState(history);
     profile.setSimpleTopicHash(130150);
-    profile.setTopicHash(SHA1HashUtils.hashToBytes(T1 + "|" + T3 + "|" + T5));
+    profile.setTopicHash(Sha1HashUtils.hashToBytes(T1 + "|" + T3 + "|" + T5));
 
 //        EndpointGroupDto eg1 = new EndpointGroupDto();
 //        eg1.setId(EG1);

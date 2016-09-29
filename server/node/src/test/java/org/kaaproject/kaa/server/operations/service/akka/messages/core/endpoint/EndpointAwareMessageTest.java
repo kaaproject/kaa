@@ -25,8 +25,8 @@ import java.util.UUID;
 public class EndpointAwareMessageTest {
   @Test
   public void endpointAwareMessageTest() {
-    EndpointAwareMessage message1 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSHA1("1"), null);
-    EndpointAwareMessage message2 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSHA1("1"), null);
+    EndpointAwareMessage message1 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSha1("1"), null);
+    EndpointAwareMessage message2 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSha1("1"), null);
 
     Assert.assertTrue(message1.equals(message1));
     Assert.assertEquals(message1.hashCode(), message1.hashCode());
@@ -37,14 +37,14 @@ public class EndpointAwareMessageTest {
     Assert.assertNotEquals(message1.getUuid(), message2.getUuid());
 
     UUID uuid = UUID.randomUUID();
-    EndpointAwareMessage message3 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSHA1("1"), null);
-    EndpointAwareMessage message4 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSHA1("1"), null);
+    EndpointAwareMessage message3 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSha1("1"), null);
+    EndpointAwareMessage message4 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSha1("1"), null);
 
     Assert.assertTrue(message3.equals(message4));
     Assert.assertEquals(message3.hashCode(), message4.hashCode());
 
     Assert.assertNotEquals(message1, new String(""));
-    Assert.assertNotEquals(message1, new EndpointAwareMessage(null, "appToken1", EndpointObjectHash.fromSHA1("1"), null));
+    Assert.assertNotEquals(message1, new EndpointAwareMessage(null, "appToken1", EndpointObjectHash.fromSha1("1"), null));
 
   }
 }

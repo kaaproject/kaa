@@ -46,7 +46,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = BASE_SCHEMA_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T> implements HasVersion {
+public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T>
+    implements HasVersion {
 
   private static final long serialVersionUID = 2866125011338808891L;
 
@@ -66,12 +67,14 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
   protected long createdTime;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = BASE_SCHEMA_APPLICATION_ID, foreignKey = @ForeignKey(name = BASE_SCHEMA_FK_APP_ID))
+  @JoinColumn(name = BASE_SCHEMA_APPLICATION_ID,
+      foreignKey = @ForeignKey(name = BASE_SCHEMA_FK_APP_ID))
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Application application;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = BASE_SCHEMA_CTL_SCHEMA_ID, nullable = false, foreignKey = @ForeignKey(name = BASE_SCHEMA_FK_CTL_SCHEMA_ID))
+  @JoinColumn(name = BASE_SCHEMA_CTL_SCHEMA_ID, nullable = false,
+      foreignKey = @ForeignKey(name = BASE_SCHEMA_FK_CTL_SCHEMA_ID))
   private CTLSchema ctlSchema;
 
   public BaseSchema() {
@@ -81,6 +84,12 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
     this.id = id;
   }
 
+
+  /**
+   * Instantiates a new Base schema.
+   *
+   * @param dto data transfare object that used to create instance
+   */
   public BaseSchema(T dto) {
     if (dto != null) {
       this.id = getLongId(dto);
@@ -152,6 +161,10 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
     this.ctlSchema = ctlSchema;
   }
 
+
+  /**
+   * Return application id.
+   */
   public String getApplicationId() {
     Long id = null;
     if (application != null) {
@@ -253,6 +266,11 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
     return dto;
   }
 
+
+  /**
+   * Return instance that contains only schema id and version.
+   *
+   */
   public VersionDto toVersionDto() {
     VersionDto dto = new VersionDto();
     dto.setId(getStringId());

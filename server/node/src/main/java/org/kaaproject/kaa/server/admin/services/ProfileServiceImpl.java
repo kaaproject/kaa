@@ -311,7 +311,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       EndpointProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(profileSchema.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(profileSchema.getCtlSchemaId());
       return new ProfileSchemaViewDto(profileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
     } catch (Exception e) {
       throw Utils.handleException(e);
@@ -368,7 +368,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ServerProfileSchemaDto serverProfileSchema = getServerProfileSchema(serverProfileSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCTLSchemaById(serverProfileSchema.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(serverProfileSchema.getCtlSchemaId());
       return new ServerProfileSchemaViewDto(serverProfileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
     } catch (Exception e) {
       throw Utils.handleException(e);
