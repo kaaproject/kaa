@@ -28,8 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * The Class AvroByteArrayConverter is used to convert {#link org.apache.avro.specific.SpecificRecordBase
- * specific Avro records} to/from bytes. NOT Thread safe.
+ * The Class AvroByteArrayConverter is used to convert
+ * {#link org.apache.avro.specific.SpecificRecordBase specific Avro records} to/from bytes.
+ * NOT Thread safe.
  *
  * @param <T> the generic type that extends SpecificRecordBase
  * @author Andrew Shvayka

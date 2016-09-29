@@ -40,7 +40,7 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse
 import org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData;
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -140,7 +140,7 @@ public class MessageFactoryTest {
     request.setRequestId(42);
     SyncRequestMetaData md = new SyncRequestMetaData();
     md.setSdkToken("sdkToken");
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(SHA1HashUtils.hashToBytes(clientPair.getPublic().getEncoded())));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(Sha1HashUtils.hashToBytes(clientPair.getPublic().getEncoded())));
     request.setSyncRequestMetaData(md);
 
     byte[] rawData = requestConverter.toByteArray(request);
@@ -185,7 +185,7 @@ public class MessageFactoryTest {
     request.setRequestId(42);
     SyncRequestMetaData md = new SyncRequestMetaData();
     md.setSdkToken("sdkToken");
-    md.setEndpointPublicKeyHash(ByteBuffer.wrap(SHA1HashUtils.hashToBytes(clientPair.getPublic().getEncoded())));
+    md.setEndpointPublicKeyHash(ByteBuffer.wrap(Sha1HashUtils.hashToBytes(clientPair.getPublic().getEncoded())));
     request.setSyncRequestMetaData(md);
 
     final byte[] rawData = requestConverter.toByteArray(request);

@@ -72,7 +72,7 @@ import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
 import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder.CipherPair;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -278,9 +278,9 @@ public class DefaultAkkaServiceTest {
     clusterServiceListener = (AkkaClusterServiceListener) ReflectionTestUtils.getField(akkaService, "clusterListener");
 
     clientPublicKey = ByteBuffer.wrap(clientPair.getPublic().getEncoded());
-    clientPublicKeyHash = ByteBuffer.wrap(SHA1HashUtils.hashToBytes(clientPair.getPublic().getEncoded()));
+    clientPublicKeyHash = ByteBuffer.wrap(Sha1HashUtils.hashToBytes(clientPair.getPublic().getEncoded()));
 
-    targetPublicKeyHash = ByteBuffer.wrap(SHA1HashUtils.hashToBytes(targetPair.getPublic().getEncoded()));
+    targetPublicKeyHash = ByteBuffer.wrap(Sha1HashUtils.hashToBytes(targetPair.getPublic().getEncoded()));
 
     Mockito.when(cacheService.getTenantIdByAppToken(APP_TOKEN)).thenReturn(TENANT_ID);
     Mockito.when(cacheService.getAppTokenBySdkToken(SDK_TOKEN)).thenReturn(APP_TOKEN);

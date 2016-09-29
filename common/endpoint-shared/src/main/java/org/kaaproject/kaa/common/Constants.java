@@ -29,7 +29,7 @@ public interface Constants { //NOSONAR
   String RESPONSE_CONTENT_TYPE = "\"application/x-kaa\""; //NOSONAR
 
   /**
-   * HTTP response custom header for set RSA Signature encoded in base64
+   * HTTP response custom header for set RSA Signature encoded in base64.
    */
   String SIGNATURE_HEADER_NAME = "X-SIGNATURE"; //NOSONAR
 

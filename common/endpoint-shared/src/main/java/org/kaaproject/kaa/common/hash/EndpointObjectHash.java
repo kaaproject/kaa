@@ -83,7 +83,7 @@ public final class EndpointObjectHash implements Serializable {
     if (data == null) {
       return null;
     }
-    return new EndpointObjectHash(SHA1HashUtils.hashToBytes(data));
+    return new EndpointObjectHash(Sha1HashUtils.hashToBytes(data));
   }
 
   /**
@@ -96,7 +96,7 @@ public final class EndpointObjectHash implements Serializable {
     if (data == null) {
       return null;
     }
-    return new EndpointObjectHash(SHA1HashUtils.hashToBytes(data));
+    return new EndpointObjectHash(Sha1HashUtils.hashToBytes(data));
   }
 
   /**

@@ -45,7 +45,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.hash.SHA1HashUtils;
+import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
@@ -387,7 +387,7 @@ public class EndpointServiceImpl implements EndpointService {
               break;
             } catch (KaaOptimisticLockingFailureException ex) {
               LOG.warn("Optimistic lock detected in endpoint profile ", Arrays.toString(endpoint.getEndpointKey()), ex);
-              endpoint = endpointProfileDao.findByKeyHash(SHA1HashUtils.hashToBytes(endpoint.getEndpointKey()));
+              endpoint = endpointProfileDao.findByKeyHash(Sha1HashUtils.hashToBytes(endpoint.getEndpointKey()));
             }
           }
           return getDto(endpoint);
@@ -427,7 +427,7 @@ public class EndpointServiceImpl implements EndpointService {
           break;
         } catch (KaaOptimisticLockingFailureException ex) {
           LOG.warn("Optimistic lock detected in endpoint profile ", Arrays.toString(endpoint.getEndpointKey()), ex);
-          endpoint = getDto(endpointProfileDao.findByKeyHash(SHA1HashUtils.hashToBytes(endpoint.getEndpointKey())));
+          endpoint = getDto(endpointProfileDao.findByKeyHash(Sha1HashUtils.hashToBytes(endpoint.getEndpointKey())));
         }
       }
     } else {
