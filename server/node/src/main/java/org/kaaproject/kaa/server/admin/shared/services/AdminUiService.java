@@ -24,19 +24,27 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 
 @RemoteServiceRelativePath("springGwtServices/adminUIService")
-public interface AdminUIService extends RemoteService {
+public interface AdminUiService extends RemoteService {
 
   PropertiesDto getMailProperties() throws KaaAdminServiceException;
 
-  PropertiesDto editMailProperties(PropertiesDto mailPropertiesDto) throws KaaAdminServiceException;
+  PropertiesDto editMailProperties(PropertiesDto mailPropertiesDto)
+      throws KaaAdminServiceException;
 
   PropertiesDto getGeneralProperties() throws KaaAdminServiceException;
 
-  PropertiesDto editGeneralProperties(PropertiesDto generalPropertiesDto) throws KaaAdminServiceException;
+  PropertiesDto editGeneralProperties(PropertiesDto generalPropertiesDto)
+      throws KaaAdminServiceException;
 
-  String getRecordDataByApplicationIdAndSchemaVersion(String applicationId, int schemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
+  String getRecordDataByApplicationIdAndSchemaVersion(String applicationId,
+                                                      int schemaVersion,
+                                                      RecordKey.RecordFiles file)
+      throws KaaAdminServiceException;
 
-  String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId, int logSchemaVersion, RecordKey.RecordFiles file) throws KaaAdminServiceException;
+  String getRecordLibraryByApplicationIdAndSchemaVersion(String applicationId,
+                                                         int logSchemaVersion,
+                                                         RecordKey.RecordFiles file)
+      throws KaaAdminServiceException;
 
   RecordField createSimpleEmptySchemaForm() throws KaaAdminServiceException;
 
@@ -46,6 +54,7 @@ public interface AdminUIService extends RemoteService {
 
   RecordField generateCommonSchemaForm(String fileItemName) throws KaaAdminServiceException;
 
-  RecordField getRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException;
+  RecordField getRecordDataFromFile(String schema, String fileItemName)
+      throws KaaAdminServiceException;
 
 }

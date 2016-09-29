@@ -399,14 +399,14 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       if (isEmpty(ctlSchemaId)) {
         if (notificationSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = notificationSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
           notificationSchema.setCtlSchemaId(schema.getId());
         } else {
-          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(
+          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCtlSchemaForm(
               notificationSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
           notificationSchema.setCtlSchemaId(ctlSchemaForm.getId());
         }
@@ -430,7 +430,7 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       notificationSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
       notificationSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       notificationSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCtlSchemaForm(
           ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
       notificationSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       NotificationSchemaDto savedNotificationSchema = saveNotificationSchema(notificationSchema);

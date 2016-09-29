@@ -37,48 +37,69 @@ public interface EventService extends RemoteService {
 
   List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException;
 
-  EventClassFamilyDto getEventClassFamily(String eventClassFamilyId) throws KaaAdminServiceException;
+  EventClassFamilyDto getEventClassFamily(String eventClassFamilyId)
+      throws KaaAdminServiceException;
 
-  EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException;
+  EventClassFamilyDto editEventClassFamily(EventClassFamilyDto eventClassFamily)
+      throws KaaAdminServiceException;
 
-  List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type) throws KaaAdminServiceException;
+  List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId,
+                                                              int version,
+                                                              EventClassType type)
+      throws KaaAdminServiceException;
 
-  List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(
+      String applicationToken) throws KaaAdminServiceException;
 
-  ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId) throws KaaAdminServiceException;
+  ApplicationEventFamilyMapDto getApplicationEventFamilyMap(String applicationEventFamilyMapId)
+      throws KaaAdminServiceException;
 
-  ApplicationEventFamilyMapDto editApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap) throws KaaAdminServiceException;
+  ApplicationEventFamilyMapDto editApplicationEventFamilyMap(
+      ApplicationEventFamilyMapDto applicationEventFamilyMap) throws KaaAdminServiceException;
 
-  List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationId(
+      String applicationId) throws KaaAdminServiceException;
 
-  List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<EcfInfoDto> getVacantEventClassFamiliesByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
-  List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<AefMapInfoDto> getEventClassFamiliesByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
   RecordField createEcfEmptySchemaForm() throws KaaAdminServiceException;
 
   RecordField generateEcfSchemaForm(String fileItemName) throws KaaAdminServiceException;
 
-  List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId) throws KaaAdminServiceException;
+  List<EventClassFamilyVersionDto> getEventClassFamilyVersions(String eventClassFamilyId)
+      throws KaaAdminServiceException;
 
-  void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException;
+  void addEventClassFamilyVersion(String eventClassFamilyId,
+                                  EventClassFamilyVersionDto eventClassFamilyVersion)
+      throws KaaAdminServiceException;
 
   EventClassViewDto getEventClassView(String eventClassId) throws KaaAdminServiceException;
 
-  EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto) throws KaaAdminServiceException;
+  EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto)
+      throws KaaAdminServiceException;
 
   EventClassDto getEventClass(String eventClassId) throws KaaAdminServiceException;
 
-  EventClassViewDto saveEventClassView(EventClassViewDto eventClassViewDto) throws KaaAdminServiceException;
+  EventClassViewDto saveEventClassView(EventClassViewDto eventClassViewDto)
+      throws KaaAdminServiceException;
 
-  EventClassViewDto createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+  EventClassViewDto createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaForm)
+      throws KaaAdminServiceException;
 
-  void addEventClassFamilyVersionFromView(String eventClassFamilyId, List<EventClassViewDto> eventClassViewDto) throws KaaAdminServiceException;
+  void addEventClassFamilyVersionFromView(String eventClassFamilyId,
+                                          List<EventClassViewDto> eventClassViewDto)
+      throws KaaAdminServiceException;
 
-  void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList) throws KaaAdminServiceException;
+  void validateEcfListInSdkProfile(List<AefMapInfoDto> ecfList) throws KaaAdminServiceException;
 
 }

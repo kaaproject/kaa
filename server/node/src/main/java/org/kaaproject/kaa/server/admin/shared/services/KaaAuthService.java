@@ -25,11 +25,12 @@ import org.kaaproject.kaa.common.dto.admin.ResultCode;
 @RemoteServiceRelativePath("springGwtServices/kaaAuthService")
 public interface KaaAuthService extends RemoteService {
 
-  public AuthResultDto checkAuth() throws Exception;
+  AuthResultDto checkAuth() throws Exception;
 
-  public void createKaaAdmin(String username, String password) throws KaaAdminServiceException;
+  void createKaaAdmin(String username, String password) throws KaaAdminServiceException;
 
-  ResultCode changePassword(String username, String oldPassword, String newPassword) throws Exception;
+  ResultCode changePassword(String username, String oldPassword, String newPassword)
+      throws Exception;
 
   ResultCode checkUserNameOccupied(String username, Long userId) throws Exception;
 

@@ -313,7 +313,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
               metaInfo.getMetaInfo().getApplicationId());
           eventClassDto.setCtlSchemaId(schema.getId());
         } else {
-          ctlSchemaForm = ctlService.saveCTLSchemaForm(
+          ctlSchemaForm = ctlService.saveCtlSchemaForm(
               eventClassViewDto.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
           eventClassDto.setCtlSchemaId(ctlSchemaForm.getId());
         }
@@ -333,7 +333,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
       EventClassDto eventClassDto = new EventClassDto();
       eventClassDto.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       eventClassDto.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCtlSchemaForm(
           ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
       eventClassDto.setCtlSchemaId(savedCtlSchemaForm.getId());
       return getEventClassViewByCtlSchemaId(eventClassDto);
@@ -365,7 +365,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   }
 
   @Override
-  public void validateECFListInSdkProfile(List<AefMapInfoDto> ecfList)
+  public void validateEcfListInSdkProfile(List<AefMapInfoDto> ecfList)
       throws KaaAdminServiceException {
     try {
       controlService.validateEcfListInSdkProfile(ecfList);

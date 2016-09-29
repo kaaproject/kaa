@@ -31,17 +31,21 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/loggingService")
 public interface LoggingService extends RemoteService {
 
-  List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<LogSchemaDto> getLogSchemasByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<LogSchemaDto> getLogSchemasByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
   LogSchemaDto getLogSchema(String logSchemaId) throws KaaAdminServiceException;
 
-  LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version) throws KaaAdminServiceException;
+  LogSchemaDto getLogSchemaByApplicationTokenAndVersion(String applicationToken, int version)
+      throws KaaAdminServiceException;
 
   LogSchemaDto saveLogSchema(LogSchemaDto profileSchema) throws KaaAdminServiceException;
 
-  List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken) throws KaaAdminServiceException;
+  List<LogAppenderDto> getRestLogAppendersByApplicationToken(String appToken)
+      throws KaaAdminServiceException;
 
   LogAppenderDto getRestLogAppender(String appenderId) throws KaaAdminServiceException;
 
@@ -49,9 +53,11 @@ public interface LoggingService extends RemoteService {
 
   void deleteLogAppender(String appenderId) throws KaaAdminServiceException;
 
-  List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
+  List<LogAppenderDto> getRestLogAppendersByApplicationId(String appId)
+      throws KaaAdminServiceException;
 
-  List<LogAppenderDto> getLogAppendersByApplicationId(String appId) throws KaaAdminServiceException;
+  List<LogAppenderDto> getLogAppendersByApplicationId(String appId)
+      throws KaaAdminServiceException;
 
   LogAppenderDto getLogAppender(String appenderId) throws KaaAdminServiceException;
 
@@ -69,6 +75,7 @@ public interface LoggingService extends RemoteService {
 
   LogSchemaViewDto saveLogSchemaView(LogSchemaViewDto logSchema) throws KaaAdminServiceException;
 
-  LogSchemaViewDto createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
+  LogSchemaViewDto createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm)
+      throws KaaAdminServiceException;
 
 }

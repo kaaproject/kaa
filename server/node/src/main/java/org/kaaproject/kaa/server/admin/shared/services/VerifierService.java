@@ -27,11 +27,14 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/verifierService")
 public interface VerifierService extends RemoteService {
 
-  List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken) throws KaaAdminServiceException;
+  List<UserVerifierDto> getRestUserVerifiersByApplicationToken(String appToken)
+      throws KaaAdminServiceException;
 
-  List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
+  List<UserVerifierDto> getRestUserVerifiersByApplicationId(String appId)
+      throws KaaAdminServiceException;
 
-  List<UserVerifierDto> getUserVerifiersByApplicationId(String appId) throws KaaAdminServiceException;
+  List<UserVerifierDto> getUserVerifiersByApplicationId(String appId)
+      throws KaaAdminServiceException;
 
   UserVerifierDto getUserVerifier(String userVerifierId) throws KaaAdminServiceException;
 
@@ -39,13 +42,15 @@ public interface VerifierService extends RemoteService {
 
   UserVerifierDto editUserVerifier(UserVerifierDto userVerifier) throws KaaAdminServiceException;
 
-  UserVerifierDto editRestUserVerifier(UserVerifierDto userVerifier) throws KaaAdminServiceException;
+  UserVerifierDto editRestUserVerifier(UserVerifierDto userVerifier)
+      throws KaaAdminServiceException;
 
   void deleteUserVerifier(String userVerifierId) throws KaaAdminServiceException;
 
   UserVerifierDto getUserVerifierForm(String userVerifierId) throws KaaAdminServiceException;
 
-  UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier) throws KaaAdminServiceException;
+  UserVerifierDto editUserVerifierForm(UserVerifierDto userVerifier)
+      throws KaaAdminServiceException;
 
   List<PluginInfoDto> getUserVerifierPluginInfos() throws KaaAdminServiceException;
 }

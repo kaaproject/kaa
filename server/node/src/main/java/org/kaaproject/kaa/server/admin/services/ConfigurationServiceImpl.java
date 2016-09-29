@@ -153,14 +153,14 @@ public class ConfigurationServiceImpl
       if (isEmpty(ctlSchemaId)) {
         if (confSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = confSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
           confSchema.setCtlSchemaId(schema.getId());
         } else {
-          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(
+          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCtlSchemaForm(
               confSchemaView.getCtlSchemaForm(), ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
           confSchema.setCtlSchemaId(ctlSchemaForm.getId());
         }
@@ -450,7 +450,7 @@ public class ConfigurationServiceImpl
       confSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
       confSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       confSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCtlSchemaForm(
           ctlSchemaForm, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER);
       confSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       ConfigurationSchemaDto savedConfSchema = saveConfigurationSchema(confSchema);

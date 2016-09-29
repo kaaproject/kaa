@@ -36,20 +36,26 @@ public interface SdkService extends RemoteService {
 
   SdkProfileDto getSdkProfile(String sdkProfileId) throws KaaAdminServiceException;
 
-  List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<SdkProfileDto> getSdkProfilesByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
-  FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException;
+  FileData getSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform)
+      throws KaaAdminServiceException;
 
   void flushSdkCache() throws KaaAdminServiceException;
 
-  String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform) throws KaaAdminServiceException;
+  String generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform)
+      throws KaaAdminServiceException;
 
   SdkProfileViewDto getSdkProfileView(String sdkProfileId) throws KaaAdminServiceException;
 
-  SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  SchemaVersions getSchemaVersionsByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  SchemaVersions getSchemaVersionsByApplicationId(String applicationId) throws KaaAdminServiceException;
+  SchemaVersions getSchemaVersionsByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
 }

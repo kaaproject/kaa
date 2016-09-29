@@ -34,23 +34,32 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/notificationService")
 public interface NotificationService extends RemoteService {
 
-  List<NotificationSchemaDto> getNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<NotificationSchemaDto> getNotificationSchemasByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<NotificationSchemaDto> getNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<NotificationSchemaDto> getNotificationSchemasByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
-  List<VersionDto> getUserNotificationSchemasByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<VersionDto> getUserNotificationSchemasByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<VersionDto> getUserNotificationSchemasByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<VersionDto> getUserNotificationSchemasByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
-  NotificationSchemaDto getNotificationSchema(String notificationSchemaId) throws KaaAdminServiceException;
+  NotificationSchemaDto getNotificationSchema(String notificationSchemaId)
+      throws KaaAdminServiceException;
 
-  NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema) throws KaaAdminServiceException;
+  NotificationSchemaDto saveNotificationSchema(NotificationSchemaDto notificationSchema)
+      throws KaaAdminServiceException;
 
-  List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  List<TopicDto> getTopicsByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
-  List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
+  List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId)
+      throws KaaAdminServiceException;
 
-  List<TopicDto> getVacantTopicsByEndpointGroupId(String endpointGroupId) throws KaaAdminServiceException;
+  List<TopicDto> getVacantTopicsByEndpointGroupId(String endpointGroupId)
+      throws KaaAdminServiceException;
 
   TopicDto getTopic(String topicId) throws KaaAdminServiceException;
 
@@ -58,26 +67,38 @@ public interface NotificationService extends RemoteService {
 
   void deleteTopic(String topicId) throws KaaAdminServiceException;
 
-  void addTopicToEndpointGroup(String endpointGroupId, String topicId) throws KaaAdminServiceException;
+  void addTopicToEndpointGroup(String endpointGroupId, String topicId)
+      throws KaaAdminServiceException;
 
-  void removeTopicFromEndpointGroup(String endpointGroupId, String topicId) throws KaaAdminServiceException;
+  void removeTopicFromEndpointGroup(String endpointGroupId, String topicId)
+      throws KaaAdminServiceException;
 
-  NotificationDto sendNotification(NotificationDto notification, byte[] body) throws KaaAdminServiceException;
+  NotificationDto sendNotification(NotificationDto notification, byte[] body)
+      throws KaaAdminServiceException;
 
-  EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, byte[] body) throws KaaAdminServiceException;
+  void sendNotification(NotificationDto notification,
+                        RecordField notificationData) throws KaaAdminServiceException;
+
+  EndpointNotificationDto sendUnicastNotification(NotificationDto notification,
+                                                  String clientKeyHash,
+                                                  byte[] body) throws KaaAdminServiceException;
+
+  EndpointNotificationDto sendUnicastNotification(
+      NotificationDto notification, String clientKeyHash, RecordField notificationData)
+      throws KaaAdminServiceException;
 
   List<TopicDto> getTopicsByApplicationId(String applicationId) throws KaaAdminServiceException;
 
-  List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(String applicationId) throws KaaAdminServiceException;
+  List<SchemaInfoDto> getUserNotificationSchemaInfosByApplicationId(String applicationId)
+      throws KaaAdminServiceException;
 
-  NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId) throws KaaAdminServiceException;
+  NotificationSchemaViewDto getNotificationSchemaView(String notificationSchemaId)
+      throws KaaAdminServiceException;
 
-  NotificationSchemaViewDto saveNotificationSchemaView(NotificationSchemaViewDto notificationSchema) throws KaaAdminServiceException;
+  NotificationSchemaViewDto saveNotificationSchemaView(
+      NotificationSchemaViewDto notificationSchema) throws KaaAdminServiceException;
 
-  NotificationSchemaViewDto createNotificationSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
-
-  void sendNotification(NotificationDto notification, RecordField notificationData) throws KaaAdminServiceException;
-
-  EndpointNotificationDto sendUnicastNotification(NotificationDto notification, String clientKeyHash, RecordField notificationData) throws KaaAdminServiceException;
+  NotificationSchemaViewDto createNotificationSchemaFormCtlSchema(
+      CtlSchemaFormDto ctlSchemaForm) throws KaaAdminServiceException;
 
 }

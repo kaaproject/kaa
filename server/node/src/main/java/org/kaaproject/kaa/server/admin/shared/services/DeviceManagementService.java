@@ -27,13 +27,19 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/deviceManagementService")
 public interface DeviceManagementService extends RemoteService {
 
-  CredentialsDto provisionCredentials(String applicationToken, String credentialsBody) throws KaaAdminServiceException;
+  CredentialsDto provisionCredentials(String applicationToken, String credentialsBody)
+      throws KaaAdminServiceException;
 
-  void provisionRegistration(String applicationToken, String credentialsId, Integer serverProfileVersion, String serverProfileBody) throws KaaAdminServiceException;
+  void provisionRegistration(String applicationToken,
+                             String credentialsId,
+                             Integer serverProfileVersion,
+                             String serverProfileBody) throws KaaAdminServiceException;
 
-  void revokeCredentials(String applicationToken, String credentialsId) throws KaaAdminServiceException;
+  void revokeCredentials(String applicationToken, String credentialsId)
+      throws KaaAdminServiceException;
 
-  void onCredentialsRevoked(String applicationToken, String credentialsId) throws KaaAdminServiceException;
+  void onCredentialsRevoked(String applicationToken, String credentialsId)
+      throws KaaAdminServiceException;
 
   CredentialsStatus getCredentialsStatus(
       String applicationToken,

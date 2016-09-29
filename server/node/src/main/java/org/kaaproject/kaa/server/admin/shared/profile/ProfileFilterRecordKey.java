@@ -29,7 +29,9 @@ public class ProfileFilterRecordKey implements Serializable {
   public ProfileFilterRecordKey() {
   }
 
-  public ProfileFilterRecordKey(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) {
+  public ProfileFilterRecordKey(String endpointProfileSchemaId,
+                                String serverProfileSchemaId,
+                                String endpointGroupId) {
     this.endpointProfileSchemaId = endpointProfileSchemaId;
     this.serverProfileSchemaId = serverProfileSchemaId;
     this.endpointGroupId = endpointGroupId;

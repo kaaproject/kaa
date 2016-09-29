@@ -28,7 +28,8 @@ public interface ApplicationService extends RemoteService {
 
   List<ApplicationDto> getApplications() throws KaaAdminServiceException;
 
-  ApplicationDto getApplicationByApplicationToken(String applicationToken) throws KaaAdminServiceException;
+  ApplicationDto getApplicationByApplicationToken(String applicationToken)
+      throws KaaAdminServiceException;
 
   ApplicationDto getApplication(String applicationId) throws KaaAdminServiceException;
 

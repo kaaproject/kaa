@@ -78,8 +78,8 @@ import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
-import org.kaaproject.kaa.server.admin.shared.services.AdminUIService;
-import org.kaaproject.kaa.server.admin.shared.services.AdminUIServiceAsync;
+import org.kaaproject.kaa.server.admin.shared.services.AdminUiService;
+import org.kaaproject.kaa.server.admin.shared.services.AdminUiServiceAsync;
 import org.kaaproject.kaa.server.admin.shared.services.ApplicationService;
 import org.kaaproject.kaa.server.admin.shared.services.ApplicationServiceAsync;
 import org.kaaproject.kaa.server.admin.shared.services.ConfigurationService;
@@ -142,7 +142,7 @@ public class DataSource {
 
   private final VerifierServiceAsync verifierRpcService = GWT.create(VerifierService.class);
 
-  private final AdminUIServiceAsync adminUirpcService = GWT.create(AdminUIService.class);
+  private final AdminUiServiceAsync adminUirpcService = GWT.create(AdminUiService.class);
 
   private final EventBus eventBus;
 
@@ -699,7 +699,7 @@ public class DataSource {
 
   public void validateEcfListInSdkProfile(List<AefMapInfoDto> ecfList,
                                           final AsyncCallback<Void> callback) {
-    eventRpcService.validateECFListInSdkProfile(ecfList, new DataCallback<Void>(callback) {
+    eventRpcService.validateEcfListInSdkProfile(ecfList, new DataCallback<Void>(callback) {
       @Override
       protected void onResult(Void result) {
       }
@@ -852,7 +852,7 @@ public class DataSource {
   public void getAvailableApplicationCtlSchemaReferences(
       String applicationId,
       final AsyncCallback<List<CtlSchemaReferenceDto>> callback) {
-    ctlRpcService.getAvailableApplicationCTLSchemaReferences(applicationId,
+    ctlRpcService.getAvailableApplicationCtlSchemaReferences(applicationId,
         new DataCallback<List<CtlSchemaReferenceDto>>(callback) {
           @Override
           protected void onResult(List<CtlSchemaReferenceDto> result) {
@@ -864,7 +864,7 @@ public class DataSource {
       String ecfId,
       List<EventClassViewDto> eventClassViewDtoList,
       final AsyncCallback<List<CtlSchemaReferenceDto>> callback) {
-    ctlRpcService.getTenantLevelCTLSchemaReferenceForECF(ecfId, eventClassViewDtoList,
+    ctlRpcService.getTenantLevelCtlSchemaReferenceForEcf(ecfId, eventClassViewDtoList,
         new DataCallback<List<CtlSchemaReferenceDto>>(callback) {
           @Override
           protected void onResult(List<CtlSchemaReferenceDto> result) {
@@ -1019,7 +1019,7 @@ public class DataSource {
 
   public void getSystemLevelCtlSchemas(
       final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
-    ctlRpcService.getSystemLevelCTLSchemas(
+    ctlRpcService.getSystemLevelCtlSchemas(
         new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
           @Override
           protected void onResult(List<CTLSchemaMetaInfoDto> result) {
@@ -1029,7 +1029,7 @@ public class DataSource {
 
   public void getTenantLevelCtlSchemas(
       final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
-    ctlRpcService.getTenantLevelCTLSchemas(
+    ctlRpcService.getTenantLevelCtlSchemas(
         new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
           @Override
           protected void onResult(List<CTLSchemaMetaInfoDto> result) {
@@ -1039,7 +1039,7 @@ public class DataSource {
 
   public void getCtlSchemaById(String ctlSchemaId,
                                final AsyncCallback<CTLSchemaDto> callback) {
-    ctlRpcService.getCTLSchemaById(ctlSchemaId,
+    ctlRpcService.getCtlSchemaById(ctlSchemaId,
         new DataCallback<CTLSchemaDto>(callback) {
           @Override
           protected void onResult(CTLSchemaDto result) {
@@ -1050,7 +1050,7 @@ public class DataSource {
   public void getApplicationLevelCtlSchemas(
       String applicationId,
       final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
-    ctlRpcService.getApplicationLevelCTLSchemas(applicationId,
+    ctlRpcService.getApplicationLevelCtlSchemas(applicationId,
         new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
           @Override
           protected void onResult(List<CTLSchemaMetaInfoDto> result) {
@@ -1060,7 +1060,7 @@ public class DataSource {
 
   public void getLatestCtlSchemaForm(String metaInfoId,
                                      final AsyncCallback<CtlSchemaFormDto> callback) {
-    ctlRpcService.getLatestCTLSchemaForm(metaInfoId,
+    ctlRpcService.getLatestCtlSchemaForm(metaInfoId,
         new DataCallback<CtlSchemaFormDto>(callback) {
           @Override
           protected void onResult(CtlSchemaFormDto result) {
@@ -1070,7 +1070,7 @@ public class DataSource {
 
   public void getCtlSchemaFormByMetaInfoIdAndVer(String metaInfoId, Integer version,
                                                  final AsyncCallback<CtlSchemaFormDto> callback) {
-    ctlRpcService.getCTLSchemaFormByMetaInfoIdAndVer(metaInfoId, version,
+    ctlRpcService.getCtlSchemaFormByMetaInfoIdAndVer(metaInfoId, version,
         new DataCallback<CtlSchemaFormDto>(callback) {
           @Override
           protected void onResult(CtlSchemaFormDto result) {
@@ -1081,7 +1081,7 @@ public class DataSource {
   public void createNewCtlSchemaFormInstance(String metaInfoId, Integer sourceVersion,
                                              String applicationId, ConverterType converterType,
                                              final AsyncCallback<CtlSchemaFormDto> callback) {
-    ctlRpcService.createNewCTLSchemaFormInstance(
+    ctlRpcService.createNewCtlSchemaFormInstance(
         metaInfoId, sourceVersion, applicationId, converterType,
         new DataCallback<CtlSchemaFormDto>(callback) {
           @Override
@@ -1103,7 +1103,7 @@ public class DataSource {
   public void editCtlSchemaForm(CtlSchemaFormDto ctlSchemaForm,
                                 ConverterType converterType,
                                 final AsyncCallback<CtlSchemaFormDto> callback) {
-    ctlRpcService.saveCTLSchemaForm(ctlSchemaForm, converterType,
+    ctlRpcService.saveCtlSchemaForm(ctlSchemaForm, converterType,
         new DataCallback<CtlSchemaFormDto>(callback) {
           @Override
           protected void onResult(CtlSchemaFormDto result) {
@@ -1136,7 +1136,7 @@ public class DataSource {
   public void deleteCtlSchemaByFqnVersionTenantIdAndApplicationId(
       String fqn, Integer version, String tenantId,
       String applicationId, final AsyncCallback<Void> callback) {
-    ctlRpcService.deleteCTLSchemaByFqnVersionTenantIdAndApplicationId(fqn, version,
+    ctlRpcService.deleteCtlSchemaByFqnVersionTenantIdAndApplicationId(fqn, version,
         tenantId, applicationId,
         new DataCallback<Void>(callback) {
           @Override
@@ -1148,7 +1148,7 @@ public class DataSource {
 
   public void prepareCtlSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method,
                                      final AsyncCallback<String> callback) {
-    ctlRpcService.prepareCTLSchemaExport(ctlSchemaId, method, new DataCallback<String>(callback) {
+    ctlRpcService.prepareCtlSchemaExport(ctlSchemaId, method, new DataCallback<String>(callback) {
       @Override
       protected void onResult(String result) {
       }

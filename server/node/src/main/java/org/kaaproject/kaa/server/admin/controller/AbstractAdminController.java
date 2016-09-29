@@ -20,7 +20,7 @@ import io.swagger.annotations.Api;
 
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.services.AdminUIService;
+import org.kaaproject.kaa.server.admin.shared.services.AdminUiService;
 import org.kaaproject.kaa.server.admin.shared.services.ApplicationService;
 import org.kaaproject.kaa.server.admin.shared.services.ConfigurationService;
 import org.kaaproject.kaa.server.admin.shared.services.CtlService;
@@ -67,7 +67,7 @@ public abstract class AbstractAdminController {
    * The kaa admin UI service.
    */
   @Autowired
-  AdminUIService adminUIService;
+  AdminUiService adminUIService;
 
   /**
    * The kaa application service.

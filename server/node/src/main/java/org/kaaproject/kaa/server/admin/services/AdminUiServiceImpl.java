@@ -29,12 +29,12 @@ import org.kaaproject.kaa.server.admin.services.entity.gen.GeneralProperties;
 import org.kaaproject.kaa.server.admin.services.entity.gen.SmtpMailProperties;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
-import org.kaaproject.kaa.server.admin.shared.services.AdminUIService;
+import org.kaaproject.kaa.server.admin.shared.services.AdminUiService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.springframework.stereotype.Service;
 
 @Service("adminUIService")
-public class AdminUiServiceImpl extends AbstractAdminService implements AdminUIService {
+public class AdminUiServiceImpl extends AbstractAdminService implements AdminUiService {
 
   @Override
   public PropertiesDto getMailProperties() throws KaaAdminServiceException {

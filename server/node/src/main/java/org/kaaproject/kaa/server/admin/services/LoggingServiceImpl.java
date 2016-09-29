@@ -148,14 +148,14 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
       if (isEmpty(ctlSchemaId)) {
         if (logSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = logSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
               metaInfo.getMetaInfo().getApplicationId());
           logSchemaDto.setCtlSchemaId(schema.getId());
         } else {
-          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCTLSchemaForm(
+          CtlSchemaFormDto ctlSchemaForm = ctlService.saveCtlSchemaForm(
               logSchemaView.getCtlSchemaForm(), ConverterType.FORM_AVRO_CONVERTER);
           logSchemaDto.setCtlSchemaId(ctlSchemaForm.getId());
         }
@@ -178,7 +178,7 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
       logSchema.setApplicationId(ctlSchemaForm.getMetaInfo().getApplicationId());
       logSchema.setName(ctlSchemaForm.getSchema().getDisplayNameFieldValue());
       logSchema.setDescription(ctlSchemaForm.getSchema().getDescriptionFieldValue());
-      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCTLSchemaForm(
+      CtlSchemaFormDto savedCtlSchemaForm = ctlService.saveCtlSchemaForm(
           ctlSchemaForm, ConverterType.FORM_AVRO_CONVERTER);
       logSchema.setCtlSchemaId(savedCtlSchemaForm.getId());
       LogSchemaDto savedLogSchema = saveLogSchema(logSchema);

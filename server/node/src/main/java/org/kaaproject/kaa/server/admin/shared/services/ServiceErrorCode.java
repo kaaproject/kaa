@@ -31,9 +31,9 @@ public enum ServiceErrorCode {
   String resKey;
   boolean showErrorMessage;
 
-  ServiceErrorCode(String _resKey, boolean _showErrorMessage) {
-    resKey = _resKey;
-    showErrorMessage = _showErrorMessage;
+  ServiceErrorCode(String resultKey, boolean showErrMessage) {
+    resKey = resultKey;
+    showErrorMessage = showErrMessage;
   }
 
   public String getResKey() {

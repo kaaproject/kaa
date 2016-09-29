@@ -77,7 +77,7 @@ public class CtlController extends AbstractAdminController {
       @RequestParam(required = false) String tenantId,
       @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = false)
       @RequestParam(required = false) String applicationToken) throws KaaAdminServiceException {
-    return ctlService.saveCTLSchemaWithAppToken(body, tenantId, applicationToken);
+    return ctlService.saveCtlSchemaWithAppToken(body, tenantId, applicationToken);
   }
 
   /**
@@ -109,7 +109,7 @@ public class CtlController extends AbstractAdminController {
       @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = false)
       @RequestParam(required = false) String applicationToken)
       throws KaaAdminServiceException {
-    ctlService.deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
+    ctlService.deleteCtlSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
   }
 
   /**
@@ -141,7 +141,7 @@ public class CtlController extends AbstractAdminController {
       @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = false)
       @RequestParam(required = false) String applicationToken)
       throws KaaAdminServiceException {
-    return ctlService.getCTLSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
+    return ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationToken(fqn, version, tenantId, applicationToken);
   }
 
   /**
@@ -163,7 +163,7 @@ public class CtlController extends AbstractAdminController {
   public CTLSchemaDto getCTLSchemaById(
       @ApiParam(name = "id", value = "A unique CTL schema identifier", required = true)
       @RequestParam String id) throws KaaAdminServiceException {
-    return ctlService.getCTLSchemaById(id);
+    return ctlService.getCtlSchemaById(id);
   }
 
   /**
@@ -234,7 +234,7 @@ public class CtlController extends AbstractAdminController {
   @RequestMapping(value = "CTL/getSystemSchemas", method = RequestMethod.GET)
   @ResponseBody
   public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() throws KaaAdminServiceException {
-    return ctlService.getSystemLevelCTLSchemas();
+    return ctlService.getSystemLevelCtlSchemas();
   }
 
   /**
@@ -252,7 +252,7 @@ public class CtlController extends AbstractAdminController {
   @RequestMapping(value = "CTL/getTenantSchemas", method = RequestMethod.GET)
   @ResponseBody
   public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() throws KaaAdminServiceException {
-    return ctlService.getTenantLevelCTLSchemas();
+    return ctlService.getTenantLevelCtlSchemas();
   }
 
   /**
@@ -276,7 +276,7 @@ public class CtlController extends AbstractAdminController {
   public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(
       @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
-    return ctlService.getApplicationLevelCTLSchemasByAppToken(applicationToken);
+    return ctlService.getApplicationLevelCtlSchemasByAppToken(applicationToken);
   }
 
   /**
@@ -315,7 +315,7 @@ public class CtlController extends AbstractAdminController {
       @RequestParam(required = false) String applicationToken,
       HttpServletRequest request, HttpServletResponse response) throws KaaAdminServiceException {
     try {
-      FileData output = ctlService.exportCTLSchemaByAppToken(fqn, version, applicationToken, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
+      FileData output = ctlService.exportCtlSchemaByAppToken(fqn, version, applicationToken, CTLSchemaExportMethod.valueOf(method.toUpperCase()));
       ServletUtils.prepareDisposition(request, response, output.getFileName());
       response.setContentType(output.getContentType());
       response.setContentLength(output.getFileData().length);
