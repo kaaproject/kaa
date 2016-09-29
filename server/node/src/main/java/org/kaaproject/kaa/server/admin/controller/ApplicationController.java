@@ -33,7 +33,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-@Api(value = "Application", description = "Provides function for manage applications", basePath = "/kaaAdmin/rest")
+@Api(value = "Application",
+    description = "Provides function for manage applications",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class ApplicationController extends AbstractAdminController {
 
@@ -44,11 +46,14 @@ public class ApplicationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get all applications",
-      notes = "Returns all applications for the current authorized user within the current tenant. The current user must have one of the following " +
-          "roles: TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER.")
+      notes = "Returns all applications for the current authorized user within the current tenant."
+          + " The current user must have one of the following "
+          + "roles: TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER)"),
+      @ApiResponse(code = 401, message = "The user is not authenticated or "
+          + "invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the "
+          + "required role (TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER)"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "applications", method = RequestMethod.GET)
   @ResponseBody
@@ -64,18 +69,26 @@ public class ApplicationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get application based on application token",
-      notes = "Returns an application by applicationToken. The current user must have one of the following roles: TENANT_ADMIN, TENANT_DEVELOPER or " +
-          "TENANT_USER.")
+      notes = "Returns an application by applicationToken. The current user must "
+          + "have one of the following roles: TENANT_ADMIN, TENANT_DEVELOPER or "
+          + "TENANT_USER.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN, TENANT_DEVELOPER, or TENANT_USER) or " +
-          "Tenant ID of the application does not match the Tenant ID of the user"),
-      @ApiResponse(code = 404, message = "An application with the specified applicationToken does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401, message = "The user is not authenticated"
+          + " or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_ADMIN, TENANT_DEVELOPER, or TENANT_USER) or "
+              + "Tenant ID of the application does not match the Tenant ID of the user"),
+      @ApiResponse(code = 404,
+          message = "An application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "application/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public ApplicationDto getApplicationByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
     return applicationService.getApplicationByApplicationToken(applicationToken);
   }
@@ -88,22 +101,31 @@ public class ApplicationController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit application",
-      notes = "Creates or edits an application. To create an application you do not need to specify the application ID. To edit the application " +
-          "specify the application ID. If the application with the specified ID exists, it will be updated. " +
-          "By default for ever new application used credentials service \"Trustful\", " +
-          "if you want to use \"Internal\" or some custom credentials service you should specify it. " +
-          "Only users with the TENANT_ADMIN role " +
-          "are allowed to perform this operation.")
+      notes = "Creates or edits an application. To create an application "
+          + "you do not need to specify the application ID. To edit the application "
+          + "specify the application ID. If the application with the specified ID exists, "
+          + "it will be updated. "
+          + "By default for ever new application used credentials service \"Trustful\", "
+          + "if you want to use \"Internal\" or some custom credentials "
+          + "service you should specify it. "
+          + "Only users with the TENANT_ADMIN role "
+          + "are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the application " +
-          "to be edited does not match the Tenant ID of the user"),
-      @ApiResponse(code = 404, message = "An application to be edited with the specified application ID does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role (TENANT_ADMIN) "
+              + "or the Tenant ID of the application "
+              + "to be edited does not match the Tenant ID of the user"),
+      @ApiResponse(code = 404, message = "An application to be edited "
+          + "with the specified application ID does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "application", method = RequestMethod.POST)
   @ResponseBody
   public ApplicationDto editApplication(
-      @ApiParam(name = "application", value = "ApplicationDto body. Mandatory fields: name, tenantId", required = true)
+      @ApiParam(name = "application",
+          value = "ApplicationDto body. Mandatory fields: name, tenantId",
+          required = true)
       @RequestBody ApplicationDto application) throws KaaAdminServiceException {
     return applicationService.editApplication(application);
   }

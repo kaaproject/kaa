@@ -46,7 +46,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-@Api(value = "User", description = "Provides function for manage users", basePath = "/kaaAdmin/rest")
+@Api(value = "User",
+    description = "Provides function for manage users",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class UserController extends AbstractAdminController {
 
@@ -58,7 +60,8 @@ public class UserController extends AbstractAdminController {
    * @throws Exception the exception
    */
   @ApiOperation(value = "Get user authentication status",
-      notes = "Returns information about the current authorized user. Only authorized users are allowed to perform this operation.")
+      notes = "Returns information about the current authorized user. "
+          + "Only authorized users are allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "auth/checkAuth", method = RequestMethod.GET)
@@ -89,13 +92,15 @@ public class UserController extends AbstractAdminController {
   public void createKaaAdmin(
       @ApiParam(name = "username", value = "A user name of the Kaa admin user", required = true)
       @RequestParam(value = "username") String username,
-      @ApiParam(name = "password", value = "A user password of the Kaa admin user; it must be no shorter than 6 characters", required = true)
+      @ApiParam(name = "password", value = "A user password of the Kaa admin user; "
+          + "it must be no shorter than 6 characters", required = true)
       @RequestParam(value = "password") String password)
       throws KaaAdminServiceException {
     if (!userFacade.isAuthorityExists(KaaAuthorityDto.KAA_ADMIN.name())) {
       kaaAuthService.createKaaAdmin(username, password);
     } else {
-      throw new KaaAdminServiceException("Kaa admin already exists. Can't create more than one kaa admin users.",
+      throw new KaaAdminServiceException("Kaa admin already exists. "
+          + "Can't create more than one kaa admin users.",
           ServiceErrorCode.PERMISSION_DENIED);
     }
   }
@@ -110,30 +115,39 @@ public class UserController extends AbstractAdminController {
    * @throws Exception the exception
    */
   @ApiOperation(value = "Change user password",
-      notes = "Changes the password of a user. Only authorized users are allowed to perform this operation.")
+      notes = "Changes the password of a user. "
+          + "Only authorized users are allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "The specified parameters are not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "auth/changePassword", method = RequestMethod.POST)
   @ResponseBody
   public ResultCode changePassword(
-      @ApiParam(name = "username", value = "A user name of the user whose password is to be changed", required = true)
+      @ApiParam(name = "username",
+          value = "A user name of the user whose password is to be changed",
+          required = true)
       @RequestParam(value = "username") String username,
       @ApiParam(name = "oldPassword", value = "An old password of the user", required = true)
       @RequestParam(value = "oldPassword") String oldPassword,
-      @ApiParam(name = "newPassword", value = "A new password of the user; it must be no shorter than 6 characters", required = true)
+      @ApiParam(name = "newPassword",
+          value = "A new password of the user; it must be no shorter than 6 characters",
+          required = true)
       @RequestParam(value = "newPassword") String newPassword)
       throws Exception {
     ResultCode resultCode = kaaAuthService.changePassword(username, oldPassword, newPassword);
     if (resultCode == ResultCode.USER_NOT_FOUND) {
-      throw Utils.handleException(new IllegalArgumentException("User with specified username was not found."));
+      throw Utils.handleException(
+          new IllegalArgumentException("User with specified username was not found."));
     } else if (resultCode == ResultCode.PERMISSION_DENIED) {
-      throw Utils.handleException(new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED));
+      throw Utils.handleException(
+          new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED));
     } else if (resultCode == ResultCode.OLD_PASSWORD_MISMATCH) {
       throw Utils.handleException(new IllegalArgumentException("Current password is invalid."));
     } else if (resultCode == ResultCode.BAD_PASSWORD_STRENGTH) {
-      throw Utils.handleException(new IllegalArgumentException("Password strength is insufficient."));
+      throw Utils.handleException(
+          new IllegalArgumentException("Password strength is insufficient."));
     }
     return resultCode;
   }
@@ -145,9 +159,11 @@ public class UserController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get user profile",
-      notes = "Returns the user profile of the current user. Only authorized users are allowed to perform this operation.")
+      notes = "Returns the user profile of the current user. "
+          + "Only authorized users are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 401, message = "The user is not authenticated "
+          + "or invalid credentials were provided"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "userProfile", method = RequestMethod.GET)
   @ResponseBody
@@ -162,14 +178,18 @@ public class UserController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Edit user profile",
-      notes = "Edits the user profile. Only authorized users are allowed to perform this operation.")
+      notes = "Edits the user profile. Only authorized "
+          + "users are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 401, message = "The user is not authenticated "
+          + "or invalid credentials were provided"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "userProfile", method = RequestMethod.POST)
   @ResponseBody
   public void editUserProfile(
-      @ApiParam(name = "userProfileUpdateDto", value = "UserProfileUpdateDto body.", required = true)
+      @ApiParam(name = "userProfileUpdateDto",
+          value = "UserProfileUpdateDto body.",
+          required = true)
       @RequestBody UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
     userService.editUserProfile(userProfileUpdateDto);
   }
@@ -181,11 +201,15 @@ public class UserController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get all users",
-      notes = "Returns a list of all users associated with the current authorized user: users whose Tenant ID values match the Tenant ID of the " +
-          "request submitter. Only users with the TENANT_ADMIN role are allowed to submit this request.")
+      notes = "Returns a list of all users associated with the current authorized "
+          + "user: users whose Tenant ID values match the Tenant ID of the "
+          + "request submitter. Only users with the TENANT_ADMIN "
+          + "role are allowed to submit this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN)"),
+      @ApiResponse(code = 401, message = "The user is not authenticated "
+          + "or invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the "
+          + "required role (TENANT_ADMIN)"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "users", method = RequestMethod.GET)
   @ResponseBody
@@ -201,12 +225,15 @@ public class UserController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get user",
-      notes = " Returns a user. Only users with the TENANT_ADMIN role are allowed to submit this request. The Tenant ID of requested user must be " +
-          "identical to the Tenant ID of the submitter.")
+      notes = " Returns a user. Only users with the TENANT_ADMIN role are allowed to submit "
+          + "this request. The Tenant ID of requested user must be "
+          + "identical to the Tenant ID of the submitter.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the requested user " +
-          "does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401, message = "The user is not authenticated "
+          + "or invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the required role "
+          + "(TENANT_ADMIN) or the Tenant ID of the requested user "
+          + "does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "The user with the specified userId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "user/{userId}", method = RequestMethod.GET)
@@ -225,25 +252,33 @@ public class UserController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit user",
-      notes = "Creates or edits a user. To create a user you do not need to specify the user ID, its Tenant ID will be set to the Tenant ID of the " +
-          "request submitter. A random password will be generated and presented in the success response in the tempPassword field. To edit user " +
-          "specify the user ID. If a user with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role can perform " +
-          "this operation.")
+      notes = "Creates or edits a user. To create a user you do not need to specify "
+          + "the user ID, its Tenant ID will be set to the Tenant ID of the "
+          + "request submitter. A random password will be generated and presented "
+          + "in the success response in the tempPassword field. To edit user "
+          + "specify the user ID. If a user with the specified ID exists, it will be updated. "
+          + "Only users with the TENANT_ADMIN role can perform "
+          + "this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "Some of the mandatory fields are not correct or are empty"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user " +
-          "does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 400, message = "Some of the mandatory "
+          + "fields are not correct or are empty"),
+      @ApiResponse(code = 401, message = "The user is not authenticated "
+          + "or invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the required "
+          + "TENANT_ADMIN role or the Tenant ID of the editing user "
+          + "does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "user", method = RequestMethod.POST)
   @ResponseBody
   public UserDto editUser(
-      @ApiParam(name = "user", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
+      @ApiParam(name = "user",
+          value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority",
+          required = true)
       @Valid @RequestBody UserDto user) throws KaaAdminServiceException {
     try {
       return userService.editUser(user);
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -254,12 +289,15 @@ public class UserController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Delete user",
-      notes = "Deletes a user specified by user ID. Only users with the TENANT_ADMIN role are allowed to perform this operation.")
+      notes = "Deletes a user specified by user ID. "
+          + "Only users with the TENANT_ADMIN role are allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "The specified userId is not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user " +
-          "does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401, message = "The user is not authenticated "
+          + "or invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the required "
+          + "TENANT_ADMIN role or the Tenant ID of the editing user "
+          + "does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "The user with the specified userId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "delUser", method = RequestMethod.POST)
@@ -272,11 +310,14 @@ public class UserController extends AbstractAdminController {
 
 
   @ApiOperation(value = "Get tenant admins based on tenant id",
-      notes = "Gets the tenant admins by specified tenantId. Only user with KAA_ADMIN role is allowed to perform this operation.")
+      notes = "Gets the tenant admins by specified tenantId. Only user with KAA_ADMIN "
+          + "role is allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "The specified tenantId is not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required KAA_ADMIN role"),
+      @ApiResponse(code = 401, message = "The user is not authenticated or"
+          + " invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does "
+          + "not have the required KAA_ADMIN role"),
       @ApiResponse(code = 404, message = "The user with the specified tenantId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "admins/{tenantId}", method = RequestMethod.POST)
