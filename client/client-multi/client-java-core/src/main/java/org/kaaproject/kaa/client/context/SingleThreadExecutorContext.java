@@ -23,7 +23,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-public class SingleThreadExecutorContext extends AbstractExecutorContext implements ExecutorContext {
+public class SingleThreadExecutorContext extends AbstractExecutorContext implements
+        ExecutorContext {
   private static final Logger LOG = LoggerFactory.getLogger(SingleThreadExecutorContext.class);
 
   private ScheduledExecutorService singleThreadExecutor;

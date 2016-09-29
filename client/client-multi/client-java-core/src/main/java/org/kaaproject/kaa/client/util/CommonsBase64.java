@@ -20,6 +20,11 @@ public class CommonsBase64 implements Base64 {
 
   private static CommonsBase64 instance;
 
+  /**
+   * Get instance of CommonsBase64 class.
+   *
+   * @return instance of CommonsBase64
+   */
   public static CommonsBase64 getInstance() {
     if (instance == null) {
       instance = new CommonsBase64();

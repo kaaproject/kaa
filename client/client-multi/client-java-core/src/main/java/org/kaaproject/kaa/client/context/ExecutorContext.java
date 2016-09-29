@@ -34,17 +34,17 @@ import java.util.concurrent.ScheduledExecutorService;
 public interface ExecutorContext {
 
   /**
-   * Initialize executors
+   * Initialize executors.
    */
   void init();
 
   /**
-   * Stops executors
+   * Stops executors.
    */
   void stop();
 
   /**
-   * Executes lifecycle events/commands of Kaa client
+   * Executes lifecycle events/commands of Kaa client.
    *
    * @return the lifecycle executor
    */
@@ -52,7 +52,7 @@ public interface ExecutorContext {
 
   /**
    * Executes user API calls to SDK client. For example, serializing of log
-   * records before submit to transport
+   * records before submit to transport.
    *
    * @return the API executor
    */
@@ -66,7 +66,7 @@ public interface ExecutorContext {
   ExecutorService getCallbackExecutor();
 
   /**
-   * Executes scheduled tasks(periodically if needed) as log upload
+   * Executes scheduled tasks(periodically if needed) as log upload.
    *
    * @return the scheduled executor
    */

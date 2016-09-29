@@ -25,7 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Simple implementation of {@link ExecutorContext executorContext} that uses
- * one thread per each executor
+ * one thread per each executor.
  *
  * @author Andrew Shvayka
  */
@@ -48,7 +48,8 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
     this(SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD);
   }
 
-  public SimpleExecutorContext(int lifeCycleThreadCount, int apiThreadCount, int callbackThreadCount, int scheduledThreadCount) {
+  public SimpleExecutorContext(int lifeCycleThreadCount, int apiThreadCount,
+                               int callbackThreadCount, int scheduledThreadCount) {
     super();
     this.lifeCycleThreadCount = lifeCycleThreadCount;
     this.apiThreadCount = apiThreadCount;
@@ -94,19 +95,19 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
     return scheduledExecutor;
   }
 
-  private ExecutorService createExecutor(int nThreads) {
-    if (nThreads == 1) {
+  private ExecutorService createExecutor(int threadsNumber) {
+    if (threadsNumber == 1) {
       return Executors.newSingleThreadExecutor();
     } else {
-      return Executors.newFixedThreadPool(nThreads);
+      return Executors.newFixedThreadPool(threadsNumber);
     }
   }
 
-  private ScheduledExecutorService createScheduledExecutor(int nThreads) {
-    if (nThreads == 1) {
+  private ScheduledExecutorService createScheduledExecutor(int threadsNumber) {
+    if (threadsNumber == 1) {
       return Executors.newSingleThreadScheduledExecutor();
     } else {
-      return Executors.newScheduledThreadPool(nThreads);
+      return Executors.newScheduledThreadPool(threadsNumber);
     }
   }
 }

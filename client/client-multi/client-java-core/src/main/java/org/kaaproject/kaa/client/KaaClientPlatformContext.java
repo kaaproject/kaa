@@ -26,21 +26,21 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 /**
- * Represents platform specific context for Kaa client initialization
+ * Represents platform specific context for Kaa client initialization.
  *
  * @author Andrew Shvayka
  */
 public interface KaaClientPlatformContext {
 
   /**
-   * Returns platform SDK properties
+   * Returns platform SDK properties.
    *
    * @return client SDK properties
    */
   KaaClientProperties getProperties();
 
   /**
-   * Returns platform dependent implementation of http client
+   * Returns platform dependent implementation of http client.
    *
    * @param url             the url
    * @param privateKey      the private key
@@ -48,11 +48,12 @@ public interface KaaClientPlatformContext {
    * @param remotePublicKey the remote public key
    * @return platform dependent implementation of http client
    */
-  AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey);
+  AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey,
+                                      PublicKey remotePublicKey);
 
   /**
    * Returns platform dependent implementation of {@link PersistentStorage
-   * persistent storage}
+   * persistent storage}.
    *
    * @return implementation of {@link PersistentStorage persistent storage}
    */
@@ -60,28 +61,28 @@ public interface KaaClientPlatformContext {
 
   /**
    * Returns platform dependent implementation of {@link Base64 base64}
-   * algorithm
+   * algorithm.
    *
    * @return implementation of {@link Base64 base64} algorithm
    */
   Base64 getBase64();
 
   /**
-   * Returns platform dependent implementation of {@link ConnectivityChecker}
+   * Returns platform dependent implementation of {@link ConnectivityChecker}.
    *
    * @return implementation of {@link ConnectivityChecker}
    */
   ConnectivityChecker createConnectivityChecker();
 
   /**
-   * Returns SDK thread execution context
+   * Returns SDK thread execution context.
    *
    * @return SDK thread execution context
    */
   ExecutorContext getExecutorContext();
 
   /**
-   * Determines if client state should be checked
+   * Determines if client state should be checked.
    *
    * @return true if client state should be checked
    */

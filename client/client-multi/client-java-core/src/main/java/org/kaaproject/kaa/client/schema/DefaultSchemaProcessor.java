@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Default implementation of @{link SchemaProcessor} using the avro schema
+ * Default implementation of @{link SchemaProcessor} using the avro schema.
  *
  * @author Yaroslav Zeygerman
  */

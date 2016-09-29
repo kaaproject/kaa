@@ -98,8 +98,9 @@ public final class TransportContext {
   }
 
   public void initTransports(KaaChannelManager channelManager, KaaClientState clientState) {
-    for (KaaTransport transport : Arrays.asList(bootstrapTransport, profileTransport, eventTransport, notificationTransport,
-        configurationTransport, userTransport, logTransport)) {
+    for (KaaTransport transport : Arrays.asList(bootstrapTransport, profileTransport,
+            eventTransport, notificationTransport, configurationTransport, userTransport,
+            logTransport)) {
       transport.setChannelManager(channelManager);
       transport.setClientState(clientState);
     }
