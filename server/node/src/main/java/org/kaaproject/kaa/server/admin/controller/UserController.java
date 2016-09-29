@@ -240,9 +240,11 @@ public class UserController extends AbstractAdminController {
     @ResponseBody
     public UserDto editUser(
             @ApiParam(name = "user", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
-           @Valid @RequestBody UserDto user) throws KaaAdminServiceException {
+           @Valid @RequestBody UserDto user,
+            @RequestParam(value="doSendTempPassword", required = false, defaultValue = "false")
+            boolean doSendTempPassword) throws KaaAdminServiceException {
         try {
-            return userService.editUser(user);
+            return userService.editUser(user, doSendTempPassword);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }

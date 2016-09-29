@@ -98,7 +98,8 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     }
 
     @Override
-    public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
+    public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user,
+                                                                boolean doSendTempPassword)
             throws KaaAdminServiceException {
         try {
             boolean createNewUser = (user.getId() == null);
@@ -106,7 +107,7 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             String tempPassword = null;
             if (createNewUser)  {
                 checkCreateUserPermission(user);
-                tempPassword = createNewUser(user);
+                tempPassword = createNewUser(user, doSendTempPassword);
             } else {
                 checkEditUserPermission(user);
                 editUserFacadeUser(user);
