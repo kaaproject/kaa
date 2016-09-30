@@ -31,6 +31,9 @@ public class ProfileSchemasDataProvider
 
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public ProfileSchemasDataProvider(AbstractGrid<EndpointProfileSchemaDto, String> dataGrid,
                                     HasErrorMessage hasErrorMessage,
                                     String applicationId) {

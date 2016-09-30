@@ -31,6 +31,9 @@ public class NotificationSchemasDataProvider
 
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public NotificationSchemasDataProvider(AbstractGrid<NotificationSchemaDto, String> dataGrid,
                                          HasErrorMessage hasErrorMessage,
                                          String applicationId) {

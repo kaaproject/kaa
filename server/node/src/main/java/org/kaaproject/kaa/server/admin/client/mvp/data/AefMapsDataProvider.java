@@ -31,6 +31,9 @@ public class AefMapsDataProvider
 
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public AefMapsDataProvider(AbstractGrid<ApplicationEventFamilyMapDto, String> dataGrid,
                              HasErrorMessage hasErrorMessage,
                              String applicationId) {

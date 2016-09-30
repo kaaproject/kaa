@@ -31,6 +31,9 @@ public class ConfigurationSchemasDataProvider
 
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public ConfigurationSchemasDataProvider(AbstractGrid<ConfigurationSchemaDto, String> dataGrid,
                                           HasErrorMessage hasErrorMessage,
                                           String applicationId) {

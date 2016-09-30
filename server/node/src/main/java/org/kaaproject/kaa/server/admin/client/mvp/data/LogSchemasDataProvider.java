@@ -30,6 +30,9 @@ public class LogSchemasDataProvider extends AbstractDataProvider<LogSchemaDto, S
 
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public LogSchemasDataProvider(AbstractGrid<LogSchemaDto, String> dataGrid,
                                 HasErrorMessage hasErrorMessage,
                                 String applicationId) {

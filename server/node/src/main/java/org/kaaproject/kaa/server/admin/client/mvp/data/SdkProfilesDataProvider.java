@@ -34,7 +34,10 @@ import java.util.List;
 public class SdkProfilesDataProvider extends AbstractDataProvider<SdkProfileDto, String> {
 
   private final String applicationId;
-
+  
+  /**
+   * All-args constructor.
+   */
   public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid,
                                  HasErrorMessage hasErrorMessage, String applicationId) {
     super(dataGrid, hasErrorMessage, false);

@@ -33,9 +33,13 @@ public class DataEvent extends GwtEvent<DataEventHandler> {
     this.refreshTree = refreshTree;
   }
 
+  /**
+   * Returns type.
+   * @return type
+   */
   public static Type<DataEventHandler> getType() {
     if (TYPE == null) {
-      TYPE = new Type<DataEventHandler>();
+      TYPE = new Type<>();
     }
     return TYPE;
   }

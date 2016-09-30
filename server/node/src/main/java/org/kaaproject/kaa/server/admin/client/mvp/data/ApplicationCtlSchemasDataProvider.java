@@ -33,6 +33,9 @@ public class ApplicationCtlSchemasDataProvider
 
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public ApplicationCtlSchemasDataProvider(AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid,
                                            HasErrorMessage hasErrorMessage,
                                            String applicationId) {

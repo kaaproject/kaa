@@ -31,6 +31,9 @@ import java.util.List;
 public class AppendersDataProvider extends AbstractDataProvider<LogAppenderDto, String> {
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public AppendersDataProvider(AbstractGrid<LogAppenderDto, String> dataGrid,
                                HasErrorMessage hasErrorMessage,
                                String applicationId) {

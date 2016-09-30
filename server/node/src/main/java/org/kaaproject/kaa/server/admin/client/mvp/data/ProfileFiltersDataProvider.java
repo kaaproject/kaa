@@ -33,6 +33,14 @@ public class ProfileFiltersDataProvider
   private String endpointGroupId;
   private boolean includeDeprecated = false;
 
+  /**
+   * Instantiates a new data provider.
+   *
+   * @param dataGrid           data grid
+   * @param hasErrorMessage    indicate whether it is error message
+   * @param endpointGroupId    endpoint group id
+   * @param includeDeprecated  indicate whether to include deprecated
+   */
   public ProfileFiltersDataProvider(
       AbstractGrid<ProfileFilterRecordDto, ProfileFilterRecordKey> dataGrid,
       HasErrorMessage hasErrorMessage,

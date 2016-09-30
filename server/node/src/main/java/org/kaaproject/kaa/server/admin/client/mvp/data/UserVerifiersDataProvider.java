@@ -30,7 +30,9 @@ import java.util.List;
 
 public class UserVerifiersDataProvider extends AbstractDataProvider<UserVerifierDto, String> {
   private String applicationId;
-
+  /**
+   * All-args constructor.
+   */
   public UserVerifiersDataProvider(AbstractGrid<UserVerifierDto, String> dataGrid,
                                    HasErrorMessage hasErrorMessage,
                                    String applicationId) {

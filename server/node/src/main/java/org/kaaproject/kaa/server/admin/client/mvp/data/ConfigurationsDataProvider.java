@@ -32,7 +32,10 @@ public class ConfigurationsDataProvider
 
   private String endpointGroupId;
   private boolean includeDeprecated = false;
-
+  
+  /**
+   * All-args constructor.
+   */
   public ConfigurationsDataProvider(AbstractGrid<ConfigurationRecordDto, ConfigRecordKey> dataGrid,
                                     HasErrorMessage hasErrorMessage,
                                     String endpointGroupId, boolean includeDeprecated) {

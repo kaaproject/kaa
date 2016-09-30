@@ -47,6 +47,9 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
   private int previousStart = -1;
   private AbstractGrid<EndpointProfileDto, String> dataGrid;
 
+  /**
+   * All-args constructor.
+   */
   public EndpointProfileDataProvider(AbstractGrid<EndpointProfileDto, String> dataGrid,
                                      HasErrorMessage hasErrorMessage, String applicationId) {
     super(dataGrid, hasErrorMessage, true);
@@ -135,6 +138,9 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     this.endpointKeyHash = endpointKeyHash;
   }
 
+  /**
+   * Updates endpoint profile data.
+   */
   public void update() {
     reset();
     dataGrid.getDataGrid().setVisibleRangeAndClearData(

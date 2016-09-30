@@ -34,6 +34,9 @@ public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, 
   private int ecfVersion;
   private List<EventClassViewDto> eventClassViewDtoList;
 
+  /**
+   * All-args constructor.
+   */
   public EcfVersionDataProvider(AbstractGrid<EventClassDto, String> dataGrid,
                                 HasErrorMessage hasErrorMessage,
                                 String eventClassFamilyId,

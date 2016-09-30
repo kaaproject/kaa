@@ -158,10 +158,18 @@ public class DataSource {
 
   private List<PluginInfoDto> userVerifierPluginInfos;
 
+  /**
+   * All-args constructor.
+   */
   public DataSource(EventBus eventBus) {
     this.eventBus = eventBus;
   }
 
+  /**
+   * Returns a user profile in async way.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void getUserProfile(
       final AsyncCallback<UserDto> callback) {
     userRpcService.getUserProfile(
@@ -172,6 +180,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a tenant admin list in async way.
+   *
+   * @param tenantId tenant id for which a list should be loaded
+   * @param callback callback which should be called with a result
+   */
   public void loadAllTenantAdminsByTenantId(String tenantId,
                                             final AsyncCallback<List<UserDto>> callback) {
 
@@ -184,6 +198,14 @@ public class DataSource {
     });
   }
 
+  /**
+   * Returns a user configuration in async way.
+   *
+   * @param externalUserId   external user id
+   * @param appId            application id
+   * @param schemaVersion    schema version
+   * @param callback         callback which should be called with a result
+   */
   public void findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(
       String externalUserId,
       String appId,
@@ -198,10 +220,14 @@ public class DataSource {
             eventBus.fireEvent(new DataEvent(EndpointUserConfigurationDto.class, true));
           }
         });
-
-
   }
 
+  /**
+   * Edits a user profile in async way.
+   *
+   * @param userProfileUpdateDto new user profile
+   * @param callback             callback which should be called with a result
+   */
   public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto,
                               final AsyncCallback<Void> callback) {
     userRpcService.editUserProfile(userProfileUpdateDto,
@@ -212,6 +238,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Finds an endpoint configuration in async way.
+   *
+   * @param endpointKeyHash endpoint key hash
+   * @param callback        callback which should be called with a result
+   */
   public void findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash,
                                                          final AsyncCallback<String> callback) {
     configurationRpcService.findEndpointConfigurationByEndpointKeyHash(
@@ -225,6 +257,11 @@ public class DataSource {
   }
 
 
+  /**
+   * Returns mail properties.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void getMailProperties(
       final AsyncCallback<PropertiesDto> callback) {
     adminUirpcService.getMailProperties(
@@ -235,6 +272,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits email properties.
+   *
+   * @param mailProperties new mail properties
+   * @param callback       callback which should be called with a result
+   */
   public void editMailProperties(PropertiesDto mailProperties,
                                  final AsyncCallback<PropertiesDto> callback) {
     adminUirpcService.editMailProperties(mailProperties,
@@ -245,6 +288,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns general properties in async way.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void getGeneralProperties(
       final AsyncCallback<PropertiesDto> callback) {
     adminUirpcService.getGeneralProperties(
@@ -255,9 +303,15 @@ public class DataSource {
         });
   }
 
-  public void editGeneralProperties(PropertiesDto mailProperties,
+  /**
+   * Edits general properties
+   *
+   * @param generalProperties new general properties
+   * @param callback          callback which should be called with a result
+   */
+  public void editGeneralProperties(PropertiesDto generalProperties,
                                     final AsyncCallback<PropertiesDto> callback) {
-    adminUirpcService.editGeneralProperties(mailProperties,
+    adminUirpcService.editGeneralProperties(generalProperties,
         new DataCallback<PropertiesDto>(callback) {
           @Override
           protected void onResult(PropertiesDto result) {
@@ -265,15 +319,26 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads tenants in async way.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void loadTenants(final AsyncCallback<List<TenantDto>> callback) {
     loadTenants(callback, false);
   }
 
 
+  /**
+   * Loads tenants in async way.
+   *
+   * @param callback callback which should be called with a result
+   * @param refresh indicate whether to clear an existing tenant list
+   */
   public void loadTenants(final AsyncCallback<List<TenantDto>> callback,
                           boolean refresh) {
     if (tenants == null || refresh) {
-      tenants = new ArrayList<TenantDto>();
+      tenants = new ArrayList<>();
       tenantRpcService.getTenants(new DataCallback<List<TenantDto>>(callback) {
         @Override
         protected void onResult(List<TenantDto> result) {
@@ -292,6 +357,12 @@ public class DataSource {
     loadTenants(null, true);
   }
 
+  /**
+   * Deletes a tenant with a specified identifier.
+   *
+   * @param tenantId identifier of a tenant which should be deleted
+   * @param callback callback which should be called with a result
+   */
   public void deleteTenant(String tenantId, final AsyncCallback<Void> callback) {
     tenantRpcService.deleteTenant(tenantId, new DataCallback<Void>(callback) {
       @Override
@@ -301,6 +372,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Edits a tenant.
+   *
+   * @param tenant   new tenant
+   * @param callback callback which should be called with a result
+   */
   public void editTenant(TenantDto tenant,
                          final AsyncCallback<TenantDto> callback) {
     tenantRpcService.editTenant(tenant,
@@ -312,6 +389,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a tenant in async way.
+   *
+   * @param tenantId identifier of a tenant which should be returned
+   * @param callback callback which should be called with a result
+   */
   public void getTenant(String tenantId,
                         final AsyncCallback<TenantDto> callback) {
     tenantRpcService.getTenant(tenantId,
@@ -322,15 +405,26 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads an application list in async way.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void loadApplications(
       final AsyncCallback<List<ApplicationDto>> callback) {
     loadApplications(callback, false);
   }
 
+  /**
+   * Loads an application list in async way.
+   *
+   * @param callback callback which should be called with a result
+   * @param refresh  indicate whether to clear an existing application list
+   */
   public void loadApplications(
       final AsyncCallback<List<ApplicationDto>> callback, boolean refresh) {
     if (applications == null || refresh) {
-      applications = new ArrayList<ApplicationDto>();
+      applications = new ArrayList<>();
       applicationRpcService.getApplications(new DataCallback<List<ApplicationDto>>(
           callback) {
         @Override
@@ -350,6 +444,12 @@ public class DataSource {
     loadApplications(null, true);
   }
 
+  /**
+   * Edits an application.
+   *
+   * @param application new application
+   * @param callback    callback which should be called with a result
+   */
   public void editApplication(ApplicationDto application,
                               final AsyncCallback<ApplicationDto> callback) {
     applicationRpcService.editApplication(application,
@@ -361,6 +461,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns an application in async way.
+   *
+   * @param applicationId identifier of an application which should be returned
+   * @param callback      callback which should be called with a result
+   */
   public void getApplication(String applicationId,
                              final AsyncCallback<ApplicationDto> callback) {
     applicationRpcService.getApplication(applicationId,
@@ -371,6 +477,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a schema version in async way.
+   *
+   * @param applicationId  identifier of an application whose schema version should be returned
+   * @param callback       callback which should be called with a result
+   */
   public void getSchemaVersionsByApplicationId(String applicationId,
                                                final AsyncCallback<SchemaVersions> callback) {
     sdkRpcService.getSchemaVersionsByApplicationId(applicationId,
@@ -381,6 +493,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Generates a sdk.
+   *
+   * @param sdkProfile     sdk profile
+   * @param targetPlatform target platform
+   * @param callback       callback which should be called with a result
+   */
   public void generateSdk(SdkProfileDto sdkProfile, SdkPlatform targetPlatform,
                           final AsyncCallback<String> callback) {
     sdkRpcService.generateSdk(sdkProfile, targetPlatform,
@@ -391,6 +510,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a record data in async way.
+   *
+   * @param applicationId    application identifier
+   * @param logSchemaVersion log schema version
+   * @param fileType         file type
+   * @param callback         callback which should be called with a result
+   */
   public void getRecordData(String applicationId,
                             Integer logSchemaVersion, RecordFiles fileType,
                             final AsyncCallback<String> callback) {
@@ -403,6 +530,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a record library in async way.
+   *
+   * @param applicationId    application identifier
+   * @param logSchemaVersion log schema version
+   * @param fileType         file type
+   * @param callback         callback which should be called with a result
+   */
   public void getRecordLibrary(String applicationId,
                                Integer logSchemaVersion, RecordFiles fileType,
                                final AsyncCallback<String> callback) {
@@ -415,14 +550,25 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a user list in async way.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void loadUsers(final AsyncCallback<List<UserDto>> callback) {
     loadUsers(callback, false);
   }
 
+  /**
+   * Loads a user list in async way.
+   *
+   * @param callback callback which should be called with a result
+   * @param refresh  indicate whether to clear an existing user list
+   */
   public void loadUsers(final AsyncCallback<List<UserDto>> callback,
                         boolean refresh) {
     if (users == null || refresh) {
-      users = new ArrayList<UserDto>();
+      users = new ArrayList<>();
       userRpcService.getUsers(new DataCallback<List<UserDto>>(callback) {
         @Override
         protected void onResult(List<UserDto> result) {
@@ -441,6 +587,12 @@ public class DataSource {
     loadUsers(null, true);
   }
 
+  /**
+   * Deletes a user with a specified identifier.
+   *
+   * @param userId   identifier of user which should be deleted
+   * @param callback callback which should be called with a result
+   */
   public void deleteUser(String userId, final AsyncCallback<Void> callback) {
     userRpcService.deleteUser(userId, new DataCallback<Void>(callback) {
       @Override
@@ -450,6 +602,11 @@ public class DataSource {
     });
   }
 
+  /**
+   * Edits a user.
+   * @param user     new user
+   * @param callback callback which should be called with a result
+   */
   public void editUser(UserDto user, final AsyncCallback<UserDto> callback) {
     userRpcService.editUser(user, new DataCallback<UserDto>(callback) {
       @Override
@@ -461,6 +618,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Returns a user with a specified identifier in async way.
+   *
+   * @param userId   user identifier
+   * @param callback callback which should be called with a result
+   */
   public void getUser(String userId, final AsyncCallback<UserDto> callback) {
     userRpcService.getUser(userId, new DataCallback<UserDto>(callback) {
       @Override
@@ -469,6 +632,11 @@ public class DataSource {
     });
   }
 
+  /**
+   * Creates a simple empty schema form.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void createSimpleEmptySchemaForm(final AsyncCallback<RecordField> callback) {
     adminUirpcService.createSimpleEmptySchemaForm(new DataCallback<RecordField>(callback) {
       @Override
@@ -477,6 +645,11 @@ public class DataSource {
     });
   }
 
+  /**
+   * Creates a common empty schema form.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void createCommonEmptySchemaForm(final AsyncCallback<RecordField> callback) {
     adminUirpcService.createCommonEmptySchemaForm(new DataCallback<RecordField>(callback) {
       @Override
@@ -485,6 +658,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Create a configuration schema.
+   *
+   * @param ctlSchemaForm CTL schema
+   * @param callback      callback which should be called with a result
+   */
   public void createConfigurationSchemaFormCtlSchema(
       CtlSchemaFormDto ctlSchemaForm,
       final AsyncCallback<ConfigurationSchemaViewDto> callback) {
@@ -497,6 +676,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Creates the empty ECF schema form.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void createEcfEmptySchemaForm(final AsyncCallback<RecordField> callback) {
     eventRpcService.createEcfEmptySchemaForm(new DataCallback<RecordField>(callback) {
       @Override
@@ -505,6 +689,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Generates a simple schema form.
+   *
+   * @param fileItemName file item name
+   * @param callback     callback which should be called with a result
+   */
   public void generateSimpleSchemaForm(String fileItemName,
                                        final AsyncCallback<RecordField> callback) {
     adminUirpcService.generateSimpleSchemaForm(fileItemName,
@@ -515,6 +705,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Generates a common schema form.
+   *
+   * @param fileItemName file item name
+   * @param callback     callback which should be called with a result
+   */
   public void generateCommonSchemaForm(String fileItemName,
                                        final AsyncCallback<RecordField> callback) {
     adminUirpcService.generateCommonSchemaForm(fileItemName,
@@ -525,6 +721,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Generates a configuration schema form.
+   *
+   * @param fileItemName file item name
+   * @param callback     callback which should be called with a result
+   */
   public void generateConfigurationSchemaForm(String fileItemName,
                                               final AsyncCallback<RecordField> callback) {
     configurationRpcService.generateConfigurationSchemaForm(fileItemName,
@@ -535,6 +737,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Generates the ECF version form.
+   *
+   * @param fileItemName file item name
+   * @param callback     callback which should be called with a result
+   */
   public void generateEcfVersionForm(String fileItemName,
                                      final AsyncCallback<RecordField> callback) {
     eventRpcService.generateEcfSchemaForm(fileItemName,
@@ -545,15 +753,26 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads the event class family list in async way.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void loadEcfs(
       final AsyncCallback<List<EventClassFamilyDto>> callback) {
     loadEcfs(callback, false);
   }
 
+  /**
+   * Loads the event class family list in async way.
+   *
+   * @param callback callback which should be called with a result
+   * @param refresh  indicate whether to clear an existing ECF list
+   */
   public void loadEcfs(
       final AsyncCallback<List<EventClassFamilyDto>> callback, boolean refresh) {
     if (ecfs == null || refresh) {
-      ecfs = new ArrayList<EventClassFamilyDto>();
+      ecfs = new ArrayList<>();
       eventRpcService.getEventClassFamilies(new DataCallback<List<EventClassFamilyDto>>(
           callback) {
         @Override
@@ -573,6 +792,12 @@ public class DataSource {
     loadEcfs(null, true);
   }
 
+  /**
+   * Edits an event class family.
+   *
+   * @param ecf      new event class family
+   * @param callback callback which should be called with a result
+   */
   public void editEcf(EventClassFamilyDto ecf,
                       final AsyncCallback<EventClassFamilyDto> callback) {
     eventRpcService.editEventClassFamily(ecf,
@@ -584,6 +809,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads an event class family in async way.
+   *
+   * @param ecfId    identifier of an event class family
+   * @param callback callback which should be called with a result
+   */
   public void getEcf(String ecfId,
                      final AsyncCallback<EventClassFamilyDto> callback) {
     eventRpcService.getEventClassFamily(ecfId,
@@ -594,6 +825,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads an event class view in async way.
+   *
+   * @param eventClassId identifier of an event class view which should be loaded
+   * @param callback     callback which should be called with a result
+   */
   public void getEventClassView(String eventClassId,
                                 final AsyncCallback<EventClassViewDto> callback) {
     eventRpcService.getEventClassView(eventClassId, new DataCallback<EventClassViewDto>(callback) {
@@ -604,6 +841,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Loads an event class view in async way.
+   *
+   * @param eventClassViewDto event class view
+   * @param callback          callback which should be called with a result
+   */
   public void getEventClassViewByCtlSchemaId(EventClassDto eventClassViewDto,
                                              final AsyncCallback<EventClassViewDto> callback) {
     eventRpcService.getEventClassViewByCtlSchemaId(
@@ -615,6 +858,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Save an event class view.
+   *
+   * @param eventClassViewDto event class view
+   * @param callback          callback which should be called with a result
+   */
   public void saveEventClassView(EventClassViewDto eventClassViewDto,
                                  final AsyncCallback<EventClassViewDto> callback) {
     eventRpcService.saveEventClassView(
@@ -627,6 +876,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Creates an event class form.
+   *
+   * @param ctlSchemaFormDto CTL schema form
+   * @param callback         callback which should be called with a result
+   */
   public void createEventClassFormCtlSchema(CtlSchemaFormDto ctlSchemaFormDto,
                                             final AsyncCallback<EventClassViewDto> callback) {
     eventRpcService.createEventClassFormCtlSchema(ctlSchemaFormDto,
@@ -638,6 +893,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Returns event class family versions.
+   *
+   * @param eventClassFamilyId event class family identifier
+   * @param callback           callback which should be called with a result
+   */
   public void getEventClassFamilyVersions(
       String eventClassFamilyId,
       final AsyncCallback<List<EventClassFamilyVersionDto>> callback) {
@@ -650,6 +911,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Returns the last CTL schema reference.
+   *
+   * @param ctlSchemaId CTL schema identifier
+   * @param callback    callback which should be called with a result
+   */
   public void getLastCtlSchemaReferenceDto(String ctlSchemaId,
                                            final AsyncCallback<CtlSchemaReferenceDto> callback) {
     ctlRpcService.getLastCtlSchemaReferenceDto(
@@ -661,6 +928,13 @@ public class DataSource {
 
   }
 
+  /**
+   * Adds an event class family version
+   *
+   * @param eventClassFamilyId event class family identifier
+   * @param eventClassViewDto  event class family view
+   * @param callback           callback which should be called with a result
+   */
   public void addEventClassFamilyVersionFromView(String eventClassFamilyId,
                                                  List<EventClassViewDto> eventClassViewDto,
                                                  final AsyncCallback<Void> callback) {
@@ -673,6 +947,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns an event class family in async way.
+   *
+   * @param eventClassFamilyId event class family identifier
+   * @param version            event class family version
+   * @param type               event class family type
+   * @param callback           callback which should be called with a result
+   */
   public void getEventClassesByFamilyIdVersionAndType(
       String eventClassFamilyId,
       int version,
@@ -686,6 +968,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Adds an event class family version.
+   *
+   * @param eventClassFamilyId      event class family identifier
+   * @param eventClassFamilyVersion event class family version
+   * @param callback                callback which should be called with a result
+   */
   public void addEventClassFamilyVersion(String eventClassFamilyId,
                                          EventClassFamilyVersionDto eventClassFamilyVersion,
                                          final AsyncCallback<Void> callback) {
@@ -697,6 +986,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Validates an event class family list in the SDK profile.
+   *
+   * @param ecfList  event class family list
+   * @param callback callback which should be called with a result
+   */
   public void validateEcfListInSdkProfile(List<AefMapInfoDto> ecfList,
                                           final AsyncCallback<Void> callback) {
     eventRpcService.validateEcfListInSdkProfile(ecfList, new DataCallback<Void>(callback) {
@@ -706,6 +1001,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Loads profile schemas.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadProfileSchemas(String applicationId,
                                  final AsyncCallback<List<EndpointProfileSchemaDto>> callback) {
     profileRpcService.getProfileSchemasByApplicationId(applicationId,
@@ -717,6 +1018,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Save profile schema view.
+   *
+   * @param profileSchemaView profile schema view
+   * @param callback          callback which should be called with a result
+   */
   public void saveProfileSchemaView(ProfileSchemaViewDto profileSchemaView,
                                     final AsyncCallback<ProfileSchemaViewDto> callback) {
     profileRpcService.saveProfileSchemaView(profileSchemaView,
@@ -728,6 +1035,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Creates a profile schema form the CTL schema.
+   *
+   * @param ctlSchemaForm CTL schema form
+   * @param callback      callback which should be called with a result
+   */
   public void createProfileSchemaFormCtlSchema(
       CtlSchemaFormDto ctlSchemaForm,
       final AsyncCallback<ProfileSchemaViewDto> callback) {
@@ -740,6 +1053,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a profile schema view in async way.
+   *
+   * @param profileSchemaId profile schema identifier
+   * @param callback        callback which should be called with a result
+   */
   public void getProfileSchemaView(String profileSchemaId,
                                    final AsyncCallback<ProfileSchemaViewDto> callback) {
     profileRpcService.getProfileSchemaView(profileSchemaId,
@@ -750,6 +1069,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads server profile schemas.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadServerProfileSchemas(
       String applicationId,
       final AsyncCallback<List<ServerProfileSchemaDto>> callback) {
@@ -761,6 +1086,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a server profile schema info list
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getServerProfileSchemaInfosByApplicationId(
       String applicationId,
       final AsyncCallback<List<SchemaInfoDto>> callback) {
@@ -772,6 +1103,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a server profile schema info list.
+   *
+   * @param endpointKeyHash endpoint key hash
+   * @param callback        callback which should be called with a result
+   */
   public void getServerProfileSchemaInfosByEndpointKey(
       String endpointKeyHash,
       final AsyncCallback<List<SchemaInfoDto>> callback) {
@@ -783,6 +1120,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a server profile schema view.
+   *
+   * @param serverProfileSchemaId server profile schema identifier
+   * @param callback              callback which should be called with a result
+   */
   public void getServerProfileSchemaView(
       String serverProfileSchemaId,
       final AsyncCallback<ServerProfileSchemaViewDto> callback) {
@@ -794,6 +1137,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Save server profile schema view.
+   *
+   * @param serverProfileSchema server profile schema
+   * @param callback            callback which should be called with a result
+   */
   public void saveServerProfileSchemaView(
       ServerProfileSchemaViewDto serverProfileSchema,
       final AsyncCallback<ServerProfileSchemaViewDto> callback) {
@@ -806,6 +1155,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Creates a server profile schema.
+   *
+   * @param ctlSchemaForm CTL schema form
+   * @param callback      callback which should be called with a result
+   */
   public void createServerProfileSchemaFormCtlSchema(
       CtlSchemaFormDto ctlSchemaForm,
       final AsyncCallback<ServerProfileSchemaViewDto> callback) {
@@ -818,6 +1173,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns an endpoint profile schema info.
+   *
+   * @param endpointProfileSchemaId endpoint profile schema identifier
+   * @param callback                callback which should be called with a result
+   */
   public void getEndpointProfileSchemaInfo(String endpointProfileSchemaId,
                                            final AsyncCallback<SchemaInfoDto> callback) {
     profileRpcService.getEndpointProfileSchemaInfo(endpointProfileSchemaId,
@@ -828,6 +1189,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a server profile schema info.
+   *
+   * @param serverProfileSchemaId server profile identifier
+   * @param callback              callback which should be called with a result
+   */
   public void getServerProfileSchemaInfo(String serverProfileSchemaId,
                                          final AsyncCallback<SchemaInfoDto> callback) {
     profileRpcService.getServerProfileSchemaInfo(serverProfileSchemaId,
@@ -838,6 +1205,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Tests a profile filter.
+   *
+   * @param endpointProfile endpoint profile
+   * @param serverProfile   server profile
+   * @param filterBody      filter to be evaluated
+   * @param callback        callback which should be called with a result
+   */
   public void testProfileFilter(RecordField endpointProfile, RecordField serverProfile,
                                 String filterBody,
                                 final AsyncCallback<Boolean> callback) {
@@ -849,6 +1224,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns an available application CTL schema reference list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getAvailableApplicationCtlSchemaReferences(
       String applicationId,
       final AsyncCallback<List<CtlSchemaReferenceDto>> callback) {
@@ -860,6 +1241,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a CTL schema reference list on a specified tenant level.
+   *
+   * @param ecfId                 event class family identifier
+   * @param eventClassViewDtoList event class view list
+   * @param callback              callback which should be called with a result
+   */
   public void getTenantLevelCtlSchemaReferenceForEcf(
       String ecfId,
       List<EventClassViewDto> eventClassViewDtoList,
@@ -872,6 +1260,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a configuration schema list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadConfigurationSchemas(
       String applicationId,
       final AsyncCallback<List<ConfigurationSchemaDto>> callback) {
@@ -884,6 +1278,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Save a configuration schema view.
+   *
+   * @param configurationSchema configuration schema view
+   * @param callback            callback which should be called with a result
+   */
   public void saveConfigurationSchemaView(
       ConfigurationSchemaViewDto configurationSchema,
       final AsyncCallback<ConfigurationSchemaViewDto> callback) {
@@ -897,6 +1297,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns configuration schema view for specified identifier.
+   *
+   * @param configurationSchemaId configuration schema identifier
+   * @param callback              callback which should be called with a result
+   */
   public void getConfigurationSchemaView(
       String configurationSchemaId,
       final AsyncCallback<ConfigurationSchemaViewDto> callback) {
@@ -908,6 +1314,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads notification schema list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadNotificationSchemas(String applicationId,
                                       final AsyncCallback<List<NotificationSchemaDto>> callback) {
     notificationRpcService.getNotificationSchemasByApplicationId(applicationId,
@@ -919,6 +1331,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Save a notification schema view.
+   *
+   * @param notificationSchema notification schema view
+   * @param callback           callback which should be called with a result
+   */
   public void saveNotificationSchemaView(
       NotificationSchemaViewDto notificationSchema,
       final AsyncCallback<NotificationSchemaViewDto> callback) {
@@ -932,6 +1350,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Creates a notification schema.
+   * @param ctlSchemaForm CTL schema form
+   * @param callback      callback which should be called with a result
+   */
   public void createNotificationSchemaFormCtlSchema(
       CtlSchemaFormDto ctlSchemaForm,
       final AsyncCallback<NotificationSchemaViewDto> callback) {
@@ -944,6 +1367,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a notification schema view.
+   *
+   * @param profileSchemaId profile schema identifier
+   * @param callback         callback which should be called with a result
+   */
   public void getNotificationSchemaView(
       String profileSchemaId,
       final AsyncCallback<NotificationSchemaViewDto> callback) {
@@ -955,6 +1384,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a notification schema.
+   *
+   * @param profileSchemaId profile schema identifier
+   * @param callback        callback which should be called with a result
+   */
   public void getNotificationSchema(String profileSchemaId,
                                     final AsyncCallback<NotificationSchemaDto> callback) {
     notificationRpcService.getNotificationSchema(profileSchemaId,
@@ -965,6 +1400,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a log schema list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadLogSchemas(String applicationId,
                              final AsyncCallback<List<LogSchemaDto>> callback) {
     loggingRpcService.getLogSchemasByApplicationId(applicationId,
@@ -976,6 +1417,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Loads a log schema version list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadLogSchemasVersion(String applicationId,
                                     final AsyncCallback<List<VersionDto>> callback) {
     loggingRpcService.getLogSchemasVersions(applicationId,
@@ -986,6 +1433,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Save a log schema view.
+   *
+   * @param logSchema log schema view
+   * @param callback  callback which should be called with a result
+   */
   public void saveLogSchemaView(LogSchemaViewDto logSchema,
                                 final AsyncCallback<LogSchemaViewDto> callback) {
     loggingRpcService.saveLogSchemaView(logSchema,
@@ -997,6 +1450,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a log schema view.
+   *
+   * @param logSchemaId log schema identifier
+   * @param callback    callback which should be called with a result
+   */
   public void getLogSchemaView(String logSchemaId,
                                final AsyncCallback<LogSchemaViewDto> callback) {
     loggingRpcService.getLogSchemaView(logSchemaId,
@@ -1007,6 +1466,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Creates a log schema.
+   *
+   * @param ctlSchemaForm CTL schema form
+   * @param callback      callback which should be called with a result
+   */
   public void createLogSchemaFormCtlSchema(CtlSchemaFormDto ctlSchemaForm,
                                            final AsyncCallback<LogSchemaViewDto> callback) {
     loggingRpcService.createLogSchemaFormCtlSchema(ctlSchemaForm,
@@ -1017,6 +1482,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns the CTL schema list on a system level.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void getSystemLevelCtlSchemas(
       final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
     ctlRpcService.getSystemLevelCtlSchemas(
@@ -1027,6 +1497,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns the CTL schema list on a tenant level.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void getTenantLevelCtlSchemas(
       final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
     ctlRpcService.getTenantLevelCtlSchemas(
@@ -1037,6 +1512,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns CTL schema by a specified identifier.
+   *
+   * @param ctlSchemaId CTL schema identifier
+   * @param callback    callback which should be called with a result
+   */
   public void getCtlSchemaById(String ctlSchemaId,
                                final AsyncCallback<CTLSchemaDto> callback) {
     ctlRpcService.getCtlSchemaById(ctlSchemaId,
@@ -1047,6 +1528,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns the CTL schema list on an application level.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getApplicationLevelCtlSchemas(
       String applicationId,
       final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
@@ -1058,6 +1545,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns the latest CTL schema form
+   *
+   * @param metaInfoId meta information identifier
+   * @param callback   callback which should be called with a result
+   */
   public void getLatestCtlSchemaForm(String metaInfoId,
                                      final AsyncCallback<CtlSchemaFormDto> callback) {
     ctlRpcService.getLatestCtlSchemaForm(metaInfoId,
@@ -1068,6 +1561,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns the CTL schema form
+   *
+   * @param metaInfoId meta information identifier
+   * @param version    CTL schema version
+   * @param callback   callback which should be called with a result
+   */
   public void getCtlSchemaFormByMetaInfoIdAndVer(String metaInfoId, Integer version,
                                                  final AsyncCallback<CtlSchemaFormDto> callback) {
     ctlRpcService.getCtlSchemaFormByMetaInfoIdAndVer(metaInfoId, version,
@@ -1078,6 +1578,15 @@ public class DataSource {
         });
   }
 
+  /**
+   * Creates new CTK schema form instance.
+   *
+   * @param metaInfoId    meta information identifier
+   * @param sourceVersion source version
+   * @param applicationId application identifier
+   * @param converterType converter type
+   * @param callback      callback which should be called with a result
+   */
   public void createNewCtlSchemaFormInstance(String metaInfoId, Integer sourceVersion,
                                              String applicationId, ConverterType converterType,
                                              final AsyncCallback<CtlSchemaFormDto> callback) {
@@ -1090,6 +1599,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Generates the CTL schema form.
+   *
+   * @param fileItemName  file item name
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void generateCtlSchemaForm(String fileItemName, String applicationId,
                                     final AsyncCallback<RecordField> callback) {
     ctlRpcService.generateCtlSchemaForm(fileItemName, applicationId,
@@ -1100,6 +1616,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits the CTL schema form.
+   *
+   * @param ctlSchemaForm CTL schema form
+   * @param converterType converter type
+   * @param callback      callback which should be called with a result
+   */
   public void editCtlSchemaForm(CtlSchemaFormDto ctlSchemaForm,
                                 ConverterType converterType,
                                 final AsyncCallback<CtlSchemaFormDto> callback) {
@@ -1112,6 +1635,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Check whether fully qualified name exists.
+   *
+   * @param ctlSchemaForm CTL schema form
+   * @param callback      callback which should be called with a result
+   */
   public void checkFqnExists(CtlSchemaFormDto ctlSchemaForm,
                              final AsyncCallback<Boolean> callback) {
     ctlRpcService.checkFqnExists(ctlSchemaForm,
@@ -1122,6 +1651,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Promotes a scope
+   *
+   * @param applicationId application identifier
+   * @param fqn           fully qualified name
+   * @param callback      callback which should be called with a result
+   */
   public void promoteScopeToTenant(String applicationId, String fqn,
                                    final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
     ctlRpcService.promoteScopeToTenant(applicationId, fqn,
@@ -1133,6 +1669,15 @@ public class DataSource {
         });
   }
 
+  /**
+   * Deletes the CTL schema.
+   *
+   * @param fqn           fully qualified name
+   * @param version       fully qualified name version
+   * @param tenantId      tenant identifier
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void deleteCtlSchemaByFqnVersionTenantIdAndApplicationId(
       String fqn, Integer version, String tenantId,
       String applicationId, final AsyncCallback<Void> callback) {
@@ -1146,6 +1691,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Prepares the CTL schema to export.
+   *
+   * @param ctlSchemaId CTL schema identifier
+   * @param method      CTL schema export method
+   * @param callback    callback which should be called with a result
+   */
   public void prepareCtlSchemaExport(String ctlSchemaId, CTLSchemaExportMethod method,
                                      final AsyncCallback<String> callback) {
     ctlRpcService.prepareCtlSchemaExport(ctlSchemaId, method, new DataCallback<String>(callback) {
@@ -1155,6 +1707,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Loads application event family maps.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadApplicationEventFamilyMaps(
       String applicationId,
       final AsyncCallback<List<ApplicationEventFamilyMapDto>> callback) {
@@ -1167,6 +1725,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Edtis an application event family map.
+   *
+   * @param applicationEventFamilyMap application event family map
+   * @param callback                  callback which should be called with a result
+   */
   public void editApplicationEventFamilyMap(
       ApplicationEventFamilyMapDto applicationEventFamilyMap,
       final AsyncCallback<ApplicationEventFamilyMapDto> callback) {
@@ -1179,6 +1743,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns an application event family map.
+   *
+   * @param applicationEventFamilyMapId application event family map identifier
+   * @param callback                    callback which should be called with a result
+   */
   public void getApplicationEventFamilyMap(
       String applicationEventFamilyMapId,
       final AsyncCallback<ApplicationEventFamilyMapDto> callback) {
@@ -1190,6 +1760,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a list of vacant event class families.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getVacantEventClassFamilies(String applicationId,
                                           final AsyncCallback<List<EcfInfoDto>> callback) {
     eventRpcService.getVacantEventClassFamiliesByApplicationId(applicationId,
@@ -1200,6 +1776,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns an attached class family list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getAefMaps(String applicationId,
                          final AsyncCallback<List<AefMapInfoDto>> callback) {
     eventRpcService.getEventClassFamiliesByApplicationId(applicationId,
@@ -1210,6 +1792,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads an endpoint group list in async way.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadEndpointGroups(String applicationId,
                                  final AsyncCallback<List<EndpointGroupDto>> callback) {
     groupRpcService.getEndpointGroupsByApplicationId(applicationId,
@@ -1221,6 +1809,12 @@ public class DataSource {
 
   }
 
+  /**
+   * Deletes an endpoint group.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void deleteEndpointGroup(String endpointGroupId,
                                   final AsyncCallback<Void> callback) {
     groupRpcService.deleteEndpointGroup(endpointGroupId,
@@ -1233,6 +1827,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits an endpoint group.
+   *
+   * @param endpointGroup new endpoint group
+   * @param callback      callback which should be called with a result
+   */
   public void editEndpointGroup(
       EndpointGroupDto endpointGroup,
       final AsyncCallback<EndpointGroupDto> callback) {
@@ -1246,6 +1846,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns an endpoint group.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void getEndpointGroup(String endpointGroupId,
                                final AsyncCallback<EndpointGroupDto> callback) {
     groupRpcService.getEndpointGroup(endpointGroupId,
@@ -1256,11 +1862,25 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns en endpoint profile.
+   *
+   * @param groupID  endpoint group identifier
+   * @param limit    limit
+   * @param offset   offset
+   * @param callback callback which should be called with a result
+   */
   public void getEndpointProfileByGroupId(String groupID, String limit, String offset,
                                           AsyncCallback<EndpointProfilesPageDto> callback) {
     groupRpcService.getEndpointProfileByEndpointGroupId(groupID, limit, offset, callback);
   }
 
+  /**
+   * Returns en endpoint profile.
+   *
+   * @param endpointKeyHash endpoint key hash
+   * @param callback        callback which should be called with a result
+   */
   public void getEndpointProfileByKeyHash(String endpointKeyHash,
                                           AsyncCallback<EndpointProfileDto> callback) {
     profileRpcService.getEndpointProfileByKeyHash(endpointKeyHash, callback);

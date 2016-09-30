@@ -30,6 +30,9 @@ public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGro
 
   private String applicationId;
 
+  /**
+   * All-args constructor.
+   */
   public EndpointGroupsDataProvider(AbstractGrid<EndpointGroupDto, String> dataGrid,
                                     HasErrorMessage hasErrorMessage,
                                     String applicationId) {
