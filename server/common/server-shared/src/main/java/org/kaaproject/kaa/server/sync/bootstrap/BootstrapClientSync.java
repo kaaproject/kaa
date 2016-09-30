@@ -18,9 +18,7 @@ package org.kaaproject.kaa.server.sync.bootstrap;
 
 import java.util.List;
 
-/**
- * @author Andrew Shvayka
- */
+
 public final class BootstrapClientSync {
 
   private final int requestId;

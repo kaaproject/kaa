@@ -31,16 +31,16 @@ public class Environment {
 
   private static final String DEFAULT_SERVER_HOME_DIR = ".";
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(Environment.class);
 
   /**
    * The Constant SYSTEM_PROPERTIES.
    */
-  private static final List<String> SYSTEM_PROPERTIES = Arrays.asList("java.version", "java.vendor", "java.home",
-      "java.class.path", "java.library.path", "java.io.tmpdir", "java.compiler", "os.name", "os.arch", "os.version",
+  private static final List<String> SYSTEM_PROPERTIES = Arrays.asList(
+      "java.version", "java.vendor", "java.home",
+      "java.class.path", "java.library.path", "java.io.tmpdir",
+      "java.compiler", "os.name", "os.arch", "os.version",
       "user.name", "user.home", "user.dir", SERVER_HOME_DIR);
 
   /**
@@ -50,7 +50,7 @@ public class Environment {
   }
 
   /**
-   * Logs environment state using {@link Logger}
+   * Logs environment state using {@link Logger}.
    */
   public static void logState() {
     LOG.info("Kaa version: {}, commit: {}", Version.PROJECT_VERSION, Version.COMMIT_HASH);

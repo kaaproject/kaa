@@ -18,9 +18,7 @@ package org.kaaproject.kaa.server.sync.bootstrap;
 
 import java.util.Set;
 
-/**
- * @author Andrew Shvayka
- */
+
 public final class BootstrapServerSync {
   private final int requestId;
   private final Set<ProtocolConnectionData> protocolList;

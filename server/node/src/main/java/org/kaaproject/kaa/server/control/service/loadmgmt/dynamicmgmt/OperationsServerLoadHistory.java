@@ -22,11 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * The Class OperationsServerLoadHistory
- *
- * @author Andrey Panasenko
- */
+
 public class OperationsServerLoadHistory {
   private final List<OperationsServerLoad> history;
   private long maxHistoryTimeLive = 600 * 1000;
@@ -37,7 +33,7 @@ public class OperationsServerLoadHistory {
   }
 
   /**
-   * Adds the Operations server load to the history
+   * Adds the Operations server load to the history.
    *
    * @param load the load
    */
@@ -46,11 +42,7 @@ public class OperationsServerLoadHistory {
     history.add(new OperationsServerLoad(load));
   }
 
-  /**
-   * Gets the history.
-   *
-   * @return the history
-   */
+
   public final List<OperationsServerLoad> getHistory() {
     return history;
   }
@@ -60,7 +52,7 @@ public class OperationsServerLoadHistory {
    */
   private void removeOldHistory() {
     long current = System.currentTimeMillis();
-    List<OperationsServerLoad> toDelete = new LinkedList<OperationsServerLoad>();
+    List<OperationsServerLoad> toDelete = new LinkedList<>();
     for (OperationsServerLoad snap : history) {
       if ((current - snap.getTime()) > maxHistoryTimeLive) {
         //Remove record.
@@ -94,9 +86,7 @@ public class OperationsServerLoadHistory {
     this.maxHistoryTimeLive = maxHistoryTimeLive;
   }
 
-  /**
-   * The Class OperationsServerLoad.
-   */
+
   public class OperationsServerLoad {
     private final long time;
     private LoadInfo loadInfo;
@@ -106,11 +96,7 @@ public class OperationsServerLoadHistory {
       this.loadInfo = load;
     }
 
-    /**
-     * Gets the time.
-     *
-     * @return the time
-     */
+
     public long getTime() {
       return time;
     }

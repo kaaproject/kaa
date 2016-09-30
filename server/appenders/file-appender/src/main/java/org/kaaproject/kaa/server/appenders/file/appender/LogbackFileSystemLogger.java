@@ -47,9 +47,11 @@ public class LogbackFileSystemLogger implements FileSystemLogger {
   @Override
   public void init(LogAppenderDto appenderDto, FileConfig config, Path filePath) {
     LOG.info(
-        "[{}][{}] Initializing with rollingFileNamePatern: {}, rollingMaxHistory: {}, triggerMaxFileSize: {}, encoderPattern: {}",
+        "[{}][{}] Initializing with rollingFileNamePatern: {}, rollingMaxHistory: {},"
+            + " triggerMaxFileSize: {}, encoderPattern: {}",
         appenderDto.getTenantId(), appenderDto.getApplicationId(),
-        config.getRollingFileNamePatern(), config.getRollingMaxHistory(), config.getTriggerMaxFileSize(), config.getEncoderPattern());
+        config.getRollingFileNamePatern(), config.getRollingMaxHistory(),
+        config.getTriggerMaxFileSize(), config.getEncoderPattern());
 
     LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     rfAppender = new RollingFileAppender();
@@ -62,7 +64,8 @@ public class LogbackFileSystemLogger implements FileSystemLogger {
     rollingPolicy.setParent(rfAppender);
     rollingPolicy.start();
 
-    SizeBasedTriggeringPolicy triggeringPolicy = new ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy();
+    SizeBasedTriggeringPolicy triggeringPolicy =
+        new ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy();
     triggeringPolicy.setMaxFileSize(config.getTriggerMaxFileSize());
     triggeringPolicy.start();
 
@@ -76,7 +79,8 @@ public class LogbackFileSystemLogger implements FileSystemLogger {
     rfAppender.setTriggeringPolicy(triggeringPolicy);
     rfAppender.start();
 
-    logger = loggerContext.getLogger(appenderDto.getTenantId() + "." + appenderDto.getApplicationToken());
+    logger = loggerContext.getLogger(appenderDto.getTenantId() + "."
+        + appenderDto.getApplicationToken());
     logger.setLevel(Level.ALL);
     logger.addAppender(rfAppender);
     LOG.debug("[{}][{}] Initialized with context {}", appenderDto.getTenantId(),

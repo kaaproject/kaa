@@ -21,9 +21,6 @@ import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 
 import java.util.List;
 
-/**
- * Server profile service
- */
 public interface ServerProfileService {
 
   /**

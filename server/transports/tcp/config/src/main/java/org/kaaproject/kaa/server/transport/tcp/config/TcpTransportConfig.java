@@ -22,16 +22,13 @@ import org.kaaproject.kaa.server.transport.KaaTransportConfig;
 import org.kaaproject.kaa.server.transport.TransportConfig;
 import org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig;
 
-/**
- * Configuration for TCP transport
- *
- * @author Andrew Shvayka
- */
+
 @KaaTransportConfig
 public class TcpTransportConfig implements TransportConfig {
   private static final String TCP_TRANSPORT_NAME = "org.kaaproject.kaa.server.transport.tcp";
   private static final int TCP_TRANSPORT_ID = Crc32Util.crc32(TCP_TRANSPORT_NAME);
-  private static final String TCP_TRANSPORT_CLASS = "org.kaaproject.kaa.server.transports.tcp.transport.TcpTransport";
+  private static final String TCP_TRANSPORT_CLASS =
+      "org.kaaproject.kaa.server.transports.tcp.transport.TcpTransport";
   private static final String TCP_TRANSPORT_CONFIG = "tcp-transport.config";
 
   public TcpTransportConfig() {

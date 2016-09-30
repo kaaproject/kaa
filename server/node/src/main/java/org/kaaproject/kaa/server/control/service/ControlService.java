@@ -1421,6 +1421,8 @@ public interface ControlService {
   SdkProfileDto getSdkProfile(String sdkProfileId) throws ControlServiceException;
 
   /**
+   * Get SDK profile by uniq application identifier.
+   *
    * @param applicationId the application id
    * @return the list sdk profile dto
    * @throws ControlServiceException the control service exception
@@ -1429,12 +1431,18 @@ public interface ControlService {
       throws ControlServiceException;
 
   /**
+   * Delete SDK profile.
+   *
    * @param sdkProfileId the sdk profile id
    * @throws ControlServiceException the control service exception
    */
   void deleteSdkProfile(String sdkProfileId) throws ControlServiceException;
 
+
+
   /**
+   * Return true if SDK profile has been already used.
+   *
    * @param token the token
    * @return boolean the sdk profile usage
    * @throws ControlServiceException the control service exception

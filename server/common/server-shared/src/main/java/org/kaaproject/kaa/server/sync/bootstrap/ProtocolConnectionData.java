@@ -18,9 +18,6 @@ package org.kaaproject.kaa.server.sync.bootstrap;
 
 import java.util.Arrays;
 
-/**
- * @author Andrew Shvayka
- */
 public final class ProtocolConnectionData {
   private final int accessPointId;
   private final ProtocolVersionId protocolVersionId;

@@ -23,16 +23,15 @@ import java.util.Map;
 
 /**
  * Dynamic Operations servers load management rebalance interface.
- *
- * @author Andrey Panasenko
  */
 public interface Rebalancer {
 
   /**
-   * Recalculate balancing
+   * Recalculate balancing.
    *
    * @param opsServerLoadHistory the Operations server load history
    * @return the map integer, redirection rule
    */
-  public Map<Integer, List<RedirectionRule>> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory);
+  Map<Integer, List<RedirectionRule>> recalculate(
+      Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory);
 }

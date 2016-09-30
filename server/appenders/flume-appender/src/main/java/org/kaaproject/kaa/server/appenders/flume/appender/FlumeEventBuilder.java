@@ -28,20 +28,20 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * The Interface FlumeEventBuilder.
- */
+
 public abstract class FlumeEventBuilder {
 
   private static final Logger LOG = LoggerFactory.getLogger(FlumeEventBuilder.class);
 
   public abstract void init(FlumeConfig configuration);
 
-  public abstract List<Event> generateEvents(String appToken, LogSchema schema, List<LogEvent> logEvents,
-                                             ProfileInfo clientProfile, ProfileInfo serverProfile, RecordHeader header);
+  public abstract List<Event> generateEvents(String appToken, LogSchema schema,
+                                             List<LogEvent> logEvents,
+                                             ProfileInfo clientProfile,
+                                             ProfileInfo serverProfile, RecordHeader header);
 
   /**
-   * This method generate flume events from own data structure <code>LogEventPack</code>
+   * This method generate flume events from own data structure <code>LogEventPack</code>.
    *
    * @param eventPack the event pack
    * @param header    the record header

@@ -25,11 +25,6 @@ public abstract class AbstractInitializationService implements InitializationSer
   private KaaNodeServerConfig kaaNodeServerConfig;
 
 
-  /**
-   * KaaNodeServerConfig getter
-   *
-   * @return KaaNodeServerConfig
-   */
   protected KaaNodeServerConfig getNodeConfig() {
     return kaaNodeServerConfig;
   }

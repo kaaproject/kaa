@@ -33,42 +33,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The Class LogAppender.
- */
+
 public abstract class AbstractLogAppender<T extends SpecificRecordBase> implements LogAppender {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(AbstractLogAppender.class);
 
-  /**
-   * The Constant LOG_HEADER_VERSION.
-   */
   private static final int LOG_HEADER_VERSION = 1;
   private final Class<T> configurationClass;
-  /**
-   * The converters.
-   */
-  Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
-  /**
-   * The appender id.
-   */
+
+  private Map<String, GenericAvroConverter<GenericRecord>> converters = new HashMap<>();
+
   private String appenderId;
-  /**
-   * The name.
-   */
+
   private String name;
-  /**
-   * The application token.
-   */
+
   private String applicationToken;
-  /**
-   * The header.
-   */
+
   private List<LogHeaderStructureDto> header;
-  private int minSchemaVersion, maxSchemaVersion;
+  private int minSchemaVersion;
+  private int maxSchemaVersion;
   private boolean confirmDelivery;
 
   public AbstractLogAppender(Class<T> configurationClass) {
@@ -82,7 +65,17 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
    * @param header       the header
    * @param listener     the listener
    */
-  public abstract void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener);
+  public abstract void doAppend(LogEventPack logEventPack, RecordHeader header,
+                                LogDeliveryCallback listener);
+
+  @Override
+  public void doAppend(LogEventPack logEventPack, LogDeliveryCallback listener) {
+    if (logEventPack != null) {
+      doAppend(logEventPack, generateHeader(logEventPack), listener);
+    } else {
+      LOG.warn("Can't append log events. LogEventPack object is null.");
+    }
+  }
 
   /**
    * Change parameters of log appender.
@@ -90,8 +83,8 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
    * @param appender      the appender
    * @param configuration the configuration
    */
-
   protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
+
 
   public void initLogAppender(LogAppenderDto appender) {
     this.minSchemaVersion = appender.getMinLogSchemaVersion();
@@ -102,8 +95,8 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
       AvroByteArrayConverter<T> converter = new AvroByteArrayConverter<>(configurationClass);
       T configuration = converter.fromByteArray(rawConfiguration);
       initFromConfiguration(appender, configuration);
-    } catch (IOException e) {
-      LOG.error("Unable to parse configuration for appender '" + getName() + "'", e);
+    } catch (IOException ex) {
+      LOG.error("Unable to parse configuration for appender '" + getName() + "'", ex);
     }
   }
 
@@ -165,14 +158,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     initLogAppender(appender);
   }
 
-  @Override
-  public void doAppend(LogEventPack logEventPack, LogDeliveryCallback listener) {
-    if (logEventPack != null) {
-      doAppend(logEventPack, generateHeader(logEventPack), listener);
-    } else {
-      LOG.warn("Can't append log events. LogEventPack object is null.");
-    }
-  }
+
 
   @Override
   public boolean isSchemaVersionSupported(int version) {
@@ -192,27 +178,32 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
    * @return the list
    * @throws IOException the io exception
    */
-  protected List<LogEventDto> generateLogEvent(LogEventPack logEventPack, RecordHeader header) throws IOException {
-    LOG.debug("Generate LogEventDto objects from LogEventPack [{}] and header [{}]", logEventPack, header);
+  protected List<LogEventDto> generateLogEvent(LogEventPack logEventPack, RecordHeader header)
+      throws IOException {
+    LOG.debug("Generate LogEventDto objects from LogEventPack [{}] and header [{}]",
+        logEventPack, header);
     List<LogEventDto> events = new ArrayList<>(logEventPack.getEvents().size());
-    GenericAvroConverter<GenericRecord> eventConverter = getConverter(logEventPack.getLogSchema().getSchema());
-    GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema().toString());
+    GenericAvroConverter<GenericRecord> eventConverter = getConverter(
+        logEventPack.getLogSchema().getSchema());
+    GenericAvroConverter<GenericRecord> headerConverter = getConverter(
+        header.getSchema().toString());
     try {
       for (LogEvent logEvent : logEventPack.getEvents()) {
         LOG.debug("Convert log events [{}] to dto objects.", logEvent);
-        if (logEvent == null | logEvent.getLogData() == null) {
+        if (logEvent == null || logEvent.getLogData() == null) {
           continue;
         }
-        LOG.trace("Avro record converter [{}] with log data [{}]", eventConverter, logEvent.getLogData());
+        LOG.trace("Avro record converter [{}] with log data [{}]",
+            eventConverter, logEvent.getLogData());
         GenericRecord decodedLog = eventConverter.decodeBinary(logEvent.getLogData());
         LOG.trace("Avro header record converter [{}]", headerConverter);
         String encodedJsonLogHeader = headerConverter.encodeToJson(header);
         String encodedJsonLog = eventConverter.encodeToJson(decodedLog);
         events.add(new LogEventDto(encodedJsonLogHeader, encodedJsonLog));
       }
-    } catch (IOException e) {
-      LOG.error("Unexpected IOException while decoding LogEvents", e);
-      throw e;
+    } catch (IOException ex) {
+      LOG.error("Unexpected IOException while decoding LogEvents", ex);
+      throw ex;
     }
     return events;
   }
@@ -228,7 +219,7 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
     GenericAvroConverter<GenericRecord> genAvroConverter = converters.get(schema);
     if (genAvroConverter == null) {
       LOG.trace("Create new converter for schema [{}]", schema);
-      genAvroConverter = new GenericAvroConverter<GenericRecord>(schema);
+      genAvroConverter = new GenericAvroConverter<>(schema);
       converters.put(schema, genAvroConverter);
     }
     LOG.trace("Get converter [{}] from map.", genAvroConverter);

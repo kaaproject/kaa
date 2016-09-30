@@ -48,7 +48,7 @@ public class KaaRestTemplate extends RestTemplate {
   }
 
   /**
-   * Initialize KaaRestTempalte using following format host1:port1,host2:port2
+   * Initialize KaaRestTempalte using following format host1:port1,host2:port2.
    */
   public KaaRestTemplate(String hostPortList) {
     if (hostPortList == null) {
@@ -73,8 +73,17 @@ public class KaaRestTemplate extends RestTemplate {
   }
 
   private void checkHostPortLists(String[] hosts, int[] ports) {
-    if ((hosts.length != ports.length) && (hosts != null)) {
-      throw new IllegalArgumentException("Length of arrays of hosts and ports must be the same length and not null");
+    if (hosts == null) {
+      throw new IllegalArgumentException("Parameter hosts can't be null.");
+    }
+
+    if (ports == null) {
+      throw new IllegalArgumentException("Parameter ports can't be null.");
+    }
+
+    if (hosts.length != ports.length) {
+      throw new IllegalArgumentException("Length of arrays of hosts "
+          + "and ports must be the same length");
     } else {
       this.hosts = hosts;
       this.ports = ports;
@@ -115,21 +124,23 @@ public class KaaRestTemplate extends RestTemplate {
           if (maxRetry <= 0) {
             logger.error("Failed to connect to ({}:{})", getCurHost(), getCurPort(), ex);
             throw new ResourceAccessException(
-                "I/O error on " + method.name() + " request for \"" + url + "\":" + ex.getMessage(), new IOException(ex));
+                "I/O error on " + method.name() + " request for \"" + url + "\":"
+                    + ex.getMessage(), new IOException(ex));
           } else {
             maxRetry--;
           }
           try {
             setNewRequestFactory(index);
-          } catch (Exception e) {
-            logger.info("Failed to initialize new request factory ({}:{})", getCurHost(), getCurPort(), e);
+          } catch (Exception exception) {
+            logger.info("Failed to initialize new request factory ({}:{})",
+                getCurHost(), getCurPort(), exception);
             continue;
           }
           url = updateURL(url);
           isRequestFactorySet = true;
         }
-      } catch (RestClientException e) {
-        throw e;
+      } catch (RestClientException ex) {
+        throw ex;
       }
     }
   }

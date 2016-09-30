@@ -25,25 +25,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * The Class DefaultControlInitializationService.
- */
+
 @Service
 public class ControlInitializationService extends AbstractInitializationService {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(ControlInitializationService.class);
 
-  /**
-   * The control zookeeper service.
-   */
+
   @Autowired
   private ControlZkService controlZkService;
 
   /**
-   * Dynamic Load Distribution Service
+   * Dynamic Load Distribution Service.
    */
   @Autowired
   private LoadDistributionService loadMgmtService;

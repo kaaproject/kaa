@@ -33,27 +33,32 @@ public final class DefaultRegistrationService implements RegistrationService {
 
   private EndpointRegistrationService endpointRegistrationService;
 
-  public void setEndpointRegistrationService(EndpointRegistrationService endpointRegistrationService) {
+  public void setEndpointRegistrationService(
+      EndpointRegistrationService endpointRegistrationService) {
     this.endpointRegistrationService = endpointRegistrationService;
   }
 
   @Override
-  public EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration) throws EndpointRegistrationServiceException {
+  public EndpointRegistrationDto saveEndpointRegistration(
+      EndpointRegistrationDto endpointRegistration) throws EndpointRegistrationServiceException {
     return this.endpointRegistrationService.saveEndpointRegistration(endpointRegistration);
   }
 
   @Override
-  public Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException {
+  public Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(
+      String endpointId) throws EndpointRegistrationServiceException {
     return this.endpointRegistrationService.findEndpointRegistrationByEndpointId(endpointId);
   }
 
   @Override
-  public Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId) throws EndpointRegistrationServiceException {
+  public Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(
+      String credentialsId) throws EndpointRegistrationServiceException {
     return this.endpointRegistrationService.findEndpointRegistrationByCredentialsId(credentialsId);
   }
 
   @Override
-  public void removeEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException {
+  public void removeEndpointRegistrationByEndpointId(String endpointId)
+      throws EndpointRegistrationServiceException {
     this.endpointRegistrationService.removeEndpointRegistrationByEndpointId(endpointId);
   }
 }
