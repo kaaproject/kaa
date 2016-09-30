@@ -113,29 +113,30 @@ public class TenantActivity extends
     }));
 
 
-    registrations.add(detailsView.getTenantAdminsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> event) {
-        String id = event.getClickedId();
-        if (event.getAction() == RowActionEvent.CLICK) {
-          UserPlace adminPlace = new UserPlace(id, entity.getId());
-          adminPlace.setPreviousPlace(place);
-          goTo(adminPlace);
-        } else if (event.getAction() == RowActionEvent.DELETE) {
-          KaaAdmin.getDataSource().deleteUser(id, new BusyAsyncCallback<Void>() {
-            @Override
-            public void onFailureImpl(Throwable throwable) {
-              Utils.handleException(throwable, detailsView);
-            }
+    registrations.add(detailsView.getTenantAdminsGrid().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> event) {
+            String id = event.getClickedId();
+            if (event.getAction() == RowActionEvent.CLICK) {
+              UserPlace adminPlace = new UserPlace(id, entity.getId());
+              adminPlace.setPreviousPlace(place);
+              goTo(adminPlace);
+            } else if (event.getAction() == RowActionEvent.DELETE) {
+              KaaAdmin.getDataSource().deleteUser(id, new BusyAsyncCallback<Void>() {
+                @Override
+                public void onFailureImpl(Throwable throwable) {
+                  Utils.handleException(throwable, detailsView);
+                }
 
-            @Override
-            public void onSuccessImpl(Void aVoid) {
-              usersDataProvider.reload();
+                @Override
+                public void onSuccessImpl(Void callback) {
+                  usersDataProvider.reload();
+                }
+              });
             }
-          });
-        }
-      }
-    }));
+          }
+        }));
   }
 
 

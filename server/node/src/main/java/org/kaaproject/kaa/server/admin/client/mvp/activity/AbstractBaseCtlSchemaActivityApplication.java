@@ -69,7 +69,8 @@ public abstract class AbstractBaseCtlSchemaActivityApplication<S extends BaseSch
       registrations.add(detailsView.getNewCtlButton().addClickHandler(new ClickHandler() {
         @Override
         public void onClick(ClickEvent event) {
-          CtlSchemaPlace newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.APPLICATION, place.getApplicationId(), true, true);
+          CtlSchemaPlace newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.APPLICATION,
+              place.getApplicationId(), true, true);
           newCtlPlace.setSchemaType(getPlaceSchemaType());
           newCtlPlace.setPreviousPlace(place);
           canceled = true;

@@ -22,7 +22,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 
-import org.kaaproject.kaa.server.admin.client.util.GUID;
+import org.kaaproject.kaa.server.admin.client.util.Guid;
 
 public class FileUploadForm extends FormPanel {
 
@@ -33,7 +33,7 @@ public class FileUploadForm extends FormPanel {
   public FileUploadForm() {
     this.setEncoding(FormPanel.ENCODING_MULTIPART);
     this.setMethod(FormPanel.METHOD_POST);
-    fu.setName(GUID.get());
+    fu.setName(Guid.get());
     fu.setHeight("30px");
     this.add(fu);
     addSubmitHandler(new FormPanel.SubmitHandler() {

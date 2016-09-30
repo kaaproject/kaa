@@ -58,10 +58,12 @@ public class SdkServlet extends HttpServlet implements Servlet, ServletParams {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
     String sdkKeyBase64 = URLDecoder.decode(request.getParameter(SDK_KEY_PARAMETER), "UTF-8");
     try {
-      CacheService.SdkKey key = (CacheService.SdkKey) Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
+      CacheService.SdkKey key = (CacheService.SdkKey) Base64
+          .decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
       FileData sdkFile = cacheService.getSdk(key);
       response.setContentType(sdkFile.getContentType());
       ServletUtils.prepareDisposition(request, response, sdkFile.getFileName());
@@ -69,9 +71,10 @@ public class SdkServlet extends HttpServlet implements Servlet, ServletParams {
       response.setBufferSize(BUFFER);
       response.getOutputStream().write(sdkFile.getFileData());
       response.flushBuffer();
-    } catch (Exception e) {
-      LOG.error("Unexpected error in SdkServlet.doGet: ", e);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get Sdk file: " + e.getMessage());
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in SdkServlet.doGet: ", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get Sdk file: "
+          + ex.getMessage());
     }
   }
 

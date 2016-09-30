@@ -38,10 +38,10 @@ public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
     extends AbstractDetailsActivity<T, V, P>
     implements ErrorMessageCustomizer, FormDataLoader {
 
-  private static final ErrorMessageCustomizer schemaErrorMessageCustomizer = new SchemaErrorMessageCustomizer();
+  private static final ErrorMessageCustomizer schemaErrorMessageCustomizer =
+      new SchemaErrorMessageCustomizer();
 
-  public AbstractBaseCtlSchemaActivity(P place,
-                                       ClientFactory clientFactory) {
+  public AbstractBaseCtlSchemaActivity(P place, ClientFactory clientFactory) {
     super(place, clientFactory);
   }
 
@@ -51,7 +51,8 @@ public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
     return null;
   }
 
-  protected P existingSchemaPlaceForEvent(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+  protected P existingSchemaPlaceForEvent(String ecfId, String ecfVersionId, int ecfVersion,
+                                          String schemaId) {
     return null;
   }
 
@@ -74,7 +75,8 @@ public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
     detailsView.getName().setValue(schema.getName());
     detailsView.getDescription().setValue(schema.getDescription());
     detailsView.getCreatedUsername().setValue(schema.getCreatedUsername());
-    detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(schema.getCreatedTime()));
+    detailsView.getCreatedDateTime()
+        .setValue(Utils.millisecondsToDateTimeString(schema.getCreatedTime()));
     if (entity.getCtlSchemaForm() != null) {
       detailsView.getSchemaForm().setValue(entity.getCtlSchemaForm().getSchema(), fireChanged);
     }

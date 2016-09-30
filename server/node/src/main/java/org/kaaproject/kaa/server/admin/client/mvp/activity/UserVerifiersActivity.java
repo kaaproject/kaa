@@ -36,7 +36,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class UserVerifiersActivity extends AbstractListActivity<UserVerifierDto, UserVerifiersPlace> {
+public class UserVerifiersActivity
+    extends AbstractListActivity<UserVerifierDto, UserVerifiersPlace> {
 
   private String applicationId;
 
@@ -51,7 +52,8 @@ public class UserVerifiersActivity extends AbstractListActivity<UserVerifierDto,
   }
 
   @Override
-  protected AbstractDataProvider<UserVerifierDto, String> getDataProvider(AbstractGrid<UserVerifierDto, String> dataGrid) {
+  protected AbstractDataProvider<UserVerifierDto, String> getDataProvider(
+      AbstractGrid<UserVerifierDto, String> dataGrid) {
     return new UserVerifiersDataProvider(dataGrid, listView, applicationId);
   }
 

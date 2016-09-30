@@ -34,7 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T> implements ColumnSortEvent.Handler, ColumnFilterEvent.Handler {
+public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T>
+    implements ColumnSortEvent.Handler, ColumnFilterEvent.Handler {
 
   protected List<T> data;
 
@@ -52,7 +53,8 @@ public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T> im
     this(dataGrid, hasErrorMessage, true);
   }
 
-  public AbstractDataProvider(AbstractGrid<T, K> dataGrid, HasErrorMessage hasErrorMessage, boolean addDisplay) {
+  public AbstractDataProvider(AbstractGrid<T, K> dataGrid, HasErrorMessage hasErrorMessage,
+                              boolean addDisplay) {
     this.dataGrid = dataGrid;
     callback = new LoadCallback(hasErrorMessage);
     dataGrid.getDataGrid().addColumnSortHandler(this);
@@ -140,8 +142,8 @@ public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T> im
     ColumnSortList sortList = dataGrid.getDataGrid().getColumnSortList();
     Column<?, ?> column = (sortList == null || sortList.size() == 0) ? null
         : sortList.get(0).getColumn();
-    boolean isSortAscending = (sortList == null || sortList.size() == 0) ? false
-        : sortList.get(0).isAscending();
+    boolean isSortAscending = !(sortList == null || sortList.size() == 0)
+        && sortList.get(0).isAscending();
     if (column != null) {
       dataGrid.sort(filteredData, column, isSortAscending);
     }

@@ -104,7 +104,8 @@ public class NavigationActivity extends AbstractActivity implements NavigationVi
   }
 
   @Override
-  public void start(AcceptsOneWidget containerWidget, com.google.gwt.event.shared.EventBus eventBus) {
+  public void start(AcceptsOneWidget containerWidget,
+                    com.google.gwt.event.shared.EventBus eventBus) {
     containerWidget.setWidget(navigationView.asWidget());
     registrations.add(navigationView.getSelectionModel().addSelectionChangeHandler(
         new SelectionChangeEvent.Handler() {

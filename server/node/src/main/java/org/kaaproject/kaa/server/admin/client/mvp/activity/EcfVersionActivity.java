@@ -39,7 +39,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClassDto, EcfVersionPlace> {
+public class EcfVersionActivity
+    extends AbstractBaseCtlSchemasActivity<EventClassDto, EcfVersionPlace> {
 
   AbstractGrid<EventClassDto, String> dataGrid;
   private String ecfId;
@@ -65,7 +66,7 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
   }
 
   private void initListView() {
-    if (ecfVersionId == null || ecfVersionId == "") {
+    if (ecfVersionId == null || ecfVersionId.isEmpty()) {
       this.listView = clientFactory.getCreateEcfVersionView();
     } else {
       this.listView = clientFactory.getEcfVersionView();
@@ -74,16 +75,18 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
 
   @Override
   protected BaseListView<EventClassDto> getView() {
-    if (ecfVersionId == null || ecfVersionId == "") {
+    if (ecfVersionId == null || ecfVersionId.isEmpty()) {
       return clientFactory.getCreateEcfVersionView();
     }
     return clientFactory.getEcfVersionView();
   }
 
   @Override
-  protected AbstractDataProvider<EventClassDto, String> getDataProvider(AbstractGrid<EventClassDto, String> dataGrid) {
+  protected AbstractDataProvider<EventClassDto, String> getDataProvider(
+      AbstractGrid<EventClassDto, String> dataGrid) {
     this.dataGrid = dataGrid;
-    return new EcfVersionDataProvider(dataGrid, listView, ecfId, ecfVersion, place.getEventClassDtoList());
+    return new EcfVersionDataProvider(dataGrid, listView, ecfId,
+        ecfVersion, place.getEventClassDtoList());
   }
 
   @Override
@@ -110,7 +113,8 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
     registrations.add(listView.getAddButton().addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
 
-        KaaAdmin.getDataSource().addEventClassFamilyVersionFromView(place.getEcfId(), place.getEventClassDtoList(),
+        KaaAdmin.getDataSource().addEventClassFamilyVersionFromView(place.getEcfId(),
+            place.getEventClassDtoList(),
             new AsyncCallback<Void>() {
               @Override
               public void onFailure(Throwable caught) {
@@ -118,7 +122,7 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
               }
 
               @Override
-              public void onSuccess(Void aVoid) {
+              public void onSuccess(Void callback) {
                 place.setEventClassDtoList(null);
                 goTo(new EcfPlace(place.getEcfId()));
               }
@@ -126,16 +130,17 @@ public class EcfVersionActivity extends AbstractBaseCtlSchemasActivity<EventClas
       }
     }));
 
-    registrations.add(listView.getRowActionsSource().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> event) {
-        String id = String.valueOf(event.getClickedId());
-        if (event.getAction() == RowActionEvent.CLICK) {
-          goTo(existingEntityPlace(id));
-        }
-        onCustomRowAction(event);
-      }
-    }));
+    registrations.add(listView.getRowActionsSource().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> event) {
+            String id = String.valueOf(event.getClickedId());
+            if (event.getAction() == RowActionEvent.CLICK) {
+              goTo(existingEntityPlace(id));
+            }
+            onCustomRowAction(event);
+          }
+        }));
 
     registrations.add(eventBus.addHandler(DataEvent.getType(), new DataEventHandler() {
       @Override

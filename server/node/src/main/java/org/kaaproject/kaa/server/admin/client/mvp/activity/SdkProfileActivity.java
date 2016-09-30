@@ -73,19 +73,22 @@ public class SdkProfileActivity extends
     if (aefMapDtoList != null) {
       detailsView.getSdkAefMapsGrid().getDataGrid().setRowData(aefMapDtoList);
     } else {
-      detailsView.getSdkAefMapsGrid().getDataGrid().setRowData(new ArrayList<ApplicationEventFamilyMapDto>());
+      detailsView.getSdkAefMapsGrid().getDataGrid()
+          .setRowData(new ArrayList<ApplicationEventFamilyMapDto>());
     }
 
     detailsView.getSdkConfigurationVersion().setText(entity.getConfigurationSchemaName());
-    registrations.add(detailsView.getSdkConfigurationVersion().addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
-        ConfigurationSchemaPlace configurationSchemaPlace =
-            new ConfigurationSchemaPlace(place.getApplicationId(), entity.getConfigurationSchemaId());
-        configurationSchemaPlace.setPreviousPlace(place);
-        goTo(configurationSchemaPlace);
-      }
-    }));
+    registrations.add(detailsView.getSdkConfigurationVersion().addClickHandler(
+        new ClickHandler() {
+          @Override
+          public void onClick(ClickEvent clickEvent) {
+            ConfigurationSchemaPlace configurationSchemaPlace =
+                new ConfigurationSchemaPlace(place.getApplicationId(),
+                    entity.getConfigurationSchemaId());
+            configurationSchemaPlace.setPreviousPlace(place);
+            goTo(configurationSchemaPlace);
+          }
+        }));
 
     detailsView.getSdkProfileVersion().setText(entity.getProfileSchemaName());
     registrations.add(detailsView.getSdkProfileVersion().addClickHandler(new ClickHandler() {
@@ -113,7 +116,8 @@ public class SdkProfileActivity extends
     registrations.add(detailsView.getSdkLoggingVersion().addClickHandler(new ClickHandler() {
       @Override
       public void onClick(ClickEvent clickEvent) {
-        LogSchemaPlace logSchemaPlace = new LogSchemaPlace(place.getApplicationId(), entity.getLogSchemaId());
+        LogSchemaPlace logSchemaPlace =
+            new LogSchemaPlace(place.getApplicationId(), entity.getLogSchemaId());
         logSchemaPlace.setPreviousPlace(place);
         goTo(logSchemaPlace);
       }
@@ -124,15 +128,16 @@ public class SdkProfileActivity extends
   protected void bind(EventBus eventBus) {
     super.bind(eventBus);
 
-    registrations.add(detailsView.getSdkAefMapsGrid().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> rowActionEvent) {
-        String id = rowActionEvent.getClickedId();
-        AefMapPlace aefMapPlace = new AefMapPlace(place.getApplicationId(), id);
-        aefMapPlace.setPreviousPlace(place);
-        goTo(aefMapPlace);
-      }
-    }));
+    registrations.add(detailsView.getSdkAefMapsGrid().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> rowActionEvent) {
+            String id = rowActionEvent.getClickedId();
+            AefMapPlace aefMapPlace = new AefMapPlace(place.getApplicationId(), id);
+            aefMapPlace.setPreviousPlace(place);
+            goTo(aefMapPlace);
+          }
+        }));
   }
 
   @Override

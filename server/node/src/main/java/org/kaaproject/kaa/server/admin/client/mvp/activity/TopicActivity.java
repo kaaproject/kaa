@@ -31,8 +31,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class TopicActivity
-    extends
-    AbstractDetailsActivity<TopicDto, TopicView, TopicPlace> {
+    extends AbstractDetailsActivity<TopicDto, TopicView, TopicPlace> {
 
   private String applicationId;
 
@@ -80,13 +79,15 @@ public class TopicActivity
     detailsView.getMandatory().setValue(entity.getType() == TopicTypeDto.MANDATORY);
     detailsView.getDescription().setValue(entity.getDescription());
     detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
-    detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
+    detailsView.getCreatedDateTime()
+        .setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
   }
 
   @Override
   protected void onSave() {
     entity.setName(detailsView.getName().getValue());
-    entity.setType(detailsView.getMandatory().getValue() ? TopicTypeDto.MANDATORY : TopicTypeDto.OPTIONAL);
+    entity.setType(
+        detailsView.getMandatory().getValue() ? TopicTypeDto.MANDATORY : TopicTypeDto.OPTIONAL);
     entity.setDescription(detailsView.getDescription().getValue());
   }
 
@@ -101,7 +102,8 @@ public class TopicActivity
   }
 
   private void sendNotification() {
-    SendNotificationPlace sendNotificationPlace = new SendNotificationPlace(applicationId, entityId);
+    SendNotificationPlace sendNotificationPlace =
+        new SendNotificationPlace(applicationId, entityId);
     sendNotificationPlace.setPreviousPlace(place);
     goTo(sendNotificationPlace);
   }

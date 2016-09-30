@@ -32,7 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, LogAppenderView, LogAppenderPlace> {
+public class LogAppenderActivity
+    extends AbstractPluginActivity<LogAppenderDto, LogAppenderView, LogAppenderPlace> {
 
   public LogAppenderActivity(LogAppenderPlace place, ClientFactory clientFactory) {
     super(place, clientFactory);
@@ -62,17 +63,18 @@ public class LogAppenderActivity extends AbstractPluginActivity<LogAppenderDto, 
   @Override
   protected void onEntityRetrieved() {
     super.onEntityRetrieved();
-    KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId, new BusyAsyncCallback<List<VersionDto>>() {
-      @Override
-      public void onFailureImpl(Throwable caught) {
-        Utils.handleException(caught, detailsView);
-      }
+    KaaAdmin.getDataSource().loadLogSchemasVersion(applicationId,
+        new BusyAsyncCallback<List<VersionDto>>() {
+          @Override
+          public void onFailureImpl(Throwable caught) {
+            Utils.handleException(caught, detailsView);
+          }
 
-      @Override
-      public void onSuccessImpl(List<VersionDto> result) {
-        onSchemaVersionsRetrieved(result);
-      }
-    });
+          @Override
+          public void onSuccessImpl(List<VersionDto> result) {
+            onSchemaVersionsRetrieved(result);
+          }
+        });
   }
 
   private void onSchemaVersionsRetrieved(List<VersionDto> result) {

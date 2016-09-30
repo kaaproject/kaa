@@ -29,9 +29,9 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 
-public class ServerProfileSchemaActivity
-    extends
-    AbstractBaseCtlSchemaActivityApplication<ServerProfileSchemaDto, ServerProfileSchemaViewDto, BaseCtlSchemaView, ServerProfileSchemaPlace> {
+public class ServerProfileSchemaActivity extends AbstractBaseCtlSchemaActivityApplication
+    <ServerProfileSchemaDto, ServerProfileSchemaViewDto, BaseCtlSchemaView,
+        ServerProfileSchemaPlace> {
 
   public ServerProfileSchemaActivity(ServerProfileSchemaPlace place,
                                      ClientFactory clientFactory) {

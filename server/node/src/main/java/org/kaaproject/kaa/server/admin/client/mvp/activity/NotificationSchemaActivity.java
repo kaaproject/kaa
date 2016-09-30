@@ -29,7 +29,9 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 
-public class NotificationSchemaActivity extends AbstractBaseCtlSchemaActivityApplication<NotificationSchemaDto, NotificationSchemaViewDto, BaseCtlSchemaView, NotificationSchemaPlace> {
+public class NotificationSchemaActivity
+    extends AbstractBaseCtlSchemaActivityApplication<NotificationSchemaDto,
+    NotificationSchemaViewDto, BaseCtlSchemaView, NotificationSchemaPlace> {
 
   public NotificationSchemaActivity(NotificationSchemaPlace place,
                                     ClientFactory clientFactory) {

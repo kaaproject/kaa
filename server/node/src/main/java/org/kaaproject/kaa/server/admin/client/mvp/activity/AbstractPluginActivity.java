@@ -30,7 +30,9 @@ import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 
 import java.util.List;
 
-public abstract class AbstractPluginActivity<T extends PluginDto, V extends BasePluginView, P extends AbstractPluginPlace> extends AbstractDetailsActivity<T, V, P> {
+public abstract class AbstractPluginActivity
+    <T extends PluginDto, V extends BasePluginView, P extends AbstractPluginPlace>
+    extends AbstractDetailsActivity<T, V, P> {
 
   protected String applicationId;
 
@@ -69,10 +71,15 @@ public abstract class AbstractPluginActivity<T extends PluginDto, V extends Base
       detailsView.getName().setValue(entity.getName());
       detailsView.getDescription().setValue(entity.getDescription());
       detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
-      detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
+      detailsView
+          .getCreatedDateTime()
+          .setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
       detailsView.getConfiguration().setValue(entity.getFieldConfiguration());
       PluginInfoDto appenderInfo =
-          new PluginInfoDto(entity.getPluginTypeName(), entity.getFieldConfiguration(), entity.getPluginClassName());
+          new PluginInfoDto(entity.getPluginTypeName(),
+              entity.getFieldConfiguration(),
+              entity.getPluginClassName()
+          );
       detailsView.getPluginInfo().setValue(appenderInfo);
     }
   }

@@ -28,7 +28,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public abstract class AbstractBaseCtlSchemasActivity<T extends BaseSchemaDto, P extends TreePlace> extends AbstractListActivity<T, P> {
+public abstract class AbstractBaseCtlSchemasActivity<T extends BaseSchemaDto, P extends TreePlace>
+    extends AbstractListActivity<T, P> {
 
   public AbstractBaseCtlSchemasActivity(P place, Class<T> dataClass,
                                         ClientFactory clientFactory) {
@@ -55,6 +56,9 @@ public abstract class AbstractBaseCtlSchemasActivity<T extends BaseSchemaDto, P 
         break;
       case KaaRowAction.CTL_EXPORT_LIBRARY:
         exportSchema(schemaId, CTLSchemaExportMethod.LIBRARY);
+        break;
+      default:
+        exportSchema(schemaId, CTLSchemaExportMethod.SHALLOW); // shallow is default export
         break;
     }
   }

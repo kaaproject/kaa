@@ -34,7 +34,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class LogSchemasActivity extends AbstractBaseCtlSchemasActivity<LogSchemaDto, LogSchemasPlace> {
+public class LogSchemasActivity
+    extends AbstractBaseCtlSchemasActivity<LogSchemaDto, LogSchemasPlace> {
 
   private String applicationId;
 

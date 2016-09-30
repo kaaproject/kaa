@@ -78,12 +78,13 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
   protected void bind(final EventBus eventBus) {
     super.bind(eventBus);
     if (create) {
-      registrations.add(recordView.getSchema().addValueChangeHandler(new ValueChangeHandler<VersionDto>() {
-        @Override
-        public void onValueChange(ValueChangeEvent<VersionDto> event) {
-          schemaSelected(event.getValue());
-        }
-      }));
+      registrations.add(recordView.getSchema().addValueChangeHandler(
+          new ValueChangeHandler<VersionDto>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<VersionDto> event) {
+              schemaSelected(event.getValue());
+            }
+          }));
     }
   }
 
@@ -124,7 +125,8 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
         inactiveStruct.setSchemaId(record.getSchemaId());
         inactiveStruct.setSchemaVersion(record.getSchemaVersion());
         inactiveStruct.setDescription(record.getDescription());
-        inactiveStruct.setConfigurationRecord(record.getActiveStructureDto().getConfigurationRecord());
+        inactiveStruct.setConfigurationRecord(
+            record.getActiveStructureDto().getConfigurationRecord());
         record.setInactiveStructureDto(inactiveStruct);
       }
       recordView.getRecordPanel().setData(record);
@@ -185,9 +187,12 @@ public class ConfigurationActivity extends AbstractRecordActivity<ConfigurationR
 
   @Override
   protected ConfigurationPlace getRecordPlaceImpl(String applicationId,
-                                                  String endpointGroupId, boolean create, boolean showActive,
+                                                  String endpointGroupId,
+                                                  boolean create,
+                                                  boolean showActive,
                                                   double random) {
-    return new ConfigurationPlace(applicationId, schemaId, endpointGroupId, create, showActive, random);
+    return new ConfigurationPlace(applicationId, schemaId, endpointGroupId,
+        create, showActive, random);
   }
 
   @Override

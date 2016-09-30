@@ -46,8 +46,7 @@ public abstract class AbstractBaseCtlSchemaActivityEvent<S extends BaseSchemaDto
   protected String ecfVersionId;
   protected int ecfVersion;
 
-  public AbstractBaseCtlSchemaActivityEvent(P place,
-                                            ClientFactory clientFactory) {
+  public AbstractBaseCtlSchemaActivityEvent(P place, ClientFactory clientFactory) {
     super(place, clientFactory);
   }
 
@@ -70,7 +69,8 @@ public abstract class AbstractBaseCtlSchemaActivityEvent<S extends BaseSchemaDto
         public void onClick(ClickEvent event) {
           CtlSchemaPlace newCtlPlace = null;
 
-          newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.TENANT, place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, true);
+          newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.TENANT, place.getEcfId(),
+              place.getEcfVersionId(), place.getEcfVersion(), true, true);
           newCtlPlace.setSchemaType(getPlaceSchemaType());
           newCtlPlace.setPreviousPlace(place);
           canceled = true;
@@ -79,18 +79,19 @@ public abstract class AbstractBaseCtlSchemaActivityEvent<S extends BaseSchemaDto
         }
       }));
 
-      KaaAdmin.getDataSource().getTenantLevelCtlSchemaReferenceForEcf(place.getEcfId(), place.getEventClassDtoList(), new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
-        @Override
-        public void onFailureImpl(Throwable caught) {
-          Utils.handleException(caught, detailsView);
-        }
+      KaaAdmin.getDataSource().getTenantLevelCtlSchemaReferenceForEcf(place.getEcfId(),
+          place.getEventClassDtoList(), new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
+            @Override
+            public void onFailureImpl(Throwable caught) {
+              Utils.handleException(caught, detailsView);
+            }
 
-        @Override
-        public void onSuccessImpl(List<CtlSchemaReferenceDto> result) {
-          detailsView.getCtlSchemaReference().setAcceptableValues(result);
-          bindDetailsView(true);
-        }
-      });
+            @Override
+            public void onSuccessImpl(List<CtlSchemaReferenceDto> result) {
+              detailsView.getCtlSchemaReference().setAcceptableValues(result);
+              bindDetailsView(true);
+            }
+          });
       detailsView.getSchemaForm().setFormDataLoader(this);
     } else {
       bindDetailsView(false);

@@ -33,8 +33,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.List;
 
 public class ApplicationActivity
-    extends
-    AbstractDetailsActivity<ApplicationDto, ApplicationView, ApplicationPlace> {
+    extends AbstractDetailsActivity<ApplicationDto, ApplicationView, ApplicationPlace> {
 
   public ApplicationActivity(ApplicationPlace place,
                              ClientFactory clientFactory) {
@@ -92,7 +91,8 @@ public class ApplicationActivity
 
         @Override
         public void onSuccess(List<String> result) {
-          ApplicationActivity.this.detailsView.getCredentialsServiceName().setAcceptableValues(result);
+          ApplicationActivity.this.detailsView.getCredentialsServiceName()
+              .setAcceptableValues(result);
         }
       });
       serviceNames.setValue(this.entity.getCredentialsServiceName());

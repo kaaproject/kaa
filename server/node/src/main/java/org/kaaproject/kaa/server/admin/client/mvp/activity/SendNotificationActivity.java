@@ -34,7 +34,8 @@ import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import java.util.Collections;
 import java.util.List;
 
-public class SendNotificationActivity extends AbstractDetailsActivity<NotificationDto, SendNotificationView, SendNotificationPlace> {
+public class SendNotificationActivity
+    extends AbstractDetailsActivity<NotificationDto, SendNotificationView, SendNotificationPlace> {
 
   private String applicationId;
   private String topicId;
@@ -101,10 +102,12 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
   }
 
   @Override
-  protected void editEntity(NotificationDto entity, final AsyncCallback<NotificationDto> callback) {
+  protected void editEntity(NotificationDto entity,
+                            final AsyncCallback<NotificationDto> callback) {
     String endpointKeyHash = detailsView.getEndpointKeyHash().getValue();
     if (endpointKeyHash == null || endpointKeyHash.equals("")) {
-      KaaAdmin.getDataSource().sendNotification(entity, detailsView.getNotificationData().getValue(),
+      KaaAdmin.getDataSource().sendNotification(entity,
+          detailsView.getNotificationData().getValue(),
           new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
@@ -117,7 +120,8 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
             }
           });
     } else {
-      KaaAdmin.getDataSource().sendUnicastNotification(entity, endpointKeyHash, detailsView.getNotificationData().getValue(),
+      KaaAdmin.getDataSource().sendUnicastNotification(entity, endpointKeyHash,
+          detailsView.getNotificationData().getValue(),
           new AsyncCallback<EndpointNotificationDto>() {
             @Override
             public void onSuccess(EndpointNotificationDto result) {

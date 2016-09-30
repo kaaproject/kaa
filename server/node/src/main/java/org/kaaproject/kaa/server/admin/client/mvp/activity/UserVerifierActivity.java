@@ -27,7 +27,8 @@ import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
 
 import java.util.List;
 
-public class UserVerifierActivity extends AbstractPluginActivity<UserVerifierDto, UserVerifierView, UserVerifierPlace> {
+public class UserVerifierActivity
+    extends AbstractPluginActivity<UserVerifierDto, UserVerifierView, UserVerifierPlace> {
 
   public UserVerifierActivity(UserVerifierPlace place, ClientFactory clientFactory) {
     super(place, clientFactory);

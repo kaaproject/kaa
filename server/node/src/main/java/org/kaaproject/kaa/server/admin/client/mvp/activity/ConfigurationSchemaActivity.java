@@ -30,10 +30,10 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 
 public class ConfigurationSchemaActivity extends
-    AbstractBaseCtlSchemaActivityApplication<ConfigurationSchemaDto, ConfigurationSchemaViewDto, BaseCtlSchemaView, ConfigurationSchemaPlace> {
+    AbstractBaseCtlSchemaActivityApplication<ConfigurationSchemaDto, ConfigurationSchemaViewDto,
+        BaseCtlSchemaView, ConfigurationSchemaPlace> {
 
-  public ConfigurationSchemaActivity(ConfigurationSchemaPlace place,
-                                     ClientFactory clientFactory) {
+  public ConfigurationSchemaActivity(ConfigurationSchemaPlace place, ClientFactory clientFactory) {
     super(place, clientFactory);
   }
 
@@ -60,7 +60,8 @@ public class ConfigurationSchemaActivity extends
 
 
   @Override
-  protected void editEntity(ConfigurationSchemaViewDto entity, AsyncCallback<ConfigurationSchemaViewDto> callback) {
+  protected void editEntity(ConfigurationSchemaViewDto entity,
+                            AsyncCallback<ConfigurationSchemaViewDto> callback) {
     KaaAdmin.getDataSource().saveConfigurationSchemaView(entity, callback);
   }
 

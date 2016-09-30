@@ -32,7 +32,8 @@ import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 import java.util.Collections;
 import java.util.List;
 
-public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUserConfigurationDto, UpdateUserConfigView, UpdateUserConfigPlace> {
+public class UpdateUserConfigActivity extends AbstractDetailsActivity
+    <EndpointUserConfigurationDto, UpdateUserConfigView, UpdateUserConfigPlace> {
 
   private String applicationId;
 
@@ -71,7 +72,8 @@ public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUs
             SchemaInfoDto schemaInfo = result.get(result.size() - 1);
             detailsView.getConfigurationSchemaInfo().setValue(schemaInfo);
             detailsView.getConfigurationSchemaInfo().setAcceptableValues(result);
-            detailsView.getConfigurationData().setValue(schemaInfo != null ? schemaInfo.getSchemaForm() : null);
+            detailsView.getConfigurationData()
+                .setValue(schemaInfo != null ? schemaInfo.getSchemaForm() : null);
           }
 
           @Override
@@ -93,7 +95,8 @@ public class UpdateUserConfigActivity extends AbstractDetailsActivity<EndpointUs
   }
 
   @Override
-  protected void editEntity(EndpointUserConfigurationDto entity, final AsyncCallback<EndpointUserConfigurationDto> callback) {
+  protected void editEntity(EndpointUserConfigurationDto entity,
+                            final AsyncCallback<EndpointUserConfigurationDto> callback) {
     KaaAdmin.getDataSource().editUserConfiguration(entity, applicationId,
         detailsView.getConfigurationData().getValue(),
         new AsyncCallback<Void>() {
