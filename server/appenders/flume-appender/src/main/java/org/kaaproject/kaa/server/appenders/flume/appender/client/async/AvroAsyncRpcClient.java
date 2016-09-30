@@ -50,7 +50,8 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
     }
 
     LOG.info("Number of Threads:" + numberOfClientThreads);
-    executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
+    executorService = MoreExecutors
+        .listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
   }
 
   public AvroAsyncRpcClient(String hostname, Integer port, int numberOfThreads) {
@@ -64,18 +65,21 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
     }
 
     LOG.info("Number of Threads:" + numberOfClientThreads);
-    executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
+    executorService = MoreExecutors
+        .listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
   }
 
-  public ListenableFuture<AppendAsyncResultPojo> appendAsync(final Event event) throws EventDeliveryException {
-    ListenableFuture<AppendAsyncResultPojo> future = executorService.submit(new Callable<AppendAsyncResultPojo>() {
-      public AppendAsyncResultPojo call() throws Exception {
-        RpcClient client = clientQueue.poll();
-        client.append(event);
-        clientQueue.add(client);
-        return new AppendAsyncResultPojo(true, event);
-      }
-    });
+  public ListenableFuture<AppendAsyncResultPojo> appendAsync(final Event event)
+      throws EventDeliveryException {
+    ListenableFuture<AppendAsyncResultPojo> future = executorService.submit(
+        new Callable<AppendAsyncResultPojo>() {
+          public AppendAsyncResultPojo call() throws Exception {
+            RpcClient client = clientQueue.poll();
+            client.append(event);
+            clientQueue.add(client);
+            return new AppendAsyncResultPojo(true, event);
+          }
+        });
     return future;
   }
 
@@ -103,8 +107,8 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
   public void append(Event event) throws EventDeliveryException {
     try {
       this.appendAsync(event).get();
-    } catch (Exception e) {
-      throw new EventDeliveryException(e);
+    } catch (Exception ex) {
+      throw new EventDeliveryException(ex);
     }
   }
 
@@ -112,8 +116,8 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
   public void appendBatch(List<Event> events) throws EventDeliveryException {
     try {
       this.appendBatchAsync(events).get();
-    } catch (Exception e) {
-      throw new EventDeliveryException(e);
+    } catch (Exception ex) {
+      throw new EventDeliveryException(ex);
     }
   }
 

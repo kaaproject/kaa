@@ -50,28 +50,39 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
   }
 
   @Override
-  public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
+  public void doAppend(LogEventPack logEventPack, RecordHeader header,
+                       LogDeliveryCallback listener) {
     if (!closed) {
       try {
-        ProfileInfo clientProfile = (this.includeClientProfile) ? logEventPack.getClientProfile() : null;
-        ProfileInfo serverProfile = (this.includeServerProfile) ? logEventPack.getServerProfile() : null;
+        ProfileInfo clientProfile = (this.includeClientProfile)
+            ? logEventPack.getClientProfile() : null;
 
-        LOG.debug("[{}] appending {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
+        ProfileInfo serverProfile = (this.includeServerProfile)
+            ? logEventPack.getServerProfile() : null;
+
+        LOG.debug("[{}] appending {} logs to mongodb collection",
+            collectionName, logEventPack.getEvents().size());
+
         List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
         LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
         if (!dtos.isEmpty()) {
           logEventDao.save(dtos, clientProfile, serverProfile, collectionName);
-          LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
+
+          LOG.debug("[{}] appended {} logs to mongodb collection",
+              collectionName, logEventPack.getEvents().size());
         }
         listener.onSuccess();
-      } catch (MongoSocketException e) {
-        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to network error", getName()), e);
+      } catch (MongoSocketException ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed "
+            + "due to network error", getName()), ex);
         listener.onConnectionError();
-      } catch (MongoInternalException | MongoServerException e) {
-        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to remote error", getName()), e);
+      } catch (MongoInternalException | MongoServerException ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed "
+            + "due to remote error", getName()), ex);
         listener.onRemoteError();
-      } catch (Exception e) {
-        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to internal error", getName()), e);
+      } catch (Exception ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed "
+            + "due to internal error", getName()), ex);
         listener.onInternalError();
       }
     } else {
@@ -88,8 +99,8 @@ public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
       this.includeClientProfile = configuration.getIncludeClientProfile();
       this.includeServerProfile = configuration.getIncludeServerProfile();
       createCollection(appender.getApplicationToken());
-    } catch (Exception e) {
-      LOG.error("Failed to init MongoDB log appender: ", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to init MongoDB log appender: ", ex);
     }
   }
 

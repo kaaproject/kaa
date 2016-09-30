@@ -40,18 +40,14 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
-/**
- * The Class AkkaHandler.
- */
-public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand> implements MessageBuilder, ErrorBuilder {
+
+public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand>
+    implements MessageBuilder, ErrorBuilder {
 
   private static final Logger LOG = LoggerFactory.getLogger(HttpHandler.class);
 
   private final MessageHandler messageHandler;
 
-  /**
-   * The uuid.
-   */
   private final UUID uuid;
 
   private volatile AbstractHttpSyncCommand command;
@@ -77,10 +73,12 @@ public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand> im
    * org.kaaproject.kaa.server.common.http.server.CommandProcessor)
    */
   @Override
-  protected void channelRead0(final ChannelHandlerContext ctx, final AbstractCommand msg) throws Exception {
+  protected void channelRead0(final ChannelHandlerContext ctx, final AbstractCommand msg)
+      throws Exception {
     this.command = (AbstractHttpSyncCommand) msg;
-    NettyHttpSyncMessage message = new NettyHttpSyncMessage(uuid, msg.getNextProtocol(), new NettyChannelContext(ctx),
-        command.getChannelType(), command, this, this);
+    NettyHttpSyncMessage message = new NettyHttpSyncMessage(uuid, msg.getNextProtocol(),
+        new NettyChannelContext(ctx), command.getChannelType(),
+        command, this, this);
     LOG.trace("Forwarding {} to handler", message);
     messageHandler.process(message);
   }
@@ -92,7 +90,9 @@ public class HttpHandler extends SimpleChannelInboundHandler<AbstractCommand> im
       status = HttpResponseStatus.UNAUTHORIZED;
     } else if (exception instanceof EndpointRevocationException) {
       status = HttpResponseStatus.FORBIDDEN;
-    } else if (exception instanceof GeneralSecurityException || exception instanceof IOException || exception instanceof IllegalArgumentException
+    } else if (exception instanceof GeneralSecurityException
+        || exception instanceof IOException
+        || exception instanceof IllegalArgumentException
         || exception instanceof InvalidSdkTokenException) {
       status = HttpResponseStatus.BAD_REQUEST;
     } else {

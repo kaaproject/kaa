@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Implementation of Kaa http transport
+ * Implementation of Kaa http transport.
  *
  * @author Andrew Shvayka
  */
@@ -57,19 +57,33 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
   private AbstractNettyServer netty;
 
   @Override
-  public void init(SpecificTransportContext<AvroHttpConfig> context) throws TransportLifecycleException {
+  public void init(SpecificTransportContext<AvroHttpConfig> context)
+      throws TransportLifecycleException {
     AvroHttpConfig configuration = context.getConfiguration();
-    configuration.setBindInterface(replaceProperty(configuration.getBindInterface(), BIND_INTERFACE_PROP_NAME, context
-        .getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
-    configuration.setPublicInterface(replaceProperty(configuration.getPublicInterface(), PUBLIC_INTERFACE_PROP_NAME, context
-        .getCommonProperties().getProperty(PUBLIC_INTERFACE_PROP_NAME, LOCALHOST)));
-    List<KaaCommandProcessorFactory<HttpRequest, HttpResponse>> processors = new ArrayList<KaaCommandProcessorFactory<HttpRequest, HttpResponse>>();
+    configuration.setBindInterface(
+        replaceProperty(
+            configuration.getBindInterface(),
+            BIND_INTERFACE_PROP_NAME,
+            context.getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)
+        )
+    );
+
+    configuration.setPublicInterface(
+        replaceProperty(
+            configuration.getPublicInterface(),
+            PUBLIC_INTERFACE_PROP_NAME,
+            context.getCommonProperties().getProperty(PUBLIC_INTERFACE_PROP_NAME, LOCALHOST)
+        )
+    );
+
+    List<KaaCommandProcessorFactory<HttpRequest, HttpResponse>> processors = new ArrayList<>();
     processors.add(new SyncCommandFactory());
     processors.add(new LongSyncCommandFactory());
     final CommandFactory<HttpRequest, HttpResponse> factory = new CommandFactory<>(processors);
     final int maxBodySize = configuration.getMaxBodySize();
 
-    this.netty = new AbstractNettyServer(configuration.getBindInterface(), configuration.getBindPort()) {
+    this.netty = new AbstractNettyServer(configuration.getBindInterface(),
+        configuration.getBindPort()) {
 
       @Override
       protected ChannelInitializer<SocketChannel> configureInitializer() throws Exception {
@@ -116,11 +130,13 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
   protected List<byte[]> getSerializedConnectionInfoList() {
     List<byte[]> connectionInfoList = new ArrayList<>();
     RangeExpressionParser rangeExpressionParser = new RangeExpressionParser();
-    List<Integer> publicPorts = rangeExpressionParser.getNumbersFromRanges(context.getConfiguration().getPublicPorts());
+    List<Integer> publicPorts = rangeExpressionParser
+        .getNumbersFromRanges(context.getConfiguration().getPublicPorts());
     for (int publicPort : publicPorts) {
       byte[] interfaceData = toUtf8Bytes(context.getConfiguration().getPublicInterface());
       byte[] publicKeyData = context.getServerKey().getEncoded();
-      ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
+      ByteBuffer buf = ByteBuffer.wrap(
+          new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
       buf.putInt(publicKeyData.length);
       buf.put(publicKeyData);
       buf.putInt(interfaceData.length);

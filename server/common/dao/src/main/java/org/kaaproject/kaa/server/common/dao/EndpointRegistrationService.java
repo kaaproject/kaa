@@ -37,7 +37,8 @@ public interface EndpointRegistrationService {
    * @return The endpoint registration saved
    * @throws EndpointRegistrationServiceException - if an exception occurs.
    */
-  EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration) throws EndpointRegistrationServiceException;
+  EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration)
+      throws EndpointRegistrationServiceException;
 
   /**
    * Returns the endpoint registration by the endpoint ID specified.
@@ -46,7 +47,8 @@ public interface EndpointRegistrationService {
    * @return The endpoint registration found
    * @throws EndpointRegistrationServiceException - if an exception occurs.
    */
-  Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException;
+  Optional<EndpointRegistrationDto> findEndpointRegistrationByEndpointId(String endpointId)
+      throws EndpointRegistrationServiceException;
 
   /**
    * Returns the endpoint registration by the credentials ID specified.
@@ -55,7 +57,8 @@ public interface EndpointRegistrationService {
    * @return The endpoint registration found
    * @throws EndpointRegistrationServiceException - if an exception occurs.
    */
-  Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId) throws EndpointRegistrationServiceException;
+  Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId)
+      throws EndpointRegistrationServiceException;
 
   /**
    * Removes the endpoint registration by the endpoint ID specified.
@@ -63,7 +66,8 @@ public interface EndpointRegistrationService {
    * @param endpointId The endpoint ID
    * @throws EndpointRegistrationServiceException - if an exception occurs.
    */
-  void removeEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException;
+  void removeEndpointRegistrationByEndpointId(String endpointId)
+      throws EndpointRegistrationServiceException;
 
   /**
    * Removes the endpoint registration by the registration ID specified.
@@ -71,5 +75,6 @@ public interface EndpointRegistrationService {
    * @param registrationId The registration ID
    * @throws EndpointRegistrationServiceException - if an exception occurs.
    */
-  void removeEndpointRegistrationById(String registrationId) throws EndpointRegistrationServiceException;
+  void removeEndpointRegistrationById(String registrationId)
+      throws EndpointRegistrationServiceException;
 }

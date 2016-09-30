@@ -78,8 +78,8 @@ public class SchemaUtil {
 
   private static boolean isEqualUnions(Schema s1, Schema s2) {
 
-    SortedMap<String, Schema> types1 = new TreeMap<String, Schema>();
-    SortedMap<String, Schema> types2 = new TreeMap<String, Schema>();
+    SortedMap<String, Schema> types1 = new TreeMap<>();
+    SortedMap<String, Schema> types2 = new TreeMap<>();
 
     for (Schema schema : s1.getTypes()) {
       types1.put(schema.getName(), schema);
@@ -96,8 +96,8 @@ public class SchemaUtil {
       return false;
     }
 
-    SortedMap<String, Schema> fields1 = new TreeMap<String, Schema>();
-    SortedMap<String, Schema> fields2 = new TreeMap<String, Schema>();
+    SortedMap<String, Schema> fields1 = new TreeMap<>();
+    SortedMap<String, Schema> fields2 = new TreeMap<>();
 
     for (Schema.Field field : s1.getFields()) {
       fields1.put(field.name(), field.schema());
@@ -109,7 +109,8 @@ public class SchemaUtil {
     return isEqualSchemaMaps(fields1, fields2);
   }
 
-  private static boolean isEqualSchemaMaps(SortedMap<String, Schema> map1, SortedMap<String, Schema> map2) {
+  private static boolean isEqualSchemaMaps(SortedMap<String, Schema> map1,
+                                           SortedMap<String, Schema> map2) {
     if (!map1.keySet().equals(map2.keySet())) {
       return false;
     }
@@ -121,10 +122,11 @@ public class SchemaUtil {
     return true;
   }
 
-  public static Map<String, Schema> getUniqueSchemasMap(Collection<Schema> schemas) throws Exception {
-    Map<String, Schema> map = new HashMap<String, Schema>();
+  public static Map<String, Schema> getUniqueSchemasMap(Collection<Schema> schemas)
+      throws Exception {
+    Map<String, Schema> map = new HashMap<>();
 
-    List<Schema> allPossible = new LinkedList<Schema>();
+    List<Schema> allPossible = new LinkedList<>();
 
     for (Schema schema : schemas) {
       allPossible.addAll(getChildSchemas(schema));
@@ -137,8 +139,10 @@ public class SchemaUtil {
         map.put(key, schema);
       } else {
         if (!SchemaUtil.isEqualSchemas(schema, map.get(key))) {
-          LOG.debug("classes {} are not the same: \n{}\n\n{}", key, schema.toString(), map.get(key).toString());
-          throw new IllegalArgumentException("multiple occurrences of " + key + " with different fields");
+          LOG.debug("classes {} are not the same: \n{}\n\n{}",
+              key, schema.toString(), map.get(key).toString());
+          throw new IllegalArgumentException("multiple occurrences of "
+              + key + " with different fields");
         }
       }
     }
@@ -185,8 +189,12 @@ public class SchemaUtil {
   public static Collection<JavaDynamicBean> compileAvroSchema(Schema avroSchema) {
     try {
       LOG.debug("Compiling {}", avroSchema);
-      Map<String, Schema> uniqueSchemas = SchemaUtil.getUniqueSchemasMap(Collections.singletonList(avroSchema));
-      List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(avroSchema, uniqueSchemas);
+      Map<String, Schema> uniqueSchemas = SchemaUtil
+          .getUniqueSchemasMap(Collections.singletonList(avroSchema));
+
+      List<JavaDynamicBean> javaSources = JavaSdkGenerator
+          .generateSchemaSources(avroSchema, uniqueSchemas);
+
       JavaDynamicCompiler compiler = new JavaDynamicCompiler();
       compiler.init();
       return compiler.compile(javaSources);

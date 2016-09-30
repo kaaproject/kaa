@@ -58,7 +58,8 @@ public class LogEventMongoDao implements LogEventDao {
     List<MongoCredential> credentials = new ArrayList<>();
     if (configuration.getMongoCredentials() != null) {
       for (MongoDBCredential credential : configuration.getMongoCredentials()) {
-        credentials.add(MongoCredential.createMongoCRCredential(credential.getUser(), configuration.getDbName(),
+        credentials.add(MongoCredential.createMongoCRCredential(credential.getUser(),
+            configuration.getDbName(),
             credential.getPassword().toCharArray()));
       }
     }
@@ -85,7 +86,8 @@ public class LogEventMongoDao implements LogEventDao {
 
     MongoDbFactory dbFactory = new SimpleMongoDbFactory(mongoClient, configuration.getDbName());
 
-    MappingMongoConverter converter = new MappingMongoConverter(dbFactory, new MongoMappingContext());
+    MappingMongoConverter converter = new MappingMongoConverter(dbFactory,
+        new MongoMappingContext());
     converter.setTypeMapper(new DefaultMongoTypeMapper(null));
 
     mongoTemplate = new MongoTemplate(dbFactory, converter);
@@ -98,13 +100,14 @@ public class LogEventMongoDao implements LogEventDao {
       if (!mongoTemplate.collectionExists(collectionName)) {
         mongoTemplate.createCollection(collectionName);
       }
-    } catch (UncategorizedMongoDbException e) {
-      LOG.warn("Failed to create collection {} due to", collectionName, e);
+    } catch (UncategorizedMongoDbException ex) {
+      LOG.warn("Failed to create collection {} due to", collectionName, ex);
     }
   }
 
   @Override
-  public List<LogEvent> save(List<LogEventDto> logEventDtos, ProfileInfo clientProfile, ProfileInfo serverProfile, String collectionName) {
+  public List<LogEvent> save(List<LogEventDto> logEventDtos, ProfileInfo clientProfile,
+                             ProfileInfo serverProfile, String collectionName) {
     List<LogEvent> logEvents = new ArrayList<>(logEventDtos.size());
     for (LogEventDto logEventDto : logEventDtos) {
       logEvents.add(new LogEvent(logEventDto, clientProfile, serverProfile));

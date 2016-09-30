@@ -358,7 +358,7 @@ public class DaoConstants {
   public static final String LOG_SCHEMA_TABLE_NAME = "log_schems";
 
   /**
-   * Notification schems constants
+   * Notification schems constants.
    */
   public static final String NOTIFICATION_SCHEMA_TABLE_NAME = "notification_schems";
   public static final String NOTIFICATION_SCHEMA_TYPE_PROPERTY = "type";
@@ -372,7 +372,7 @@ public class DaoConstants {
   public static final String LOG_APPENDER_CONFIRM_DELIVERY = "confirm_delivery";
 
   /**
-   * SDK profile constants
+   * SDK profile constants.
    */
   public static final String SDK_PROFILE_APPLICATION_ID = APPLICATION_ID;
   public static final String SDK_PROFILE_CONFIGURATION_SCHEMA_VERSION =
@@ -390,7 +390,7 @@ public class DaoConstants {
   public static final String SDK_PROFILE_TOKEN = "token";
 
   /**
-   * CTL schems constants
+   * CTL schems constants.
    */
   public static final String CTL_SCHEMA_TABLE_NAME = "ctl";
   public static final String CTL_SCHEMA_META_INFO_ID = "metainfo_id";
@@ -415,7 +415,7 @@ public class DaoConstants {
       + "." + ID;
 
   /**
-   * CTL schems meta info constants
+   * CTL schems meta info constants.
    */
   public static final String CTL_SCHEMA_META_INFO_TABLE_NAME = "ctl_metainfo";
   public static final String CTL_SCHEMA_META_INFO_FQN = FQN;

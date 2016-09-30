@@ -19,15 +19,16 @@ package org.kaaproject.kaa.server.transports.tcp.transport.netty;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 
-public abstract class AbstractKaaTcpCommandProcessor implements KaaCommandProcessor<MqttFrame, MqttFrame> {
+public abstract class AbstractKaaTcpCommandProcessor
+    implements KaaCommandProcessor<MqttFrame, MqttFrame> {
 
   /**
-   * Time of SYNC processing
+   * Time of SYNC processing.
    */
   private long syncTime = 0;
 
   /**
-   * integer representing ID of HTTP request
+   * Integer representing id of HTTP request.
    */
   private int commandId;
 

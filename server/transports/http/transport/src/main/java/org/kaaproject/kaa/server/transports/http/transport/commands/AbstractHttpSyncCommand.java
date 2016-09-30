@@ -21,6 +21,7 @@ import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -49,37 +50,22 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * The Class AbstractOperationsCommand.
- *
- * @param <T> the generic type
- * @param <R> the generic type
- */
+
 public abstract class AbstractHttpSyncCommand extends AbstractCommand {
 
-  /**
-   * The signature.
-   */
+
   private byte[] requestSignature;
 
-  /**
-   * The encoded request session key.
-   */
+
   private byte[] requestKey;
 
-  /**
-   * The request data.
-   */
+
   private byte[] requestData;
 
-  /**
-   * The response body.
-   */
+
   private byte[] responseBody;
 
-  /**
-   * The signature.
-   */
+
   private byte[] responseSignature;
 
   private int nextProtocol = Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID;
@@ -125,7 +111,8 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
             if (CommonEpConstans.REQUEST_SIGNATURE_ATTR_NAME.equals(data.getName())) {
               requestSignature = attribute.get();
               if (LOG.isTraceEnabled()) {
-                LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " Signature set. size: "
+                LOG.trace("Multipart name " + data.getName() + " type "
+                    + data.getHttpDataType().name() + " Signature set. size: "
                     + requestSignature.length);
                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestSignature));
               }
@@ -133,14 +120,16 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
             } else if (CommonEpConstans.REQUEST_KEY_ATTR_NAME.equals(data.getName())) {
               requestKey = attribute.get();
               if (LOG.isTraceEnabled()) {
-                LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " requestKey set. size: "
+                LOG.trace("Multipart name " + data.getName() + " type "
+                    + data.getHttpDataType().name() + " requestKey set. size: "
                     + requestKey.length);
                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestKey));
               }
             } else if (CommonEpConstans.REQUEST_DATA_ATTR_NAME.equals(data.getName())) {
               requestData = attribute.get();
               if (LOG.isTraceEnabled()) {
-                LOG.trace("Multipart name " + data.getName() + " type " + data.getHttpDataType().name() + " requestData set. size: "
+                LOG.trace("Multipart name " + data.getName() + " type "
+                    + data.getHttpDataType().name() + " requestData set. size: "
                     + requestData.length);
                 LOG.trace(MessageEncoderDecoder.bytesToHex(requestData));
               }
@@ -212,9 +201,13 @@ public abstract class AbstractHttpSyncCommand extends AbstractCommand {
     httpResponse.headers().set(CONTENT_TYPE, CommonEpConstans.RESPONSE_CONTENT_TYPE);
     httpResponse.headers().set(CONTENT_LENGTH, data.readableBytes());
     LOG.warn("Response size: {}", data.readableBytes());
-    httpResponse.headers().set(CommonEpConstans.RESPONSE_TYPE, CommonEpConstans.RESPONSE_TYPE_OPERATION);
+    httpResponse
+        .headers()
+        .set(CommonEpConstans.RESPONSE_TYPE, CommonEpConstans.RESPONSE_TYPE_OPERATION);
     if (responseSignature != null) {
-      httpResponse.headers().set(CommonEpConstans.SIGNATURE_HEADER_NAME, Base64.encodeBase64String(responseSignature));
+      httpResponse
+          .headers()
+          .set(CommonEpConstans.SIGNATURE_HEADER_NAME, encodeBase64String(responseSignature));
     }
     if (isNeedConnectionClose()) {
       httpResponse.headers().set(CONNECTION, HttpHeaders.Values.CLOSE);

@@ -48,7 +48,8 @@ public class LogAppenderServiceImpl implements LogAppendersService {
   @Override
   public List<LogAppenderDto> findLogAppendersByAppIdAndSchemaVersion(
       String appId, int schemaVersion) {
-    LOG.debug("Find registered log appenders by application id [{}] and schema version [{}]", appId, schemaVersion);
+    LOG.debug("Find registered log appenders by application id [{}] and schema version [{}]",
+        appId, schemaVersion);
     return convertDtoList(logAppenderDao.findByAppIdAndSchemaVersion(appId, schemaVersion));
   }
 

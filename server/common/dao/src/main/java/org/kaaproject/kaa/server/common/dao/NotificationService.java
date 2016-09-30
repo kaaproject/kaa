@@ -68,7 +68,8 @@ public interface NotificationService {
    * @param dto the dto
    * @return the update notification dto
    */
-  UpdateNotificationDto<EndpointNotificationDto> saveUnicastNotification(EndpointNotificationDto dto);
+  UpdateNotificationDto<EndpointNotificationDto> saveUnicastNotification(
+      EndpointNotificationDto dto);
 
   /**
    * Find notifications by topic id.
@@ -128,7 +129,8 @@ public interface NotificationService {
    * @param userNfVersion the user schema version
    * @return the list
    */
-  List<NotificationDto> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNum, int sysNfVersion, int userNfVersion);
+  List<NotificationDto> findNotificationsByTopicIdAndVersionAndStartSecNum(
+      String topicId, int seqNum, int sysNfVersion, int userNfVersion);
 
   /**
    * Find notification schemas by app id and type.
@@ -137,7 +139,8 @@ public interface NotificationService {
    * @param type  the type
    * @return the list
    */
-  List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type);
+  List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String appId,
+                                                                    NotificationTypeDto type);
 
   /**
    * Find notification schema by app id and type and version.
@@ -147,7 +150,9 @@ public interface NotificationService {
    * @param majorVersion the major version
    * @return the notification schema dto
    */
-  NotificationSchemaDto findNotificationSchemaByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int majorVersion);
+  NotificationSchemaDto findNotificationSchemaByAppIdAndTypeAndVersion(String appId,
+                                                                       NotificationTypeDto type,
+                                                                       int majorVersion);
 
   /**
    * Find unicast notifications by key hash.
