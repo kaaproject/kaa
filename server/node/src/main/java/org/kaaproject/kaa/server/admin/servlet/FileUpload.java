@@ -40,9 +40,6 @@ public class FileUpload extends HttpServlet {
 
   private static final long serialVersionUID = 2959115024959843564L;
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(FileUpload.class);
 
   @Autowired
@@ -54,8 +51,10 @@ public class FileUpload extends HttpServlet {
     SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
         config.getServletContext());
   }
-
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  //CHECKSTYLE:OFF
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    //CHECKSTYLE:ON
     ServletFileUpload upload = new ServletFileUpload();
 
     try {
@@ -79,9 +78,9 @@ public class FileUpload extends HttpServlet {
         LOG.error("No file found in post request!");
         throw new RuntimeException("No file found in post request!");
       }
-    } catch (Exception e) {
-      LOG.error("Unexpected error in FileUpload.doPost: ", e);
-      throw new RuntimeException(e);
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in FileUpload.doPost: ", ex);
+      throw new RuntimeException(ex);
     }
 
   }

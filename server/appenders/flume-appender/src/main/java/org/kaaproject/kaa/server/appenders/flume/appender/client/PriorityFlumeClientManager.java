@@ -96,8 +96,8 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
 
   private AsyncRpcClient getNextClient(boolean isInit, int retryCount) {
     LOG.debug("Get next flume rpc client");
-    AsyncRpcClient client = null;
-    PrioritizedFlumeNode node = null;
+    AsyncRpcClient client;
+    PrioritizedFlumeNode node;
     if (isInit) {
       node = flumeNodes.get(DEFAULT_POSITION);
     } else {
@@ -111,21 +111,16 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
     try {
       LOG.warn("Initialize new flume client.");
       client = new AvroAsyncRpcClient(node.getHost(), node.getPort(), maxClientThreads);
-    } catch (FlumeException e) {
-      LOG.warn("Can't initialize flume client.", e);
+    } catch (FlumeException ex) {
+      LOG.warn("Can't initialize flume client.", ex);
       if (retryCount <= MAX_RETRY_COUNT) {
         client = getNextClient(false, ++retryCount);
       } else {
-        LOG.warn("Wasn't initialized any clients. Got exception {}", e);
-        throw e;
+        LOG.warn("Wasn't initialized any clients. Got exception {}", ex);
+        throw ex;
       }
     }
     return client;
-  }
-
-  @Override
-  public void sendEventToFlume(Event event) throws EventDeliveryException {
-    sendEventToFlume(event, 1);
   }
 
   @Override
@@ -133,45 +128,75 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
     sendEventsToFlume(events, 1);
   }
 
-  private void sendEventToFlume(Event event, int retryCount) throws EventDeliveryException {
-    try {
-      LOG.debug("Sending flume event to flume agent {}", event);
-      currentClient.append(event);
-    } catch (EventDeliveryException e) {
-      LOG.warn("Can't send flume event. Got exception {}", e);
-      currentClient.close();
-      currentClient = getNextClient(false);
-      if (retryCount <= MAX_RETRY_COUNT) {
-        LOG.debug("Retry send flume event. Count {}", retryCount);
-        sendEventToFlume(event, ++retryCount);
-      } else {
-        LOG.warn("Flume event wasn't sent. Got exception {}", e);
-        throw e;
-      }
-    }
-  }
 
-  private void sendEventsToFlume(List<Event> events, int retryCount) throws EventDeliveryException {
+  private void sendEventsToFlume(List<Event> events, int retryCount)
+      throws EventDeliveryException {
     try {
       LOG.debug("Sending flume events to flume agent {}", events);
       currentClient.appendBatch(events);
-    } catch (EventDeliveryException e) {
-      LOG.warn("Can't send flume events. Got exception {}", e);
+    } catch (EventDeliveryException ex) {
+      LOG.warn("Can't send flume events. Got exception {}", ex);
       currentClient.close();
       currentClient = getNextClient(false);
       if (retryCount <= MAX_RETRY_COUNT) {
         LOG.debug("Retry send flume events. Count {}", retryCount);
         sendEventsToFlume(events, ++retryCount);
       } else {
-        LOG.warn("Flume events wasn't sent. Got exception {}", e);
-        throw e;
+        LOG.warn("Flume events wasn't sent. Got exception {}", ex);
+        throw ex;
       }
     }
   }
 
   @Override
-  public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
+  public void sendEventToFlume(Event event) throws EventDeliveryException {
+    sendEventToFlume(event, 1);
+  }
+
+
+  private void sendEventToFlume(Event event, int retryCount) throws EventDeliveryException {
+    try {
+      LOG.debug("Sending flume event to flume agent {}", event);
+      currentClient.append(event);
+    } catch (EventDeliveryException ex) {
+      LOG.warn("Can't send flume event. Got exception {}", ex);
+      currentClient.close();
+      currentClient = getNextClient(false);
+      if (retryCount <= MAX_RETRY_COUNT) {
+        LOG.debug("Retry send flume event. Count {}", retryCount);
+        sendEventToFlume(event, ++retryCount);
+      } else {
+        LOG.warn("Flume event wasn't sent. Got exception {}", ex);
+        throw ex;
+      }
+    }
+  }
+
+
+  @Override
+  public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event)
+      throws EventDeliveryException {
     return sendEventToFlumeAsync(event, 1);
+  }
+
+
+  public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event, int retryCount)
+      throws EventDeliveryException {
+    try {
+      LOG.debug("Sending flume event to flume agent {}", event);
+      return currentClient.appendAsync(event);
+    } catch (EventDeliveryException ex) {
+      LOG.warn("Can't send flume event. Got exception {}", ex);
+      currentClient.close();
+      currentClient = getNextClient(false);
+      if (retryCount <= MAX_RETRY_COUNT) {
+        LOG.debug("Retry send flume event. Count {}", retryCount);
+        return sendEventToFlumeAsync(event, ++retryCount);
+      } else {
+        LOG.warn("Flume event wasn't sent. Got exception {}", ex);
+        throw ex;
+      }
+    }
   }
 
   @Override
@@ -180,41 +205,26 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
     return sendEventsToFlumeAsync(events, 1);
   }
 
-  public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event, int retryCount)
-      throws EventDeliveryException {
-    try {
-      LOG.debug("Sending flume event to flume agent {}", event);
-      return currentClient.appendAsync(event);
-    } catch (EventDeliveryException e) {
-      LOG.warn("Can't send flume event. Got exception {}", e);
-      currentClient.close();
-      currentClient = getNextClient(false);
-      if (retryCount <= MAX_RETRY_COUNT) {
-        LOG.debug("Retry send flume event. Count {}", retryCount);
-        return sendEventToFlumeAsync(event, ++retryCount);
-      } else {
-        LOG.warn("Flume event wasn't sent. Got exception {}", e);
-        throw e;
-      }
-    }
-  }
-
-  public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events, int retryCount)
-      throws EventDeliveryException {
+  public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(
+      List<Event> events, int retryCount) throws EventDeliveryException {
     try {
       LOG.debug("Sending flume events to flume agent {}", events);
       return currentClient.appendBatchAsync(events);
-    } catch (EventDeliveryException e) {
-      LOG.warn("Can't send flume events. Got exception {}", e);
+    } catch (EventDeliveryException ex) {
+      LOG.warn("Can't send flume events. Got exception {}", ex);
       currentClient.close();
       currentClient = getNextClient(false);
       if (retryCount <= MAX_RETRY_COUNT) {
         LOG.debug("Retry send flume events. Count {}", retryCount);
         return sendEventsToFlumeAsync(events, ++retryCount);
       } else {
-        LOG.warn("Flume events wasn't sent. Got exception {}", e);
-        throw e;
+        LOG.warn("Flume events wasn't sent. Got exception {}", ex);
+        throw ex;
       }
     }
   }
+
+
+
+
 }

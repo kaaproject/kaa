@@ -52,7 +52,7 @@ public class DynamicLoadManagerTest {
     ldServiceMock = mock(LoadDistributionService.class);
     zkServiceMock = mock(ControlZkService.class);
     pNodeMock = mock(ControlNode.class);
-    when(ldServiceMock.getOpsServerHistoryTTL()).thenReturn(300);
+    when(ldServiceMock.getOpsServerHistoryTtl()).thenReturn(300);
     when(ldServiceMock.getRebalancer()).thenReturn(new EndpointCountRebalancer());
     when(ldServiceMock.getZkService()).thenReturn(zkServiceMock);
     when(zkServiceMock.getControlZkNode()).thenReturn(pNodeMock);
@@ -67,7 +67,7 @@ public class DynamicLoadManagerTest {
     assertNotNull(dm);
     assertNotNull(dm.getLoadDistributionService());
     assertNotNull(dm.getDynamicRebalancer());
-    verify(ldServiceMock, atLeast(1)).getOpsServerHistoryTTL();
+    verify(ldServiceMock, atLeast(1)).getOpsServerHistoryTtl();
     assertEquals(300000, dm.getOpsServerHistoryTtl());
   }
 

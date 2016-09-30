@@ -62,7 +62,8 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
   @Override
   public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
     listView = clientFactory.getEndpointProfilesView();
-    dataProvider = new EndpointProfileDataProvider(listView.getListWidget(), listView, this.applicationId);
+    dataProvider = new EndpointProfileDataProvider(listView.getListWidget(),
+        listView, this.applicationId);
     listView.setPresenter(this);
     bind();
     containerWidget.setWidget(listView.asWidget());
@@ -79,34 +80,36 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
       }
     }));
 
-    registrations.add(listView.getRowActionsSource().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> event) {
-        String id = event.getClickedId();
-        if (event.getAction() == RowActionEvent.CLICK) {
-          goTo(new EndpointProfilePlace(applicationId, id));
-        } else if (event.getAction() == RowActionEvent.DELETE) {
-          deleteEntity(id, new BusyAsyncCallback<Void>() {
-            @Override
-            public void onFailureImpl(Throwable caught) {
-              Utils.handleException(caught, listView);
-            }
+    registrations.add(listView.getRowActionsSource().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> event) {
+            String id = event.getClickedId();
+            if (event.getAction() == RowActionEvent.CLICK) {
+              goTo(new EndpointProfilePlace(applicationId, id));
+            } else if (event.getAction() == RowActionEvent.DELETE) {
+              deleteEntity(id, new BusyAsyncCallback<Void>() {
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                  Utils.handleException(caught, listView);
+                }
 
-            @Override
-            public void onSuccessImpl(Void result) {
-              dataProvider.update();
+                @Override
+                public void onSuccessImpl(Void result) {
+                  dataProvider.update();
+                }
+              });
             }
-          });
-        }
-      }
-    }));
+          }
+        }));
 
-    registrations.add(listView.getEndpointGroupsInfo().addValueChangeHandler(new ValueChangeHandler<EndpointGroupDto>() {
-      @Override
-      public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
-        findByEndpointGroup();
-      }
-    }));
+    registrations.add(listView.getEndpointGroupsInfo().addValueChangeHandler(
+        new ValueChangeHandler<EndpointGroupDto>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<EndpointGroupDto> valueChangeEvent) {
+            findByEndpointGroup();
+          }
+        }));
 
     registrations.add(listView.getFindEndpointButton().addClickHandler(new ClickHandler() {
       @Override
@@ -124,18 +127,20 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
         }
       }));
     }
-    registrations.add(listView.getEndpointGroupButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-      @Override
-      public void onValueChange(ValueChangeEvent<Boolean> event) {
-        findByEndpointGroup();
-      }
-    }));
-    registrations.add(listView.getEndpointKeyHashButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-      @Override
-      public void onValueChange(ValueChangeEvent<Boolean> event) {
-        findByEndpointKeyHash();
-      }
-    }));
+    registrations.add(listView.getEndpointGroupButton().addValueChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            findByEndpointGroup();
+          }
+        }));
+    registrations.add(listView.getEndpointKeyHashButton().addValueChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            findByEndpointKeyHash();
+          }
+        }));
 
     reset();
   }
@@ -165,17 +170,18 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
   }
 
   private void getGroupsList() {
-    KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        Utils.handleException(caught, listView);
-      }
+    KaaAdmin.getDataSource().loadEndpointGroups(applicationId,
+        new AsyncCallback<List<EndpointGroupDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            Utils.handleException(caught, listView);
+          }
 
-      @Override
-      public void onSuccess(List<EndpointGroupDto> result) {
-        populateListBoxAndGrid(result);
-      }
-    });
+          @Override
+          public void onSuccess(List<EndpointGroupDto> result) {
+            populateListBoxAndGrid(result);
+          }
+        });
   }
 
   private void populateListBoxAndGrid(List<EndpointGroupDto> result) {

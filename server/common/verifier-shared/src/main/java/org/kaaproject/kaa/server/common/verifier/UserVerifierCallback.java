@@ -30,49 +30,49 @@ public interface UserVerifierCallback {
   void onSuccess();
 
   /**
-   * Failed verification due to invalid token
+   * Failed verification due to invalid token.
    */
   void onTokenInvalid();
 
   /**
-   * Failed verification due to outdated token
+   * Failed verification due to outdated token.
    */
   void onTokenExpired();
 
   /**
-   * Failed verification due to specified reason
+   * Failed verification due to specified reason.
    *
    * @param reason - reason of failure
    */
   void onVerificationFailure(String reason);
 
   /**
-   * Failed verification due to internal error
+   * Failed verification due to internal error.
    */
   void onInternalError();
 
   /**
-   * Failed verification due to internal error
+   * Failed verification due to internal error.
    */
   void onInternalError(String reason);
 
   /**
-   * Failed verification due to connection error
+   * Failed verification due to connection error.
    */
   void onConnectionError();
 
   /**
-   * Failed verification due to connection error
+   * Failed verification due to connection error.
    */
   void onConnectionError(String reason);
 
   /**
-   * Failed verification due to remote authentication service error
+   * Failed verification due to remote authentication service error.
    */
   void onRemoteError();
 
   /**
-   * Failed verification due to remote authentication service error
+   * Failed verification due to remote authentication service error.
    */
   void onRemoteError(String reason);
 

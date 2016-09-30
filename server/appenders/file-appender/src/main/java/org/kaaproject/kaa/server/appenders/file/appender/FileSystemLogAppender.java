@@ -51,7 +51,8 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
   }
 
   @Override
-  public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
+  public void doAppend(LogEventPack logEventPack, RecordHeader header,
+                       LogDeliveryCallback listener) {
     if (!closed) {
       try {
         String path = logsRootPath + "/" + tenantDirName + "/" + applicationDirName;
@@ -63,8 +64,8 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
         }
         LOG.debug("[{}] appended {} logs to directory", path, logEventPack.getEvents().size());
         listener.onSuccess();
-      } catch (Exception e) {
-        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed", getName()), e);
+      } catch (Exception ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed", getName()), ex);
         listener.onInternalError();
       }
     } else {
@@ -76,8 +77,11 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
   private List<String> eventsToStrings(List<LogEventDto> dtos) {
     List<String> events = new ArrayList<>();
     for (LogEventDto logEventDto : dtos) {
-      String event = new StringBuilder("{\"Log Header\": \"").append(logEventDto.getHeader()).append("\", \"Event\": ")
-          .append(logEventDto.getEvent()).append("}").toString();
+      String event = new StringBuilder("{\"Log Header\": \"")
+          .append(logEventDto.getHeader())
+          .append("\", \"Event\": ")
+          .append(logEventDto.getEvent())
+          .append("}").toString();
       events.add(event);
     }
     return events;
@@ -95,11 +99,12 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
         logger = new LogbackFileSystemLogger();
       }
       initLogDirectories(appenderDto);
-      logger.init(appenderDto, configuration, Paths.get(logsRootPath, tenantDirName, applicationDirName, "application.log"));
+      logger.init(appenderDto, configuration,
+          Paths.get(logsRootPath, tenantDirName, applicationDirName, "application.log"));
       fileSystemLogEventService.createUserAndGroup(appenderDto, configuration,
           Paths.get(logsRootPath, tenantDirName, applicationDirName).toAbsolutePath().toString());
-    } catch (Exception e) {
-      LOG.error("Failed to init file system log appender: ", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to init file system log appender: ", ex);
     }
   }
 
@@ -110,7 +115,8 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
 
   private void createApplicationLogDirectory(String applicationToken) {
     applicationDirName = "application_" + applicationToken;
-    fileSystemLogEventService.createDirectory(logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
+    fileSystemLogEventService
+        .createDirectory(logsRootPath + "/" + tenantDirName + "/" + applicationDirName);
   }
 
   private void initLogDirectories(LogAppenderDto appender) {
@@ -126,8 +132,8 @@ public class FileSystemLogAppender extends AbstractLogAppender<FileConfig> {
       if (logger != null) {
         try {
           logger.close();
-        } catch (IOException e) {
-          LOG.warn("IO Exception catched: ", e);
+        } catch (IOException ex) {
+          LOG.warn("IO Exception catched: ", ex);
         }
       }
       fileSystemLogEventService = null;

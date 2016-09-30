@@ -18,24 +18,16 @@ package org.kaaproject.kaa.server.common.server;
 
 public interface KaaCommandProcessor<T, U> {
 
-  /**
-   * @return the commandId
-   */
+
   int getCommandId();
 
-  /**
-   * @param commandId the commandId to set
-   */
+
   void setCommandId(int commandId);
 
-  /**
-   * @return the syncTime
-   */
+
   long getSyncTime();
 
-  /**
-   * @param syncTime the syncTime to set
-   */
+
   void setSyncTime(long syncTime);
 
   /**

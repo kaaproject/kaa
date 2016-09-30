@@ -40,7 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventClassActivity
-    extends AbstractBaseCtlSchemaActivityEvent<EventClassDto, EventClassViewDto, EventClassView, EventClassPlace> {
+    extends AbstractBaseCtlSchemaActivityEvent<EventClassDto, EventClassViewDto,
+    EventClassView, EventClassPlace> {
 
   public EventClassActivity(EventClassPlace place, ClientFactory clientFactory) {
     super(place, clientFactory);
@@ -64,8 +65,12 @@ public class EventClassActivity
   protected void getEntity(String eventClassId,
                            final AsyncCallback<EventClassViewDto> callback) {
     if (place.getEventClassDtoList() != null) {
-      if (!place.getEventClassDtoList().isEmpty() && (Integer.valueOf(entityId) <= place.getEventClassDtoList().size())) {
-        EventClassDto eventClassDto = place.getEventClassDtoList().get(Integer.valueOf(eventClassId) - 1).getSchema();
+      if (!place.getEventClassDtoList().isEmpty()
+          && (Integer.valueOf(entityId) <= place.getEventClassDtoList().size())) {
+
+        EventClassDto eventClassDto = place.getEventClassDtoList()
+            .get(Integer.valueOf(eventClassId) - 1)
+            .getSchema();
         detailsView.getEventClassTypes().setValue(eventClassDto.getType().name());
         KaaAdmin.getDataSource().getEventClassViewByCtlSchemaId(eventClassDto, callback);
       } else {
@@ -76,36 +81,40 @@ public class EventClassActivity
     }
   }
 
-  private void getEventClassView(String eventClassId, final AsyncCallback<EventClassViewDto> callback) {
-    KaaAdmin.getDataSource().getEventClassView(eventClassId, new AsyncCallback<EventClassViewDto>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        Utils.handleException(caught, EventClassActivity.this.detailsView);
-      }
+  private void getEventClassView(String eventClassId,
+                                 final AsyncCallback<EventClassViewDto> callback) {
+    KaaAdmin.getDataSource().getEventClassView(eventClassId,
+        new AsyncCallback<EventClassViewDto>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            Utils.handleException(caught, EventClassActivity.this.detailsView);
+          }
 
-      @Override
-      public void onSuccess(EventClassViewDto eventClassViewDto) {
-        detailsView.getEventClassTypes().setValue(eventClassViewDto.getSchema().getType().name());
-        callback.onSuccess(eventClassViewDto);
-      }
-    });
+          @Override
+          public void onSuccess(EventClassViewDto eventClassViewDto) {
+            detailsView.getEventClassTypes()
+                .setValue(eventClassViewDto.getSchema().getType().name());
+            callback.onSuccess(eventClassViewDto);
+          }
+        });
   }
 
   @Override
   protected void editEntity(final EventClassViewDto eventClassViewDto,
                             final AsyncCallback<EventClassViewDto> callback) {
-    KaaAdmin.getDataSource().saveEventClassView(eventClassViewDto, new AsyncCallback<EventClassViewDto>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        Utils.handleException(caught, EventClassActivity.this.detailsView);
-      }
+    KaaAdmin.getDataSource().saveEventClassView(eventClassViewDto,
+        new AsyncCallback<EventClassViewDto>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            Utils.handleException(caught, EventClassActivity.this.detailsView);
+          }
 
-      @Override
-      public void onSuccess(EventClassViewDto eventClassViewDto) {
-        place.addEventClassViewDto(eventClassViewDto);
-        callback.onSuccess(eventClassViewDto);
-      }
-    });
+          @Override
+          public void onSuccess(EventClassViewDto eventClassViewDto) {
+            place.addEventClassViewDto(eventClassViewDto);
+            callback.onSuccess(eventClassViewDto);
+          }
+        });
   }
 
   @Override
@@ -124,8 +133,10 @@ public class EventClassActivity
   }
 
   @Override
-  protected EventClassPlace existingSchemaPlaceForEvent(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
-    return new EventClassPlace(ecfId, ecfVersionId, ecfVersion, schemaId, place.getEventClassDtoList());
+  protected EventClassPlace existingSchemaPlaceForEvent(String ecfId, String ecfVersionId,
+                                                        int ecfVersion, String schemaId) {
+    return new EventClassPlace(ecfId, ecfVersionId, ecfVersion,
+        schemaId, place.getEventClassDtoList());
   }
 
   @Override
@@ -147,9 +158,11 @@ public class EventClassActivity
         new BusyAsyncCallback<EventClassViewDto>() {
           public void onSuccessImpl(EventClassViewDto result) {
             if (!create) {
-              goTo(existingSchemaPlaceForEvent(place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), result.getId()));
+              goTo(existingSchemaPlaceForEvent(place.getEcfId(), place.getEcfVersionId(),
+                  place.getEcfVersion(), result.getId()));
             } else {
-              goTo(new EcfVersionPlace(place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), place.getEventClassDtoList()));
+              goTo(new EcfVersionPlace(place.getEcfId(), place.getEcfVersionId(),
+                  place.getEcfVersion(), place.getEventClassDtoList()));
             }
           }
 
@@ -168,24 +181,27 @@ public class EventClassActivity
       for (EventClassType eventClassType : EventClassType.values()) {
         eventClassTypeList.add(eventClassType.name());
       }
-      EventClassActivity.this.detailsView.getEventClassTypes().setAcceptableValues(eventClassTypeList);
+      EventClassActivity.this.detailsView
+          .getEventClassTypes()
+          .setAcceptableValues(eventClassTypeList);
     }
 
     if (place.getCtlSchemaId() != null) {
-      KaaAdmin.getDataSource().getLastCtlSchemaReferenceDto(place.getCtlSchemaId(), new AsyncCallback<CtlSchemaReferenceDto>() {
+      KaaAdmin.getDataSource().getLastCtlSchemaReferenceDto(place.getCtlSchemaId(),
+          new AsyncCallback<CtlSchemaReferenceDto>() {
 
-        @Override
-        public void onFailure(Throwable caught) {
-          Utils.handleException(caught, EventClassActivity.this.detailsView);
-        }
+            @Override
+            public void onFailure(Throwable caught) {
+              Utils.handleException(caught, EventClassActivity.this.detailsView);
+            }
 
-        @Override
-        public void onSuccess(CtlSchemaReferenceDto ctlSchemaReferenceDto) {
-          detailsView.getCtlSchemaReference().setValue(ctlSchemaReferenceDto);
-          detailsView.getName().setValue(place.getNameEc());
-          place.setCtlSchemaId(null);
-        }
-      });
+            @Override
+            public void onSuccess(CtlSchemaReferenceDto ctlSchemaReferenceDto) {
+              detailsView.getCtlSchemaReference().setValue(ctlSchemaReferenceDto);
+              detailsView.getName().setValue(place.getNameEc());
+              place.setCtlSchemaId(null);
+            }
+          });
     }
   }
 }

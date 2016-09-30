@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Implementation of Kaa TCP transport
+ * Implementation of Kaa TCP transport.
  *
  * @author Andrew Shvayka
  */
@@ -49,20 +49,27 @@ public class TcpTransport extends AbstractKaaTransport<AvroTcpConfig> {
   private AbstractNettyServer netty;
 
   @Override
-  protected void init(SpecificTransportContext<AvroTcpConfig> context) throws TransportLifecycleException {
+  protected void init(SpecificTransportContext<AvroTcpConfig> context)
+      throws TransportLifecycleException {
     AvroTcpConfig configuration = context.getConfiguration();
-    configuration.setBindInterface(replaceProperty(configuration.getBindInterface(), BIND_INTERFACE_PROP_NAME, context
-        .getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
-    configuration.setPublicInterface(replaceProperty(configuration.getPublicInterface(), PUBLIC_INTERFACE_PROP_NAME, context
-        .getCommonProperties().getProperty(PUBLIC_INTERFACE_PROP_NAME, LOCALHOST)));
+    configuration.setBindInterface(replaceProperty(configuration.getBindInterface(),
+        BIND_INTERFACE_PROP_NAME,
+        context.getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
+
+    configuration.setPublicInterface(replaceProperty(configuration.getPublicInterface(),
+        PUBLIC_INTERFACE_PROP_NAME,
+        context.getCommonProperties().getProperty(PUBLIC_INTERFACE_PROP_NAME, LOCALHOST)));
+
     final KaaTcpCommandFactory factory = new KaaTcpCommandFactory();
-    this.netty = new AbstractNettyServer(configuration.getBindInterface(), configuration.getBindPort()) {
+    this.netty = new
+        AbstractNettyServer(configuration.getBindInterface(), configuration.getBindPort()) {
 
       @Override
       protected ChannelInitializer<SocketChannel> configureInitializer() throws Exception {
         return new AbstractKaaTcpServerInitializer() {
           @Override
-          protected SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> getMainHandler(UUID uuid) {
+          protected SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> getMainHandler(
+              UUID uuid) {
             return new TcpHandler(uuid, TcpTransport.this.handler);
           }
 
@@ -98,11 +105,14 @@ public class TcpTransport extends AbstractKaaTransport<AvroTcpConfig> {
   protected List<byte[]> getSerializedConnectionInfoList() {
     List<byte[]> connectionInfoList = new ArrayList<>();
     RangeExpressionParser rangeExpressionParser = new RangeExpressionParser();
-    List<Integer> publicPorts = rangeExpressionParser.getNumbersFromRanges(context.getConfiguration().getPublicPorts());
+    List<Integer> publicPorts = rangeExpressionParser
+        .getNumbersFromRanges(context.getConfiguration().getPublicPorts());
     for (int publicPort : publicPorts) {
       byte[] interfaceData = toUtf8Bytes(context.getConfiguration().getPublicInterface());
       byte[] publicKeyData = context.getServerKey().getEncoded();
-      ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
+      ByteBuffer buf = ByteBuffer.wrap(
+          new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
+
       buf.putInt(publicKeyData.length);
       buf.put(publicKeyData);
       buf.putInt(interfaceData.length);

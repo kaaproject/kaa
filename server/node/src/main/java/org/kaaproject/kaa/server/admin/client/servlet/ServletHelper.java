@@ -28,8 +28,10 @@ import java.util.Map.Entry;
 
 public class ServletHelper implements ServletParams {
 
-  public static void downloadUserConfiguration(String externalUId, String schemaVersion, String appId) {
-    String getUrl = composeURL(KAA_USER_CONFIGURATION_SERVLET_PATH,
+
+  public static void downloadUserConfiguration(String externalUId, String schemaVersion,
+                                               String appId) {
+    String getUrl = composeUrl(KAA_USER_CONFIGURATION_SERVLET_PATH,
         APPLICATION_ID_PARAMETER + "=" + URL.encodeQueryString(appId),
         USER_EXTERNAL_ID_PARAMETER + "=" + URL.encodeQueryString(externalUId),
         CONFIGURATION_SCHEMA_ID + "=" + URL.encodeQueryString(schemaVersion));
@@ -37,48 +39,56 @@ public class ServletHelper implements ServletParams {
     Window.open(url, "_self", "enabled");
   }
 
+
   public static void downloadSdk(String key) {
-    String getUrl = composeURL(KAA_SDK_SERVLET_PATH,
+    String getUrl = composeUrl(KAA_SDK_SERVLET_PATH,
         SDK_KEY_PARAMETER + "=" + URL.encodeQueryString(key));
     String url = GWT.getModuleBaseURL() + getUrl;
     Window.open(url, "_self", "enabled");
   }
 
+
   public static void downloadRecordLibrary(String key) {
-    String getUrl = composeURL(KAA_RECORD_LIBRARY_SERVLET_PATH, RECORD_KEY_PARAMETER + "=" + URL.encodeQueryString(key));
+    String getUrl = composeUrl(KAA_RECORD_LIBRARY_SERVLET_PATH, RECORD_KEY_PARAMETER
+        + "=" + URL.encodeQueryString(key));
     String url = GWT.getModuleBaseURL() + getUrl;
     Window.open(url, "_self", "enabled");
   }
 
   public static void exportCtlSchema(String key) {
-    String getUrl = composeURL(KAA_CTL_EXPORT_SERVLET_PATH, CTL_EXPORT_KEY_PARAMETER + "=" + URL.encodeQueryString(key));
+    String getUrl = composeUrl(KAA_CTL_EXPORT_SERVLET_PATH, CTL_EXPORT_KEY_PARAMETER
+        + "=" + URL.encodeQueryString(key));
     String url = GWT.getModuleBaseURL() + getUrl;
     Window.open(url, "_self", "enabled");
   }
 
+
   public static void downloadEndpointProfile(String endpointKey, ProfileType type) {
-    String getUrl = composeURL(KAA_PROFILE_DOWNLOAD_SERVLET_PATH,
+    String getUrl = composeUrl(KAA_PROFILE_DOWNLOAD_SERVLET_PATH,
         ENDPOINT_KEY_PARAMETER + "=" + URL.encodeQueryString(endpointKey),
         PROFILE_TYPE_PARAMETER + "=" + URL.encodeQueryString(type.name()));
     String url = GWT.getModuleBaseURL() + getUrl;
     Window.open(url, "_self", "enabled");
   }
 
+
   public static void downloadEndpointConfiguration(String endpointKeyHash) {
-    String getUrl = composeURL(EP_CONF_SERVLET_PATH,
+    String getUrl = composeUrl(EP_CONF_SERVLET_PATH,
         ENDPOINT_KEY_PARAMETER + "=" + URL.encodeQueryString(endpointKeyHash));
     String url = GWT.getModuleBaseURL() + getUrl;
     Window.open(url, "_self", "enabled");
   }
 
-  /*
-  Some browsers may not use given filename.
+
+  /**
+   * Some browsers may not use given filename.
    */
   public static void downloadJsonFile(String json, String filename) {
-    Window.open("data:application/octet-stream;headers=Content-Disposition: attachment; filename=\"" + filename + "\"," + json, "_self", "enabled");
+    Window.open("data:application/octet-stream;headers=Content-Disposition: attachment; filename=\""
+        + filename + "\"," + json, "_self", "enabled");
   }
 
-  private static String composeURL(String servletPath, String... params) {
+  private static String composeUrl(String servletPath, String... params) {
     String ret = servletPath;
     ret = ret.replaceAll("[\\?&]+$", "");
     String sep = ret.contains("?") ? "&" : "?";

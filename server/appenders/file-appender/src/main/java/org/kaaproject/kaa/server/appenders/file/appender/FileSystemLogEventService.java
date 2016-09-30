@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
 public interface FileSystemLogEventService {
 
   /**
-   * Create Directory with specific path
+   * Create Directory with specific path.
    *
    * @param path the path to directory
    */
@@ -33,7 +33,7 @@ public interface FileSystemLogEventService {
 
   /**
    * Create log user and log group and give them permissions to access
-   * logs of application with specific id
+   * logs of application with specific id.
    *
    * @param applicationId the application id
    * @param config        the File log appender config

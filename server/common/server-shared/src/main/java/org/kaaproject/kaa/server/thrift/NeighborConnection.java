@@ -58,29 +58,26 @@ import java.util.concurrent.TimeUnit;
  */
 public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(NeighborConnection.class);
 
   /**
-   * SOCKET_TIMEOUT on opened connection in seconds
+   * SOCKET_TIMEOUT on opened connection in seconds.
    */
-  // In seconds
   private static final long DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR = 20;
 
   /**
-   * Default maximum number of event messages queue
+   * Default maximum number of event messages queue.
    */
   private static final int DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH = 1024 * 1024;
 
   /**
-   * ID of connection in thriftHost:thriftPort formar
+   * ID of connection in thriftHost:thriftPort format.
    */
   private final String id;
 
   /**
-   * ConnectionInfo of neighbor Operations server
+   * ConnectionInfo of neighbor Operations server.
    */
   private final ConnectionInfo connectionInfo;
 
@@ -89,39 +86,36 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
   private final T template;
 
   /**
-   * Real SOCKET_TIMEOUT on opened connection, if not set used default
+   * Real SOCKET_TIMEOUT on opened connection, if not set used default.
    */
   private final long socketTimeout;
 
   /**
-   * Real maximum number of event messages queue
+   * Real maximum number of event messages queue.
    */
   private final int messageQueueLingth = DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH;
 
-  /**
-   * Thrift classes
-   */
+
   private ThriftFactory<OperationsThriftService.Iface> clientFactory;
   private Thrift<OperationsThriftService.Iface> thrift;
 
-  /**
-   * Blocking queue of event messages
-   */
+
   private LinkedBlockingQueue<V> messageQueue;
 
   /**
-   * Fixed Thread pool to run event workers
+   * Fixed Thread pool to run event workers.
    */
   private ExecutorService executor;
 
   /**
-   * Future list of event workers
+   * Future list of event workers.
    */
   private List<Future<?>> workers;
 
   private boolean started;
 
-  public NeighborConnection(ConnectionInfo connectionInfo, int maxNumberConnection, long socketTimeout, T template) {
+  public NeighborConnection(ConnectionInfo connectionInfo, int maxNumberConnection,
+                            long socketTimeout, T template) {
     this.connectionInfo = connectionInfo;
     this.maxNumberConnection = maxNumberConnection;
     this.socketTimeout = socketTimeout;
@@ -129,8 +123,10 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
     this.id = Neighbors.getServerID(connectionInfo);
   }
 
-  public NeighborConnection(ConnectionInfo connectionInfo, int maxNumberNeighborConnections, T template) {
-    this(connectionInfo, maxNumberNeighborConnections, DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR, template);
+  public NeighborConnection(ConnectionInfo connectionInfo,
+                            int maxNumberNeighborConnections, T template) {
+    this(connectionInfo, maxNumberNeighborConnections,
+        DEFAULT_SOCKET_TIMEOUT_CONNECTION_TO_NEIGHBOR, template);
   }
 
   /**
@@ -149,7 +145,10 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
    * @return OperationsThriftService.Iface
    */
   public OperationsThriftService.Iface getClient() {
-    return thrift.builder().disableStats().withRequestTimeout(Amount.of(socketTimeout, Time.SECONDS)).create();
+    return thrift.builder()
+        .disableStats()
+        .withRequestTimeout(Amount.of(socketTimeout, Time.SECONDS))
+        .create();
   }
 
   public synchronized void start() {
@@ -158,16 +157,20 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
       messageQueue = new LinkedBlockingQueue<>(messageQueueLingth);
       workers = new LinkedList<>();
       clientFactory = ThriftFactory.create(OperationsThriftService.Iface.class);
-      InetSocketAddress address = new InetSocketAddress(connectionInfo.getThriftHost().toString(), connectionInfo.getThriftPort());
-      Set<InetSocketAddress> backends = new HashSet<InetSocketAddress>();
+      InetSocketAddress address = new InetSocketAddress(
+          connectionInfo.getThriftHost().toString(), connectionInfo.getThriftPort()
+      );
+      Set<InetSocketAddress> backends = new HashSet<>();
       backends.add(address);
       thrift = clientFactory.withMaxConnectionsPerEndpoint(maxNumberConnection)
-          .withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS)).
-              withClientFactory(new Function<TTransport, OperationsThriftService.Iface>() {
+          .withSocketTimeout(Amount.of(socketTimeout, Time.SECONDS))
+          .withClientFactory(new Function<TTransport, OperationsThriftService.Iface>() {
                 @Override
                 public Iface apply(TTransport transport) {
                   TProtocol protocol = new TBinaryProtocol(transport);
-                  TMultiplexedProtocol mprotocol = new TMultiplexedProtocol(protocol, KaaThriftService.OPERATIONS_SERVICE.getServiceName());
+                  TMultiplexedProtocol mprotocol = new TMultiplexedProtocol(
+                      protocol, KaaThriftService.OPERATIONS_SERVICE.getServiceName()
+                  );
                   return new OperationsThriftService.Client(mprotocol);
                 }
               }).build(backends);
@@ -190,8 +193,8 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
       executor.shutdown();
       try {
         executor.awaitTermination(1, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-        LOG.error("Neighbor Connection {} error terminates ExecutorService", getId(), e);
+      } catch (InterruptedException ex) {
+        LOG.error("Neighbor Connection {} error terminates ExecutorService", getId(), ex);
       }
       thrift.close();
       started = false;
@@ -201,15 +204,16 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
   }
 
   /**
-   * Send List<EventMessage> to neighbor Operartions Server.
+   * Send list of event message to the neighbor operations server.
    *
-   * @param messages List<EventMessage>
+   * @param messages a list of messages that will be sent to  to the neighbor server
    * @throws InterruptedException in case of queuing error occurred.
    */
   public void sendMessages(Collection<V> messages) throws InterruptedException {
     for (V e : messages) {
       if (!messageQueue.offer(e, 1, TimeUnit.MINUTES)) {
-        LOG.error("NeighborConnection [{}] event messages queue is full more than 1 minute. Operation impossible.", getId());
+        LOG.error("NeighborConnection [{}] event messages queue is full "
+            + "more than 1 minute. Operation impossible.", getId());
         throw new InterruptedException("Event messages queue is full more than 10 minutes");
       }
     }
@@ -225,7 +229,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
   }
 
   /**
-   * Return Neighbor Operations Server ConnectionInfo
+   * Return Neighbor Operations Server ConnectionInfo.
    *
    * @return the connectionInfo
    */
@@ -273,11 +277,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
     return true;
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see java.lang.Object#toString()
-   */
+
   @Override
   public String toString() {
     return "NeighborConnection [Id=" + id + "]";
@@ -299,11 +299,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
       this.template = template;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Runnable#run()
-     */
+
     @Override
     public void run() {
       LinkedList<V> messages = new LinkedList<>(); // NOSONAR
@@ -320,8 +316,8 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
         } catch (TException te) {
           LOG.error("EventWorker [{}:{}] error sending event messages pack. ", id, uniqueId, te);
           template.onServerError(id, te);
-        } catch (InterruptedException e) {
-          LOG.info("EventWorker [{}<{}>] terminated: ", id, uniqueId, e);
+        } catch (InterruptedException ex) {
+          LOG.info("EventWorker [{}<{}>] terminated: ", id, uniqueId, ex);
           operate = false;
         }
       }

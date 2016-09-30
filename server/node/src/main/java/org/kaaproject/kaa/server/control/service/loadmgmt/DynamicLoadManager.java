@@ -91,7 +91,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     opsServersMap = new ConcurrentHashMap<Integer, OperationsServerMeta>();
     bootstrapsMap = new ConcurrentHashMap<String, BootstrapNodeInfo>();
     // Translate seconds to ms
-    opsLoadHistoryTtl = loadDistributionService.getOpsServerHistoryTTL() * 1000;
+    opsLoadHistoryTtl = loadDistributionService.getOpsServerHistoryTtl() * 1000;
   }
 
   /**

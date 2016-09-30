@@ -41,8 +41,13 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractRecordActivity<R extends AbstractStructureDto,
-    T extends StructureRecordDto<R>, F, V extends BaseRecordView<R, F>, P extends AbstractRecordPlace> extends AbstractActivity implements BaseDetailsView.Presenter, ErrorMessageCustomizer {
+public abstract class AbstractRecordActivity
+    <R extends AbstractStructureDto,
+        T extends StructureRecordDto<R>,
+        F,
+        V extends BaseRecordView<R, F>,
+        P extends AbstractRecordPlace>
+    extends AbstractActivity implements BaseDetailsView.Presenter, ErrorMessageCustomizer {
 
   protected final ClientFactory clientFactory;
   protected final String applicationId;
@@ -79,7 +84,8 @@ public abstract class AbstractRecordActivity<R extends AbstractStructureDto,
 
   protected abstract void deactivateStruct(String id, AsyncCallback<R> callback);
 
-  protected abstract P getRecordPlaceImpl(String applicationId, String endpointGroupId, boolean create, boolean showActive, double random);
+  protected abstract P getRecordPlaceImpl(String applicationId, String endpointGroupId,
+                                          boolean create, boolean showActive, double random);
 
   protected abstract void onRecordRetrieved();
 
@@ -107,23 +113,26 @@ public abstract class AbstractRecordActivity<R extends AbstractStructureDto,
   }
 
   protected void bind(final EventBus eventBus) {
-    registrations.add(recordView.getRecordPanel().getSaveButton().addClickHandler(new ClickHandler() {
-      public void onClick(ClickEvent event) {
-        doSave(eventBus);
-      }
-    }));
+    registrations.add(recordView.getRecordPanel().getSaveButton()
+        .addClickHandler(new ClickHandler() {
+          public void onClick(ClickEvent event) {
+            doSave(eventBus);
+          }
+        }));
 
-    registrations.add(recordView.getRecordPanel().getActivateButton().addClickHandler(new ClickHandler() {
-      public void onClick(ClickEvent event) {
-        doActivate(eventBus);
-      }
-    }));
+    registrations.add(recordView.getRecordPanel().getActivateButton()
+        .addClickHandler(new ClickHandler() {
+          public void onClick(ClickEvent event) {
+            doActivate(eventBus);
+          }
+        }));
 
-    registrations.add(recordView.getRecordPanel().getDeactivateButton().addClickHandler(new ClickHandler() {
-      public void onClick(ClickEvent event) {
-        doDeactivate(eventBus);
-      }
-    }));
+    registrations.add(recordView.getRecordPanel().getDeactivateButton()
+        .addClickHandler(new ClickHandler() {
+          public void onClick(ClickEvent event) {
+            doDeactivate(eventBus);
+          }
+        }));
 
     registrations.add(recordView.getBackButton().addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
@@ -140,30 +149,31 @@ public abstract class AbstractRecordActivity<R extends AbstractStructureDto,
       record.setInactiveStructureDto(inactiveStruct);
       onRecordRetrieved();
     } else {
-      KaaAdmin.getDataSource().getEndpointGroup(endpointGroupId, new BusyAsyncCallback<EndpointGroupDto>() {
+      KaaAdmin.getDataSource().getEndpointGroup(endpointGroupId,
+          new BusyAsyncCallback<EndpointGroupDto>() {
 
-        @Override
-        public void onFailureImpl(Throwable caught) {
-          Utils.handleException(caught, recordView);
-        }
-
-        @Override
-        public void onSuccessImpl(EndpointGroupDto result) {
-          endpointGroup = result;
-          getRecord(endpointGroupId, new AsyncCallback<T>() {
             @Override
-            public void onFailure(Throwable caught) {
+            public void onFailureImpl(Throwable caught) {
               Utils.handleException(caught, recordView);
             }
 
             @Override
-            public void onSuccess(T result) {
-              record = result;
-              onRecordRetrieved();
+            public void onSuccessImpl(EndpointGroupDto result) {
+              endpointGroup = result;
+              getRecord(endpointGroupId, new AsyncCallback<T>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                  Utils.handleException(caught, recordView);
+                }
+
+                @Override
+                public void onSuccess(T result) {
+                  record = result;
+                  onRecordRetrieved();
+                }
+              });
             }
           });
-        }
-      });
     }
   }
 
@@ -204,7 +214,8 @@ public abstract class AbstractRecordActivity<R extends AbstractStructureDto,
         });
   }
 
-  protected P getRecordPlace(String applicationId, String endpointGroupId, boolean create, boolean showActive, double random) {
+  protected P getRecordPlace(String applicationId, String endpointGroupId, boolean create,
+                             boolean showActive, double random) {
     P recordPlace = getRecordPlaceImpl(applicationId, endpointGroupId, create, showActive, random);
     recordPlace.setPreviousPlace(place.getPreviousPlace());
     return recordPlace;

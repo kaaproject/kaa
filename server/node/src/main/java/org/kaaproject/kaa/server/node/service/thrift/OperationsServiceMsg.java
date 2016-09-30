@@ -35,8 +35,10 @@ public class OperationsServiceMsg {
   private final UserConfigurationUpdate userConfigurationUpdateMsg;
 
   private OperationsServiceMsg(ThriftUnicastNotificationMessage unicastNotificationMsg,
-                               ThriftServerProfileUpdateMessage serverProfileUpdateMsg, ThriftEntityRouteMessage entityRouteMsg,
-                               UserConfigurationUpdate userConfigurationUpdateMsg, ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
+                               ThriftServerProfileUpdateMessage serverProfileUpdateMsg,
+                               ThriftEntityRouteMessage entityRouteMsg,
+                               UserConfigurationUpdate userConfigurationUpdateMsg,
+                               ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
     super();
     this.unicastNotificationMsg = unicastNotificationMsg;
     this.serverProfileUpdateMsg = serverProfileUpdateMsg;
@@ -45,11 +47,13 @@ public class OperationsServiceMsg {
     this.userConfigurationUpdateMsg = userConfigurationUpdateMsg;
   }
 
-  public static OperationsServiceMsg fromServerProfileUpdateMessage(ThriftServerProfileUpdateMessage serverProfileUpdateMsg) {
+  public static OperationsServiceMsg fromServerProfileUpdateMessage(
+      ThriftServerProfileUpdateMessage serverProfileUpdateMsg) {
     return new OperationsServiceMsg(null, serverProfileUpdateMsg, null, null, null);
   }
 
-  public static OperationsServiceMsg fromNotification(ThriftUnicastNotificationMessage unicastNotificationMsg) {
+  public static OperationsServiceMsg fromNotification(
+      ThriftUnicastNotificationMessage unicastNotificationMsg) {
     return new OperationsServiceMsg(unicastNotificationMsg, null, null, null, null);
   }
 
@@ -57,11 +61,13 @@ public class OperationsServiceMsg {
     return new OperationsServiceMsg(null, null, entityRouteMsg, null, null);
   }
 
-  public static OperationsServiceMsg fromUpdate(UserConfigurationUpdate userConfigurationUpdateMsg) {
+  public static OperationsServiceMsg fromUpdate(
+      UserConfigurationUpdate userConfigurationUpdateMsg) {
     return new OperationsServiceMsg(null, null, null, userConfigurationUpdateMsg, null);
   }
 
-  public static OperationsServiceMsg fromDeregistration(ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
+  public static OperationsServiceMsg fromDeregistration(
+      ThriftEndpointDeregistrationMessage endpointDeregistrationMsg) {
     return new OperationsServiceMsg(null, null, null, null, endpointDeregistrationMsg);
   }
 

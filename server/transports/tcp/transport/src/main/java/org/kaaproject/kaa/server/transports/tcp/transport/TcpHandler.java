@@ -53,20 +53,20 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
-public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> implements SessionCreateListener {
+public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor>
+    implements SessionCreateListener {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(TcpHandler.class);
 
   private static final boolean NOT_ZIPPED = false;
-  private final static ErrorBuilder connectErrorConverter = new ErrorBuilder() { //NOSONAR
+  private static final ErrorBuilder connectErrorConverter = new ErrorBuilder() { //NOSONAR
     @Override
     public Object[] build(Exception exception) {
       Object[] responses = new Object[1];
-      if (exception instanceof GeneralSecurityException || exception instanceof IOException ||
-          exception instanceof IllegalArgumentException || exception instanceof InvalidSdkTokenException) {
+      if (exception instanceof GeneralSecurityException
+          || exception instanceof IOException
+          || exception instanceof IllegalArgumentException
+          || exception instanceof InvalidSdkTokenException) {
         responses[0] = new ConnAck(ReturnCode.REFUSE_BAD_CREDENTIALS);
       } else if (exception instanceof EndpointVerificationException) {
         responses[0] = new ConnAck(ReturnCode.REFUSE_VERIFICATION_FAILED);
@@ -76,12 +76,15 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
       return responses;
     }
   };
-  private final static MessageBuilder syncResponseConverter = new MessageBuilder() { //NOSONAR
+
+  private static final MessageBuilder syncResponseConverter = new MessageBuilder() { //NOSONAR
     @Override
-    public Object[] build(byte[] encriptedResponseData, byte[] encriptedResponseSignature, boolean isEncrypted) {
+    public Object[] build(byte[] encriptedResponseData, byte[] encriptedResponseSignature,
+                          boolean isEncrypted) {
       Object[] responses = new Object[1];
-      responses[0] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(encriptedResponseData, NOT_ZIPPED,
-          isEncrypted);
+      responses[0] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages
+          .SyncResponse(encriptedResponseData, NOT_ZIPPED, isEncrypted);
+
       LOG.debug("Sending {} response objects", responses.length);
       return responses;
     }
@@ -91,12 +94,16 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
       return build(messageData, null, isEncrypted);
     }
   };
-  private final static ErrorBuilder syncErrorConverter = new ErrorBuilder() { //NOSONAR
+
+
+  private static final  ErrorBuilder syncErrorConverter = new ErrorBuilder() { //NOSONAR
     @Override
     public Object[] build(Exception exception) {
       Object[] responses = new Object[1];
-      if (exception instanceof GeneralSecurityException || exception instanceof IOException ||
-          exception instanceof IllegalArgumentException || exception instanceof InvalidSdkTokenException) {
+      if (exception instanceof GeneralSecurityException
+          || exception instanceof IOException
+          || exception instanceof IllegalArgumentException
+          || exception instanceof InvalidSdkTokenException) {
         responses[0] = new Disconnect(DisconnectReason.BAD_REQUEST);
       } else if (exception instanceof EndpointVerificationException) {
         responses[0] = new Disconnect(DisconnectReason.CREDENTIALS_REVOKED);
@@ -106,6 +113,7 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
       return responses;
     }
   };
+
   private final UUID uuid;
   private final MessageHandler handler;
   private volatile SessionInfo session;
@@ -119,21 +127,23 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
       volatile boolean connAckSent = false;
 
       @Override
-      public Object[] build(byte[] encriptedResponseData, byte[] encriptedResponseSignature, boolean isEncrypted) {
+      public Object[] build(byte[] encriptedResponseData, byte[] encriptedResponseSignature,
+                            boolean isEncrypted) {
         if (!connAckSent) {
           synchronized (this) {
             if (!connAckSent) {
               connAckSent = true;
               Object[] responses = new Object[2];
               responses[0] = new ConnAck(ReturnCode.ACCEPTED);
-              responses[1] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncResponse(
-                  encriptedResponseData, NOT_ZIPPED, isEncrypted);
+              responses[1] = new org.kaaproject.kaa.common.channels.protocols.kaatcp.messages
+                  .SyncResponse(encriptedResponseData, NOT_ZIPPED, isEncrypted);
               LOG.debug("Sending {} response objects", responses.length);
               return responses;
             }
           }
         }
-        return syncResponseConverter.build(encriptedResponseData, encriptedResponseSignature, isEncrypted);
+        return syncResponseConverter.build(encriptedResponseData, encriptedResponseSignature,
+            isEncrypted);
       }
 
       @Override
@@ -144,7 +154,8 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
   }
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, AbstractKaaTcpCommandProcessor msg) throws Exception {
+  protected void channelRead0(ChannelHandlerContext ctx, AbstractKaaTcpCommandProcessor msg)
+      throws Exception {
     MqttFrame frame = msg.getRequest();
     LOG.trace("[{}] Processing {}", uuid, frame);
     if (frame.getMessageType() == MessageType.CONNECT) {
@@ -167,8 +178,11 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
       });
 
       if (session == null) {
-        handler.process(new NettyTcpConnectMessage(uuid, new NettyChannelContext(ctx), (Connect) frame, ChannelType.ASYNC, this,
-            connectResponseConverter, connectErrorConverter));
+        handler.process(
+            new NettyTcpConnectMessage(uuid, new NettyChannelContext(ctx), (Connect) frame,
+                ChannelType.ASYNC, this,
+                connectResponseConverter, connectErrorConverter)
+        );
       } else {
         LOG.info("[{}] Ignoring duplicate {} message ", uuid, MessageType.CONNECT);
       }
@@ -177,7 +191,9 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
         switch (frame.getMessageType()) {
           case KAASYNC:
             if (((KaaSync) frame).getKaaSyncMessageType() == KaaSyncMessageType.SYNC) {
-              handler.process(new NettyTcpSyncMessage((SyncRequest) frame, session, syncResponseConverter, syncErrorConverter));
+              handler.process(
+                  new NettyTcpSyncMessage((SyncRequest) frame, session, syncResponseConverter,
+                      syncErrorConverter));
             }
             break;
           case PINGREQ:
@@ -191,7 +207,8 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
             break;
         }
       } else {
-        LOG.info("[{}] Ignoring {} message due to incomplete CONNECT sequence", uuid, frame.getMessageType());
+        LOG.info("[{}] Ignoring {} message due to incomplete CONNECT sequence",
+            uuid, frame.getMessageType());
         ctx.writeAndFlush(new ConnAck(ReturnCode.REFUSE_BAD_PROTOCOL));
       }
     }

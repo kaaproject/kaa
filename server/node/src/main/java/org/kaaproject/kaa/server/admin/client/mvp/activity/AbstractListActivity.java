@@ -41,7 +41,8 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractListActivity<T extends HasId, P extends TreePlace> extends AbstractActivity implements BaseListView.Presenter {
+public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
+    extends AbstractActivity implements BaseListView.Presenter {
 
   protected final ClientFactory clientFactory;
   protected final Class<T> dataClass;
@@ -70,7 +71,8 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
 
   protected abstract BaseListView<T> getView();
 
-  protected abstract AbstractDataProvider<T, String> getDataProvider(AbstractGrid<T, String> dataGrid);
+  protected abstract AbstractDataProvider<T, String> getDataProvider(
+      AbstractGrid<T, String> dataGrid);
 
   protected abstract Place newEntityPlace();
 
@@ -87,7 +89,7 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
   }
 
   /**
-   * Navigate to a new Place in the browser
+   * Navigate to a new Place in the browser.
    */
   public void goTo(Place place) {
     clientFactory.getPlaceController().goTo(place);
@@ -103,27 +105,28 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
       }
     }));
 
-    registrations.add(listView.getRowActionsSource().addRowActionHandler(new RowActionEventHandler<String>() {
-      @Override
-      public void onRowAction(RowActionEvent<String> event) {
-        String id = event.getClickedId();
-        if (event.getAction() == RowActionEvent.CLICK) {
-          goTo(existingEntityPlace(id));
-        } else if (event.getAction() == RowActionEvent.DELETE) {
-          deleteEntity(id, new BusyAsyncCallback<Void>() {
-            @Override
-            public void onFailureImpl(Throwable caught) {
-              Utils.handleException(caught, listView);
-            }
+    registrations.add(listView.getRowActionsSource().addRowActionHandler(
+        new RowActionEventHandler<String>() {
+          @Override
+          public void onRowAction(RowActionEvent<String> event) {
+            String id = event.getClickedId();
+            if (event.getAction() == RowActionEvent.CLICK) {
+              goTo(existingEntityPlace(id));
+            } else if (event.getAction() == RowActionEvent.DELETE) {
+              deleteEntity(id, new BusyAsyncCallback<Void>() {
+                @Override
+                public void onFailureImpl(Throwable caught) {
+                  Utils.handleException(caught, listView);
+                }
 
-            @Override
-            public void onSuccessImpl(Void result) {
+                @Override
+                public void onSuccessImpl(Void result) {
+                }
+              });
             }
-          });
-        }
-        onCustomRowAction(event);
-      }
-    }));
+            onCustomRowAction(event);
+          }
+        }));
 
     registrations.add(eventBus.addHandler(DataEvent.getType(), new DataEventHandler() {
       @Override

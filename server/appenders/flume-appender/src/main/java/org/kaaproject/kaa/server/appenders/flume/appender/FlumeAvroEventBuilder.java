@@ -60,12 +60,15 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
 
   @Override
   public List<Event> generateEvents(String appToken, LogSchema schema, List<LogEvent> logEvents,
-                                    ProfileInfo clientProfile, ProfileInfo serverProfile, RecordHeader header) {
-    LOG.debug("Build flume events with appToken [{}], schema version [{}], events: [{}] and header [{}].", appToken, schema.getVersion(), logEvents, header);
+                                    ProfileInfo clientProfile, ProfileInfo serverProfile,
+                                    RecordHeader header) {
+    LOG.debug("Build flume events with appToken [{}], schema version [{}], events: [{}]"
+        + " and header [{}].", appToken, schema.getVersion(), logEvents, header);
     List<Event> events = null;
     switch (flumeEventFormat) {
       case RECORDS_CONTAINER:
-        Event event = generateRecordsContainerEvent(appToken, schema, logEvents, clientProfile, serverProfile, header);
+        Event event = generateRecordsContainerEvent(appToken, schema, logEvents, clientProfile,
+            serverProfile, header);
         if (event != null) {
           events = Collections.singletonList(event);
         }
@@ -79,8 +82,9 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
     return events;
   }
 
-  private Event generateRecordsContainerEvent(String appToken, LogSchema schema, List<LogEvent> logEvents,
-                                              ProfileInfo clientProfile, ProfileInfo serverProfile, RecordHeader header) {
+  private Event generateRecordsContainerEvent(String appToken, LogSchema schema,
+                                              List<LogEvent> logEvents, ProfileInfo clientProfile,
+                                              ProfileInfo serverProfile, RecordHeader header) {
     if (clientProfile == null && includeClientProfile) {
       LOG.error("Can't  generate records container event. " + CLIENT_PROFILE_NOT_SET);
       throw new RuntimeException(CLIENT_PROFILE_NOT_SET);
@@ -130,8 +134,8 @@ public class FlumeAvroEventBuilder extends FlumeEventBuilder {
       writer.write(logData, encoder);
       encoder.flush();
       event = EventBuilder.withBody(baos.toByteArray());
-    } catch (IOException e) {
-      LOG.warn("Can't convert avro object {} to binary. Exception catched: {}", logData, e);
+    } catch (IOException ex) {
+      LOG.warn("Can't convert avro object {} to binary. Exception catched: {}", logData, ex);
     }
     LOG.trace("Build flume event with array body [{}]", baos);
     return event;

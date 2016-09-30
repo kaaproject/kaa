@@ -35,16 +35,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Created by pyshankov on 09.09.16.
- */
+
 public class EndpointConfigurationServlet extends HttpServlet implements Servlet, ServletParams {
 
   private static final long serialVersionUID = 1584721028492234643L;
 
-  /**
-   * The Constant logger.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(ProfileDownloadServlet.class);
 
   private static final int BUFFER = 1024 * 100;
@@ -64,11 +59,13 @@ public class EndpointConfigurationServlet extends HttpServlet implements Servlet
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+        config.getServletContext());
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
     String endpointKey = URLDecoder.decode(request.getParameter(ENDPOINT_KEY_PARAMETER), "UTF-8");
     try {
       String json = configurationService.findEndpointConfigurationByEndpointKeyHash(endpointKey);
@@ -77,16 +74,19 @@ public class EndpointConfigurationServlet extends HttpServlet implements Servlet
           new Object[]{endpointKey}).getMessage();
 
       Object jsonObject = FORMATTER.readValue(json, Object.class);
-      byte[] body = FORMATTER.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject).getBytes("UTF-8");
+      byte[] body = FORMATTER.writerWithDefaultPrettyPrinter()
+          .writeValueAsString(jsonObject)
+          .getBytes("UTF-8");
       ServletUtils.prepareDisposition(request, response, fileName);
       response.setContentType(JSON);
       response.setContentLength(body.length);
       response.setBufferSize(BUFFER);
       response.getOutputStream().write(body);
       response.flushBuffer();
-    } catch (Exception e) {
-      LOG.error("Unexpected error in ProfileDownloadServlet.doGet: ", e);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: " + e.getMessage());
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in ProfileDownloadServlet.doGet: ", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: "
+          + ex.getMessage());
     }
   }
 }

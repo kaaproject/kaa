@@ -38,7 +38,8 @@ import java.util.concurrent.Callable;
  *
  * @author Andrey Panasenko
  */
-public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaCommandProcessor<HttpRequest, HttpResponse> {
+public abstract class AbstractCommand
+    implements Callable<AbstractCommand>, KaaCommandProcessor<HttpRequest, HttpResponse> {
 
   protected static final Logger LOG = LoggerFactory //NOSONAR
       .getLogger(AbstractCommand.class);
@@ -47,19 +48,13 @@ public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaC
 
   private HttpRequest httpRequest;
 
-  /**
-   * Session UUID
-   */
+
   private UUID sessionUuid;
 
-  /**
-   * Time of SYNC processing
-   */
+
   private long syncTime = 0;
 
-  /**
-   * integer representing ID of HTTP request
-   */
+
   private int commandId;
 
   /**
@@ -79,27 +74,19 @@ public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaC
     return COMMAND_NAME;
   }
 
-  /**
-   * @return the commandId
-   */
+
   @Override
   public int getCommandId() {
     return commandId;
   }
 
-  /**
-   * @param commandId the commandId to set
-   */
+
   @Override
   public void setCommandId(int commandId) {
     this.commandId = commandId;
   }
 
-  /**
-   * HttpRequest getter.
-   *
-   * @return HttpRequest
-   */
+
   @Override
   public HttpRequest getRequest() {
     return httpRequest;
@@ -115,11 +102,7 @@ public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaC
     this.httpRequest = httpRequest;
   }
 
-  /**
-   * Command Name getter.
-   *
-   * @return String
-   */
+
   @Override
   public String getName() {
     return COMMAND_NAME;
@@ -169,31 +152,23 @@ public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaC
     return this;
   }
 
-  /**
-   * @return the sessionUuid
-   */
+
   public UUID getSessionUuid() {
     return sessionUuid;
   }
 
-  /**
-   * @param sessionUuid the sessionUuid to set
-   */
+
   public void setSessionUuid(UUID sessionUuid) {
     this.sessionUuid = sessionUuid;
   }
 
-  /**
-   * @return the syncTime
-   */
+
   @Override
   public long getSyncTime() {
     return syncTime;
   }
 
-  /**
-   * @param syncTime the syncTime to set
-   */
+
   @Override
   public void setSyncTime(long syncTime) {
     this.syncTime = syncTime;

@@ -67,7 +67,8 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
 
   @Override
   public void createUserAndGroup(LogAppenderDto appender, FileConfig config, String path) {
-    LOG.debug("Starting create user and group for application with id: {}", appender.getApplicationId());
+    LOG.debug("Starting create user and group for application with id: {}",
+        appender.getApplicationId());
     String userName = "kaa_log_user_" + appender.getApplicationToken();
     String groupName = "kaa_log_group_" + appender.getApplicationToken();
     String publicKey = config.getPublicKey();
@@ -85,8 +86,8 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
       executeCommand(null, "sudo", createUserScript.getAbsolutePath(),
           userName, groupName, path, tmpKeyFile.getAbsolutePath());
 
-    } catch (IOException e) {
-      LOG.error("Unexpected exception occurred while creating user", e);
+    } catch (IOException ex) {
+      LOG.error("Unexpected exception occurred while creating user", ex);
     } finally {
       if (tmpKeyFile != null) {
         tmpKeyFile.delete();
@@ -105,8 +106,8 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
       createRootLogDirScript = prepareScriptFile(CREATE_ROOT_LOG_DIR);
       executeCommand(null, "sudo", createRootLogDirScript.getAbsolutePath(),
           logsRootPath, DEFAULT_SYSTEM_USER);
-    } catch (IOException e) {
-      LOG.error("Can't create root log dir: " + logsRootPath, e);
+    } catch (IOException ex) {
+      LOG.error("Can't create root log dir: " + logsRootPath, ex);
     } finally {
       if (createRootLogDirScript != null) {
         createRootLogDirScript.delete();
@@ -121,8 +122,8 @@ public class FileSystemLogEventServiceImpl implements FileSystemLogEventService 
     try {
       FileUtils.deleteDirectory(directory);
       LOG.debug("Directory was successfully deleted");
-    } catch (IOException e) {
-      LOG.error("Unable to delete directory with path: {}, exception catched: {}", path, e);
+    } catch (IOException ex) {
+      LOG.error("Unable to delete directory with path: {}, exception catched: {}", path, ex);
     }
   }
 

@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoadDistributionService extends Thread {
   private static final Logger LOG = LoggerFactory.getLogger(LoadDistributionService.class);
+
   /**
    * Synchronization object.
    */
@@ -45,14 +46,10 @@ public class LoadDistributionService extends Thread {
    */
   private volatile boolean isMaster = false;
 
-  /**
-   * ControlZkService.
-   */
+
   private ControlZkService zkService;
 
-  /**
-   * DynamicLoadManager.
-   */
+
   private DynamicLoadManager loadManager;
 
   /**
@@ -116,7 +113,7 @@ public class LoadDistributionService extends Thread {
     }
     try {
       this.join(10000);
-    } catch (InterruptedException e) {
+    } catch (InterruptedException ex) {
       LOG.trace("Load distribution service shutdown join() interrupted");
     } finally {
       LOG.info("Load distribution service shutdown complete");
@@ -137,7 +134,7 @@ public class LoadDistributionService extends Thread {
           LOG.info("Load distribution service recalculation started...");
           loadManager.recalculate();
           sync.wait(recalculationPeriod * 1000);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ex) {
           LOG.warn("Load distribution service interrupted, shutting down...");
           operate = false;
         }
@@ -182,7 +179,8 @@ public class LoadDistributionService extends Thread {
   public void setMaster(boolean isMaster) {
     if (this.isMaster != isMaster) {
       this.isMaster = isMaster;
-      LOG.info("Load distribution service master state changed from {} to {}", this.isMaster, isMaster);
+      LOG.info("Load distribution service master state changed from {} to {}",
+          this.isMaster, isMaster);
       synchronized (sync) {
         sync.notify();
       }
@@ -216,7 +214,7 @@ public class LoadDistributionService extends Thread {
    *
    * @return the endpoint_history_ttl
    */
-  public int getOpsServerHistoryTTL() {
+  public int getOpsServerHistoryTtl() {
     return opsServerHistoryTtl;
   }
 }
