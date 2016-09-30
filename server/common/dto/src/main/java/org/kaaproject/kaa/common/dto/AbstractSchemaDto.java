@@ -104,20 +104,21 @@ public abstract class AbstractSchemaDto extends VersionDto {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof AbstractSchemaDto)) {
+    if (!(obj instanceof AbstractSchemaDto)) {
       return false;
     }
 
-    AbstractSchemaDto that = (AbstractSchemaDto) o;
+    AbstractSchemaDto that = (AbstractSchemaDto) obj;
 
     if (version != that.version) {
       return false;
     }
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
       return false;
     }
     if (schema != null ? !schema.equals(that.schema) : that.schema != null) {

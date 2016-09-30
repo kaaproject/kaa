@@ -30,7 +30,8 @@ public class ProfileVersionPairDto implements Serializable, Comparable<ProfileVe
   public ProfileVersionPairDto() {
   }
 
-  public ProfileVersionPairDto(Integer endpointProfileSchemaVersion, String endpointProfileSchemaid) {
+  public ProfileVersionPairDto(Integer endpointProfileSchemaVersion,
+                               String endpointProfileSchemaid) {
     this.endpointProfileSchemaid = endpointProfileSchemaid;
     this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
   }
@@ -40,7 +41,8 @@ public class ProfileVersionPairDto implements Serializable, Comparable<ProfileVe
     this.serverProfileSchemaVersion = serverProfileSchemaVersion;
   }
 
-  public ProfileVersionPairDto(String endpointProfileSchemaid, Integer endpointProfileSchemaVersion, String serverProfileSchemaid,
+  public ProfileVersionPairDto(String endpointProfileSchemaid, Integer endpointProfileSchemaVersion,
+                               String serverProfileSchemaid,
                                Integer serverProfileSchemaVersion) {
     this.endpointProfileSchemaid = endpointProfileSchemaid;
     this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
@@ -84,10 +86,14 @@ public class ProfileVersionPairDto implements Serializable, Comparable<ProfileVe
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
-    result = prime * result + ((endpointProfileSchemaid == null) ? 0 : endpointProfileSchemaid.hashCode());
-    result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
-    result = prime * result + ((serverProfileSchemaid == null) ? 0 : serverProfileSchemaid.hashCode());
+    result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 :
+                                       endpointProfileSchemaVersion.hashCode());
+    result = prime * result + ((endpointProfileSchemaid == null) ? 0 :
+                                       endpointProfileSchemaid.hashCode());
+    result = prime * result + ((serverProfileSchemaVersion == null) ? 0 :
+                                       serverProfileSchemaVersion.hashCode());
+    result = prime * result + ((serverProfileSchemaid == null) ? 0 :
+                                       serverProfileSchemaid.hashCode());
     return result;
   }
 
@@ -136,29 +142,32 @@ public class ProfileVersionPairDto implements Serializable, Comparable<ProfileVe
 
   @Override
   public String toString() {
-    return "ProfileVersionPairDto [endpointProfileSchemaid=" + endpointProfileSchemaid + ", endpointProfileSchemaVersion="
-        + endpointProfileSchemaVersion + ", serverProfileSchemaid=" + serverProfileSchemaid + ", serverProfileSchemaVersion="
+    return "ProfileVersionPairDto [endpointProfileSchemaid=" + endpointProfileSchemaid
+           + ", endpointProfileSchemaVersion="
+        + endpointProfileSchemaVersion + ", serverProfileSchemaid=" + serverProfileSchemaid
+           + ", serverProfileSchemaVersion="
         + serverProfileSchemaVersion + "]";
   }
 
   @Override
-  public int compareTo(ProfileVersionPairDto o) {
-    if (this.getEndpointProfileSchemaid() != null && o.getEndpointProfileSchemaid() == null) {
+  public int compareTo(ProfileVersionPairDto obj) {
+    if (this.getEndpointProfileSchemaid() != null && obj.getEndpointProfileSchemaid() == null) {
       return 1;
-    } else if (this.getEndpointProfileSchemaid() == null && o.getEndpointProfileSchemaid() != null) {
+    } else if (this.getEndpointProfileSchemaid() == null
+               && obj.getEndpointProfileSchemaid() != null) {
       return -1;
     }
-    if (this.getEndpointProfileSchemaid() != null && o.getEndpointProfileSchemaid() != null) {
-      if (this.getEndpointProfileSchemaVersion() != o.getEndpointProfileSchemaVersion()) {
-        return this.getEndpointProfileSchemaVersion() - o.getEndpointProfileSchemaVersion();
+    if (this.getEndpointProfileSchemaid() != null && obj.getEndpointProfileSchemaid() != null) {
+      if (this.getEndpointProfileSchemaVersion() != obj.getEndpointProfileSchemaVersion()) {
+        return this.getEndpointProfileSchemaVersion() - obj.getEndpointProfileSchemaVersion();
       }
     }
-    if (this.getServerProfileSchemaid() != null && o.getServerProfileSchemaid() == null) {
+    if (this.getServerProfileSchemaid() != null && obj.getServerProfileSchemaid() == null) {
       return 1;
-    } else if (this.getServerProfileSchemaid() == null && o.getServerProfileSchemaid() != null) {
+    } else if (this.getServerProfileSchemaid() == null && obj.getServerProfileSchemaid() != null) {
       return -1;
-    } else if (this.getServerProfileSchemaid() != null && o.getServerProfileSchemaid() != null) {
-      return this.getServerProfileSchemaVersion() - o.getServerProfileSchemaVersion();
+    } else if (this.getServerProfileSchemaid() != null && obj.getServerProfileSchemaid() != null) {
+      return this.getServerProfileSchemaVersion() - obj.getServerProfileSchemaVersion();
     } else {
       return 0;
     }

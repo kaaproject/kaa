@@ -59,11 +59,11 @@ public class ConfigurationSchemaDto extends BaseSchemaDto {
 
   @Override
   public String toString() {
-    return "ConfigurationSchemaDto{" +
-        "id='" + id + '\'' +
-        ", applicationId='" + applicationId + '\'' +
-        ", version=" + version +
-        ", status=" + status +
-        '}';
+    return "ConfigurationSchemaDto{"
+           + "id='" + id + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", version=" + version
+           + ", status=" + status
+           + '}';
   }
 }

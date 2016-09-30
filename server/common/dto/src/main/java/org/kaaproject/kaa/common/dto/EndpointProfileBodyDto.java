@@ -36,7 +36,8 @@ public class EndpointProfileBodyDto implements Serializable {
   public EndpointProfileBodyDto() {
   }
 
-  public EndpointProfileBodyDto(byte[] endpointKeyHash, String clientSideProfile, String serverSideProfile, int clientSideProfileVersion,
+  public EndpointProfileBodyDto(byte[] endpointKeyHash, String clientSideProfile,
+                                String serverSideProfile, int clientSideProfileVersion,
                                 int serverSideProfileVersion, String appId) {
     this.endpointKeyHash = endpointKeyHash;
     this.clientSideProfile = clientSideProfile;
@@ -91,15 +92,15 @@ public class EndpointProfileBodyDto implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    EndpointProfileBodyDto that = (EndpointProfileBodyDto) o;
+    EndpointProfileBodyDto that = (EndpointProfileBodyDto) obj;
 
     if (clientSideProfileVersion != that.clientSideProfileVersion) {
       return false;
@@ -110,10 +111,12 @@ public class EndpointProfileBodyDto implements Serializable {
     if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
       return false;
     }
-    if (clientSideProfile != null ? !clientSideProfile.equals(that.clientSideProfile) : that.clientSideProfile != null) {
+    if (clientSideProfile != null ? !clientSideProfile.equals(that.clientSideProfile) :
+            that.clientSideProfile != null) {
       return false;
     }
-    if (serverSideProfile != null ? !serverSideProfile.equals(that.serverSideProfile) : that.serverSideProfile != null) {
+    if (serverSideProfile != null ? !serverSideProfile.equals(that.serverSideProfile) :
+            that.serverSideProfile != null) {
       return false;
     }
     return !(appId != null ? !appId.equals(that.appId) : that.appId != null);

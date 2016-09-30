@@ -41,8 +41,8 @@ public class DtoByteMarshaller {
     try {
       ObjectOutputStream out = new ObjectOutputStream(byteStream);
       out.writeObject(object);
-    } catch (IOException e) {
-      LOG.error("Can't convert object to bytes.", e);
+    } catch (IOException ex) {
+      LOG.error("Can't convert object to bytes.", ex);
     }
     return byteStream.toByteArray();
   }
@@ -54,8 +54,8 @@ public class DtoByteMarshaller {
     try {
       ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
       object = (T) objectInputStream.readObject();
-    } catch (Exception e) {
-      LOG.error("Can't convert bytes to object.", e);
+    } catch (Exception ex) {
+      LOG.error("Can't convert bytes to object.", ex);
     }
     return object;
   }

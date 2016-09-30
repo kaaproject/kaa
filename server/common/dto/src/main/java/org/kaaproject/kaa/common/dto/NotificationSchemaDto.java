@@ -32,20 +32,21 @@ public class NotificationSchemaDto extends BaseSchemaDto {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof NotificationSchemaDto)) {
+    if (!(obj instanceof NotificationSchemaDto)) {
       return false;
     }
 
-    NotificationSchemaDto that = (NotificationSchemaDto) o;
+    NotificationSchemaDto that = (NotificationSchemaDto) obj;
 
     if (version != that.version) {
       return false;
     }
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
       return false;
     }
     if (ctlSchemaId != null ? !ctlSchemaId.equals(that.ctlSchemaId) : that.ctlSchemaId != null) {
@@ -69,13 +70,13 @@ public class NotificationSchemaDto extends BaseSchemaDto {
 
   @Override
   public String toString() {
-    return "NotificationSchemaDto{" +
-        "id='" + id + '\'' +
-        ", applicationId='" + applicationId + '\'' +
-        ", majorVersion=" + version +
-        ", type=" + type +
-        ", ctlSchemaId='" + ctlSchemaId + '\'' +
-        '}';
+    return "NotificationSchemaDto{"
+           + "id='" + id + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", majorVersion=" + version
+           + ", type=" + type
+           + ", ctlSchemaId='" + ctlSchemaId + '\''
+           + '}';
   }
 
   public int incrementVersion() {

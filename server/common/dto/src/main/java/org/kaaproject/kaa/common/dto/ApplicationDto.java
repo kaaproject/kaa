@@ -80,20 +80,21 @@ public class ApplicationDto implements HasId, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    ApplicationDto that = (ApplicationDto) o;
+    ApplicationDto that = (ApplicationDto) obj;
 
     if (sequenceNumber != that.sequenceNumber) {
       return false;
     }
-    if (applicationToken != null ? !applicationToken.equals(that.applicationToken) : that.applicationToken != null) {
+    if (applicationToken != null ? !applicationToken.equals(that.applicationToken) :
+            that.applicationToken != null) {
       return false;
     }
     if (tenantId != null ? !tenantId.equals(that.tenantId) : that.tenantId != null) {
@@ -117,7 +118,13 @@ public class ApplicationDto implements HasId, Serializable {
 
   @Override
   public String toString() {
-    return "ApplicationDto{" + "id='" + id + '\'' + ", applicationToken='" + applicationToken + '\'' + ", name='" + name + '\''
-        + ", sequenceNumber=" + sequenceNumber + ", tenantId='" + tenantId + ", credentialsServiceName='" + credentialsServiceName + '\'' + '}';
+    return "ApplicationDto{"
+           + "id='" + id + '\''
+           + ", applicationToken='" + applicationToken
+           + '\'' + ", name='" + name + '\''
+           + ", sequenceNumber=" + sequenceNumber
+           + ", tenantId='" + tenantId
+           + ", credentialsServiceName='" + credentialsServiceName + '\''
+           + '}';
   }
 }

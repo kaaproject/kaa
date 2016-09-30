@@ -116,15 +116,15 @@ public class NotificationDto implements HasId, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof NotificationDto)) {
+    if (!(obj instanceof NotificationDto)) {
       return false;
     }
 
-    NotificationDto that = (NotificationDto) o;
+    NotificationDto that = (NotificationDto) obj;
 
     if (secNum != that.secNum) {
       return false;
@@ -132,7 +132,8 @@ public class NotificationDto implements HasId, Serializable {
     if (nfVersion != that.nfVersion) {
       return false;
     }
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
       return false;
     }
     if (!Arrays.equals(body, that.body)) {
@@ -141,7 +142,8 @@ public class NotificationDto implements HasId, Serializable {
     if (expiredAt != null ? !expiredAt.equals(that.expiredAt) : that.expiredAt != null) {
       return false;
     }
-    if (lastTimeModify != null ? !lastTimeModify.equals(that.lastTimeModify) : that.lastTimeModify != null) {
+    if (lastTimeModify != null ? !lastTimeModify.equals(that.lastTimeModify) :
+            that.lastTimeModify != null) {
       return false;
     }
     if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) {
@@ -173,17 +175,17 @@ public class NotificationDto implements HasId, Serializable {
 
   @Override
   public String toString() {
-    return "NotificationDto{" +
-        "id='" + id + '\'' +
-        ", applicationId='" + applicationId + '\'' +
-        ", schemaId='" + schemaId + '\'' +
-        ", topicId='" + topicId + '\'' +
-        ", nfVersion=" + nfVersion +
-        ", lastTimeModify=" + lastTimeModify +
-        ", type=" + type +
-        ", body=" + Arrays.toString(body) +
-        ", expiredAt=" + expiredAt +
-        ", secNum=" + secNum +
-        '}';
+    return "NotificationDto{"
+           + "id='" + id + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", schemaId='" + schemaId + '\''
+           + ", topicId='" + topicId + '\''
+           + ", nfVersion=" + nfVersion
+           + ", lastTimeModify=" + lastTimeModify
+           + ", type=" + type
+           + ", body=" + Arrays.toString(body)
+           + ", expiredAt=" + expiredAt
+           + ", secNum=" + secNum
+           + '}';
   }
 }

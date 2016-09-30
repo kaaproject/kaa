@@ -24,11 +24,9 @@ import org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo;
  * The class that is interested in processing a controlNode
  * event implements this interface, and the object created
  * with that class is registered with a component using the
- * component's <code>addControlNodeListener<code> method. When
+ * component's <code>addControlNodeListener</code> method. When
  * the controlNode event occurs, that object's appropriate
  * method is invoked.
- *
- * @see ControlNodeEvent
  */
 public interface ControlNodeListener {
 

@@ -22,14 +22,14 @@ package org.kaaproject.kaa.common.dto;
 public interface HasId {
 
   /**
-   * This method return string id
+   * This method return string id.
    *
    * @return string id
    */
   String getId();
 
   /**
-   * This is method set string id
+   * This is method set string id.
    *
    * @param id string id
    */

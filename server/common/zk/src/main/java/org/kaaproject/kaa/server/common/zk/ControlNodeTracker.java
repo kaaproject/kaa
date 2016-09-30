@@ -75,7 +75,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
   /**
    * The control node avro converter.
    */
-  protected ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>> controlNodeAvroConverter = new ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>>() {
+  protected ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>> controlNodeAvroConverter =
+          new ThreadLocal<AvroByteArrayConverter<ControlNodeInfo>>() {
     @Override
     protected AvroByteArrayConverter<ControlNodeInfo> initialValue() {
       return new AvroByteArrayConverter<ControlNodeInfo>(ControlNodeInfo.class);
@@ -84,7 +85,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
   /**
    * The endpoint node avro converter.
    */
-  protected ThreadLocal<AvroByteArrayConverter<OperationsNodeInfo>> operationsNodeAvroConverter = new ThreadLocal<AvroByteArrayConverter<OperationsNodeInfo>>() {
+  protected ThreadLocal<AvroByteArrayConverter<OperationsNodeInfo>> operationsNodeAvroConverter =
+          new ThreadLocal<AvroByteArrayConverter<OperationsNodeInfo>>() {
     @Override
     protected AvroByteArrayConverter<OperationsNodeInfo> initialValue() {
       return new AvroByteArrayConverter<OperationsNodeInfo>(OperationsNodeInfo.class);
@@ -93,7 +95,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
   /**
    * The bootstrap node avro converter.
    */
-  protected ThreadLocal<AvroByteArrayConverter<BootstrapNodeInfo>> bootstrapNodeAvroConverter = new ThreadLocal<AvroByteArrayConverter<BootstrapNodeInfo>>() {
+  protected ThreadLocal<AvroByteArrayConverter<BootstrapNodeInfo>> bootstrapNodeAvroConverter =
+          new ThreadLocal<AvroByteArrayConverter<BootstrapNodeInfo>>() {
     @Override
     protected AvroByteArrayConverter<BootstrapNodeInfo> initialValue() {
       return new AvroByteArrayConverter<BootstrapNodeInfo>(BootstrapNodeInfo.class);
@@ -108,8 +111,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
    */
   private final UnhandledErrorListener errorsListener = new UnhandledErrorListener() {
     @Override
-    public void unhandledError(String message, Throwable e) {
-      LOG.error("Unrecoverable error: " + message, e);
+    public void unhandledError(String message, Throwable ex) {
+      LOG.error("Unrecoverable error: " + message, ex);
       try {
         close();
       } catch (IOException ioe) {
@@ -234,8 +237,8 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
       try {
         zkClient.delete().forPath(nodePath);
         LOG.debug("Node with path {} successfully deleted", nodePath);
-      } catch (Exception e) {
-        LOG.debug("Failed to delete node", e);
+      } catch (Exception ex) {
+        LOG.debug("Failed to delete node", ex);
       }
     }
   }
@@ -265,33 +268,43 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
   private ControlNodeInfo extractControlServerInfo(ChildData currentData) {
     ControlNodeInfo controlServerInfo = null;
     try {
-      controlServerInfo = controlNodeAvroConverter.get().fromByteArray(currentData.getData(), controlServerInfo);
-    } catch (IOException e) {
-      LOG.error("error reading control service info", e);
+      controlServerInfo = controlNodeAvroConverter.get().fromByteArray(currentData.getData(),
+              controlServerInfo);
+    } catch (IOException ex) {
+      LOG.error("error reading control service info", ex);
     }
     return controlServerInfo;
   }
 
-  public boolean doZKClientAction(ZKClientAction action) throws IOException {
-    return doZKClientAction(action, false);
+  public boolean doZkClientAction(ZkClientAction action) throws IOException {
+    return doZkClientAction(action, false);
   }
 
-  public boolean doZKClientAction(ZKClientAction action, boolean throwIOException) throws IOException {
+  /**
+   * Do Zookeeper client action.
+   *
+   * @param action            the Zookeeper client action
+   * @param throwIoException  define throw or not IOException
+   * @return boolean 'true' if doWithZkClient method works without exceptions
+   * @throws IOException the IOException
+   */
+  public boolean doZkClientAction(ZkClientAction action, boolean throwIoException)
+          throws IOException {
     try {
       action.doWithZkClient(zkClient);
       return true;
-    } catch (Exception e) {
-      LOG.error("Unknown Error", e);
+    } catch (Exception ex) {
+      LOG.error("Unknown Error", ex);
       close();
-      if (throwIOException) {
-        throw new IOException(e);
+      if (throwIoException) {
+        throw new IOException(ex);
       } else {
         return false;
       }
     }
   }
 
-  public static interface ZKClientAction {
+  public static interface ZkClientAction {
     void doWithZkClient(CuratorFramework client) throws Exception; //NOSONAR
   }
 }

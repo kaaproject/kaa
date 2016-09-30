@@ -43,7 +43,7 @@ public class LogAppenderDto extends PluginDto {
     this.minLogSchemaVersion = logAppenderDto.getMinLogSchemaVersion();
     this.maxLogSchemaVersion = logAppenderDto.getMaxLogSchemaVersion();
     this.confirmDelivery = logAppenderDto.isConfirmDelivery();
-    this.headerStructure = new ArrayList<LogHeaderStructureDto>(logAppenderDto.getHeaderStructure());
+    this.headerStructure = new ArrayList<>(logAppenderDto.getHeaderStructure());
   }
 
   public String getApplicationToken() {

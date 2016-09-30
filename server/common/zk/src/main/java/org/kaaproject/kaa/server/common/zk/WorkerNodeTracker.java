@@ -71,6 +71,11 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     init();
   }
 
+  /**
+   * Instantiates a new WorkerNodeTracker.
+   *
+   * @param zkClient the Zookeeper client
+   */
   public WorkerNodeTracker(CuratorFramework zkClient) {
     super();
     this.zkClient = zkClient;
@@ -96,7 +101,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     super.start();
     endpointCache.getListenable().addListener(new PathChildrenCacheListener() {
       @Override
-      public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+      public void childEvent(CuratorFramework client, PathChildrenCacheEvent event)
+              throws Exception {
         switch (event.getType()) {
           case CHILD_ADDED:
             endpointAdded(event.getData());
@@ -116,7 +122,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
 
     bootstrapCache.getListenable().addListener(new PathChildrenCacheListener() {
       @Override
-      public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+      public void childEvent(CuratorFramework client, PathChildrenCacheEvent event)
+              throws Exception {
         LOG.info("Bootstrap node event: " + event.getType());
         switch (event.getType()) {
           case CHILD_ADDED:
@@ -142,7 +149,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
    * @return the current endpoint nodes
    */
   public List<OperationsNodeInfo> getCurrentOperationServerNodes() {
-    List<ChildData> nodesData = endpointCache != null ? endpointCache.getCurrentData() : new ArrayList<ChildData>();
+    List<ChildData> nodesData = endpointCache != null ? endpointCache
+            .getCurrentData() : new ArrayList<ChildData>();
     Map<ConnectionInfoKey, OperationsNodeInfo> uniqueMap = new HashMap<>();
 
     for (ChildData data : nodesData) {
@@ -167,7 +175,8 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
    * @return the current bootstrap nodes
    */
   public List<BootstrapNodeInfo> getCurrentBootstrapNodes() {
-    List<ChildData> nodesData = bootstrapCache != null ? bootstrapCache.getCurrentData() : new ArrayList<ChildData>();
+    List<ChildData> nodesData = bootstrapCache != null ? bootstrapCache
+            .getCurrentData() : new ArrayList<ChildData>();
     List<BootstrapNodeInfo> result = new ArrayList<>(nodesData.size());
     for (ChildData data : nodesData) {
       result.add(extractBootstrapServerInfo(data));

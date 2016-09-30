@@ -47,15 +47,15 @@ public class TenantDto implements HasId, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof TenantDto)) {
+    if (!(obj instanceof TenantDto)) {
       return false;
     }
 
-    TenantDto that = (TenantDto) o;
+    TenantDto that = (TenantDto) obj;
 
     if (name != null ? !name.equals(that.name) : that.name != null) {
       return false;
@@ -71,9 +71,9 @@ public class TenantDto implements HasId, Serializable {
 
   @Override
   public String toString() {
-    return "TenantDto{" +
-        "id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        '}';
+    return "TenantDto{"
+           + "id='" + id + '\''
+           + ", name='" + name + '\''
+           + '}';
   }
 }

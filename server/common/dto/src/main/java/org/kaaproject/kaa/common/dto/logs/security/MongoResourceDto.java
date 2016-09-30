@@ -34,11 +34,11 @@ public class MongoResourceDto implements Serializable {
     this.collection = collection;
   }
 
-  public String getDB() {
+  public String getDb() {
     return db;
   }
 
-  public void setDB(String db) {
+  public void setDb(String db) {
     this.db = db;
   }
 

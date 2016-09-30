@@ -56,20 +56,21 @@ public class EndpointNotificationDto implements HasId, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof EndpointNotificationDto)) {
+    if (!(obj instanceof EndpointNotificationDto)) {
       return false;
     }
 
-    EndpointNotificationDto that = (EndpointNotificationDto) o;
+    EndpointNotificationDto that = (EndpointNotificationDto) obj;
 
     if (!Arrays.equals(endpointKeyHash, that.endpointKeyHash)) {
       return false;
     }
-    if (notificationDto != null ? !notificationDto.equals(that.notificationDto) : that.notificationDto != null) {
+    if (notificationDto != null ? !notificationDto.equals(that.notificationDto) :
+            that.notificationDto != null) {
       return false;
     }
 
@@ -85,10 +86,10 @@ public class EndpointNotificationDto implements HasId, Serializable {
 
   @Override
   public String toString() {
-    return "EndpointNotificationDto{" +
-        "id='" + id + '\'' +
-        ", endpointKeyHash=" + Arrays.toString(endpointKeyHash) +
-        ", notificationDto=" + notificationDto +
-        '}';
+    return "EndpointNotificationDto{"
+           + "id='" + id + '\''
+           + ", endpointKeyHash=" + Arrays.toString(endpointKeyHash)
+           + ", notificationDto=" + notificationDto
+           + '}';
   }
 }

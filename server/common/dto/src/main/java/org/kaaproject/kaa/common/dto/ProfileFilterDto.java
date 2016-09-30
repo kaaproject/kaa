@@ -62,10 +62,14 @@ public class ProfileFilterDto extends AbstractStructureDto {
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((endpointProfileSchemaId == null) ? 0 : endpointProfileSchemaId.hashCode());
-    result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
-    result = prime * result + ((serverProfileSchemaId == null) ? 0 : serverProfileSchemaId.hashCode());
-    result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
+    result = prime * result + ((endpointProfileSchemaId == null) ? 0 :
+                                       endpointProfileSchemaId.hashCode());
+    result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 :
+                                       endpointProfileSchemaVersion.hashCode());
+    result = prime * result + ((serverProfileSchemaId == null) ? 0 :
+                                       serverProfileSchemaId.hashCode());
+    result = prime * result + ((serverProfileSchemaVersion == null) ? 0 :
+                                       serverProfileSchemaVersion.hashCode());
     return result;
   }
 

@@ -130,7 +130,8 @@ public class EndpointUserDto implements HasId, HasVersion, Serializable {
 
   @Override
   public String toString() {
-    return "EndpointUser [id=" + id + ", externalId=" + externalId + ", tenantId=" + tenantId + ", username=" + username + ", accessToken=" + accessToken
+    return "EndpointUser [id=" + id + ", externalId=" + externalId + ", tenantId=" + tenantId
+           + ", username=" + username + ", accessToken=" + accessToken
         + "]";
   }
 }

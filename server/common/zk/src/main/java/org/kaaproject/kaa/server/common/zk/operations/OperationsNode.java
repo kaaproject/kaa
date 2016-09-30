@@ -72,7 +72,7 @@ public class OperationsNode extends WorkerNodeTracker {
    */
   public void updateNodeData(OperationsNodeInfo currentNodeInfo) throws IOException {
     this.nodeInfo = currentNodeInfo;
-    doZKClientAction(new ZKClientAction() {
+    doZkClientAction(new ZkClientAction() {
       @Override
       public void doWithZkClient(CuratorFramework client) throws Exception {
         client.setData().forPath(nodePath, operationsNodeAvroConverter.get().toByteArray(nodeInfo));
@@ -82,16 +82,16 @@ public class OperationsNode extends WorkerNodeTracker {
 
   @Override
   public boolean createZkNode() throws IOException {
-    return doZKClientAction(new ZKClientAction() {
+    return doZkClientAction(new ZkClientAction() {
       @Override
       public void doWithZkClient(CuratorFramework client) throws Exception {
         nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodePath = client
-            .create()
-            .creatingParentsIfNeeded()
-            .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-            .forPath(OPERATIONS_SERVER_NODE_PATH + OPERATIONS_SERVER_NODE_PATH,
-                operationsNodeAvroConverter.get().toByteArray(nodeInfo));
+                .create()
+                .creatingParentsIfNeeded()
+                .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
+                .forPath(OPERATIONS_SERVER_NODE_PATH + OPERATIONS_SERVER_NODE_PATH,
+                        operationsNodeAvroConverter.get().toByteArray(nodeInfo));
         LOG.info("Created node with path: " + nodePath);
       }
     });

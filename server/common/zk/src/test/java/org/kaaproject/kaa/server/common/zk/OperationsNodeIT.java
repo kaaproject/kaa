@@ -132,7 +132,7 @@ public class OperationsNodeIT {
 
     OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
     endpointNode.start();
-    endpointNode.doZKClientAction(new ControlNodeTracker.ZKClientAction() {
+    endpointNode.doZkClientAction(new ControlNodeTracker.ZkClientAction() {
 
       @Override
       public void doWithZkClient(CuratorFramework client) throws Exception {
@@ -158,7 +158,7 @@ public class OperationsNodeIT {
 
     OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
     endpointNode.start();
-    endpointNode.doZKClientAction(new ControlNodeTracker.ZKClientAction() {
+    endpointNode.doZkClientAction(new ControlNodeTracker.ZkClientAction() {
 
       @Override
       public void doWithZkClient(CuratorFramework client) throws Exception {

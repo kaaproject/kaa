@@ -181,8 +181,8 @@ public class TopicDto implements Serializable, HasId, Comparable<TopicDto> {
   }
 
   @Override
-  public int compareTo(TopicDto o) {
-    return Long.compare(Long.parseLong(this.id), Long.parseLong(o.id));
+  public int compareTo(TopicDto topicDto) {
+    return Long.compare(Long.parseLong(this.id), Long.parseLong(topicDto.id));
   }
 
 }
