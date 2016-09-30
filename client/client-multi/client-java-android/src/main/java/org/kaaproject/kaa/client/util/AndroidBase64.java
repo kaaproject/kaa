@@ -20,6 +20,11 @@ public class AndroidBase64 implements Base64 {
 
   private static AndroidBase64 instance;
 
+  /**
+   * Get instantiates of AndroidBase64.
+   *
+   * @return the instance of AndroidBase64
+   */
   public static AndroidBase64 getInstance() {
     if (instance == null) {
       instance = new AndroidBase64();

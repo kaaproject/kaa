@@ -21,7 +21,7 @@ import org.apache.avro.Schema;
 import java.util.Arrays;
 
 /**
- * Default {@link CommonFixed} implementation
+ * Default {@link CommonFixed} implementation.
  *
  * @author Yaroslav Zeygerman
  */

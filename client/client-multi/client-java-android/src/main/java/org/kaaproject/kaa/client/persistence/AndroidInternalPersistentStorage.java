@@ -35,17 +35,17 @@ public class AndroidInternalPersistentStorage implements PersistentStorage {
 
   @Override
   public InputStream openForRead(String path) throws IOException {
-    File f = new File(context.getFilesDir(), path);
-    return new FileInputStream(f);
+    File file = new File(context.getFilesDir(), path);
+    return new FileInputStream(file);
   }
 
   @Override
   public OutputStream openForWrite(String path) throws IOException {
-    File f = new File(context.getFilesDir(), path);
-    if (f.getParentFile() != null && !f.getParentFile().exists()) {
-      f.getParentFile().mkdirs();
+    File file = new File(context.getFilesDir(), path);
+    if (file.getParentFile() != null && !file.getParentFile().exists()) {
+      file.getParentFile().mkdirs();
     }
-    return new FileOutputStream(f);
+    return new FileOutputStream(file);
   }
 
   @Override

@@ -21,10 +21,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DataCollectionDBHelper extends SQLiteOpenHelper {
-  private static final String TAG = "DataCollectionDBHelper";
+public class DataCollectionDbHelper extends SQLiteOpenHelper {
+  private static final String TAG = "DataCollectionDbHelper";
 
-  public DataCollectionDBHelper(Context context, String name) {
+  public DataCollectionDbHelper(Context context, String name) {
     super(context, name, null, PersistentLogStorageConstants.DB_VERSION);
   }
 
@@ -46,7 +46,8 @@ public class DataCollectionDBHelper extends SQLiteOpenHelper {
     Log.i(TAG, "Database was upgraded. Dropping its contents");
 
     sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageConstants.LOG_TABLE_NAME);
-    sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PersistentLogStorageConstants.STORAGE_INFO_TABLE_NAME);
+    sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "
+                           + PersistentLogStorageConstants.STORAGE_INFO_TABLE_NAME);
     onCreate(sqLiteDatabase);
   }
 }

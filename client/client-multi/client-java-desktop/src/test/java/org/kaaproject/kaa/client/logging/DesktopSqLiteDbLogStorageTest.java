@@ -22,7 +22,7 @@ import org.junit.Before;
 import java.io.File;
 import java.sql.SQLException;
 
-public class DesktopSQLiteDBLogStorageTest extends AbstractPersistentLogStorageTest {
+public class DesktopSqLiteDbLogStorageTest extends AbstractPersistentLogStorageTest {
   private static final String DB_FILENAME = "test.db";
   private static File dbFile = new File(DB_FILENAME);
 
@@ -37,8 +37,8 @@ public class DesktopSQLiteDBLogStorageTest extends AbstractPersistentLogStorageT
   }
 
   @Override
-  protected DesktopSQLiteDBLogStorage getStorage(long bucketSize, int recordCount) {
-    return new DesktopSQLiteDBLogStorage(DB_FILENAME, bucketSize, recordCount);
+  protected DesktopSqLiteDbLogStorage getStorage(long bucketSize, int recordCount) {
+    return new DesktopSqLiteDbLogStorage(DB_FILENAME, bucketSize, recordCount);
   }
 
   private void deleteDBFile() {

@@ -18,9 +18,6 @@ package org.kaaproject.kaa.client.bootstrap;
 
 public class BootstrapRuntimeException extends RuntimeException {
 
-  /**
-   *
-   */
   private static final long serialVersionUID = -1884411210618404248L;
 
   public BootstrapRuntimeException(String message) {

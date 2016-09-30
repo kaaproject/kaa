@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.common;
 import org.apache.avro.Schema;
 
 /**
- * Interface for objects whose serialization depends on schema
+ * Interface for objects whose serialization depends on schema.
  *
  * @author Yaroslav Zeygerman
  */

@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Default {@link BootstrapManager} implementation
+ * Default {@link BootstrapManager} implementation.
  *
  * @author Yaroslav Zeygerman
  */
@@ -53,8 +53,10 @@ public class DefaultBootstrapManager implements BootstrapManager {
    * The Constant LOG.
    */
   private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapManager.class);
-  private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList = new HashMap<>();
-  private final Map<TransportProtocolId, Iterator<ProtocolMetaData>> mappedIterators = new HashMap<>();
+  private final Map<TransportProtocolId, List<ProtocolMetaData>> mappedOperationServerList =
+          new HashMap<>();
+  private final Map<TransportProtocolId, Iterator<ProtocolMetaData>> mappedIterators =
+          new HashMap<>();
   private FailureListener failureListener;
   private BootstrapTransport transport;
   private List<ProtocolMetaData> operationsServerList;
@@ -63,7 +65,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
   private Integer serverToApply;
   private ExecutorContext executorContext;
 
-  public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext, FailureListener failureListener) {
+  public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext,
+                                 FailureListener failureListener) {
     this.transport = transport;
     this.executorContext = executorContext;
     this.failureListener = failureListener;
@@ -117,7 +120,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
   private void notifyChannelManagerAboutServer(List<ProtocolMetaData> transports) {
     for (ProtocolMetaData transport : transports) {
       LOG.debug("Applying new transport {}", transports);
-      channelManager.onTransportConnectionInfoUpdated(new GenericTransportInfo(ServerType.OPERATIONS, transport));
+      channelManager.onTransportConnectionInfoUpdated(new GenericTransportInfo(
+              ServerType.OPERATIONS, transport));
     }
   }
 
@@ -158,7 +162,9 @@ public class DefaultBootstrapManager implements BootstrapManager {
     }
 
     for (ProtocolMetaData server : operationsServerList) {
-      TransportProtocolId transportId = new TransportProtocolId(server.getProtocolVersionInfo().getId(), server.getProtocolVersionInfo().getVersion());
+      TransportProtocolId transportId = new TransportProtocolId(
+              server.getProtocolVersionInfo().getId(),
+              server.getProtocolVersionInfo().getVersion());
       List<ProtocolMetaData> servers = mappedOperationServerList.get(transportId);
       if (servers == null) {
         servers = new LinkedList<>();
@@ -166,7 +172,8 @@ public class DefaultBootstrapManager implements BootstrapManager {
       }
       servers.add(server);
     }
-    for (Map.Entry<TransportProtocolId, List<ProtocolMetaData>> entry : mappedOperationServerList.entrySet()) {
+    for (Map.Entry<TransportProtocolId, List<ProtocolMetaData>> entry : mappedOperationServerList
+            .entrySet()) {
       Collections.shuffle(entry.getValue());
       mappedIterators.put(entry.getKey(), entry.getValue().iterator());
     }
@@ -177,8 +184,10 @@ public class DefaultBootstrapManager implements BootstrapManager {
         serverToApply = null;
       }
     } else {
-      for (Map.Entry<TransportProtocolId, Iterator<ProtocolMetaData>> entry : mappedIterators.entrySet()) {
-        TransportConnectionInfo info = new GenericTransportInfo(ServerType.OPERATIONS, entry.getValue().next());
+      for (Map.Entry<TransportProtocolId, Iterator<ProtocolMetaData>> entry : mappedIterators
+              .entrySet()) {
+        TransportConnectionInfo info = new GenericTransportInfo(ServerType.OPERATIONS,
+                entry.getValue().next());
         channelManager.onTransportConnectionInfoUpdated(info);
       }
     }
@@ -192,30 +201,32 @@ public class DefaultBootstrapManager implements BootstrapManager {
         break;
       case RETRY:
         long retryPeriod = decision.getRetryPeriod();
-        LOG.warn("Attempt to receive operations service list will be made in {} ms, " +
-            "according to failover strategy decision", retryPeriod);
+        LOG.warn("Attempt to receive operations service list will be made in {} ms, "
+                 + "according to failover strategy decision", retryPeriod);
         executorContext.getScheduledExecutor().schedule(new Runnable() {
           @Override
           public void run() {
             try {
               receiveOperationsServerList();
-            } catch (TransportException e) {
-              LOG.error("Error while receiving operations service list", e);
+            } catch (TransportException ex) {
+              LOG.error("Error while receiving operations service list", ex);
             }
           }
         }, retryPeriod, TimeUnit.MILLISECONDS);
         break;
       case USE_NEXT_BOOTSTRAP:
-        LOG.warn("Trying to switch to the next bootstrap service according to failover strategy decision");
+        LOG.warn("Trying to switch to the next bootstrap service according to failover strategy "
+                 + "decision");
         retryPeriod = decision.getRetryPeriod();
-        failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP), status);
+        failoverManager.onServerFailed(channelManager.getActiveServer(TransportType.BOOTSTRAP),
+                status);
         executorContext.getScheduledExecutor().schedule(new Runnable() {
           @Override
           public void run() {
             try {
               receiveOperationsServerList();
-            } catch (TransportException e) {
-              LOG.error("Error while receiving operations service list", e);
+            } catch (TransportException ex) {
+              LOG.error("Error while receiving operations service list", ex);
             }
           }
         }, retryPeriod, TimeUnit.MILLISECONDS);
