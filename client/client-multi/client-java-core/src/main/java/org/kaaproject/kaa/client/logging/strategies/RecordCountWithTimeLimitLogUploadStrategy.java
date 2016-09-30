@@ -30,11 +30,13 @@ import java.util.concurrent.TimeUnit;
  * countThreshold records in storage or records are stored for more then timeLimit TimeUnit units.
  */
 public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadStrategy {
-  private static final Logger LOG = LoggerFactory.getLogger(RecordCountWithTimeLimitLogUploadStrategy.class);
+  private static final Logger LOG = LoggerFactory.getLogger(
+          RecordCountWithTimeLimitLogUploadStrategy.class);
 
   protected long lastUploadTime = System.currentTimeMillis();
 
-  public RecordCountWithTimeLimitLogUploadStrategy(int countThreshold, long timeLimit, TimeUnit timeUnit) {
+  public RecordCountWithTimeLimitLogUploadStrategy(int countThreshold, long timeLimit,
+                                                   TimeUnit timeUnit) {
     setUploadCheckPeriod((int) timeUnit.toSeconds(timeLimit));
     setCountThreshold(countThreshold);
   }
@@ -47,12 +49,13 @@ public class RecordCountWithTimeLimitLogUploadStrategy extends DefaultLogUploadS
     long currentRecordCount = status.getRecordCount();
 
     if (currentRecordCount >= countThreshold) {
-      LOG.info("Need to upload logs - current count: {}, threshold: {}", currentRecordCount, countThreshold);
+      LOG.info("Need to upload logs - current count: {}, threshold: {}",
+              currentRecordCount, countThreshold);
       decision = LogUploadStrategyDecision.UPLOAD;
       lastUploadTime = currentTime;
     } else if (((currentTime - lastUploadTime) / 1000) >= uploadCheckPeriod) {
-      LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {}"
-          , currentRecordCount, lastUploadTime, uploadCheckPeriod);
+      LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {}",
+              currentRecordCount, lastUploadTime, uploadCheckPeriod);
       decision = LogUploadStrategyDecision.UPLOAD;
       lastUploadTime = currentTime;
     }

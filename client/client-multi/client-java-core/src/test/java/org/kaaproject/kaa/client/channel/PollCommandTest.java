@@ -34,7 +34,7 @@ public class PollCommandTest {
     AbstractHttpClient client = Mockito.mock(AbstractHttpClient.class);
     RawDataProcessor processor = Mockito.mock(RawDataProcessor.class);
     Map<TransportType, ChannelDirection> transportTypes = new HashMap<>();
-    IPTransportInfo serverInfo = Mockito.mock(IPTransportInfo.class);
+    IpTransportInfo serverInfo = Mockito.mock(IpTransportInfo.class);
 
     Mockito.when(processor.createRequest(transportTypes)).thenReturn(null);
 
@@ -61,7 +61,7 @@ public class PollCommandTest {
     AbstractHttpClient client = Mockito.mock(AbstractHttpClient.class);
     RawDataProcessor processor = Mockito.mock(RawDataProcessor.class);
     Map<TransportType, ChannelDirection> transportTypes = new HashMap<>();
-    IPTransportInfo serverInfo = Mockito.mock(IPTransportInfo.class);
+    IpTransportInfo serverInfo = Mockito.mock(IpTransportInfo.class);
 
     Mockito.when(client.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
 

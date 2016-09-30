@@ -40,7 +40,8 @@ public class RecordCountLogUploadStrategy extends DefaultLogUploadStrategy {
     LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
     if (currentRecordCount >= countThreshold) {
-      LOG.info("Need to upload logs - current count: {}, threshold: {}", currentRecordCount, countThreshold);
+      LOG.info("Need to upload logs - current count: {}, threshold: {}",
+              currentRecordCount, countThreshold);
       decision = LogUploadStrategyDecision.UPLOAD;
     }
 

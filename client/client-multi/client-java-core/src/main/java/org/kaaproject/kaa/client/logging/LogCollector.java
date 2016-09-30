@@ -45,7 +45,7 @@ public interface LogCollector extends GenericLogCollector {
    *
    * @param record A log record object.
    * @return The {@link RecordFuture} object which allows tracking a delivery status of a log
-   * record.
+   *         record.
    */
   RecordFuture addLogRecord(Log record);
 }

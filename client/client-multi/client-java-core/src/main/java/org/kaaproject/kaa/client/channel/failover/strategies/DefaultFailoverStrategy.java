@@ -66,9 +66,11 @@ public class DefaultFailoverStrategy implements FailoverStrategy {
       case BOOTSTRAP_SERVERS_NA:
         return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
       case CURRENT_BOOTSTRAP_SERVER_NA:
-        return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod, timeUnit);
+        return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod,
+                timeUnit);
       case NO_OPERATION_SERVERS_RECEIVED:
-        return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod, timeUnit);
+        return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod,
+                timeUnit);
       case OPERATION_SERVERS_NA:
         return new FailoverDecision(FailoverAction.RETRY, operationsServersRetryPeriod, timeUnit);
       case NO_CONNECTIVITY:

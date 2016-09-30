@@ -44,7 +44,8 @@ public class DefaultFailoverManager implements FailoverManager {
   private Map<ServerType, AccessPointIdResolution> resolutionProgressMap = new HashMap<>();
 
   public DefaultFailoverManager(KaaChannelManager channelManager, ExecutorContext context) {
-    this(channelManager, context, new DefaultFailoverStrategy(), DEFAULT_FAILURE_RESOLUTION_TIMEOUT, DEFAULT_TIME_UNIT);
+    this(channelManager, context, new DefaultFailoverStrategy(),
+            DEFAULT_FAILURE_RESOLUTION_TIMEOUT, DEFAULT_TIME_UNIT);
   }
 
   public DefaultFailoverManager(KaaChannelManager channelManager,
@@ -60,16 +61,19 @@ public class DefaultFailoverManager implements FailoverManager {
   }
 
   @Override
-  public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo, FailoverStatus status) {
+  public synchronized void onServerFailed(final TransportConnectionInfo connectionInfo,
+                                          FailoverStatus status) {
     if (connectionInfo == null) {
       LOG.warn("Server failed, but connection info is null, can't resolve");
       return;
     } else {
-      LOG.info("Server [{}, {}] failed", connectionInfo.getServerType(), connectionInfo.getAccessPointId());
+      LOG.info("Server [{}, {}] failed", connectionInfo.getServerType(),
+              connectionInfo.getAccessPointId());
     }
 
     long currentResolutionTime = -1;
-    AccessPointIdResolution currentAccessPointIdResolution = resolutionProgressMap.get(connectionInfo.getServerType());
+    AccessPointIdResolution currentAccessPointIdResolution = resolutionProgressMap.get(
+            connectionInfo.getServerType());
     if (currentAccessPointIdResolution != null) {
       currentResolutionTime = currentAccessPointIdResolution.getResolutionTime();
       if (currentAccessPointIdResolution.getAccessPointId() == connectionInfo.getAccessPointId()
@@ -79,25 +83,29 @@ public class DefaultFailoverManager implements FailoverManager {
         return;
       } else {
         if (currentAccessPointIdResolution.getCurResolution() != null) {
-          LOG.trace("Cancelling old resolution: {}", currentAccessPointIdResolution.getCurResolution());
+          LOG.trace("Cancelling old resolution: {}",
+                  currentAccessPointIdResolution.getCurResolution());
           cancelCurrentFailResolution(currentAccessPointIdResolution);
         }
       }
     }
 
-    LOG.trace("Next fail resolution will be available in {} {}", failureResolutionTimeout, timeUnit.toString());
+    LOG.trace("Next fail resolution will be available in {} {}",
+            failureResolutionTimeout, timeUnit.toString());
 
     Future<?> currentResolution = context.getScheduledExecutor().schedule(new Runnable() {
       @Override
       public void run() {
-        LOG.debug("Removing server {} from resolution map for type: {}", connectionInfo, connectionInfo.getServerType());
+        LOG.debug("Removing server {} from resolution map for type: {}",
+                connectionInfo, connectionInfo.getServerType());
         resolutionProgressMap.remove(connectionInfo.getServerType());
       }
     }, failureResolutionTimeout, timeUnit);
 
     channelManager.onServerFailed(connectionInfo, status);
 
-    long updatedResolutionTime = currentAccessPointIdResolution != null ? currentAccessPointIdResolution.getResolutionTime() : currentResolutionTime;
+    long updatedResolutionTime = currentAccessPointIdResolution
+            != null ? currentAccessPointIdResolution.getResolutionTime() : currentResolutionTime;
 
     AccessPointIdResolution newAccessPointIdResolution =
         new AccessPointIdResolution(connectionInfo.getAccessPointId(), currentResolution);
@@ -115,19 +123,25 @@ public class DefaultFailoverManager implements FailoverManager {
       LOG.warn("Server has changed, but its connection info is null, can't resolve");
       return;
     } else {
-      LOG.trace("Server [{}, {}] has changed", connectionInfo.getServerType(), connectionInfo.getAccessPointId());
+      LOG.trace("Server [{}, {}] has changed",
+              connectionInfo.getServerType(), connectionInfo.getAccessPointId());
     }
 
-    AccessPointIdResolution currentAccessPointIdResolution = resolutionProgressMap.get(connectionInfo.getServerType());
+    AccessPointIdResolution currentAccessPointIdResolution = resolutionProgressMap.get(
+            connectionInfo.getServerType());
     if (currentAccessPointIdResolution == null) {
-      AccessPointIdResolution newResolution = new AccessPointIdResolution(connectionInfo.getAccessPointId(), null);
+      AccessPointIdResolution newResolution = new AccessPointIdResolution(
+              connectionInfo.getAccessPointId(), null);
       resolutionProgressMap.put(connectionInfo.getServerType(), newResolution);
-    } else if (currentAccessPointIdResolution.getAccessPointId() != connectionInfo.getAccessPointId()) {
+    } else if (currentAccessPointIdResolution.getAccessPointId()
+            != connectionInfo.getAccessPointId()) {
       if (currentAccessPointIdResolution.getCurResolution() != null) {
-        LOG.trace("Cancelling fail resolution, as server [{}] has changed: {}", connectionInfo, currentAccessPointIdResolution);
+        LOG.trace("Cancelling fail resolution, as server [{}] has changed: {}",
+                connectionInfo, currentAccessPointIdResolution);
         cancelCurrentFailResolution(currentAccessPointIdResolution);
       }
-      AccessPointIdResolution newResolution = new AccessPointIdResolution(connectionInfo.getAccessPointId(), null);
+      AccessPointIdResolution newResolution = new AccessPointIdResolution(
+              connectionInfo.getAccessPointId(), null);
       resolutionProgressMap.put(connectionInfo.getServerType(), newResolution);
     } else {
       LOG.debug("Same server [{}] is used, nothing has changed", connectionInfo);
@@ -144,19 +158,23 @@ public class DefaultFailoverManager implements FailoverManager {
 
     failoverStrategy.onRecover(connectionInfo);
 
-    AccessPointIdResolution accessPointIdResolution = resolutionProgressMap.get(connectionInfo.getServerType());
+    AccessPointIdResolution accessPointIdResolution = resolutionProgressMap.get(
+            connectionInfo.getServerType());
     if (accessPointIdResolution == null) {
-      LOG.trace("Server hasn't been set yet (failover resolution has happened), so a new server: {} can't be connected", connectionInfo);
+      LOG.trace("Server hasn't been set yet (failover resolution has happened), so a new server: "
+              + "{} can't be connected", connectionInfo);
     } else if (accessPointIdResolution.getCurResolution() != null
         && connectionInfo.getAccessPointId() == accessPointIdResolution.getAccessPointId()) {
 
       LOG.trace("Cancelling fail resolution: {}", accessPointIdResolution);
       cancelCurrentFailResolution(accessPointIdResolution);
     } else if (accessPointIdResolution.getCurResolution() != null) {
-      LOG.debug("Connection for outdated accessPointId: {} was received, ignoring. The new accessPointId is: {}",
+      LOG.debug("Connection for outdated accessPointId: {} was received, ignoring. "
+                      + "The new accessPointId is: {}",
           connectionInfo.getAccessPointId(), accessPointIdResolution.getAccessPointId());
     } else {
-      LOG.trace("There is no current resolution in progress, connected to the same server: {}", connectionInfo);
+      LOG.trace("There is no current resolution in progress, connected to the same server: {}",
+              connectionInfo);
     }
   }
 
@@ -177,14 +195,16 @@ public class DefaultFailoverManager implements FailoverManager {
       case BOOTSTRAP_SERVERS_NA:
       case CURRENT_BOOTSTRAP_SERVER_NA:
         accessPointIdResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
-        resolutionTime += failoverStrategy.getTimeUnit().toMillis(failoverStrategy.getBootstrapServersRetryPeriod());
+        resolutionTime += failoverStrategy.getTimeUnit().toMillis(
+                failoverStrategy.getBootstrapServersRetryPeriod());
         break;
       case NO_OPERATION_SERVERS_RECEIVED:
         accessPointIdResolution = resolutionProgressMap.get(ServerType.BOOTSTRAP);
         break;
       case OPERATION_SERVERS_NA:
         accessPointIdResolution = resolutionProgressMap.get(ServerType.OPERATIONS);
-        resolutionTime += failoverStrategy.getTimeUnit().toMillis(failoverStrategy.getOperationServersRetryPeriod());
+        resolutionTime += failoverStrategy.getTimeUnit().toMillis(
+                failoverStrategy.getOperationServersRetryPeriod());
         break;
       default:
         break;
@@ -237,20 +257,21 @@ public class DefaultFailoverManager implements FailoverManager {
     }
 
     @Override
-    public boolean equals(Object o) {
-      if (this == o) {
+    public boolean equals(Object obj) {
+      if (this == obj) {
         return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if (obj == null || getClass() != obj.getClass()) {
         return false;
       }
 
-      AccessPointIdResolution that = (AccessPointIdResolution) o;
+      AccessPointIdResolution that = (AccessPointIdResolution) obj;
 
       if (accessPointId != that.accessPointId) {
         return false;
       }
-      if (curResolution != null ? !curResolution.equals(that.curResolution) : that.curResolution != null) {
+      if (curResolution != null ? !curResolution.equals(that.curResolution) : that.curResolution
+              != null) {
         return false;
       }
 
@@ -266,11 +287,11 @@ public class DefaultFailoverManager implements FailoverManager {
 
     @Override
     public String toString() {
-      return "AccessPointIdResolution{" +
-          "accessPointId=" + accessPointId +
-          ", resolutionTime=" + resolutionTimeMillis +
-          ", curResolution=" + curResolution +
-          '}';
+      return "AccessPointIdResolution{"
+              + "accessPointId=" + accessPointId
+              + ", resolutionTime=" + resolutionTimeMillis
+              + ", curResolution=" + curResolution
+              + '}';
     }
   }
 }

@@ -30,7 +30,7 @@ import java.io.IOException;
 import javax.annotation.Generated;
 
 /**
- * Reference implementation of @see LogCollector
+ * Reference implementation of @see LogCollector.
  *
  * @author Andrew Shvayka
  */
@@ -53,8 +53,8 @@ public class DefaultLogCollector extends AbstractLogCollector {
           BucketInfo bucketInfo = storage.addLogRecord(new LogRecord(record));
           bucketInfoMap.put(bucketInfo.getBucketId(), bucketInfo);
           addDeliveryFuture(bucketInfo, future);
-        } catch (IOException e) {
-          LOG.warn("Can't serialize log record {}, exception catched: {}", record, e);
+        } catch (IOException ex) {
+          LOG.warn("Can't serialize log record {}, exception catched: {}", record, ex);
         }
 
         uploadIfNeeded();

@@ -110,7 +110,7 @@ public interface KaaDataChannel {
   void setMultiplexer(KaaDataMultiplexer multiplexer);
 
   /**
-   * Retrieves info about current used server
+   * Retrieves info about current used server.
    *
    * @return Server info
    */

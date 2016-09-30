@@ -68,11 +68,13 @@ public class MemBucket {
 
   public boolean addRecord(LogRecord record) {
     if (size + record.getSize() > maxSize) {
-      LOG.trace("No space left in bucket. Current size: {}, record size: {}, max size: {}", size, record.getSize(), maxSize);
+      LOG.trace("No space left in bucket. Current size: {}, record size: {}, max size: {}",
+              size, record.getSize(), maxSize);
       return false;
     }
     if (getCount() + 1 > maxRecordCount) {
-      LOG.trace("No space left in bucket. Current count: {}, max count: {}", getCount(), maxRecordCount);
+      LOG.trace("No space left in bucket. Current count: {}, max count: {}", getCount(),
+              maxRecordCount);
       return false;
     }
     records.add(record);
@@ -81,7 +83,7 @@ public class MemBucket {
   }
 
   /**
-   * Shrinks current bucket to the newSize
+   * Shrinks current bucket to the newSize.
    *
    * @param newSize  expected max size of a bucket inclusively
    * @param newCount the new count
@@ -105,21 +107,22 @@ public class MemBucket {
       size -= curRecord.getSize();
     }
 
-    LOG.trace("Shrink over-sized elements: [{}]. New bucket size: [{}] and count [{}]", overSize.size(), size, getCount());
+    LOG.trace("Shrink over-sized elements: [{}]. New bucket size: [{}] and count [{}]",
+            overSize.size(), size, getCount());
 
     return overSize;
   }
 
   @Override
   public String toString() {
-    return "MemBucket{" +
-        "id=" + id +
-        ", maxSize=" + maxSize +
-        ", maxRecordCount=" + maxRecordCount +
-        ", records count=" + records.size() +
-        ", size=" + size +
-        ", state=" + state +
-        '}';
+    return "MemBucket{"
+            + "id=" + id
+            + ", maxSize=" + maxSize
+            + ", maxRecordCount=" + maxRecordCount
+            + ", records count=" + records.size()
+            + ", size=" + size
+            + ", state=" + state
+            + '}';
   }
 
   public static enum MemBucketState {

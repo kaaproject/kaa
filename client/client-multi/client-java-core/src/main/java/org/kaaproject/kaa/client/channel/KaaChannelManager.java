@@ -41,7 +41,6 @@ import java.util.List;
  * kaaClient.getChannelManager().addChannel(dataChannel1);
  * }
  * </pre>
- *
  * The code above registers new data channel in the KaaChannelManager instance.
  * This channel will be used by each transport abstraction which is supported by
  * this channel (See {@link KaaDataChannel#getSupportedTransportTypes()}).<br>
@@ -105,7 +104,8 @@ public interface KaaChannelManager {
    * @throws KaaInvalidChannelException the kaa invalid channel exception
    * @see KaaDataChannel
    */
-  void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException;
+  void setChannel(TransportType transport, KaaDataChannel channel)
+          throws KaaInvalidChannelException;
 
   /**
    * Updates the manager by adding the channel.
@@ -162,21 +162,21 @@ public interface KaaChannelManager {
   void clearChannelList();
 
   /**
-   * Invoke sync on active channel by specified transport type
+   * Invoke sync on active channel by specified transport type.
    *
    * @param type the type
    */
   void sync(TransportType type);
 
   /**
-   * Invoke sync acknowledgement on active channel by specified transport type
+   * Invoke sync acknowledgement on active channel by specified transport type.
    *
    * @param type the type
    */
   void syncAck(TransportType type);
 
   /**
-   * Invoke sync acknowledgement on active channel
+   * Invoke sync acknowledgement on active channel.
    *
    * @param type - type that is used to identify active channel
    */
@@ -184,7 +184,7 @@ public interface KaaChannelManager {
 
   /**
    * Returns information about server that is used for data transfer for specified {@link
-   * TransportType}
+   * TransportType}.
    *
    * @param type - type that is used to identify active channel
    * @return TransportConnectionInfo active server
@@ -192,7 +192,7 @@ public interface KaaChannelManager {
   TransportConnectionInfo getActiveServer(TransportType type);
 
   /**
-   * Sets a new failover manager
+   * Sets a new failover manager.
    *
    * @param failoverManager the failover manager
    */

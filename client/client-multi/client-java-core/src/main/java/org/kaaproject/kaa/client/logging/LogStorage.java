@@ -32,7 +32,7 @@ public interface LogStorage {
    *
    * @param record The {@link LogRecord} object.
    * @return The {@link BucketInfo} object which contains information about a bucket the log record
-   * is added.
+   *         is added.
    * @see LogRecord
    * @see BucketInfo
    */

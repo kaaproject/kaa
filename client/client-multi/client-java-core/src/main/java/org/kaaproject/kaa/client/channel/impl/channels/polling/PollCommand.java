@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.channel.impl.channels.polling;
 
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
+import org.kaaproject.kaa.client.channel.IpTransportInfo;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
@@ -34,11 +34,11 @@ public class PollCommand implements Command {
   private final AbstractHttpClient httpClient;
   private final RawDataProcessor processor;
   private final Map<TransportType, ChannelDirection> transportTypes;
-  private final IPTransportInfo serverInfo;
+  private final IpTransportInfo serverInfo;
   private volatile boolean canceled = false;
 
   public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType,
-          ChannelDirection> transportTypes, IPTransportInfo serverInfo) {
+          ChannelDirection> transportTypes, IpTransportInfo serverInfo) {
     this.httpClient = client;
     this.serverInfo = serverInfo;
     this.processor = processor;

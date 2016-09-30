@@ -18,7 +18,7 @@ package org.kaaproject.kaa.client.channel.impl.channels;
 
 import org.kaaproject.kaa.client.FailureListener;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
+import org.kaaproject.kaa.client.channel.IpTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -98,7 +98,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
   };
   private final MessageFactory messageFactory = new MessageFactory();
   private FailureListener failureListener;
-  private IPTransportInfo currentServer;
+  private IpTransportInfo currentServer;
   private ScheduledExecutorService executor;
   private volatile State channelState = State.CLOSED;
   private KaaDataDemultiplexer demultiplexer;
@@ -527,8 +527,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       LOG.info("Can't set server. Channel [{}] is down", getId());
       return;
     }
-    IPTransportInfo oldServer = currentServer;
-    this.currentServer = new IPTransportInfo(server);
+    IpTransportInfo oldServer = currentServer;
+    this.currentServer = new IpTransportInfo(server);
     this.encDec = new MessageEncoderDecoder(state.getPrivateKey(), state.getPublicKey(),
             currentServer.getPublicKey());
     if (channelState != State.PAUSE) {

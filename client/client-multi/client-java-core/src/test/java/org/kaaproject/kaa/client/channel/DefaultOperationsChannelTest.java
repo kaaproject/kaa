@@ -97,8 +97,8 @@ public class DefaultOperationsChannelTest {
     KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
     DefaultOperationsChannelFake channel = new DefaultOperationsChannelFake(client, state, failoverManager, 3);
 
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
-        "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+            "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
     channel.setDemultiplexer(null);
     channel.setDemultiplexer(demultiplexer);
@@ -145,8 +145,8 @@ public class DefaultOperationsChannelTest {
     channel.setDemultiplexer(demultiplexer);
     channel.setMultiplexer(multiplexer);
 
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
-        "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+            "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
     channel.setServer(server);
 
     Mockito.verify(failoverManager, Mockito.times(1)).onServerFailed(Mockito.any(TransportConnectionInfo.class), Mockito.any(FailoverStatus.class));
@@ -179,8 +179,8 @@ public class DefaultOperationsChannelTest {
     channel.setMultiplexer(multiplexer);
     channel.shutdown();
 
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
-        "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+            "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
     channel.setServer(server);
 
     channel.sync(TransportType.EVENT);

@@ -39,7 +39,7 @@ public interface TransportConnectionInfo {
   TransportProtocolId getTransportId();
 
   /**
-   * Retrieves the access point id (operations/bootstrap service id)
+   * Retrieves the access point id (operations/bootstrap service id).
    *
    * @return access point id
    */

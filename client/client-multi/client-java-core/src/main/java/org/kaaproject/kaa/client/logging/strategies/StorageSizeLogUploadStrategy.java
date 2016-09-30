@@ -40,7 +40,8 @@ public class StorageSizeLogUploadStrategy extends DefaultLogUploadStrategy {
     LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
 
     if (currentConsumedVolume >= volumeThreshold) {
-      LOG.info("Need to upload logs - current size: {}, threshold: {}", currentConsumedVolume, volumeThreshold);
+      LOG.info("Need to upload logs - current size: {}, threshold: {}",
+              currentConsumedVolume, volumeThreshold);
       decision = LogUploadStrategyDecision.UPLOAD;
     }
 

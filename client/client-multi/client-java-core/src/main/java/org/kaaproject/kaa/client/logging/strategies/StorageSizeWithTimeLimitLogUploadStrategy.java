@@ -31,11 +31,13 @@ import java.util.concurrent.TimeUnit;
  * or records are stored for more then timeLimit TimeUnit units.
  */
 public class StorageSizeWithTimeLimitLogUploadStrategy extends DefaultLogUploadStrategy {
-  private static final Logger LOG = LoggerFactory.getLogger(StorageSizeWithTimeLimitLogUploadStrategy.class);
+  private static final Logger LOG = LoggerFactory.getLogger(
+          StorageSizeWithTimeLimitLogUploadStrategy.class);
 
   protected long lastUploadTime = System.currentTimeMillis();
 
-  public StorageSizeWithTimeLimitLogUploadStrategy(int volumeThreshold, long timeLimit, TimeUnit timeUnit) {
+  public StorageSizeWithTimeLimitLogUploadStrategy(int volumeThreshold, long timeLimit,
+                                                   TimeUnit timeUnit) {
     setUploadCheckPeriod((int) timeUnit.toSeconds(timeLimit));
     setVolumeThreshold(volumeThreshold);
   }
@@ -48,7 +50,8 @@ public class StorageSizeWithTimeLimitLogUploadStrategy extends DefaultLogUploadS
     long currentConsumedVolume = status.getConsumedVolume();
 
     if (currentConsumedVolume >= volumeThreshold) {
-      LOG.info("Need to upload logs - current size: {}, threshold: {}", currentConsumedVolume, volumeThreshold);
+      LOG.info("Need to upload logs - current size: {}, threshold: {}",
+              currentConsumedVolume, volumeThreshold);
       decision = LogUploadStrategyDecision.UPLOAD;
       lastUploadTime = currentTime;
     } else if (((currentTime - lastUploadTime) / 1000) >= uploadCheckPeriod) {

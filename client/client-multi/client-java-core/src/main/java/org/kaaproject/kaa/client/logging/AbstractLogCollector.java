@@ -45,7 +45,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Reference implementation of @see LogCollector
+ * Reference implementation of @see LogCollector.
  *
  * @author Andrew Shvayka
  */
@@ -290,7 +290,8 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
 
   private boolean isUploadAllowed() {
     if (timeouts.size() >= strategy.getMaxParallelUploads()) {
-      LOG.debug("Ignore log upload: too much pending requests {}, max allowed {}", timeouts.size(), strategy.getMaxParallelUploads());
+      LOG.debug("Ignore log upload: too much pending requests {}, max allowed {}",
+              timeouts.size(), strategy.getMaxParallelUploads());
       return false;
     }
     return true;

@@ -64,10 +64,12 @@ public class DefaultLogUploadStrategy implements LogUploadStrategy {
   protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
     LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
     if (status.getConsumedVolume() >= volumeThreshold) {
-      LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
+      LOG.info("Need to upload logs - current size: {}, threshold: {}",
+              status.getConsumedVolume(), volumeThreshold);
       decision = LogUploadStrategyDecision.UPLOAD;
     } else if (status.getRecordCount() >= countThreshold) {
-      LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
+      LOG.info("Need to upload logs - current count: {}, threshold: {}",
+              status.getRecordCount(), countThreshold);
       decision = LogUploadStrategyDecision.UPLOAD;
     }
     return decision;
