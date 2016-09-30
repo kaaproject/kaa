@@ -78,20 +78,23 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
   public BucketInfo addLogRecord(LogRecord record) {
     LOG.trace("Adding new log record with size {}", record.getSize());
     if (record.getSize() > maxBucketSize) {
-      throw new IllegalArgumentException("Record size(" + record.getSize() + ") is bigger than max bucket size (" + maxBucketSize + ")!");
+      throw new IllegalArgumentException("Record size(" + record.getSize()
+              + ") is bigger than max bucket size (" + maxBucketSize + ")!");
     }
     synchronized (buckets) {
       if (consumedVolume + record.getSize() > maxStorageSize) {
         throw new IllegalStateException("Storage is full!");
       }
       if (currentBucket == null || currentBucket.getState() != MemBucketState.FREE) {
-        currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(), maxBucketSize, maxBucketRecordCount);
+        currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(),
+                maxBucketSize, maxBucketRecordCount);
         buckets.put(currentBucket.getId(), currentBucket);
       }
       if (!currentBucket.addRecord(record)) {
         LOG.trace("Current bucket is full. Creating new one.");
         currentBucket.setState(MemBucketState.FULL);
-        currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(), maxBucketSize, maxBucketRecordCount);
+        currentBucket = new MemBucket(bucketIdSeq.getAndIncrement(),
+                maxBucketSize, maxBucketRecordCount);
         buckets.put(currentBucket.getId(), currentBucket);
         currentBucket.addRecord(record);
       }
@@ -124,7 +127,8 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
         consumedVolume -= bucketCandidate.getSize();
         recordCount -= bucketCandidate.getCount();
         if (bucketCandidate.getState() == MemBucketState.FREE) {
-          LOG.trace("Only a bucket with state FREE found: [{}]. Changing its state to PENDING", bucketCandidate.getId());
+          LOG.trace("Only a bucket with state FREE found: [{}]. Changing its state to PENDING",
+                  bucketCandidate.getId());
           bucketCandidate.setState(MemBucketState.PENDING);
         }
         result = new LogBucket(bucketCandidate.getId(), bucketCandidate.getRecords());

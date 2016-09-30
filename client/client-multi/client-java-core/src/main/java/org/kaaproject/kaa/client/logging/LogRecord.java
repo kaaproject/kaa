@@ -30,16 +30,17 @@ import javax.annotation.Generated;
  */
 @Generated("LogRecord.java.template")
 public class LogRecord {
+
   /**
    * Thread-local converter of log records to bytes.
    */
   private static final ThreadLocal<AvroByteArrayConverter<Log>> CONVERTER
       = new ThreadLocal<AvroByteArrayConverter<Log>>() {
-    @Override
-    protected AvroByteArrayConverter<Log> initialValue() {
-      return new AvroByteArrayConverter<>(Log.class);
-    }
-  };
+        @Override
+        protected AvroByteArrayConverter<Log> initialValue() {
+          return new AvroByteArrayConverter<>(Log.class);
+        }
+      };
 
   /**
    * Avro-encoded log record.

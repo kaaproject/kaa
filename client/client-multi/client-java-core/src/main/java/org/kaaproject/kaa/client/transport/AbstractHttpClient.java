@@ -52,8 +52,8 @@ public abstract class AbstractHttpClient {
     return messageEncDec;
   }
 
-  public abstract byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity
-      , boolean verifyResponse) throws Exception; //NOSONAR
+  public abstract byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity,
+                                            boolean verifyResponse) throws Exception; //NOSONAR
 
   public abstract void close() throws IOException;
 

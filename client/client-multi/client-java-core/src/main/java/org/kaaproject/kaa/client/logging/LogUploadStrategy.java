@@ -52,28 +52,28 @@ public interface LogUploadStrategy {
   /**
    * If there are records in storage we need to periodically check isUploadNeeded method. This is
    * useful if client want to upload logs on certain timing conditions instead of log storage
-   * checks
+   * checks.
    *
    * @return Time in seconds
    */
   int getUploadCheckPeriod();
 
   /**
-   * Returns max parallel upload count
+   * Returns max parallel upload count.
    *
    * @return Max parallel upload count
    */
   int getMaxParallelUploads();
 
   /**
-   * Handles timeout of log delivery
+   * Handles timeout of log delivery.
    *
    * @param controller the controller
    */
   void onTimeout(LogFailoverCommand controller);
 
   /**
-   * Handles failure of log delivery
+   * Handles failure of log delivery.
    *
    * @param controller the controller
    * @param code       the code

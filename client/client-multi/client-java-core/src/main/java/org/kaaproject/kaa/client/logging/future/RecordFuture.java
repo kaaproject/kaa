@@ -93,8 +93,8 @@ public class RecordFuture implements Future<RecordInfo> {
       value.setRecordAddedTimestampMs(recordAddedTimestampMs);
       value.setRecordDeliveryTimeMs(arriveTime - recordAddedTimestampMs);
       this.queue.put(new ExecutionResult<>(value, null));
-    } catch (InterruptedException e) {
-      LOG.warn("Failed to push value", e);
+    } catch (InterruptedException ex) {
+      LOG.warn("Failed to push value", ex);
     }
     state = State.DONE;
   }
@@ -106,7 +106,8 @@ public class RecordFuture implements Future<RecordInfo> {
   }
 
   @Override
-  public RecordInfo get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+  public RecordInfo get(long timeout, TimeUnit unit)
+          throws InterruptedException, ExecutionException, TimeoutException {
     ExecutionResult<RecordInfo> result = queue.poll(timeout, unit);
     return processResult(result);
   }

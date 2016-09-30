@@ -20,7 +20,7 @@ import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
 
 /**
- * Manager is responsible for managing current server's failover/connection events
+ * Manager is responsible for managing current server's failover/connection events.
  */
 public interface FailoverManager {
 

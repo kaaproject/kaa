@@ -20,7 +20,7 @@ import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
 /**
  * Generic implementation of {@link TransportConnectionInfo} that is based on
- * {@link ProtocolMetaData}
+ * {@link ProtocolMetaData}.
  *
  * @author Andrew Shvayka
  */
@@ -34,7 +34,8 @@ public class GenericTransportInfo implements TransportConnectionInfo {
     super();
     this.serverType = serverType;
     this.md = md;
-    this.transportId = new TransportProtocolId(md.getProtocolVersionInfo().getId(), md.getProtocolVersionInfo().getVersion());
+    this.transportId = new TransportProtocolId(md.getProtocolVersionInfo().getId(),
+            md.getProtocolVersionInfo().getVersion());
   }
 
   @Override
@@ -58,15 +59,15 @@ public class GenericTransportInfo implements TransportConnectionInfo {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof GenericTransportInfo)) {
+    if (!(obj instanceof GenericTransportInfo)) {
       return false;
     }
 
-    GenericTransportInfo that = (GenericTransportInfo) o;
+    GenericTransportInfo that = (GenericTransportInfo) obj;
 
     if (md != null ? !md.equals(that.md) : that.md != null) {
       return false;

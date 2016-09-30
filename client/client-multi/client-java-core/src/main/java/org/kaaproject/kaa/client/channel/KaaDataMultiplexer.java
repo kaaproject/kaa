@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * Multiplexer collects the info about states from different
  * services and compiles it in one request.
- *
  * Required in user implementation of any kind of data channel.
  *
  * @author Yaroslav Zeygerman

@@ -21,15 +21,15 @@ package org.kaaproject.kaa.client.channel;
  */
 public enum ChannelDirection {
   /**
-   * From the endpoint to the server
+   * From the endpoint to the server.
    */
   UP,
   /**
-   * From the server to the enpoint
+   * From the server to the enpoint.
    */
   DOWN,
   /**
-   * In both ways
+   * In both ways.
    */
   BIDIRECTIONAL
 }

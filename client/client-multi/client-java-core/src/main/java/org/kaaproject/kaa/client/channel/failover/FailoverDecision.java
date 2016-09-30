@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Class that describes a decision which is made by a failover manager,
- * which corresponds to a failover strategy
+ * which corresponds to a failover strategy.
  *
  * @see FailoverManager
  */
@@ -44,7 +44,7 @@ public class FailoverDecision {
   }
 
   /**
-   * Is used to get retryPeriod value in milliseconds
+   * Is used to get retryPeriod value in milliseconds.
    *
    * @return retry period in milliseconds
    */
@@ -53,7 +53,7 @@ public class FailoverDecision {
   }
 
   /**
-   * Enum which represents an action corresponding to a failover scenario
+   * Enum which represents an action corresponding to a failover scenario.
    */
   public static enum FailoverAction {
     NOOP,               // doing nothing

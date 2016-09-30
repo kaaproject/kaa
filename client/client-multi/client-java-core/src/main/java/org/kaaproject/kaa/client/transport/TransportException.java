@@ -18,9 +18,6 @@ package org.kaaproject.kaa.client.transport;
 
 public class TransportException extends Exception {
 
-  /**
-   *
-   */
   private static final long serialVersionUID = 4200594644236099078L;
   private int status;
 
@@ -28,8 +25,8 @@ public class TransportException extends Exception {
     super(message);
   }
 
-  public TransportException(Exception e) {
-    super(e);
+  public TransportException(Exception ex) {
+    super(ex);
   }
 
   public TransportException(int status) {

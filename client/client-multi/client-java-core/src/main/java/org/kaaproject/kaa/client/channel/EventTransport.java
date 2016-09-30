@@ -61,12 +61,12 @@ public interface EventTransport extends KaaTransport {
   void setEventManager(EventManager manager);
 
   /**
-   *
+   * Block Event manager.
    */
   void blockEventManager();
 
   /**
-   *
+   * Release Event manager.
    */
   void releaseEventManager();
 

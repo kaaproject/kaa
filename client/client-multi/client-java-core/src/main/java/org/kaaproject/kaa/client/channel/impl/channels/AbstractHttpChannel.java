@@ -18,7 +18,7 @@ package org.kaaproject.kaa.client.channel.impl.channels;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
+import org.kaaproject.kaa.client.channel.IpTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -50,7 +50,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
   private final AbstractKaaClient client;
   private final KaaClientState state;
   private final FailoverManager failoverManager;
-  private IPTransportInfo currentServer;
+  private IpTransportInfo currentServer;
   private volatile ExecutorService executor;
 
   private volatile boolean lastConnectionFailed = false;
@@ -166,8 +166,8 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
       executor = createExecutor();
     }
     if (server != null) {
-      this.currentServer = new IPTransportInfo(server);
-      this.httpClient = client.createHttpClient(currentServer.getURL() + getUrlSufix(),
+      this.currentServer = new IpTransportInfo(server);
+      this.httpClient = client.createHttpClient(currentServer.getUrl() + getUrlSufix(),
               state.getPrivateKey(), state.getPublicKey(),
           currentServer.getPublicKey());
       if (lastConnectionFailed && !isPaused) {

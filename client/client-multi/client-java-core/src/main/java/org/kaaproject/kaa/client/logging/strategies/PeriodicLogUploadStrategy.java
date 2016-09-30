@@ -44,8 +44,8 @@ public class PeriodicLogUploadStrategy extends DefaultLogUploadStrategy {
     long currentTime = System.currentTimeMillis();
 
     if (((currentTime - lastUploadTime) / 1000) >= uploadCheckPeriod) {
-      LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {} sec"
-          , status.getRecordCount(), lastUploadTime, uploadCheckPeriod);
+      LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {} sec",
+              status.getRecordCount(), lastUploadTime, uploadCheckPeriod);
       decision = LogUploadStrategyDecision.UPLOAD;
       lastUploadTime = currentTime;
     }

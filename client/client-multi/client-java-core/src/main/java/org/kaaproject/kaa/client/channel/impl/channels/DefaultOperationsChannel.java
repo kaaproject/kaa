@@ -18,7 +18,7 @@ package org.kaaproject.kaa.client.channel.impl.channels;
 
 import org.kaaproject.kaa.client.AbstractKaaClient;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
+import org.kaaproject.kaa.client.channel.IpTransportInfo;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -75,7 +75,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
   private AbstractHttpClient httpClient;
   private KaaDataDemultiplexer demultiplexer;
   private KaaDataMultiplexer multiplexer;
-  private IPTransportInfo currentServer;
+  private IpTransportInfo currentServer;
   private ScheduledExecutorService scheduler;
 
   private volatile Future<?> pollFuture;
@@ -328,10 +328,10 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
       if (!isPaused) {
         stopPoll();
       }
-      this.currentServer = new IPTransportInfo(server);
+      this.currentServer = new IpTransportInfo(server);
       synchronized (httpClientLock) {
         LOG.debug("Channel [{}]: creating HTTP client..", getId());
-        this.httpClient = client.createHttpClient(currentServer.getURL() + "/EP/LongSync",
+        this.httpClient = client.createHttpClient(currentServer.getUrl() + "/EP/LongSync",
                 state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
         synchronized (httpClientSetLock) {
           httpClientSetLock.notifyAll();
