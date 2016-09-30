@@ -29,11 +29,13 @@ import java.util.Arrays;
 import javax.annotation.Generated;
 
 @Generated("ResyncConfigurationManager.java.template")
-public class ResyncConfigurationManager extends AbstractConfigurationManager implements ConfigurationManager {
+public class ResyncConfigurationManager extends AbstractConfigurationManager
+        implements ConfigurationManager {
 
   private static final Logger LOG = LoggerFactory.getLogger(ResyncConfigurationManager.class);
 
-  public ResyncConfigurationManager(KaaClientProperties properties, KaaClientState state, ExecutorContext executorContext) {
+  public ResyncConfigurationManager(KaaClientProperties properties, KaaClientState state,
+                                    ExecutorContext executorContext) {
     super(properties, state, executorContext);
   }
 
@@ -41,12 +43,14 @@ public class ResyncConfigurationManager extends AbstractConfigurationManager imp
   public Configuration getConfiguration() {
     try {
       return deserializer.fromByteArray(getConfigurationData());
-    } catch (IOException e) {
-      LOG.error("Failed to decode configuration data {}, exception catched: {}", Arrays.toString(getConfigurationData()), e);
+    } catch (IOException ex) {
+      LOG.error("Failed to decode configuration data {}, exception catched: {}",
+              Arrays.toString(getConfigurationData()), ex);
       try {
         return deserializer.fromByteArray(getDefaultConfigurationData());
       } catch (IOException e1) {
-        LOG.error("Failed to decode default configuration data {}, exception catched: {}", Arrays.toString(getConfigurationData()), e1);
+        LOG.error("Failed to decode default configuration data {}, exception catched: {}",
+                Arrays.toString(getConfigurationData()), e1);
         return null;
       }
     }

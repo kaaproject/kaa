@@ -40,11 +40,12 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Default @{link ConfigurationManager} implementation
+ * Default @{link ConfigurationManager} implementation.
  *
  * @author Yaroslav Zeygerman
  */
-public class DefaultConfigurationManager implements GenericDeltaReceiver, ConfigurationManager, ConfigurationProcessedObserver {
+public class DefaultConfigurationManager implements GenericDeltaReceiver, ConfigurationManager,
+        ConfigurationProcessedObserver {
   private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurationManager.class);
   private static final String UUID = "__uuid";
 
@@ -69,7 +70,8 @@ public class DefaultConfigurationManager implements GenericDeltaReceiver, Config
     }
   }
 
-  private void processRecordField(CommonRecord record, GenericRecord deltaRecord, String fieldName) {
+  private void processRecordField(
+          CommonRecord record, GenericRecord deltaRecord, String fieldName) {
     CommonRecord nextRecord = null;
     CommonValue nextValue = record.getField(fieldName);
     if (nextValue != null
@@ -101,7 +103,8 @@ public class DefaultConfigurationManager implements GenericDeltaReceiver, Config
       currentArray = arrayValue.getArray().getList();
     } else {
       currentArray = new LinkedList<CommonValue>();
-      record.setField(fieldName, commonFactory.createCommonValue(commonFactory.createCommonArray(array.getSchema(), currentArray)));
+      record.setField(fieldName, commonFactory.createCommonValue(
+              commonFactory.createCommonArray(array.getSchema(), currentArray)));
     }
     if (!array.isEmpty()) {
       Object rawItem = array.get(0);
@@ -131,7 +134,8 @@ public class DefaultConfigurationManager implements GenericDeltaReceiver, Config
           }
         } else {
           for (GenericFixed item : fixedItems) {
-            currentArray.add(commonFactory.createCommonValue(commonFactory.createCommonFixed(item.getSchema(), item.bytes())));
+            currentArray.add(commonFactory.createCommonValue(
+                    commonFactory.createCommonFixed(item.getSchema(), item.bytes())));
           }
         }
       } else {
@@ -148,12 +152,14 @@ public class DefaultConfigurationManager implements GenericDeltaReceiver, Config
     if (AvroGenericUtils.isReset(symbol)) {
       record.getField(fieldName).getArray().getList().clear();
     } else if (!AvroGenericUtils.isUnchanged(symbol)) {
-      record.setField(fieldName, commonFactory.createCommonValue(commonFactory.createCommonEnum(enumSchema, symbol.toString())));
+      record.setField(fieldName, commonFactory.createCommonValue(
+              commonFactory.createCommonEnum(enumSchema, symbol.toString())));
     }
   }
 
   private void processFixedField(CommonRecord record, GenericFixed fixed, String fieldName) {
-    record.setField(fieldName, commonFactory.createCommonValue(commonFactory.createCommonFixed(fixed.getSchema(), fixed.bytes())));
+    record.setField(fieldName, commonFactory.createCommonValue(
+            commonFactory.createCommonFixed(fixed.getSchema(), fixed.bytes())));
   }
 
   private void updateRecord(CommonRecord record, GenericRecord delta) {

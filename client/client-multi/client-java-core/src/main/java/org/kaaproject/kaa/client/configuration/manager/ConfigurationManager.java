@@ -92,7 +92,7 @@ public interface ConfigurationManager {
   void unsubscribeFromConfigurationUpdates(ConfigurationReceiver receiver);
 
   /**
-   * Retrieves full configuration
+   * Retrieves full configuration.
    *
    * @return common object with full configuration
    * @see CommonRecord

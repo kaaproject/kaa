@@ -36,7 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractConfigurationManager implements ConfigurationManager {
   private static final Logger LOG = LoggerFactory.getLogger(AbstractConfigurationManager.class);
   protected final ConfigurationDeserializer deserializer;
-  private final Set<ConfigurationListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<ConfigurationListener, Boolean>());
+  private final Set<ConfigurationListener> listeners = Collections.newSetFromMap(
+          new ConcurrentHashMap<ConfigurationListener, Boolean>());
   private final KaaClientProperties properties;
   private final ExecutorContext executorContext;
   private volatile byte[] configurationData;
@@ -44,7 +45,8 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
   private ConfigurationHashContainer container = new HashContainer();
   private KaaClientState state;
 
-  public AbstractConfigurationManager(KaaClientProperties properties, KaaClientState state, ExecutorContext executorContext) {
+  public AbstractConfigurationManager(KaaClientProperties properties, KaaClientState state,
+                                      ExecutorContext executorContext) {
     super();
     this.properties = properties;
     this.state = state;
@@ -56,9 +58,9 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     if (buffer == null) {
       return null;
     }
-    byte[] b = new byte[buffer.remaining()];
-    buffer.get(b);
-    return b;
+    byte[] bytes = new byte[buffer.remaining()];
+    buffer.get(bytes);
+    return bytes;
   }
 
   @Override
@@ -90,7 +92,8 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
     return new ConfigurationProcessor() {
 
       @Override
-      public void processConfigurationData(ByteBuffer buffer, boolean fullResync) throws IOException {
+      public void processConfigurationData(ByteBuffer buffer, boolean fullResync)
+              throws IOException {
         if (fullResync) {
           configurationData = toByteArray(buffer);
           if (LOG.isTraceEnabled()) {
@@ -132,15 +135,15 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
         LOG.info("Clearing old configuration data from storage {}", storage);
         try {
           storage.clearConfiguration();
-        } catch (IOException e) {
-          LOG.error("Failed to clear configuration from storage", e);
+        } catch (IOException ex) {
+          LOG.error("Failed to clear configuration from storage", ex);
         }
       } else {
         LOG.debug("Loading configuration data from storage {}", storage);
         try {
           configurationData = toByteArray(storage.loadConfiguration());
-        } catch (IOException e) {
-          LOG.error("Failed to load configuration from storage", e);
+        } catch (IOException ex) {
+          LOG.error("Failed to load configuration from storage", ex);
         }
       }
     }

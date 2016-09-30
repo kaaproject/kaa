@@ -28,7 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Implementation of {@link ConfigurationProcessor} using avro decoding mechanisms
+ * Implementation of {@link ConfigurationProcessor} using avro decoding mechanisms.
  *
  * @author Yaroslav Zeygerman
  */
@@ -36,8 +36,8 @@ public class DefaultConfigurationProcessor implements
     ConfigurationProcessor, DecodedDeltaObservable,
     SchemaUpdatesReceiver, ConfigurationProcessedObservable {
 
-  private final List<GenericDeltaReceiver> onDeltaReceived = new LinkedList<GenericDeltaReceiver>();
-  private final List<ConfigurationProcessedObserver> onProcessed = new LinkedList<ConfigurationProcessedObserver>();
+  private final List<GenericDeltaReceiver> onDeltaReceived = new LinkedList<>();
+  private final List<ConfigurationProcessedObserver> onProcessed = new LinkedList<>();
   private Schema schema;
 
   public DefaultConfigurationProcessor() {
@@ -45,17 +45,21 @@ public class DefaultConfigurationProcessor implements
   }
 
   @Override
-  public synchronized void processConfigurationData(ByteBuffer buffer, boolean fullResync) throws IOException {
+  public synchronized void processConfigurationData(ByteBuffer buffer, boolean fullResync)
+          throws IOException {
     if (buffer != null) {
       if (schema == null) {
-        throw new ConfigurationRuntimeException("Can't process configuration update. Schema is null");
+        throw new ConfigurationRuntimeException(
+                "Can't process configuration update. Schema is null");
       }
-      GenericAvroConverter<GenericArray<GenericRecord>> converter = new GenericAvroConverter<GenericArray<GenericRecord>>(schema);
+      GenericAvroConverter<GenericArray<GenericRecord>> converter =
+              new GenericAvroConverter<>(schema);
       GenericArray<GenericRecord> deltaArray = converter.decodeBinary(buffer.array());
 
       for (GenericRecord delta : deltaArray) {
         GenericRecord record = (GenericRecord) delta.get("delta");
-        int index = delta.getSchema().getField("delta").schema().getTypes().indexOf(record.getSchema());
+        int index = delta.getSchema().getField("delta").schema().getTypes().indexOf(
+                record.getSchema());
         for (GenericDeltaReceiver subscriber : onDeltaReceived) {
           subscriber.onDeltaReceived(index, record, fullResync);
         }

@@ -36,7 +36,7 @@ import javax.annotation.Generated;
 public interface ConfigurationManager extends GenericConfigurationManager {
 
   /**
-   * Always returns latest configuration
+   * Always returns latest configuration.
    *
    * @return configuration
    */

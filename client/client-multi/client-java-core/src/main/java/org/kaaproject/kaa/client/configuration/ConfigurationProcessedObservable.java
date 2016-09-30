@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.configuration;
 
 /**
- * Notifies subscribers when all deltas have been already processed
+ * Notifies subscribers when all deltas have been already processed.
  *
  * @author Yaroslav Zeygerman
  */

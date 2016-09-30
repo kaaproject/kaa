@@ -21,7 +21,6 @@ import java.nio.ByteBuffer;
 
 /**
  * Interface for a configuration processor.
- *
  * Receives and decodes the raw configuration data
  *
  * @author Yaroslav Zeygerman

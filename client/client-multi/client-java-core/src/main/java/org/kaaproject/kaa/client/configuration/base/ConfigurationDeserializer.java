@@ -27,7 +27,6 @@ import javax.annotation.Generated;
 
 /**
  * This class deserialize binary data to configuration object.
- *
  * This implementation is auto-generated. Please modify corresponding template
  * file.
  *
@@ -36,14 +35,16 @@ import javax.annotation.Generated;
 @Generated("ConfigurationDeserializer.java.template")
 class ConfigurationDeserializer {
 
-  private final AvroByteArrayConverter<Configuration> converter = new AvroByteArrayConverter<Configuration>(Configuration.class);
+  private final AvroByteArrayConverter<Configuration> converter =
+          new AvroByteArrayConverter<Configuration>(Configuration.class);
   private final ExecutorContext executorContext;
 
   public ConfigurationDeserializer(ExecutorContext executorContext) {
     this.executorContext = executorContext;
   }
 
-  void notify(Collection<ConfigurationListener> listeners, byte[] configurationData) throws IOException {
+  void notify(Collection<ConfigurationListener> listeners, byte[] configurationData)
+          throws IOException {
     final Configuration configuration = fromByteArray(configurationData);
     for (final ConfigurationListener listener : listeners) {
       executorContext.getCallbackExecutor().submit(new Runnable() {

@@ -18,7 +18,6 @@ package org.kaaproject.kaa.client.configuration;
 
 /**
  * Interface for configuration processing is finished observers.
- *
  * Receiver can be subscribed/unsubscribed via {@link ConfigurationProcessedObservable}
  */
 public interface ConfigurationProcessedObserver {
