@@ -58,7 +58,6 @@ import java.util.concurrent.TimeUnit;
  */
 public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
 
-
   private static final Logger LOG = LoggerFactory.getLogger(NeighborConnection.class);
 
   /**
@@ -120,7 +119,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
     this.maxNumberConnection = maxNumberConnection;
     this.socketTimeout = socketTimeout;
     this.template = template;
-    this.id = Neighbors.getServerID(connectionInfo);
+    this.id = Neighbors.getServerId(connectionInfo);
   }
 
   public NeighborConnection(ConnectionInfo connectionInfo,

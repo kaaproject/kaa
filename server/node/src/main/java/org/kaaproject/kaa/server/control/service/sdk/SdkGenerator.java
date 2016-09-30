@@ -31,14 +31,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-/**
- * The Class SdkGenerator.
- */
+
 public abstract class SdkGenerator {
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(SdkGenerator.class);
 
   /**
@@ -62,10 +58,10 @@ public abstract class SdkGenerator {
       }
       reader.close();
       result = fileData.toString();
-    } catch (IOException e) {
+    } catch (IOException ex) {
       LOG.error("Unable to read from specified file '"
-          + file + "'! Error: " + e.getMessage(), e);
-      throw e;
+          + file + "'! Error: " + ex.getMessage(), ex);
+      throw ex;
     }
     return result;
   }
@@ -78,10 +74,11 @@ public abstract class SdkGenerator {
    * @throws IOException Signals that an I/O exception has occurred.
    */
   public static String readResource(String resource) throws IOException {
-    String result = null;
+    String result;
     try {
       StringBuffer fileData = new StringBuffer();
-      InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+      InputStream input = Thread.currentThread()
+          .getContextClassLoader().getResourceAsStream(resource);
       BufferedReader reader = new BufferedReader(new InputStreamReader(input));
       char[] buf = new char[1024];
       int numRead = 0;
@@ -91,10 +88,10 @@ public abstract class SdkGenerator {
       }
       reader.close();
       result = fileData.toString();
-    } catch (IOException e) {
+    } catch (IOException ex) {
       LOG.error("Unable to read from specified resource '"
-          + resource + "'! Error: " + e.getMessage(), e);
-      throw e;
+          + resource + "'! Error: " + ex.getMessage(), ex);
+      throw ex;
     }
     return result;
   }

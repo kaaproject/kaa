@@ -41,9 +41,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class Neighbors<T extends NeighborTemplate<V>, V> {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(Neighbors.class);
 
   private final KaaThriftService serviceType;
@@ -73,8 +70,8 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
    * @param info ConnectionInfo
    * @return server ID in format thriftHost:thriftPort
    */
-  public static String getServerID(ConnectionInfo info) {
-    return getServerID(KaaThriftService.OPERATIONS_SERVICE, info);
+  public static String getServerId(ConnectionInfo info) {
+    return getServerId(KaaThriftService.OPERATIONS_SERVICE, info);
   }
 
   /**
@@ -84,7 +81,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
    * @param info    ConnectionInfo
    * @return server ID in format thriftHost:thriftPort
    */
-  public static String getServerID(KaaThriftService service, ConnectionInfo info) {
+  public static String getServerId(KaaThriftService service, ConnectionInfo info) {
     StringBuffer sb = new StringBuffer();
     sb.append(info.getThriftHost());
     sb.append(":");
@@ -99,16 +96,16 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
   }
 
   public void sendMessages(ConnectionInfo info, Collection<V> msg) {
-    NeighborConnection<T, V> neighbor = neigbors.get(getServerID(info));
+    NeighborConnection<T, V> neighbor = neigbors.get(getServerId(info));
     if (neighbor != null) {
       try {
         neighbor.sendMessages(msg);
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ex) {
         LOG.error("Failed to send message to {}", neighbor.getId());
-        throw new RuntimeException(e);
+        throw new RuntimeException(ex);
       }
     } else {
-      LOG.warn("Can't find server for id {}", getServerID(info));
+      LOG.warn("Can't find server for id {}", getServerId(info));
     }
   }
 
@@ -124,7 +121,7 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
       LOG.trace("Broadcasting to {} neighbor", neighbor);
       try {
         neighbor.sendMessages(msgs);
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ex) {
         LOG.warn("Failed to send message to {}", neighbor.getId());
       }
     }
@@ -144,14 +141,13 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
   /**
    * Return current list of Neighbors.
    *
-   * @return List<NeighborConnection> neighbors.
    */
   public List<NeighborConnection<T, V>> getNeighbors() {
     return new LinkedList<NeighborConnection<T, V>>(neigbors.values());
   }
 
   /**
-   * Return specific Neighbor connection by Id
+   * Return specific Neighbor connection by Id.
    *
    * @param serverId String in format thriftHost:thriftPort
    * @return NeighborConnection or null if such server not exist
@@ -160,8 +156,9 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
     return neigbors.get(serverId);
   }
 
-  public void setZkNode(KaaThriftService service, ConnectionInfo connectionInfo, WorkerNodeTracker zkNode) {
-    setZkNode(getServerID(service, connectionInfo), zkNode);
+  public void setZkNode(KaaThriftService service, ConnectionInfo connectionInfo,
+                        WorkerNodeTracker zkNode) {
+    setZkNode(getServerId(service, connectionInfo), zkNode);
   }
 
   /**
@@ -185,13 +182,14 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
       @Override
       public void onNodeRemoved(OperationsNodeInfo nodeInfo) {
-        String opId = getServerID(nodeInfo.getConnectionInfo());
+        String opId = getServerId(nodeInfo.getConnectionInfo());
         if (!zkId.equals(opId)) {
           NeighborConnection<T, V> connection = neigbors.remove(opId);
           if (connection != null) {
             connection.shutdown();
           }
-          LOG.info("Operations server {} removed to {} Neighbors list ({}). Now {} neighbors", opId, neigbors.size());
+          LOG.info("Operations server {} removed to {} Neighbors list ({}). Now {} neighbors",
+              opId, neigbors.size());
         }
       }
     });
@@ -205,12 +203,15 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
 
   private void addOpsServer(OperationsNodeInfo opServer) {
     LOG.trace("[{}] Building id for {}", zkId, opServer.getConnectionInfo());
-    String opId = getServerID(serviceType, opServer.getConnectionInfo());
+    String opId = getServerId(serviceType, opServer.getConnectionInfo());
     if (!zkId.equals(opId)) {
       LOG.trace("Adding {} to {}", opId, neigbors);
-      neigbors.putIfAbsent(opId, new NeighborConnection<T, V>(opServer.getConnectionInfo(), maxNumberNeighborConnections, template));
+      neigbors.putIfAbsent(opId, new NeighborConnection<T, V>(opServer.getConnectionInfo(),
+          maxNumberNeighborConnections, template));
+
       neigbors.get(opId).start();
-      LOG.info("Operations server {} added/updated to {} Neighbors list. Now {} neighbors", opId, zkId, neigbors.size());
+      LOG.info("Operations server {} added/updated to {} Neighbors list. Now {} neighbors",
+          opId, zkId, neigbors.size());
     }
   }
 }

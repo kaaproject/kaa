@@ -16,7 +16,8 @@
 
 /**
  * Provides classes and interfaces used to decode platform level data to {@link
- * org.kaaproject.kaa.server.sync.ClientSync} and encode {@link org.kaaproject.kaa.server.sync.ServerSync}
+ * org.kaaproject.kaa.server.sync.ClientSync} and encode
+ *   {@link org.kaaproject.kaa.server.sync.ServerSync}
  */
 package org.kaaproject.kaa.server.sync.platform;
 

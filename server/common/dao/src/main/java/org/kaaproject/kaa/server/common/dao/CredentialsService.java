@@ -25,11 +25,11 @@ import java.util.Optional;
 /**
  * A service to manage security credentials.
  *
- * In general, each application has its own independent credentials service used
+ * <p>In general, each application has its own independent credentials service used
  * as a bridge to some external system. Since Kaa acts as such a system by
  * default, a single credentials service is enough to be used across all
  * applications. Its methods require an additonal parameter, though, namely the
- * application ID.
+ * application ID.</p>
  *
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
@@ -45,7 +45,8 @@ public interface CredentialsService {
    * @return The credentials provided
    * @throws CredentialsServiceException - if an unexpected exception occures.
    */
-  CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials) throws CredentialsServiceException;
+  CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials)
+      throws CredentialsServiceException;
 
   /**
    * Returns the credentials by ID.
@@ -55,7 +56,8 @@ public interface CredentialsService {
    * @return The credentials with the given ID
    * @throws CredentialsServiceException - if an unexpected exception occures.
    */
-  Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId) throws CredentialsServiceException;
+  Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId)
+      throws CredentialsServiceException;
 
   /**
    * Sets the status of the given credentials to
@@ -63,9 +65,11 @@ public interface CredentialsService {
    *
    * @param applicationId The application ID
    * @param credentialsId The credentials ID
-   * @throws CredentialsServiceException - if the credentials are not {@link CredentialsStatus#AVAILABLE}.
+   * @throws CredentialsServiceException - if the credentials are not
+   *   {@link CredentialsStatus#AVAILABLE}.
    */
-  void markCredentialsInUse(String applicationId, String credentialsId) throws CredentialsServiceException;
+  void markCredentialsInUse(String applicationId, String credentialsId)
+      throws CredentialsServiceException;
 
   /**
    * Revokes the given credentials by setting their status to
@@ -73,7 +77,8 @@ public interface CredentialsService {
    *
    * @param applicationId The application ID
    * @param credentialsId The credentials ID
-   * @throws CredentialsServiceException - if an unexpected exception occures.
+   * @throws CredentialsServiceException - if an unexpected exception occurs.
    */
-  void markCredentialsRevoked(String applicationId, String credentialsId) throws CredentialsServiceException;
+  void markCredentialsRevoked(String applicationId, String credentialsId)
+      throws CredentialsServiceException;
 }

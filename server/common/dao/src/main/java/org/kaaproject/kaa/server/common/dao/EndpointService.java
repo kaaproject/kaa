@@ -126,7 +126,8 @@ public interface EndpointService {
    * @param endpointConfigurationDto the endpoint configuration dto
    * @return the endpoint configuration dto
    */
-  EndpointConfigurationDto saveEndpointConfiguration(EndpointConfigurationDto endpointConfigurationDto);
+  EndpointConfigurationDto saveEndpointConfiguration(
+      EndpointConfigurationDto endpointConfigurationDto);
 
   /**
    * Find endpoint profile by key hash.
@@ -153,7 +154,7 @@ public interface EndpointService {
   TopicListEntryDto findTopicListEntryByHash(byte[] hash);
 
   /**
-   * Save topic list entry
+   * Save topic list entry.
    *
    * @param topicListEntryDto the endpoint list entry dto
    * @return the topic list entry dto
@@ -190,7 +191,8 @@ public interface EndpointService {
    * @param profile        the profile
    * @return the endpoint profile dto
    */
-  EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile);
+  EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId,
+                                          EndpointProfileDto profile);
 
   /**
    * Attach endpoint profile to user.
@@ -200,15 +202,21 @@ public interface EndpointService {
    * @return the endpoint profile dto
    */
 
-  @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100), value = {KaaOptimisticLockingFailureException.class})
-  EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken) throws KaaOptimisticLockingFailureException;
+  @Retryable(maxAttempts = 10,
+      backoff = @Backoff(delay = 100),
+      value = {KaaOptimisticLockingFailureException.class}
+  )
+  EndpointProfileDto attachEndpointToUser(String endpointUserId, String endpointAccessToken)
+      throws KaaOptimisticLockingFailureException;
 
   /**
    * Detach endpoint profile from user.
    *
    * @param detachEndpoint the detach endpoint
    */
-  @Retryable(maxAttempts = 10, backoff = @Backoff(delay = 100), value = {KaaOptimisticLockingFailureException.class})
+  @Retryable(maxAttempts = 10,
+      backoff = @Backoff(delay = 100),
+      value = {KaaOptimisticLockingFailureException.class})
   void detachEndpointFromUser(EndpointProfileDto detachEndpoint);
 
   /**
@@ -259,7 +267,8 @@ public interface EndpointService {
    * @param tenantId   the tenant id
    * @return the list of endpoint profiles
    */
-  List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId, String tenantId);
+  List<EndpointProfileDto> findEndpointProfilesByExternalIdAndTenantId(String externalId,
+                                                                       String tenantId);
 
   /**
    * Returns the default group for the given application.

@@ -110,7 +110,7 @@ public class DefaultClusterService implements ClusterService {
   @Override
   public void setZkNode(OperationsNode operationsNode) {
     this.operationsNode = operationsNode;
-    this.id = Neighbors.getServerID(this.operationsNode.getNodeInfo().getConnectionInfo());
+    this.id = Neighbors.getServerId(this.operationsNode.getNodeInfo().getConnectionInfo());
     neighbors.setZkNode(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo(), operationsNode);
     if (resolver != null) {
       updateResolver(this.resolver);
@@ -176,7 +176,7 @@ public class DefaultClusterService implements ClusterService {
     if (info == null) {
       return false;
     }
-    String nodeId = Neighbors.getServerID(info.getConnectionInfo());
+    String nodeId = Neighbors.getServerId(info.getConnectionInfo());
     LOG.trace("Comparing {} to {} for entity {}", id, nodeId, entityIdStr);
     return id.equals(nodeId);
 
@@ -191,7 +191,7 @@ public class DefaultClusterService implements ClusterService {
   public String getEntityNode(byte[] entityId) {
     OperationsNodeInfo info = resolver.getNode(Base64Util.encode(entityId));
     if (info != null) {
-      return Neighbors.getServerID(info.getConnectionInfo());
+      return Neighbors.getServerId(info.getConnectionInfo());
     }
     return null;
   }
@@ -356,7 +356,7 @@ public class DefaultClusterService implements ClusterService {
     }
 
     @Override
-    public void onServerError(String serverId, Exception e) {
+    public void onServerError(String serverId, Exception ex) {
       LOG.warn("Failed to send data to [{}]", serverId);
     }
   }

@@ -25,6 +25,6 @@ public interface NeighborTemplate<V> {
 
   void process(OperationsThriftService.Iface client, List<V> messages) throws TException;
 
-  void onServerError(String serverId, Exception e);
+  void onServerError(String serverId, Exception ex);
 
 }

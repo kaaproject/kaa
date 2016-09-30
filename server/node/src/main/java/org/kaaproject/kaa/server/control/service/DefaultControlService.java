@@ -932,7 +932,7 @@ public class DefaultControlService implements ControlService {
           configuration.getUserId(), configuration.getAppToken(),
           configuration.getSchemaVersion(), hash.getDataBuf());
       if (LOG.isTraceEnabled()) {
-        LOG.trace("Sending message {} to [{}]", msg, Neighbors.getServerID(
+        LOG.trace("Sending message {} to [{}]", msg, Neighbors.getServerId(
             server.getConnectionInfo()));
       }
       neighbors.sendMessage(server.getConnectionInfo(), OperationsServiceMsg.fromUpdate(msg));
@@ -1583,7 +1583,7 @@ public class DefaultControlService implements ControlService {
       nf.setNotificationId(notificationDto.getId());
       if (LOG.isTraceEnabled()) {
         LOG.trace("Sending message {} to [{}]",
-            nf, Neighbors.getServerID(server.getConnectionInfo()));
+            nf, Neighbors.getServerId(server.getConnectionInfo()));
       }
       neighbors.sendMessage(server.getConnectionInfo(), OperationsServiceMsg.fromNotification(nf));
     } else {
@@ -1618,7 +1618,7 @@ public class DefaultControlService implements ControlService {
       nf.setActorClassifier(ThriftActorClassifier.GLOBAL);
       if (LOG.isTraceEnabled()) {
         LOG.trace("Sending message {} to [{}]",
-            nf, Neighbors.getServerID(server.getConnectionInfo()));
+            nf, Neighbors.getServerId(server.getConnectionInfo()));
       }
       neighbors.sendMessage(server.getConnectionInfo(),
           OperationsServiceMsg.fromServerProfileUpdateMessage(nf));
