@@ -350,7 +350,7 @@ public class DefaultEventService implements EventService {
   @Override
   public void sendEndpointRouteInfo(GlobalRouteInfo routeInfo) {
     LOG.trace("calculating server for user {}", routeInfo.getUserId());
-    String serverId = Neighbors.getServerID(resolver.getNode(routeInfo.getUserId()).getConnectionInfo());
+    String serverId = Neighbors.getServerId(resolver.getNode(routeInfo.getUserId()).getConnectionInfo());
     sendMessagesToServer(packMessage(routeInfo), serverId);
   }
 
@@ -366,14 +366,14 @@ public class DefaultEventService implements EventService {
       return false;
     }
     LOG.trace("comparing {} to {} for user {}", id, info.getConnectionInfo(), userId);
-    return id.equals(Neighbors.getServerID(info.getConnectionInfo()));
+    return id.equals(Neighbors.getServerId(info.getConnectionInfo()));
   }
 
   @Override
   public String getUserNode(String userId) {
     OperationsNodeInfo info = resolver.getNode(userId);
     if (info != null) {
-      return Neighbors.getServerID(info.getConnectionInfo());
+      return Neighbors.getServerId(info.getConnectionInfo());
     }
     return null;
   }
@@ -388,7 +388,7 @@ public class DefaultEventService implements EventService {
   @Override
   public void setZkNode(OperationsNode operationsNode) {
     this.operationsNode = operationsNode;
-    this.id = Neighbors.getServerID(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo());
+    this.id = Neighbors.getServerId(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo());
     neighbors.setZkNode(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo(), operationsNode);
     if (resolver != null) {
       updateResolver(this.resolver);
@@ -675,7 +675,7 @@ public class DefaultEventService implements EventService {
     }
 
     @Override
-    public void onServerError(String serverId, Exception e) {
+    public void onServerError(String serverId, Exception ex) {
       service.notifyListenersOnServerProblem(serverId);
     }
   }

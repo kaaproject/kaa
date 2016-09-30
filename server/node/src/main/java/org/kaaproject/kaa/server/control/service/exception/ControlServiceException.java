@@ -24,8 +24,8 @@ public class ControlServiceException extends Exception {
     super(message);
   }
 
-  public ControlServiceException(Exception e) {
-    super(e);
+  public ControlServiceException(Exception ex) {
+    super(ex);
   }
 
 }

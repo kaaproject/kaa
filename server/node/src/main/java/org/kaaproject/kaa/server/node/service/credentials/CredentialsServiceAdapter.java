@@ -39,18 +39,22 @@ public final class CredentialsServiceAdapter implements CredentialsService {
    * @param applicationId      The application ID
    * @param credentialsService The internal credentials service used by Kaa
    */
-  public CredentialsServiceAdapter(String applicationId, org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {
+  public CredentialsServiceAdapter(
+      String applicationId,
+      org.kaaproject.kaa.server.common.dao.CredentialsService credentialsService) {
     this.applicationId = applicationId;
     this.credentialsService = credentialsService;
   }
 
   @Override
-  public CredentialsDto provideCredentials(CredentialsDto credentials) throws CredentialsServiceException {
+  public CredentialsDto provideCredentials(CredentialsDto credentials)
+      throws CredentialsServiceException {
     return credentialsService.provideCredentials(applicationId, credentials);
   }
 
   @Override
-  public Optional<CredentialsDto> lookupCredentials(String credentialsId) throws CredentialsServiceException {
+  public Optional<CredentialsDto> lookupCredentials(String credentialsId)
+      throws CredentialsServiceException {
     return credentialsService.lookupCredentials(applicationId, credentialsId);
   }
 

@@ -38,7 +38,8 @@ import javax.annotation.Resource;
  * @since v0.9.0
  */
 @Service("rootCredentialsServiceLocator")
-public final class DefaultCredentialsServiceLocator implements CredentialsServiceLocator, CredentialsServiceRegistry {
+public final class DefaultCredentialsServiceLocator
+    implements CredentialsServiceLocator, CredentialsServiceRegistry {
 
   public static final String DEFAULT_CREDENTIALS_SERVICE_NAME = "Trustful";
   private static final Logger LOG = LoggerFactory.getLogger(DefaultCredentialsServiceLocator.class);
@@ -53,11 +54,13 @@ public final class DefaultCredentialsServiceLocator implements CredentialsServic
     String serviceName = this.cacheService.findAppById(applicationId).getCredentialsServiceName();
     if (StringUtils.isBlank(serviceName)) {
       serviceName = DEFAULT_CREDENTIALS_SERVICE_NAME;
-      LOG.debug("No credentials service configured for application [{}], using [{}]", applicationId, serviceName);
+      LOG.debug("No credentials service configured for application [{}], using [{}]",
+          applicationId, serviceName);
     }
     CredentialsServiceLocator locator = credentialsServiceLocatorMap.get(serviceName);
     if (locator == null) {
-      throw new IllegalStateException("Can't find credentials service factory for name: " + serviceName);
+      throw new IllegalStateException("Can't find credentials service factory for name: "
+          + serviceName);
     } else {
       return locator.getCredentialsService(applicationId);
     }
@@ -65,6 +68,8 @@ public final class DefaultCredentialsServiceLocator implements CredentialsServic
 
   @Override
   public List<String> getCredentialsServiceNames() {
-    return this.credentialsServiceLocatorMap.keySet().stream().sorted().collect(Collectors.toList());
+    return this.credentialsServiceLocatorMap.keySet().stream()
+        .sorted()
+        .collect(Collectors.toList());
   }
 }
