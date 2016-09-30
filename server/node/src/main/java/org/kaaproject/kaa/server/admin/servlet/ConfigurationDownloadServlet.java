@@ -25,35 +25,38 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import java.io.IOException;
 import java.net.URLDecoder;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ConfigurationDownloadServlet extends HttpServlet implements Servlet, ServletParams {
+public class ConfigurationDownloadServlet extends HttpServlet implements ServletParams {
 
-  private final int BUFFER = 1024 * 100;
+  private final int buffer = 1024 * 100;
+
   @Autowired
   private ConfigurationService configurationService;
 
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    SpringBeanAutowiringSupport
+        .processInjectionBasedOnServletContext(this, config.getServletContext());
   }
 
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+      throws ServletException, IOException {
     String schemaId = URLDecoder.decode(req.getParameter(CONFIGURATION_SCHEMA_ID), "UTF-8");
     String endpointGroupId = URLDecoder.decode(req.getParameter(ENDPOINT_GROUP_ID), "UTF-8");
 
-    ConfigurationRecordDto dto = configurationService.findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
+    ConfigurationRecordDto dto = configurationService
+        .findConfigurationRecordBySchemaIdAndEndpointGroupId(schemaId, endpointGroupId);
     String body = dto.getActiveStructureDto().getBody();
     resp.setContentType("application/octet-stream");
     resp.setHeader("Content-Disposition:", "attachment;filename=configurationSchema.txt");
-    resp.setBufferSize(BUFFER);
+    resp.setBufferSize(buffer);
     resp.setContentLength(body.length());
     resp.getOutputStream().print(body);
   }

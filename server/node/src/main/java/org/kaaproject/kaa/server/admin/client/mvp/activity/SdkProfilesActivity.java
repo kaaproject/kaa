@@ -56,7 +56,8 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkProfileDto, Sdk
   }
 
   @Override
-  protected AbstractDataProvider<SdkProfileDto, String> getDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid) {
+  protected AbstractDataProvider<SdkProfileDto, String> getDataProvider(
+      AbstractGrid<SdkProfileDto, String> dataGrid) {
     return new SdkProfilesDataProvider(dataGrid, listView, applicationId);
   }
 
@@ -94,44 +95,46 @@ public class SdkProfilesActivity extends AbstractListActivity<SdkProfileDto, Sdk
   protected void onCustomRowAction(RowActionEvent<String> event) {
     if (event.getAction() == KaaRowAction.GENERATE_SDK) {
 
-      KaaAdmin.getDataSource().getSdkProfile(event.getClickedId(), new AsyncCallback<SdkProfileDto>() {
-
-        @Override
-        public void onFailure(Throwable caught) {
-          Utils.handleException(caught, SdkProfilesActivity.this.getView());
-        }
-
-        @Override
-        public void onSuccess(final SdkProfileDto sdkProfile) {
-
-          GenerateSdkDialog.show(new GenerateSdkDialog.Listener() {
+      KaaAdmin.getDataSource().getSdkProfile(event.getClickedId(),
+          new AsyncCallback<SdkProfileDto>() {
 
             @Override
-            public void onGenerateSdk(SdkPlatform targetPlatform) {
-              BusyPopup.showPopup();
-              KaaAdmin.getDataSource().generateSdk(sdkProfile, targetPlatform, new AsyncCallback<String>() {
+            public void onFailure(Throwable caught) {
+              Utils.handleException(caught, SdkProfilesActivity.this.getView());
+            }
+
+            @Override
+            public void onSuccess(final SdkProfileDto sdkProfile) {
+
+              GenerateSdkDialog.show(new GenerateSdkDialog.Listener() {
 
                 @Override
-                public void onFailure(Throwable caught) {
-                  BusyPopup.hidePopup();
-                  Utils.handleException(caught, SdkProfilesActivity.this.getView());
+                public void onGenerateSdk(SdkPlatform targetPlatform) {
+                  BusyPopup.showPopup();
+                  KaaAdmin.getDataSource().generateSdk(sdkProfile, targetPlatform,
+                      new AsyncCallback<String>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                          BusyPopup.hidePopup();
+                          Utils.handleException(caught, SdkProfilesActivity.this.getView());
+                        }
+
+                        @Override
+                        public void onSuccess(String key) {
+                          BusyPopup.hidePopup();
+                          SdkProfilesActivity.this.getView().clearError();
+                          ServletHelper.downloadSdk(key);
+                        }
+                      });
                 }
 
                 @Override
-                public void onSuccess(String key) {
-                  BusyPopup.hidePopup();
-                  SdkProfilesActivity.this.getView().clearError();
-                  ServletHelper.downloadSdk(key);
+                public void onCancel() {
                 }
               });
             }
-
-            @Override
-            public void onCancel() {
-            }
           });
-        }
-      });
     }
   }
 }

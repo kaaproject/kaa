@@ -52,7 +52,9 @@ public class AdminInitializationService extends AbstractInitializationService {
     webAppContext = new WebAppContext();
     webAppContext.setEventListeners(new EventListener[]{adminContextLoaderListener});
     webAppContext.setContextPath("/");
-    String webXmlLocation = AdminInitializationService.class.getResource("/admin-web/WEB-INF/" + webXmlFile).toString();
+    String webXmlLocation = AdminInitializationService.class.getResource("/admin-web/WEB-INF/"
+        + webXmlFile).toString();
+
     webAppContext.setDescriptor(webXmlLocation);
     String resLocation = AdminInitializationService.class.getResource("/admin-web").toString();
     webAppContext.setResourceBase(resLocation);
@@ -63,8 +65,8 @@ public class AdminInitializationService extends AbstractInitializationService {
     try {
       server.start();
       LOG.info("Kaa Admin Web Server started.");
-    } catch (Exception e) {
-      LOG.error("Error starting Kaa Admin Web Server!", e);
+    } catch (Exception ex) {
+      LOG.error("Error starting Kaa Admin Web Server!", ex);
     }
   }
 
@@ -75,8 +77,8 @@ public class AdminInitializationService extends AbstractInitializationService {
       server.stop();
       webAppContext.destroy();
       LOG.info("Kaa Admin Web Server stopped.");
-    } catch (Exception e) {
-      LOG.error("Error stopping Kaa Admin Web Server!", e);
+    } catch (Exception ex) {
+      LOG.error("Error stopping Kaa Admin Web Server!", ex);
     }
   }
 

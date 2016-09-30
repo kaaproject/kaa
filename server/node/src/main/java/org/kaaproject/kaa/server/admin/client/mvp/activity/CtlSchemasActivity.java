@@ -28,9 +28,11 @@ import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.DataFilter;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
 
-public abstract class CtlSchemasActivity<P extends TreePlace> extends AbstractListActivity<CTLSchemaMetaInfoDto, P> {
+public abstract class CtlSchemasActivity<P extends TreePlace>
+    extends AbstractListActivity<CTLSchemaMetaInfoDto, P> {
 
-  public CtlSchemasActivity(P place, Class<CTLSchemaMetaInfoDto> dataClass, ClientFactory clientFactory) {
+  public CtlSchemasActivity(P place, Class<CTLSchemaMetaInfoDto> dataClass,
+                            ClientFactory clientFactory) {
     super(place, dataClass, clientFactory);
   }
 
@@ -52,12 +54,13 @@ public abstract class CtlSchemasActivity<P extends TreePlace> extends AbstractLi
         }
       };
       dataProvider.setDataFilter(dataFilter);
-      registrations.add(ctlSchemaView().getShowHigherScopeCheckBox().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-        @Override
-        public void onValueChange(ValueChangeEvent<Boolean> event) {
-          dataProvider.updateData();
-        }
-      }));
+      registrations.add(ctlSchemaView().getShowHigherScopeCheckBox().addValueChangeHandler(
+          new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+              dataProvider.updateData();
+            }
+          }));
     }
   }
 

@@ -28,7 +28,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-public class NotificationSchemasActivity extends AbstractBaseCtlSchemasActivity<NotificationSchemaDto, NotificationSchemasPlace> {
+public class NotificationSchemasActivity
+    extends AbstractBaseCtlSchemasActivity<NotificationSchemaDto, NotificationSchemasPlace> {
 
   private String applicationId;
 

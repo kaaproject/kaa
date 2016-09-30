@@ -27,7 +27,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-public class ProfileSchemasActivity extends AbstractBaseCtlSchemasActivity<EndpointProfileSchemaDto, ProfileSchemasPlace> {
+public class ProfileSchemasActivity
+    extends AbstractBaseCtlSchemasActivity<EndpointProfileSchemaDto, ProfileSchemasPlace> {
 
   private String applicationId;
 

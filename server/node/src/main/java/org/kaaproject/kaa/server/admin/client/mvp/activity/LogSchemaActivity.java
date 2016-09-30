@@ -31,7 +31,8 @@ import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
 
 public class LogSchemaActivity
     extends
-    AbstractBaseCtlSchemaActivityApplication<LogSchemaDto, LogSchemaViewDto, BaseCtlSchemaView, LogSchemaPlace> {
+    AbstractBaseCtlSchemaActivityApplication<LogSchemaDto, LogSchemaViewDto,
+        BaseCtlSchemaView, LogSchemaPlace> {
 
   public LogSchemaActivity(LogSchemaPlace place,
                            ClientFactory clientFactory) {

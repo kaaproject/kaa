@@ -84,7 +84,8 @@ public class ServletHelper implements ServletParams {
    * Some browsers may not use given filename.
    */
   public static void downloadJsonFile(String json, String filename) {
-    Window.open("data:application/octet-stream;headers=Content-Disposition: attachment; filename=\""
+    Window.open("data:application/octet-stream;"
+        + "headers=Content-Disposition: attachment; filename=\""
         + filename + "\"," + json, "_self", "enabled");
   }
 

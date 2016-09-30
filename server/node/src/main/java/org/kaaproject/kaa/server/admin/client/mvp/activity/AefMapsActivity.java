@@ -28,7 +28,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.AefMapsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-public class AefMapsActivity extends AbstractListActivity<ApplicationEventFamilyMapDto, AefMapsPlace> {
+public class AefMapsActivity
+    extends AbstractListActivity<ApplicationEventFamilyMapDto, AefMapsPlace> {
 
   private String applicationId;
 

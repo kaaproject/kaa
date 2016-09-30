@@ -37,8 +37,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.List;
 
 public class AefMapActivity
-    extends
-    AbstractDetailsActivity<ApplicationEventFamilyMapDto, AefMapView, AefMapPlace> {
+    extends AbstractDetailsActivity<ApplicationEventFamilyMapDto, AefMapView, AefMapPlace> {
 
   private EventMapDataProvider eventMapDataProvider;
 
@@ -57,14 +56,15 @@ public class AefMapActivity
   protected void bind(final EventBus eventBus) {
     super.bind(eventBus);
     if (create) {
-      registrations.add(detailsView.getEcf().addValueChangeHandler(new ValueChangeHandler<EcfInfoDto>() {
-        @Override
-        public void onValueChange(ValueChangeEvent<EcfInfoDto> event) {
-          EcfInfoDto ecf = detailsView.getEcf().getValue();
-          eventMapDataProvider.setEcf(ecf);
-          eventMapDataProvider.reload();
-        }
-      }));
+      registrations.add(detailsView.getEcf().addValueChangeHandler(
+          new ValueChangeHandler<EcfInfoDto>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<EcfInfoDto> event) {
+              EcfInfoDto ecf = detailsView.getEcf().getValue();
+              eventMapDataProvider.setEcf(ecf);
+              eventMapDataProvider.reload();
+            }
+          }));
     }
   }
 
@@ -92,20 +92,22 @@ public class AefMapActivity
   @Override
   protected void onEntityRetrieved() {
     if (create) {
-      KaaAdmin.getDataSource().getVacantEventClassFamilies(place.getApplicationId(), new BusyAsyncCallback<List<EcfInfoDto>>() {
-        @Override
-        public void onFailureImpl(Throwable caught) {
-          Utils.handleException(caught, detailsView);
-        }
+      KaaAdmin.getDataSource().getVacantEventClassFamilies(place.getApplicationId(),
+          new BusyAsyncCallback<List<EcfInfoDto>>() {
+            @Override
+            public void onFailureImpl(Throwable caught) {
+              Utils.handleException(caught, detailsView);
+            }
 
-        @Override
-        public void onSuccessImpl(List<EcfInfoDto> result) {
-          detailsView.updateEcfs(result);
-        }
-      });
+            @Override
+            public void onSuccessImpl(List<EcfInfoDto> result) {
+              detailsView.updateEcfs(result);
+            }
+          });
     } else {
       detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
-      detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
+      detailsView.getCreatedDateTime()
+          .setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
       detailsView.getEcfName().setValue(entity.getEcfName());
       detailsView.getEcfVersion().setValue(entity.getVersion() + "");
       eventMapDataProvider.setEventMaps(entity.getEventMaps());

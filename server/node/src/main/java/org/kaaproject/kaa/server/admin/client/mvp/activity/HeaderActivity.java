@@ -38,13 +38,13 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HeaderActivity extends AbstractActivity implements
-    HeaderView.Presenter {
+public class HeaderActivity extends AbstractActivity
+    implements HeaderView.Presenter {
 
   private final ClientFactory clientFactory;
   private final HeaderView headerView;
 
-  protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
+  protected List<HandlerRegistration> registrations = new ArrayList<>();
 
   public HeaderActivity(ClientFactory clientFactory) {
     this.clientFactory = clientFactory;
@@ -85,32 +85,36 @@ public class HeaderActivity extends AbstractActivity implements
         KaaAdmin.signOut();
       }
     }));
-    headerView.getSettingsLabel().addMenuItem(Utils.constants.profile(), new ActionMenuItemListener() {
-      @Override
-      public void onMenuItemSelected() {
-        goTo(new UserProfilePlace());
-      }
-    });
-    headerView.getSettingsLabel().addMenuItem(Utils.constants.changePassword(), new ActionMenuItemListener() {
-      @Override
-      public void onMenuItemSelected() {
-        showChangePasswordDialog();
-      }
-    });
+    headerView.getSettingsLabel().addMenuItem(Utils.constants.profile(),
+        new ActionMenuItemListener() {
+          @Override
+          public void onMenuItemSelected() {
+            goTo(new UserProfilePlace());
+          }
+        });
+    headerView.getSettingsLabel().addMenuItem(Utils.constants.changePassword(),
+        new ActionMenuItemListener() {
+          @Override
+          public void onMenuItemSelected() {
+            showChangePasswordDialog();
+          }
+        });
     KaaAuthorityDto autority = KaaAdmin.getAuthInfo().getAuthority();
     if (autority == KaaAuthorityDto.KAA_ADMIN) {
-      headerView.getSettingsLabel().addMenuItem(Utils.constants.generalSettings(), new ActionMenuItemListener() {
-        @Override
-        public void onMenuItemSelected() {
-          goTo(new GeneralPropertiesPlace());
-        }
-      });
-      headerView.getSettingsLabel().addMenuItem(Utils.constants.outgoingMailSettings(), new ActionMenuItemListener() {
-        @Override
-        public void onMenuItemSelected() {
-          goTo(new MailPropertiesPlace());
-        }
-      });
+      headerView.getSettingsLabel().addMenuItem(Utils.constants.generalSettings(),
+          new ActionMenuItemListener() {
+            @Override
+            public void onMenuItemSelected() {
+              goTo(new GeneralPropertiesPlace());
+            }
+          });
+      headerView.getSettingsLabel().addMenuItem(Utils.constants.outgoingMailSettings(),
+          new ActionMenuItemListener() {
+            @Override
+            public void onMenuItemSelected() {
+              goTo(new MailPropertiesPlace());
+            }
+          });
     }
   }
 

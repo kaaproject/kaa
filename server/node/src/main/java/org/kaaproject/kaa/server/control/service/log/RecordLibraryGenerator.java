@@ -37,26 +37,14 @@ import java.util.zip.ZipOutputStream;
 
 import javax.tools.JavaFileObject.Kind;
 
-/**
- * The Class RecordLibraryGenerator.
- */
+
 public class RecordLibraryGenerator {
 
-  /**
-   * The Constant LIBRARY_PREFIX.
-   */
   private static final String LIBRARY_PREFIX = "kaa-record-lib-";
 
-  /**
-   * The Constant LIBRARY_NAME_PATTERN.
-   */
   private static final String LIBRARY_NAME_PATTERN = LIBRARY_PREFIX + "l{}.jar";
 
-  /**
-   * The Constant LOG.
-   */
-  private static final Logger LOG = LoggerFactory
-      .getLogger(RecordLibraryGenerator.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RecordLibraryGenerator.class);
 
   private RecordLibraryGenerator() {
   }
@@ -69,11 +57,16 @@ public class RecordLibraryGenerator {
    * @return the record structure library
    * @throws Exception the exception
    */
-  public static FileData generateRecordLibrary(int logSchemaVersion, String logSchema) throws Exception {
-    final Schema recordWrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(logSchema);
+  public static FileData generateRecordLibrary(int logSchemaVersion, String logSchema)
+      throws Exception {
+    final Schema recordWrapperSchema = RecordWrapperSchemaGenerator
+        .generateRecordWrapperSchema(logSchema);
 
-    Map<String, Schema> uniqueSchemas = SchemaUtil.getUniqueSchemasMap(Arrays.asList(recordWrapperSchema));
-    List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(recordWrapperSchema, uniqueSchemas);
+    Map<String, Schema> uniqueSchemas = SchemaUtil
+        .getUniqueSchemasMap(Arrays.asList(recordWrapperSchema));
+
+    List<JavaDynamicBean> javaSources = JavaSdkGenerator
+        .generateSchemaSources(recordWrapperSchema, uniqueSchemas);
 
     ByteArrayOutputStream libraryOutput = new ByteArrayOutputStream();
     ZipOutputStream libraryFile = new ZipOutputStream(libraryOutput);

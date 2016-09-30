@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.util;
 
+import static com.google.gwt.i18n.client.DateTimeFormat.getFormat;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -44,26 +46,18 @@ import java.util.List;
 
 public class Utils {
 
-  public static final KaaAdminResources resources = GWT
-      .create(KaaAdminResources.class);
-  public static final KaaAdminConstants constants = GWT
-      .create(KaaAdminConstants.class);
-  public static final KaaAdminMessages messages = GWT
-      .create(KaaAdminMessages.class);
-  public static final AvroUiResources avroUiResources =
-      GWT.create(AvroUiResources.class);
-  public static final KaaTheme kaaTheme =
-      resources.kaaTheme();
-  public static final KaaAdminStyle kaaAdminStyle =
-      resources.kaaAdminStyle();
-  public static final AvroUiStyle avroUiStyle =
-      avroUiResources.avroUiStyle();
+  public static final KaaAdminResources resources = GWT.create(KaaAdminResources.class);
+  public static final KaaAdminConstants constants = GWT.create(KaaAdminConstants.class);
+  public static final KaaAdminMessages messages = GWT.create(KaaAdminMessages.class);
+  public static final AvroUiResources avroUiResources = GWT.create(AvroUiResources.class);
+  public static final KaaTheme kaaTheme = resources.kaaTheme();
+  public static final KaaAdminStyle kaaAdminStyle = resources.kaaAdminStyle();
+  public static final AvroUiStyle avroUiStyle = avroUiResources.avroUiStyle();
   private static final int MAX_ERROR_LINE_LENGTH = 200;
-  private static final DateTimeFormat simpleDateFormat = DateTimeFormat
-      .getFormat("MM/dd/yyyy");
 
-  private static final DateTimeFormat simpleDateTimeFormat = DateTimeFormat
-      .getFormat("MM/dd/yyyy h:mm a");
+  private static final DateTimeFormat simpleDateFormat = getFormat("MM/dd/yyyy");
+
+  private static final DateTimeFormat simpleDateTimeFormat = getFormat("MM/dd/yyyy h:mm a");
 
   private static final int INCORRECT_IDX = -1;
 
@@ -94,7 +88,8 @@ public class Utils {
         handled = true;
       }
     } else if (caught instanceof IncompatibleRemoteServiceException) {
-      MessageDialog.showMessageDialog(AlertPanel.Type.ERROR, constants.incompatibleRemoteService(), messages.incompatibleRemoteService());
+      MessageDialog.showMessageDialog(AlertPanel.Type.ERROR, constants.incompatibleRemoteService(),
+          messages.incompatibleRemoteService());
       handled = true;
     }
     if (!handled) {
@@ -109,7 +104,8 @@ public class Utils {
   }
 
   public static void handleNetworkConnectionError() {
-    MessageDialog.showMessageDialog(AlertPanel.Type.ERROR, constants.serverIsUnreachable(), messages.serverIsUnreacheableMessage());
+    MessageDialog.showMessageDialog(AlertPanel.Type.ERROR, constants.serverIsUnreachable(),
+        messages.serverIsUnreacheableMessage());
   }
 
   public static String parseErrorMessage(Throwable caught) {
@@ -231,6 +227,7 @@ public class Utils {
    * @return The abbreviated string
    */
   public static String abbreviateText(String text, int maxLength) {
-    return (text != null && text.length() > maxLength) ? text.substring(0, maxLength) + "..." : text;
+    return (text != null
+        && text.length() > maxLength) ? text.substring(0, maxLength) + "..." : text;
   }
 }

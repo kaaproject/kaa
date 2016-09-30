@@ -27,11 +27,13 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-public class ServerProfileSchemasActivity extends AbstractBaseCtlSchemasActivity<ServerProfileSchemaDto, ServerProfileSchemasPlace> {
+public class ServerProfileSchemasActivity
+    extends AbstractBaseCtlSchemasActivity<ServerProfileSchemaDto, ServerProfileSchemasPlace> {
 
   private String applicationId;
 
-  public ServerProfileSchemasActivity(ServerProfileSchemasPlace place, ClientFactory clientFactory) {
+  public ServerProfileSchemasActivity(ServerProfileSchemasPlace place,
+                                      ClientFactory clientFactory) {
     super(place, ServerProfileSchemaDto.class, clientFactory);
     this.applicationId = place.getApplicationId();
   }

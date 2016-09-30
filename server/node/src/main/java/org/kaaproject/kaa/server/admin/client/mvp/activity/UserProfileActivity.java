@@ -33,8 +33,7 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.dialog.ChangePasswordDial
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class UserProfileActivity
-    extends
-    AbstractDetailsActivity<UserDto, UserProfileView, UserProfilePlace> {
+    extends AbstractDetailsActivity<UserDto, UserProfileView, UserProfilePlace> {
 
   public UserProfileActivity(UserProfilePlace place,
                              ClientFactory clientFactory) {
@@ -71,7 +70,8 @@ public class UserProfileActivity
   @Override
   protected void onEntityRetrieved() {
     detailsView.setTitle(entity.getUsername());
-    detailsView.getAuthority().setValue(Utils.constants.getString(entity.getAuthority().getResourceKey()));
+    detailsView.getAuthority()
+        .setValue(Utils.constants.getString(entity.getAuthority().getResourceKey()));
     detailsView.getFirstName().setValue(entity.getFirstName());
     detailsView.getLastName().setValue(entity.getLastName());
     detailsView.getEmail().setValue(entity.getMail());
@@ -95,21 +95,22 @@ public class UserProfileActivity
 
   private void checkEmail() {
     final Long userId = Long.valueOf(entity.getExternalUid());
-    KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId, new BusyAsyncCallback<ResultCode>() {
-      @Override
-      public void onFailureImpl(Throwable caught) {
-        Utils.handleException(caught, detailsView);
-      }
+    KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,
+        new BusyAsyncCallback<ResultCode>() {
+          @Override
+          public void onFailureImpl(Throwable caught) {
+            Utils.handleException(caught, detailsView);
+          }
 
-      @Override
-      public void onSuccessImpl(ResultCode result) {
-        if (result != ResultCode.OK) {
-          detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-        } else {
-          performSave();
-        }
-      }
-    });
+          @Override
+          public void onSuccessImpl(ResultCode result) {
+            if (result != ResultCode.OK) {
+              detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
+            } else {
+              performSave();
+            }
+          }
+        });
   }
 
   private void performSave() {
@@ -134,17 +135,18 @@ public class UserProfileActivity
 
   @Override
   protected void editEntity(UserDto entity, AsyncCallback<UserDto> callback) {
-    KaaAdmin.getDataSource().editUserProfile(new UserProfileUpdateDto(entity), new AsyncCallback<Void>() {
-      @Override
-      public void onFailure(Throwable caught) {
-        Utils.handleException(caught, detailsView);
-      }
+    KaaAdmin.getDataSource().editUserProfile(new UserProfileUpdateDto(entity),
+        new AsyncCallback<Void>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            Utils.handleException(caught, detailsView);
+          }
 
-      @Override
-      public void onSuccess(Void aVoid) {
-        reload();
-      }
-    });
+          @Override
+          public void onSuccess(Void asyncCallback) {
+            reload();
+          }
+        });
   }
 
   private void showChangePasswordDialog() {

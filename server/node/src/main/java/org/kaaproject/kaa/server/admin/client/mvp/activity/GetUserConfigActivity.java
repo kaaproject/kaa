@@ -35,7 +35,8 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class GetUserConfigActivity extends AbstractDetailsActivity<EndpointUserConfigurationDto, GetUserConfigView, GetUserConfigPlace> {
+public class GetUserConfigActivity extends AbstractDetailsActivity<EndpointUserConfigurationDto,
+    GetUserConfigView, GetUserConfigPlace> {
 
   private String applicationId;
 
@@ -77,31 +78,34 @@ public class GetUserConfigActivity extends AbstractDetailsActivity<EndpointUserC
             Utils.handleException(caught, detailsView);
           }
         });
-    registrations.add(detailsView.getDownloadUserCongigurationButton().addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent clickEvent) {
+    registrations.add(detailsView.getDownloadUserCongigurationButton().addClickHandler(
+        new ClickHandler() {
+          @Override
+          public void onClick(ClickEvent clickEvent) {
 
-        KaaAdmin.getDataSource().findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(
-            detailsView.getExternalUserId().getValue(),
-            applicationId,
-            detailsView.getConfigurationSchemaInfo().getValue().getVersion(),
-            new BusyAsyncCallback<EndpointUserConfigurationDto>() {
-              @Override
-              public void onSuccessImpl(EndpointUserConfigurationDto result) {
-                ServletHelper.downloadUserConfiguration(
-                    detailsView.getExternalUserId().getValue(),
-                    String.valueOf(detailsView.getConfigurationSchemaInfo().getValue().getVersion()),
-                    applicationId
-                );
-              }
+            KaaAdmin.getDataSource().findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(
+                detailsView.getExternalUserId().getValue(),
+                applicationId,
+                detailsView.getConfigurationSchemaInfo().getValue().getVersion(),
+                new BusyAsyncCallback<EndpointUserConfigurationDto>() {
+                  @Override
+                  public void onSuccessImpl(EndpointUserConfigurationDto result) {
+                    ServletHelper.downloadUserConfiguration(
+                        detailsView.getExternalUserId().getValue(),
+                        String.valueOf(
+                            detailsView.getConfigurationSchemaInfo().getValue().getVersion()
+                        ),
+                        applicationId
+                    );
+                  }
 
-              @Override
-              public void onFailureImpl(Throwable caught) {
-                Utils.handleException(caught, detailsView);
-              }
-            });
-      }
-    }));
+                  @Override
+                  public void onFailureImpl(Throwable caught) {
+                    Utils.handleException(caught, detailsView);
+                  }
+                });
+          }
+        }));
   }
 
   @Override
@@ -113,7 +117,8 @@ public class GetUserConfigActivity extends AbstractDetailsActivity<EndpointUserC
   }
 
   @Override
-  protected void editEntity(EndpointUserConfigurationDto entity, AsyncCallback<EndpointUserConfigurationDto> callback) {
+  protected void editEntity(EndpointUserConfigurationDto entity,
+                            AsyncCallback<EndpointUserConfigurationDto> callback) {
   }
 
   @Override

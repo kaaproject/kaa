@@ -173,7 +173,8 @@ public class Login implements EntryPoint {
   private void login(final String userName, String password) {
     String postData = preparePostData("j_username=" + userName, "j_password=" + password);
 
-    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, GWT.getModuleBaseURL() + "j_spring_security_check?" + postData);
+    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST,
+        GWT.getModuleBaseURL() + "j_spring_security_check?" + postData);
     try {
       builder.sendRequest(null, new RequestCallback() {
         public void onError(Request request, Throwable exception) {
@@ -210,8 +211,8 @@ public class Login implements EntryPoint {
           }
         }
       });
-    } catch (RequestException e) {
-      Utils.handleException(e, view);
+    } catch (RequestException ex) {
+      Utils.handleException(ex, view);
     }
   }
 
@@ -308,15 +309,16 @@ public class Login implements EntryPoint {
   class ForgotPasswordHandler implements ClickHandler {
     @Override
     public void onClick(ClickEvent event) {
-      ResetPasswordDialog resetPasswordDialog = new ResetPasswordDialog(new ResetPasswordDialog.Listener() {
-        @Override
-        public void onSendResetPasswordLink() {
-        }
+      ResetPasswordDialog resetPasswordDialog = new ResetPasswordDialog(
+          new ResetPasswordDialog.Listener() {
+            @Override
+            public void onSendResetPasswordLink() {
+            }
 
-        @Override
-        public void onCancel() {
-        }
-      });
+            @Override
+            public void onCancel() {
+            }
+          });
 
       resetPasswordDialog.show();
       resetPasswordDialog.center();

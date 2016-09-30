@@ -36,7 +36,9 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P extends TreePlace> extends AbstractActivity implements BaseDetailsView.Presenter {
+public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P extends TreePlace>
+    extends AbstractActivity
+    implements BaseDetailsView.Presenter {
 
   protected final ClientFactory clientFactory;
   protected final String entityId;

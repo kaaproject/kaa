@@ -53,7 +53,8 @@ public class EcfActivity
   public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
     super.start(containerWidget, eventBus);
     if (!create) {
-      AbstractGrid<EventClassFamilyVersionDto, Integer> ecfVersionsGrid = detailsView.getEcfVersionsGrid();
+      AbstractGrid<EventClassFamilyVersionDto, Integer> ecfVersionsGrid =
+          detailsView.getEcfVersionsGrid();
       ecfVersionsDataProvider = new EcfVersionsDataProvider(ecfVersionsGrid, detailsView);
     }
   }
@@ -67,17 +68,18 @@ public class EcfActivity
       }
     }));
 
-    registrations.add(detailsView.getEcfVersionsGrid().addRowActionHandler(new RowActionEventHandler<Integer>() {
-      @Override
-      public void onRowAction(RowActionEvent<Integer> event) {
-        Integer id = event.getClickedId();
-        if (event.getAction() == RowActionEvent.CLICK) {
-          EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, place.getEcfId(), id);
-          ecfVersionPlace.setPreviousPlace(place);
-          goTo(ecfVersionPlace);
-        }
-      }
-    }));
+    registrations.add(detailsView.getEcfVersionsGrid().addRowActionHandler(
+        new RowActionEventHandler<Integer>() {
+          @Override
+          public void onRowAction(RowActionEvent<Integer> event) {
+            Integer id = event.getClickedId();
+            if (event.getAction() == RowActionEvent.CLICK) {
+              EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, place.getEcfId(), id);
+              ecfVersionPlace.setPreviousPlace(place);
+              goTo(ecfVersionPlace);
+            }
+          }
+        }));
   }
 
   @Override
@@ -107,20 +109,22 @@ public class EcfActivity
     detailsView.getClassName().setValue(entity.getClassName());
     detailsView.getDescription().setValue(entity.getDescription());
     detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
-    detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
+    detailsView.getCreatedDateTime()
+        .setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
     if (!create) {
-      KaaAdmin.getDataSource().getEventClassFamilyVersions(entity.getId(), new AsyncCallback<List<EventClassFamilyVersionDto>>() {
-        @Override
-        public void onFailure(Throwable caught) {
-          Utils.handleException(caught, EcfActivity.this.detailsView);
-        }
+      KaaAdmin.getDataSource().getEventClassFamilyVersions(entity.getId(),
+          new AsyncCallback<List<EventClassFamilyVersionDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              Utils.handleException(caught, EcfActivity.this.detailsView);
+            }
 
-        @Override
-        public void onSuccess(List<EventClassFamilyVersionDto> eventClassFamilyVersionDtos) {
-          ecfVersionsDataProvider.setSchemas(eventClassFamilyVersionDtos);
-          ecfVersionsDataProvider.reload();
-        }
-      });
+            @Override
+            public void onSuccess(List<EventClassFamilyVersionDto> eventClassFamilyVersionDtos) {
+              ecfVersionsDataProvider.setSchemas(eventClassFamilyVersionDtos);
+              ecfVersionsDataProvider.reload();
+            }
+          });
     }
   }
 

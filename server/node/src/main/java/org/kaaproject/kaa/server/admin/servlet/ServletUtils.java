@@ -26,17 +26,15 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ServletUtils {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(ServletUtils.class);
 
   private ServletUtils() {
   }
 
-  public static void prepareDisposition(HttpServletRequest request, HttpServletResponse response, String fileName) {
+  public static void prepareDisposition(HttpServletRequest request, HttpServletResponse response,
+                                        String fileName) {
     String userAgent = request.getHeader("user-agent");
-    boolean isInternetExplorer = userAgent.indexOf("MSIE") > -1;
+    boolean isInternetExplorer = userAgent.contains("MSIE");
 
     try {
       byte[] fileNameBytes = fileName.getBytes(isInternetExplorer ? "windows-1250" : "utf-8");

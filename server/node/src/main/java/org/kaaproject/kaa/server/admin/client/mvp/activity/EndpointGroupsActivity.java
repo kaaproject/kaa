@@ -29,7 +29,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-public class EndpointGroupsActivity extends AbstractListActivity<EndpointGroupDto, EndpointGroupsPlace> {
+public class EndpointGroupsActivity
+    extends AbstractListActivity<EndpointGroupDto, EndpointGroupsPlace> {
 
   private String applicationId;
 

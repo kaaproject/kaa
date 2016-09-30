@@ -27,7 +27,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 @Service
-public final class AdminContextLoaderListener extends ContextLoader implements ApplicationContextAware, ServletContextListener {
+public final class AdminContextLoaderListener extends ContextLoader
+    implements ApplicationContextAware, ServletContextListener {
   private ApplicationContext applicationContext;
 
   @Override

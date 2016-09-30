@@ -16,8 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.util;
 
-public class GUID {
-  private static final char[] CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
+public class Guid {
+  private static final char[] CHARS = ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      + "abcdefghijklmnopqrstuvwxyz").toCharArray();
 
   /**
    * Generate a random uuid of the specified length. Example: uuid(15) returns
@@ -39,9 +40,9 @@ public class GUID {
    * </ul>
    *
    * @param len   the desired number of characters
-   * @param radix the number of allowable values for each character (must be equals or grater than
-   *              62)
-   * @return the strign
+   * @param radix the number of allowable values for each character
+   *              (must be equals or grater than 62)
+   * @return the string
    */
   public static String get(int len, int radix) {
     if (radix > CHARS.length) {
@@ -63,7 +64,7 @@ public class GUID {
    */
   public static String get() {
     char[] uuid = new char[36];
-    int r;
+    int num;
 
     // rfc4122 requires these characters
     uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
@@ -73,8 +74,8 @@ public class GUID {
     // per rfc4122, sec. 4.1.5
     for (int i = 0; i < 36; i++) {
       if (uuid[i] == 0) {
-        r = (int) (Math.random() * 16);
-        uuid[i] = CHARS[(i == 19) ? (r & 0x3) | 0x8 : r & 0xf];
+        num = (int) (Math.random() * 16);
+        uuid[i] = CHARS[(i == 19) ? (num & 0x3) | 0x8 : num & 0xf];
       }
     }
     return new String(uuid);

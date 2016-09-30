@@ -54,11 +54,13 @@ public class RecordServlet extends HttpServlet implements Servlet, ServletParams
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
-    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    SpringBeanAutowiringSupport
+        .processInjectionBasedOnServletContext(this, config.getServletContext());
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
     String recordKeyBase64 = URLDecoder.decode(request.getParameter(RECORD_KEY_PARAMETER), "UTF-8");
     try {
       RecordKey key = (RecordKey) Base64.decodeToObject(recordKeyBase64, Base64.URL_SAFE, null);
@@ -68,9 +70,10 @@ public class RecordServlet extends HttpServlet implements Servlet, ServletParams
       response.setBufferSize(BUFFER);
       response.getOutputStream().write(recordLibrary.getFileData());
       response.flushBuffer();
-    } catch (Exception e) {
-      LOG.error("Unexpected error in RecordLibraryServlet.doGet: ", e);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: " + e.getMessage());
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in RecordLibraryServlet.doGet: ", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: "
+          + ex.getMessage());
     }
   }
 }
