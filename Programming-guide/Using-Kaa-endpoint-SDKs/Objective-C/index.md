@@ -5,28 +5,26 @@ permalink: /:path/
 sort_idx: 30
 ---
 
-**Table of Contents**
+{% include variables.md %}
 
 * TOC
 {:toc}
 
-This guide describes how to use the Kaa Objective-C SDK into your application, including base API overview and
-external links to demo applications and programming guides, which cover a pretty big amount of KAA architecture
-topics.
+This guide describes how to use the [Kaa Objective-C SDK]({{root_url}}Glossary/#endpoint-sdk) within your application.
 
-# Requirements
+## Requirements
 
-First, ensure that the following components are installed on your machine: 
+Make sure that the following components are installed on your machine:
 
-- Xcode 7.x or later 
-- CocoaPods 1.x.x or later
+- Xcode 7.x or later.
+- CocoaPods 1.x.x or later.
 
-# Installation
+## Installation
 
 The main method for installing Kaa SDK into a project as a third-party framework is using [CocoaPods](https://cocoapods.org/) dependency manager.
 
 First of all, before start to develop your application, you need to [generate Endpoint SDK](%s:https://balldir.github.io/kaa/docs/current/:{{root_url}}:g) for the target platform - Objective-C. 
-After pressing on _download_ button, you'll get an archived file wrapped with __.tar.gz__ extension. 
+After pressing on _download_ button, you'll get an archived file wrapped with __.tar.gz__ extension.
 After downloading, please, move this archive into your project directory and extract.
 
 After that, open a console, move into your project directory by _cd_ command. 
@@ -60,7 +58,7 @@ After that, you'll see a log message within extra frameworks success installatio
 If you don't get any errors, you can open your project with Xcode, running __xworkspace__ file.
 In your project tree you can find Kaa into __Development Pods__ group, located  Pods target.
 
-# Using endpoint SDK 
+## Using endpoint SDK 
 
 So, let's begin to use Kaa SDK. 
 Development will be carried out in one of auto-created files, e.g. __ViewController__.
@@ -106,7 +104,7 @@ In order to change current SDK logging level open `Kaa/KaaLogging.m` file and as
 * `DDLogLevelAll`
 * `DDLogLevelOff`
 
-# Demo application
+## Demo application
 
 To better familiarize yourself with Kaa Objective-C SDK, you may look at our demo applications.
 
