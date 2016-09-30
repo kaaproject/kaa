@@ -70,8 +70,8 @@ public class DefaultBootstrapChannelTest {
     KaaDataDemultiplexer demultiplexer = Mockito.mock(KaaDataDemultiplexer.class);
     DefaultBootstrapChannelMock channel = new DefaultBootstrapChannelMock(client, state, failoverManager, 2);
 
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
-        "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+            "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
     channel.setServer(server);
 
@@ -110,8 +110,8 @@ public class DefaultBootstrapChannelTest {
     channel.setMultiplexer(multiplexer);
     channel.shutdown();
 
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
-        "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID,
+            "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
     channel.setServer(server);
 
     channel.sync(TransportType.BOOTSTRAP);

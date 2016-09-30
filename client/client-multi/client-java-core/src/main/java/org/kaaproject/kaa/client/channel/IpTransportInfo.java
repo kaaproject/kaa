@@ -27,26 +27,28 @@ import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.PublicKey;
 
-public class IPTransportInfo extends GenericTransportInfo {
+public class IpTransportInfo extends GenericTransportInfo {
   public static final Logger LOG = LoggerFactory // NOSONAR
-      .getLogger(IPTransportInfo.class);
+      .getLogger(IpTransportInfo.class);
   private static final Charset UTF8 = Charset.forName("UTF-8");
 
   private final String host;
   private final int port;
   private final PublicKey publicKey;
 
-  public IPTransportInfo(TransportConnectionInfo parent) {
-    super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(), new ProtocolVersionPair(parent.getTransportId()
-        .getProtocolId(), parent.getTransportId().getProtocolVersion()), ByteBuffer.wrap(parent.getConnectionInfo())));
+  public IpTransportInfo(TransportConnectionInfo parent) {
+    super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(),
+            new ProtocolVersionPair(parent.getTransportId()
+        .getProtocolId(), parent.getTransportId().getProtocolVersion()),
+            ByteBuffer.wrap(parent.getConnectionInfo())));
     ByteBuffer buf = md.getConnectionInfo().duplicate();
     byte[] publicKeyData = new byte[buf.getInt()];
     buf.get(publicKeyData);
     try {
       this.publicKey = KeyUtil.getPublic(publicKeyData);
-    } catch (InvalidKeyException e) {
-      LOG.error("Can't initialize public key", e);
-      throw new RuntimeException(e);
+    } catch (InvalidKeyException ex) {
+      LOG.error("Can't initialize public key", ex);
+      throw new RuntimeException(ex);
     }
     byte[] hostData = new byte[buf.getInt()];
     buf.get(hostData);
@@ -66,14 +68,14 @@ public class IPTransportInfo extends GenericTransportInfo {
     return publicKey;
   }
 
-  public String getURL() {
+  public String getUrl() {
     return "http://" + host + ":" + port;
   }
 
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("IPTransportInfo [host=");
+    builder.append("IpTransportInfo [host=");
     builder.append(host);
     builder.append(", port=");
     builder.append(port);

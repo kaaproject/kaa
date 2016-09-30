@@ -30,7 +30,7 @@ import java.security.PublicKey;
 /**
  * @author Andrew Shvayka
  */
-public class IPTransportInfoTest {
+public class IpTransportInfoTest {
   protected static final int SIZE_OF_INT = 4;
   private static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -52,7 +52,7 @@ public class IPTransportInfoTest {
 
   @Test
   public void testInit() throws NoSuchAlgorithmException {
-    IPTransportInfo info = new IPTransportInfo(createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
+    IpTransportInfo info = new IpTransportInfo(createTestServerInfo(ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID,
         "localhost", 80, KeyUtil.generateKeyPair().getPublic()));
 
     Assert.assertEquals(ServerType.OPERATIONS, info.getServerType());

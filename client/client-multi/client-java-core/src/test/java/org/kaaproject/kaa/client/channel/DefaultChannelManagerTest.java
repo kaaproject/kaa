@@ -79,8 +79,8 @@ public class DefaultChannelManagerTest {
   @Test
   public void testAddHttpLpChannel() throws NoSuchAlgorithmException, InvalidKeySpecException {
     Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
-    bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Collections.singletonList(IPTransportInfoTest.createTestServerInfo(
-        ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+    bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Collections.singletonList(IpTransportInfoTest.createTestServerInfo(
+            ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
     BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
     KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
@@ -95,8 +95,8 @@ public class DefaultChannelManagerTest {
     channelManager.addChannel(channel);
     channelManager.addChannel(channel);
 
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(
-        ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(
+            ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
     channelManager.onTransportConnectionInfoUpdated(server);
     Mockito.verify(failoverManager, Mockito.times(1)).onServerChanged(Mockito.any(TransportConnectionInfo.class));
 
@@ -118,8 +118,8 @@ public class DefaultChannelManagerTest {
   @Test
   public void testAddBootstrapChannel() throws NoSuchAlgorithmException, InvalidKeySpecException {
     Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(
-        ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(
+            ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
     bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Collections.singletonList(server));
 
     BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
@@ -162,8 +162,8 @@ public class DefaultChannelManagerTest {
     KaaInternalChannelManager channelManager = new DefaultChannelManager(bootstrapManager, bootststrapServers, null, null);
     channelManager.addChannel(channel);
 
-    TransportConnectionInfo opServer = IPTransportInfoTest.createTestServerInfo(
-        ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo opServer = IpTransportInfoTest.createTestServerInfo(
+            ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
     channelManager.onTransportConnectionInfoUpdated(opServer);
 
     channelManager.onServerFailed(opServer, FailoverStatus.NO_CONNECTIVITY);
@@ -175,10 +175,10 @@ public class DefaultChannelManagerTest {
   public void testBootstrapServerFailed() throws NoSuchAlgorithmException, InvalidKeySpecException {
     final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
     bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Arrays.asList(
-        IPTransportInfoTest.createTestServerInfo(
-            ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic()),
-        IPTransportInfoTest.createTestServerInfo(
-            ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, KeyUtil.generateKeyPair().getPublic())));
+        IpTransportInfoTest.createTestServerInfo(
+                ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic()),
+        IpTransportInfoTest.createTestServerInfo(
+                ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, KeyUtil.generateKeyPair().getPublic())));
     BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
     final KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
@@ -214,8 +214,8 @@ public class DefaultChannelManagerTest {
   public void testSingleBootstrapServerFailed() throws NoSuchAlgorithmException, InvalidKeySpecException {
     Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
     bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Arrays.asList(
-        IPTransportInfoTest.createTestServerInfo(
-            ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
+        IpTransportInfoTest.createTestServerInfo(
+                ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic())));
     BootstrapManager bootstrapManager = Mockito.mock(BootstrapManager.class);
 
     KaaDataChannel channel = Mockito.mock(KaaDataChannel.class);
@@ -270,12 +270,12 @@ public class DefaultChannelManagerTest {
     channelManager.addChannel(channel1);
     channelManager.addChannel(channel2);
 
-    TransportConnectionInfo opServer = IPTransportInfoTest.createTestServerInfo(
-        ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo opServer = IpTransportInfoTest.createTestServerInfo(
+            ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9999, KeyUtil.generateKeyPair().getPublic());
     channelManager.onTransportConnectionInfoUpdated(opServer);
 
-    TransportConnectionInfo opServer2 = IPTransportInfoTest.createTestServerInfo(
-        ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo opServer2 = IpTransportInfoTest.createTestServerInfo(
+            ServerType.OPERATIONS, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
 
     channelManager.onTransportConnectionInfoUpdated(opServer2);
 
@@ -286,8 +286,8 @@ public class DefaultChannelManagerTest {
 
     channelManager.removeChannel(channel2);
 
-    TransportConnectionInfo opServer3 = IPTransportInfoTest.createTestServerInfo(
-        ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID, "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo opServer3 = IpTransportInfoTest.createTestServerInfo(
+            ServerType.OPERATIONS, TransportProtocolIdConstants.TCP_TRANSPORT_ID, "localhost", 9009, KeyUtil.generateKeyPair().getPublic());
     channelManager.addChannel(channel3);
     channelManager.onTransportConnectionInfoUpdated(opServer3);
 
@@ -490,8 +490,8 @@ public class DefaultChannelManagerTest {
 
   private Map<TransportProtocolId, List<TransportConnectionInfo>> getDefaultBootstrapServers() throws NoSuchAlgorithmException {
     Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers = new HashMap<>();
-    TransportConnectionInfo server = IPTransportInfoTest.createTestServerInfo(
-        ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
+    TransportConnectionInfo server = IpTransportInfoTest.createTestServerInfo(
+            ServerType.BOOTSTRAP, TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889, KeyUtil.generateKeyPair().getPublic());
     bootststrapServers.put(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, Collections.singletonList(server));
     return bootststrapServers;
   }

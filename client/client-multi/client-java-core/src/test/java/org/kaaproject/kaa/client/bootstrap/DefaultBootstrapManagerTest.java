@@ -27,8 +27,8 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
-import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
+import org.kaaproject.kaa.client.channel.IpTransportInfo;
+import org.kaaproject.kaa.client.channel.IpTransportInfoTest;
 import org.kaaproject.kaa.client.channel.KaaDataChannel;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
 import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
@@ -98,8 +98,8 @@ public class DefaultBootstrapManagerTest {
     KeyPair keyPair = keyGen.genKeyPair();
 
     List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-    ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
-        keyPair.getPublic());
+    ProtocolMetaData md = IpTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
+            keyPair.getPublic());
     list.add(md);
 
     ChanelManagerMock channelManager = spy(new ChanelManagerMock());
@@ -136,8 +136,8 @@ public class DefaultBootstrapManagerTest {
     KeyPair keyPair = keyGen.genKeyPair();
 
     List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-    ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
-        keyPair.getPublic());
+    ProtocolMetaData md = IpTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
+            keyPair.getPublic());
     list.add(md);
 
     manager.onProtocolListUpdated(list);
@@ -147,7 +147,7 @@ public class DefaultBootstrapManagerTest {
     verify(transport, times(1)).sync();
 
     list = new ArrayList<ProtocolMetaData>();
-    md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());
+    md = IpTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());
     list.add(md);
 
     manager.onProtocolListUpdated(list);
@@ -208,7 +208,7 @@ public class DefaultBootstrapManagerTest {
 
     @Override
     public void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
-      receivedUrl = new IPTransportInfo(newServer).getURL();
+      receivedUrl = new IpTransportInfo(newServer).getUrl();
       serverUpdated = true;
     }
 
