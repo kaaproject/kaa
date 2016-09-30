@@ -34,19 +34,22 @@ public class HttpRequestCreator {
   private HttpRequestCreator() {
   }
 
-  static LinkedHashMap<String, byte[]> createOperationHttpRequest(byte[] body, MessageEncoderDecoder messageEncDec) throws GeneralSecurityException {
+  static LinkedHashMap<String, byte[]> createOperationHttpRequest(
+          byte[] body, MessageEncoderDecoder messageEncDec) throws GeneralSecurityException {
     return createHttpRequest(body, messageEncDec, true);
   }
 
-  static LinkedHashMap<String, byte[]> createBootstrapHttpRequest(byte[] body, MessageEncoderDecoder messageEncDec) throws GeneralSecurityException {
+  static LinkedHashMap<String, byte[]> createBootstrapHttpRequest(
+          byte[] body, MessageEncoderDecoder messageEncDec) throws GeneralSecurityException {
     return createHttpRequest(body, messageEncDec, false);
   }
 
-  static LinkedHashMap<String, byte[]> createHttpRequest(byte[] body, MessageEncoderDecoder messageEncDec, boolean sign) throws GeneralSecurityException {
+  static LinkedHashMap<String, byte[]> createHttpRequest(
+          byte[] body, MessageEncoderDecoder messageEncDec, boolean sign)
+          throws GeneralSecurityException {
     if (body != null && messageEncDec != null) {
       byte[] requestKeyEncoded = messageEncDec.getEncodedSessionKey();
       byte[] requestBodyEncoded = messageEncDec.encodeData(body);
-      byte[] nextProtocol = ByteBuffer.allocate(4).putInt(Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID_V2).array();
       byte[] signature = null;
       if (sign) {
         signature = messageEncDec.sign(requestKeyEncoded);
@@ -66,6 +69,8 @@ public class HttpRequestCreator {
       if (sign) {
         requestEntity.put(CommonEpConstans.REQUEST_SIGNATURE_ATTR_NAME, signature);
       }
+      byte[] nextProtocol = ByteBuffer.allocate(4).putInt(
+              Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID_V2).array();
       requestEntity.put(CommonEpConstans.REQUEST_KEY_ATTR_NAME, requestKeyEncoded);
       requestEntity.put(CommonEpConstans.REQUEST_DATA_ATTR_NAME, requestBodyEncoded);
       requestEntity.put(CommonEpConstans.NEXT_PROTOCOL_ATTR_NAME, nextProtocol);

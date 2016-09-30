@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client;
 import org.kaaproject.kaa.client.exceptions.KaaException;
 
 /**
- * Notifies about Kaa client state changes and errors
+ * Notifies about Kaa client state changes and errors.
  *
  * @author Andrew Shvayka
  */

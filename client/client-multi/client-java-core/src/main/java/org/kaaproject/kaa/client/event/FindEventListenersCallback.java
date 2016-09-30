@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Listener interface for retrieving endpoints list
- * which supports requested event class FQNs
+ * which supports requested event class FQNs.
  *
  * @author Taras Lemkin
  * @see EventListenersResolver
@@ -28,7 +28,7 @@ import java.util.List;
 public interface FindEventListenersCallback {
 
   /**
-   * Called when resolve was successful
+   * Called when resolve was successful.
    *
    * @param eventListeners List of endpoints
    */

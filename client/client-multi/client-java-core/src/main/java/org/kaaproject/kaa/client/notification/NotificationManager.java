@@ -90,7 +90,8 @@ public interface NotificationManager {
    * @param listener Listener to receive notifications.
    * @throws UnavailableTopicException Throw if unknown topic id is provided.
    */
-  void addNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
+  void addNotificationListener(Long topicId, NotificationListener listener)
+          throws UnavailableTopicException;
 
   /**
    * <p>
@@ -116,7 +117,8 @@ public interface NotificationManager {
    * @param listener Listener to receive notifications.
    * @throws UnavailableTopicException Throw if unknown topic id is provided.
    */
-  void removeNotificationListener(Long topicId, NotificationListener listener) throws UnavailableTopicException;
+  void removeNotificationListener(Long topicId, NotificationListener listener)
+          throws UnavailableTopicException;
 
   /**
    * <p>
@@ -182,7 +184,8 @@ public interface NotificationManager {
    *                                   optional.
    * @see #sync()
    */
-  void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync) throws UnavailableTopicException;
+  void unsubscribeFromTopics(List<Long> topicIds, boolean forceSync)
+          throws UnavailableTopicException;
 
   /**
    * <p> Accept optional subscription changes. </p>

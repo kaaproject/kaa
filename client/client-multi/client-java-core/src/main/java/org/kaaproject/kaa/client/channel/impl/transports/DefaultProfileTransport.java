@@ -68,7 +68,8 @@ public class DefaultProfileTransport extends AbstractKaaTransport implements
         LOG.info("Profile is up to date");
       }
     } else {
-      LOG.error("Failed to create ProfileSyncRequest clientState {}, manager {}, properties {}", clientState, manager, properties);
+      LOG.error("Failed to create ProfileSyncRequest clientState {}, manager {}, properties {}",
+              clientState, manager, properties);
     }
     return null;
   }

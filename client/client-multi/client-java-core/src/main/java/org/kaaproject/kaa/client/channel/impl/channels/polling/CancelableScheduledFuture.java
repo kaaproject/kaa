@@ -73,8 +73,8 @@ public class CancelableScheduledFuture<V> implements RunnableScheduledFuture<V> 
   }
 
   @Override
-  public int compareTo(Delayed o) {
-    return futureTask.compareTo(o);
+  public int compareTo(Delayed delayed) {
+    return futureTask.compareTo(delayed);
   }
 
   @Override

@@ -46,8 +46,10 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationDataProcessor.class);
   private final AtomicInteger requestsCounter = new AtomicInteger(0);
-  private final AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
-  private final AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+  private final AvroByteArrayConverter<SyncRequest> requestConverter =
+          new AvroByteArrayConverter<>(SyncRequest.class);
+  private final AvroByteArrayConverter<SyncResponse> responseConverter =
+          new AvroByteArrayConverter<>(SyncResponse.class);
   private final KaaClientState state;
   private MetaDataTransport metaDataTransport;
   private ConfigurationTransport configurationTransport;
@@ -71,7 +73,8 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
     this.metaDataTransport = metaDataTransport;
   }
 
-  public synchronized void setConfigurationTransport(ConfigurationTransport configurationTransport) {
+  public synchronized void setConfigurationTransport(
+          ConfigurationTransport configurationTransport) {
     this.configurationTransport = configurationTransport;
   }
 
@@ -103,7 +106,8 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
 
         LOG.info("Received Sync response: {}", syncResponse);
         if (syncResponse.getConfigurationSyncResponse() != null && configurationTransport != null) {
-          configurationTransport.onConfigurationResponse(syncResponse.getConfigurationSyncResponse());
+          configurationTransport.onConfigurationResponse(
+                  syncResponse.getConfigurationSyncResponse());
         }
         if (eventTransport != null) {
           eventTransport.onSyncResposeIdReceived(syncResponse.getRequestId());
@@ -127,7 +131,8 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
           logTransport.onLogResponse(syncResponse.getLogSyncResponse());
         }
 
-        boolean needProfileResync = syncResponse.getStatus() == SyncResponseResultType.PROFILE_RESYNC;
+        boolean needProfileResync = syncResponse.getStatus() == SyncResponseResultType
+                .PROFILE_RESYNC;
         state.setIfNeedProfileResync(needProfileResync);
         if (needProfileResync) {
           LOG.info("Going to resync profile...");
@@ -140,7 +145,8 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
   }
 
   @Override
-  public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws Exception {
+  public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types)
+          throws Exception {
     if (types != null) {
       SyncRequest request = new SyncRequest();
       request.setRequestId(requestsCounter.incrementAndGet());
@@ -153,22 +159,26 @@ public class DefaultOperationDataProcessor implements KaaDataMultiplexer, KaaDat
         switch (type.getKey()) {
           case CONFIGURATION:
             if (configurationTransport != null) {
-              request.setConfigurationSyncRequest(configurationTransport.createConfigurationRequest());
+              request.setConfigurationSyncRequest(
+                      configurationTransport.createConfigurationRequest());
             }
             break;
           case EVENT:
             if (isDownDirection) {
               request.setEventSyncRequest(new EventSyncRequest());
             } else if (eventTransport != null) {
-              request.setEventSyncRequest(eventTransport.createEventRequest(request.getRequestId()));
+              request.setEventSyncRequest(
+                      eventTransport.createEventRequest(request.getRequestId()));
             }
             break;
           case NOTIFICATION:
             if (notificationTransport != null) {
               if (isDownDirection) {
-                request.setNotificationSyncRequest(notificationTransport.createEmptyNotificationRequest());
+                request.setNotificationSyncRequest(
+                        notificationTransport.createEmptyNotificationRequest());
               } else {
-                request.setNotificationSyncRequest(notificationTransport.createNotificationRequest());
+                request.setNotificationSyncRequest(
+                        notificationTransport.createNotificationRequest());
               }
             }
             break;

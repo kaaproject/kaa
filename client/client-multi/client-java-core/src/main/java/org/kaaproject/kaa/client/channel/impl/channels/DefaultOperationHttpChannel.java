@@ -34,7 +34,7 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
   public static final Logger LOG = LoggerFactory //NOSONAR
       .getLogger(DefaultOperationsChannel.class);
 
-  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
+  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<>();
   private static final String CHANNEL_ID = "default_operations_http_channel";
 
   static {
@@ -42,7 +42,8 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
     SUPPORTED_TYPES.put(TransportType.LOGGING, ChannelDirection.UP);
   }
 
-  public DefaultOperationHttpChannel(AbstractKaaClient client, KaaClientState state, FailoverManager failoverManager) {
+  public DefaultOperationHttpChannel(AbstractKaaClient client, KaaClientState state,
+                                     FailoverManager failoverManager) {
     super(client, state, failoverManager);
   }
 
@@ -50,7 +51,8 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
     byte[] requestBodyRaw = getMultiplexer().compileRequest(types);
     byte[] decodedResponse = null;
     synchronized (this) {
-      LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, getHttpClient().getEncoderDecoder());
+      LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createOperationHttpRequest(
+              requestBodyRaw, getHttpClient().getEncoderDecoder());
       byte[] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
       decodedResponse = getHttpClient().getEncoderDecoder().decodeData(responseDataRaw);
     }
@@ -79,7 +81,7 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
   }
 
   @Override
-  protected String getURLSufix() {
+  protected String getUrlSufix() {
     return "/EP/Sync";
   }
 
@@ -96,11 +98,11 @@ public class DefaultOperationHttpChannel extends AbstractHttpChannel {
       try {
         processTypes(typesToProcess);
         connectionFailed(false);
-      } catch (TransportException e) {
-        LOG.error("Failed to receive response from the operation {}", e);
-        connectionFailed(true, e.getStatus());
-      } catch (Exception e) {
-        LOG.error("Failed to receive response from the operation {}", e);
+      } catch (TransportException ex) {
+        LOG.error("Failed to receive response from the operation {}", ex);
+        connectionFailed(true, ex.getStatus());
+      } catch (Exception ex) {
+        LOG.error("Failed to receive response from the operation {}", ex);
         connectionFailed(true);
       }
     }

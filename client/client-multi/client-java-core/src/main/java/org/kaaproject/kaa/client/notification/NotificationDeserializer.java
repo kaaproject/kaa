@@ -28,7 +28,6 @@ import javax.annotation.Generated;
 
 /**
  * This class deserialize binary data to notification object.
- *
  * This implementation is auto-generated. Please modify corresponding template file.
  *
  * @author Andrew Shvayka
@@ -36,14 +35,16 @@ import javax.annotation.Generated;
 @Generated("NotificationDeserializer.java.template")
 class NotificationDeserializer {
 
-  private final AvroByteArrayConverter<Notification> converter = new AvroByteArrayConverter<Notification>(Notification.class);
+  private final AvroByteArrayConverter<Notification> converter =
+          new AvroByteArrayConverter<Notification>(Notification.class);
   private final ExecutorContext executorContext;
 
   public NotificationDeserializer(ExecutorContext executorContext) {
     this.executorContext = executorContext;
   }
 
-  void notify(Collection<NotificationListener> listeners, final Topic topic, byte[] notificationData) throws IOException {
+  void notify(Collection<NotificationListener> listeners, final Topic topic,
+              byte[] notificationData) throws IOException {
     final Notification notification = fromByteArray(notificationData);
     for (final NotificationListener listener : listeners) {
       executorContext.getCallbackExecutor().submit(new Runnable() {

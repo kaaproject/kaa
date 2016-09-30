@@ -27,7 +27,7 @@ import javax.annotation.Generated;
 public interface ProfileContainer {
 
   /**
-   * Retrieves serialized profile
+   * Retrieves serialized profile.
    *
    * @return byte array with serialized profile
    */

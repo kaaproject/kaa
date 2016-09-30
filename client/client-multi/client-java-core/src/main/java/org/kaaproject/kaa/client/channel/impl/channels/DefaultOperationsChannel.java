@@ -56,7 +56,7 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
   public static final Logger LOG = LoggerFactory // NOSONAR
       .getLogger(DefaultOperationsChannel.class);
 
-  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
+  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<>();
   private static final String CHANNEL_ID = "default_operations_long_poll_channel";
 
   static {
@@ -92,13 +92,14 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
           while (httpClient == null && !stopped && !Thread.currentThread().isInterrupted()) {
             try {
               httpClientSetLock.wait();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ex) {
               break;
             }
           }
         }
         if (!stopped) {
-          currentCommand = new PollCommand(httpClient, DefaultOperationsChannel.this, getSupportedTransportTypes(), currentServer);
+          currentCommand = new PollCommand(httpClient, DefaultOperationsChannel.this,
+                  getSupportedTransportTypes(), currentServer);
           if (!Thread.currentThread().isInterrupted()) {
             currentCommand.execute();
           }
@@ -114,7 +115,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
   private volatile boolean isShutdown = false;
   private volatile boolean isPaused = false;
 
-  public DefaultOperationsChannel(AbstractKaaClient client, KaaClientState state, FailoverManager failoverManager) {
+  public DefaultOperationsChannel(AbstractKaaClient client, KaaClientState state,
+                                  FailoverManager failoverManager) {
     this.client = client;
     this.state = state;
     this.failoverManager = failoverManager;
@@ -124,7 +126,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
     LOG.info("Creating a new executor for channel [{}]", getId());
     return new ScheduledThreadPoolExecutor(1) {
       @Override
-      protected <V> RunnableScheduledFuture<V> decorateTask(Runnable runnable, RunnableScheduledFuture<V> task) {
+      protected <V> RunnableScheduledFuture<V> decorateTask(Runnable runnable,
+                                                            RunnableScheduledFuture<V> task) {
         if (runnable instanceof CancelableRunnable) {
           return new CancelableScheduledFuture<V>((CancelableRunnable) runnable, task);
         }
@@ -166,15 +169,17 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
   }
 
   @Override
-  public LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types) {// NOSONAR
+  public LinkedHashMap<String, byte[]> createRequest(
+          Map<TransportType, ChannelDirection> types) { // NOSONAR
     LinkedHashMap<String, byte[]> request = null;
     try {
       byte[] requestBodyRaw = multiplexer.compileRequest(types);
       synchronized (httpClientLock) {
-        request = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw, httpClient.getEncoderDecoder());
+        request = HttpRequestCreator.createOperationHttpRequest(requestBodyRaw,
+                httpClient.getEncoderDecoder());
       }
-    } catch (Exception e) {
-      LOG.error("Failed to create request {}", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to create request {}", ex);
     }
     return request;
   }
@@ -191,9 +196,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
       demultiplexer.processResponse(decodedResponse);
       processingResponse = false;
       failoverManager.onServerConnected(currentServer);
-    } catch (Exception e) {
+    } catch (Exception ex) {
       LOG.error("Failed to process response {}", Arrays.toString(response));
-      LOG.error("Exception stack trace: ", e);
+      LOG.error("Exception stack trace: ", ex);
     }
   }
 
@@ -326,8 +331,8 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
       this.currentServer = new IPTransportInfo(server);
       synchronized (httpClientLock) {
         LOG.debug("Channel [{}]: creating HTTP client..", getId());
-        this.httpClient = client.createHttpClient(currentServer.getURL() + "/EP/LongSync", state.getPrivateKey(),
-            state.getPublicKey(), currentServer.getPublicKey());
+        this.httpClient = client.createHttpClient(currentServer.getURL() + "/EP/LongSync",
+                state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
         synchronized (httpClientSetLock) {
           httpClientSetLock.notifyAll();
         }

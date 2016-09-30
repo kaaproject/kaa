@@ -34,7 +34,8 @@ import javax.annotation.Generated;
  */
 @Generated("ProfileSerializer.java.template")
 class ProfileSerializer {
-  private final AvroByteArrayConverter<EmptyData> converter = new AvroByteArrayConverter<EmptyData>(EmptyData.class);
+  private final AvroByteArrayConverter<EmptyData> converter =
+          new AvroByteArrayConverter<EmptyData>(EmptyData.class);
 
   byte[] toByteArray(ProfileContainer container) throws IOException {
     EmptyData profile;

@@ -52,13 +52,13 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   public static final Logger LOG = LoggerFactory // NOSONAR
       .getLogger(DefaultChannelManager.class);
   private final List<KaaDataChannel> channels = new LinkedList<>();
-  private final Map<TransportType, KaaDataChannel> upChannels = new HashMap<TransportType, KaaDataChannel>();
+  private final Map<TransportType, KaaDataChannel> upChannels = new HashMap<>();
   private final BootstrapManager bootstrapManager;
   private final Map<TransportProtocolId, TransportConnectionInfo> lastServers = new HashMap<>();
   private final Map<TransportProtocolId, List<TransportConnectionInfo>> bootststrapServers;
-  private final Map<TransportProtocolId, TransportConnectionInfo> lastBSServers = new HashMap<>();
-  private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new ConcurrentHashMap<String, BlockingQueue<SyncTask>>();
-  private final Map<String, SyncWorker> syncWorkers = new HashMap<String, DefaultChannelManager.SyncWorker>();
+  private final Map<TransportProtocolId, TransportConnectionInfo> lastBsServers = new HashMap<>();
+  private final Map<String, BlockingQueue<SyncTask>> syncTaskQueueMap = new ConcurrentHashMap<>();
+  private final Map<String, SyncWorker> syncWorkers = new HashMap<>();
   private FailureListener failureListener;
   private FailoverManager failoverManager;
   private ExecutorContext executorContext;
@@ -73,7 +73,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   private KaaDataDemultiplexer bootstrapDemultiplexer;
 
   public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId,
-      List<TransportConnectionInfo>> bootststrapServers, ExecutorContext executorContext, FailureListener failureListener) {
+      List<TransportConnectionInfo>> bootststrapServers, ExecutorContext executorContext,
+                               FailureListener failureListener) {
     if (manager == null || bootststrapServers == null || bootststrapServers.isEmpty()) {
       throw new ChannelRuntimeException("Failed to create channel manager");
     }
@@ -85,7 +86,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
 
   private boolean useChannelForType(KaaDataChannel channel, TransportType type) {
     ChannelDirection direction = channel.getSupportedTransportTypes().get(type);
-    if (direction != null && (direction.equals(ChannelDirection.BIDIRECTIONAL) || direction.equals(ChannelDirection.UP))) {
+    if (direction != null && (direction.equals(ChannelDirection.BIDIRECTIONAL)
+            || direction.equals(ChannelDirection.UP))) {
       upChannels.put(type, channel);
       return true;
     }
@@ -130,7 +132,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         server = lastServers.get(channel.getTransportProtocolId());
       }
       if (server != null) {
-        LOG.debug("Applying server {} for channel [{}] type {}", server, channel.getId(), channel.getTransportProtocolId());
+        LOG.debug("Applying server {} for channel [{}] type {}",
+                server, channel.getId(), channel.getTransportProtocolId());
         channel.setServer(server);
         if (failoverManager != null) {
           failoverManager.onServerChanged(server);
@@ -147,22 +150,24 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                 channel.getTransportProtocolId());
           }
         } else {
-          LOG.debug("list of services is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
+          LOG.debug("list of services is empty for channel [{}] type {}",
+                  channel.getId(), channel.getTransportProtocolId());
         }
       }
     }
   }
 
   @Override
-  public synchronized void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException {
+  public synchronized void setChannel(TransportType transport, KaaDataChannel channel)
+          throws KaaInvalidChannelException {
     if (isShutdown) {
       LOG.warn("Can't set a channel. Channel manager is down");
       return;
     }
     if (channel != null) {
       if (!useChannelForType(channel, transport)) {
-        throw new KaaInvalidChannelException("Unsupported transport type " + transport.toString() + " for channel \""
-            + channel.getId() + "\"");
+        throw new KaaInvalidChannelException("Unsupported transport type " + transport.toString()
+                + " for channel \"" + channel.getId() + "\"");
       }
       if (isPaused) {
         channel.pause();
@@ -298,7 +303,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   }
 
   @Override
-  public synchronized void onServerFailed(final TransportConnectionInfo server, FailoverStatus status) {
+  public synchronized void onServerFailed(final TransportConnectionInfo server,
+                                          FailoverStatus status) {
     if (isShutdown) {
       LOG.warn("Can't process server failure. Channel manager is down");
       return;
@@ -308,15 +314,16 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
       final TransportConnectionInfo nextConnectionInfo = getNextBootstrapServer(server);
       if (nextConnectionInfo != null) {
         LOG.trace("Using next bootstrap service");
-        FailoverDecision decision = failoverManager.onFailover(FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
+        FailoverDecision decision = failoverManager.onFailover(
+                FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
         switch (decision.getAction()) {
           case NOOP:
             LOG.warn("No operation is performed according to failover strategy decision");
             break;
           case RETRY:
             long retryPeriod = decision.getRetryPeriod();
-            LOG.warn("Attempt to reconnect to the current bootstrap service will be made in {} ms, " +
-                "according to failover strategy decision", retryPeriod);
+            LOG.warn("Attempt to reconnect to the current bootstrap service will be made in {} ms, "
+                    + "according to failover strategy decision", retryPeriod);
             executorContext.getScheduledExecutor().schedule(new Runnable() {
               @Override
               public void run() {
@@ -326,8 +333,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             break;
           case USE_NEXT_BOOTSTRAP:
             retryPeriod = decision.getRetryPeriod();
-            LOG.warn("Attempt to connect to the next bootstrap service will be made in {} ms, " +
-                "according to failover strategy decision", retryPeriod);
+            LOG.warn("Attempt to connect to the next bootstrap service will be made in {} ms, "
+                    + "according to failover strategy decision", retryPeriod);
             executorContext.getScheduledExecutor().schedule(new Runnable() {
               @Override
               public void run() {
@@ -351,8 +358,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             break;
           case RETRY:
             long retryPeriod = decision.getRetryPeriod();
-            LOG.warn("Attempt to reconnect to first bootstrap service will be made in {} ms, " +
-                "according to failover strategy decision", retryPeriod);
+            LOG.warn("Attempt to reconnect to first bootstrap service will be made in {} ms, "
+                    + "according to failover strategy decision", retryPeriod);
             executorContext.getScheduledExecutor().schedule(new Runnable() {
               @Override
               public void run() {
@@ -380,12 +387,12 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   }
 
   private TransportConnectionInfo getCurrentBootstrapServer(TransportProtocolId type) {
-    TransportConnectionInfo bsi = lastBSServers.get(type);
+    TransportConnectionInfo bsi = lastBsServers.get(type);
     if (bsi == null) {
       List<TransportConnectionInfo> serverList = bootststrapServers.get(type);
       if (serverList != null && !serverList.isEmpty()) {
         bsi = serverList.get(0);
-        lastBSServers.put(type, bsi);
+        lastBsServers.put(type, bsi);
       }
     }
 
@@ -395,7 +402,8 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   private TransportConnectionInfo getNextBootstrapServer(TransportConnectionInfo currentServer) {
     TransportConnectionInfo bsi = null;
 
-    List<TransportConnectionInfo> serverList = bootststrapServers.get(currentServer.getTransportId());
+    List<TransportConnectionInfo> serverList = bootststrapServers.get(
+            currentServer.getTransportId());
     int serverIndex = serverList.indexOf(currentServer);
 
     if (serverIndex >= 0) {
@@ -403,7 +411,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         serverIndex = 0;
       }
       bsi = serverList.get(serverIndex);
-      lastBSServers.put(currentServer.getTransportId(), bsi);
+      lastBsServers.put(currentServer.getTransportId(), bsi);
     }
 
     return bsi;
@@ -531,20 +539,22 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             task = SyncTask.merge(task, additionalTasks);
           }
           if (task.isAll()) {
-            LOG.debug("[{}] Going to invoke syncAll method for types {}", channel.getId(), task.getTypes());
+            LOG.debug("[{}] Going to invoke syncAll method for types {}",
+                    channel.getId(), task.getTypes());
             channel.syncAll();
           } else if (task.isAckOnly()) {
-            LOG.debug("[{}] Going to invoke syncAck method for types {}", channel.getId(), task.getTypes());
+            LOG.debug("[{}] Going to invoke syncAck method for types {}",
+                    channel.getId(), task.getTypes());
             channel.syncAck(task.getTypes());
           } else {
             LOG.debug("[{}] Going to invoke sync method", channel.getId());
             channel.sync(task.getTypes());
           }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ex) {
           if (stop) {
             LOG.debug("[{}] Worker is interrupted.", channel.getId());
           } else {
-            LOG.warn("[{}] Worker is interrupted.", channel.getId(), e);
+            LOG.warn("[{}] Worker is interrupted.", channel.getId(), ex);
           }
         }
       }

@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.channel;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 
 /**
- * @author Yaroslav Zeygerman
+ * @author Yaroslav Zeygerman.
  * @see KaaDataChannel
  */
 public interface KaaInternalChannelManager extends KaaChannelManager {

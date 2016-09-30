@@ -50,16 +50,8 @@ public abstract class AbstractKaaTransport implements KaaTransport {
     syncByType(type, false);
   }
 
-  protected void syncAckByType(TransportType type) {
-    syncByType(type, true);
-  }
-
   protected void syncByType(TransportType type, boolean ack) {
     syncByType(type, ack, false);
-  }
-
-  protected void syncAll(TransportType type) {
-    syncByType(type, false, true);
   }
 
   protected void syncByType(TransportType type, boolean ack, boolean all) {
@@ -74,6 +66,14 @@ public abstract class AbstractKaaTransport implements KaaTransport {
     } else {
       channelManager.sync(type);
     }
+  }
+
+  protected void syncAll(TransportType type) {
+    syncByType(type, false, true);
+  }
+
+  protected void syncAckByType(TransportType type) {
+    syncByType(type, true);
   }
 
   @Override
@@ -92,5 +92,5 @@ public abstract class AbstractKaaTransport implements KaaTransport {
     }
   }
 
-  abstract protected TransportType getTransportType();
+  protected abstract TransportType getTransportType();
 }

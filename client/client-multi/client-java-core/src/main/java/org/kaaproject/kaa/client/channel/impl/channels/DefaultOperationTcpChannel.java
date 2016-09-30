@@ -72,7 +72,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
   public static final Logger LOG = LoggerFactory // NOSONAR
       .getLogger(DefaultOperationTcpChannel.class);
 
-  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
+  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<>();
   private static final int CHANNEL_TIMEOUT = 200;
   private static final int PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
   private static final String CHANNEL_ID = "default_operation_tcp_channel";
@@ -109,16 +109,16 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public void onMessage(SyncResponse message) {
-      LOG.info("KaaSync message (zipped={}, encrypted={}) received for channel [{}]", message.isZipped(), message.isEncrypted(),
-          getId());
+      LOG.info("KaaSync message (zipped={}, encrypted={}) received for channel [{}]",
+              message.isZipped(), message.isEncrypted(), getId());
       byte[] resultBody = null;
       if (message.isEncrypted()) {
         synchronized (this) {
           try {
             resultBody = encDec.decodeData(message.getAvroObject());
-          } catch (GeneralSecurityException e) {
+          } catch (GeneralSecurityException ex) {
             LOG.error("Failed to decrypt message body for channel [{}]: {}", getId());
-            LOG.error("Stack Trace: ", e);
+            LOG.error("Stack Trace: ", ex);
           }
         }
       } else {
@@ -129,8 +129,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
           demultiplexer.preProcess();
           demultiplexer.processResponse(resultBody);
           demultiplexer.postProcess();
-        } catch (Exception e) {
-          LOG.error("Failed to process response for channel [{}]", getId(), e);
+        } catch (Exception ex) {
+          LOG.error("Failed to process response for channel [{}]", getId(), ex);
         }
 
         synchronized (DefaultOperationTcpChannel.this) {
@@ -175,7 +175,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
     @Override
     public void onMessage(Disconnect message) {
-      LOG.info("Disconnect message (reason={}) received for channel [{}]", message.getReason(), getId());
+      LOG.info("Disconnect message (reason={}) received for channel [{}]",
+              message.getReason(), getId());
       switch (message.getReason()) {
         case NONE:
           closeConnection();
@@ -204,8 +205,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
           } else {
             LOG.info("Can't schedule ping task for channel [{}]. Task was interrupted", getId());
           }
-        } catch (IOException e) {
-          LOG.error("Failed to send ping request for channel [{}]. Stack trace: ", getId(), e);
+        } catch (IOException ex) {
+          LOG.error("Failed to send ping request for channel [{}]. Stack trace: ", getId(), ex);
           onServerFailed();
         }
       } else {
@@ -214,7 +215,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
   };
 
-  public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager, FailureListener failureListener) {
+  public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager,
+                                    FailureListener failureListener) {
     this.state = state;
     this.failoverManager = failoverManager;
     this.failureListener = failureListener;
@@ -255,7 +257,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     byte[] requestBodyEncoded = encDec.encodeData(body);
     byte[] sessionKey = encDec.getEncodedSessionKey();
     byte[] signature = encDec.sign(sessionKey);
-    sendFrame(new Connect(CHANNEL_TIMEOUT, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID_V2, sessionKey, requestBodyEncoded, signature));
+    sendFrame(new Connect(CHANNEL_TIMEOUT, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID_V2,
+            sessionKey, requestBodyEncoded, signature));
   }
 
   private synchronized void closeConnection() {
@@ -271,13 +274,13 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       LOG.info("Channel \"{}\": closing current connection", getId());
       try {
         sendDisconnect();
-      } catch (IOException e) {
-        LOG.error("Failed to send Disconnect to server: {}", e);
+      } catch (IOException ex) {
+        LOG.error("Failed to send Disconnect to server: {}", ex);
       } finally {
         try {
           socket.close();
-        } catch (IOException e) {
-          LOG.error("Failed to close socket: {}", e);
+        } catch (IOException ex) {
+          LOG.error("Failed to close socket: {}", ex);
         }
         socket = null;
         messageFactory.getFramer().flush();
@@ -304,8 +307,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       sendConnect();
       scheduleReadTask(socket);
       schedulePingTask();
-    } catch (Exception e) {
-      LOG.error("Failed to create a socket for server {}:{}. Stack trace: ", currentServer.getHost(), currentServer.getPort(), e);
+    } catch (Exception ex) {
+      LOG.error("Failed to create a socket for server {}:{}. Stack trace: ",
+              currentServer.getHost(), currentServer.getPort(), ex);
       onServerFailed();
     }
   }
@@ -327,8 +331,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
           break;
         case RETRY:
           long retryPeriod = decision.getRetryPeriod();
-          LOG.warn("Attempt to reconnect will be made in {} ms " +
-              "according to failover strategy decision", retryPeriod);
+          LOG.warn("Attempt to reconnect will be made in {} ms "
+                  + "according to failover strategy decision", retryPeriod);
           scheduleOpenConnectionTask(retryPeriod);
           break;
         case FAILURE:
@@ -396,7 +400,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       return;
     }
     if (channelState != State.OPENED) {
-      LOG.info("Can't sync. Channel [{}] is waiting for CONNACK message + KAASYNC message", getId());
+      LOG.info("Can't sync. Channel [{}] is waiting for CONNACK message + KAASYNC message",
+              getId());
       return;
     }
     if (multiplexer == null) {
@@ -412,7 +417,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       return;
     }
 
-    Map<TransportType, ChannelDirection> typeMap = new HashMap<>(getSupportedTransportTypes().size());
+    Map<TransportType, ChannelDirection> typeMap =
+            new HashMap<>(getSupportedTransportTypes().size());
     for (TransportType type : types) {
       LOG.info("Processing sync {} for channel [{}]", type, getId());
       ChannelDirection direction = getSupportedTransportTypes().get(type);
@@ -421,7 +427,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       } else {
         LOG.error("Unsupported type {} for channel [{}]", type, getId());
       }
-      for (Map.Entry<TransportType, ChannelDirection> typeIt : getSupportedTransportTypes().entrySet()) {
+      for (Map.Entry<TransportType, ChannelDirection> typeIt : getSupportedTransportTypes()
+              .entrySet()) {
         if (!typeIt.getKey().equals(type)) {
           typeMap.put(typeIt.getKey(), ChannelDirection.DOWN);
         }
@@ -429,8 +436,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
     try {
       sendKaaSyncRequest(typeMap);
-    } catch (Exception e) {
-      LOG.error("Failed to sync channel [{}]", getId(), e);
+    } catch (Exception ex) {
+      LOG.error("Failed to sync channel [{}]", getId(), ex);
     }
   }
 
@@ -453,8 +460,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
       if (currentServer != null && socket != null) {
         try {
           sendKaaSyncRequest(getSupportedTransportTypes());
-        } catch (Exception e) {
-          LOG.error("Failed to sync channel [{}]: {}", getId(), e);
+        } catch (Exception ex) {
+          LOG.error("Failed to sync channel [{}]: {}", getId(), ex);
           onServerFailed();
         }
       } else {
@@ -465,7 +472,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
 
   @Override
   public void syncAck(TransportType type) {
-    LOG.info("Adding sync acknowledgement for type {} as a regular sync for channel [{}]", type, getId());
+    LOG.info("Adding sync acknowledgement for type {} as a regular sync for channel [{}]",
+            type, getId());
     syncAck(Collections.singleton(type));
   }
 
@@ -521,7 +529,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
     IPTransportInfo oldServer = currentServer;
     this.currentServer = new IPTransportInfo(server);
-    this.encDec = new MessageEncoderDecoder(state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
+    this.encDec = new MessageEncoderDecoder(state.getPrivateKey(), state.getPublicKey(),
+            currentServer.getPublicKey());
     if (channelState != State.PAUSE) {
       if (executor == null) {
         executor = createExecutor();
@@ -530,7 +539,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
           || socket == null
           || !oldServer.getHost().equals(currentServer.getHost())
           || oldServer.getPort() != currentServer.getPort()) {
-        LOG.info("New server's: {} host or ip is different from the old {}, reconnecting", currentServer, oldServer);
+        LOG.info("New server's: {} host or ip is different from the old {}, reconnecting",
+                currentServer, oldServer);
         closeConnection();
         scheduleOpenConnectionTask(0);
       }
@@ -619,7 +629,8 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     public void run() {
       while (!Thread.currentThread().isInterrupted()) {
         try {
-          LOG.info("Channel [{}] is reading data from stream using [{}] byte buffer", getId(), buffer.length);
+          LOG.info("Channel [{}] is reading data from stream using [{}] byte buffer",
+                  getId(), buffer.length);
 
           int size = readTaskSocket.getInputStream().read(buffer);
 
@@ -630,10 +641,10 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
             onServerFailed();
           }
 
-        } catch (IOException | KaaTcpProtocolException | RuntimeException e) {
+        } catch (IOException | KaaTcpProtocolException | RuntimeException ex) {
           if (Thread.currentThread().isInterrupted()) {
             if (channelState != State.SHUTDOWN) {
-              LOG.warn("Socket connection for channel [{}] was interrupted: ", getId(), e);
+              LOG.warn("Socket connection for channel [{}] was interrupted: ", getId(), ex);
             } else {
               LOG.debug("Socket connection for channel [{}] was interrupted.", getId());
             }

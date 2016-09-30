@@ -61,7 +61,8 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
   private KaaDataDemultiplexer demultiplexer;
   private KaaDataMultiplexer multiplexer;
 
-  public AbstractHttpChannel(AbstractKaaClient client, KaaClientState state, FailoverManager failoverManager) {
+  public AbstractHttpChannel(AbstractKaaClient client, KaaClientState state,
+                             FailoverManager failoverManager) {
     this.client = client;
     this.state = state;
     this.failoverManager = failoverManager;
@@ -148,7 +149,7 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     LOG.info("Sync ack message is ignored for Channel {}", getId());
   }
 
-  protected abstract String getURLSufix();
+  protected abstract String getUrlSufix();
 
   @Override
   public TransportConnectionInfo getServer() {
@@ -166,7 +167,8 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
     }
     if (server != null) {
       this.currentServer = new IPTransportInfo(server);
-      this.httpClient = client.createHttpClient(currentServer.getURL() + getURLSufix(), state.getPrivateKey(), state.getPublicKey(),
+      this.httpClient = client.createHttpClient(currentServer.getURL() + getUrlSufix(),
+              state.getPrivateKey(), state.getPublicKey(),
           currentServer.getPublicKey());
       if (lastConnectionFailed && !isPaused) {
         lastConnectionFailed = false;

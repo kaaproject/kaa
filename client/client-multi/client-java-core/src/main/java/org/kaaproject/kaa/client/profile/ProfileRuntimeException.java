@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.client.profile;
 
 /**
- * Profile runtime exception
+ * Profile runtime exception.
  *
  * @author Yaroslav Zeygerman
  */

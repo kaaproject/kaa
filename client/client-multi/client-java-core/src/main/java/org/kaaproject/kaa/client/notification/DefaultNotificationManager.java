@@ -47,15 +47,16 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
   private static final Logger LOG = LoggerFactory.getLogger(DefaultNotificationManager.class);
   private final ExecutorContext executorContext;
   private final NotificationDeserializer deserializer;
-  private final Set<NotificationListener> mandatoryListeners = new HashSet<NotificationListener>();
+  private final Set<NotificationListener> mandatoryListeners = new HashSet<>();
   private final Map<Long, List<NotificationListener>> optionalListeners = new HashMap<>();
-  private final Set<NotificationTopicListListener> topicsListeners = new HashSet<NotificationTopicListListener>();
-  private final List<SubscriptionCommand> subscriptionInfo = new LinkedList<SubscriptionCommand>();
+  private final Set<NotificationTopicListListener> topicsListeners = new HashSet<>();
+  private final List<SubscriptionCommand> subscriptionInfo = new LinkedList<>();
   private final KaaClientState state;
   private Map<Long, Topic> topics = new HashMap<>();
   private volatile NotificationTransport transport;
 
-  public DefaultNotificationManager(KaaClientState state, ExecutorContext executorContext, NotificationTransport transport) {
+  public DefaultNotificationManager(KaaClientState state, ExecutorContext executorContext,
+                                    NotificationTransport transport) {
     this.state = state;
     this.transport = transport;
     this.executorContext = executorContext;
@@ -317,7 +318,8 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
 
   private void notifyListeners(Collection<NotificationListener> listeners, final Topic topic,
                                final Notification notification) {
-    final Collection<NotificationListener> listenersCopy = new ArrayList<NotificationListener>(listeners);
+    final Collection<NotificationListener> listenersCopy =
+            new ArrayList<NotificationListener>(listeners);
     if (notification.getBody() != null) {
       executorContext.getCallbackExecutor().submit(new Runnable() {
         @Override

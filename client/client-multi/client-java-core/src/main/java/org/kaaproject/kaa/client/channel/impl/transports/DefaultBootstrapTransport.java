@@ -55,8 +55,10 @@ public class DefaultBootstrapTransport extends AbstractKaaTransport implements B
       List<ProtocolVersionPair> pairs = new ArrayList<ProtocolVersionPair>(channels.size());
       for (KaaDataChannel channel : channels) {
         TransportProtocolId channelTransportId = channel.getTransportProtocolId();
-        pairs.add(new ProtocolVersionPair(channelTransportId.getProtocolId(), channelTransportId.getProtocolVersion()));
-        LOG.debug("Adding transport with id {} and version {} to resolve request", channelTransportId.getProtocolId(), channelTransportId.getProtocolVersion());
+        pairs.add(new ProtocolVersionPair(channelTransportId.getProtocolId(),
+                channelTransportId.getProtocolVersion()));
+        LOG.debug("Adding transport with id {} and version {} to resolve request",
+                channelTransportId.getProtocolId(), channelTransportId.getProtocolVersion());
       }
       resolveRequest.setSupportedProtocols(pairs);
       resolveRequest.setRequestId(increment.get());
@@ -69,8 +71,10 @@ public class DefaultBootstrapTransport extends AbstractKaaTransport implements B
 
   @Override
   public void onResolveResponse(SyncResponse syncResponse) {
-    if (manager != null && syncResponse != null && syncResponse.getBootstrapSyncResponse() != null) {
-      manager.onProtocolListUpdated(syncResponse.getBootstrapSyncResponse().getSupportedProtocols());
+    if (manager != null && syncResponse != null
+            && syncResponse.getBootstrapSyncResponse() != null) {
+      manager.onProtocolListUpdated(
+              syncResponse.getBootstrapSyncResponse().getSupportedProtocols());
     }
   }
 

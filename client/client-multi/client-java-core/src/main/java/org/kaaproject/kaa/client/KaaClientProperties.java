@@ -43,7 +43,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Service class to store base endpoint configuration
+ * Service class to store base endpoint configuration.
  */
 public class KaaClientProperties extends Properties {
   public static final String KAA_CLIENT_PROPERTIES_FILE = "kaaClientPropertiesFile";
@@ -118,8 +118,8 @@ public class KaaClientProperties extends Properties {
         updateDigest(digest, SDK_TOKEN);
 
         propertiesHash = digest.digest();
-      } catch (NoSuchAlgorithmException e) {
-        LOG.warn("Failed to calculate hash for SDK properties: {}", e);
+      } catch (NoSuchAlgorithmException ex) {
+        LOG.warn("Failed to calculate hash for SDK properties: {}", ex);
       }
     }
 
@@ -141,8 +141,8 @@ public class KaaClientProperties extends Properties {
     return getProperty(BUILD_COMMIT_HASH);
   }
 
-  public Map<TransportProtocolId, List<TransportConnectionInfo>> getBootstrapServers() throws InvalidKeySpecException,
-      NoSuchAlgorithmException {
+  public Map<TransportProtocolId, List<TransportConnectionInfo>> getBootstrapServers()
+          throws InvalidKeySpecException, NoSuchAlgorithmException {
     return parseBootstrapServers(getProperty(KaaClientProperties.BOOTSTRAP_SERVERS));
   }
 
@@ -162,8 +162,8 @@ public class KaaClientProperties extends Properties {
     return TimeUnit.valueOf(getProperty(KaaClientProperties.TRANSPORT_POLL_UNIT));
   }
 
-  private Map<TransportProtocolId, List<TransportConnectionInfo>> parseBootstrapServers(String serversStr)
-      throws InvalidKeySpecException, NoSuchAlgorithmException {
+  private Map<TransportProtocolId, List<TransportConnectionInfo>> parseBootstrapServers(
+          String serversStr) throws InvalidKeySpecException, NoSuchAlgorithmException {
     Map<TransportProtocolId, List<TransportConnectionInfo>> servers = new HashMap<>();
     String[] serversSplit = serversStr.split(";");
 
@@ -172,10 +172,11 @@ public class KaaClientProperties extends Properties {
         String[] tokens = server.split(":");
         ProtocolMetaData md = new ProtocolMetaData();
         md.setAccessPointId(Integer.valueOf(tokens[0]));
-        md.setProtocolVersionInfo(new ProtocolVersionPair(Integer.valueOf(tokens[1]), Integer.valueOf(tokens[2])));
+        md.setProtocolVersionInfo(new ProtocolVersionPair(Integer.valueOf(tokens[1]),
+                Integer.valueOf(tokens[2])));
         md.setConnectionInfo(ByteBuffer.wrap(getBase64().decodeBase64(tokens[3])));
-        TransportProtocolId key = new TransportProtocolId(md.getProtocolVersionInfo().getId(), md.getProtocolVersionInfo()
-            .getVersion());
+        TransportProtocolId key = new TransportProtocolId(md.getProtocolVersionInfo().getId(),
+                md.getProtocolVersionInfo().getVersion());
         List<TransportConnectionInfo> serverList = servers.get(key);
         if (serverList == null) {
           serverList = new ArrayList<TransportConnectionInfo>();

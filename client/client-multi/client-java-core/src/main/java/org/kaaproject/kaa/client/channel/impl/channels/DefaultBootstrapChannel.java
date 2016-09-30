@@ -34,14 +34,15 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
   public static final Logger LOG = LoggerFactory // NOSONAR
       .getLogger(DefaultBootstrapChannel.class);
 
-  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<TransportType, ChannelDirection>();
+  private static final Map<TransportType, ChannelDirection> SUPPORTED_TYPES = new HashMap<>();
   private static final String CHANNEL_ID = "default_bootstrap_channel";
 
   static {
     SUPPORTED_TYPES.put(TransportType.BOOTSTRAP, ChannelDirection.BIDIRECTIONAL);
   }
 
-  public DefaultBootstrapChannel(AbstractKaaClient client, KaaClientState state, FailoverManager failoverManager) {
+  public DefaultBootstrapChannel(AbstractKaaClient client, KaaClientState state,
+                                 FailoverManager failoverManager) {
     super(client, state, failoverManager);
   }
 
@@ -50,8 +51,8 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
     byte[] requestBodyRaw = getMultiplexer().compileRequest(types);
     byte[] decodedResponse = null;
     synchronized (this) {
-      LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createBootstrapHttpRequest(requestBodyRaw, getHttpClient()
-          .getEncoderDecoder());
+      LinkedHashMap<String, byte[]> requestEntity = HttpRequestCreator.createBootstrapHttpRequest(
+              requestBodyRaw, getHttpClient().getEncoderDecoder());
       byte[] responseDataRaw = getHttpClient().executeHttpRequest("", requestEntity, false);
       decodedResponse = getHttpClient().getEncoderDecoder().decodeData(responseDataRaw);
     }
@@ -79,7 +80,7 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
   }
 
   @Override
-  protected String getURLSufix() {
+  protected String getUrlSufix() {
     return "/BS/Sync";
   }
 
@@ -90,12 +91,12 @@ public class DefaultBootstrapChannel extends AbstractHttpChannel {
       try {
         processTypes(SUPPORTED_TYPES);
         connectionFailed(false);
-      } catch (Exception e) {
+      } catch (Exception ex) {
         if (!isShutdown()) {
-          LOG.error("Failed to receive operation servers list {}", e);
+          LOG.error("Failed to receive operation servers list {}", ex);
           connectionFailed(true);
         } else {
-          LOG.debug("Failed to receive operation servers list {}", e);
+          LOG.debug("Failed to receive operation servers list {}", ex);
         }
       }
     }

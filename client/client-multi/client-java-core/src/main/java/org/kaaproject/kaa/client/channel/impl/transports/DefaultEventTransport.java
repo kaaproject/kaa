@@ -47,13 +47,13 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
   private final EventComparator eventSeqNumberComparator = new EventComparator();
 
   private final KaaClientState clientState;
-  private final AtomicInteger startEventSN;
+  private final AtomicInteger startEventSn;
   private EventManager eventManager;
-  private boolean isEventSNSynchronized = false;
+  private boolean isEventSnSynchronized = false;
 
   public DefaultEventTransport(KaaClientState state) {
     this.clientState = state;
-    this.startEventSN = new AtomicInteger(clientState.getEventSeqNum());
+    this.startEventSn = new AtomicInteger(clientState.getEventSeqNum());
   }
 
   @Override
@@ -63,12 +63,13 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
 
       eventManager.fillEventListenersSyncRequest(request);
 
-      if (isEventSNSynchronized) {
+      if (isEventSnSynchronized) {
         Set<Event> eventsSet = new HashSet<Event>();
 
         if (!pendingEvents.isEmpty()) {
           for (Map.Entry<Integer, Set<Event>> pendingEntry : pendingEvents.entrySet()) {
-            LOG.debug("Have not received response for {} events sent with request id {}", pendingEntry.getValue().size(),
+            LOG.debug("Have not received response for {} events sent with request id {}",
+                    pendingEntry.getValue().size(),
                 pendingEntry.getKey());
             eventsSet.addAll(pendingEntry.getValue());
           }
@@ -79,7 +80,8 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
         List<Event> events = new ArrayList<Event>(eventsSet);
         if (!events.isEmpty()) {
           Collections.sort(events, eventSeqNumberComparator);
-          LOG.debug("Going to send {} event{}", events.size(), (events.size() == 1 ? "" : "s")); // NOSONAR
+          LOG.debug("Going to send {} event{}", events.size(),
+                  (events.size() == 1 ? "" : "s")); // NOSONAR
           request.setEvents(events);
           pendingEvents.put(requestId, eventsSet);
         }
@@ -87,7 +89,7 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
         request.setEventSequenceNumberRequest(null);
       } else {
         request.setEventSequenceNumberRequest(new EventSequenceNumberRequest());
-        LOG.trace("Sending event sequence number request: " + "restored_sn = {}", startEventSN);
+        LOG.trace("Sending event sequence number request: " + "restored_sn = {}", startEventSn);
       }
 
       return request;
@@ -98,13 +100,13 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
   @Override
   public void onEventResponse(EventSyncResponse response) {
     if (eventManager != null) {
-      if (!isEventSNSynchronized && response.getEventSequenceNumberResponse() != null) {
-        int lastSN = response.getEventSequenceNumberResponse().getSeqNum();
-        int expectedSN = lastSN > 0 ? lastSN + 1 : lastSN;
+      if (!isEventSnSynchronized && response.getEventSequenceNumberResponse() != null) {
+        int lastSn = response.getEventSequenceNumberResponse().getSeqNum();
+        int expectedSn = lastSn > 0 ? lastSn + 1 : lastSn;
 
-        if (startEventSN.get() != expectedSN) {
-          startEventSN.set(expectedSN);
-          clientState.setEventSeqNum(startEventSN.get());
+        if (startEventSn.get() != expectedSn) {
+          startEventSn.set(expectedSn);
+          clientState.setEventSeqNum(startEventSn.get());
 
           Set<Event> eventsSet = new HashSet<Event>();
           for (Set<Event> events : pendingEvents.values()) {
@@ -116,33 +118,36 @@ public class DefaultEventTransport extends AbstractKaaTransport implements Event
           List<Event> events = new ArrayList<Event>(eventsSet);
           Collections.sort(events, eventSeqNumberComparator);
 
-          clientState.setEventSeqNum(startEventSN.get() + events.size());
-          if (!events.isEmpty() && events.get(0).getSeqNum() != startEventSN.get()) {
-            LOG.info("Put in order event sequence numbers (expected: {}, actual: {})", startEventSN, events.get(0).getSeqNum());
+          clientState.setEventSeqNum(startEventSn.get() + events.size());
+          if (!events.isEmpty() && events.get(0).getSeqNum() != startEventSn.get()) {
+            LOG.info("Put in order event sequence numbers (expected: {}, actual: {})",
+                    startEventSn, events.get(0).getSeqNum());
 
             for (Event e : events) {
-              e.setSeqNum(startEventSN.getAndIncrement());
+              e.setSeqNum(startEventSn.getAndIncrement());
             }
           } else {
-            startEventSN.getAndAdd(events.size());
+            startEventSn.getAndAdd(events.size());
           }
 
-          LOG.info("Event sequence number is unsynchronized. Set to {}", startEventSN);
+          LOG.info("Event sequence number is unsynchronized. Set to {}", startEventSn);
         } else {
-          LOG.info("Event sequence number is up to date: {}", startEventSN);
+          LOG.info("Event sequence number is up to date: {}", startEventSn);
         }
 
-        isEventSNSynchronized = true;
+        isEventSnSynchronized = true;
       }
 
       if (response.getEvents() != null && !response.getEvents().isEmpty()) {
         List<Event> events = new ArrayList<>(response.getEvents());
         Collections.sort(events, eventSeqNumberComparator);
         for (Event event : events) {
-          eventManager.onGenericEvent(event.getEventClassFQN(), event.getEventData().array(), event.getSource());
+          eventManager.onGenericEvent(event.getEventClassFQN(), event.getEventData().array(),
+                  event.getSource());
         }
       }
-      if (response.getEventListenersResponses() != null && !response.getEventListenersResponses().isEmpty()) {
+      if (response.getEventListenersResponses() != null
+              && !response.getEventListenersResponses().isEmpty()) {
         eventManager.eventListenersResponseReceived(response.getEventListenersResponses());
       }
     }

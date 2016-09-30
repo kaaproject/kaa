@@ -21,7 +21,7 @@ import org.kaaproject.kaa.client.channel.ProfileTransport;
 import java.io.IOException;
 
 /**
- * Default {@link ProfileManager} implementation
+ * Default {@link ProfileManager} implementation.
  *
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka

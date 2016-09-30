@@ -34,8 +34,10 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapDataProcessor.class);
 
-  private final AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
-  private final AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
+  private final AvroByteArrayConverter<SyncRequest> requestConverter =
+          new AvroByteArrayConverter<>(SyncRequest.class);
+  private final AvroByteArrayConverter<SyncResponse> responseConverter =
+          new AvroByteArrayConverter<>(SyncResponse.class);
   private BootstrapTransport transport;
 
   public void setBootstrapTransport(BootstrapTransport transport) {
@@ -43,7 +45,8 @@ public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDat
   }
 
   @Override
-  public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws IOException {
+  public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types)
+          throws IOException {
     if (transport != null) {
       SyncRequest request = transport.createResolveRequest();
       LOG.trace("Created Resolve request {}", request);

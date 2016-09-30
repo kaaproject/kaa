@@ -39,15 +39,15 @@ public class SyncTask {
     this.all = all;
   }
 
-  public static SyncTask merge(SyncTask task, List<SyncTask> additionalTasks) {
+  public static SyncTask merge(SyncTask syncTask, List<SyncTask> additionalTasks) {
     Set<TransportType> types = new HashSet<TransportType>();
-    types.addAll(task.types);
-    boolean ack = task.ackOnly;
-    boolean all = task.all;
-    for (SyncTask aTask : additionalTasks) {
-      types.addAll(aTask.types);
-      ack = ack && aTask.ackOnly;
-      all = all || aTask.all;
+    types.addAll(syncTask.types);
+    boolean ack = syncTask.ackOnly;
+    boolean all = syncTask.all;
+    for (SyncTask task : additionalTasks) {
+      types.addAll(task.types);
+      ack = ack && task.ackOnly;
+      all = all || task.all;
     }
     return new SyncTask(types, ack, all);
   }

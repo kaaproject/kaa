@@ -42,11 +42,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class DefaultNotificationTransport extends AbstractKaaTransport implements NotificationTransport {
+public class DefaultNotificationTransport extends AbstractKaaTransport
+        implements NotificationTransport {
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultNotificationTransport.class);
   private final Set<String> acceptedUnicastNotificationIds = new HashSet<>();
-  private final List<SubscriptionCommand> sentNotificationCommands = new LinkedList<SubscriptionCommand>();
+  private final List<SubscriptionCommand> sentNotificationCommands = new LinkedList<>();
   private NotificationProcessor processor;
 
   private List<TopicState> getTopicStates() {
@@ -130,10 +131,12 @@ public class DefaultNotificationTransport extends AbstractKaaTransport implement
 
         for (Notification notification : multicastNotifications) {
           LOG.info("Received {}", notification);
-          if (clientState.updateTopicSubscriptionInfo(notification.getTopicId(), notification.getSeqNumber())) {
+          if (clientState.updateTopicSubscriptionInfo(notification.getTopicId(),
+                  notification.getSeqNumber())) {
             newNotifications.add(notification);
           } else {
-            LOG.info("Notification with seq number {} was already received", notification.getSeqNumber());
+            LOG.info("Notification with seq number {} was already received",
+                    notification.getSeqNumber());
           }
         }
         processor.notificationReceived(newNotifications);

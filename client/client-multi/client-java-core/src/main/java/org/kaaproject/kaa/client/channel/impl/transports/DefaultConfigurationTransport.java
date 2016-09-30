@@ -36,7 +36,8 @@ import java.nio.ByteBuffer;
  *
  * @author Yaroslav Zeygerman
  */
-public class DefaultConfigurationTransport extends AbstractKaaTransport implements ConfigurationTransport {
+public class DefaultConfigurationTransport extends AbstractKaaTransport
+        implements ConfigurationTransport {
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurationTransport.class);
 
@@ -83,7 +84,8 @@ public class DefaultConfigurationTransport extends AbstractKaaTransport implemen
       }
       ByteBuffer confBody = response.getConfDeltaBody();
       if (confBody != null) {
-        configProcessor.processConfigurationData(confBody, response.getResponseStatus().equals(SyncResponseStatus.RESYNC));
+        configProcessor.processConfigurationData(confBody,
+                response.getResponseStatus().equals(SyncResponseStatus.RESYNC));
       }
       syncAck(response.getResponseStatus());
       LOG.info("Processed configuration response.");
