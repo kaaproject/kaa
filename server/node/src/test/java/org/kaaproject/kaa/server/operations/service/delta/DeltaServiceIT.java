@@ -42,7 +42,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -155,26 +155,26 @@ public class DeltaServiceIT extends AbstractTest {
 
     EndpointGroupDto groupAll = endpointService.findEndpointGroupsByAppId(application.getId()).get(0);
 
-    CTLSchemaDto profileCtlSchema = new CTLSchemaDto();
+    CtlSchemaDto profileCtlSchema = new CtlSchemaDto();
     CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto(BasicEndpointProfile.SCHEMA$.getFullName(),
         application.getTenantId(),
         application.getId());
     profileCtlSchema.setMetaInfo(metaInfo);
     profileCtlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
     profileCtlSchema.setVersion(1);
-    profileCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
+    profileCtlSchema.setDependencySet(new HashSet<CtlSchemaDto>());
     profileCtlSchema = ctlService.saveCTLSchema(profileCtlSchema);
 
 
     Schema schema = new Schema.Parser().parse(dataSchema);
-    CTLSchemaDto confCtlSchema = new CTLSchemaDto();
+    CtlSchemaDto confCtlSchema = new CtlSchemaDto();
     CTLSchemaMetaInfoDto confMetaInfo = new CTLSchemaMetaInfoDto(schema.getFullName(),
         application.getTenantId(),
         application.getId());
     confCtlSchema.setMetaInfo(confMetaInfo);
     confCtlSchema.setBody(schema.toString());
     confCtlSchema.setVersion(CONF_SCHEMA_VERSION);
-    confCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
+    confCtlSchema.setDependencySet(new HashSet<CtlSchemaDto>());
     confCtlSchema = ctlService.saveCTLSchema(confCtlSchema);
 
     EndpointProfileSchemaDto profileSchemaObj = new EndpointProfileSchemaDto();

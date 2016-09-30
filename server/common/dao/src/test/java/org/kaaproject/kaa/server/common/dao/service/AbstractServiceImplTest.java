@@ -25,7 +25,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -114,8 +114,8 @@ public abstract class AbstractServiceImplTest {
     return null;
   }
 
-  protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version) {
-    CTLSchemaDto ctlSchema = new CTLSchemaDto();
+  protected CtlSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version) {
+    CtlSchemaDto ctlSchema = new CtlSchemaDto();
     CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, tenantId);
     ctlSchema.setMetaInfo(metaInfoDto);
     ctlSchema.setVersion(version);
@@ -132,7 +132,7 @@ public abstract class AbstractServiceImplTest {
       if (isBlank(applicationId)) {
         applicationId = generateApplication(tenantId).getId();
       }
-      CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1));
+      CtlSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1));
       EndpointProfileSchemaDto schemaDto;
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {

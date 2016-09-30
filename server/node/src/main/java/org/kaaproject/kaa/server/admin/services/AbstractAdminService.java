@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.plugin.PluginDto;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
@@ -303,7 +303,7 @@ public abstract class AbstractAdminService implements InitializingBean {
       throws KaaAdminServiceException {
     try {
       RecordField recordField;
-      CTLSchemaDto ctlSchema = controlService.getCtlSchemaById(ctlSchemaId);
+      CtlSchemaDto ctlSchema = controlService.getCtlSchemaById(ctlSchemaId);
       Schema schema = controlService.exportCtlSchemaFlatAsSchema(ctlSchema);
       if (!isEmpty(body)) {
         GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
@@ -430,7 +430,7 @@ public abstract class AbstractAdminService implements InitializingBean {
     plugin.setRawConfiguration(rawConfiguration);
   }
 
-  CtlSchemaFormDto toCtlSchemaForm(CTLSchemaDto ctlSchema, ConverterType converterType)
+  CtlSchemaFormDto toCtlSchemaForm(CtlSchemaDto ctlSchema, ConverterType converterType)
       throws KaaAdminServiceException {
     try {
       CtlSchemaFormDto ctlSchemaForm = new CtlSchemaFormDto(ctlSchema);

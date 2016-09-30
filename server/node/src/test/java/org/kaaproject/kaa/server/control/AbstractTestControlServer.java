@@ -51,7 +51,7 @@ import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -706,7 +706,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     }
 
     if (strIsEmpty(ctlSchemaId)) {
-      CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+      CtlSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
       configurationSchema.setCtlSchemaId(ctlSchema.getId());
     } else {
       configurationSchema.setCtlSchemaId(ctlSchemaId);
@@ -745,7 +745,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
       profileSchema.setApplicationId(applicationId);
     }
     if (strIsEmpty(ctlSchemaId)) {
-      CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+      CtlSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
       profileSchema.setCtlSchemaId(ctlSchema.getId());
     } else {
       profileSchema.setCtlSchemaId(ctlSchemaId);
@@ -774,7 +774,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
       profileSchema.setApplicationId(applicationId);
     }
     if (strIsEmpty(ctlSchemaId)) {
-      CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+      CtlSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
       profileSchema.setCtlSchemaId(ctlSchema.getId());
     }
     loginTenantDeveloper(tenantDeveloperDto.getUsername());
@@ -998,7 +998,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     } else {
       notificationSchema.setApplicationId(appId);
     }
-    CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+    CtlSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
     notificationSchema.setCtlSchemaId(ctlSchema.getId());
 
     loginTenantDeveloper(tenantDeveloperDto.getUsername());
@@ -1023,7 +1023,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     } else {
       notificationSchema.setApplicationId(appId);
     }
-    CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+    CtlSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
     notificationSchema.setCtlSchemaId(ctlSchema.getId());
     loginTenantDeveloper(tenantDeveloperDto.getUsername());
     NotificationSchemaDto savedSchema = client
@@ -1059,7 +1059,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
       logSchema.setApplicationId(applicationId);
     }
 
-    CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
+    CtlSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
     logSchema.setCtlSchemaId(ctlSchema.getId());
 
     loginTenantDeveloper(tenantDeveloperDto.getUsername());
@@ -1229,7 +1229,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     List<EventClassDto> records = new ArrayList<>();
 
     String className = "Test" + random.nextInt(1000);
-    CTLSchemaDto ctlSchema = this.createCTLSchema(className, EVENT_CLASS_FAMILY_NAMESPACE, 1, tenantId, null, null, null);
+    CtlSchemaDto ctlSchema = this.createCTLSchema(className, EVENT_CLASS_FAMILY_NAMESPACE, 1, tenantId, null, null, null);
     EventClassDto ec = new EventClassDto();
     ec.setFqn(EVENT_CLASS_FAMILY_NAMESPACE + "." + className);
     ec.setType(EventClassType.EVENT);
@@ -1316,7 +1316,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     return CTL_DEFAULT_TYPE + random.nextInt(100000);
   }
 
-  protected CTLSchemaDto createCTLSchema(String name, String namespace, int version,
+  protected CtlSchemaDto createCTLSchema(String name, String namespace, int version,
                                          String tenantId, String applicationToken, Set<FqnVersion> dependencies,
                                          Map<String, String> fields) throws Exception {
 

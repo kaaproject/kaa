@@ -32,7 +32,7 @@ import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
@@ -156,7 +156,7 @@ public class ConcurrentCacheService implements CacheService {
   /**
    * The ctl schema memorizer.
    */
-  private final CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, CtlSchemaDto> ctlSchemaMemorizer = new CacheTemporaryMemorizer<>();
   /**
    * The ctl schema body memorizer.
    */
@@ -637,10 +637,10 @@ public class ConcurrentCacheService implements CacheService {
 
   @Override
   @Cacheable("ctlSchemas")
-  public CTLSchemaDto getCtlSchemaById(String key) {
-    return ctlSchemaMemorizer.compute(key, new Computable<String, CTLSchemaDto>() {
+  public CtlSchemaDto getCtlSchemaById(String key) {
+    return ctlSchemaMemorizer.compute(key, new Computable<String, CtlSchemaDto>() {
       @Override
-      public CTLSchemaDto compute(String key) {
+      public CtlSchemaDto compute(String key) {
         LOG.debug("Fetching result for ctl schemas");
         return ctlService.findCTLSchemaById(key);
       }
@@ -654,7 +654,7 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public String compute(String key) {
         LOG.debug("Fetching result for ctl schemas");
-        CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(key);
+        CtlSchemaDto ctlSchema = ctlService.findCTLSchemaById(key);
         return ctlService.flatExportAsString(ctlSchema);
       }
     });

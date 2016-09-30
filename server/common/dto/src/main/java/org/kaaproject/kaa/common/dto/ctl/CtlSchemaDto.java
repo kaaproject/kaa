@@ -26,7 +26,7 @@ import java.util.Set;
  *
  * @since v0.8.0
  */
-public class CTLSchemaDto implements HasId, Serializable {
+public class CtlSchemaDto implements HasId, Serializable {
 
   private static final long serialVersionUID = -7601241323233814152L;
 
@@ -37,9 +37,9 @@ public class CTLSchemaDto implements HasId, Serializable {
   private String defaultRecord;
   private String createdUsername;
   private long createdTime;
-  private Set<CTLSchemaDto> dependencySet;
+  private Set<CtlSchemaDto> dependencySet;
 
-  public CTLSchemaDto() {
+  public CtlSchemaDto() {
   }
 
   @Override
@@ -100,11 +100,11 @@ public class CTLSchemaDto implements HasId, Serializable {
     this.createdTime = createdTime;
   }
 
-  public Set<CTLSchemaDto> getDependencySet() {
+  public Set<CtlSchemaDto> getDependencySet() {
     return dependencySet;
   }
 
-  public void setDependencySet(Set<CTLSchemaDto> dependencySet) {
+  public void setDependencySet(Set<CtlSchemaDto> dependencySet) {
     this.dependencySet = dependencySet;
   }
 
@@ -120,37 +120,48 @@ public class CTLSchemaDto implements HasId, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
-    CTLSchemaDto other = (CTLSchemaDto) obj;
+    }
+    CtlSchemaDto other = (CtlSchemaDto) obj;
 
     if (id == null) {
-      if (other.id != null)
+      if (other.id != null) {
         return false;
-    } else if (!id.equals(other.id))
+      }
+    } else if (!id.equals(other.id)) {
       return false;
+    }
 
     if (dependencySet == null) {
-      if (other.dependencySet != null)
+      if (other.dependencySet != null) {
         return false;
-    } else if (!dependencySet.equals(other.dependencySet))
+      }
+    } else if (!dependencySet.equals(other.dependencySet)) {
       return false;
+    }
 
     if (metaInfo == null) {
-      if (other.metaInfo != null)
+      if (other.metaInfo != null) {
         return false;
-    } else if (!metaInfo.equals(other.metaInfo))
+      }
+    } else if (!metaInfo.equals(other.metaInfo)) {
       return false;
+    }
 
     if (version == null) {
-      if (other.version != null)
+      if (other.version != null) {
         return false;
-    } else if (!version.equals(other.version))
+      }
+    } else if (!version.equals(other.version)) {
       return false;
+    }
 
     return true;
   }
@@ -158,7 +169,7 @@ public class CTLSchemaDto implements HasId, Serializable {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("CTLSchemaDto [id=");
+    builder.append("CtlSchemaDto [id=");
     builder.append(id);
     builder.append(", metaInfo=");
     builder.append(metaInfo);

@@ -32,7 +32,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_UNIQU
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_VERSION;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 
 import java.io.Serializable;
@@ -54,7 +54,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = CTL_SCHEMA_TABLE_NAME, uniqueConstraints =
 @UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_ID, CTL_SCHEMA_VERSION}, name = CTL_SCHEMA_UNIQUE_CONSTRAINT))
-public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializable {
+public class CTLSchema extends GenericModel<CtlSchemaDto> implements Serializable {
 
   private static final long serialVersionUID = -1179381742235545494L;
 
@@ -87,7 +87,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     this.id = id;
   }
 
-  public CTLSchema(CTLSchemaDto dto) {
+  public CTLSchema(CtlSchemaDto dto) {
     this.id = getLongId(dto.getId());
     this.metaInfo = new CTLSchemaMetaInfo(dto.getMetaInfo());
     this.version = dto.getVersion();
@@ -96,12 +96,12 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     update(dto);
   }
 
-  public void update(CTLSchemaDto dto) {
+  public void update(CtlSchemaDto dto) {
     this.body = dto.getBody();
     this.defaultRecord = dto.getDefaultRecord();
-    Set<CTLSchemaDto> dependencies = dto.getDependencySet();
+    Set<CtlSchemaDto> dependencies = dto.getDependencySet();
     if (dependencies != null && !dependencies.isEmpty()) {
-      for (CTLSchemaDto dependency : dependencies) {
+      for (CtlSchemaDto dependency : dependencies) {
         dependencySet.add(new CTLSchema(dependency));
       }
     }
@@ -164,18 +164,18 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
   }
 
   @Override
-  protected CTLSchemaDto createDto() {
-    return new CTLSchemaDto();
+  protected CtlSchemaDto createDto() {
+    return new CtlSchemaDto();
   }
 
   @Override
-  protected GenericModel<CTLSchemaDto> newInstance(Long id) {
+  protected GenericModel<CtlSchemaDto> newInstance(Long id) {
     return new CTLSchema(id);
   }
 
   @Override
-  public CTLSchemaDto toDto() {
-    CTLSchemaDto ctlSchemaDto = createDto();
+  public CtlSchemaDto toDto() {
+    CtlSchemaDto ctlSchemaDto = createDto();
     ctlSchemaDto.setId(getStringId());
     ctlSchemaDto.setMetaInfo(metaInfo.toDto());
     ctlSchemaDto.setVersion(version);

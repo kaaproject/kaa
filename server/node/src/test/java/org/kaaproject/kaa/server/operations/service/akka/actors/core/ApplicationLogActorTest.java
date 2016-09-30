@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -120,10 +120,10 @@ public class ApplicationLogActorTest {
     when(cacheService.getServerProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, SERVER_SCHEMA_VERSION)))
         .thenReturn(serverProfileSchemaDto);
 
-    CTLSchemaDto profileCtlSchemaDto = new CTLSchemaDto();
+    CtlSchemaDto profileCtlSchemaDto = new CtlSchemaDto();
     profileCtlSchemaDto.setId(CLIENT_PROFILE_CTL_SCHEMA_ID);
 
-    CTLSchemaDto serverProfileCtlSchemaDto = new CTLSchemaDto();
+    CtlSchemaDto serverProfileCtlSchemaDto = new CtlSchemaDto();
     serverProfileCtlSchemaDto.setId(SERVER_PROFILE_CTL_SCHEMA_ID);
 
     when(cacheService.getCtlSchemaById(CLIENT_PROFILE_CTL_SCHEMA_ID)).thenReturn(profileCtlSchemaDto);

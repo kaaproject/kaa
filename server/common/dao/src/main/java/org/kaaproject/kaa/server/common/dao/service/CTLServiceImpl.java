@@ -35,7 +35,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
@@ -86,14 +86,14 @@ public class CTLServiceImpl implements CTLService {
   /**
    * A template for naming exported CTL schemas.
    *
-   * @see #shallowExport(CTLSchemaDto)
-   * @see #flatExport(CTLSchemaDto)
+   * @see #shallowExport(CtlSchemaDto)
+   * @see #flatExport(CtlSchemaDto)
    */
   private static final String CTL_EXPORT_TEMPLATE = "{0}.v{1}.avsc";
   /**
    * The name of the archive to put exported CTL schemas into.
    *
-   * @see #deepExport(CTLSchemaDto)
+   * @see #deepExport(CtlSchemaDto)
    */
   private static final String CTL_EXPORT_ZIP_NAME = "schemas.zip";
   /**
@@ -108,16 +108,16 @@ public class CTLServiceImpl implements CTLService {
   private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
 
   @Override
-  public CTLSchemaDto getOrCreateEmptySystemSchema(String createdUsername) {
-    CTLSchemaDto ctlSchema = findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN, DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION,
+  public CtlSchemaDto getOrCreateEmptySystemSchema(String createdUsername) {
+    CtlSchemaDto ctlSchema = findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN, DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION,
         null, null);
     if (ctlSchema == null) {
-      ctlSchema = new CTLSchemaDto();
+      ctlSchema = new CtlSchemaDto();
       CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN);
       ctlSchema.setMetaInfo(metaInfo);
       ctlSchema.setVersion(DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION);
       ctlSchema.setCreatedUsername(createdUsername);
-      ctlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
+      ctlSchema.setDependencySet(new HashSet<CtlSchemaDto>());
       String body = getStringFromFile(DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE, CTLServiceImpl.class);
       if (!body.isEmpty()) {
         ctlSchema.setBody(body);
@@ -130,7 +130,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public CTLSchemaDto saveCTLSchema(CTLSchemaDto unSavedSchema) {
+  public CtlSchemaDto saveCTLSchema(CtlSchemaDto unSavedSchema) {
     validateCTLSchemaObject(unSavedSchema);
     if (unSavedSchema.getDefaultRecord() == null) {
       unSavedSchema = generateDefaultRecord(unSavedSchema);
@@ -139,7 +139,7 @@ public class CTLServiceImpl implements CTLService {
     }
     if (isBlank(unSavedSchema.getId())) {
       CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
-      CTLSchemaDto dto;
+      CtlSchemaDto dto;
       synchronized (this) {
         List<CTLSchemaMetaInfo> existingFqns = ctlSchemaMetaInfoDao.findExistingFqns(metaInfo.getFqn(), metaInfo.getTenantId(), metaInfo.getApplicationId());
         if (existingFqns != null && !existingFqns.isEmpty()) {
@@ -166,7 +166,7 @@ public class CTLServiceImpl implements CTLService {
     }
   }
 
-  private void validateDefaultRecord(CTLSchemaDto unSavedSchema) {
+  private void validateDefaultRecord(CtlSchemaDto unSavedSchema) {
     try {
       String schemaBody = flatExportAsString(unSavedSchema);
       GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<GenericRecord>(schemaBody);
@@ -177,7 +177,7 @@ public class CTLServiceImpl implements CTLService {
     }
   }
 
-  private CTLSchemaDto generateDefaultRecord(CTLSchemaDto unSavedSchema) {
+  private CtlSchemaDto generateDefaultRecord(CtlSchemaDto unSavedSchema) {
     try {
       String schemaBody = flatExportAsString(unSavedSchema);
       LOG.debug("Generating default record for flat schema: {}", schemaBody);
@@ -197,7 +197,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public CTLSchemaDto updateCTLSchema(CTLSchemaDto ctlSchema) {
+  public CtlSchemaDto updateCTLSchema(CtlSchemaDto ctlSchema) {
     validateCTLSchemaObject(ctlSchema);
     LOG.debug("Update ctl schema with id [{}]", ctlSchema.getId());
     CTLSchema schema = ctlSchemaDao.findById(ctlSchema.getId());
@@ -311,14 +311,14 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public CTLSchemaDto findCTLSchemaById(String schemaId) {
+  public CtlSchemaDto findCTLSchemaById(String schemaId) {
     validateSqlId(schemaId, "Incorrect schema id for ctl request " + schemaId);
     LOG.debug("Find ctl schema by id [{}]", schemaId);
     return DaoUtil.getDto(ctlSchemaDao.findById(schemaId));
   }
 
   @Override
-  public CTLSchemaDto findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) {
+  public CtlSchemaDto findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version, String tenantId, String applicationId) {
     if (isBlank(fqn) || version == null) {
       throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
     }
@@ -327,7 +327,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public CTLSchemaDto findByMetaInfoIdAndVer(String metaInfoId, Integer version) {
+  public CtlSchemaDto findByMetaInfoIdAndVer(String metaInfoId, Integer version) {
     if (isBlank(metaInfoId) || version == null) {
       throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
     }
@@ -336,7 +336,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public CTLSchemaDto findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version,
+  public CtlSchemaDto findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(String fqn, Integer version,
                                                                              String tenantId, String applicationId) {
     if (isBlank(fqn) || version == null) {
       throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
@@ -346,7 +346,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public List<CTLSchemaDto> findSystemCTLSchemas() {
+  public List<CtlSchemaDto> findSystemCTLSchemas() {
     LOG.debug("Find system ctl schemas");
     return convertDtoList(ctlSchemaDao.findSystemSchemas());
   }
@@ -370,37 +370,37 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public CTLSchemaDto findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
+  public CtlSchemaDto findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
     validateString(fqn, "Incorrect fqn for ctl schema request.");
     LOG.debug("Find latest ctl schema by fqn {}, tenantId {} and applicationId {}", fqn, tenantId, applicationId);
     return DaoUtil.getDto(ctlSchemaDao.findLatestByFqnAndTenantIdAndApplicationId(fqn, tenantId, applicationId));
   }
 
   @Override
-  public CTLSchemaDto findLatestByMetaInfoId(String metaInfoId) {
+  public CtlSchemaDto findLatestByMetaInfoId(String metaInfoId) {
     validateString(metaInfoId, "Incorrect meta info id for ctl schema request.");
     LOG.debug("Find latest ctl schema by meta info id {}", metaInfoId);
     return DaoUtil.getDto(ctlSchemaDao.findLatestByMetaInfoId(metaInfoId));
   }
 
   @Override
-  public List<CTLSchemaDto> findAllCTLSchemasByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
+  public List<CtlSchemaDto> findAllCTLSchemasByFqnAndTenantIdAndApplicationId(String fqn, String tenantId, String applicationId) {
     validateString(fqn, "Incorrect fqn for ctl schema request.");
     LOG.debug("Find all ctl schemas by fqn {}, tenantId {} and applicationId {}", fqn, tenantId, applicationId);
     return convertDtoList(ctlSchemaDao.findAllByFqnAndTenantIdAndApplicationId(fqn, tenantId, applicationId));
   }
 
   @Override
-  public List<CTLSchemaDto> findCTLSchemas() {
+  public List<CtlSchemaDto> findCTLSchemas() {
     LOG.debug("Find all ctl schemas");
     return convertDtoList(ctlSchemaDao.find());
   }
 
   @Override
-  public List<CTLSchemaDto> findCTLSchemaDependents(String schemaId) {
+  public List<CtlSchemaDto> findCTLSchemaDependents(String schemaId) {
     validateSqlId(schemaId, "Incorrect schema id for ctl schema request.");
     LOG.debug("Find dependents schemas for schema with id [{}]", schemaId);
-    List<CTLSchemaDto> list = Collections.emptyList();
+    List<CtlSchemaDto> list = Collections.emptyList();
     CTLSchema schemaDto = ctlSchemaDao.findById(schemaId);
     if (schemaDto != null) {
       list = convertDtoList(ctlSchemaDao.findDependentSchemas(schemaDto.getStringId()));
@@ -409,12 +409,12 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public List<CTLSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId, String applicationId) {
+  public List<CtlSchemaDto> findCTLSchemaDependents(String fqn, Integer version, String tenantId, String applicationId) {
     if (isBlank(fqn) || version == null) {
       throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
     }
     LOG.debug("Find dependents schemas for schema with fqn {} version {}, tenantId {} and applicationId ()", fqn, version, tenantId, applicationId);
-    List<CTLSchemaDto> schemas = Collections.emptyList();
+    List<CtlSchemaDto> schemas = Collections.emptyList();
     CTLSchema schema = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId, applicationId);
     if (schema != null) {
       schemas = convertDtoList(ctlSchemaDao.findDependentSchemas(schema.getStringId()));
@@ -422,7 +422,7 @@ public class CTLServiceImpl implements CTLService {
     return schemas;
   }
 
-  private void validateCTLSchemaObject(CTLSchemaDto ctlSchema) {
+  private void validateCTLSchemaObject(CtlSchemaDto ctlSchema) {
     validateObject(ctlSchema, "Incorrect ctl schema object");
     CTLSchemaMetaInfoDto metaInfo = ctlSchema.getMetaInfo();
     if (metaInfo == null) {
@@ -457,7 +457,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public FileData shallowExport(CTLSchemaDto schema) {
+  public FileData shallowExport(CtlSchemaDto schema) {
     try {
       FileData result = new FileData();
       result.setContentType(JSON);
@@ -474,7 +474,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public Schema flatExportAsSchema(CTLSchemaDto schema) {
+  public Schema flatExportAsSchema(CtlSchemaDto schema) {
     try {
       return this.parseDependencies(schema, new Schema.Parser());
     } catch (Exception cause) {
@@ -484,12 +484,12 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public String flatExportAsString(CTLSchemaDto schema) {
+  public String flatExportAsString(CtlSchemaDto schema) {
     return flatExportAsSchema(schema).toString();
   }
 
   @Override
-  public FileData flatExport(CTLSchemaDto schema) {
+  public FileData flatExport(CtlSchemaDto schema) {
     try {
       FileData result = new FileData();
       result.setContentType(JSON);
@@ -509,7 +509,7 @@ public class CTLServiceImpl implements CTLService {
   }
 
   @Override
-  public FileData deepExport(CTLSchemaDto schema) {
+  public FileData deepExport(CtlSchemaDto schema) {
     try {
       ByteArrayOutputStream content = new ByteArrayOutputStream();
       ZipOutputStream out = new ZipOutputStream(content);
@@ -531,9 +531,9 @@ public class CTLServiceImpl implements CTLService {
     }
   }
 
-  private Schema parseDependencies(CTLSchemaDto schema, final Schema.Parser parser) throws Exception {
+  private Schema parseDependencies(CtlSchemaDto schema, final Schema.Parser parser) throws Exception {
     if (schema.getDependencySet() != null) {
-      for (CTLSchemaDto dependency : schema.getDependencySet()) {
+      for (CtlSchemaDto dependency : schema.getDependencySet()) {
         this.parseDependencies(dependency, parser);
       }
     }
@@ -543,7 +543,7 @@ public class CTLServiceImpl implements CTLService {
     return parser.parse(body);
   }
 
-  private List<FileData> recursiveShallowExport(List<FileData> files, CTLSchemaDto parent) throws Exception {
+  private List<FileData> recursiveShallowExport(List<FileData> files, CtlSchemaDto parent) throws Exception {
     files.add(this.shallowExport(parent));
     ObjectNode object = new ObjectMapper().readValue(parent.getBody(), ObjectNode.class);
     ArrayNode dependencies = (ArrayNode) object.get(DEPENDENCIES);
@@ -552,7 +552,7 @@ public class CTLServiceImpl implements CTLService {
         ObjectNode dependency = (ObjectNode) node;
         String fqn = dependency.get(FQN).getTextValue();
         Integer version = dependency.get(VERSION).getIntValue();
-        CTLSchemaDto child = this.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
+        CtlSchemaDto child = this.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(
             fqn, version, parent.getMetaInfo().getTenantId(), parent.getMetaInfo().getApplicationId());
         Validate.notNull(child, MessageFormat.format("The dependency [{0}] was not found!", fqn));
         this.recursiveShallowExport(files, child);

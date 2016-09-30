@@ -47,7 +47,7 @@ import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -1179,7 +1179,7 @@ public interface ControlService {
    * @return The saved CTL schema
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto saveCtlSchema(CTLSchemaDto schema) throws ControlServiceException;
+  CtlSchemaDto saveCtlSchema(CtlSchemaDto schema) throws ControlServiceException;
 
   /**
    * Deletes a CTL schema from the database by its fully qualified name,
@@ -1203,7 +1203,7 @@ public interface ControlService {
    * @return A CTL schema with the given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto getCtlSchemaById(String schemaId) throws ControlServiceException;
+  CtlSchemaDto getCtlSchemaById(String schemaId) throws ControlServiceException;
 
   /**
    * Returns a CTL schema by its fully qualified name, version number,
@@ -1217,7 +1217,7 @@ public interface ControlService {
    *         application identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
+  CtlSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
                                                                 int version,
                                                                 String tenantId,
                                                                 String applicationId)
@@ -1230,7 +1230,7 @@ public interface ControlService {
    * @param version    the schema version.
    * @return the CTL schema with the given meta info id and version.
    */
-  CTLSchemaDto getCtlSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version);
+  CtlSchemaDto getCtlSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version);
 
   /**
    * Returns any CTL schema by its fully qualified name, version number,
@@ -1244,7 +1244,7 @@ public interface ControlService {
    *         application identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  CTLSchemaDto getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(
+  CtlSchemaDto getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(
       String fqn, int version, String tenantId, String applicationId)
       throws ControlServiceException;
 
@@ -1318,7 +1318,7 @@ public interface ControlService {
    * @return CTL schemas that reference a CTL schema with the given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaDto> getCtlSchemaDependents(String schemaId) throws ControlServiceException;
+  List<CtlSchemaDto> getCtlSchemaDependents(String schemaId) throws ControlServiceException;
 
   /**
    * Returns CTL schemas that reference a CTL schema with the given fully
@@ -1332,11 +1332,11 @@ public interface ControlService {
    *         version number, tenant and application identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaDto> getCtlSchemaDependents(String fqn, int version,
+  List<CtlSchemaDto> getCtlSchemaDependents(String fqn, int version,
                                             String tenantId,
                                             String applicationId) throws ControlServiceException;
 
-  CTLSchemaDto getLatestCtlSchemaByFqnTenantIdAndApplicationId(
+  CtlSchemaDto getLatestCtlSchemaByFqnTenantIdAndApplicationId(
       String fqn, String tenantId, String applicationId) throws ControlServiceException;
 
   List<Integer> getAllCtlSchemaVersionsByFqnTenantIdAndApplicationId(
@@ -1348,7 +1348,7 @@ public interface ControlService {
    * @param metaInfoId the id of meta info object.
    * @return the latest version of  CTL schema with the given meta info id.
    */
-  CTLSchemaDto getLatestCtlSchemaByMetaInfoId(String metaInfoId);
+  CtlSchemaDto getLatestCtlSchemaByMetaInfoId(String metaInfoId);
 
   /**
    * Exports the body of a CTL schema.
@@ -1357,7 +1357,7 @@ public interface ControlService {
    * @return A file containing the body of a CTL schema
    * @throws ControlServiceException - if an exception occures.
    */
-  FileData exportCtlSchemaShallow(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaShallow(CtlSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema with all dependencies inline,
@@ -1367,7 +1367,7 @@ public interface ControlService {
    * @return A file containing the body of a CTL schema with all dependencies inline, recursively
    * @throws ControlServiceException - if an exception occures.
    */
-  FileData exportCtlSchemaFlat(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaFlat(CtlSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema as java library with all dependencies
@@ -1378,7 +1378,7 @@ public interface ControlService {
    *         dependencies inline, recursively
    * @throws ControlServiceException the control service exception
    */
-  FileData exportCtlSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaFlatAsLibrary(CtlSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema with all dependencies inline,
@@ -1388,7 +1388,7 @@ public interface ControlService {
    * @return A string containing the body of a CTL schema with all dependencies inline, recursively
    * @throws ControlServiceException - if an exception occures.
    */
-  String exportCtlSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException;
+  String exportCtlSchemaFlatAsString(CtlSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the CTL schema as avro schema with all dependencies inline,
@@ -1398,7 +1398,7 @@ public interface ControlService {
    * @return An avro schema of a CTL schema with all dependencies inline, recursively
    * @throws ControlServiceException - if an exception occures.
    */
-  Schema exportCtlSchemaFlatAsSchema(CTLSchemaDto schema) throws ControlServiceException;
+  Schema exportCtlSchemaFlatAsSchema(CtlSchemaDto schema) throws ControlServiceException;
 
   /**
    * Exports the body of a CTL schema with all dependencies as different
@@ -1409,7 +1409,7 @@ public interface ControlService {
    *         different files, recursively.
    * @throws ControlServiceException - if an exception occures.
    */
-  FileData exportCtlSchemaDeep(CTLSchemaDto schema) throws ControlServiceException;
+  FileData exportCtlSchemaDeep(CtlSchemaDto schema) throws ControlServiceException;
 
   /**
    * Gets SdkProfileDto object by sdk profile id.

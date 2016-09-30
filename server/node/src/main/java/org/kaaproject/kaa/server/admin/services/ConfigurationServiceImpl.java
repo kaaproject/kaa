@@ -35,7 +35,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
@@ -153,7 +153,7 @@ public class ConfigurationServiceImpl
       if (isEmpty(ctlSchemaId)) {
         if (confSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = confSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
+          CtlSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
@@ -179,7 +179,7 @@ public class ConfigurationServiceImpl
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ConfigurationSchemaDto confSchema = getConfigurationSchema(configurationSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(confSchema.getCtlSchemaId());
+      CtlSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(confSchema.getCtlSchemaId());
       return new ConfigurationSchemaViewDto(
           confSchema, toCtlSchemaForm(
               ctlSchemaDto, ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER));

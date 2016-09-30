@@ -44,7 +44,7 @@ import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest;
@@ -1375,7 +1375,7 @@ public class DefaultAkkaServiceTest {
     profileSchemaDto.setId("1");
     profileSchemaDto.setCtlSchemaId("22");
 
-    CTLSchemaDto ctlSchema = new CTLSchemaDto();
+    CtlSchemaDto ctlSchema = new CtlSchemaDto();
     ctlSchema.setId("22");
 
     when(cacheService.getProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, 0))).thenReturn(profileSchemaDto);
@@ -1386,7 +1386,7 @@ public class DefaultAkkaServiceTest {
     serverProfileSchemaDto.setId("1");
     serverProfileSchemaDto.setCtlSchemaId("23");
 
-    CTLSchemaDto serverCtlSchema = new CTLSchemaDto();
+    CtlSchemaDto serverCtlSchema = new CtlSchemaDto();
     serverCtlSchema.setId("23");
 
     when(cacheService.getServerProfileSchemaByAppAndVersion(new AppVersionKey(APP_TOKEN, 0))).thenReturn(serverProfileSchemaDto);

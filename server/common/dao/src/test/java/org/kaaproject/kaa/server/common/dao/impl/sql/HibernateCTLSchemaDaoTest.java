@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
@@ -54,12 +54,12 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
   @Autowired
   private CTLService ctlService;
   private TenantDto tenant;
-  private CTLSchemaDto firstSchema;
-  private CTLSchemaDto secondSchema;
-  private CTLSchemaDto thirdSchema;
-  private CTLSchemaDto fourthSchema;
-  private CTLSchemaDto mainSchema;
-  private CTLSchemaDto systemSchema;
+  private CtlSchemaDto firstSchema;
+  private CtlSchemaDto secondSchema;
+  private CtlSchemaDto thirdSchema;
+  private CtlSchemaDto fourthSchema;
+  private CtlSchemaDto mainSchema;
+  private CtlSchemaDto systemSchema;
 
   @Before
   public void before() {
@@ -72,7 +72,7 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
         tenant = userService.saveTenant(tn);
       }
     }
-    Set<CTLSchemaDto> dependency = new HashSet<>();
+    Set<CtlSchemaDto> dependency = new HashSet<>();
     firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 1, tenant.getId(), null, 1));
     dependency.add(firstSchema);
     secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 2, tenant.getId(), null, 2));
@@ -109,9 +109,9 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
 
   @Test
   public void saveCTLSchemaWithDependency() throws InterruptedException {
-    List<CTLSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentSchemas(mainSchema.getId()));
+    List<CtlSchemaDto> dep = convertDtoList(ctlSchemaDao.findDependentSchemas(mainSchema.getId()));
     Assert.assertTrue(dep.isEmpty());
-    List<CTLSchemaDto> expected = Arrays.asList(mainSchema);
+    List<CtlSchemaDto> expected = Arrays.asList(mainSchema);
     dep = convertDtoList(ctlSchemaDao.findDependentSchemas(firstSchema.getId()));
     Assert.assertEquals(expected.size(), dep.size());
     dep = convertDtoList(ctlSchemaDao.findDependentSchemas(secondSchema.getId()));

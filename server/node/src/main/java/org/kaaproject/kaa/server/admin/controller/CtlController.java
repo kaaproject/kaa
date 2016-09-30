@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
@@ -70,7 +70,7 @@ public class CtlController extends AbstractAdminController {
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "CTL/saveSchema", params = {"body"}, method = RequestMethod.POST)
   @ResponseBody
-  public CTLSchemaDto saveCTLSchemaWithAppToken(
+  public CtlSchemaDto saveCTLSchemaWithAppToken(
       @ApiParam(name = "body", value = "The CTL schema structure", required = true)
       @RequestParam String body,
       @ApiParam(name = "tenantId", value = "A unique tenant identifier", required = false)
@@ -131,7 +131,7 @@ public class CtlController extends AbstractAdminController {
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "CTL/getSchema", params = {"fqn", "version"}, method = RequestMethod.GET)
   @ResponseBody
-  public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(
+  public CtlSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(
       @ApiParam(name = "fqn", value = "The fully qualified name of the CTL schema", required = true)
       @RequestParam String fqn,
       @ApiParam(name = "version", value = "The version number of the CTL schema", required = true)
@@ -160,7 +160,7 @@ public class CtlController extends AbstractAdminController {
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "CTL/getSchemaById", params = {"id"}, method = RequestMethod.GET)
   @ResponseBody
-  public CTLSchemaDto getCTLSchemaById(
+  public CtlSchemaDto getCTLSchemaById(
       @ApiParam(name = "id", value = "A unique CTL schema identifier", required = true)
       @RequestParam String id) throws KaaAdminServiceException {
     return ctlService.getCtlSchemaById(id);

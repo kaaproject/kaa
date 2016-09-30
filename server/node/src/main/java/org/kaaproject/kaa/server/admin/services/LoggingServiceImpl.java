@@ -22,7 +22,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
@@ -127,7 +127,7 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       LogSchemaDto logSchema = getLogSchema(logSchemaId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(logSchema.getCtlSchemaId());
+      CtlSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(logSchema.getCtlSchemaId());
       LogSchemaViewDto logSchemaViewDto = new LogSchemaViewDto(
           logSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return logSchemaViewDto;
@@ -148,7 +148,7 @@ public class LoggingServiceImpl extends AbstractAdminService implements LoggingS
       if (isEmpty(ctlSchemaId)) {
         if (logSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = logSchemaView.getExistingMetaInfo();
-          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
+          CtlSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),

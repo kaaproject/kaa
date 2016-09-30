@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -225,7 +225,7 @@ public class ApplicationServiceImpl implements ApplicationService {
   private EndpointProfileSchemaDto createDefaultProfileSchema(String appId, String createdUsername) {
     EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
     profileSchemaDto.setApplicationId(appId);
-    CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
+    CtlSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
     profileSchemaDto.setCtlSchemaId(ctlSchema.getId());
     profileSchemaDto.setName(DEFAULT_SCHEMA_NAME);
     profileSchemaDto.setCreatedUsername(createdUsername);
@@ -239,7 +239,7 @@ public class ApplicationServiceImpl implements ApplicationService {
   private ConfigurationDto createDefaultConfigurationWithSchema(String appId, String groupId, String createdUsername) {
     ConfigurationSchemaDto schema = new ConfigurationSchemaDto();
     schema.setApplicationId(appId);
-    CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
+    CtlSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
     schema.setCtlSchemaId(ctlSchema.getId());
     schema.setName(DEFAULT_SCHEMA_NAME);
     schema.setCreatedUsername(createdUsername);
@@ -255,7 +255,7 @@ public class ApplicationServiceImpl implements ApplicationService {
   private ServerProfileSchemaDto createDefaultServerProfileSchema(String appId, String createdUsername) {
     ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
     serverProfileSchemaDto.setApplicationId(appId);
-    CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
+    CtlSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
     serverProfileSchemaDto.setCtlSchemaId(ctlSchema.getId());
     serverProfileSchemaDto.setName(DEFAULT_SCHEMA_NAME);
     serverProfileSchemaDto.setCreatedUsername(createdUsername);
@@ -265,7 +265,7 @@ public class ApplicationServiceImpl implements ApplicationService {
   private NotificationSchemaDto createDefaultNotificationSchema(String appId, String createdUsername) {
     NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
     notificationSchemaDto.setApplicationId(appId);
-    CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
+    CtlSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
     notificationSchemaDto.setCtlSchemaId(ctlSchema.getId());
     notificationSchemaDto.setName(DEFAULT_SCHEMA_NAME);
     notificationSchemaDto.setCreatedUsername(createdUsername);
@@ -280,7 +280,7 @@ public class ApplicationServiceImpl implements ApplicationService {
   private LogSchemaDto createDefaultLogSchema(String appId, String createdUsername) {
     LogSchemaDto schema = new LogSchemaDto();
     schema.setApplicationId(appId);
-    CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
+    CtlSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
     schema.setCtlSchemaId(ctlSchema.getId());
     schema.setName(DEFAULT_SCHEMA_NAME);
     schema.setCreatedUsername(createdUsername);

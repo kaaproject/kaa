@@ -22,7 +22,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import org.apache.avro.Schema;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -263,7 +263,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
         KaaAuthorityDto.TENANT_ADMIN);
     try {
       EventClassDto eventClassDto = getEventClass(eventClassId);
-      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
+      CtlSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
       EventClassViewDto eventClassViewDto = new EventClassViewDto(
           eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
       return eventClassViewDto;
@@ -276,7 +276,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
   public EventClassViewDto getEventClassViewByCtlSchemaId(EventClassDto eventClassDto)
       throws KaaAdminServiceException {
     try {
-      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
+      CtlSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(eventClassDto.getCtlSchemaId());
       Utils.checkNotNull(ctlSchemaDto);
       EventClassViewDto eventClassViewDto = new EventClassViewDto(
           eventClassDto, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
@@ -306,7 +306,7 @@ public class EventServiceImpl extends AbstractAdminService implements EventServi
       if (isEmpty(ctlSchemaId)) {
         if (eventClassViewDto.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = eventClassViewDto.getExistingMetaInfo();
-          CTLSchemaDto schema = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
+          CtlSchemaDto schema = controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),

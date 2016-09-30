@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -128,7 +128,7 @@ public class ProfileServiceIT extends AbstractTest {
 
     CTLSchemaMetaInfoDto ctl1MetaDataDto = new CTLSchemaMetaInfoDto(EmptyData.SCHEMA$.getFullName(),
         null, null);
-    CTLSchemaDto ctl1SchemaDto = new CTLSchemaDto();
+    CtlSchemaDto ctl1SchemaDto = new CtlSchemaDto();
     ctl1SchemaDto.setMetaInfo(ctl1MetaDataDto);
     ctl1SchemaDto.setVersion(2);
     ctl1SchemaDto.setBody(EmptyData.SCHEMA$.toString());
@@ -142,7 +142,7 @@ public class ProfileServiceIT extends AbstractTest {
 
     CTLSchemaMetaInfoDto ctl2MetaDataDto = new CTLSchemaMetaInfoDto(BasicEndpointProfile.SCHEMA$.getFullName(),
         application.getTenantId(), application.getId());
-    CTLSchemaDto ctl2SchemaDto = new CTLSchemaDto();
+    CtlSchemaDto ctl2SchemaDto = new CtlSchemaDto();
     ctl2SchemaDto.setMetaInfo(ctl2MetaDataDto);
     ctl2SchemaDto.setVersion(2);
     ctl2SchemaDto.setBody(BasicEndpointProfile.SCHEMA$.toString());

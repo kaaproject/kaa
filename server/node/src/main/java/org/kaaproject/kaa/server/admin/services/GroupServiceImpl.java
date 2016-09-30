@@ -32,7 +32,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.GroupService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -326,7 +326,7 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
   }
 
   private GenericRecord getDefaultRecordFromCtlSchema(String ctlSchemaId) throws Exception {
-    CTLSchemaDto ctlSchema = controlService.getCtlSchemaById(ctlSchemaId);
+    CtlSchemaDto ctlSchema = controlService.getCtlSchemaById(ctlSchemaId);
     Schema schema = controlService.exportCtlSchemaFlatAsSchema(ctlSchema);
     GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
     GenericRecord defaultRecord = converter.decodeJson(ctlSchema.getDefaultRecord());

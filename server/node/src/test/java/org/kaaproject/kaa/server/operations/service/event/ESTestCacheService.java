@@ -27,7 +27,7 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
@@ -404,7 +404,7 @@ public class ESTestCacheService implements CacheService {
   }
 
   @Override
-  public CTLSchemaDto getCtlSchemaById(String key) {
+  public CtlSchemaDto getCtlSchemaById(String key) {
     // TODO Auto-generated method stub
     return null;
   }

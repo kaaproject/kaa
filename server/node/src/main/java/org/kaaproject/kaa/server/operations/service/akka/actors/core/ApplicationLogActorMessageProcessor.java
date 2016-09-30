@@ -22,7 +22,7 @@ import akka.actor.ActorRef;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
@@ -175,7 +175,7 @@ public class ApplicationLogActorMessageProcessor {
       BaseSchemaInfo schemaInfo = clientProfileSchemas.get(key);
       if (schemaInfo == null) {
         EndpointProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(key);
-        CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(profileSchema.getCtlSchemaId());
+        CtlSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(profileSchema.getCtlSchemaId());
         String schema = ctlService.flatExportAsString(ctlSchemaDto);
         schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);
         clientProfileSchemas.put(key, schemaInfo);
@@ -188,7 +188,7 @@ public class ApplicationLogActorMessageProcessor {
       BaseSchemaInfo schemaInfo = serverProfileSchemas.get(key);
       if (schemaInfo == null) {
         ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(key);
-        CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(serverProfileSchema.getCtlSchemaId());
+        CtlSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(serverProfileSchema.getCtlSchemaId());
         String schema = ctlService.flatExportAsString(ctlSchemaDto);
         schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);
         serverProfileSchemas.put(key, schemaInfo);
