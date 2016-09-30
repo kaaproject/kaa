@@ -31,7 +31,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
         <avro-ui.version>0.2.1</avro-ui.version>
-
+        <lombok.version>1.16.10.0</lombok.version>
         <akka.version>2.4.1</akka.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
@@ -1331,6 +1331,11 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>io.netty</groupId>
                 <artifactId>netty-handler</artifactId>
                 <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
