@@ -1886,11 +1886,25 @@ public class DataSource {
     profileRpcService.getEndpointProfileByKeyHash(endpointKeyHash, callback);
   }
 
+  /**
+   * Returns an endpoint profile view.
+   *
+   * @param endpointKeyHash endpoint key hash
+   * @param callback        callback which should be called with a result
+   */
   public void getEndpointProfileViewByKeyHash(String endpointKeyHash,
                                               AsyncCallback<EndpointProfileViewDto> callback) {
     profileRpcService.getEndpointProfileViewByKeyHash(endpointKeyHash, callback);
   }
 
+  /**
+   * Updates a server profile.
+   *
+   * @param endpointKeyHash      endpoint key hash
+   * @param serverProfileVersion server profile version
+   * @param serverProfileRecord  server profile record
+   * @param callback             callback which should be called with a result
+   */
   public void updateServerProfile(String endpointKeyHash,
                                   int serverProfileVersion,
                                   RecordField serverProfileRecord,
@@ -1899,6 +1913,13 @@ public class DataSource {
         endpointKeyHash, serverProfileVersion, serverProfileRecord, callback);
   }
 
+  /**
+   * Loads a profile filter record list.
+   *
+   * @param endpointGroupId   endpoint group identifier
+   * @param includeDeprecated indicate whether to include deprecated records
+   * @param callback          callback which should be called with a result
+   */
   public void loadProfileFilterRecords(
       String endpointGroupId,
       boolean includeDeprecated,
@@ -1911,6 +1932,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a profile filter record.
+   *
+   * @param endpointProfileSchemaId endpoint profile schema identifier
+   * @param serverProfileSchemaId   server profile schema identifier
+   * @param endpointGroupId         endpoint group identifier
+   * @param callback                callback which should be called with a result
+   */
   public void getProfileFilterRecord(String endpointProfileSchemaId,
                                      String serverProfileSchemaId,
                                      String endpointGroupId,
@@ -1924,6 +1953,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Deletes a profile filter record.
+   *
+   * @param endpointProfileSchemaId endpoint profile schema identifier
+   * @param serverProfileSchemaId   server profile schema identifier
+   * @param endpointGroupId         endpoint group identifier
+   * @param callback                callback which should be called with a result
+   */
   public void deleteProfileFilterRecord(String endpointProfileSchemaId,
                                         String serverProfileSchemaId,
                                         String endpointGroupId,
@@ -1939,6 +1976,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits a profile filter.
+   *
+   * @param profileFilter profile filter
+   * @param callback      callback which should be called with a result
+   */
   public void editProfileFilter(ProfileFilterDto profileFilter,
                                 final AsyncCallback<ProfileFilterDto> callback) {
     groupRpcService.editProfileFilter(profileFilter,
@@ -1950,6 +1993,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Activates a profile filter.
+   *
+   * @param profileFilterId profile filter identifier
+   * @param callback        callback which should be called with a result
+   */
   public void activateProfileFilter(String profileFilterId,
                                     final AsyncCallback<ProfileFilterDto> callback) {
     groupRpcService.activateProfileFilter(profileFilterId,
@@ -1961,6 +2010,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Deactivates a profile filter.
+   *
+   * @param profileFilterId profile filter identifier
+   * @param callback        callback which should be called with a result
+   */
   public void deactivateProfileFilter(String profileFilterId,
                                       final AsyncCallback<ProfileFilterDto> callback) {
     groupRpcService.deactivateProfileFilter(profileFilterId,
@@ -1972,6 +2027,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a configuration record list.
+   *
+   * @param endpointGroupId   endpoint group identifier
+   * @param includeDeprecated indicate whether to include deprecated records
+   * @param callback          callback which should be called with a result
+   */
   public void loadConfigurationRecords(
       String endpointGroupId,
       boolean includeDeprecated,
@@ -1985,6 +2047,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a configuration record view.
+   *
+   * @param schemaId        schema identifier
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void getConfigurationRecordView(
       String schemaId,
       String endpointGroupId,
@@ -1997,6 +2066,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Deletes a configuration record.
+   *
+   * @param schemaId        schema identifier
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void deleteConfigurationRecord(String schemaId, String endpointGroupId,
                                         final AsyncCallback<Void> callback) {
     configurationRpcService.deleteConfigurationRecord(schemaId, endpointGroupId,
@@ -2009,6 +2085,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits a configuration record form.
+   *
+   * @param configuration configuration
+   * @param callback      callback which should be called with a result
+   */
   public void editConfigurationRecordForm(
       ConfigurationRecordFormDto configuration,
       final AsyncCallback<ConfigurationRecordFormDto> callback) {
@@ -2021,6 +2103,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Activates a configuration record form.
+   *
+   * @param configurationId configuration identifier
+   * @param callback        callback which should be called with a result
+   */
   public void activateConfigurationRecordForm(
       String configurationId,
       final AsyncCallback<ConfigurationRecordFormDto> callback) {
@@ -2033,6 +2121,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Deactivates a configuration record form.
+   *
+   * @param configurationId configuration identifier
+   * @param callback        callback which should be called with a result
+   */
   public void deactivateConfigurationRecordForm(
       String configurationId,
       final AsyncCallback<ConfigurationRecordFormDto> callback) {
@@ -2045,6 +2139,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a vacant profile schema list.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void getVacantProfileSchemas(String endpointGroupId,
                                       final AsyncCallback<List<ProfileVersionPairDto>> callback) {
     groupRpcService.getVacantProfileSchemasByEndpointGroupId(endpointGroupId,
@@ -2055,6 +2155,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a vacant profile schema information list.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void getVacantConfigurationSchemaInfos(
       String endpointGroupId,
       final AsyncCallback<List<SchemaInfoDto>> callback) {
@@ -2066,6 +2172,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a user notification schema list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getUserNotificationSchemas(String applicationId,
                                          final AsyncCallback<List<VersionDto>> callback) {
     notificationRpcService.getUserNotificationSchemasByApplicationId(applicationId,
@@ -2076,6 +2188,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a user notification schema info list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getUserNotificationSchemaInfosByApplicationId(
       String applicationId,
       final AsyncCallback<List<SchemaInfoDto>> callback) {
@@ -2087,6 +2205,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a topic list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadTopics(String applicationId,
                          final AsyncCallback<List<TopicDto>> callback) {
     notificationRpcService.getTopicsByApplicationId(applicationId,
@@ -2097,6 +2221,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a topic list.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void loadTopicsByEndpointGroupId(String endpointGroupId,
                                           final AsyncCallback<List<TopicDto>> callback) {
     notificationRpcService.getTopicsByEndpointGroupId(endpointGroupId,
@@ -2107,6 +2237,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a vacant topic list.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param callback        callback which should be called with a result
+   */
   public void loadVacantTopicsByEndpointGroupId(String endpointGroupId,
                                                 final AsyncCallback<List<TopicDto>> callback) {
     notificationRpcService.getVacantTopicsByEndpointGroupId(endpointGroupId,
@@ -2117,6 +2253,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Deletes a topic.
+   *
+   * @param topicId  topic identifier
+   * @param callback callback which should be called with a result
+   */
   public void deleteTopic(String topicId,
                           final AsyncCallback<Void> callback) {
     notificationRpcService.deleteTopic(topicId,
@@ -2129,6 +2271,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Removes an endpoint profile.
+   *
+   * @param endpointKeyHash endpoint key hash
+   * @param callback        callback which should be called with a result
+   */
   public void removeEndpointProfileByKeyHash(String endpointKeyHash,
                                              final AsyncCallback<Void> callback) {
     profileRpcService.removeEndpointProfileByKeyHash(endpointKeyHash,
@@ -2141,6 +2289,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits a topic.
+   *
+   * @param topic    new topic
+   * @param callback callback which should be called with a result
+   */
   public void editTopic(
       TopicDto topic,
       final AsyncCallback<TopicDto> callback) {
@@ -2154,6 +2308,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a topic.
+   *
+   * @param topicId  topic identifier
+   * @param callback callback which should be called with a result
+   */
   public void getTopic(String topicId,
                        final AsyncCallback<TopicDto> callback) {
     notificationRpcService.getTopic(topicId,
@@ -2164,6 +2324,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Adds a topic to an endpoint group.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param topicId         topic identifier
+   * @param callback        callback which should be called with a result
+   */
   public void addTopicToEndpointGroup(String endpointGroupId, String topicId,
                                       final AsyncCallback<Void> callback) {
     notificationRpcService.addTopicToEndpointGroup(endpointGroupId, topicId,
@@ -2176,6 +2343,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Removes a topic from endpoint group.
+   *
+   * @param endpointGroupId endpoint group identifier
+   * @param topicId         topic identifier
+   * @param callback        callback which should be called with a result
+   */
   public void removeTopicFromEndpointGroup(String endpointGroupId, String topicId,
                                            final AsyncCallback<Void> callback) {
     notificationRpcService.removeTopicFromEndpointGroup(endpointGroupId, topicId,
@@ -2188,6 +2362,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a record data.
+   *
+   * @param schema       schema
+   * @param fileItemName file item name
+   * @param callback     callback which should be called with a result
+   */
   public void getRecordDataFromFile(String schema, String fileItemName,
                                     final AsyncCallback<RecordField> callback) {
     adminUirpcService.getRecordDataFromFile(schema, fileItemName,
@@ -2198,6 +2379,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a configuration record.
+   *
+   * @param schema       schema
+   * @param fileItemName file item name
+   * @param callback     callback which should be called with a result
+   */
   public void getConfigurationRecordDataFromFile(String schema, String fileItemName,
                                                  final AsyncCallback<RecordField> callback) {
     configurationRpcService.getConfigurationRecordDataFromFile(schema, fileItemName,
@@ -2208,6 +2396,13 @@ public class DataSource {
         });
   }
 
+  /**
+   * Sends a notification.
+   *
+   * @param notification      notification to be sent
+   * @param notificationData  notification data
+   * @param callback          callback which should be called with a result
+   */
   public void sendNotification(
       NotificationDto notification, RecordField notificationData,
       final AsyncCallback<Void> callback) {
@@ -2219,6 +2414,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Sends a unicast notification.
+   *
+   * @param notification     notification to be sent
+   * @param endpointKeyHash  endpoint key hash
+   * @param notificationData notification data
+   * @param callback         callback which should be called with a result
+   */
   public void sendUnicastNotification(
       NotificationDto notification, String endpointKeyHash, RecordField notificationData,
       final AsyncCallback<EndpointNotificationDto> callback) {
@@ -2230,6 +2433,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads log appenders.
+   *
+   * @param applicationId application idetifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadLogAppenders(String applicationId,
                                final AsyncCallback<List<LogAppenderDto>> callback) {
     loggingRpcService.getLogAppendersByApplicationId(applicationId,
@@ -2240,6 +2449,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a log appender.
+   *
+   * @param appenderId appender identifier
+   * @param callback   callback which should be called with a result
+   */
   public void getLogAppender(String appenderId, final AsyncCallback<LogAppenderDto> callback) {
     loggingRpcService.getRestLogAppender(appenderId,
         new DataCallback<LogAppenderDto>(callback) {
@@ -2249,6 +2464,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a log appender form.
+   *
+   * @param appenderId log appender identifier
+   * @param callback   callback which should be called with a result
+   */
   public void getLogAppenderForm(String appenderId,
                                  final AsyncCallback<LogAppenderDto> callback) {
     loggingRpcService.getLogAppenderForm(appenderId,
@@ -2259,6 +2480,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits a log appender.
+   *
+   * @param dto      new log appender
+   * @param callback callback which should be called with a result
+   */
   public void editLogAppenderForm(LogAppenderDto dto,
                                   final AsyncCallback<LogAppenderDto> callback) {
     loggingRpcService.editLogAppenderForm(dto,
@@ -2269,6 +2496,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Removes a log appender.
+   *
+   * @param appenderId log appender identifier
+   * @param callback   callback which should be called with a result
+   */
   public void removeLogAppender(String appenderId,
                                 final AsyncCallback<Void> callback) {
     loggingRpcService.deleteLogAppender(appenderId,
@@ -2281,6 +2514,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a log appender plugin info list.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void loadLogAppenderPluginInfos(
       final AsyncCallback<List<PluginInfoDto>> callback) {
     if (logAppenderPluginInfos == null) {
@@ -2298,6 +2536,12 @@ public class DataSource {
     }
   }
 
+  /**
+   * Loads user verifiers.
+   *
+   * @param applicationId application idetifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadUserVerifiers(String applicationId,
                                 final AsyncCallback<List<UserVerifierDto>> callback) {
     verifierRpcService.getUserVerifiersByApplicationId(applicationId,
@@ -2308,6 +2552,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a user verifier form.
+   *
+   * @param userVerifierId user verifier identifier
+   * @param callback       callback which should be called with a result
+   */
   public void getUserVerifierForm(String userVerifierId,
                                   final AsyncCallback<UserVerifierDto> callback) {
     verifierRpcService.getUserVerifierForm(userVerifierId,
@@ -2318,6 +2568,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a user verifier.
+   *
+   * @param userVerifierId user verifier identifier
+   * @param callback       callback which should be called with a result
+   */
   public void getUserVerifier(String userVerifierId,
                               final AsyncCallback<UserVerifierDto> callback) {
     verifierRpcService.getRestUserVerifier(userVerifierId,
@@ -2328,6 +2584,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits a user verifier form.
+   *
+   * @param dto      new user verifier
+   * @param callback callback which should be called with a result
+   */
   public void editUserVerifierForm(UserVerifierDto dto,
                                    final AsyncCallback<UserVerifierDto> callback) {
     verifierRpcService.editUserVerifierForm(dto,
@@ -2338,6 +2600,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Removes a user verifier.
+   *
+   * @param userVerifierId user verifier identifier
+   * @param callback       callback which should be called with a result
+   */
   public void removeUserVerifier(String userVerifierId,
                                  final AsyncCallback<Void> callback) {
     verifierRpcService.deleteUserVerifier(userVerifierId,
@@ -2350,6 +2618,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Loads a user verifier plugin list.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void loadUserVerifierPluginInfos(
       final AsyncCallback<List<PluginInfoDto>> callback) {
     if (userVerifierPluginInfos == null) {
@@ -2368,6 +2641,12 @@ public class DataSource {
     }
   }
 
+  /**
+   * Returns a user configuration schema info list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void getUserConfigurationSchemaInfosByApplicationId(
       String applicationId,
       final AsyncCallback<List<SchemaInfoDto>> callback) {
@@ -2379,6 +2658,14 @@ public class DataSource {
         });
   }
 
+  /**
+   * Edits a user configuration.
+   *
+   * @param endpointUserConfiguration endpoint user configuration
+   * @param applicationId             application identifier
+   * @param configurationData         configuratuon data
+   * @param callback                  callback which should be called with a result
+   */
   public void editUserConfiguration(
       EndpointUserConfigurationDto endpointUserConfiguration,
       String applicationId, RecordField configurationData,
@@ -2392,6 +2679,12 @@ public class DataSource {
         });
   }
 
+  /**
+   * Adds the SDK profile.
+   *
+   * @param sdkProfile SDK profile
+   * @param callback   callback which should be called with a result
+   */
   public void addSdkProfile(SdkProfileDto sdkProfile,
                             final AsyncCallback<SdkProfileDto> callback) {
     sdkRpcService.createSdkProfile(sdkProfile, new DataCallback<SdkProfileDto>(callback) {
@@ -2401,6 +2694,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Deletes the SDK profile.
+   *
+   * @param sdkProfileId SDK profile identifier
+   * @param callback     callback which should be called with a result
+   */
   public void deleteSdkProfile(String sdkProfileId, final AsyncCallback<Void> callback) {
     sdkRpcService.deleteSdkProfile(sdkProfileId, new DataCallback<Void>(callback) {
       @Override
@@ -2410,6 +2709,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Returns the SDK profile
+   *
+   * @param sdkProfileId SDK profile identifier
+   * @param callback     callback which should be called with a result
+   */
   public void getSdkProfile(String sdkProfileId, final AsyncCallback<SdkProfileDto> callback) {
     sdkRpcService.getSdkProfile(sdkProfileId, new DataCallback<SdkProfileDto>(callback) {
       @Override
@@ -2418,6 +2723,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Returns the SDK profile view.
+   *
+   * @param sdkProfileId SDK profile identifier
+   * @param callback     callback which should be called with a result
+   */
   public void getSdkProfileView(String sdkProfileId,
                                 final AsyncCallback<SdkProfileViewDto> callback) {
     sdkRpcService.getSdkProfileView(sdkProfileId, new DataCallback<SdkProfileViewDto>(callback) {
@@ -2427,6 +2738,12 @@ public class DataSource {
     });
   }
 
+  /**
+   * Loads the SDK profile list.
+   *
+   * @param applicationId application identifier
+   * @param callback      callback which should be called with a result
+   */
   public void loadSdkProfiles(String applicationId,
                               final AsyncCallback<List<SdkProfileDto>> callback) {
     sdkRpcService.getSdkProfilesByApplicationId(
@@ -2437,6 +2754,11 @@ public class DataSource {
         });
   }
 
+  /**
+   * Returns a credential service name list.
+   *
+   * @param callback callback which should be called with a result
+   */
   public void getCredentialsServiceNames(final AsyncCallback<List<String>> callback) {
     deviceManagementRpcService.getCredentialsServiceNames(
         new DataCallback<List<String>>(callback) {
