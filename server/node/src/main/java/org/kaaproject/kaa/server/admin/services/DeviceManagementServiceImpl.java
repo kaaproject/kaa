@@ -24,7 +24,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.DeviceManagementService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -158,7 +158,7 @@ public class DeviceManagementServiceImpl
 
   private void validateServerProfile(ServerProfileSchemaDto serverProfileSchema,
                                      String serverProfileBody) throws Exception {
-    CtlSchemaDto commonType = this.controlService.getCtlSchemaById(
+    CTLSchemaDto commonType = this.controlService.getCtlSchemaById(
         serverProfileSchema.getCtlSchemaId());
     Schema typeSchema = this.controlService.exportCtlSchemaFlatAsSchema(commonType);
     try {

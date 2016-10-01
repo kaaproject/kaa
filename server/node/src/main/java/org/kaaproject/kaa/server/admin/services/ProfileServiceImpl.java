@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.endpoint.EndpointProfileViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
@@ -314,7 +314,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       if (isEmpty(ctlSchemaId)) {
         if (profileSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = profileSchemaView.getExistingMetaInfo();
-          CtlSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),
@@ -359,7 +359,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       EndpointProfileSchemaDto profileSchema = getProfileSchema(profileSchemaId);
-      CtlSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(profileSchema.getCtlSchemaId());
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(profileSchema.getCtlSchemaId());
       return new ProfileSchemaViewDto(
           profileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
     } catch (Exception ex) {
@@ -425,7 +425,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       ServerProfileSchemaDto serverProfileSchema = getServerProfileSchema(serverProfileSchemaId);
-      CtlSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(
+      CTLSchemaDto ctlSchemaDto = controlService.getCtlSchemaById(
           serverProfileSchema.getCtlSchemaId());
       return new ServerProfileSchemaViewDto(
           serverProfileSchema, toCtlSchemaForm(ctlSchemaDto, ConverterType.FORM_AVRO_CONVERTER));
@@ -446,7 +446,7 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
       if (isEmpty(ctlSchemaId)) {
         if (serverProfileSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = serverProfileSchemaView.getExistingMetaInfo();
-          CtlSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),

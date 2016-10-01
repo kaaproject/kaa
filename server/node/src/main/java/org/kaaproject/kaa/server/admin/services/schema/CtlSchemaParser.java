@@ -25,7 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.avro.ui.shared.FqnVersion;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -48,7 +48,7 @@ import java.util.Set;
  *
  * @author Bohdan Khablenko
  * @see #parse(String, String)
- * @see #validate(CtlSchemaDto)
+ * @see #validate(CTLSchemaDto)
  * @since v0.8.0
  */
 public class CtlSchemaParser {
@@ -111,9 +111,9 @@ public class CtlSchemaParser {
     return parser.parse(avroSchema);
   }
 
-  public CtlSchemaDto parse(String body, String applicationId)
+  public CTLSchemaDto parse(String body, String applicationId)
       throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
-    CtlSchemaDto schema = new CtlSchemaDto();
+    CTLSchemaDto schema = new CTLSchemaDto();
     CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
     String fqn = null;
 
@@ -139,7 +139,7 @@ public class CtlSchemaParser {
     }
     schema.setVersion(object.get(VERSION).asInt());
 
-    Set<CtlSchemaDto> dependencies = new HashSet<>();
+    Set<CTLSchemaDto> dependencies = new HashSet<>();
     List<FqnVersion> missingDependencies = new ArrayList<>();
     if (!object.has(DEPENDENCIES)) {
       schema.setDependencySet(dependencies);
@@ -154,7 +154,7 @@ public class CtlSchemaParser {
           String dependencyFqn = child.get(FQN).asText();
           int dependencyVersion = child.get(VERSION).asInt();
 
-          CtlSchemaDto dependency =
+          CTLSchemaDto dependency =
               controlService.getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(
                   dependencyFqn, dependencyVersion, tenantId, applicationId);
           if (dependency != null) {
@@ -185,11 +185,11 @@ public class CtlSchemaParser {
    * @throws KaaAdminServiceException - if the given CTL schema is invalid and thus cannot be
    *                                  parsed.
    */
-  public Schema validate(CtlSchemaDto schema) throws KaaAdminServiceException {
+  public Schema validate(CTLSchemaDto schema) throws KaaAdminServiceException {
     if (schema.getDependencySet() != null) {
-      for (CtlSchemaDto dependency : schema.getDependencySet()) {
+      for (CTLSchemaDto dependency : schema.getDependencySet()) {
         try {
-          CtlSchemaDto dependencySchema =
+          CTLSchemaDto dependencySchema =
               controlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
                   dependency.getMetaInfo().getFqn(), dependency.getVersion(),
                   dependency.getMetaInfo().getTenantId(),

@@ -17,9 +17,9 @@
 package org.kaaproject.kaa.server.admin.shared.schema;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
-public class CtlSchemaFormDto extends CtlSchemaDto {
+public class CtlSchemaFormDto extends CTLSchemaDto {
 
   private static final long serialVersionUID = -5383847121615543863L;
 
@@ -30,7 +30,7 @@ public class CtlSchemaFormDto extends CtlSchemaDto {
     super();
   }
 
-  public CtlSchemaFormDto(CtlSchemaDto ctlSchema) {
+  public CtlSchemaFormDto(CTLSchemaDto ctlSchema) {
     super();
     setId(ctlSchema.getId());
     setMetaInfo(ctlSchema.getMetaInfo());

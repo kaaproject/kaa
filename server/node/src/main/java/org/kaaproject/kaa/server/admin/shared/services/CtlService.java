@@ -20,7 +20,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
@@ -34,12 +34,12 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/ctlService")
 public interface CtlService extends RemoteService {
 
-  CtlSchemaDto saveCtlSchema(CtlSchemaDto schema) throws KaaAdminServiceException;
+  CTLSchemaDto saveCtlSchema(CTLSchemaDto schema) throws KaaAdminServiceException;
 
-  CtlSchemaDto saveCtlSchema(String body, String tenantId, String applicationId)
+  CTLSchemaDto saveCtlSchema(String body, String tenantId, String applicationId)
       throws KaaAdminServiceException;
 
-  CtlSchemaDto saveCtlSchemaWithAppToken(String body, String tenantId, String applicationToken)
+  CTLSchemaDto saveCtlSchemaWithAppToken(String body, String tenantId, String applicationToken)
       throws KaaAdminServiceException;
 
   void deleteCtlSchemaByFqnVersionTenantIdAndApplicationToken(String fqn, Integer version,
@@ -53,19 +53,19 @@ public interface CtlService extends RemoteService {
                                                            String applicationId)
       throws KaaAdminServiceException;
 
-  CtlSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
+  CTLSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn,
                                                                 Integer version,
                                                                 String tenantId,
                                                                 String applicationId)
       throws KaaAdminServiceException;
 
-  CtlSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationToken(String fqn,
+  CTLSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationToken(String fqn,
                                                                    Integer version,
                                                                    String tenantId,
                                                                    String applicationToken)
       throws KaaAdminServiceException;
 
-  CtlSchemaDto getCtlSchemaById(String schemaId) throws KaaAdminServiceException;
+  CTLSchemaDto getCtlSchemaById(String schemaId) throws KaaAdminServiceException;
 
   boolean checkFqnExists(String fqn, String tenantId, String applicationId)
       throws KaaAdminServiceException;

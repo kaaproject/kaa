@@ -24,7 +24,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.appenders.mongo.appender.LogEventDao;
@@ -175,7 +175,7 @@ public class DefaultLogAppenderServiceTest {
 
     when(logSchemaService.findLogSchemaByAppIdAndVersion(APPLICATION_ID, LOG_SCHEMA_VERSION)).thenReturn(dto);
 
-    CtlSchemaDto ctlSchemaDto = new CtlSchemaDto();
+    CTLSchemaDto ctlSchemaDto = new CTLSchemaDto();
 
     when(ctlService.findCTLSchemaById(dto.getCtlSchemaId())).thenReturn(ctlSchemaDto);
 

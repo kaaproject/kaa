@@ -169,8 +169,9 @@
  *
  * <p>There is a similar stuff to deal with a group of optional topics - {@link
  * org.kaaproject.kaa.client.notification.NotificationManager#subscribeToTopics(java.util.List,
- * boolean)} and {@link org.kaaproject.kaa.client.notification.NotificationManager#
- * unsubscribeFromTopics(java.util.List,boolean)}.</p>
+ * boolean)} and {@link
+ * org.kaaproject.kaa.client.notification.NotificationManager#unsubscribeFromTopics(
+ * java.util.List,boolean)}.</p>
  *
  * <h3>Performance</h3>
  *

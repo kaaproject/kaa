@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.services;
 import net.sf.ehcache.Ehcache;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.cache.CacheService;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
@@ -124,7 +124,7 @@ public class CacheServiceImpl implements CacheService {
   public FileData getExportedCtlSchema(CtlSchemaExportKey key)
       throws KaaAdminServiceException {
     try {
-      CtlSchemaDto schemaFound = controlService.getCtlSchemaById(key.getCtlSchemaId());
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaById(key.getCtlSchemaId());
       Utils.checkNotNull(schemaFound);
       switch (key.getExportMethod()) {
         case SHALLOW:
