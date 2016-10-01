@@ -34,7 +34,7 @@ import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
@@ -376,7 +376,7 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
     try {
       NotificationSchemaDto notificationSchema = getNotificationSchema(notificationSchemaId);
-      CtlSchemaDto ctlSchemaDto =
+      CTLSchemaDto ctlSchemaDto =
           controlService.getCtlSchemaById(notificationSchema.getCtlSchemaId());
       NotificationSchemaViewDto notificationSchemaViewDto = new NotificationSchemaViewDto(
           notificationSchema, toCtlSchemaForm(ctlSchemaDto,
@@ -399,7 +399,7 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
       if (isEmpty(ctlSchemaId)) {
         if (notificationSchemaView.useExistingCtlSchema()) {
           CtlSchemaReferenceDto metaInfo = notificationSchemaView.getExistingMetaInfo();
-          CtlSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
+          CTLSchemaDto schema = ctlService.getCtlSchemaByFqnVersionTenantIdAndApplicationId(
               metaInfo.getMetaInfo().getFqn(),
               metaInfo.getVersion(),
               metaInfo.getMetaInfo().getTenantId(),

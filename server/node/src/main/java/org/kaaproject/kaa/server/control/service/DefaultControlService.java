@@ -65,7 +65,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -200,7 +200,7 @@ public class DefaultControlService implements ControlService {
   /**
    * A template for naming exported CTL library schemas.
    *
-   * @see #exportCtlSchemaFlatAsLibrary(CtlSchemaDto)
+   * @see #exportCtlSchemaFlatAsLibrary(CTLSchemaDto)
    */
   private static final String CTL_LIBRARY_EXPORT_TEMPLATE = "{0}.v{1}";
 
@@ -1178,15 +1178,15 @@ public class DefaultControlService implements ControlService {
       throw new NotFoundException("Log schema not found!");
     }
 
-    CtlSchemaDto logCtlSchema = getCtlSchemaById(logSchema.getCtlSchemaId());
+    CTLSchemaDto logCtlSchema = getCtlSchemaById(logSchema.getCtlSchemaId());
 
     String logSchemaBodyString = ctlService.flatExportAsString(logCtlSchema);
 
-    CtlSchemaDto profileCtlSchema = getCtlSchemaById(profileSchema.getCtlSchemaId());
+    CTLSchemaDto profileCtlSchema = getCtlSchemaById(profileSchema.getCtlSchemaId());
 
-    CtlSchemaDto notificationCtlSchema = getCtlSchemaById(notificationSchema.getCtlSchemaId());
+    CTLSchemaDto notificationCtlSchema = getCtlSchemaById(notificationSchema.getCtlSchemaId());
 
-    CtlSchemaDto confCtlSchema = getCtlSchemaById(configurationSchema.getCtlSchemaId());
+    CTLSchemaDto confCtlSchema = getCtlSchemaById(configurationSchema.getCtlSchemaId());
 
     String notificationSchemaBodyString = ctlService.flatExportAsString(notificationCtlSchema);
     String profileSchemaBodyString = ctlService.flatExportAsString(profileCtlSchema);
@@ -1235,7 +1235,7 @@ public class DefaultControlService implements ControlService {
                     null);
             efm.setRecords(records);
 
-            List<CtlSchemaDto> ctlDtos = new ArrayList<>();
+            List<CTLSchemaDto> ctlDtos = new ArrayList<>();
             List<String> flatEventClassCtlSchemas = new ArrayList<>();
             records.forEach(rec -> ctlDtos.add(ctlService.findCTLSchemaById(rec.getCtlSchemaId())));
             ctlDtos.forEach(
@@ -1288,7 +1288,7 @@ public class DefaultControlService implements ControlService {
       throw new NotFoundException("Log schema not found!");
     }
     try {
-      CtlSchemaDto logCtlSchema = getCtlSchemaById(logSchema.getCtlSchemaId());
+      CTLSchemaDto logCtlSchema = getCtlSchemaById(logSchema.getCtlSchemaId());
       Schema recordWrapperSchema = RecordWrapperSchemaGenerator
           .generateRecordWrapperSchema(getFlatSchemaByCtlSchemaId(logCtlSchema.getId()));
 
@@ -1385,7 +1385,7 @@ public class DefaultControlService implements ControlService {
    */
   @Override
   public String getFlatSchemaByCtlSchemaId(String schemaId) throws ControlServiceException {
-    CtlSchemaDto ctlSchemaDto = getCtlSchemaById(schemaId);
+    CTLSchemaDto ctlSchemaDto = getCtlSchemaById(schemaId);
     return ctlService.flatExportAsString(ctlSchemaDto);
   }
 
@@ -2164,7 +2164,7 @@ public class DefaultControlService implements ControlService {
 
     Schema recordWrapperSchema = null;
     try {
-      CtlSchemaDto logCtlSchema = getCtlSchemaById(logSchema.getCtlSchemaId());
+      CTLSchemaDto logCtlSchema = getCtlSchemaById(logSchema.getCtlSchemaId());
       recordWrapperSchema = RecordWrapperSchemaGenerator
           .generateRecordWrapperSchema(logCtlSchema.getBody());
     } catch (IOException ex) {
@@ -2315,7 +2315,7 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public CtlSchemaDto saveCtlSchema(CtlSchemaDto schema) throws ControlServiceException {
+  public CTLSchemaDto saveCtlSchema(CTLSchemaDto schema) throws ControlServiceException {
     return ctlService.saveCTLSchema(schema);
   }
 
@@ -2329,8 +2329,8 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public CtlSchemaDto getCtlSchemaById(String schemaId) throws ControlServiceException {
-    CtlSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(schemaId);
+  public CTLSchemaDto getCtlSchemaById(String schemaId) throws ControlServiceException {
+    CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(schemaId);
     if (ctlSchemaDto == null) {
       LOG.error("CTL schema with Id [{}] not found!", schemaId);
       throw new NotFoundException("CTL schema not found!");
@@ -2339,7 +2339,7 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public CtlSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version,
+  public CTLSchemaDto getCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version,
                                                                        String tenantId,
                                                                        String applicationId)
       throws ControlServiceException {
@@ -2348,12 +2348,12 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public CtlSchemaDto getCtlSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version) {
+  public CTLSchemaDto getCtlSchemaByMetaInfoIdAndVer(String metaInfoId, Integer version) {
     return ctlService.findByMetaInfoIdAndVer(metaInfoId, version);
   }
 
   @Override
-  public CtlSchemaDto getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version,
+  public CTLSchemaDto getAnyCtlSchemaByFqnVersionTenantIdAndApplicationId(String fqn, int version,
                                                                           String tenantId,
                                                                           String applicationId)
       throws ControlServiceException {
@@ -2424,52 +2424,52 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public List<CtlSchemaDto> getCtlSchemaDependents(String schemaId) throws ControlServiceException {
+  public List<CTLSchemaDto> getCtlSchemaDependents(String schemaId) throws ControlServiceException {
     return ctlService.findCTLSchemaDependents(schemaId);
   }
 
   @Override
-  public List<CtlSchemaDto> getCtlSchemaDependents(String fqn, int version,
+  public List<CTLSchemaDto> getCtlSchemaDependents(String fqn, int version,
                                                    String tenantId, String applicationId)
       throws ControlServiceException {
     return ctlService.findCTLSchemaDependents(fqn, version, tenantId, applicationId);
   }
 
   @Override
-  public CtlSchemaDto getLatestCtlSchemaByFqnTenantIdAndApplicationId(
+  public CTLSchemaDto getLatestCtlSchemaByFqnTenantIdAndApplicationId(
       String fqn, String tenantId, String applicationId) throws ControlServiceException {
     return ctlService.findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(fqn, tenantId,
         applicationId);
   }
 
   @Override
-  public CtlSchemaDto getLatestCtlSchemaByMetaInfoId(String metaInfoId) {
+  public CTLSchemaDto getLatestCtlSchemaByMetaInfoId(String metaInfoId) {
     return ctlService.findLatestByMetaInfoId(metaInfoId);
   }
 
   @Override
   public List<Integer> getAllCtlSchemaVersionsByFqnTenantIdAndApplicationId(
       String fqn, String tenantId, String applicationId) throws ControlServiceException {
-    List<CtlSchemaDto> schemas = ctlService.findAllCTLSchemasByFqnAndTenantIdAndApplicationId(fqn,
+    List<CTLSchemaDto> schemas = ctlService.findAllCTLSchemasByFqnAndTenantIdAndApplicationId(fqn,
         tenantId, applicationId);
     List<Integer> versions = new ArrayList<>(schemas.size());
-    for (CtlSchemaDto schema : schemas) {
+    for (CTLSchemaDto schema : schemas) {
       versions.add(schema.getVersion());
     }
     return versions;
   }
 
-  public FileData exportCtlSchemaShallow(CtlSchemaDto schema) throws ControlServiceException {
+  public FileData exportCtlSchemaShallow(CTLSchemaDto schema) throws ControlServiceException {
     return ctlService.shallowExport(schema);
   }
 
   @Override
-  public FileData exportCtlSchemaFlat(CtlSchemaDto schema) throws ControlServiceException {
+  public FileData exportCtlSchemaFlat(CTLSchemaDto schema) throws ControlServiceException {
     return ctlService.flatExport(schema);
   }
 
   @Override
-  public FileData exportCtlSchemaFlatAsLibrary(CtlSchemaDto schema) throws ControlServiceException {
+  public FileData exportCtlSchemaFlatAsLibrary(CTLSchemaDto schema) throws ControlServiceException {
     try {
       Schema avroSchema = ctlService.flatExportAsSchema(schema);
       String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE,
@@ -2482,17 +2482,17 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public String exportCtlSchemaFlatAsString(CtlSchemaDto schema) throws ControlServiceException {
+  public String exportCtlSchemaFlatAsString(CTLSchemaDto schema) throws ControlServiceException {
     return ctlService.flatExportAsString(schema);
   }
 
   @Override
-  public Schema exportCtlSchemaFlatAsSchema(CtlSchemaDto schema) throws ControlServiceException {
+  public Schema exportCtlSchemaFlatAsSchema(CTLSchemaDto schema) throws ControlServiceException {
     return ctlService.flatExportAsSchema(schema);
   }
 
   @Override
-  public FileData exportCtlSchemaDeep(CtlSchemaDto schema) throws ControlServiceException {
+  public FileData exportCtlSchemaDeep(CTLSchemaDto schema) throws ControlServiceException {
     return ctlService.deepExport(schema);
   }
 
@@ -2680,7 +2680,7 @@ public class DefaultControlService implements ControlService {
             endpointProfileDto.getConfigurationVersion()
         );
 
-    CtlSchemaDto ctlSchemaDto = ctlService
+    CTLSchemaDto ctlSchemaDto = ctlService
         .findCTLSchemaById(configurationSchemaDto.getCtlSchemaId());
     String schema = ctlService.flatExportAsString(ctlSchemaDto);
     String endConf = null;
@@ -2717,7 +2717,7 @@ public class DefaultControlService implements ControlService {
             endpointProfileDto.getApplicationId(),
             endpointProfileDto.getConfigurationVersion()
         );
-    CtlSchemaDto ctlSchemaDto = ctlService
+    CTLSchemaDto ctlSchemaDto = ctlService
         .findCTLSchemaById(configurationSchemaDto.getCtlSchemaId());
     return ctlService.flatExportAsSchema(ctlSchemaDto);
   }

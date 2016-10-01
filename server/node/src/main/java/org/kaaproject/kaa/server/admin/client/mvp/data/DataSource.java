@@ -48,7 +48,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileViewDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -1519,11 +1519,11 @@ public class DataSource {
    * @param callback    callback which should be called with a result
    */
   public void getCtlSchemaById(String ctlSchemaId,
-                               final AsyncCallback<CtlSchemaDto> callback) {
+                               final AsyncCallback<CTLSchemaDto> callback) {
     ctlRpcService.getCtlSchemaById(ctlSchemaId,
-        new DataCallback<CtlSchemaDto>(callback) {
+        new DataCallback<CTLSchemaDto>(callback) {
           @Override
-          protected void onResult(CtlSchemaDto result) {
+          protected void onResult(CTLSchemaDto result) {
           }
         });
   }

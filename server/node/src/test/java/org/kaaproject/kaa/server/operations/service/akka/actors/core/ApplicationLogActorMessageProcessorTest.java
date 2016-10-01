@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
@@ -149,12 +149,12 @@ public class ApplicationLogActorMessageProcessorTest {
     Mockito.when(cacheService.getServerProfileSchemaByAppAndVersion(key)).thenReturn(serverProfileSchema);
 
     // Endpoint profile CTL schema
-    CtlSchemaDto endpointProfileCTLSchema = new CtlSchemaDto();
+    CTLSchemaDto endpointProfileCTLSchema = new CTLSchemaDto();
     endpointProfileCTLSchema.setId(CLIENT_PROFILE_SCHEMA_CTL_SCHEMA_ID);
     Mockito.when(cacheService.getCtlSchemaById(CLIENT_PROFILE_SCHEMA_CTL_SCHEMA_ID)).thenReturn(endpointProfileCTLSchema);
 
     // Server profile CTL schema
-    CtlSchemaDto serverProfileCTLSchema = new CtlSchemaDto();
+    CTLSchemaDto serverProfileCTLSchema = new CTLSchemaDto();
     serverProfileCTLSchema.setId(SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID);
     Mockito.when(cacheService.getCtlSchemaById(SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID)).thenReturn(serverProfileCTLSchema);
 
@@ -174,12 +174,12 @@ public class ApplicationLogActorMessageProcessorTest {
     message = new LogEventPackMessage(REQUEST_ID, ActorRef.noSender(), pack);
   }
 
-  protected CtlSchemaDto generateCTLSchemaDto(String tenantId) {
+  protected CTLSchemaDto generateCTLSchemaDto(String tenantId) {
     return generateCTLSchemaDto(DEFAULT_FQN, tenantId, null, 100);
   }
 
-  protected CtlSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
-    CtlSchemaDto ctlSchema = new CtlSchemaDto();
+  protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
+    CTLSchemaDto ctlSchema = new CTLSchemaDto();
     ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId));
     ctlSchema.setVersion(version);
     String name = fqn.substring(fqn.lastIndexOf(".") + 1);

@@ -41,7 +41,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
@@ -510,7 +510,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
   }
 
   private void generateSchemas(ConfigurationSchemaDto schema) throws SchemaCreationException {
-    CtlSchemaDto ctlSchema = ctlService.findCTLSchemaById(schema.getCtlSchemaId());
+    CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(schema.getCtlSchemaId());
     String sch = ctlService.flatExportAsString(ctlSchema);
     DataSchema dataSchema = new DataSchema(sch);
     if (!dataSchema.isEmpty()) {

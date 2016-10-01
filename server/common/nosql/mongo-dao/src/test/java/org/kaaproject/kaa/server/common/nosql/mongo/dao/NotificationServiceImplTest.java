@@ -36,7 +36,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
     notificationSchemaDto.setApplicationId(app.getId());
-    CtlSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
+    CTLSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
     notificationSchemaDto.setCtlSchemaId(ctlSchema.getId());
     if (notificationSchemaDto == null) {
       throw new RuntimeException("Can't save default profile schema "); //NOSONAR

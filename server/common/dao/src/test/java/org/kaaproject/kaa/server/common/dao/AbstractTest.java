@@ -44,7 +44,7 @@ import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
@@ -325,7 +325,7 @@ public class AbstractTest {
       }
 
       ConfigurationSchemaDto schemaDto;
-      CtlSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
+      CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
       schemas = new ArrayList<>(count);
 
       for (int i = 0; i < count; i++) {
@@ -399,7 +399,7 @@ public class AbstractTest {
         appId = generateApplicationDto(tenantId).getId();
       }
       EndpointProfileSchemaDto schemaDto;
-      CtlSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
+      CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {
         schemaDto = new EndpointProfileSchemaDto();
@@ -491,7 +491,7 @@ public class AbstractTest {
       for (int i = 0; i < count; i++) {
         schemaDto = new LogSchemaDto();
         schemaDto.setApplicationId(appId);
-        CtlSchemaDto ctlSchema = null;
+        CTLSchemaDto ctlSchema = null;
         try {
           ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
         } catch (DatabaseProcessingException e) {
@@ -586,7 +586,7 @@ public class AbstractTest {
     schema.setApplicationId(appId);
     schema.setName(NOTIFICATION_SCHEMA_NAME);
     schema.setType(type != null ? type : NotificationTypeDto.USER);
-    CtlSchemaDto ctlSchema = null;
+    CTLSchemaDto ctlSchema = null;
     try {
       ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
     } catch (DatabaseProcessingException e) {
@@ -782,12 +782,12 @@ public class AbstractTest {
     return endpointService.saveEndpointProfile(profileDto);
   }
 
-  protected CtlSchemaDto generateCTLSchemaDto(String tenantId) {
+  protected CTLSchemaDto generateCTLSchemaDto(String tenantId) {
     return generateCTLSchemaDto(DEFAULT_FQN, tenantId, null, 100);
   }
 
-  protected CtlSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
-    CtlSchemaDto ctlSchema = new CtlSchemaDto();
+  protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
+    CTLSchemaDto ctlSchema = new CTLSchemaDto();
     ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId));
     ctlSchema.setVersion(version);
     String name = fqn.substring(fqn.lastIndexOf(".") + 1);
@@ -819,7 +819,7 @@ public class AbstractTest {
     schemaDto.setApplicationId(appId);
     schemaDto.setCreatedTime(System.currentTimeMillis());
 
-    CtlSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(ctlRandomFqn(), tenantId, appId, version));
+    CTLSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(ctlRandomFqn(), tenantId, appId, version));
     schemaDto.setCtlSchemaId(ctlSchema.getId());
     return serverProfileService.saveServerProfileSchema(schemaDto);
   }

@@ -56,7 +56,7 @@ import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
@@ -97,6 +97,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -941,7 +942,7 @@ public class AdminClient {
     return data;
   }
 
-  public FileData downloadCtlSchemaByAppToken(CtlSchemaDto ctlSchemaDto,
+  public FileData downloadCtlSchemaByAppToken(CTLSchemaDto ctlSchemaDto,
                                               CTLSchemaExportMethod method, String appToken) {
     FileDataResponseExtractor extractor = new FileDataResponseExtractor();
     MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
@@ -961,7 +962,7 @@ public class AdminClient {
   }
 
 
-  public CtlSchemaDto saveCTLSchemaWithAppToken(String body, String tenantId,
+  public CTLSchemaDto saveCTLSchemaWithAppToken(String body, String tenantId,
                                                 String applicationToken) {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("body", body);
@@ -972,7 +973,7 @@ public class AdminClient {
       params.add("applicationToken", applicationToken);
     }
     return restTemplate.postForObject(restTemplate.getUrl() + "CTL/saveSchema",
-        params, CtlSchemaDto.class);
+        params, CTLSchemaDto.class);
   }
 
   public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(String fqn,
@@ -991,27 +992,27 @@ public class AdminClient {
     restTemplate.postForLocation(restTemplate.getUrl() + "CTL/deleteSchema", params);
   }
 
-  public CtlSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(
+  public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(
       String fqn, Integer version, String tenantId, String applicationToken) {
     if (tenantId != null && applicationToken != null) {
       return restTemplate.getForObject(
           restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}"
               + "&applicationToken={applicationToken}",
-          CtlSchemaDto.class, fqn, version, tenantId, applicationToken);
+          CTLSchemaDto.class, fqn, version, tenantId, applicationToken);
     } else if (tenantId != null) {
       return restTemplate.getForObject(
           restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}",
-          CtlSchemaDto.class, fqn, version, tenantId);
+          CTLSchemaDto.class, fqn, version, tenantId);
     } else {
       return restTemplate.getForObject(
           restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}",
-          CtlSchemaDto.class, fqn, version);
+          CTLSchemaDto.class, fqn, version);
     }
   }
 
-  public CtlSchemaDto getCTLSchemaById(String id) {
+  public CTLSchemaDto getCTLSchemaById(String id) {
     return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchemaById?id={id}",
-        CtlSchemaDto.class, id);
+        CTLSchemaDto.class, id);
   }
 
   public boolean checkFqnExistsWithAppToken(String fqn, String tenantId,
