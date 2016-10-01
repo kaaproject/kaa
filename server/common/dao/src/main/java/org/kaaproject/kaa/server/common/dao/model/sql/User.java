@@ -113,7 +113,8 @@ public class User extends GenericModel<UserDto> implements Serializable {
 
   @Override
   public String toString() {
-    return "User [username=" + username + ", externalUid=" + externalUid + ", authority=" + authority + ", id=" + id + "]";
+    return "User [username=" + username + ", externalUid=" + externalUid + ", authority="
+           + authority + ", id=" + id + "]";
   }
 
   @Override

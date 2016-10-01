@@ -101,7 +101,8 @@ public class Validator {
           Long.parseLong(id);
           correct = true;
         } catch (NumberFormatException cause) {
-          LOG.debug("Exception during ID validation: the ID is not blank, but cannot be parsed as long.");
+          LOG.debug("Exception during ID validation: the ID is not blank, but cannot be parsed as "
+                    + "long.");
         }
       } else {
         correct = true;
@@ -125,14 +126,14 @@ public class Validator {
   }
 
   /**
-   * @param id           the id
+   * @param id           the id.
    * @param errorMessage the error message for exception
    */
   public static void validateSqlId(String id, String errorMessage) {
     try {
       Long.valueOf(id);
-    } catch (NumberFormatException e) {
-      throw new IncorrectParameterException(errorMessage, e);
+    } catch (NumberFormatException ex) {
+      throw new IncorrectParameterException(errorMessage, ex);
     }
   }
 

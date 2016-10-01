@@ -37,7 +37,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateProfileSchemaDao extends HibernateAbstractDao<EndpointProfileSchema> implements ProfileSchemaDao<EndpointProfileSchema> {
+public class HibernateProfileSchemaDao extends HibernateAbstractDao<EndpointProfileSchema>
+        implements ProfileSchemaDao<EndpointProfileSchema> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateProfileSchemaDao.class);
 
@@ -62,7 +63,8 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<EndpointProf
     LOG.debug("Searching profile schema by application id [{}] and version [{}]", appId, version);
     EndpointProfileSchema schema = null;
     if (isNotBlank(appId)) {
-      schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
+      schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+              Restrictions.and(
           Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
           Restrictions.eq(VERSION_PROPERTY, version)));
     }
@@ -94,7 +96,8 @@ public class HibernateProfileSchemaDao extends HibernateAbstractDao<EndpointProf
 
   @Override
   public List<EndpointProfileSchema> findVacantSchemas(String appId, List<String> usedSchemaIds) {
-    LOG.debug("Searching vacant schemas by application id [{}] and used schema ids [{}] ", appId, usedSchemaIds);
+    LOG.debug("Searching vacant schemas by application id [{}] and used schema ids [{}] ",
+            appId, usedSchemaIds);
     List<EndpointProfileSchema> schemas = Collections.emptyList();
     if (isNotBlank(appId)) {
       Criteria criteria = getCriteria().createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS)

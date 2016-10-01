@@ -36,7 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Repository
-public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> implements LogSchemaDao<LogSchema> {
+public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema>
+        implements LogSchemaDao<LogSchema> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateLogSchemaDao.class);
 
@@ -63,10 +64,12 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
 
   @Override
   public LogSchema findByApplicationIdAndVersion(String applicationId, int version) {
-    LOG.debug("Searching log schema by applicationId [{}] and version [{}] ", applicationId, version);
+    LOG.debug("Searching log schema by applicationId [{}] and version [{}] ",
+            applicationId, version);
     LogSchema logSchema = null;
     if (isNotBlank(applicationId)) {
-      logSchema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
+      logSchema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+              Restrictions.and(
           Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)),
           Restrictions.eq(VERSION_PROPERTY, version)));
     }
@@ -81,7 +84,8 @@ public class HibernateLogSchemaDao extends HibernateAbstractDao<LogSchema> imple
   @Override
   public void removeByApplicationId(String applicationId) {
     if (isNotBlank(applicationId)) {
-      List<LogSchema> logSchemas = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+      List<LogSchema> logSchemas = findListByCriterionWithAlias(
+              APPLICATION_PROPERTY, APPLICATION_ALIAS,
           Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId)));
       removeList(logSchemas);
     }

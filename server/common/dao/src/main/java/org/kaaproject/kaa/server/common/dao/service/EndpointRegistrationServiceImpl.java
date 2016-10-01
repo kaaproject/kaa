@@ -45,22 +45,26 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
 
   private EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao;
 
-  public void setEndpointRegistrationDao(EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao) {
+  public void setEndpointRegistrationDao(
+          EndpointRegistrationDao<EndpointRegistration> endpointRegistrationDao) {
     this.endpointRegistrationDao = endpointRegistrationDao;
   }
 
   @Override
-  public EndpointRegistrationDto saveEndpointRegistration(EndpointRegistrationDto endpointRegistration)
+  public EndpointRegistrationDto saveEndpointRegistration(
+          EndpointRegistrationDto endpointRegistration)
       throws EndpointRegistrationServiceException {
     try {
       Validate.notNull(endpointRegistration, "Invalid endpoint registration provided!");
       String credentialsId = endpointRegistration.getCredentialsId();
-      Optional<EndpointRegistrationDto> oldRegistration = findEndpointRegistrationByCredentialsId(credentialsId);
+      Optional<EndpointRegistrationDto> oldRegistration =
+              findEndpointRegistrationByCredentialsId(credentialsId);
       if (oldRegistration.isPresent()) {
         EndpointRegistrationDto oldRegistrationDto = oldRegistration.get();
         if (oldRegistrationDto.getEndpointId() != null
             && !oldRegistrationDto.getEndpointId().equals(endpointRegistration.getEndpointId())) {
-          throw new IllegalStateException("The endpoint registration with such credentials already exists!");
+          throw new IllegalStateException("The endpoint registration with such credentials "
+                                          + "already exists!");
         }
       }
       return this.endpointRegistrationDao.save(endpointRegistration).toDto();
@@ -75,27 +79,33 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
       throws EndpointRegistrationServiceException {
     try {
       Validate.notBlank(endpointId, "Invalid endpoint ID provided!");
-      return this.endpointRegistrationDao.findByEndpointId(endpointId).map(EndpointRegistration::toDto);
+      return this.endpointRegistrationDao.findByEndpointId(endpointId)
+              .map(EndpointRegistration::toDto);
     } catch (Exception cause) {
-      LOG.error("An unexpected exception occured while searching for endpoint registration!", cause);
+      LOG.error("An unexpected exception occured while searching for endpoint registration!",
+              cause);
       throw new EndpointRegistrationServiceException(cause);
     }
   }
 
   @Override
-  public Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(String credentialsId)
+  public Optional<EndpointRegistrationDto> findEndpointRegistrationByCredentialsId(
+          String credentialsId)
       throws EndpointRegistrationServiceException {
     try {
       Validate.notBlank(credentialsId, "Invalid credentials ID provided!");
-      return this.endpointRegistrationDao.findByCredentialsId(credentialsId).map(EndpointRegistration::toDto);
+      return this.endpointRegistrationDao.findByCredentialsId(credentialsId).map(
+              EndpointRegistration::toDto);
     } catch (Exception cause) {
-      LOG.error("An unexpected exception occured while searching for endpoint registration!", cause);
+      LOG.error("An unexpected exception occured while searching for endpoint registration!",
+              cause);
       throw new EndpointRegistrationServiceException(cause);
     }
   }
 
   @Override
-  public void removeEndpointRegistrationByEndpointId(String endpointId) throws EndpointRegistrationServiceException {
+  public void removeEndpointRegistrationByEndpointId(String endpointId)
+          throws EndpointRegistrationServiceException {
     try {
       Validate.notBlank(endpointId, "Invalid endpoint ID provided!");
       this.endpointRegistrationDao.removeByEndpointId(endpointId);
@@ -106,7 +116,8 @@ public final class EndpointRegistrationServiceImpl implements EndpointRegistrati
   }
 
   @Override
-  public void removeEndpointRegistrationById(String registrationId) throws EndpointRegistrationServiceException {
+  public void removeEndpointRegistrationById(String registrationId)
+          throws EndpointRegistrationServiceException {
     try {
       Validate.notBlank(registrationId, "Invalid registration ID provided!");
       this.endpointRegistrationDao.removeById(registrationId);

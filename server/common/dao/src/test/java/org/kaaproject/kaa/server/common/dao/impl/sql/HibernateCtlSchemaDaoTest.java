@@ -47,9 +47,9 @@ import java.util.UUID;
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
-public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
+public class HibernateCtlSchemaDaoTest extends HibernateAbstractTest {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HibernateCTLSchemaDaoTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateCtlSchemaDaoTest.class);
   private static final String SYSTEM_FQN = "org.kaaproject.kaa.ctl.SystemSchema";
   @Autowired
   private CTLService ctlService;
@@ -73,18 +73,18 @@ public class HibernateCTLSchemaDaoTest extends HibernateAbstractTest {
       }
     }
     Set<CTLSchemaDto> dependency = new HashSet<>();
-    firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 1, tenant.getId(), null, 1));
+    firstSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 1, tenant.getId(), null, 1));
     dependency.add(firstSchema);
-    secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 2, tenant.getId(), null, 2));
+    secondSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 2, tenant.getId(), null, 2));
     dependency.add(secondSchema);
-    thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 3, tenant.getId(), null, 3));
+    thirdSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 3, tenant.getId(), null, 3));
     dependency.add(thirdSchema);
-    fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 4, tenant.getId(), null, 4));
+    fourthSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 4, tenant.getId(), null, 4));
     dependency.add(fourthSchema);
     mainSchema = generateCTLSchemaDto(DEFAULT_FQN + 5, tenant.getId(), null, 7);
     mainSchema.setDependencySet(dependency);
-    mainSchema = ctlService.saveCTLSchema(mainSchema);
-    systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(SYSTEM_FQN, null, null, 50));
+    mainSchema = ctlService.saveCtlSchema(mainSchema);
+    systemSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(SYSTEM_FQN, null, null, 50));
   }
 
   @Test(expected = Exception.class)

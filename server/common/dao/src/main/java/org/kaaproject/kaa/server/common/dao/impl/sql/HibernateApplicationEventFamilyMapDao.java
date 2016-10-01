@@ -40,9 +40,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<ApplicationEventFamilyMap> implements ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> {
+public class HibernateApplicationEventFamilyMapDao
+        extends HibernateAbstractDao<ApplicationEventFamilyMap>
+        implements ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HibernateApplicationEventFamilyMapDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(
+          HibernateApplicationEventFamilyMapDao.class);
 
   @Override
   protected Class<ApplicationEventFamilyMap> getEntityClass() {
@@ -54,7 +57,9 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
     LOG.debug("Searching application event family maps by application id [{}] ", appId);
     List<ApplicationEventFamilyMap> applicationEventFamilyMaps = Collections.emptyList();
     if (isNotBlank(appId)) {
-      applicationEventFamilyMaps = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
+      applicationEventFamilyMaps = findListByCriterionWithAlias(
+              APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.eq(
+                      APPLICATION_REFERENCE, Long.valueOf(appId)));
     }
     if (LOG.isTraceEnabled()) {
       LOG.trace("[{}] Search result: {}.", appId, applicationEventFamilyMaps);
@@ -71,10 +76,12 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
     if (ids != null && !ids.isEmpty()) {
       idsArray = Arrays.toString(ids.toArray());
       LOG.debug("Searching application event family maps by ids {} ", idsArray);
-      applicationEventFamilyMaps = findListByCriterion(Restrictions.in(ID_PROPERTY, toLongIds(ids)));
+      applicationEventFamilyMaps = findListByCriterion(Restrictions.in(
+              ID_PROPERTY, toLongIds(ids)));
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("{} Search result: {}.", idsArray, Arrays.toString(applicationEventFamilyMaps.toArray()));
+      LOG.trace("{} Search result: {}.", idsArray, Arrays.toString(
+              applicationEventFamilyMaps.toArray()));
     } else {
       LOG.debug("{} Search result: {}.", idsArray, applicationEventFamilyMaps.size());
     }
@@ -84,7 +91,8 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
   @Override
   public void removeByApplicationId(String appId) {
     if (isNotBlank(appId)) {
-      List<ApplicationEventFamilyMap> eventClassFamilies = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+      List<ApplicationEventFamilyMap> eventClassFamilies = findListByCriterionWithAlias(
+              APPLICATION_PROPERTY, APPLICATION_ALIAS,
           Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
       removeList(eventClassFamilies);
     }
@@ -93,7 +101,8 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
 
   @Override
   public boolean validateApplicationEventFamilyMap(String appId, String ecfId, int version) {
-    LOG.debug("Validating application event family map by application id [{}], ecf id [{}], version [{}]", appId, ecfId, version);
+    LOG.debug("Validating application event family map by application id [{}], ecf id [{}], "
+              + "version [{}]", appId, ecfId, version);
     Criteria criteria = getCriteria();
     criteria.createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS);
     criteria.createAlias(ECF_PROPERTY, ECF_ALIAS);
@@ -109,7 +118,8 @@ public class HibernateApplicationEventFamilyMapDao extends HibernateAbstractDao<
 
   @Override
   public List<ApplicationEventFamilyMap> findByEcfIdAndVersion(String ecfId, int version) {
-    LOG.debug("Searching application event family maps by event class family id [{}] and version [{}] ", ecfId, version);
+    LOG.debug("Searching application event family maps by event class family id [{}] and "
+              + "version [{}] ", ecfId, version);
     Criteria criteria = getCriteria();
     criteria.createAlias(ECF_PROPERTY, ECF_ALIAS);
     criteria.add(Restrictions.and(

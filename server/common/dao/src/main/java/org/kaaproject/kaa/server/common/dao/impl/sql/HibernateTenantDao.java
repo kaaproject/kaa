@@ -29,7 +29,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HibernateTenantDao extends HibernateAbstractDao<Tenant> implements TenantDao<Tenant> {
 
-  public static final String DELETE_BY_NAME_HQL = "delete from Tenant where " + NAME_PROPERTY + "= :name";
+  public static final String DELETE_BY_NAME_HQL =
+          "delete from Tenant where " + NAME_PROPERTY + "= :name";
   private static final Logger LOG = LoggerFactory.getLogger(HibernateTenantDao.class);
 
   @Override

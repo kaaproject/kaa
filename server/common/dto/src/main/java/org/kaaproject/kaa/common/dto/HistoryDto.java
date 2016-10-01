@@ -69,15 +69,15 @@ public class HistoryDto implements HasId, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    HistoryDto that = (HistoryDto) o;
+    HistoryDto that = (HistoryDto) obj;
 
     if (lastModifyTime != that.lastModifyTime) {
       return false;
@@ -85,7 +85,8 @@ public class HistoryDto implements HasId, Serializable {
     if (sequenceNumber != that.sequenceNumber) {
       return false;
     }
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
       return false;
     }
     if (change != null ? !change.equals(that.change) : that.change != null) {
@@ -106,12 +107,12 @@ public class HistoryDto implements HasId, Serializable {
 
   @Override
   public String toString() {
-    return "HistoryDto{" +
-        "id='" + id + '\'' +
-        ", applicationId='" + applicationId + '\'' +
-        ", sequenceNumber=" + sequenceNumber +
-        ", change=" + change +
-        ", lastModifyTime=" + lastModifyTime +
-        '}';
+    return "HistoryDto{"
+           + "id='" + id + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", sequenceNumber=" + sequenceNumber
+           + ", change=" + change
+           + ", lastModifyTime=" + lastModifyTime
+           + '}';
   }
 }

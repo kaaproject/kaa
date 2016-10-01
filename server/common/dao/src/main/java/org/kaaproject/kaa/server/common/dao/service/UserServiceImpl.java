@@ -150,7 +150,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<UserDto> findAllTenantAdminsByTenantId(String id) {
     if (isValidSqlId(id)) {
-      return convertDtoList(userDao.findByTenantIdAndAuthority(id, KaaAuthorityDto.TENANT_ADMIN.name()));
+      return convertDtoList(userDao.findByTenantIdAndAuthority(id,
+              KaaAuthorityDto.TENANT_ADMIN.name()));
     }
     return null;
   }

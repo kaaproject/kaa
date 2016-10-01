@@ -33,7 +33,7 @@ public interface CTLSchemaMetaInfoDao<T> extends SqlDao<T> {
    * @param tenantId      the tenant identifier.
    * @param applicationId the application identifier.
    * @return the CTL schema meta information object with given fully qualified name, tenant and
-   * application identifiers.
+   *         application identifiers.
    */
   T findByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
 
@@ -46,7 +46,8 @@ public interface CTLSchemaMetaInfoDao<T> extends SqlDao<T> {
    * @param applicationId the application identifier.
    * @return the CTL schema meta information objects which are the siblings to the given CTL.
    */
-  List<T> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String tenantId, String applicationId);
+  List<T> findSiblingsByFqnTenantIdAndApplicationId(
+          String fqn, String tenantId, String applicationId);
 
   /**
    * Find a list of CTL schema meta infos of the given fully qualified name
@@ -67,7 +68,7 @@ public interface CTLSchemaMetaInfoDao<T> extends SqlDao<T> {
    * @param tenantId    the tenant identifier.
    * @param excludingId the ctl schema meta info identifier to exclude.
    * @return the others CTL schema meta infos with the given fully qualified name and tenant
-   * identifier.
+   *         identifier.
    */
   List<T> findOthersByFqnAndTenantId(String fqn, String tenantId, String excludingId);
 

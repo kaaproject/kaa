@@ -163,7 +163,7 @@ public class DeltaServiceIT extends AbstractTest {
     profileCtlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
     profileCtlSchema.setVersion(1);
     profileCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
-    profileCtlSchema = ctlService.saveCTLSchema(profileCtlSchema);
+    profileCtlSchema = ctlService.saveCtlSchema(profileCtlSchema);
 
 
     Schema schema = new Schema.Parser().parse(dataSchema);
@@ -175,7 +175,7 @@ public class DeltaServiceIT extends AbstractTest {
     confCtlSchema.setBody(schema.toString());
     confCtlSchema.setVersion(CONF_SCHEMA_VERSION);
     confCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
-    confCtlSchema = ctlService.saveCTLSchema(confCtlSchema);
+    confCtlSchema = ctlService.saveCtlSchema(confCtlSchema);
 
     EndpointProfileSchemaDto profileSchemaObj = new EndpointProfileSchemaDto();
     profileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);

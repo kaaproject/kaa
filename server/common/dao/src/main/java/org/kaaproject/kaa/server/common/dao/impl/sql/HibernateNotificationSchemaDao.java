@@ -36,7 +36,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateNotificationSchemaDao extends HibernateAbstractDao<NotificationSchema> implements NotificationSchemaDao<NotificationSchema> {
+public class HibernateNotificationSchemaDao extends HibernateAbstractDao<NotificationSchema>
+        implements NotificationSchemaDao<NotificationSchema> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateNotificationSchemaDao.class);
 
@@ -67,7 +68,8 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
   }
 
   @Override
-  public List<NotificationSchema> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type) {
+  public List<NotificationSchema> findNotificationSchemasByAppIdAndType(
+          String appId, NotificationTypeDto type) {
     LOG.debug("Searching notification schema by application id {} type {}", appId, type);
     List<NotificationSchema> schemas = Collections.emptyList();
     if (isNotBlank(appId)) {
@@ -84,8 +86,10 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
   }
 
   @Override
-  public NotificationSchema findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int version) {
-    LOG.debug("Searching notification schema by application id [{}] type [{}] version [{}]", appId, type, version);
+  public NotificationSchema findNotificationSchemasByAppIdAndTypeAndVersion(
+          String appId, NotificationTypeDto type, int version) {
+    LOG.debug("Searching notification schema by application id [{}] type [{}] version [{}]",
+            appId, type, version);
     NotificationSchema schema = null;
     if (isNotBlank(appId)) {
       schema = findOneByCriterion(Restrictions.and(
@@ -102,7 +106,8 @@ public class HibernateNotificationSchemaDao extends HibernateAbstractDao<Notific
   }
 
   @Override
-  public NotificationSchema findLatestNotificationSchemaByAppId(String appId, NotificationTypeDto type) {
+  public NotificationSchema findLatestNotificationSchemaByAppId(
+          String appId, NotificationTypeDto type) {
     LOG.debug("Searching latest notification schema by application id [{}] type [{}]", appId, type);
     NotificationSchema latestSchema = null;
     if (isNotBlank(appId)) {

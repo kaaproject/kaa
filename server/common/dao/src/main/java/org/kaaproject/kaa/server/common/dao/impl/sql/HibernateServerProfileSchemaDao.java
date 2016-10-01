@@ -38,7 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateServerProfileSchemaDao extends HibernateAbstractDao<ServerProfileSchema> implements ServerProfileSchemaDao<ServerProfileSchema> {
+public class HibernateServerProfileSchemaDao extends HibernateAbstractDao<ServerProfileSchema>
+        implements ServerProfileSchemaDao<ServerProfileSchema> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateServerProfileSchemaDao.class);
 
@@ -82,12 +83,14 @@ public class HibernateServerProfileSchemaDao extends HibernateAbstractDao<Server
 
   @Override
   public ServerProfileSchema findByAppIdAndVersion(String appId, int version) {
-    LOG.debug("Searching server profile schema by application id [{}] and version [{}]", appId, version);
+    LOG.debug("Searching server profile schema by application id [{}] and version [{}]",
+            appId, version);
     ServerProfileSchema schema = null;
     if (isNotBlank(appId)) {
-      schema = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
-          Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-          Restrictions.eq(VERSION_PROPERTY, version)));
+      schema = findOneByCriterionWithAlias(
+              APPLICATION_PROPERTY, APPLICATION_ALIAS, Restrictions.and(
+              Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+              Restrictions.eq(VERSION_PROPERTY, version)));
     }
     if (LOG.isTraceEnabled()) {
       LOG.trace("[{},{}] Search result: {}.", appId, version, schema);
@@ -100,7 +103,8 @@ public class HibernateServerProfileSchemaDao extends HibernateAbstractDao<Server
   @Override
   public void removeByAppId(String appId) {
     if (isNotBlank(appId)) {
-      List<ServerProfileSchema> schemaList = findListByCriterion(Restrictions.eq(APPLICATION_REFERENCE, getLongId(appId)));
+      List<ServerProfileSchema> schemaList = findListByCriterion(Restrictions.eq(
+              APPLICATION_REFERENCE, getLongId(appId)));
       removeList(schemaList);
     }
     LOG.debug("Removed server profile schemas by application id [{}]", appId);

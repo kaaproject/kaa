@@ -39,7 +39,8 @@ public final class EndpointRegistrationDto implements HasId, Serializable {
   public EndpointRegistrationDto() {
   }
 
-  public EndpointRegistrationDto(String applicationId, String endpointId, String credentialsId, Integer serverProfileVersion, String serverProfileBody) {
+  public EndpointRegistrationDto(String applicationId, String endpointId, String credentialsId,
+                                 Integer serverProfileVersion, String serverProfileBody) {
     this.applicationId = applicationId;
     this.endpointId = endpointId;
     this.credentialsId = credentialsId;
@@ -103,8 +104,10 @@ public final class EndpointRegistrationDto implements HasId, Serializable {
     result = prime * result + ((this.applicationId == null) ? 0 : this.applicationId.hashCode());
     result = prime * result + ((this.credentialsId == null) ? 0 : this.credentialsId.hashCode());
     result = prime * result + ((this.endpointId == null) ? 0 : this.endpointId.hashCode());
-    result = prime * result + ((this.serverProfileBody == null) ? 0 : this.serverProfileBody.hashCode());
-    result = prime * result + ((this.serverProfileVersion == null) ? 0 : this.serverProfileVersion.hashCode());
+    result = prime * result + ((this.serverProfileBody == null) ? 0 :
+            this.serverProfileBody.hashCode());
+    result = prime * result + ((this.serverProfileVersion == null) ? 0 :
+            this.serverProfileVersion.hashCode());
     return result;
   }
 

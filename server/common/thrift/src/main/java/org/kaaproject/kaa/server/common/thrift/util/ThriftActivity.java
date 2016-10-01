@@ -26,9 +26,9 @@ public interface ThriftActivity<T> {
   /**
    * Do in template.
    *
-   * @param t the t
+   * @param template the template
    */
-  public void doInTemplate(T t);
+  public void doInTemplate(T template);
 
   /**
    * Checks if is success.

@@ -42,7 +42,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> implements EventClassDao<EventClass> {
+public class HibernateEventClassDao extends HibernateAbstractDao<EventClass>
+        implements EventClassDao<EventClass> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateEventClassDao.class);
 
@@ -56,7 +57,8 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
     List<EventClass> eventClasses = Collections.emptyList();
     LOG.debug("Searching event classes by ecfv id [{}] ", ecfvId);
     if (isNotBlank(ecfvId)) {
-      eventClasses = findListByCriterionWithAlias(ECFV_PROPERTY, ECFV_ALIAS, Restrictions.eq(ECFV_REFERENCE, Long.valueOf(ecfvId)));
+      eventClasses = findListByCriterionWithAlias(ECFV_PROPERTY, ECFV_ALIAS, Restrictions.eq(
+              ECFV_REFERENCE, Long.valueOf(ecfvId)));
     }
     if (LOG.isTraceEnabled()) {
       LOG.trace("[{}] Search result: {}.", ecfvId, Arrays.toString(eventClasses.toArray()));
@@ -67,8 +69,10 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
   }
 
   @Override
-  public List<EventClass> findByEcfvIdVersionAndType(String ecfvId, int version, EventClassType type) {
-    LOG.debug("Searching event class by ecfv id [{}] version [{}] and type [{}]", ecfvId, version, type);
+  public List<EventClass> findByEcfvIdVersionAndType(String ecfvId, int version,
+                                                     EventClassType type) {
+    LOG.debug("Searching event class by ecfv id [{}] version [{}] and type [{}]",
+            ecfvId, version, type);
     List<EventClass> eventClasses = Collections.emptyList();
     if (isNotBlank(ecfvId)) {
       List<Criterion> predicates = new ArrayList<>();
@@ -81,7 +85,8 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
           Restrictions.and(predicates.toArray(new Criterion[]{})));
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{},{}] Search result: {}.", ecfvId, version, type, Arrays.toString(eventClasses.toArray()));
+      LOG.trace("[{},{},{}] Search result: {}.", ecfvId, version, type,
+              Arrays.toString(eventClasses.toArray()));
     } else {
       LOG.debug("[{},{},{}] Search result: {}.", ecfvId, version, type, eventClasses.size());
     }
@@ -109,7 +114,8 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
               Restrictions.eq(FQN_PROPERTY, fqn)));
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{}] Search result: {}.", tenantId, fqn, Arrays.toString(eventClasses.toArray()));
+      LOG.trace("[{},{}] Search result: {}.", tenantId, fqn, Arrays.toString(
+              eventClasses.toArray()));
     } else {
       LOG.debug("[{},{}] Search result: {}.", tenantId, fqn, eventClasses.size());
     }
@@ -118,7 +124,8 @@ public class HibernateEventClassDao extends HibernateAbstractDao<EventClass> imp
 
   @Override
   public EventClass findByTenantIdAndFqnAndVersion(String tenantId, String fqn, int version) {
-    LOG.debug("Searching event classes by tenant id [{}], fqn [{}] and version [{}]", tenantId, fqn, version);
+    LOG.debug("Searching event classes by tenant id [{}], fqn [{}] and version [{}]",
+            tenantId, fqn, version);
     EventClass eventClass = null;
     if (isNotBlank(tenantId)) {
       eventClass = findOneByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,

@@ -106,15 +106,15 @@ public class EndpointGroupDto implements HasId, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    EndpointGroupDto that = (EndpointGroupDto) o;
+    EndpointGroupDto that = (EndpointGroupDto) obj;
 
     if (sequenceNumber != that.sequenceNumber) {
       return false;
@@ -122,7 +122,8 @@ public class EndpointGroupDto implements HasId, Serializable {
     if (weight != that.weight) {
       return false;
     }
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
       return false;
     }
     if (name != null ? !name.equals(that.name) : that.name != null) {
@@ -147,14 +148,14 @@ public class EndpointGroupDto implements HasId, Serializable {
 
   @Override
   public String toString() {
-    return "EndpointGroupDto{" +
-        "id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        ", applicationId='" + applicationId + '\'' +
-        ", weight=" + weight +
-        ", sequenceNumber=" + sequenceNumber +
-        ", topics=" + topics +
-        '}';
+    return "EndpointGroupDto{"
+           + "id='" + id + '\''
+           + ", name='" + name + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", weight=" + weight
+           + ", sequenceNumber=" + sequenceNumber
+           + ", topics=" + topics
+           + '}';
   }
 
   public int incrementSecNum() {

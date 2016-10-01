@@ -722,7 +722,7 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public CTLSchemaDto compute(String key) {
         LOG.debug("Fetching result for ctl schemas");
-        return ctlService.findCTLSchemaById(key);
+        return ctlService.findCtlSchemaById(key);
       }
     });
   }
@@ -734,7 +734,7 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public String compute(String key) {
         LOG.debug("Fetching result for ctl schemas");
-        CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(key);
+        CTLSchemaDto ctlSchema = ctlService.findCtlSchemaById(key);
         return ctlService.flatExportAsString(ctlSchema);
       }
     });

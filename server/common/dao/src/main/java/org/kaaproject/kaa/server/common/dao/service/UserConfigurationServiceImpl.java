@@ -63,7 +63,8 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
   private EndpointUserDao<EndpointUser> endpointUserDao;
 
   @Override
-  public EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto userConfig) {
+  public EndpointUserConfigurationDto saveUserConfiguration(
+          EndpointUserConfigurationDto userConfig) {
     EndpointUserConfigurationDto userConfigurationDto = null;
     if (userConfig != null) {
       String userConfigBody = userConfig.getBody();
@@ -72,33 +73,43 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
         ApplicationDto applicationDto = applicationService.findAppByApplicationToken(appToken);
         if (applicationDto != null) {
           int schemaVersion = userConfig.getSchemaVersion();
-          ConfigurationSchemaDto schemaDto = configurationService.findConfSchemaByAppIdAndVersion(applicationDto.getId(), schemaVersion);
+          ConfigurationSchemaDto schemaDto = configurationService.findConfSchemaByAppIdAndVersion(
+                  applicationDto.getId(), schemaVersion);
           if (schemaDto != null) {
             OverrideSchema overrideSchema = new OverrideSchema(schemaDto.getOverrideSchema());
-            LOG.debug("Create default UUID validator with override schema: {}", overrideSchema.getRawSchema());
-            UuidValidator<OverrideData> uuidValidator = new DefaultUuidValidator<>(overrideSchema, new OverrideDataFactory());
-            GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(overrideSchema.getRawSchema());
+            LOG.debug("Create default UUID validator with override schema: {}",
+                    overrideSchema.getRawSchema());
+            UuidValidator<OverrideData> uuidValidator = new DefaultUuidValidator<>(
+                    overrideSchema, new OverrideDataFactory());
+            GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(
+                    overrideSchema.getRawSchema());
             try {
               GenericRecord configRecord = avroConverter.decodeJson(userConfigBody);
-              // TODO: Need to use last active configuration instead of null. Will be changed after supporting delta configuration
+              // TODO: Need to use last active configuration instead of null.
+              // TODO: Will be changed after supporting delta configuration
               KaaData<OverrideSchema> body = uuidValidator.validateUuidFields(configRecord, null);
               if (body != null) {
                 userConfig.setBody(body.getRawData());
                 userConfigurationDto = getDto(endpointUserConfigurationDao.save(userConfig));
               } else {
                 LOG.warn("Validated endpoint user configuration body is empty");
-                throw new IncorrectParameterException("Validated endpoint user configuration body is empty");
+                throw new IncorrectParameterException(
+                        "Validated endpoint user configuration body is empty");
               }
-            } catch (IOException e) {
-              LOG.error("Invalid endpoint user configuration for override schema.", e);
-              throw new IncorrectParameterException("Invalid endpoint user configuration for override schema.");
+            } catch (IOException ex) {
+              LOG.error("Invalid endpoint user configuration for override schema.", ex);
+              throw new IncorrectParameterException(
+                      "Invalid endpoint user configuration for override schema.");
             }
           } else {
-            LOG.warn("Can't find configuration schema with version {} for endpoint user configuration.", schemaVersion);
-            throw new IncorrectParameterException("Can't find configuration schema for specified version.");
+            LOG.warn("Can't find configuration schema with version {} for "
+                     + "endpoint user configuration.", schemaVersion);
+            throw new IncorrectParameterException("Can't find configuration schema for "
+                                                  + "specified version.");
           }
         } else {
-          LOG.warn("Can't find application with token {} for endpoint user configuration.", appToken);
+          LOG.warn("Can't find application with token {} for endpoint user configuration.",
+                  appToken);
           throw new IncorrectParameterException("Can't find application for specified token.");
         }
       } else {
@@ -110,8 +121,10 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
   }
 
   @Override
-  public EndpointUserConfigurationDto findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion) {
-    return getDto(endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(userId, appToken, schemaVersion));
+  public EndpointUserConfigurationDto findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(
+          String userId, String appToken, Integer schemaVersion) {
+    return getDto(endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
+            userId, appToken, schemaVersion));
   }
 
   @Override
@@ -120,8 +133,10 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
   }
 
   @Override
-  public void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion) {
-    endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userId, appToken, schemaVersion);
+  public void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken,
+                                                        Integer schemaVersion) {
+    endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userId, appToken,
+            schemaVersion);
   }
 
   @Override
@@ -131,7 +146,8 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
       Integer schemaVersion,
       String tenantId) {
     if (isNotBlank(externalUid)) {
-      EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(externalUid, tenantId);
+      EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(
+              externalUid, tenantId);
       if (endpointUser != null) {
         return getDto(endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
             endpointUser.getId(),
@@ -148,7 +164,8 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
   }
 
 
-  public void setEndpointUserConfigurationDao(EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao) {
+  public void setEndpointUserConfigurationDao(
+          EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao) {
     this.endpointUserConfigurationDao = endpointUserConfigurationDao;
   }
 

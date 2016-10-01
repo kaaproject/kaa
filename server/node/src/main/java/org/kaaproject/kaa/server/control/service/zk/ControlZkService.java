@@ -129,9 +129,9 @@ public class ControlZkService {
             }
 
             @Override
-            public void doInTemplate(Client client) {
+            public void doInTemplate(Client template) {
               try { // NOSONAR
-                client.onNotification(thriftNotification);
+                template.onNotification(thriftNotification);
               } catch (TException ex) {
                 LOG.error("Unexpected error occurred while send notification to endpoint server",
                     ex);

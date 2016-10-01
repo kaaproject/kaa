@@ -113,7 +113,8 @@ public class CliSessionState {
   public void connect() throws TException {
     transport = new TSocket(host, port);
     TProtocol protocol = new TBinaryProtocol(transport);
-    TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, KaaThriftService.KAA_NODE_SERVICE.getServiceName());
+    TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol,
+            KaaThriftService.KAA_NODE_SERVICE.getServiceName());
     client = new CliClient(mp);
     transport.open();
     remoteServerName = client.serverName();

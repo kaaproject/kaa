@@ -185,7 +185,7 @@ public interface ConfigurationService {
                                         String groupId);
 
   /**
-   * Save Configuration schema. <p> During saving new configuration schema will be generated: <ul>
+   * Save Configuration schema. During saving new configuration schema will be generated: <ul>
    * <li>Base Schema</li> <li>Override Schema</li> <li>Protocol Schema</li> <li>Base Data -
    * Configuration attached to default group</li> </ul> After that will added information
    * to history

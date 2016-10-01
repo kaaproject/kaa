@@ -1237,7 +1237,7 @@ public class DefaultControlService implements ControlService {
 
             List<CTLSchemaDto> ctlDtos = new ArrayList<>();
             List<String> flatEventClassCtlSchemas = new ArrayList<>();
-            records.forEach(rec -> ctlDtos.add(ctlService.findCTLSchemaById(rec.getCtlSchemaId())));
+            records.forEach(rec -> ctlDtos.add(ctlService.findCtlSchemaById(rec.getCtlSchemaId())));
             ctlDtos.forEach(
                 ctlDto -> flatEventClassCtlSchemas.add(
                     new DataSchema(ctlService.flatExportAsString(ctlDto)).getRawSchema()
@@ -2316,7 +2316,7 @@ public class DefaultControlService implements ControlService {
 
   @Override
   public CTLSchemaDto saveCtlSchema(CTLSchemaDto schema) throws ControlServiceException {
-    return ctlService.saveCTLSchema(schema);
+    return ctlService.saveCtlSchema(schema);
   }
 
   @Override
@@ -2324,13 +2324,13 @@ public class DefaultControlService implements ControlService {
                                                                      String tenantId,
                                                                      String applicationId)
       throws ControlServiceException {
-    ctlService.removeCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId,
+    ctlService.removeCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId,
         applicationId);
   }
 
   @Override
   public CTLSchemaDto getCtlSchemaById(String schemaId) throws ControlServiceException {
-    CTLSchemaDto ctlSchemaDto = ctlService.findCTLSchemaById(schemaId);
+    CTLSchemaDto ctlSchemaDto = ctlService.findCtlSchemaById(schemaId);
     if (ctlSchemaDto == null) {
       LOG.error("CTL schema with Id [{}] not found!", schemaId);
       throw new NotFoundException("CTL schema not found!");
@@ -2343,7 +2343,7 @@ public class DefaultControlService implements ControlService {
                                                                        String tenantId,
                                                                        String applicationId)
       throws ControlServiceException {
-    return ctlService.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId,
+    return ctlService.findCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId,
         applicationId);
   }
 
@@ -2357,7 +2357,7 @@ public class DefaultControlService implements ControlService {
                                                                           String tenantId,
                                                                           String applicationId)
       throws ControlServiceException {
-    return ctlService.findAnyCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId,
+    return ctlService.findAnyCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(fqn, version, tenantId,
         applicationId);
   }
 
@@ -2370,31 +2370,31 @@ public class DefaultControlService implements ControlService {
 
   @Override
   public CTLSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
-    return ctlService.updateCTLSchemaMetaInfoScope(ctlSchemaMetaInfo);
+    return ctlService.updateCtlSchemaMetaInfoScope(ctlSchemaMetaInfo);
   }
 
   @Override
   public List<CTLSchemaMetaInfoDto> getSystemCtlSchemasMetaInfo() throws ControlServiceException {
-    return ctlService.findSystemCTLSchemasMetaInfo();
+    return ctlService.findSystemCtlSchemasMetaInfo();
   }
 
   @Override
   public Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForSystem()
       throws ControlServiceException {
-    return extractCtlSchemaVersionsInfo(ctlService.findSystemCTLSchemasMetaInfo());
+    return extractCtlSchemaVersionsInfo(ctlService.findSystemCtlSchemasMetaInfo());
   }
 
   @Override
   public List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForTenant(String tenantId)
       throws ControlServiceException {
-    return ctlService.findAvailableCTLSchemasMetaInfoForTenant(tenantId);
+    return ctlService.findAvailableCtlSchemasMetaInfoForTenant(tenantId);
   }
 
   @Override
   public Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForTenant(String tenantId)
       throws ControlServiceException {
     return extractCtlSchemaVersionsInfo(
-        ctlService.findAvailableCTLSchemasMetaInfoForTenant(tenantId)
+        ctlService.findAvailableCtlSchemasMetaInfoForTenant(tenantId)
     );
   }
 
@@ -2402,7 +2402,7 @@ public class DefaultControlService implements ControlService {
   public List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForApplication(String tenantId,
                                                                                  String appId)
       throws ControlServiceException {
-    return ctlService.findAvailableCTLSchemasMetaInfoForApplication(tenantId, appId);
+    return ctlService.findAvailableCtlSchemasMetaInfoForApplication(tenantId, appId);
   }
 
   @Override
@@ -2410,7 +2410,7 @@ public class DefaultControlService implements ControlService {
                                                                              String appId)
       throws ControlServiceException {
     return extractCtlSchemaVersionsInfo(
-        ctlService.findAvailableCTLSchemasMetaInfoForApplication(tenantId, appId)
+        ctlService.findAvailableCtlSchemasMetaInfoForApplication(tenantId, appId)
     );
   }
 
@@ -2425,20 +2425,20 @@ public class DefaultControlService implements ControlService {
 
   @Override
   public List<CTLSchemaDto> getCtlSchemaDependents(String schemaId) throws ControlServiceException {
-    return ctlService.findCTLSchemaDependents(schemaId);
+    return ctlService.findCtlSchemaDependents(schemaId);
   }
 
   @Override
   public List<CTLSchemaDto> getCtlSchemaDependents(String fqn, int version,
                                                    String tenantId, String applicationId)
       throws ControlServiceException {
-    return ctlService.findCTLSchemaDependents(fqn, version, tenantId, applicationId);
+    return ctlService.findCtlSchemaDependents(fqn, version, tenantId, applicationId);
   }
 
   @Override
   public CTLSchemaDto getLatestCtlSchemaByFqnTenantIdAndApplicationId(
       String fqn, String tenantId, String applicationId) throws ControlServiceException {
-    return ctlService.findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(fqn, tenantId,
+    return ctlService.findLatestCtlSchemaByFqnAndTenantIdAndApplicationId(fqn, tenantId,
         applicationId);
   }
 
@@ -2450,7 +2450,7 @@ public class DefaultControlService implements ControlService {
   @Override
   public List<Integer> getAllCtlSchemaVersionsByFqnTenantIdAndApplicationId(
       String fqn, String tenantId, String applicationId) throws ControlServiceException {
-    List<CTLSchemaDto> schemas = ctlService.findAllCTLSchemasByFqnAndTenantIdAndApplicationId(fqn,
+    List<CTLSchemaDto> schemas = ctlService.findAllCtlSchemasByFqnAndTenantIdAndApplicationId(fqn,
         tenantId, applicationId);
     List<Integer> versions = new ArrayList<>(schemas.size());
     for (CTLSchemaDto schema : schemas) {
@@ -2681,7 +2681,7 @@ public class DefaultControlService implements ControlService {
         );
 
     CTLSchemaDto ctlSchemaDto = ctlService
-        .findCTLSchemaById(configurationSchemaDto.getCtlSchemaId());
+        .findCtlSchemaById(configurationSchemaDto.getCtlSchemaId());
     String schema = ctlService.flatExportAsString(ctlSchemaDto);
     String endConf = null;
     String appToken;
@@ -2718,7 +2718,7 @@ public class DefaultControlService implements ControlService {
             endpointProfileDto.getConfigurationVersion()
         );
     CTLSchemaDto ctlSchemaDto = ctlService
-        .findCTLSchemaById(configurationSchemaDto.getCtlSchemaId());
+        .findCtlSchemaById(configurationSchemaDto.getCtlSchemaId());
     return ctlService.flatExportAsSchema(ctlSchemaDto);
   }
 

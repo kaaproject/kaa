@@ -63,23 +63,28 @@ public class HistoryServiceImpl implements HistoryService {
   @Override
   public HistoryDto findHistoryBySeqNumber(String appId, int seqNum) {
     LOG.debug("Find history by application id [{}] and sequence number {}", appId, seqNum);
-    validateId(appId, "Can't find history by application id and sequence number. Invalid application id " + appId);
+    validateId(appId, "Can't find history by application id and sequence number. "
+                      + "Invalid application id " + appId);
     return getDto(historyDao.findBySeqNumber(appId, seqNum));
   }
 
   @Override
   public List<HistoryDto> findHistoriesBySeqNumberStart(String appId, int startSeqNum) {
-    LOG.debug("Find history range by application id [{}] and start sequence number {}", appId, startSeqNum);
-    validateId(appId, "Can't find history by application id and start sequence number. Invalid application id " + appId);
+    LOG.debug("Find history range by application id [{}] and start sequence number {}",
+            appId, startSeqNum);
+    validateId(appId, "Can't find history by application id and start sequence number. "
+                      + "Invalid application id " + appId);
     return convertDtoList(historyDao.findBySeqNumberStart(appId, startSeqNum));
   }
 
   @Override
-  public List<HistoryDto> findHistoriesBySeqNumberRange(String appId, int startSeqNum, int endSeqNum) {
-    LOG.debug("Find history range by application id [{}] and start sequence number {} end sequence number {} ",
-        appId, startSeqNum, endSeqNum);
+  public List<HistoryDto> findHistoriesBySeqNumberRange(
+          String appId, int startSeqNum, int endSeqNum) {
+    LOG.debug("Find history range by application id [{}] and start sequence number {} "
+              + "end sequence number {} ", appId, startSeqNum, endSeqNum);
 
-    validateId(appId, "Can't find history by application id and sequence number range. Invalid application id " + appId);
+    validateId(appId, "Can't find history by application id and sequence number range. "
+                      + "Invalid application id " + appId);
     return convertDtoList(historyDao.findBySeqNumberRange(appId, startSeqNum, endSeqNum));
   }
 

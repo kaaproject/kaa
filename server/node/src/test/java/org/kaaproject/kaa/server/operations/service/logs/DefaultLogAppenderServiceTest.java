@@ -177,7 +177,7 @@ public class DefaultLogAppenderServiceTest {
 
     CTLSchemaDto ctlSchemaDto = new CTLSchemaDto();
 
-    when(ctlService.findCTLSchemaById(dto.getCtlSchemaId())).thenReturn(ctlSchemaDto);
+    when(ctlService.findCtlSchemaById(dto.getCtlSchemaId())).thenReturn(ctlSchemaDto);
 
     LogSchema logSchema = new LogSchema(dto, ctlSchemaDto.getBody());
 

@@ -87,8 +87,8 @@ public class PageLinkDto implements Serializable {
     String nextUrlPart = null;
     if (limit != null && offset != null) {
       StringBuilder sb = new StringBuilder();
-      sb.append(ENDPOINT_GROUP_ID).append(EQ).append(endpointGroupId).append(AMP).append(LIMIT).append(EQ).append(limit)
-          .append(AMP).append(OFFSET).append(EQ).append(offset);
+      sb.append(ENDPOINT_GROUP_ID).append(EQ).append(endpointGroupId).append(AMP).append(LIMIT)
+              .append(EQ).append(limit).append(AMP).append(OFFSET).append(EQ).append(offset);
       nextUrlPart = sb.toString();
     }
     return nextUrlPart;

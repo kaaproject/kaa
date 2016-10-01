@@ -132,7 +132,7 @@ public class ProfileServiceIT extends AbstractTest {
     ctl1SchemaDto.setMetaInfo(ctl1MetaDataDto);
     ctl1SchemaDto.setVersion(2);
     ctl1SchemaDto.setBody(EmptyData.SCHEMA$.toString());
-    ctl1SchemaDto = ctlService.saveCTLSchema(ctl1SchemaDto);
+    ctl1SchemaDto = ctlService.saveCtlSchema(ctl1SchemaDto);
 
     schema1Dto = new EndpointProfileSchemaDto();
     schema1Dto.setVersion(PROFILE_SCHEMA_VERSION);
@@ -146,7 +146,7 @@ public class ProfileServiceIT extends AbstractTest {
     ctl2SchemaDto.setMetaInfo(ctl2MetaDataDto);
     ctl2SchemaDto.setVersion(2);
     ctl2SchemaDto.setBody(BasicEndpointProfile.SCHEMA$.toString());
-    ctl2SchemaDto = ctlService.saveCTLSchema(ctl2SchemaDto);
+    ctl2SchemaDto = ctlService.saveCtlSchema(ctl2SchemaDto);
 
     schema2Dto = new EndpointProfileSchemaDto();
     schema2Dto.setVersion(NEW_PROFILE_SCHEMA_VERSION);

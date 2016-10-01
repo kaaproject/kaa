@@ -87,7 +87,8 @@ public interface ProfileService {
    * @param includeDeprecated the include deprecated filters
    * @return the collection of profile filters
    */
-  Collection<ProfileFilterRecordDto> findAllProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated);
+  Collection<ProfileFilterRecordDto> findAllProfileFilterRecordsByEndpointGroupId(
+          String endpointGroupId, boolean includeDeprecated);
 
   /**
    * Find profile filter record by schema ids and endpoint group id.
@@ -97,7 +98,8 @@ public interface ProfileService {
    * @param endpointGroupId         the endpoint group identifier
    * @return the structure record dto
    */
-  ProfileFilterRecordDto findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId);
+  ProfileFilterRecordDto findProfileFilterRecordBySchemaIdAndEndpointGroupId(
+          String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId);
 
   /**
    * Find all vacant profile schemas versions by endpoint group id.
@@ -150,7 +152,9 @@ public interface ProfileService {
    * @param deactivatedUsername     the deactivated username
    * @return the change profile filter notification
    */
-  ChangeProfileFilterNotification deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId, String deactivatedUsername);
+  ChangeProfileFilterNotification deleteProfileFilterRecord(
+          String endpointProfileSchemaId, String serverProfileSchemaId,
+          String groupId, String deactivatedUsername);
 
   /**
    * Find profile filter by application id and version.
@@ -160,7 +164,8 @@ public interface ProfileService {
    * @param serverSchemaVersion   the schema version
    * @return the list of profile filters
    */
-  List<ProfileFilterDto> findProfileFiltersByAppIdAndVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion);
+  List<ProfileFilterDto> findProfileFiltersByAppIdAndVersionsCombination(
+          String appId, int endpointSchemaVersion, int serverSchemaVersion);
 
   /**
    * Find profile schema by application id and version.
@@ -179,7 +184,8 @@ public interface ProfileService {
    * @param groupId                 the endpoint group identifier
    * @return found profile filter
    */
-  ProfileFilterDto findLatestFilterBySchemaIdsAndGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
+  ProfileFilterDto findLatestFilterBySchemaIdsAndGroupId(
+          String endpointProfileSchemaId, String serverProfileSchemaId, String groupId);
 
   EndpointProfileDto findEndpointProfileByEndpointKeyHash(String endpointKeyHash);
 }

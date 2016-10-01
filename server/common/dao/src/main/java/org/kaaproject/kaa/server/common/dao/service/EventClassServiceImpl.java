@@ -97,19 +97,22 @@ public class EventClassServiceImpl implements EventClassService {
 
   @Override
   public EventClassFamilyDto findEventClassFamilyById(String id) {
-    validateSqlId(id, "Event class family id is incorrect. Can't find event class family by id " + id);
+    validateSqlId(id, "Event class family id is incorrect. Can't find event class family by id "
+                      + id);
     return getDto(eventClassFamilyDao.findById(id));
   }
 
   @Override
   public EventClassFamilyDto findEventClassFamilyByEcfvId(String id) {
-    validateSqlId(id, "Event class family version id is incorrect. Can't find event class family by ECF version id " + id);
+    validateSqlId(id, "Event class family version id is incorrect. Can't find event class family "
+                      + "by ECF version id " + id);
     return getDto(eventClassFamilyDao.findByEcfvId(id));
   }
 
   @Override
   public List<EventClassFamilyVersionDto> findEventClassFamilyVersionsByEcfId(String ecfId) {
-    validateSqlId(ecfId, "Event class family id is incorrect. Can't find event class family by id " + ecfId);
+    validateSqlId(ecfId, "Event class family id is incorrect. Can't find event class family by id "
+                         + ecfId);
     EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
     return convertDtoList(ecf.getSchemas());
   }
@@ -119,29 +122,43 @@ public class EventClassServiceImpl implements EventClassService {
       EventClassFamilyDto eventClassFamilyDto) {
     EventClassFamilyDto savedEventClassFamilyDto = null;
     if (isValidSqlObject(eventClassFamilyDto)) {
-      if (eventClassFamilyDao.validateName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getName())) {
+      if (eventClassFamilyDao.validateName(eventClassFamilyDto.getTenantId(),
+              eventClassFamilyDto.getId(), eventClassFamilyDto.getName())) {
         if (StringUtils.isBlank(eventClassFamilyDto.getId())) {
           if (NamesValidator.validateNamespace(eventClassFamilyDto.getNamespace())) {
             if (NamesValidator.validateClassName(eventClassFamilyDto.getClassName())) {
-              if (eventClassFamilyDao.validateClassName(eventClassFamilyDto.getTenantId(), eventClassFamilyDto.getId(), eventClassFamilyDto.getClassName())) {
+              if (eventClassFamilyDao.validateClassName(eventClassFamilyDto.getTenantId(),
+                      eventClassFamilyDto.getId(), eventClassFamilyDto.getClassName())) {
                 eventClassFamilyDto.setCreatedTime(System.currentTimeMillis());
               } else {
-                LOG.debug("Can't save event class family. Class name should be unique within the tenant.");
-                throw new IncorrectParameterException("Incorrect event class family. Class name should be unique within the tenant.");
+                LOG.debug("Can't save event class family. Class name should be unique within the "
+                          + "tenant.");
+                throw new IncorrectParameterException("Incorrect event class family. Class name "
+                                                      + "should be unique within the tenant.");
               }
             } else {
-              LOG.debug("Can't save event class family. Class name [{}] is not valid.", eventClassFamilyDto.getClassName());
-              throw new IncorrectParameterException("Incorrect event class family. Class name is not valid. '" + eventClassFamilyDto.getClassName() + "' is not a valid identifier.");
+              LOG.debug("Can't save event class family. Class name [{}] is not valid.",
+                      eventClassFamilyDto.getClassName());
+              throw new IncorrectParameterException("Incorrect event class family. Class name "
+                                                    + "is not valid. '"
+                                                    + eventClassFamilyDto.getClassName()
+                                                    + "' is not a valid identifier.");
             }
           } else {
-            LOG.debug("Can't save event class family. Namespace [{}] is not valid.", eventClassFamilyDto.getNamespace());
-            throw new IncorrectParameterException("Incorrect event class family. Namespace is not valid. '" + eventClassFamilyDto.getNamespace() + "' is not a valid identifier.");
+            LOG.debug("Can't save event class family. Namespace [{}] is not valid.",
+                    eventClassFamilyDto.getNamespace());
+            throw new IncorrectParameterException("Incorrect event class family. Namespace is "
+                                                  + "not valid. '"
+                                                  + eventClassFamilyDto.getNamespace()
+                                                  + "' is not a valid identifier.");
           }
         }
-        savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(new EventClassFamily(eventClassFamilyDto)));
+        savedEventClassFamilyDto = getDto(eventClassFamilyDao.save(new EventClassFamily(
+                eventClassFamilyDto)));
       } else {
         LOG.debug("Can't save event class family. Name should be unique within the tenant.");
-        throw new IncorrectParameterException("Incorrect event class family. Name should be unique within the tenant.");
+        throw new IncorrectParameterException("Incorrect event class family. Name should be unique"
+                                              + " within the tenant.");
       }
     }
     return savedEventClassFamilyDto;
@@ -149,7 +166,8 @@ public class EventClassServiceImpl implements EventClassService {
 
   @Override
   public void addEventClassFamilyVersion(String eventClassFamilyId,
-                                         EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername) {
+                                         EventClassFamilyVersionDto eventClassFamilyVersion,
+                                         String createdUsername) {
     EventClassFamilyDto eventClassFamily = findEventClassFamilyById(eventClassFamilyId);
     if (eventClassFamily != null) {
       List<EventClassDto> records = eventClassFamilyVersion.getRecords();
@@ -158,7 +176,8 @@ public class EventClassServiceImpl implements EventClassService {
         fqns.add(eventClass.getFqn());
       }
       if (validateEventClassFamilyFqns(eventClassFamily.getId(), fqns)) {
-        List<EventClassFamilyVersionDto> schemasDto = findEventClassFamilyVersionsByEcfId(eventClassFamilyId);
+        List<EventClassFamilyVersionDto> schemasDto = findEventClassFamilyVersionsByEcfId(
+                eventClassFamilyId);
         int version = 1;
         if (schemasDto != null && !schemasDto.isEmpty()) {
           Collections.sort(schemasDto, new Comparator<EventClassFamilyVersionDto>() {
@@ -176,26 +195,29 @@ public class EventClassServiceImpl implements EventClassService {
         eventClassFamilyVersion.setCreatedTime(System.currentTimeMillis());
         eventClassFamilyVersion.setCreatedUsername(createdUsername);
         schemasDto.add(eventClassFamilyVersion);
-        EventClassFamily ecf = new EventClassFamily(eventClassFamily);
         List<EventClassFamilyVersion> schemas = new ArrayList<>();
         for (EventClassDto eventClass : records) {
           setEventClassProperties(eventClassFamily, eventClass);
         }
         schemasDto.forEach(s -> schemas.add(new EventClassFamilyVersion(s)));
         setBackreference(schemas);
+        EventClassFamily ecf = new EventClassFamily(eventClassFamily);
         ecf.setSchemas(schemas);
         eventClassFamilyDao.save(ecf);
       } else {
         LOG.debug("Can't process event class family schema.");
-        throw new IncorrectParameterException("Incorrect event class family schema. FQNs should be unique within the tenant.");
+        throw new IncorrectParameterException("Incorrect event class family schema. FQNs should be"
+                                              + " unique within the tenant.");
       }
     } else {
       LOG.debug("Can't find related event class family.");
-      throw new IncorrectParameterException("Event class family not found, id:" + eventClassFamilyId);
+      throw new IncorrectParameterException("Event class family not found, id:"
+                                            + eventClassFamilyId);
     }
   }
 
-  private void setEventClassProperties(EventClassFamilyDto eventClassFamilyDto, EventClassDto eventClass) {
+  private void setEventClassProperties(EventClassFamilyDto eventClassFamilyDto,
+                                       EventClassDto eventClass) {
     eventClass.setTenantId(eventClassFamilyDto.getTenantId());
     eventClass.setVersion(ctlSchemaDao.findById(eventClass.getCtlSchemaId()).getVersion());
   }
@@ -206,20 +228,25 @@ public class EventClassServiceImpl implements EventClassService {
 
   @Override
   public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
-    Set<String> storedFQNs = getFqnSetForECF(eventClassFamilyId);
+    Set<String> storedFqns = getFqnSetForECF(eventClassFamilyId);
     for (String fqn : fqns) {
-      if (storedFQNs.contains(fqn)) return false;
+      if (storedFqns.contains(fqn)) {
+        return false;
+      }
     }
     return true;
   }
 
   @Override
-  public List<EventClassDto> findEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type) {
+  public List<EventClassDto> findEventClassesByFamilyIdVersionAndType(String ecfId, int version,
+                                                                      EventClassType type) {
     List<EventClassDto> eventClasses = new ArrayList<>();
     if (isValidSqlId(ecfId)) {
-      LOG.debug("Find event classes by family id [{}] version [{}] and type [{}]", ecfId, version, type);
+      LOG.debug("Find event classes by family id [{}] version [{}] and type [{}]",
+              ecfId, version, type);
       EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
-      Optional<EventClassFamilyVersion> ecfv = ecf.getSchemas().stream().filter(s -> s.getVersion() == version).findFirst();
+      Optional<EventClassFamilyVersion> ecfv = ecf.getSchemas().stream()
+              .filter(s -> s.getVersion() == version).findFirst();
 
       if (type == null) {
         ecfv.ifPresent(
@@ -247,7 +274,8 @@ public class EventClassServiceImpl implements EventClassService {
   }
 
   @Override
-  public EventClassDto findEventClassByTenantIdAndFQNAndVersion(String tenantId, String fqn, int version) {
+  public EventClassDto findEventClassByTenantIdAndFQNAndVersion(String tenantId, String fqn,
+                                                                int version) {
     if (isValidSqlId(tenantId)) {
       LOG.debug("Find event class family by tenant id [{}] and fqn {}", tenantId, fqn);
       return getDto(eventClassDao.findByTenantIdAndFqnAndVersion(tenantId, fqn, version));
@@ -278,7 +306,9 @@ public class EventClassServiceImpl implements EventClassService {
           .findFirst();
       if (optEcfv.isPresent()) {
         for (EventClass ec : optEcfv.get().getRecords()) {
-          if (!ecList.add(ec)) return false;
+          if (!ecList.add(ec)) {
+            return false;
+          }
         }
       }
     }
@@ -289,10 +319,11 @@ public class EventClassServiceImpl implements EventClassService {
   public Set<String> getFqnSetForECF(String ecfId) {
     if (isValidSqlId(ecfId)) {
       LOG.debug("Get fqn list for event class family by id [{}] ", ecfId);
-      Set<String> storedFQNs = new HashSet<>();
+      Set<String> storedFqns = new HashSet<>();
       EventClassFamily ecf = eventClassFamilyDao.findById(ecfId);
-      ecf.getSchemas().forEach(ecfv -> ecfv.getRecords().forEach(ec -> storedFQNs.add(ec.getFqn())));
-      return storedFQNs;
+      ecf.getSchemas().forEach(ecfv -> ecfv.getRecords()
+              .forEach(ec -> storedFqns.add(ec.getFqn())));
+      return storedFqns;
     } else {
       throw new IncorrectParameterException("Incorrect event class family id: " + ecfId);
     }
