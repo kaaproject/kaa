@@ -22,7 +22,7 @@ import static org.kaaproject.kaa.server.datamigration.utils.datadefinition.Refer
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class CtlConfigurationMigration extends AbstractCTLMigration {
+public class CtlConfigurationMigration extends AbstractCtlMigration {
 
 
   public CtlConfigurationMigration(Connection connection) {

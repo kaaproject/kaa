@@ -22,19 +22,19 @@ public class Configuration implements Serializable {
 
   private static final long serialVersionUID = -1176562073;
 
-  private byte[] configuration_body;
-  private Integer configuration_schems_version;
+  private byte[] configurationBody;
+  private Integer configurationSchemasVersion;
   private Long id;
-  private Long configuration_schems_id;
+  private Long configurationSchemasId;
 
   public Configuration() {
   }
 
   public Configuration(Configuration value) {
-    this.configuration_body = value.configuration_body;
-    this.configuration_schems_version = value.configuration_schems_version;
+    this.configurationBody = value.configurationBody;
+    this.configurationSchemasVersion = value.configurationSchemasVersion;
     this.id = value.id;
-    this.configuration_schems_id = value.configuration_schems_id;
+    this.configurationSchemasId = value.configurationSchemasId;
   }
 
   public Configuration(
@@ -43,26 +43,26 @@ public class Configuration implements Serializable {
       Long id,
       Long configurationSchemsId
   ) {
-    this.configuration_body = configurationBody;
-    this.configuration_schems_version = configurationSchemsVersion;
+    this.configurationBody = configurationBody;
+    this.configurationSchemasVersion = configurationSchemsVersion;
     this.id = id;
-    this.configuration_schems_id = configurationSchemsId;
+    this.configurationSchemasId = configurationSchemsId;
   }
 
-  public byte[] getConfiguration_body() {
-    return this.configuration_body;
+  public byte[] getConfigurationBody() {
+    return this.configurationBody;
   }
 
-  public void setConfiguration_body(byte[] configuration_body) {
-    this.configuration_body = configuration_body;
+  public void setConfigurationBody(byte[] configurationBody) {
+    this.configurationBody = configurationBody;
   }
 
-  public Integer getConfiguration_schems_version() {
-    return this.configuration_schems_version;
+  public Integer getConfigurationSchemasVersion() {
+    return this.configurationSchemasVersion;
   }
 
-  public void setConfiguration_schems_version(Integer configuration_schems_version) {
-    this.configuration_schems_version = configuration_schems_version;
+  public void setConfigurationSchemasVersion(Integer configurationSchemasVersion) {
+    this.configurationSchemasVersion = configurationSchemasVersion;
   }
 
   public Long getId() {
@@ -73,22 +73,22 @@ public class Configuration implements Serializable {
     this.id = id;
   }
 
-  public Long getConfiguration_schems_id() {
-    return this.configuration_schems_id;
+  public Long getConfigurationSchemasId() {
+    return this.configurationSchemasId;
   }
 
-  public void setConfiguration_schems_id(Long configuration_schems_id) {
-    this.configuration_schems_id = configuration_schems_id;
+  public void setConfigurationSchemasId(Long configurationSchemasId) {
+    this.configurationSchemasId = configurationSchemasId;
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("configuration.Configuration[");
 
-    sb.append("configuration_body=").append(new String(configuration_body));
-    sb.append(", configuration_schems_version=").append(configuration_schems_version);
+    sb.append("configurationBody=").append(new String(configurationBody));
+    sb.append(", configurationSchemasVersion=").append(configurationSchemasVersion);
     sb.append(", id=").append(id);
-    sb.append(", configuration_schems_id=").append(configuration_schems_id);
+    sb.append(", configurationSchemasId=").append(configurationSchemasId);
 
     sb.append("]");
     return sb.toString();

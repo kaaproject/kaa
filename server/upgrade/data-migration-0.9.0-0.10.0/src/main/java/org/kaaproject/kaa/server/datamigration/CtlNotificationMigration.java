@@ -44,7 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class CtlNotificationMigration extends AbstractCTLMigration {
+public class CtlNotificationMigration extends AbstractCtlMigration {
   private MongoClient client;
   private Cluster cluster;
   private String dbName;

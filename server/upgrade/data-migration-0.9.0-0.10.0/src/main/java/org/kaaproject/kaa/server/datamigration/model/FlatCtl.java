@@ -79,7 +79,8 @@ public class FlatCtl {
   }
 
   public Ctl toCtl() throws IOException, ConfigurationGenerationException {
-    return new Ctl(ctlId, new CtlMetaInfo(metaInfoId, fqn, appId, tenantId), generateDefaultRecord());
+    return new Ctl(ctlId, new CtlMetaInfo(
+        metaInfoId, fqn, appId, tenantId), generateDefaultRecord());
   }
 
 
@@ -87,7 +88,8 @@ public class FlatCtl {
     org.apache.avro.Schema schemaBody = new org.apache.avro.Schema.Parser().parse(body);
     String fqn = schemaBody.getFullName();
     RawSchema rawSchema = new RawSchema(schemaBody.toString());
-    DefaultRecordGenerationAlgorithm<RawData> algotithm = new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
-    return algotithm.getRootData().getRawData();
+    DefaultRecordGenerationAlgorithm<RawData> algorithm =
+        new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
+    return algorithm.getRootData().getRawData();
   }
 }

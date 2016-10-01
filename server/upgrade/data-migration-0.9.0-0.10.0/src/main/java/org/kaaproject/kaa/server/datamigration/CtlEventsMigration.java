@@ -34,7 +34,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CtlEventsMigration extends AbstractCTLMigration {
+public class CtlEventsMigration extends AbstractCtlMigration {
   private static final String EVENT_SCHEMA_VERSION_TABLE_NAME = "event_schems_versions";
   private static final String EVENT_CLASS_FAMILY_TABLE_NAME = "events_class_family";
   private static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME =
@@ -185,7 +185,7 @@ public class CtlEventsMigration extends AbstractCTLMigration {
       String namespace = jsonNode.get("namespace").asText();
       String name = jsonNode.get("name").asText();
 
-      return esv.getSchems().contains(name) && esv.getSchems().contains(namespace);
+      return esv.getSchemas().contains(name) && esv.getSchemas().contains(namespace);
     } catch (IOException ex) {
       System.err.println("Failed to read EventClass schema: " + ec);
     }

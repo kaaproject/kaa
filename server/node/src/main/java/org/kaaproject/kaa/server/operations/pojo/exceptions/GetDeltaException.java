@@ -41,10 +41,10 @@ public class GetDeltaException extends Exception {
   /**
    * Instantiates a new delta exception.
    *
-   * @param e the e
+   * @param ex exception
    */
-  public GetDeltaException(Exception e) {
-    super(e);
+  public GetDeltaException(Exception ex) {
+    super(ex);
   }
 
 

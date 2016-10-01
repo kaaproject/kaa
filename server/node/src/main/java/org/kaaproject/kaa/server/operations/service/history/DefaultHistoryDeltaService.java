@@ -92,12 +92,12 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
     EndpointGroupStateDto groupAllState = new EndpointGroupStateDto();
     groupAllState.setEndpointGroupId(groupDto.getId());
     groupAllState.setConfigurationId(cacheService.getConfIdByKey(
-        confIdKey.copyWithNewEGId(groupDto.getId())));
+        confIdKey.copyWithNewEgId(groupDto.getId())));
     result.add(groupAllState);
 
     for (ProfileFilterDto filter : filters) {
       String confId = cacheService.getConfIdByKey(
-          confIdKey.copyWithNewEGId(filter.getEndpointGroupId()));
+          confIdKey.copyWithNewEgId(filter.getEndpointGroupId()));
       EndpointGroupStateDto endpointGroupState = new EndpointGroupStateDto();
       endpointGroupState.setEndpointGroupId(filter.getEndpointGroupId());
       endpointGroupState.setProfileFilterId(filter.getId());
@@ -226,7 +226,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
     for (Entry<String, EndpointGroupStateDto> entry : groupsMap.entrySet()) {
       if (entry.getValue().getConfigurationId() == null) {
         LOG.debug("[{}] Attempt to fetch configuration id for {}", endpointId, entry.getKey());
-        String confId = cacheService.getConfIdByKey(confIdKey.copyWithNewEGId(entry.getKey()));
+        String confId = cacheService.getConfIdByKey(confIdKey.copyWithNewEgId(entry.getKey()));
         if (confId != null) {
           entry.getValue().setConfigurationId(confId);
         } else {

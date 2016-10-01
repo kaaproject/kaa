@@ -429,7 +429,7 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Repack list of EventRoute messages to list of EventMessage
+   * Repack list of EventRoute messages to list of EventMessage.
    *
    * @param routes List<EventRoute>
    * @return List<EventMessage>
@@ -444,7 +444,7 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Pack UserRouteInfo into list of EventMessage
+   * Pack UserRouteInfo into list of EventMessage.
    *
    * @param userRoute UserRouteInfo
    * @return List<EventMessage>
@@ -455,7 +455,7 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Pack Event into list of EventMessage
+   * Pack Event into list of EventMessage.
    *
    * @param event Event
    * @return List<EventMessage>
@@ -477,7 +477,7 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Transform Collection<RouteInfo> into List<EventRoute>
+   * Transform Collection<RouteInfo> into List<EventRoute>.
    *
    * @param routeInfos Collection<RouteInfo>
    * @return List<EventRoute>

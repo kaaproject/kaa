@@ -87,7 +87,9 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
   private EndpointService endpointService;
 
   @Override
-  public TopicListCacheEntry getTopicListHash(String appToken, String endpointId, EndpointProfileDto profile) {
+  public TopicListCacheEntry getTopicListHash(String appToken,
+                                              String endpointId,
+                                              EndpointProfileDto profile) {
     LOG.debug("[{}][{}] Calculating new topic list", appToken, endpointId);
     List<TopicDto> topics = recalculateTopicList(profile.getGroupState());
     Collections.sort(topics);
@@ -99,7 +101,8 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
       joiner.add(id.toString());
     }
     int simpleHash = Arrays.hashCode(ids);
-    EndpointObjectHash complexHash = EndpointObjectHash.fromBytes(Sha1HashUtils.hashToBytes(joiner.toString()));
+    EndpointObjectHash complexHash = EndpointObjectHash.fromBytes(
+        Sha1HashUtils.hashToBytes(joiner.toString()));
     TopicListCacheEntry entry = new TopicListCacheEntry(simpleHash, complexHash, topics);
     cacheService.putTopicList(complexHash, entry);
     LOG.debug("[{}][{}] Calculated new topic list {}", appToken, endpointId, entry);
@@ -126,7 +129,8 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
 
     if (request.getTopicHash() != profile.getSimpleTopicHash()) {
       LOG.debug("[{}] Topic list changed. recalculating topic list", endpointId);
-      TopicListCacheEntry topicListCache = cacheService.getTopicListByHash(EndpointObjectHash.fromBytes(profile.getTopicHash()));
+      TopicListCacheEntry topicListCache = cacheService.getTopicListByHash(
+          EndpointObjectHash.fromBytes(profile.getTopicHash()));
       List<TopicDto> topicList = topicListCache.getTopics();
       LOG.debug("[{}] New topic list contains {} topics", endpointId, topicList.size());
       List<String> allPossibleTopics = new ArrayList<>(topicList.size());
@@ -136,7 +140,9 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
         if (topic.getType() == TopicTypeDto.MANDATORY) {
           if (subscriptionSet.add(topic.getId())) { // NOSONAR
             subscriptionSetChanged = true;
-            LOG.debug("[{}] added subscription for mandatory topic id: {}, name: {}", endpointId, topic.getId(),
+            LOG.debug("[{}] added subscription for mandatory topic id: {}, name: {}",
+                endpointId,
+                topic.getId(),
                 topic.getName());
           }
         }
@@ -150,15 +156,17 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     }
 
     if (request.getSubscriptionCommands() != null) {
-      for (SubscriptionCommand sCommand : request.getSubscriptionCommands()) {
-        if (sCommand.getCommand() == SubscriptionCommandType.ADD) {
-          if (subscriptionSet.add(sCommand.getTopicId())) {
-            LOG.debug("[{}] added subscription for topic id: {} based on client request", endpointId, sCommand.getTopicId());
+      for (SubscriptionCommand subscriptionCommand : request.getSubscriptionCommands()) {
+        if (subscriptionCommand.getCommand() == SubscriptionCommandType.ADD) {
+          if (subscriptionSet.add(subscriptionCommand.getTopicId())) {
+            LOG.debug("[{}] added subscription for topic id: {} based on client request",
+                endpointId, subscriptionCommand.getTopicId());
             subscriptionSetChanged = true;
           }
         } else {
-          if (subscriptionSet.remove(sCommand.getTopicId())) {
-            LOG.debug("[{}] removed subscription for topic id: {} based on client request", endpointId, sCommand.getTopicId());
+          if (subscriptionSet.remove(subscriptionCommand.getTopicId())) {
+            LOG.debug("[{}] removed subscription for topic id: {} based on client request",
+                endpointId, subscriptionCommand.getTopicId());
             subscriptionSetChanged = true;
           }
         }
@@ -173,10 +181,13 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     for (String topicId : subscriptionSet) {
       int seqNumber = subscriptionStates.get(topicId);
       LOG.debug(
-          "[{}] fetch new subscriptions for topic id: {}, system schema version {}, user schema version {}, starting seq number {}",
-          endpointId, topicId, profile.getSystemNfVersion(), profile.getUserNfVersion(), seqNumber);
-      List<NotificationDto> topicNotifications = notificationService.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId,
-          seqNumber, profile.getSystemNfVersion(), profile.getUserNfVersion());
+          "[{}] fetch new subscriptions for topic id: {}, system schema version {}, "
+              + "user schema version {}, starting seq number {}",
+          endpointId, topicId, profile.getSystemNfVersion(),
+          profile.getUserNfVersion(), seqNumber);
+      List<NotificationDto> topicNotifications =
+          notificationService.findNotificationsByTopicIdAndVersionAndStartSecNum(
+              topicId, seqNumber, profile.getSystemNfVersion(), profile.getUserNfVersion());
       if (topicNotifications != null) {
         int count = 0;
         for (NotificationDto notification : topicNotifications) {
@@ -187,7 +198,8 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
             count++;
           }
         }
-        LOG.debug("[{}] detected {} new subscriptions for topic id: {} ", endpointId, count, topicId);
+        LOG.debug("[{}] detected {} new subscriptions for topic id: {} ",
+            endpointId, count, topicId);
         subscriptionStates.put(topicId, seqNumber);
       }
     }
@@ -195,20 +207,24 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     if (request.getAcceptedUnicastNotifications() != null) {
       for (String acceptedUnicastId : request.getAcceptedUnicastNotifications()) {
         notificationService.removeUnicastNotificationById(acceptedUnicastId);
-        LOG.debug("[{}] deleted accepted unicast notification {} ", endpointId, acceptedUnicastId);
+        LOG.debug("[{}] deleted accepted unicast notification {} ",
+            endpointId, acceptedUnicastId);
       }
     }
 
-    List<EndpointNotificationDto> unicastNotifications = notificationService.findUnicastNotificationsByKeyHash(request.getProfile()
-        .getEndpointKeyHash());
+    List<EndpointNotificationDto> unicastNotifications =
+        notificationService.findUnicastNotificationsByKeyHash(
+            request.getProfile().getEndpointKeyHash());
     for (EndpointNotificationDto unicastNotification : unicastNotifications) {
-      LOG.debug("[{}] detected new unicast notification: {} ", endpointId, unicastNotification.getId());
+      LOG.debug("[{}] detected new unicast notification: {} ",
+          endpointId, unicastNotification.getId());
       LOG.trace("[{}] detected new unicast notification: {} ", endpointId, unicastNotification);
       NotificationDto notificationDto = unicastNotification.getNotificationDto();
       if (notificationDto != null) {
         Date date = notificationDto.getExpiredAt();
         if (date != null && date.getTime() > now) {
-          LOG.trace("[{}] notification expiration time is {}({}) which is later then {}", endpointId, date.getTime(), date, now);
+          LOG.trace("[{}] notification expiration time is {}({}) which is later then {}",
+              endpointId, date.getTime(), date, now);
           notificationDto.setId(unicastNotification.getId());
           notifications.add(notificationDto);
         }
@@ -219,7 +235,8 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
     response.setSubscriptionStates(subscriptionStates);
 
     if (subscriptionSetChanged) {
-      LOG.debug("[{}] Updating profile with subscription set. Size {}", endpointId, subscriptionSet.size());
+      LOG.debug("[{}] Updating profile with subscription set. Size {}",
+          endpointId, subscriptionSet.size());
       response.setSubscriptionSetChanged(true);
       response.setSubscriptionSet(subscriptionSet);
     }
@@ -246,14 +263,15 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
    * @param subscriptionSet the subscription set
    * @return the map
    */
-  private Map<String, Integer> buildTopicStateMap(GetNotificationRequest request, Set<String> subscriptionSet) {
-    Map<String, Integer> topicStates = new HashMap<String, Integer>();
+  private Map<String, Integer> buildTopicStateMap(GetNotificationRequest request,
+                                                  Set<String> subscriptionSet) {
+    Map<String, Integer> topicStates = new HashMap<>();
     if (request.getTopicStates() != null) {
       for (TopicState topicState : request.getTopicStates()) {
         topicStates.put(topicState.getTopicId(), topicState.getSeqNumber());
       }
     }
-    Map<String, Integer> subscriptionStates = new HashMap<String, Integer>();
+    Map<String, Integer> subscriptionStates = new HashMap<>();
     for (String subscription : subscriptionSet) {
       Integer seqNumber = topicStates.get(subscription);
       subscriptionStates.put(subscription, seqNumber != null ? seqNumber : 0);
@@ -265,7 +283,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
   /**
    * Recalculate topic list.
    *
-   * @param historyDelta the history delta
+   * @param groups endpoint group state list
    * @return the list
    */
   private List<TopicDto> recalculateTopicList(List<EndpointGroupStateDto> groups) {
@@ -279,7 +297,7 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
         }
       }
     }
-    List<TopicDto> topicList = new ArrayList<TopicDto>(topicSet);
+    List<TopicDto> topicList = new ArrayList<>(topicSet);
     Collections.sort(topicList, new Comparator<TopicDto>() {
       @Override
       public int compare(TopicDto o1, TopicDto o2) {
@@ -296,7 +314,9 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
    * @return the sets the
    */
   private Set<String> buildSubscriptionSet(EndpointProfileDto profile) {
-    return profile.getSubscriptions() != null ? new HashSet<String>(profile.getSubscriptions()) : new HashSet<String>();
+    return profile.getSubscriptions() != null
+        ? new HashSet<>(profile.getSubscriptions())
+        : new HashSet<>();
   }
 
   /*
@@ -318,7 +338,8 @@ public class DefaultNotificationDeltaService implements NotificationDeltaService
    */
   @Override
   public NotificationDto findUnicastNotificationById(String unicastNotificationId) {
-    EndpointNotificationDto notification = notificationService.findUnicastNotificationById(unicastNotificationId);
+    EndpointNotificationDto notification = notificationService.findUnicastNotificationById(
+        unicastNotificationId);
     if (notification == null) {
       return null;
     } else {

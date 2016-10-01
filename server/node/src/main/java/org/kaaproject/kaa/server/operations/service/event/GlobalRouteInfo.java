@@ -28,14 +28,18 @@ public final class GlobalRouteInfo extends ClusterRouteInfo {
   private final int cfVersion;
   private final byte[] ucfHash;
 
-  private GlobalRouteInfo(String tenantId, String userId, RouteTableAddress address, int cfVersion, byte[] ucfHash,
+  private GlobalRouteInfo(String tenantId, String userId,
+                          RouteTableAddress address,
+                          int cfVersion,
+                          byte[] ucfHash,
                           RouteOperation routeOperation) {
     super(tenantId, userId, address, routeOperation);
     this.cfVersion = cfVersion;
     this.ucfHash = ucfHash;
   }
 
-  public static GlobalRouteInfo add(String tenantId, String userId, RouteTableAddress address, int cfVersion, byte[] ucfHash) {
+  public static GlobalRouteInfo add(String tenantId, String userId, RouteTableAddress address,
+                                    int cfVersion, byte[] ucfHash) {
     return new GlobalRouteInfo(tenantId, userId, address, cfVersion, ucfHash, RouteOperation.ADD);
   }
 
@@ -44,11 +48,16 @@ public final class GlobalRouteInfo extends ClusterRouteInfo {
   }
 
   public static GlobalRouteInfo fromThrift(EndpointRouteUpdate message) {
-    RouteTableAddress address = new RouteTableAddress(EndpointObjectHash.fromBytes(message.getRouteAddress().getEndpointKey()), message
-        .getRouteAddress().getApplicationToken(), message.getRouteAddress().getOperationsServerId());
-    RouteOperation operation = message.getUpdateType() == EventRouteUpdateType.ADD ? RouteOperation.ADD : RouteOperation.DELETE;
-    return new GlobalRouteInfo(message.getTenantId(), message.getUserId(), address, message.getCfSchemaVersion(), message.getUcfHash(),
-        operation);
+    RouteTableAddress address = new RouteTableAddress(
+        EndpointObjectHash.fromBytes(message.getRouteAddress().getEndpointKey()),
+        message.getRouteAddress().getApplicationToken(),
+        message.getRouteAddress().getOperationsServerId());
+    RouteOperation operation = message.getUpdateType() == EventRouteUpdateType.ADD
+        ? RouteOperation.ADD
+        : RouteOperation.DELETE;
+    return new GlobalRouteInfo
+        (message.getTenantId(), message.getUserId(), address,
+            message.getCfSchemaVersion(), message.getUcfHash(), operation);
   }
 
   public int getCfVersion() {

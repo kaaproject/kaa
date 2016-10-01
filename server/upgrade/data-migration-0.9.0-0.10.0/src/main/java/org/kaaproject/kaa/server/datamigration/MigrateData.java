@@ -87,7 +87,7 @@ public class MigrateData {
       BaseSchemaIdCounter.setInitValue(maxId);
       UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn, options.getHost(), options.getDbName(), options.getNoSql());
       EndpointProfileMigration endpointProfileMigration = new EndpointProfileMigration(options.getHost(), options.getDbName(), options.getNoSql());
-      List<AbstractCTLMigration> migrationList = new ArrayList<>();
+      List<AbstractCtlMigration> migrationList = new ArrayList<>();
       migrationList.add(new CtlConfigurationMigration(conn));
       migrationList.add(new CtlEventsMigration(conn));
       migrationList.add(new CtlNotificationMigration(conn, options.getHost(), options.getDbName(), options.getNoSql()));
@@ -101,12 +101,12 @@ public class MigrateData {
       endpointProfileMigration.transform();
 
       //before phase
-      for (AbstractCTLMigration m : migrationList) {
+      for (AbstractCtlMigration m : migrationList) {
         m.beforeTransform();
       }
 
       // transform phase
-      for (AbstractCTLMigration m : migrationList) {
+      for (AbstractCtlMigration m : migrationList) {
         schemas.addAll(m.transform());
       }
 
@@ -117,7 +117,7 @@ public class MigrateData {
       recordsCreation.create(ctlToSchemas);
 
       //after phase
-      for (AbstractCTLMigration m : migrationList) {
+      for (AbstractCtlMigration m : migrationList) {
         m.afterTransform();
       }
 

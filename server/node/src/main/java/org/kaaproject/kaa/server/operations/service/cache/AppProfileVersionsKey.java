@@ -54,7 +54,9 @@ public final class AppProfileVersionsKey implements Serializable {
    * @param endpointProfileSchemaVersion the endpoint profile schema version
    * @param serverProfileSchemaVersion   the server profile schema version
    */
-  public AppProfileVersionsKey(String applicationToken, Integer endpointProfileSchemaVersion, Integer serverProfileSchemaVersion) {
+  public AppProfileVersionsKey(String applicationToken,
+                               Integer endpointProfileSchemaVersion,
+                               Integer serverProfileSchemaVersion) {
     super();
     this.applicationToken = applicationToken;
     this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
@@ -77,9 +79,12 @@ public final class AppProfileVersionsKey implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-    result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
-    result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
+    result = prime * result
+        + ((applicationToken == null) ? 0 : applicationToken.hashCode());
+    result = prime * result
+        + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
+    result = prime * result
+        + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
     return result;
   }
 
@@ -121,8 +126,9 @@ public final class AppProfileVersionsKey implements Serializable {
 
   @Override
   public String toString() {
-    return "AppProfileVersionsKey [applicationToken=" + applicationToken + ", endpointProfileSchemaVersion="
-        + endpointProfileSchemaVersion + ", serverProfileSchemaVersion=" + serverProfileSchemaVersion + "]";
+    return "AppProfileVersionsKey [applicationToken=" + applicationToken
+        + ", endpointProfileSchemaVersion=" + endpointProfileSchemaVersion
+        + ", serverProfileSchemaVersion=" + serverProfileSchemaVersion + "]";
   }
 
 }

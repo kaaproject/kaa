@@ -25,7 +25,18 @@ public final class RemoteEndpointEvent {
   private final EndpointEvent event;
   private final RouteTableAddress recipient;
 
-  public RemoteEndpointEvent(String tenantId, String userId, EndpointEvent event, RouteTableAddress recipient) {
+  /**
+   * All-args constructor.
+   *
+   * @param tenantId    tenant identifier
+   * @param userId      user identifier
+   * @param event       endpoint event
+   * @param recipient   recipient address
+   */
+  public RemoteEndpointEvent(String tenantId,
+                             String userId,
+                             EndpointEvent event,
+                             RouteTableAddress recipient) {
     super();
     this.tenantId = tenantId;
     this.userId = userId;

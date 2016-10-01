@@ -27,7 +27,9 @@ public final class RouteTableAddress {
     this(endpointKey, applicationToken, null);
   }
 
-  public RouteTableAddress(EndpointObjectHash endpointKey, String applicationToken, String serverId) {
+  public RouteTableAddress(EndpointObjectHash endpointKey,
+                           String applicationToken,
+                           String serverId) {
     super();
     this.endpointKey = endpointKey;
     this.applicationToken = applicationToken;
@@ -105,7 +107,9 @@ public final class RouteTableAddress {
    */
   @Override
   public String toString() {
-    return "RouteTableAddress [endpointKey=" + endpointKey + ", serverId=" + serverId + ", applicationToken=" + applicationToken + "]";
+    return "RouteTableAddress [endpointKey=" + endpointKey
+        + ", serverId=" + serverId + ", applicationToken="
+        + applicationToken + "]";
   }
 
 

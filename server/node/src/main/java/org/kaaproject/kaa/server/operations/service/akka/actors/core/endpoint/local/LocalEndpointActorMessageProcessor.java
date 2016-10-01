@@ -521,7 +521,7 @@ public class LocalEndpointActorMessageProcessor
   }
 
   private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {
-    List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToECFVersions(
+    List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToEcfVersions(
         endpointProfile.getEcfVersionStates());
     EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(
         state.getUserId(), key, ecfVersions,

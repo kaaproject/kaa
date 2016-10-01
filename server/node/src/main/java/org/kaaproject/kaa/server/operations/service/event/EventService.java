@@ -72,7 +72,8 @@ public interface EventService {
    *
    * @param routeInfo UserRouteInfo
    */
-  void sendUserRouteInfo(org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo);
+  void sendUserRouteInfo(
+      org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo);
 
   /**
    * Register event route engine listener, used to inform route engine on
@@ -83,7 +84,7 @@ public interface EventService {
   void addListener(EventServiceListener listener);
 
   /**
-   * Deregister event route engine listener
+   * Deregister event route engine listener.
    *
    * @param listener EventServiceListener
    */
@@ -91,7 +92,7 @@ public interface EventService {
 
   /**
    * Operations Server thrift interface, used to receive unified event message
-   * which includes RouteInfo,UserRouteInfo and Event messages
+   * which includes RouteInfo,UserRouteInfo and Event messages.
    *
    * @param messages List of type EventMessage
    */
@@ -112,14 +113,14 @@ public interface EventService {
   void setResolver(OperationsServerResolver resolver);
 
   /**
-   * Sends routing information about endpoint to global user actor
+   * Sends routing information about endpoint to global user actor.
    *
    * @param route the route
    */
   void sendEndpointRouteInfo(GlobalRouteInfo route);
 
   /**
-   * Sends configuration update information to specific endpoint actor;
+   * Sends configuration update information to specific endpoint actor.
    *
    * @param serverId the server id
    * @param update   the update
@@ -127,7 +128,7 @@ public interface EventService {
   void sendEndpointStateInfo(String serverId, EndpointUserConfigurationUpdate update);
 
   /**
-   * Checks if global user actor for specified user is located on current node
+   * Checks if global user actor for specified user is located on current node.
    *
    * @param userId to check
    * @return true if global user actor is located on this node, false otherwise.

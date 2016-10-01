@@ -90,16 +90,20 @@ public class TopicActor extends UntypedActor {
    * @param calendar               the calendar
    * @return the list
    */
-  public static List<NotificationDto> filterMap(SortedMap<Integer, NotificationDto> pendingNotificationMap, int systemNfSchemaVersion,
-                                                int userNfSchemaVersion, Calendar calendar) {
+  public static List<NotificationDto> filterMap(
+      SortedMap<Integer, NotificationDto> pendingNotificationMap,
+      int systemNfSchemaVersion,
+      int userNfSchemaVersion,
+      Calendar calendar) {
     List<NotificationDto> pendingNotifications = new ArrayList<>(pendingNotificationMap.size());
 
     long now = calendar.getTimeInMillis();
 
     List<NotificationDto> expiredNotifications = null;
     for (NotificationDto dto : pendingNotificationMap.values()) {
-      LOG.trace("Filtering notification {} using system schema version {} and user schema version {}", dto, systemNfSchemaVersion,
-          userNfSchemaVersion);
+      LOG.trace("Filtering notification {} using system schema version "
+              + "{} and user schema version {}",
+          dto, systemNfSchemaVersion, userNfSchemaVersion);
       Date date = dto.getExpiredAt();
       if (date != null && date.getTime() > now) {
         if (isSchemaVersionMatch(dto, systemNfSchemaVersion, userNfSchemaVersion)) {
@@ -110,12 +114,14 @@ public class TopicActor extends UntypedActor {
           expiredNotifications = new ArrayList<>();
         }
         expiredNotifications.add(dto);
-        LOG.trace("Detected expired notification: {}, nfTime: {}, curTime: {}", dto, date == null ? date : date.getTime(), now);
+        LOG.trace("Detected expired notification: {}, nfTime: {}, curTime: {}",
+            dto, date == null ? date : date.getTime(), now);
       }
     }
 
     if (expiredNotifications != null) {
-      LOG.trace("Removing {} notifications from pendingNotificationMap", expiredNotifications.size());
+      LOG.trace("Removing {} notifications from pendingNotificationMap",
+          expiredNotifications.size());
       pendingNotificationMap.values().removeAll(expiredNotifications);
     }
     return pendingNotifications;
@@ -129,7 +135,9 @@ public class TopicActor extends UntypedActor {
    * @param userNfVersion   the user nf version
    * @return true, if is schema version match
    */
-  public static boolean isSchemaVersionMatch(NotificationDto notificationDto, int systemNfVersion, int userNfVersion) {
+  public static boolean isSchemaVersionMatch(NotificationDto notificationDto,
+                                             int systemNfVersion,
+                                             int userNfVersion) {
     if (notificationDto.getType() == NotificationTypeDto.SYSTEM) {
       return notificationDto.getNfVersion() == systemNfVersion;
     } else if (notificationDto.getType() == NotificationTypeDto.USER) {
@@ -168,18 +176,22 @@ public class TopicActor extends UntypedActor {
   private void processEndpointRegistration(TopicSubscriptionMessage message) {
     ActorRef endpointActor = message.getOriginator();
     Integer seqNum = message.getSeqNumber();
-    SortedMap<Integer, NotificationDto> pendingNotificationMap = notificationCache.tailMap(seqNum, false);
+    SortedMap<Integer, NotificationDto> pendingNotificationMap = notificationCache.tailMap(
+        seqNum, false);
     Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
-    List<NotificationDto> pendingNotifications = filterMap(pendingNotificationMap, message.getSystemNfSchemaVersion(),
+    List<NotificationDto> pendingNotifications = filterMap(
+        pendingNotificationMap, message.getSystemNfSchemaVersion(),
         message.getUserNfSchemaVersion(), calendar);
     if (!pendingNotifications.isEmpty()) {
       LOG.debug("Detected new messages during endpoint subscription!");
-      NotificationMessage notificationMessage = NotificationMessage.fromNotifications(pendingNotifications);
+      NotificationMessage notificationMessage = NotificationMessage.fromNotifications(
+          pendingNotifications);
       endpointActor.tell(notificationMessage, self());
     } else {
       LOG.debug("No new messages detected. Subscribing endpoint actor to topic actor");
       String endpointKey = message.getOriginator().path().name();
-      ActorInfo actorInfo = new ActorInfo(endpointActor, message.getSystemNfSchemaVersion(), message.getUserNfSchemaVersion());
+      ActorInfo actorInfo = new ActorInfo(
+          endpointActor, message.getSystemNfSchemaVersion(), message.getUserNfSchemaVersion());
       if (endpointSessions.put(endpointKey, actorInfo) != null) {
         LOG.warn("Detected duplication of registration message: {}", message);
       }
@@ -208,10 +220,13 @@ public class TopicActor extends UntypedActor {
       LOG.warn("Can't find notification by id {}. Probably it has already expired!");
     } else {
       notificationCache.put(notificationDto.getSecNum(), notificationDto);
-      LOG.debug("[{}] Put notification to topic actor cache {}", notificationDto.getTopicId(), notificationDto);
-      NotificationMessage notificationMessage = NotificationMessage.fromNotifications(Collections.singletonList(notificationDto));
+      LOG.debug("[{}] Put notification to topic actor cache {}",
+          notificationDto.getTopicId(), notificationDto);
+      NotificationMessage notificationMessage = NotificationMessage.fromNotifications(
+          Collections.singletonList(notificationDto));
       for (ActorInfo endpoint : endpointSessions.values()) {
-        if (isSchemaVersionMatch(notificationDto, endpoint.getSystemNfVersion(), endpoint.getUserNfVersion())) {
+        if (isSchemaVersionMatch(
+            notificationDto, endpoint.getSystemNfVersion(), endpoint.getUserNfVersion())) {
           endpoint.getActorRef().tell(notificationMessage, self());
         }
       }

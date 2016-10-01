@@ -69,7 +69,7 @@ public class UpdateUuidsMigration {
     ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<Configuration>(Configuration.class);
     List<Configuration> configs = run.query(connection, "SELECT * FROM configuration", rsHandler);
     for (Configuration config : configs) {
-      JsonNode json = new ObjectMapper().readTree(config.getConfiguration_body());
+      JsonNode json = new ObjectMapper().readTree(config.getConfigurationBody());
       JsonNode jsonEncoded = encodeUuids(json);
       byte[] encodedConfigurationBody = jsonEncoded.toString().getBytes();
 

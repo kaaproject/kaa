@@ -161,7 +161,9 @@ public interface CacheService {
    * @param worker  the worker
    * @return the merged configuration
    */
-  Pair<BaseData, RawData> getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> worker);
+  Pair<BaseData, RawData> getMergedConfiguration(List<EndpointGroupStateDto> egsList,
+                                                 Computable<List<EndpointGroupStateDto>,
+                                                     Pair<BaseData, RawData>> worker);
 
   /**
    * Sets the merged configuration.
@@ -180,7 +182,9 @@ public interface CacheService {
    * @return the delta
    * @throws GetDeltaException the get delta exception
    */
-  ConfigurationCacheEntry getDelta(DeltaCacheKey deltaKey, Computable<DeltaCacheKey, ConfigurationCacheEntry> worker) throws GetDeltaException;
+  ConfigurationCacheEntry getDelta(DeltaCacheKey deltaKey,
+                                   Computable<DeltaCacheKey,
+                                       ConfigurationCacheEntry> worker) throws GetDeltaException;
 
   /**
    * Sets the delta.
@@ -200,7 +204,7 @@ public interface CacheService {
   PublicKey getEndpointKey(EndpointObjectHash hash);
 
   /**
-   * Gets the EndpointClassFamily Id using tenant Id and name;
+   * Gets the EndpointClassFamily Id using tenant Id and name.
    *
    * @param key the event class family id key
    * @return the EndpointClassFamily Id
@@ -208,7 +212,7 @@ public interface CacheService {
   String getEventClassFamilyIdByName(EventClassFamilyIdKey key);
 
   /**
-   * Gets the Tenant Id by application token;
+   * Gets the Tenant Id by application token.
    *
    * @param appToken token of Application that belongs to Tenant
    * @return the Tenant Id
@@ -216,7 +220,7 @@ public interface CacheService {
   String getTenantIdByAppToken(String appToken);
 
   /**
-   * Gets the {@link ApplicationDto} by application token;
+   * Gets the {@link ApplicationDto} by application token.
    *
    * @param appToken token of Application
    * @return the Application
@@ -224,7 +228,7 @@ public interface CacheService {
   String getApplicationIdByAppToken(String appToken);
 
   /**
-   * Gets the application token by the sdk token
+   * Gets the application token by the sdk token.
    *
    * @param sdkToken the sdk token
    * @return application token for the specified sdk token
@@ -232,7 +236,7 @@ public interface CacheService {
   String getAppTokenBySdkToken(String sdkToken);
 
   /**
-   * Gets the Event Class Family Id by Event Class FQN
+   * Gets the Event Class Family Id by Event Class FQN.
    *
    * @param fqn of one of the events that belong to target Event Class Family
    * @return the Event Class Family Id
@@ -241,7 +245,7 @@ public interface CacheService {
 
   /**
    * Gets all possible Event Class Family - Application keys that are interested in receiving
-   * events for this particular Event Class
+   * events for this particular Event Class.
    *
    * @param eventClassVersion Event Class Id and Version pair
    * @return set of Event Class Family - Application keys
@@ -258,7 +262,7 @@ public interface CacheService {
   PublicKey putEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
 
   /**
-   * Remove key from hash
+   * Remove key from hash.
    *
    * @param hash        the hash
    * @param endpointKey the endpoint key
@@ -301,7 +305,7 @@ public interface CacheService {
   void setEndpointService(EndpointService endpointService);
 
   /**
-   * Setter for test purposes only
+   * Setter for test purposes only.
    *
    * @param sdkProfileService the new sdk profile service
    */
@@ -387,13 +391,14 @@ public interface CacheService {
   String putConfId(ConfigurationIdKey key, String value);
 
   /**
-   * Put application event family maps
+   * Put application event family maps.
    *
    * @param key   list of event family maps ids
    * @param value list of event family maps
    * @return the list
    */
-  public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(List<String> key, List<ApplicationEventFamilyMapDto> value);
+  List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(
+      List<String> key, List<ApplicationEventFamilyMapDto> value);
 
   void setEventClassService(EventClassService eventClassService);
 

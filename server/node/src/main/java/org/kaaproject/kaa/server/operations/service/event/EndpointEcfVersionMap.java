@@ -22,11 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EndpointECFVersionMap {
+public class EndpointEcfVersionMap {
 
   private final Map<EndpointObjectHash, Map<String, Integer>> map;
 
-  public EndpointECFVersionMap() {
+  public EndpointEcfVersionMap() {
     super();
     map = new HashMap<EndpointObjectHash, Map<String, Integer>>();
   }

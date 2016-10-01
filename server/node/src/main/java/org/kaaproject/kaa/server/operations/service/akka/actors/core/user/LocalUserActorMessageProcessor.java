@@ -38,7 +38,7 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Rout
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserRouteInfoMessage;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
-import org.kaaproject.kaa.server.operations.service.event.EndpointECFVersionMap;
+import org.kaaproject.kaa.server.operations.service.event.EndpointEcfVersionMap;
 import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
@@ -83,7 +83,7 @@ public class LocalUserActorMessageProcessor {
 
   private final RouteTable routeTable;
 
-  private final EndpointECFVersionMap versionMap;
+  private final EndpointEcfVersionMap versionMap;
 
   private final EventStorage eventStorage;
 
@@ -105,7 +105,7 @@ public class LocalUserActorMessageProcessor {
     this.tenantId = tenantId;
     this.endpoints = new HashMap<>();
     this.routeTable = new RouteTable();
-    this.versionMap = new EndpointECFVersionMap();
+    this.versionMap = new EndpointEcfVersionMap();
     this.eventStorage = new EventStorage();
     this.eventDeliveryTable = new EventDeliveryTable();
     this.localRoutes = new HashMap<RouteTableAddress, GlobalRouteInfo>();
@@ -371,7 +371,7 @@ public class LocalUserActorMessageProcessor {
   }
 
   private void processEvent(ActorContext context, EndpointEvent event) {
-    String fqn = event.getEventClassFQN();
+    String fqn = event.getEventClassFqn();
     LOG.debug("[{}] Processing event {} from {}", userId, event.getId(), event.getSender());
 
     Integer version;

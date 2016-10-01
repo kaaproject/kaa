@@ -53,7 +53,8 @@ public class ApplicationLogActorMessageProcessor {
   /**
    * The Constant LOG.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(ApplicationLogActorMessageProcessor.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(ApplicationLogActorMessageProcessor.class);
 
   private final LogAppenderService logAppenderService;
   private final CacheService cacheService;
@@ -81,7 +82,9 @@ public class ApplicationLogActorMessageProcessor {
     this.cacheService = context.getCacheService();
     this.ctlService = context.getCtlService();
     this.applicationToken = applicationToken;
-    this.applicationId = context.getApplicationService().findAppByApplicationToken(applicationToken).getId();
+    this.applicationId = context.getApplicationService()
+        .findAppByApplicationToken(applicationToken)
+        .getId();
     this.logAppenders = new HashMap<>();
     this.logAppendersCache = new HashMap<>();
     this.logSchemas = new HashMap<>();
@@ -94,7 +97,8 @@ public class ApplicationLogActorMessageProcessor {
   }
 
   protected void processLogEventPack(ActorContext context, LogEventPackMessage message) {
-    LOG.debug("[{}] Processing a log event pack with {} appenders", applicationToken, logAppenders.size());
+    LOG.debug("[{}] Processing a log event pack with {} appenders",
+        applicationToken, logAppenders.size());
     fetchSchemas(message);
     LogSchema logSchema = message.getLogSchema();
     List<LogAppender> required = filterAppenders(logSchema.getVersion(), true);
@@ -106,15 +110,18 @@ public class ApplicationLogActorMessageProcessor {
       } else {
         LogDeliveryCallback callback;
         if (required.size() == 1) {
-          callback = new SingleLogDeliveryCallback(message.getOriginator(), message.getRequestId());
+          callback = new SingleLogDeliveryCallback(
+              message.getOriginator(), message.getRequestId());
         } else {
-          callback = new MultiLogDeliveryCallback(message.getOriginator(), message.getRequestId(), required.size());
+          callback = new MultiLogDeliveryCallback(
+              message.getOriginator(), message.getRequestId(), required.size());
         }
         required.forEach(appender -> {
           try {
             appender.doAppend(message.getLogEventPack(), callback);
           } catch (Exception cause) {
-            String text = String.format("Failed to append logs using [%s] (ID: %s)", appender.getName(), appender.getAppenderId());
+            String text = String.format("Failed to append logs using [%s] (ID: %s)",
+                appender.getName(), appender.getAppenderId());
             LOG.warn(text, cause);
             sendErrorMessageToEndpoint(message, LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR);
           }
@@ -149,7 +156,8 @@ public class ApplicationLogActorMessageProcessor {
     if (result == null) {
       result = new ArrayList<LogAppender>();
       for (LogAppender appender : logAppenders.values()) {
-        if (appender.isSchemaVersionSupported(schemaVersion) && appender.isDeliveryConfirmationRequired() == confirmDelivery) {
+        if (appender.isSchemaVersionSupported(schemaVersion)
+            && appender.isDeliveryConfirmationRequired() == confirmDelivery) {
           result.add(appender);
         }
       }
@@ -171,7 +179,8 @@ public class ApplicationLogActorMessageProcessor {
     EndpointProfileDataDto profileDto = logPack.getProfileDto();
     ProfileInfo clientProfile = logPack.getClientProfile();
     if (clientProfile == null) {
-      AppVersionKey key = new AppVersionKey(applicationToken, profileDto.getClientProfileVersion());
+      AppVersionKey key = new AppVersionKey(
+          applicationToken, profileDto.getClientProfileVersion());
       BaseSchemaInfo schemaInfo = clientProfileSchemas.get(key);
       if (schemaInfo == null) {
         EndpointProfileSchemaDto profileSchema = cacheService.getProfileSchemaByAppAndVersion(key);
@@ -180,26 +189,33 @@ public class ApplicationLogActorMessageProcessor {
         schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);
         clientProfileSchemas.put(key, schemaInfo);
       }
-      logPack.setClientProfile(new BaseProfileInfo(schemaInfo, profileDto.getClientProfileBody()));
+      logPack.setClientProfile(
+          new BaseProfileInfo(schemaInfo, profileDto.getClientProfileBody()));
     }
     ProfileInfo serverProfile = logPack.getServerProfile();
     if (serverProfile == null) {
-      AppVersionKey key = new AppVersionKey(applicationToken, profileDto.getServerProfileVersion());
+      AppVersionKey key = new AppVersionKey(
+          applicationToken, profileDto.getServerProfileVersion());
       BaseSchemaInfo schemaInfo = serverProfileSchemas.get(key);
       if (schemaInfo == null) {
-        ServerProfileSchemaDto serverProfileSchema = cacheService.getServerProfileSchemaByAppAndVersion(key);
-        CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(serverProfileSchema.getCtlSchemaId());
+        ServerProfileSchemaDto serverProfileSchema =
+            cacheService.getServerProfileSchemaByAppAndVersion(key);
+        CTLSchemaDto ctlSchemaDto = cacheService.getCtlSchemaById(
+            serverProfileSchema.getCtlSchemaId());
         String schema = ctlService.flatExportAsString(ctlSchemaDto);
         schemaInfo = new BaseSchemaInfo(ctlSchemaDto.getId(), schema);
         serverProfileSchemas.put(key, schemaInfo);
       }
-      logPack.setServerProfile(new BaseProfileInfo(schemaInfo, profileDto.getServerProfileBody()));
+      logPack.setServerProfile(
+          new BaseProfileInfo(schemaInfo, profileDto.getServerProfileBody()));
     }
   }
 
-  protected void sendErrorMessageToEndpoint(LogEventPackMessage message, LogDeliveryErrorCode errorCode) {
+  protected void sendErrorMessageToEndpoint(LogEventPackMessage message,
+                                            LogDeliveryErrorCode errorCode) {
     if (message.getOriginator() != null) {
-      message.getOriginator().tell(new LogDeliveryMessage(message.getRequestId(), false, errorCode), ActorRef.noSender());
+      message.getOriginator().tell(new LogDeliveryMessage(
+          message.getRequestId(), false, errorCode), ActorRef.noSender());
     } else {
       LOG.warn("[{}] Can't send error message to unknown originator.", applicationToken);
     }
@@ -220,36 +236,43 @@ public class ApplicationLogActorMessageProcessor {
         addLogAppender(appenderId);
         break;
       default:
-        LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationToken, appenderId, notification.getOp());
+        LOG.debug("[{}][{}] Operation [{}] is not supported.",
+            applicationToken, appenderId, notification.getOp());
     }
   }
 
   protected void stop() {
     for (LogAppender logAppender : logAppenders.values()) {
-      LOG.info("[{}] Closing appender [{}] with name {}", applicationToken, logAppender.getAppenderId(), logAppender.getName());
+      LOG.info("[{}] Closing appender [{}] with name {}",
+          applicationToken, logAppender.getAppenderId(), logAppender.getName());
       logAppender.close();
     }
   }
 
   private void addLogAppender(String appenderId) {
-    LOG.info("[{}] Adding log appender with id [{}].", applicationId, appenderId);
+    LOG.info("[{}] Adding log appender with id [{}].",
+        applicationId, appenderId);
     if (!logAppenders.containsKey(appenderId)) {
       LogAppender logAppender = logAppenderService.getApplicationAppender(appenderId);
       if (logAppender != null) {
         addAppender(appenderId, logAppender);
-        LOG.info("[{}] Log appender [{}] registered.", applicationId, appenderId);
+        LOG.info("[{}] Log appender [{}] registered.",
+            applicationId, appenderId);
       }
     } else {
-      LOG.info("[{}] Log appender [{}] is already registered.", applicationId, appenderId);
+      LOG.info("[{}] Log appender [{}] is already registered.",
+          applicationId, appenderId);
     }
   }
 
   private void removeLogAppender(String appenderId) {
     if (logAppenders.containsKey(appenderId)) {
-      LOG.info("[{}] Closing log appender with id [{}].", applicationToken, appenderId);
+      LOG.info("[{}] Closing log appender with id [{}].",
+          applicationToken, appenderId);
       removeAppender(appenderId).close();
     } else {
-      LOG.warn("[{}] Can't remove unregistered appender with id [{}]", applicationToken, appenderId);
+      LOG.warn("[{}] Can't remove unregistered appender with id [{}]",
+          applicationToken, appenderId);
     }
   }
 

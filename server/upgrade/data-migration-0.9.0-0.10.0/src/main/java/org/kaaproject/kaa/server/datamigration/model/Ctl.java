@@ -29,15 +29,21 @@ public class Ctl {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
 
-    Ctl ctl = (Ctl) o;
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
 
-    if (!metaInfo.equals(ctl.metaInfo)) return false;
+    Ctl ctl = (Ctl) obj;
+
+    if (!metaInfo.equals(ctl.metaInfo)) {
+      return false;
+    }
     return defaultRecord.equals(ctl.defaultRecord);
-
   }
 
   @Override
