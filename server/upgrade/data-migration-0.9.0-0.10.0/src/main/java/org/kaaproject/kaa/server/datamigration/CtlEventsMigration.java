@@ -34,15 +34,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CTLEventsMigration extends AbstractCTLMigration {
+public class CtlEventsMigration extends AbstractCTLMigration {
   private static final String EVENT_SCHEMA_VERSION_TABLE_NAME = "event_schems_versions";
   private static final String EVENT_CLASS_FAMILY_TABLE_NAME = "events_class_family";
-  private static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME = "events_class_family_versions";
+  private static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME =
+      "events_class_family_versions";
   private static final String EVENT_CLASS_TABLE_NAME = "events_class";
   private static final String BASE_SCHEMA_TABLE_NAME = "base_schems";
   private static final String APPLICATION_EVENT_MAP_TABLE_NAME = "application_event_map";
 
-  public CTLEventsMigration(Connection connection) {
+  public CtlEventsMigration(Connection connection) {
     super(connection);
   }
 
@@ -54,9 +55,12 @@ public class CTLEventsMigration extends AbstractCTLMigration {
 
   @Override
   public void beforeTransform() throws SQLException {
-    dd.dropUnnamedFK(EVENT_CLASS_TABLE_NAME, EVENT_CLASS_FAMILY_TABLE_NAME);
-    dd.dropUnnamedFK(APPLICATION_EVENT_MAP_TABLE_NAME, EVENT_CLASS_TABLE_NAME);
-    runner.update(connection, "ALTER TABLE " + BASE_SCHEMA_TABLE_NAME + " CHANGE application_id application_id bigint(20)");
+    dd.dropUnnamedFk(EVENT_CLASS_TABLE_NAME, EVENT_CLASS_FAMILY_TABLE_NAME);
+    dd.dropUnnamedFk(APPLICATION_EVENT_MAP_TABLE_NAME, EVENT_CLASS_TABLE_NAME);
+    runner.update(
+        connection, "ALTER TABLE "
+            + BASE_SCHEMA_TABLE_NAME
+            + " CHANGE application_id application_id bigint(20)");
   }
 
   @Override
@@ -83,24 +87,35 @@ public class CTLEventsMigration extends AbstractCTLMigration {
     // fetch schemas of appropriate feature like configuration
     List<Schema> schemas = new ArrayList<>();
 
-    List<EventSchemaVersion> oldESVs = runner.query(connection,
-        "SELECT id, schems, created_time, created_username FROM " + EVENT_SCHEMA_VERSION_TABLE_NAME,
+    final List<EventSchemaVersion> oldEsvs = runner.query(connection,
+        "SELECT id, schems, created_time, created_username FROM "
+            + EVENT_SCHEMA_VERSION_TABLE_NAME,
         new BeanListHandler<EventSchemaVersion>(EventSchemaVersion.class));
-    List<EventClass> oldECs = runner.query(connection, "SELECT id, schems, version FROM " + EVENT_CLASS_TABLE_NAME +
-        " WHERE schems not like '{\"type\":\"enum\"%'", new BeanListHandler<EventClass>(EventClass.class));
+    List<EventClass> oldECs = runner.query(
+        connection, "SELECT id, schems, version FROM " + EVENT_CLASS_TABLE_NAME
+        + " WHERE schems not like '{\"type\":\"enum\"%'",
+        new BeanListHandler<>(EventClass.class));
 
-    runner.update(connection, "ALTER TABLE " + EVENT_SCHEMA_VERSION_TABLE_NAME + " DROP COLUMN schems");
-    runner.update(connection, "ALTER TABLE " + EVENT_SCHEMA_VERSION_TABLE_NAME + " RENAME " + EVENT_CLASS_FAMILY_VERSION_TABLE_NAME);
-    runner.update(connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME + " CHANGE events_class_family_id events_class_family_versions_id bigint(20)");
+    runner.update(
+        connection, "ALTER TABLE " + EVENT_SCHEMA_VERSION_TABLE_NAME + " DROP COLUMN schems");
+
+    runner.update(
+        connection, "ALTER TABLE " + EVENT_SCHEMA_VERSION_TABLE_NAME + " RENAME "
+            + EVENT_CLASS_FAMILY_VERSION_TABLE_NAME);
+
+    runner.update(
+        connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME
+            + " CHANGE events_class_family_id events_class_family_versions_id bigint(20)");
+
     runner.update(connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME + " DROP COLUMN schems");
     runner.update(connection, "ALTER TABLE " + EVENT_CLASS_TABLE_NAME + " DROP COLUMN version");
 
     for (EventClass ec : oldECs) {
-      updateFamilyVersionId(ec, oldESVs, runner);
+      updateFamilyVersionId(ec, oldEsvs, runner);
     }
 
     for (EventClass ec : oldECs) {
-      EventSchemaVersion esv = findParent(ec, oldESVs);
+      EventSchemaVersion esv = findParent(ec, oldEsvs);
 
       Long id = ec.getId();
       Long createdTime = esv.getCreatedTime();
@@ -112,33 +127,48 @@ public class CTLEventsMigration extends AbstractCTLMigration {
       Long applicationId = null;
       String type = null; //fixme: what is type?
 
-      Schema schema = new Schema(id, version, name, description, createUsername, createdTime, applicationId, schems, type);
+      Schema schema = new Schema(
+          id, version, name, description, createUsername,
+          createdTime, applicationId, schems, type);
       schemas.add(schema);
     }
 
     // shift ids in order to avoid PK constraint violation during adding record to base_schema
-    Long shift = runner.query(connection, "select max(id) as max_id from " + EVENT_CLASS_TABLE_NAME, rs -> rs.next() ? rs.getLong("max_id") : null);
+    Long shift = runner.query(
+        connection, "select max(id) as max_id from " + EVENT_CLASS_TABLE_NAME,
+        rs -> rs.next() ? rs.getLong("max_id") : null);
     Long idShift = BaseSchemaIdCounter.getInstance().getAndShift(shift);
-    runner.update(connection, "update " + EVENT_CLASS_TABLE_NAME + " set id = id + " + idShift + " order by id desc");
-    runner.update(connection, "update " + APPLICATION_EVENT_MAP_TABLE_NAME + " set events_class_id = events_class_id + " + idShift + " order by id desc");
-    schemas.forEach(s -> s.setId(s.getId() + idShift));
+    runner.update(
+        connection,
+        "update " + EVENT_CLASS_TABLE_NAME + " set id = id + " + idShift + " order by id desc");
 
+    runner.update(
+        connection,
+        "update " + APPLICATION_EVENT_MAP_TABLE_NAME + " set events_class_id = events_class_id + "
+            + idShift + " order by id desc");
+
+    schemas.forEach(s -> s.setId(s.getId() + idShift));
     return schemas;
   }
 
 
   private EventSchemaVersion findParent(EventClass ec, List<EventSchemaVersion> versions) {
     for (EventSchemaVersion esv : versions) {
-      if (ecBelongToThisFamilyVersion(ec, esv)) return esv;
+      if (ecBelongToThisFamilyVersion(ec, esv)) {
+        return esv;
+      }
     }
     return null;
   }
 
-  private void updateFamilyVersionId(EventClass ec, List<EventSchemaVersion> versions, QueryRunner runner) throws SQLException {
+  private void updateFamilyVersionId(EventClass ec,
+                                     List<EventSchemaVersion> versions,
+                                     QueryRunner runner) throws SQLException {
     for (EventSchemaVersion esv : versions) {
       if (ecBelongToThisFamilyVersion(ec, esv)) {
         int updateCount = runner.update(this.connection,
-            "UPDATE " + EVENT_CLASS_TABLE_NAME + " SET events_class_family_versions_id=? WHERE id=?",
+            "UPDATE " + EVENT_CLASS_TABLE_NAME
+                + " SET events_class_family_versions_id=? WHERE id=?",
             esv.getId(), ec.getId());
         if (updateCount != 1) {
           System.err.println("Error: failed to update event class's reference to ECFV: " + ec);
@@ -156,7 +186,7 @@ public class CTLEventsMigration extends AbstractCTLMigration {
       String name = jsonNode.get("name").asText();
 
       return esv.getSchems().contains(name) && esv.getSchems().contains(namespace);
-    } catch (IOException e) {
+    } catch (IOException ex) {
       System.err.println("Failed to read EventClass schema: " + ec);
     }
     return false;
@@ -166,7 +196,7 @@ public class CTLEventsMigration extends AbstractCTLMigration {
     try {
       JsonNode jsonNode = new ObjectMapper().readTree(body);
       return jsonNode.get("name").asText();
-    } catch (IOException e) {
+    } catch (IOException ex) {
       System.err.println("Failed to parse name from schema: " + body);
     }
     return "";

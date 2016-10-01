@@ -83,8 +83,8 @@ public class DefaultLoadBalancingService implements LoadBalancingService {
     pool.shutdown();
     try {
       pool.awaitTermination(3, TimeUnit.SECONDS);
-    } catch (InterruptedException e) {
-      LOG.error("Failed to terminate service", e);
+    } catch (InterruptedException ex) {
+      LOG.error("Failed to terminate service", ex);
     }
   }
 
@@ -92,12 +92,13 @@ public class DefaultLoadBalancingService implements LoadBalancingService {
   public void onStatusUpdate(AkkaServiceStatus status) {
     try {
       OperationsNodeInfo nodeInfo = operationsNode.getNodeInfo();
-      OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-      nodeInfo.setLoadInfo(new LoadInfo(status.getEndpointCount(), operatingSystemMXBean.getSystemLoadAverage()));
+      OperatingSystemMXBean operatingSystemMxBean = ManagementFactory.getOperatingSystemMXBean();
+      nodeInfo.setLoadInfo(new LoadInfo(
+          status.getEndpointCount(), operatingSystemMxBean.getSystemLoadAverage()));
       operationsNode.updateNodeData(nodeInfo);
       LOG.info("Updated load info: {}", nodeInfo.getLoadInfo());
-    } catch (Exception e) {
-      LOG.error("Failed to report status update to control service", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to report status update to control service", ex);
     }
   }
 }

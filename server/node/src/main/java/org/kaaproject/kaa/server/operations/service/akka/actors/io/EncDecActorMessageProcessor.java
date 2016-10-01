@@ -98,29 +98,37 @@ public class EncDecActorMessageProcessor {
   private final MeterClient redirectMeter;
   private final MeterClient errorMeter;
 
-  protected EncDecActorMessageProcessor(ActorRef epsActor, AkkaContext context, Set<String> platformProtocols) {
+  protected EncDecActorMessageProcessor(ActorRef epsActor,
+                                        AkkaContext context,
+                                        Set<String> platformProtocols) {
     super();
     this.opsActor = epsActor;
     this.cacheService = context.getCacheService();
     this.credentialsServiceLocator = context.getCredentialsServiceLocator();
     this.registrationService = context.getRegistrationService();
     this.supportUnencryptedConnection = context.getSupportUnencryptedConnection();
-    this.crypt = new MessageEncoderDecoder(context.getKeyStoreService().getPrivateKey(), context.getKeyStoreService().getPublicKey());
+    this.crypt = new MessageEncoderDecoder(
+        context.getKeyStoreService().getPrivateKey(), context.getKeyStoreService().getPublicKey());
     this.platformEncDecMap = PlatformLookup.initPlatformProtocolMap(platformProtocols);
     MetricsService metricsService = context.getMetricsService();
-    this.sessionInitMeter = metricsService.createMeter("sessionInitMeter", Thread.currentThread().getName());
-    this.sessionRequestMeter = metricsService.createMeter("sessionRequestMeter", Thread.currentThread().getName());
-    this.sessionResponseMeter = metricsService.createMeter("sessionResponseMeter", Thread.currentThread().getName());
-    this.redirectMeter = metricsService.createMeter("redirectMeter", Thread.currentThread().getName());
-    this.errorMeter = metricsService.createMeter("errorMeter", Thread.currentThread().getName());
+    this.sessionInitMeter = metricsService.createMeter(
+        "sessionInitMeter", Thread.currentThread().getName());
+    this.sessionRequestMeter = metricsService.createMeter(
+        "sessionRequestMeter", Thread.currentThread().getName());
+    this.sessionResponseMeter = metricsService.createMeter(
+        "sessionResponseMeter", Thread.currentThread().getName());
+    this.redirectMeter = metricsService.createMeter(
+        "redirectMeter", Thread.currentThread().getName());
+    this.errorMeter = metricsService.createMeter(
+        "errorMeter", Thread.currentThread().getName());
   }
 
   void decodeAndForward(ActorContext context, SessionInitMessage message) {
     try {
       sessionInitMeter.mark();
       processSessionInitRequest(context, message);
-    } catch (Exception e) {
-      processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
+    } catch (Exception ex) {
+      processErrors(message.getChannelContext(), message.getErrorBuilder(), ex);
     }
   }
 
@@ -128,8 +136,8 @@ public class EncDecActorMessageProcessor {
     try {
       sessionRequestMeter.mark();
       processSessionRequest(context, message);
-    } catch (Exception e) {
-      processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
+    } catch (Exception ex) {
+      processErrors(message.getChannelContext(), message.getErrorBuilder(), ex);
     }
   }
 
@@ -141,8 +149,8 @@ public class EncDecActorMessageProcessor {
       } else {
         processErrors(message.getChannelContext(), message.getErrorBuilder(), message.getError());
       }
-    } catch (Exception e) {
-      processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
+    } catch (Exception ex) {
+      processErrors(message.getChannelContext(), message.getErrorBuilder(), ex);
     }
   }
 
@@ -151,7 +159,8 @@ public class EncDecActorMessageProcessor {
       LOG.debug("Forwarding session aware message: {}", message);
       this.opsActor.tell(message, context.self());
     } else {
-      LOG.debug("Session aware message ignored. Reason: message {} has invalid sdk token", message);
+      LOG.debug("Session aware message ignored. Reason: message {} has invalid sdk token",
+          message);
     }
   }
 
@@ -163,15 +172,18 @@ public class EncDecActorMessageProcessor {
       EndpointObjectHash key = getEndpointObjectHash(request);
       String sdkToken = getSdkToken(request);
       String appToken = getAppToken(sdkToken);
-      SessionInfo sessionInfo = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-          message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(),
+      SessionInfo sessionInfo = new SessionInfo(
+          message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
+          message.getChannelType(), crypt.getSessionCipherPair(), key, appToken,
+          sdkToken, message.getKeepAlive(),
           message.isEncrypted());
-      SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
+      SessionResponse responseMessage = new NettySessionResponseMessage(
+          sessionInfo, response, message.getMessageBuilder(),
           message.getErrorBuilder());
       LOG.debug("Redirect Response: {}", response);
       processSessionResponse(responseMessage);
-    } catch (Exception e) {
-      processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
+    } catch (Exception ex) {
+      processErrors(message.getChannelContext(), message.getErrorBuilder(), ex);
     }
   }
 
@@ -182,17 +194,19 @@ public class EncDecActorMessageProcessor {
       ClientSync request = decodeRequest(message);
       ServerSync response = buildRedirectionResponse(redirection, request);
       SessionInfo sessionInfo = message.getSessionInfo();
-      SessionResponse responseMessage = new NettySessionResponseMessage(sessionInfo, response, message.getMessageBuilder(),
+      SessionResponse responseMessage = new NettySessionResponseMessage(
+          sessionInfo, response, message.getMessageBuilder(),
           message.getErrorBuilder());
       LOG.debug("Redirect Response: {}", response);
       processSessionResponse(responseMessage);
-    } catch (Exception e) {
-      processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
+    } catch (Exception ex) {
+      processErrors(message.getChannelContext(), message.getErrorBuilder(), ex);
     }
   }
 
   private ServerSync buildRedirectionResponse(RedirectionRule redirection, ClientSync request) {
-    RedirectServerSync redirectSyncResponse = new RedirectServerSync(redirection.getAccessPointId());
+    RedirectServerSync redirectSyncResponse = new RedirectServerSync(
+        redirection.getAccessPointId());
     ServerSync response = new ServerSync();
     response.setRequestId(request.getRequestId());
     response.setStatus(SyncStatus.REDIRECT);
@@ -201,15 +215,18 @@ public class EncDecActorMessageProcessor {
   }
 
   private void processSessionInitRequest(ActorContext context, SessionInitMessage message)
-      throws GeneralSecurityException, PlatformEncDecException, InvalidSdkTokenException, EndpointVerificationException {
+      throws GeneralSecurityException, PlatformEncDecException,
+      InvalidSdkTokenException, EndpointVerificationException {
     ClientSync request = decodeRequest(message);
     EndpointObjectHash key = getEndpointObjectHash(request);
     String sdkToken = getSdkToken(request);
     if (isSDKTokenValid(sdkToken)) {
       String appToken = getAppToken(sdkToken);
       verifyEndpoint(key, appToken);
-      SessionInfo session = new SessionInfo(message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
-          message.getChannelType(), crypt.getSessionCipherPair(), key, appToken, sdkToken, message.getKeepAlive(),
+      SessionInfo session = new SessionInfo(
+          message.getChannelUuid(), message.getPlatformId(), message.getChannelContext(),
+          message.getChannelType(), crypt.getSessionCipherPair(), key,
+          appToken, sdkToken, message.getKeepAlive(),
           message.isEncrypted());
       message.onSessionCreated(session);
       forwardToOpsActor(context, session, request, message);
@@ -219,7 +236,8 @@ public class EncDecActorMessageProcessor {
     }
   }
 
-  private void verifyEndpoint(EndpointObjectHash key, String appToken) throws EndpointVerificationException {
+  private void verifyEndpoint(EndpointObjectHash key, String appToken)
+      throws EndpointVerificationException {
     // Credentials id match EP id in current implementation.
     // We will have two dedicated variables with same value just to
     // simplify reading of the logic.
@@ -230,20 +248,25 @@ public class EncDecActorMessageProcessor {
           .findEndpointRegistrationByCredentialsId(credentialsId);
       if (!registrationLookupResult.isPresent()) {
         String appId = cacheService.getApplicationIdByAppToken(appToken);
-        CredentialsService credentialsService = credentialsServiceLocator.getCredentialsService(appId);
+        CredentialsService credentialsService = credentialsServiceLocator.getCredentialsService(
+            appId);
 
-        Optional<CredentialsDto> credentailsLookupResult = credentialsService.lookupCredentials(credentialsId);
+        Optional<CredentialsDto> credentailsLookupResult = credentialsService.lookupCredentials(
+            credentialsId);
         if (!credentailsLookupResult.isPresent()) {
           LOG.info("[{}] Credentials with id: [{}] not found!", appToken, credentialsId);
-          throw new EndpointVerificationException(EndpointVerificationError.NOT_FOUND, "Credentials not found!");
+          throw new EndpointVerificationException(
+              EndpointVerificationError.NOT_FOUND, "Credentials not found!");
         }
         CredentialsDto credentials = credentailsLookupResult.get();
         if (credentials.getStatus() == CredentialsStatus.REVOKED) {
           LOG.info("[{}] Credentials with id: [{}] was already revoked!", appToken, credentialsId);
-          throw new EndpointVerificationException(EndpointVerificationError.REVOKED, "Credentials was revoked!");
+          throw new EndpointVerificationException(
+              EndpointVerificationError.REVOKED, "Credentials was revoked!");
         } else if (credentials.getStatus() == CredentialsStatus.IN_USE) {
           LOG.info("[{}] Credentials with id: [{}] are already in use!", appToken, credentialsId);
-          throw new EndpointVerificationException(EndpointVerificationError.IN_USE, "Credentials are already in use!");
+          throw new EndpointVerificationException(
+              EndpointVerificationError.IN_USE, "Credentials are already in use!");
         } else {
           credentialsService.markCredentialsInUse(credentialsId);
           EndpointRegistrationDto endpointRegistration = new EndpointRegistrationDto();
@@ -256,22 +279,27 @@ public class EncDecActorMessageProcessor {
         EndpointRegistrationDto endpointRegistration = registrationLookupResult.get();
         if (endpointRegistration.getEndpointId() == null) {
           String appId = cacheService.getApplicationIdByAppToken(appToken);
-          CredentialsService credentialsService = credentialsServiceLocator.getCredentialsService(appId);
+          CredentialsService credentialsService = credentialsServiceLocator.getCredentialsService(
+              appId);
           credentialsService.markCredentialsInUse(credentialsId);
           endpointRegistration.setEndpointId(endpointId);
           registrationService.saveEndpointRegistration(endpointRegistration);
         } else if (!endpointId.equals(endpointRegistration.getEndpointId())) {
-          LOG.info("[{}] Credentials with id: [{}] are already in use!", appToken, credentialsId);
-          throw new EndpointVerificationException(EndpointVerificationError.IN_USE, "Credentials are already in use!");
+          LOG.info("[{}] Credentials with id: [{}] are already in use!",
+              appToken, credentialsId);
+          throw new EndpointVerificationException(EndpointVerificationError.IN_USE,
+              "Credentials are already in use!");
         }
       }
-      LOG.debug("[{}] Succesfully validated endpoint information: [{}]", appToken, credentialsId);
-    } catch (CredentialsServiceException e) {
-      LOG.info("[{}] Failed to lookup credentials info with id: [{}]", appToken, credentialsId, e);
-      throw new RuntimeException(e);
-    } catch (EndpointRegistrationServiceException e) {
-      LOG.info("[{}] Failed to lookup registration info with id: [{}]", appToken, credentialsId, e);
-      throw new RuntimeException(e);
+      LOG.debug("[{}] Succesfully validated endpoint information: [{}]",
+          appToken, credentialsId);
+    } catch (CredentialsServiceException ex) {
+      LOG.info("[{}] Failed to lookup credentials info with id: [{}]", appToken, credentialsId, ex);
+      throw new RuntimeException(ex);
+    } catch (EndpointRegistrationServiceException ex) {
+      LOG.info("[{}] Failed to lookup registration info with id: [{}]",
+          appToken, credentialsId, ex);
+      throw new RuntimeException(ex);
     }
   }
 
@@ -286,12 +314,17 @@ public class EncDecActorMessageProcessor {
     }
   }
 
-  private void forwardToOpsActor(ActorContext context, SessionInfo session, ClientSync request, Message requestMessage) {
-    SyncRequestMessage message = new SyncRequestMessage(session, request, requestMessage, context.self());
+  private void forwardToOpsActor(ActorContext context,
+                                 SessionInfo session,
+                                 ClientSync request,
+                                 Message requestMessage) {
+    SyncRequestMessage message = new SyncRequestMessage(
+        session, request, requestMessage, context.self());
     this.opsActor.tell(message, context.self());
   }
 
-  private void processSessionResponse(SessionResponse message) throws GeneralSecurityException, PlatformEncDecException {
+  private void processSessionResponse(SessionResponse message)
+      throws GeneralSecurityException, PlatformEncDecException {
     SessionInfo session = message.getSessionInfo();
 
     byte[] responseData = encodePlatformLevelData(message.getPlatformId(), message);
@@ -312,21 +345,26 @@ public class EncDecActorMessageProcessor {
     }
   }
 
-  private ClientSync decodeRequest(SessionInitMessage message) throws GeneralSecurityException, PlatformEncDecException {
+  private ClientSync decodeRequest(SessionInitMessage message)
+      throws GeneralSecurityException, PlatformEncDecException {
     ClientSync syncRequest = null;
     if (message.isEncrypted()) {
       syncRequest = decodeEncryptedRequest(message);
     } else if (supportUnencryptedConnection) {
       syncRequest = decodeUnencryptedRequest(message);
     } else {
-      LOG.warn("Received unencrypted init message, but unencrypted connection forbidden by configuration.");
+      LOG.warn("Received unencrypted init message, "
+          + "but unencrypted connection forbidden by configuration.");
       throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
     }
     return syncRequest;
   }
 
-  private ClientSync decodeEncryptedRequest(SessionInitMessage message) throws GeneralSecurityException, PlatformEncDecException {
-    byte[] requestRaw = crypt.decodeData(message.getEncodedMessageData(), message.getEncodedSessionKey());
+  private ClientSync decodeEncryptedRequest(SessionInitMessage message)
+      throws GeneralSecurityException, PlatformEncDecException {
+    byte[] requestRaw = crypt.decodeData(
+
+        message.getEncodedMessageData(), message.getEncodedSessionKey());
     LOG.trace("Request data decrypted");
     ClientSync request = decodePlatformLevelData(message.getPlatformId(), requestRaw);
     LOG.trace("Request data deserialized");
@@ -347,7 +385,8 @@ public class EncDecActorMessageProcessor {
     return request;
   }
 
-  private ClientSync decodeUnencryptedRequest(SessionInitMessage message) throws GeneralSecurityException, PlatformEncDecException {
+  private ClientSync decodeUnencryptedRequest(SessionInitMessage message)
+      throws GeneralSecurityException, PlatformEncDecException {
     byte[] requestRaw = message.getEncodedMessageData();
     LOG.trace("Try to convert raw data to SynRequest object");
     ClientSync request = decodePlatformLevelData(message.getPlatformId(), requestRaw);
@@ -362,7 +401,8 @@ public class EncDecActorMessageProcessor {
     return request;
   }
 
-  private ClientSync decodeEncryptedRequest(SessionAwareMessage message) throws GeneralSecurityException, PlatformEncDecException {
+  private ClientSync decodeEncryptedRequest(SessionAwareMessage message)
+      throws GeneralSecurityException, PlatformEncDecException {
     SessionInfo session = message.getSessionInfo();
     crypt.setSessionCipherPair(session.getCipherPair());
     byte[] requestRaw = crypt.decodeData(message.getEncodedMessageData());
@@ -372,41 +412,48 @@ public class EncDecActorMessageProcessor {
     return request;
   }
 
-  private ClientSync decodeUnencryptedRequest(SessionAwareMessage message) throws PlatformEncDecException {
+  private ClientSync decodeUnencryptedRequest(SessionAwareMessage message)
+      throws PlatformEncDecException {
     byte[] requestRaw = message.getEncodedMessageData();
     ClientSync request = decodePlatformLevelData(message.getPlatformId(), requestRaw);
     LOG.trace("Request data deserialized");
     return request;
   }
 
-  private byte[] encodePlatformLevelData(int platformID, SessionResponse message) throws PlatformEncDecException {
+  private byte[] encodePlatformLevelData(int platformID, SessionResponse message)
+      throws PlatformEncDecException {
     PlatformEncDec encDec = platformEncDecMap.get(platformID);
     if (encDec != null) {
       return platformEncDecMap.get(platformID).encode(message.getResponse());
     } else {
-      throw new PlatformEncDecException(MessageFormat.format("Encoder for platform protocol [{0}] is not defined", platformID));
+      throw new PlatformEncDecException(
+          MessageFormat.format("Encoder for platform protocol [{0}] is not defined", platformID));
     }
   }
 
-  private ClientSync decodePlatformLevelData(Integer platformID, byte[] requestRaw) throws PlatformEncDecException {
+  private ClientSync decodePlatformLevelData(Integer platformID, byte[] requestRaw)
+      throws PlatformEncDecException {
     PlatformEncDec encDec = platformEncDecMap.get(platformID);
     if (encDec != null) {
       ClientSync syncRequest = platformEncDecMap.get(platformID).decode(requestRaw);
       addAppTokenToClientSyncMetaData(syncRequest.getClientSyncMetaData());
       return syncRequest;
     } else {
-      throw new PlatformEncDecException(MessageFormat.format("Decoder for platform protocol [{0}] is not defined", platformID));
+      throw new PlatformEncDecException(
+          MessageFormat.format("Decoder for platform protocol [{0}] is not defined", platformID));
     }
   }
 
-  private ClientSync decodeRequest(SessionAwareMessage message) throws GeneralSecurityException, PlatformEncDecException {
+  private ClientSync decodeRequest(SessionAwareMessage message)
+      throws GeneralSecurityException, PlatformEncDecException {
     ClientSync syncRequest = null;
     if (message.isEncrypted()) {
       syncRequest = decodeEncryptedRequest(message);
     } else if (supportUnencryptedConnection) {
       syncRequest = decodeUnencryptedRequest(message);
     } else {
-      LOG.warn("Received unencrypted aware message, but unencrypted connection forbidden by configuration.");
+      LOG.warn("Received unencrypted aware message, "
+          + "but unencrypted connection forbidden by configuration.");
       throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
     }
     return syncRequest;
@@ -414,7 +461,8 @@ public class EncDecActorMessageProcessor {
 
   private PublicKey getPublicKey(ClientSync request) throws GeneralSecurityException {
     PublicKey endpointKey = null;
-    if (request.getProfileSync() != null && request.getProfileSync().getEndpointPublicKey() != null) {
+    if (request.getProfileSync() != null
+        && request.getProfileSync().getEndpointPublicKey() != null) {
       byte[] publicKeySrc = request.getProfileSync().getEndpointPublicKey().array();
       endpointKey = KeyUtil.getPublic(publicKeySrc);
     }
@@ -425,16 +473,16 @@ public class EncDecActorMessageProcessor {
     return endpointKey;
   }
 
-  private void processErrors(ChannelContext ctx, ErrorBuilder converter, Exception e) {
-    LOG.trace("Request processing failed", e);
+  private void processErrors(ChannelContext ctx, ErrorBuilder converter, Exception ex) {
+    LOG.trace("Request processing failed", ex);
     errorMeter.mark();
-    Object[] responses = converter.build(e);
+    Object[] responses = converter.build(ex);
     if (responses != null && responses.length > 0) {
       for (Object response : responses) {
         ctx.writeAndFlush(response);
       }
     } else {
-      ctx.fireExceptionCaught(e);
+      ctx.fireExceptionCaught(ex);
     }
   }
 
@@ -455,6 +503,7 @@ public class EncDecActorMessageProcessor {
   }
 
   protected EndpointObjectHash getEndpointObjectHash(ClientSync request) {
-    return EndpointObjectHash.fromBytes(request.getClientSyncMetaData().getEndpointPublicKeyHash().array());
+    return EndpointObjectHash.fromBytes(
+        request.getClientSyncMetaData().getEndpointPublicKeyHash().array());
   }
 }

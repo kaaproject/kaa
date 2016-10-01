@@ -32,7 +32,8 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
   }
 
   @Override
-  public LogAppender getAppender(LogAppenderDto appenderConfig) throws ReflectiveOperationException {
+  public LogAppender getAppender(LogAppenderDto appenderConfig)
+      throws ReflectiveOperationException {
     if (appenderConfig == null) {
       throw new IllegalArgumentException("appender config can't be null");
     }
@@ -41,18 +42,20 @@ public class DefaultLogAppenderBuilder implements LogAppenderBuilder {
       Class<LogAppender> appenderClass = (Class<LogAppender>) Class
           .forName(appenderConfig.getPluginClassName());
       LogAppender logAppender = appenderClass.newInstance();
-      LOG.debug("Init log appender [{}] with appender configuration [{}].", logAppender, appenderConfig);
+      LOG.debug("Init log appender [{}] with appender configuration [{}].",
+          logAppender, appenderConfig);
       logAppender.setName(appenderConfig.getName());
       logAppender.setAppenderId(appenderConfig.getId());
       logAppender.setApplicationToken(appenderConfig.getApplicationToken());
       logAppender.init(appenderConfig);
       return logAppender;
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException ex) {
       LOG.error("Unable to find custom appender class {}", appenderConfig.getPluginClassName());
-      throw e;
-    } catch (InstantiationException | IllegalAccessException e) {
-      LOG.error("Unable to instantiate custom appender from class {}", appenderConfig.getPluginClassName());
-      throw e;
+      throw ex;
+    } catch (InstantiationException | IllegalAccessException ex) {
+      LOG.error("Unable to instantiate custom appender from class {}",
+          appenderConfig.getPluginClassName());
+      throw ex;
     }
   }
 }

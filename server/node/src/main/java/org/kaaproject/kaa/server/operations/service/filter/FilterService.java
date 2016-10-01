@@ -39,7 +39,8 @@ public interface FilterService {
    * @param profile               the profile
    * @return the all matching filters
    */
-  List<ProfileFilterDto> getAllMatchingFilters(AppProfileVersionsKey appProfileVersionsKey, EndpointProfileDto profile);
+  List<ProfileFilterDto> getAllMatchingFilters(AppProfileVersionsKey appProfileVersionsKey,
+                                               EndpointProfileDto profile);
 
   /**
    * Check if profileBody matches filter that is represented by filter id.

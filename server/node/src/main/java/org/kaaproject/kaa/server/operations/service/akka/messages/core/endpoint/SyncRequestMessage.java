@@ -66,7 +66,10 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
    * @param requestMessage the request message
    * @param originator     the originator
    */
-  public SyncRequestMessage(SessionInfo session, ClientSync request, Message requestMessage, ActorRef originator) {
+  public SyncRequestMessage(SessionInfo session,
+                            ClientSync request,
+                            Message requestMessage,
+                            ActorRef originator) {
     super(session.getApplicationToken(), session.getKey(), originator);
     this.command = requestMessage;
     this.request = request;
@@ -131,17 +134,21 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
   public ClientSync merge(SyncRequestMessage syncRequest) {
     UUID channelUuid = getChannelUuid();
     ClientSync other = syncRequest.getRequest();
-    LOG.trace("[{}] Merging original request {} with new request {}", channelUuid, request, other);
+    LOG.trace("[{}] Merging original request {} with new request {}",
+        channelUuid, request, other);
     request.setRequestId(other.getRequestId());
-    request.getClientSyncMetaData().setProfileHash(other.getClientSyncMetaData().getProfileHash());
+      request.getClientSyncMetaData()
+        .setProfileHash(other.getClientSyncMetaData().getProfileHash());
     LOG.debug("[{}] Updated request id and profile hash", channelUuid);
     ClientSync diff = new ClientSync();
     diff.setRequestId(other.getRequestId());
     diff.setClientSyncMetaData(other.getClientSyncMetaData());
     diff.setUseConfigurationRawSchema(other.isUseConfigurationRawSchema());
     if (request.getClientSyncMetaData().getApplicationToken() != null) {
-      LOG.debug("Setting application token, as it was null: {}", request.getClientSyncMetaData().getApplicationToken());
-      diff.getClientSyncMetaData().setApplicationToken(request.getClientSyncMetaData().getApplicationToken());
+      LOG.debug("Setting application token, as it was null: {}",
+          request.getClientSyncMetaData().getApplicationToken());
+      diff.getClientSyncMetaData()
+          .setApplicationToken(request.getClientSyncMetaData().getApplicationToken());
     } else {
       LOG.trace("[{}] Application token is null for request", request);
     }
@@ -152,8 +159,10 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
       LOG.debug("[{}] Updated profile request", channelUuid);
     }
     if (other.getConfigurationSync() != null) {
-      ConfigurationClientSync mergedConfigurationClientSync = hasProfileSync || other.isForceConfigurationSync() ? other
-          .getConfigurationSync() : diff(request.getConfigurationSync(), other.getConfigurationSync());
+      ConfigurationClientSync mergedConfigurationClientSync = hasProfileSync
+          || other.isForceConfigurationSync()
+          ? other.getConfigurationSync()
+          : diff(request.getConfigurationSync(), other.getConfigurationSync());
       diff.setConfigurationSync(mergedConfigurationClientSync);
       request.setConfigurationSync(other.getConfigurationSync());
       LOG.debug("[{}] Updated configuration request", channelUuid);
@@ -163,8 +172,10 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
       }
     }
     if (other.getNotificationSync() != null) {
-      NotificationClientSync mergedNotificationClientSync = hasProfileSync || other.isForceNotificationSync() ? other
-          .getNotificationSync() : diff(request.getNotificationSync(), other.getNotificationSync());
+      NotificationClientSync mergedNotificationClientSync = hasProfileSync
+          || other.isForceNotificationSync()
+          ? other.getNotificationSync()
+          : diff(request.getNotificationSync(), other.getNotificationSync());
       diff.setNotificationSync(mergedNotificationClientSync);
       request.setNotificationSync(other.getNotificationSync());
       LOG.debug("[{}] Updated notification request", channelUuid);
@@ -191,11 +202,13 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     return diff;
   }
 
-  private ConfigurationClientSync diff(ConfigurationClientSync oldRequest, ConfigurationClientSync newRequest) {
+  private ConfigurationClientSync diff(ConfigurationClientSync oldRequest,
+                                       ConfigurationClientSync newRequest) {
     if (oldRequest == null) {
       return newRequest;
     } else {
-      if (!Arrays.equals(oldRequest.getConfigurationHash().array(), newRequest.getConfigurationHash().array())) {
+      if (!Arrays.equals(oldRequest.getConfigurationHash().array(),
+          newRequest.getConfigurationHash().array())) {
         return newRequest;
       } else {
         return null;
@@ -203,12 +216,15 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     }
   }
 
-  private NotificationClientSync diff(NotificationClientSync oldRequest, NotificationClientSync newRequest) {
+  private NotificationClientSync diff(NotificationClientSync oldRequest,
+                                      NotificationClientSync newRequest) {
     if (oldRequest == null) {
       return newRequest;
     } else {
-      if ((newRequest.getAcceptedUnicastNotifications() != null && newRequest.getAcceptedUnicastNotifications().size() > 0)
-          || (newRequest.getSubscriptionCommands() != null && newRequest.getSubscriptionCommands().size() > 0)
+      if ((newRequest.getAcceptedUnicastNotifications() != null
+          && newRequest.getAcceptedUnicastNotifications().size() > 0)
+          || (newRequest.getSubscriptionCommands() != null
+          && newRequest.getSubscriptionCommands().size() > 0)
           || (newRequest.getTopicListHash() != oldRequest.getTopicListHash())) {
         return newRequest;
       } else {

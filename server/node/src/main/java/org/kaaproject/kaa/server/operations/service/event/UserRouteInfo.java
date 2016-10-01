@@ -30,7 +30,10 @@ public final class UserRouteInfo {
     this(tenantId, userId, null, RouteOperation.ADD);
   }
 
-  public UserRouteInfo(String tenantId, String userId, String serverId, RouteOperation routeOperation) {
+  public UserRouteInfo(String tenantId,
+                       String userId,
+                       String serverId,
+                       RouteOperation routeOperation) {
     super();
     this.tenantId = tenantId;
     this.userId = userId;

@@ -78,7 +78,8 @@ import java.util.List;
 public class DefaultDeltaService implements DeltaService {
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultDeltaService.class);
-  private static final Comparator<EndpointGroupDto> ENDPOINT_GROUP_COMPARATOR = new Comparator<EndpointGroupDto>() {
+  private static final Comparator<EndpointGroupDto> ENDPOINT_GROUP_COMPARATOR =
+      new Comparator<EndpointGroupDto>() {
 
     @Override
     public int compare(EndpointGroupDto o1, EndpointGroupDto o2) {
@@ -110,13 +111,19 @@ public class DefaultDeltaService implements DeltaService {
   }
 
   @Override
-  public ConfigurationCacheEntry getConfiguration(String appToken, String endpointId, EndpointProfileDto profile) throws GetDeltaException {
+  public ConfigurationCacheEntry getConfiguration(String appToken,
+                                                  String endpointId,
+                                                  EndpointProfileDto profile)
+      throws GetDeltaException {
     LOG.debug("[{}][{}] Calculating new configuration", appToken, endpointId);
-    AppVersionKey appConfigVersionKey = new AppVersionKey(appToken, profile.getConfigurationVersion());
-    DeltaCacheKey deltaKey = new DeltaCacheKey(appConfigVersionKey, profile.getGroupState(), EndpointObjectHash.fromBytes(profile
+    AppVersionKey appConfigVersionKey = new AppVersionKey(
+        appToken, profile.getConfigurationVersion());
+    DeltaCacheKey deltaKey = new DeltaCacheKey(
+        appConfigVersionKey, profile.getGroupState(), EndpointObjectHash.fromBytes(profile
         .getUserConfigurationHash()), null, profile.isUseConfigurationRawSchema(), true);
     LOG.debug("[{}][{}] Built resync delta key {}", appToken, endpointId, deltaKey);
-    return getDelta(endpointId, profile.getEndpointUserId(), deltaKey, profile.isUseConfigurationRawSchema());
+    return getDelta(
+        endpointId, profile.getEndpointUserId(), deltaKey, profile.isUseConfigurationRawSchema());
   }
 
   /*
@@ -135,7 +142,8 @@ public class DefaultDeltaService implements DeltaService {
     if (LOG.isDebugEnabled() && profile != null && profile.getEndpointKeyHash() != null) {
       endpointId = Base64Util.encode(profile.getEndpointKeyHash());
     }
-    LOG.debug("[{}][{}] Processing configuration request", request.getApplicationToken(), endpointId);
+    LOG.debug("[{}][{}] Processing configuration request",
+        request.getApplicationToken(), endpointId);
     boolean resync = false;
     if (request.isFirstRequest()) {
       resync = true;
@@ -144,28 +152,17 @@ public class DefaultDeltaService implements DeltaService {
       resync = true;
     }
     if (resync) {
-      EndpointConfigurationDto configurationDto = cacheService.getConfByHash(EndpointObjectHash.fromBytes(profile
+      EndpointConfigurationDto configurationDto = cacheService.getConfByHash(
+          EndpointObjectHash.fromBytes(profile
           .getConfigurationHash()));
-      response = new GetDeltaResponse(GetDeltaResponseType.CONF_RESYNC, new BaseBinaryDelta(configurationDto.getConfiguration()));
+      response = new GetDeltaResponse(GetDeltaResponseType.CONF_RESYNC, new BaseBinaryDelta(
+          configurationDto.getConfiguration()));
     } else {
       response = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA);
     }
-    LOG.debug("[{}][{}] Processed configuration request {}", request.getApplicationToken(), endpointId, response.getResponseType());
+    LOG.debug("[{}][{}] Processed configuration request {}",
+        request.getApplicationToken(), endpointId, response.getResponseType());
     return response;
-  }
-
-  private void logHashMismatch(GetDeltaRequest request, EndpointProfileDto profile, String endpointId) {
-    if (profile.getConfigurationHash() != null && LOG.isWarnEnabled()) {
-      String serverHash = "";
-      String clientHash = "";
-      if (profile.getConfigurationHash() != null) {
-        serverHash = MessageEncoderDecoder.bytesToHex(profile.getConfigurationHash());
-      }
-      if (request.getConfigurationHash() != null) {
-        clientHash = MessageEncoderDecoder.bytesToHex(request.getConfigurationHash().getData());
-      }
-      LOG.warn("[{}] Configuration hash mismatch! server {}, client {}", endpointId, serverHash, clientHash);
-    }
   }
 
   /**
@@ -175,7 +172,11 @@ public class DefaultDeltaService implements DeltaService {
    * @return the delta cache entry
    * @throws GetDeltaException the get delta exception
    */
-  private ConfigurationCacheEntry getDelta(final String endpointId, final String userId, DeltaCacheKey deltaKey, boolean useConfigurationRawSchema) throws GetDeltaException {
+  private ConfigurationCacheEntry getDelta(final String endpointId,
+                                           final String userId,
+                                           DeltaCacheKey deltaKey,
+                                           boolean useConfigurationRawSchema)
+      throws GetDeltaException {
     EndpointUserConfigurationDto userConfiguration = findLatestUserConfiguration(userId, deltaKey);
 
     final DeltaCacheKey newKey;
@@ -192,57 +193,83 @@ public class DefaultDeltaService implements DeltaService {
       newKey = deltaKey;
     }
 
-    ConfigurationCacheEntry deltaCacheEntry = cacheService.getDelta(newKey, new Computable<DeltaCacheKey, ConfigurationCacheEntry>() { // NOSONAR
-      @Override
-      public ConfigurationCacheEntry compute(DeltaCacheKey deltaKey) {
-        try {
-          LOG.debug("[{}] Calculating delta for {}", endpointId, deltaKey);
-          ConfigurationCacheEntry deltaCache;
-          AbstractKaaData<?> data;
-          ConfigurationSchemaDto latestConfigurationSchema = cacheService.getConfSchemaByAppAndVersion(deltaKey.getAppConfigVersionKey());
+    ConfigurationCacheEntry deltaCacheEntry = cacheService.getDelta(
+        newKey, new Computable<DeltaCacheKey, ConfigurationCacheEntry>() { // NOSONAR
+          @Override
+          public ConfigurationCacheEntry compute(DeltaCacheKey deltaKey) {
+            try {
+              LOG.debug("[{}] Calculating delta for {}", endpointId, deltaKey);
+              AbstractKaaData<?> data;
+              ConfigurationSchemaDto latestConfigurationSchema =
+                  cacheService.getConfSchemaByAppAndVersion(deltaKey.getAppConfigVersionKey());
 
-          EndpointUserConfigurationDto userConfiguration = findLatestUserConfiguration(userId, deltaKey);
+              EndpointUserConfigurationDto userConfiguration = findLatestUserConfiguration(
+                  userId, deltaKey);
 
-          EndpointObjectHash userConfigurationHash = null;
-          if (userConfiguration != null) {
-            userConfigurationHash = EndpointObjectHash.fromString(userConfiguration.getBody());
+              EndpointObjectHash userConfigurationHash = null;
+              if (userConfiguration != null) {
+                userConfigurationHash = EndpointObjectHash.fromString(userConfiguration.getBody());
+              }
+
+              Pair<BaseData, RawData> mergedConfiguration = getMergedConfiguration(
+                  endpointId, userConfiguration, deltaKey, latestConfigurationSchema);
+
+              if (useConfigurationRawSchema) {
+                data = mergedConfiguration.getV2();
+              } else {
+                data = mergedConfiguration.getV1();
+              }
+
+              LOG.trace("[{}] Merged configuration {}", endpointId, data.getRawData());
+              ConfigurationCacheEntry deltaCache = buildBaseResyncDelta(
+                  endpointId, data.getRawData(),
+                  data.getSchema().getRawSchema(), userConfigurationHash);
+
+              if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
+                EndpointConfigurationDto newConfiguration = new EndpointConfigurationDto();
+                newConfiguration.setConfiguration(deltaCache.getConfiguration());
+                newConfiguration.setConfigurationHash(deltaCache.getHash().getData());
+                cacheService.putConfiguration(deltaCache.getHash(), newConfiguration);
+              }
+
+              LOG.debug("[{}] Configuration hash for {} is {}", endpointId, deltaKey,
+                  MessageEncoderDecoder.bytesToHex(deltaCache.getHash().getData()));
+              return deltaCache;
+            } catch (GetDeltaException | IOException ex) {
+              throw new RuntimeException(ex); // NOSONAR
+            }
           }
-
-          Pair<BaseData, RawData> mergedConfiguration = getMergedConfiguration(endpointId, userConfiguration, deltaKey, latestConfigurationSchema);
-
-          if (useConfigurationRawSchema) {
-            data = mergedConfiguration.getV2();
-          } else {
-            data = mergedConfiguration.getV1();
-          }
-
-          LOG.trace("[{}] Merged configuration {}", endpointId, data.getRawData());
-          deltaCache = buildBaseResyncDelta(endpointId, data.getRawData(), data.getSchema().getRawSchema(), userConfigurationHash);
-
-          if (cacheService.getConfByHash(deltaCache.getHash()) == null) {
-            EndpointConfigurationDto newConfiguration = new EndpointConfigurationDto();
-            newConfiguration.setConfiguration(deltaCache.getConfiguration());
-            newConfiguration.setConfigurationHash(deltaCache.getHash().getData());
-            cacheService.putConfiguration(deltaCache.getHash(), newConfiguration);
-          }
-
-          LOG.debug("[{}] Configuration hash for {} is {}", endpointId, deltaKey,
-              MessageEncoderDecoder.bytesToHex(deltaCache.getHash().getData()));
-          return deltaCache;
-        } catch (GetDeltaException | IOException e) {
-          throw new RuntimeException(e); // NOSONAR
-        }
-      }
-    });
+        });
 
     return deltaCacheEntry;
   }
 
-  private EndpointUserConfigurationDto findLatestUserConfiguration(final String userId, DeltaCacheKey deltaKey) {
+  private void logHashMismatch(GetDeltaRequest request,
+                               EndpointProfileDto profile,
+                               String endpointId) {
+    if (profile.getConfigurationHash() != null && LOG.isWarnEnabled()) {
+      String serverHash = "";
+      String clientHash = "";
+      if (profile.getConfigurationHash() != null) {
+        serverHash = MessageEncoderDecoder.bytesToHex(profile.getConfigurationHash());
+      }
+      if (request.getConfigurationHash() != null) {
+        clientHash = MessageEncoderDecoder.bytesToHex(request.getConfigurationHash().getData());
+      }
+      LOG.warn("[{}] Configuration hash mismatch! server {}, client {}",
+          endpointId, serverHash, clientHash);
+    }
+  }
+
+  private EndpointUserConfigurationDto findLatestUserConfiguration(final String userId,
+                                                                   DeltaCacheKey deltaKey) {
     EndpointUserConfigurationDto userConfiguration = null;
     if (userId != null) {
-      userConfiguration = userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(userId, deltaKey
-          .getAppConfigVersionKey().getApplicationToken(), deltaKey.getAppConfigVersionKey().getVersion());
+      userConfiguration =
+          userConfigurationService.findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(
+              userId,
+              deltaKey.getAppConfigVersionKey().getApplicationToken(),
+              deltaKey.getAppConfigVersionKey().getVersion());
       if (userConfiguration != null) {
         LOG.debug("[{}] User specific configuration found", userId);
       } else {
@@ -252,8 +279,10 @@ public class DefaultDeltaService implements DeltaService {
     return userConfiguration;
   }
 
-  private BaseData processEndpointGroups(List<EndpointGroupDto> endpointGroups, List<ConfigurationDto> configurations,
-                                         ConfigurationSchemaDto configurationSchema) throws OverrideException, IOException {
+  private BaseData processEndpointGroups(List<EndpointGroupDto> endpointGroups,
+                                         List<ConfigurationDto> configurations,
+                                         ConfigurationSchemaDto configurationSchema)
+      throws OverrideException, IOException {
     // create sorted map to store configurations sorted by endpoint group
     // weight
     // put all endpoint groups as keys into the map
@@ -277,21 +306,26 @@ public class DefaultDeltaService implements DeltaService {
         }
       }
       if (!endpointGroupFound) {
-        LOG.debug("No Configuration found for Endpoint Group; Endpoint Group Id: {}", endpointGroup.getId());
+        LOG.debug("No Configuration found for Endpoint Group; Endpoint Group Id: {}",
+            endpointGroup.getId());
       }
     }
 
-    OverrideAlgorithm configurationMerger = configurationOverrideFactory.createConfigurationOverrideAlgorithm();
+    OverrideAlgorithm configurationMerger =
+        configurationOverrideFactory.createConfigurationOverrideAlgorithm();
     return configurationMerger.override(baseConfig, overrideConfigs);
   }
 
   /**
-   * Gets the latest conf from cache
+   * Gets the latest conf from cache.
    *
    * @return the latest conf from cache
    */
-  private Pair<BaseData, RawData> getMergedConfiguration(final String endpointId, final EndpointUserConfigurationDto userConfiguration,
-                                                         final DeltaCacheKey cacheKey, ConfigurationSchemaDto latestConfigurationSchema) throws GetDeltaException {
+  private Pair<BaseData, RawData> getMergedConfiguration(
+      final String endpointId,
+      final EndpointUserConfigurationDto userConfiguration,
+      final DeltaCacheKey cacheKey,
+      ConfigurationSchemaDto latestConfigurationSchema) throws GetDeltaException {
 
     final List<EndpointGroupStateDto> egsList = cacheKey.getEndpointGroups();
     // return Pair in order to cache both calculated configuration and optimize performance
@@ -316,28 +350,33 @@ public class DefaultDeltaService implements DeltaService {
 
                 ConfigurationDto configuration = null;
                 if (!StringUtils.isBlank(egs.getConfigurationId())) {
-                  configuration = configurationService.findConfigurationById(egs.getConfigurationId());
+                  configuration = configurationService.findConfigurationById(
+                      egs.getConfigurationId());
                   if (configuration != null) {
                     configurations.add(configuration);
                   }
                 }
 
                 if (configurationSchema == null && configuration != null) {
-                  configurationSchema = configurationService.findConfSchemaById(configuration.getSchemaId());
+                  configurationSchema = configurationService.findConfSchemaById(
+                      configuration.getSchemaId());
                 }
               }
-              BaseData baseData = processEndpointGroups(endpointGroups, configurations, configurationSchema);
+              BaseData baseData = processEndpointGroups(
+                  endpointGroups, configurations, configurationSchema);
 
               // converting merged base schema to raw schema
-              String ctlSchema = cacheService.getFlatCtlSchemaById(latestConfigurationSchema.getCtlSchemaId());
+              String ctlSchema = cacheService.getFlatCtlSchemaById(
+                  latestConfigurationSchema.getCtlSchemaId());
               JsonNode json = new ObjectMapper().readTree(baseData.getRawData());
               AvroUtils.removeUuids(json);
               RawData rawData = new RawData(new RawSchema(ctlSchema), json.toString());
 
               return new Pair<>(baseData, rawData);
-            } catch (OverrideException | IOException oe) {
-              LOG.error("[{}] Unexpected exception occurred while merging configuration: ", endpointId, oe);
-              throw new RuntimeException(oe); // NOSONAR
+            } catch (OverrideException | IOException ex) {
+              LOG.error("[{}] Unexpected exception occurred while merging configuration: ",
+                  endpointId, ex);
+              throw new RuntimeException(ex); // NOSONAR
             } finally {
               LOG.trace("[{}] getMergedGroupConfiguration.compute end", endpointId);
             }
@@ -345,21 +384,27 @@ public class DefaultDeltaService implements DeltaService {
         });
 
     if (userConfiguration != null) {
-      OverrideAlgorithm configurationMerger = configurationOverrideFactory.createConfigurationOverrideAlgorithm();
-      OverrideSchema overrideSchema = new OverrideSchema(latestConfigurationSchema.getOverrideSchema());
+      OverrideAlgorithm configurationMerger =
+          configurationOverrideFactory.createConfigurationOverrideAlgorithm();
+      OverrideSchema overrideSchema = new OverrideSchema(
+          latestConfigurationSchema.getOverrideSchema());
       try {
-        LOG.trace("Merging group configuration with user configuration: {}", userConfiguration.getBody());
+        LOG.trace("Merging group configuration with user configuration: {}",
+            userConfiguration.getBody());
         BaseData baseData = configurationMerger.override(mergedConfiguration.getV1(),
-            Collections.singletonList(new OverrideData(overrideSchema, userConfiguration.getBody())));
+            Collections.singletonList(new OverrideData(
+                overrideSchema, userConfiguration.getBody())));
 
         JsonNode json = new ObjectMapper().readTree(baseData.getRawData());
         AvroUtils.removeUuids(json);
-        RawData rawData = new RawData(new RawSchema(mergedConfiguration.getV2().getSchema().getRawSchema()), json.toString());
+        RawData rawData = new RawData(new RawSchema(
+            mergedConfiguration.getV2().getSchema().getRawSchema()), json.toString());
 
         mergedConfiguration = new Pair<>(baseData, rawData);
-      } catch (OverrideException | IOException oe) {
-        LOG.error("[{}] Unexpected exception occurred while merging configuration: ", endpointId, oe);
-        throw new GetDeltaException(oe);
+      } catch (OverrideException | IOException ex) {
+        LOG.error("[{}] Unexpected exception occurred while merging configuration: ",
+            endpointId, ex);
+        throw new GetDeltaException(ex);
       } finally {
         LOG.trace("[{}] getMergedConfiguration.compute end", endpointId);
       }
@@ -367,9 +412,15 @@ public class DefaultDeltaService implements DeltaService {
     return mergedConfiguration;
   }
 
-  private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId, String jsonData, String schema, EndpointObjectHash userConfigurationHash) throws IOException {
+  private ConfigurationCacheEntry buildBaseResyncDelta(String endpointId,
+                                                       String jsonData,
+                                                       String schema,
+                                                       EndpointObjectHash userConfigurationHash)
+      throws IOException {
     byte[] configuration = GenericAvroConverter.toRawData(jsonData, schema);
-    return new ConfigurationCacheEntry(configuration, new BaseBinaryDelta(configuration), EndpointObjectHash.fromSha1(configuration),
+    return new ConfigurationCacheEntry(
+        configuration, new BaseBinaryDelta(configuration),
+        EndpointObjectHash.fromSha1(configuration),
         userConfigurationHash);
   }
 

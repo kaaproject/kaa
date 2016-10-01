@@ -53,12 +53,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Responsible for initialization and management of transport instances
+ * Responsible for initialization and management of transport instances.
  *
  * @author Andrew Shvayka
  */
 @Service
-public class BootstrapTransportService extends AbstractTransportService implements TransportService {
+public class BootstrapTransportService
+    extends AbstractTransportService
+    implements TransportService {
 
   /**
    * Constant LOG.
@@ -103,10 +105,17 @@ public class BootstrapTransportService extends AbstractTransportService implemen
   @Override
   public void lookupAndInit() {
     LOG.info("Lookup platform protocols");
-    Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
+    Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(
+        PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
     LOG.info("Initializing message handler with {} worker threads", threadPoolSize);
-    handler = new BootstrapMessageHandler(operationsServerListService, Executors.newFixedThreadPool(threadPoolSize), platformProtocols,
-        new KeyPair(bootstrapKeyStoreService.getPublicKey(), bootstrapKeyStoreService.getPrivateKey()), supportUnencryptedConnection);
+    handler = new BootstrapMessageHandler(
+        operationsServerListService,
+        Executors.newFixedThreadPool(threadPoolSize),
+        platformProtocols,
+        new KeyPair(
+            bootstrapKeyStoreService.getPublicKey(),
+            bootstrapKeyStoreService.getPrivateKey()),
+        supportUnencryptedConnection);
     super.lookupAndInit();
   }
 
@@ -128,7 +137,8 @@ public class BootstrapTransportService extends AbstractTransportService implemen
 
   public static class BootstrapMessageHandler implements MessageHandler {
 
-    private static final ThreadLocal<Map<Integer, PlatformEncDec>> platformEncDecMap = new ThreadLocal<>(); //NOSONAR
+    private static final ThreadLocal<Map<Integer, PlatformEncDec>> platformEncDecMap =
+        new ThreadLocal<>(); //NOSONAR
     private static final ThreadLocal<MessageEncoderDecoder> crypt = new ThreadLocal<>(); //NOSONAR
     private final ExecutorService executor;
     private final Set<String> platformProtocols;
@@ -136,8 +146,11 @@ public class BootstrapTransportService extends AbstractTransportService implemen
     private final boolean supportUnencryptedConnection;
     private final OperationsServerListService opsListService;
 
-    public BootstrapMessageHandler(OperationsServerListService opsListService, ExecutorService executor, Set<String> platformProtocols,
-                                   KeyPair keyPair, boolean supportUnencryptedConnection) {
+    public BootstrapMessageHandler(OperationsServerListService opsListService,
+                                   ExecutorService executor,
+                                   Set<String> platformProtocols,
+                                   KeyPair keyPair,
+                                   boolean supportUnencryptedConnection) {
       super();
       this.opsListService = opsListService;
       this.executor = executor;
@@ -164,7 +177,8 @@ public class BootstrapTransportService extends AbstractTransportService implemen
             LOG.trace("Processing request {}", request);
             BootstrapClientSync bsRequest = request.getBootstrapSync();
             Set<ProtocolConnectionData> transports = opsListService.filter(bsRequest.getKeys());
-            BootstrapServerSync bsResponse = new BootstrapServerSync(bsRequest.getRequestId(), transports);
+            BootstrapServerSync bsResponse = new BootstrapServerSync(
+                bsRequest.getRequestId(), transports);
             ServerSync response = new ServerSync();
             response.setRequestId(request.getRequestId());
             response.setStatus(SyncStatus.SUCCESS);
@@ -172,16 +186,19 @@ public class BootstrapTransportService extends AbstractTransportService implemen
             LOG.trace("Response {}", response);
             encodeAndForward(message, crypt, platformEncDecMap, response);
             LOG.trace("Response forwarded to specific transport {}", response);
-          } catch (Exception e) {
-            processErrors(message.getChannelContext(), message.getErrorBuilder(), e);
+          } catch (Exception ex) {
+            processErrors(message.getChannelContext(), message.getErrorBuilder(), ex);
           }
         }
 
-        private void encodeAndForward(final SessionInitMessage message, MessageEncoderDecoder crypt,
-                                      Map<Integer, PlatformEncDec> platformEncDecMap, ServerSync response) throws PlatformEncDecException,
-            GeneralSecurityException {
+        private void encodeAndForward(final SessionInitMessage message,
+                                      MessageEncoderDecoder crypt,
+                                      Map<Integer, PlatformEncDec> platformEncDecMap,
+                                      ServerSync response)
+            throws PlatformEncDecException, GeneralSecurityException {
           MessageBuilder converter = message.getMessageBuilder();
-          byte[] responseData = encodePlatformLevelData(platformEncDecMap, message.getPlatformId(), response);
+          byte[] responseData = encodePlatformLevelData(
+              platformEncDecMap, message.getPlatformId(), response);
           Object[] objects;
           if (message.isEncrypted()) {
             byte[] responseSignature = crypt.sign(responseData);
@@ -203,28 +220,32 @@ public class BootstrapTransportService extends AbstractTransportService implemen
           }
         }
 
-        private void processErrors(ChannelContext ctx, ErrorBuilder converter, Exception e) {
-          LOG.trace("Message processing failed", e);
-          Object[] responses = converter.build(e);
+        private void processErrors(ChannelContext ctx, ErrorBuilder converter, Exception ex) {
+          LOG.trace("Message processing failed", ex);
+          Object[] responses = converter.build(ex);
           if (responses != null && responses.length > 0) {
             for (Object response : responses) {
               ctx.writeAndFlush(response);
             }
           } else {
-            ctx.fireExceptionCaught(e);
+            ctx.fireExceptionCaught(ex);
           }
         }
 
-        private ClientSync decodeRequest(SessionInitMessage message, MessageEncoderDecoder crypt,
-                                         Map<Integer, PlatformEncDec> platformEncDecMap) throws GeneralSecurityException, PlatformEncDecException {
+        private ClientSync decodeRequest(SessionInitMessage message,
+                                         MessageEncoderDecoder crypt,
+                                         Map<Integer, PlatformEncDec> platformEncDecMap)
+            throws GeneralSecurityException, PlatformEncDecException {
           ClientSync syncRequest = null;
           if (message.isEncrypted()) {
             syncRequest = decodeEncryptedRequest(message, crypt, platformEncDecMap);
           } else if (supportUnencryptedConnection) {
             syncRequest = decodeUnencryptedRequest(message, platformEncDecMap);
           } else {
-            LOG.warn("Received unencrypted init message, but unencrypted connection forbidden by configuration.");
-            throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
+            LOG.warn("Received unencrypted init message, but unencrypted connection "
+                + "forbidden by configuration.");
+            throw new GeneralSecurityException(
+                "Unencrypted connection forbidden by configuration.");
           }
           if (syncRequest.getBootstrapSync() == null) {
             throw new IllegalArgumentException("Bootstrap sync message is missing");
@@ -232,42 +253,54 @@ public class BootstrapTransportService extends AbstractTransportService implemen
           return syncRequest;
         }
 
-        private ClientSync decodeEncryptedRequest(SessionInitMessage message, MessageEncoderDecoder crypt,
-                                                  Map<Integer, PlatformEncDec> platformEncDecMap) throws GeneralSecurityException, PlatformEncDecException {
-          byte[] requestRaw = crypt.decodeData(message.getEncodedMessageData(), message.getEncodedSessionKey());
+        private ClientSync decodeEncryptedRequest(SessionInitMessage message,
+                                                  MessageEncoderDecoder crypt,
+                                                  Map<Integer, PlatformEncDec> platformEncDecMap)
+            throws GeneralSecurityException, PlatformEncDecException {
+          byte[] requestRaw = crypt.decodeData(
+              message.getEncodedMessageData(), message.getEncodedSessionKey());
           LOG.trace("Request data decrypted");
-          ClientSync request = decodePlatformLevelData(platformEncDecMap, message.getPlatformId(), requestRaw);
+          ClientSync request = decodePlatformLevelData(
+              platformEncDecMap, message.getPlatformId(), requestRaw);
           LOG.trace("Request data deserialized");
           return request;
         }
 
-        private ClientSync decodeUnencryptedRequest(SessionInitMessage message, Map<Integer, PlatformEncDec> platformEncDecMap)
+        private ClientSync decodeUnencryptedRequest(SessionInitMessage message,
+                                                    Map<Integer, PlatformEncDec> platformEncDecMap)
             throws GeneralSecurityException, PlatformEncDecException {
           byte[] requestRaw = message.getEncodedMessageData();
           LOG.trace("Try to convert raw data to SynRequest object");
-          ClientSync request = decodePlatformLevelData(platformEncDecMap, message.getPlatformId(), requestRaw);
+          ClientSync request = decodePlatformLevelData(
+              platformEncDecMap, message.getPlatformId(), requestRaw);
           LOG.trace("Request data deserialized");
           return request;
         }
 
-        private byte[] encodePlatformLevelData(Map<Integer, PlatformEncDec> platformEncDecMap, int platformID, ServerSync sync)
+        private byte[] encodePlatformLevelData(Map<Integer, PlatformEncDec> platformEncDecMap,
+                                               int platformID,
+                                               ServerSync sync)
             throws PlatformEncDecException {
           PlatformEncDec encDec = platformEncDecMap.get(platformID);
           if (encDec != null) {
             return platformEncDecMap.get(platformID).encode(sync);
           } else {
-            throw new PlatformEncDecException(MessageFormat.format("Encoder for platform protocol [{0}] is not defined",
+            throw new PlatformEncDecException(
+                MessageFormat.format("Encoder for platform protocol [{0}] is not defined",
                 platformID));
           }
         }
 
-        private ClientSync decodePlatformLevelData(Map<Integer, PlatformEncDec> platformEncDecMap, Integer platformID,
-                                                   byte[] requestRaw) throws PlatformEncDecException {
+        private ClientSync decodePlatformLevelData(Map<Integer, PlatformEncDec> platformEncDecMap,
+                                                   Integer platformID,
+                                                   byte[] requestRaw)
+            throws PlatformEncDecException {
           PlatformEncDec encDec = platformEncDecMap.get(platformID);
           if (encDec != null) {
             return platformEncDecMap.get(platformID).decode(requestRaw);
           } else {
-            throw new PlatformEncDecException(MessageFormat.format("Decoder for platform protocol [{0}] is not defined",
+            throw new PlatformEncDecException
+                (MessageFormat.format("Decoder for platform protocol [{0}] is not defined",
                 platformID));
           }
         }

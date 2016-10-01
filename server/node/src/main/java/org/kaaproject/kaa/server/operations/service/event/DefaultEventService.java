@@ -79,21 +79,26 @@ public class DefaultEventService implements EventService {
    */
   private static final Logger LOG = LoggerFactory.getLogger(DefaultEventService.class);
 
-  private static final AtomicLong eventSequence = new AtomicLong(UUID.randomUUID().getLeastSignificantBits()); //NOSONAR
+  private static final AtomicLong eventSequence = new AtomicLong(
+      UUID.randomUUID().getLeastSignificantBits()); //NOSONAR
   /**
-   * AVRO event converter
+   * AVRO event converter.
    */
-  private final ThreadLocal<AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>> eventConverter = new ThreadLocal<AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>>() {
-    @Override
-    protected AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event> initialValue() {
-      return new AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>(
-          org.kaaproject.kaa.common.endpoint.gen.Event.class);
-    }
-  };
+  private final ThreadLocal<AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>>
+      eventConverter =
+      new ThreadLocal<AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>>() {
+        @Override
+        protected AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>
+        initialValue() {
+          return new AvroByteArrayConverter<>(
+              org.kaaproject.kaa.common.endpoint.gen.Event.class);
+        }
+      };
+
   @Autowired
   private OperationsServerConfig operationsServerConfig;
   /**
-   * ID is thriftHost:thriftPort
+   * ID is thriftHost:thriftPort.
    */
   private volatile String id;
   private volatile Neighbors<MessageTemplate, Message> neighbors;
@@ -112,7 +117,7 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Map RouteOperation into EventRouteUpdateType
+   * Map RouteOperation into EventRouteUpdateType.
    *
    * @param operation RouteOperation
    * @return EventRouteUpdateType
@@ -132,7 +137,7 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Map EventRouteUpdateType into RouteOperation
+   * Map EventRouteUpdateType into RouteOperation.
    *
    * @param updateType EventRouteUpdateType
    * @return RouteOperation
@@ -155,12 +160,15 @@ public class DefaultEventService implements EventService {
    * @param ecfVersions List<EventClassFamilyVersion>
    * @return thrift List<EventClassFamilyVersion>
    */
-  private static List<org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion> transformECFV(
-      List<EventClassFamilyVersion> ecfVersions) {
-    List<org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion> ecfvThL = new ArrayList<>();
+  private
+  static List<org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion>
+  transformEcfv(List<EventClassFamilyVersion> ecfVersions) {
+    List<org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion> ecfvThL =
+        new ArrayList<>();
     if (ecfVersions != null) {
       for (EventClassFamilyVersion ecfv : ecfVersions) {
-        org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion ecfvTh = new org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion();
+        org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion ecfvTh =
+            new org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion();
         ecfvTh.setEndpointClassFamilyId(ecfv.getEcfId());
         ecfvTh.setEndpointClassFamilyVersion(ecfv.getVersion());
         ecfvThL.add(ecfvTh);
@@ -173,7 +181,7 @@ public class DefaultEventService implements EventService {
   public void initBean() {
     LOG.info("Init default event service.");
     listeners = Collections.newSetFromMap(new ConcurrentHashMap<EventServiceListener, Boolean>());
-    neighbors = new Neighbors<MessageTemplate, Message>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(this),
+    neighbors = new Neighbors<>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(this),
         operationsServerConfig.getMaxNumberNeighborConnections());
   }
 
@@ -202,22 +210,32 @@ public class DefaultEventService implements EventService {
       notifyListenersOnServerProblem(serverId);
       return;
     }
-    RouteAddress routeAddress = new RouteAddress(ByteBuffer.wrap(remoteEndpointEvent.getRecipient().getEndpointKey().getData()),
+    RouteAddress routeAddress = new RouteAddress(
+        ByteBuffer.wrap(remoteEndpointEvent.getRecipient().getEndpointKey().getData()),
         remoteEndpointEvent.getRecipient().getApplicationToken(), serverId);
     ByteBuffer eventData;
     try {
       org.kaaproject.kaa.server.sync.Event eventSource = remoteEndpointEvent.getEvent().getEvent();
-      eventData = ByteBuffer.wrap(eventConverter.get().toByteArray(AvroEncDec.convert(eventSource)));
-      org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent endpointEvent = new org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent(
-          remoteEndpointEvent.getEvent().getId().toString(),
-          ByteBuffer.wrap(remoteEndpointEvent.getEvent().getSender().getData()), eventData, remoteEndpointEvent.getEvent()
-          .getCreateTime(), remoteEndpointEvent.getEvent().getVersion());
-      Event event = new Event(remoteEndpointEvent.getUserId(), remoteEndpointEvent.getTenantId(), endpointEvent, routeAddress);
+      eventData = ByteBuffer.wrap(
+          eventConverter.get().toByteArray(AvroEncDec.convert(eventSource)));
+      org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent endpointEvent =
+          new org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointEvent(
+              remoteEndpointEvent.getEvent().getId().toString(),
+              ByteBuffer.wrap(
+                  remoteEndpointEvent.getEvent().getSender().getData()),
+              eventData,
+              remoteEndpointEvent.getEvent()
+                  .getCreateTime(), remoteEndpointEvent.getEvent().getVersion());
+      Event event = new Event(
+          remoteEndpointEvent.getUserId(),
+          remoteEndpointEvent.getTenantId(),
+          endpointEvent,
+          routeAddress);
       server.sendMessages(packMessage(event));
-    } catch (IOException e1) {
-      LOG.error("Error on converting Event to byte array: skiping this event message", e1);
-    } catch (InterruptedException e) {
-      LOG.error("Error sending events to server: ", e);
+    } catch (IOException ex) {
+      LOG.error("Error on converting Event to byte array: skiping this event message", ex);
+    } catch (InterruptedException ex) {
+      LOG.error("Error sending events to server: ", ex);
       notifyListenersOnServerProblem(serverId);
     }
   }
@@ -265,7 +283,8 @@ public class DefaultEventService implements EventService {
    * (org.kaaproject.kaa.server.operations.service.event.UserRouteInfo)
    */
   @Override
-  public void sendUserRouteInfo(org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo) {
+  public void sendUserRouteInfo(
+      org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo) {
     LOG.debug("EventService: sendUserRouteInfo().....");
     List<NeighborConnection<MessageTemplate, Message>> servers = neighbors.getNeighbors();
 
@@ -350,7 +369,8 @@ public class DefaultEventService implements EventService {
   @Override
   public void sendEndpointRouteInfo(GlobalRouteInfo routeInfo) {
     LOG.trace("calculating server for user {}", routeInfo.getUserId());
-    String serverId = Neighbors.getServerId(resolver.getNode(routeInfo.getUserId()).getConnectionInfo());
+    String serverId = Neighbors.getServerId(
+        resolver.getNode(routeInfo.getUserId()).getConnectionInfo());
     sendMessagesToServer(packMessage(routeInfo), serverId);
   }
 
@@ -388,8 +408,13 @@ public class DefaultEventService implements EventService {
   @Override
   public void setZkNode(OperationsNode operationsNode) {
     this.operationsNode = operationsNode;
-    this.id = Neighbors.getServerId(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo());
-    neighbors.setZkNode(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo(), operationsNode);
+    this.id = Neighbors.getServerId(
+        KaaThriftService.OPERATIONS_SERVICE,
+        this.operationsNode.getNodeInfo().getConnectionInfo());
+    neighbors.setZkNode(
+        KaaThriftService.OPERATIONS_SERVICE,
+        this.operationsNode.getNodeInfo().getConnectionInfo(),
+        operationsNode);
     if (resolver != null) {
       updateResolver(this.resolver);
     }
@@ -425,7 +450,8 @@ public class DefaultEventService implements EventService {
    * @return List<EventMessage>
    */
   private List<Message> packMessage(UserRouteInfo userRoute) {
-    return Collections.singletonList(new Message(EventMessageType.USER_ROUTE_INFO, getEventId(), null, null, userRoute, null, null));
+    return Collections.singletonList(new Message(
+        EventMessageType.USER_ROUTE_INFO, getEventId(), null, null, userRoute, null, null));
   }
 
   /**
@@ -435,7 +461,8 @@ public class DefaultEventService implements EventService {
    * @return List<EventMessage>
    */
   private List<Message> packMessage(Event event) {
-    return Collections.singletonList(new Message(EventMessageType.EVENT, getEventId(), event, null, null, null, null));
+    return Collections.singletonList(new Message(
+        EventMessageType.EVENT, getEventId(), event, null, null, null, null));
   }
 
   /**
@@ -455,17 +482,21 @@ public class DefaultEventService implements EventService {
    * @param routeInfos Collection<RouteInfo>
    * @return List<EventRoute>
    */
-  private List<EventRoute> transformEventRouteFromRouteInfoCollection(Collection<RouteInfo> routeInfos) {
+  private List<EventRoute> transformEventRouteFromRouteInfoCollection(
+      Collection<RouteInfo> routeInfos) {
     List<EventRoute> routes = new ArrayList<>();
-    HashMap<UserTenantKey, List<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>> routeInfosTh = new HashMap<>(); // NOSONAR
+    HashMap<UserTenantKey, List<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>>
+        routeInfosTh = new HashMap<>(); // NOSONAR
     for (RouteInfo ri : routeInfos) {
-      org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo riTh = new org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo(
-          transformUpdateType(ri.getRouteOperation()), transformECFV(ri.getEcfVersions()), ri.getAddress().getApplicationToken(),
-          ByteBuffer.wrap(ri.getAddress().getEndpointKey().getData()));
+      org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo riTh =
+          new org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo(
+              transformUpdateType(ri.getRouteOperation()), transformEcfv(ri.getEcfVersions()),
+              ri.getAddress().getApplicationToken(),
+              ByteBuffer.wrap(ri.getAddress().getEndpointKey().getData()));
       UserTenantKey key = new UserTenantKey(ri.getUserId(), ri.getTenantId());
 
       if (!routeInfosTh.containsKey(key)) {
-        routeInfosTh.put(key, new ArrayList<org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo>());
+        routeInfosTh.put(key, new ArrayList<>());
       }
       routeInfosTh.get(key).add(riTh);
     }
@@ -495,12 +526,13 @@ public class DefaultEventService implements EventService {
     sendMessagesToServer(server, messages);
   }
 
-  private void sendMessagesToServer(NeighborConnection<MessageTemplate, Message> server, List<Message> messages) {
+  private void sendMessagesToServer(NeighborConnection<MessageTemplate, Message> server,
+                                    List<Message> messages) {
     try {
       LOG.trace("Sending to server {} messages: {}", server.getId(), messages);
       server.sendMessages(messages);
-    } catch (InterruptedException e) {
-      LOG.error("Error sending events to server: ", e);
+    } catch (InterruptedException ex) {
+      LOG.error("Error sending events to server: ", ex);
       notifyListenersOnServerProblem(server.getId());
     }
   }
@@ -528,22 +560,27 @@ public class DefaultEventService implements EventService {
    * @param route EventRoute
    */
   private void onRouteUpdate(EventRoute route) {
-    LOG.debug("onEventRouteUpdate .... {} routes updated in {} listeners", route.getRouteInfo().size(), listeners.size());
+    LOG.debug("onEventRouteUpdate .... {} routes updated in {} listeners",
+        route.getRouteInfo().size(), listeners.size());
     for (EventServiceListener listener : listeners) {
-      for (org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo routeInfo : route.getRouteInfo()) {
+      for (org.kaaproject.kaa.server.common.thrift.gen.operations.RouteInfo routeInfo
+          : route.getRouteInfo()) {
         String applicationToken = routeInfo.getApplicationToken();
         EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(routeInfo.getEndpointId());
 
-        RouteTableAddress address = new RouteTableAddress(endpointKey, applicationToken, route.getOperationsServerId());
+        RouteTableAddress address = new RouteTableAddress(
+            endpointKey, applicationToken, route.getOperationsServerId());
 
         List<EventClassFamilyVersion> ecfVersions = new ArrayList<>();
-        for (org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion ecfv : routeInfo
-            .getEventClassFamilyVersion()) {
-          EventClassFamilyVersion ecf = new EventClassFamilyVersion(ecfv.getEndpointClassFamilyId(),
+        for (org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion ecfv
+            : routeInfo.getEventClassFamilyVersion()) {
+          EventClassFamilyVersion ecf = new EventClassFamilyVersion(
+              ecfv.getEndpointClassFamilyId(),
               ecfv.getEndpointClassFamilyVersion());
           ecfVersions.add(ecf);
         }
-        listener.onRouteInfo(new RouteInfo(route.getTenantId(), route.getUserId(), address, ecfVersions));
+        listener.onRouteInfo(new RouteInfo(
+            route.getTenantId(), route.getUserId(), address, ecfVersions));
       }
     }
   }
@@ -555,13 +592,16 @@ public class DefaultEventService implements EventService {
    * @param userRoute UserRouteInfo object
    */
   private void onUserRouteInfo(UserRouteInfo userRoute) {
-    LOG.debug("eventUserRouteInfo .... User routes updates in {} listeners", listeners.size());
-    LOG.debug("UserRouteInfo UserId={}; TenantId={}; OperationServerId={}", userRoute.getUserId(), userRoute.getTenantId(),
+    LOG.debug("eventUserRouteInfo .... User routes updates in {} listeners",
+        listeners.size());
+    LOG.debug("UserRouteInfo UserId={}; TenantId={}; OperationServerId={}",
+        userRoute.getUserId(), userRoute.getTenantId(),
         userRoute.getOperationsServerId());
     for (EventServiceListener listener : listeners) {
-      org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo = new org.kaaproject.kaa.server.operations.service.event.UserRouteInfo(
-          userRoute.getTenantId(), userRoute.getUserId(), userRoute.getOperationsServerId(),
-          transformUpdateType(userRoute.getUpdateType()));
+      org.kaaproject.kaa.server.operations.service.event.UserRouteInfo routeInfo =
+          new org.kaaproject.kaa.server.operations.service.event.UserRouteInfo(
+              userRoute.getTenantId(), userRoute.getUserId(), userRoute.getOperationsServerId(),
+              transformUpdateType(userRoute.getUpdateType()));
       listener.onUserRouteInfo(routeInfo);
     }
   }
@@ -578,16 +618,22 @@ public class DefaultEventService implements EventService {
     for (EventServiceListener listener : listeners) {
       org.kaaproject.kaa.server.sync.Event localEvent;
       try {
-        localEvent = AvroEncDec.convert(eventConverter.get().fromByteArray(event.getEndpointEvent().getEventData()));
-        EndpointEvent endpointEvent = new EndpointEvent(EndpointObjectHash.fromBytes(event.getEndpointEvent().getSender()),
-            localEvent, UUID.fromString(event.getEndpointEvent().getUuid()), event.getEndpointEvent().getCreateTime(), event
-            .getEndpointEvent().getVersion());
-        RouteTableAddress recipient = new RouteTableAddress(EndpointObjectHash.fromBytes(event.getRouteAddress().getEndpointKey()),
-            event.getRouteAddress().getApplicationToken(), event.getRouteAddress().getOperationsServerId());
-        RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(event.getTenantId(), event.getUserId(), endpointEvent, recipient);
+        localEvent = AvroEncDec.convert(eventConverter.get().fromByteArray(
+            event.getEndpointEvent().getEventData()));
+        EndpointEvent endpointEvent = new EndpointEvent(
+            EndpointObjectHash.fromBytes(event.getEndpointEvent().getSender()),
+            localEvent, UUID.fromString(
+            event.getEndpointEvent().getUuid()), event.getEndpointEvent().getCreateTime(),
+            event.getEndpointEvent().getVersion());
+        RouteTableAddress recipient = new RouteTableAddress(
+            EndpointObjectHash.fromBytes(event.getRouteAddress().getEndpointKey()),
+            event.getRouteAddress().getApplicationToken(),
+            event.getRouteAddress().getOperationsServerId());
+        RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(
+            event.getTenantId(), event.getUserId(), endpointEvent, recipient);
         listener.onEvent(remoteEvent);
-      } catch (IOException e) {
-        LOG.error("Error on converting byte array to Event: skiping this event message", e);
+      } catch (IOException ex) {
+        LOG.error("Error on converting byte array to Event: skiping this event message", ex);
       }
 
     }
@@ -620,8 +666,8 @@ public class DefaultEventService implements EventService {
   }
 
   private List<Message> packMessage(GlobalRouteInfo routeInfo) {
-    EventMessageType type = EventMessageType.ENDPOINT_ROUTE_UPDATE;
-    List<Message> messages = new LinkedList<>();
+    final EventMessageType type = EventMessageType.ENDPOINT_ROUTE_UPDATE;
+    final List<Message> messages = new LinkedList<>();
 
     EndpointRouteUpdate route = new EndpointRouteUpdate();
     route.setTenantId(routeInfo.getTenantId());
@@ -635,7 +681,8 @@ public class DefaultEventService implements EventService {
       opsServerId = id;
     }
 
-    RouteAddress routeAddress = new RouteAddress(ByteBuffer.wrap(routeInfo.getAddress().getEndpointKey().getData()), routeInfo
+    RouteAddress routeAddress = new RouteAddress(
+        ByteBuffer.wrap(routeInfo.getAddress().getEndpointKey().getData()), routeInfo
         .getAddress().getApplicationToken(), opsServerId);
     route.setRouteAddress(routeAddress);
 
@@ -645,8 +692,8 @@ public class DefaultEventService implements EventService {
   }
 
   private List<Message> packMessage(EndpointUserConfigurationUpdate update) {
-    EventMessageType type = EventMessageType.ENDPOINT_STATE_UPDATE;
-    List<Message> messages = new LinkedList<>();
+    final EventMessageType type = EventMessageType.ENDPOINT_STATE_UPDATE;
+    final List<Message> messages = new LinkedList<>();
 
     EndpointStateUpdate msg = new EndpointStateUpdate();
     msg.setTenantId(update.getTenantId());

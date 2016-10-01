@@ -68,7 +68,7 @@ public interface EventService {
   void sendRouteInfo(Collection<RouteInfo> routeInfos, String... serverIdList);
 
   /**
-   * Send UserRouteInfo to all neighbors,
+   * Send UserRouteInfo to all neighbors.
    *
    * @param routeInfo UserRouteInfo
    */

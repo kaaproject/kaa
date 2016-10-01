@@ -70,7 +70,7 @@ public class DefaultClusterService implements ClusterService {
   private OperationsServerConfig operationsServerConfig;
 
   /**
-   * ID is thriftHost:thriftPort
+   * ID is thriftHost:thriftPort.
    */
   private volatile String id;
 
@@ -89,7 +89,7 @@ public class DefaultClusterService implements ClusterService {
   @PostConstruct
   public void initBean() {
     LOG.info("Init default cluster service.");
-    neighbors = new Neighbors<MessageTemplate, OperationsServiceMsg>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(),
+    neighbors = new Neighbors<>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(),
         operationsServerConfig.getMaxNumberNeighborConnections());
   }
 
@@ -111,7 +111,10 @@ public class DefaultClusterService implements ClusterService {
   public void setZkNode(OperationsNode operationsNode) {
     this.operationsNode = operationsNode;
     this.id = Neighbors.getServerId(this.operationsNode.getNodeInfo().getConnectionInfo());
-    neighbors.setZkNode(KaaThriftService.OPERATIONS_SERVICE, this.operationsNode.getNodeInfo().getConnectionInfo(), operationsNode);
+    neighbors.setZkNode(
+        KaaThriftService.OPERATIONS_SERVICE,
+        this.operationsNode.getNodeInfo().getConnectionInfo(),
+        operationsNode);
     if (resolver != null) {
       updateResolver(this.resolver);
     }
@@ -204,17 +207,22 @@ public class DefaultClusterService implements ClusterService {
   }
 
   @Override
-  public void sendUnicastNotificationMessage(String serverId, ThriftUnicastNotificationMessage msg) {
+  public void sendUnicastNotificationMessage(String serverId,
+                                             ThriftUnicastNotificationMessage msg) {
     sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromNotification(msg));
   }
 
   @Override
-  public void sendServerProfileUpdateMessage(String serverId, ThriftServerProfileUpdateMessage msg) {
-    sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
+  public void sendServerProfileUpdateMessage(String serverId,
+                                             ThriftServerProfileUpdateMessage msg) {
+    sendServerProfileUpdateMessage(
+        serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
   }
 
-  private void sendServerProfileUpdateMessage(String serverId, OperationsServiceMsg msg) {
-    NeighborConnection<MessageTemplate, OperationsServiceMsg> server = neighbors.getNeghborConnection(serverId);
+  private void sendServerProfileUpdateMessage(String serverId,
+                                              OperationsServiceMsg msg) {
+    NeighborConnection<MessageTemplate, OperationsServiceMsg> server =
+        neighbors.getNeghborConnection(serverId);
     if (server == null) {
       LOG.warn("Specified server {} not found in neighbors list", serverId);
     } else {
@@ -239,25 +247,38 @@ public class DefaultClusterService implements ClusterService {
   public void onUnicastNotificationMessage(ThriftUnicastNotificationMessage msg) {
     EndpointAddress address = fromThriftAddress(msg.getAddress());
     ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
-    listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftUnicastNotificationMessage>(address, classifier, msg));
+    listener.onEndpointActorMsg(new ThriftEndpointActorMsg<>(address, classifier, msg));
   }
 
   @Override
   public void onServerProfileUpdateMessage(ThriftServerProfileUpdateMessage msg) {
     EndpointAddress address = fromThriftAddress(msg.getAddress());
     ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
-    listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftServerProfileUpdateMessage>(address, classifier, msg));
+    listener.onEndpointActorMsg(new ThriftEndpointActorMsg<>(address, classifier, msg));
   }
 
   @Override
   public void onEndpointDeregistrationMessage(ThriftEndpointDeregistrationMessage msg) {
     EndpointAddress address = fromThriftAddress(msg.getAddress());
     ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
-    listener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftEndpointDeregistrationMessage>(address, classifier, msg));
+    listener.onEndpointActorMsg(new ThriftEndpointActorMsg<>(address, classifier, msg));
   }
 
   private EndpointAddress fromThriftAddress(ThriftEntityAddress source) {
-    return new EndpointAddress(source.getTenantId(), source.getApplicationToken(), EndpointObjectHash.fromBytes(source.getEntityId()));
+    return new EndpointAddress(
+        source.getTenantId(),
+        source.getApplicationToken(),
+        EndpointObjectHash.fromBytes(source.getEntityId()));
+  }
+
+  private EndpointClusterAddress fromThriftAddress(ThriftEntityClusterAddress source) {
+    ThriftEntityAddress address = source.getAddress();
+    EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(address.getEntityId());
+    return new EndpointClusterAddress(
+        source.getNodeId(),
+        address.getTenantId(),
+        address.getApplicationToken(),
+        endpointKey);
   }
 
   private ActorClassifier fromThriftActorClassifier(ThriftActorClassifier actorClassifier) {
@@ -265,7 +286,9 @@ public class DefaultClusterService implements ClusterService {
   }
 
   private EndpointRouteMessage fromThriftMsg(ThriftEntityRouteMessage source) {
-    return new EndpointRouteMessage(fromThriftAddress(source.getAddress()), fromThriftOperation(source.getOperation()));
+    return new EndpointRouteMessage(
+        fromThriftAddress(source.getAddress()),
+        fromThriftOperation(source.getOperation()));
   }
 
   private RouteOperation fromThriftOperation(ThriftRouteOperation operation) {
@@ -281,19 +304,14 @@ public class DefaultClusterService implements ClusterService {
     }
   }
 
-  private EndpointClusterAddress fromThriftAddress(ThriftEntityClusterAddress source) {
-    ThriftEntityAddress address = source.getAddress();
-    EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(address.getEntityId());
-    return new EndpointClusterAddress(source.getNodeId(), address.getTenantId(), address.getApplicationToken(), endpointKey);
-  }
-
-  private void sendMessagesToServer(NeighborConnection<MessageTemplate, OperationsServiceMsg> server,
-                                    Collection<OperationsServiceMsg> messages) {
+  private void sendMessagesToServer(
+      NeighborConnection<MessageTemplate, OperationsServiceMsg> server,
+      Collection<OperationsServiceMsg> messages) {
     try {
       LOG.trace("Sending to server {} messages: {}", server.getId(), messages);
       server.sendMessages(messages);
-    } catch (InterruptedException e) {
-      LOG.error("Error sending events to server: ", e);
+    } catch (InterruptedException ex) {
+      LOG.error("Error sending events to server: ", ex);
     }
   }
 

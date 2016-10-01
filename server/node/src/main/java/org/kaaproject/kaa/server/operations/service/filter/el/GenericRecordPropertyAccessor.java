@@ -37,7 +37,8 @@ public class GenericRecordPropertyAccessor implements PropertyAccessor {
   }
 
   /* (non-Javadoc)
-   * @see org.springframework.expression.PropertyAccessor#canRead(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String)
+   * @see org.springframework.expression.PropertyAccessor#canRead(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String)
    */
   @Override
   public boolean canRead(EvaluationContext context, Object target, String name)
@@ -47,7 +48,8 @@ public class GenericRecordPropertyAccessor implements PropertyAccessor {
   }
 
   /* (non-Javadoc)
-   * @see org.springframework.expression.PropertyAccessor#read(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String)
+   * @see org.springframework.expression.PropertyAccessor#read(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String)
    */
   @Override
   public TypedValue read(EvaluationContext context, Object target, String name)
@@ -57,7 +59,8 @@ public class GenericRecordPropertyAccessor implements PropertyAccessor {
   }
 
   /* (non-Javadoc)
-   * @see org.springframework.expression.PropertyAccessor#canWrite(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String)
+   * @see org.springframework.expression.PropertyAccessor#canWrite(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String)
    */
   @Override
   public boolean canWrite(EvaluationContext context, Object target,
@@ -66,7 +69,8 @@ public class GenericRecordPropertyAccessor implements PropertyAccessor {
   }
 
   /* (non-Javadoc)
-   * @see org.springframework.expression.PropertyAccessor#write(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String, java.lang.Object)
+   * @see org.springframework.expression.PropertyAccessor#write(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String, java.lang.Object)
    */
   @Override
   public void write(EvaluationContext context, Object target, String name,

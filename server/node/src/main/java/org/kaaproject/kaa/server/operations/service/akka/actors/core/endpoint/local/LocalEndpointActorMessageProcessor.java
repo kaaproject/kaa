@@ -97,20 +97,29 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMessageProcessor<LocalEndpointActorState> {
+public class LocalEndpointActorMessageProcessor
+    extends AbstractEndpointActorMessageProcessor<LocalEndpointActorState> {
 
   /**
    * The Constant LOG.
    */
-  private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActorMessageProcessor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(
+      LocalEndpointActorMessageProcessor.class);
 
   private final Map<Integer, LogDeliveryMessage> logUploadResponseMap;
 
   private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
 
-  public LocalEndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
-    super(new LocalEndpointActorState(Base64Util.encode(key.getData()), actorKey), context.getOperationsService(), appToken, key,
-        actorKey, Base64Util.encode(key.getData()), context.getLocalEndpointTimeout());
+  public LocalEndpointActorMessageProcessor(AkkaContext context,
+                                            String appToken,
+                                            EndpointObjectHash key,
+                                            String actorKey) {
+    super(new LocalEndpointActorState(Base64Util.encode(key.getData()), actorKey),
+        context.getOperationsService(), appToken,
+        key,
+        actorKey,
+        Base64Util.encode(key.getData()),
+        context.getLocalEndpointTimeout());
     this.logUploadResponseMap = new HashMap<>();
     this.userAttachResponseMap = new LinkedHashMap<>();
   }
@@ -119,7 +128,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     sync(context, message);
   }
 
-  public void processEndpointEventReceiveMessage(ActorContext context, EndpointEventReceiveMessage message) {
+  public void processEndpointEventReceiveMessage(ActorContext context,
+                                                 EndpointEventReceiveMessage message) {
     EndpointEventDeliveryMessage response;
     if (state.isValidForEvents()) {
       Set<ChannelMetaData> eventChannels = state.getChannelsByType(TransportType.EVENT);
@@ -129,13 +139,15 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         }
         response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.SUCCESS);
       } else {
-        LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
+        LOG.debug("[{}] Message ignored due to no channel contexts registered for events",
+            actorKey, message);
         response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
         state.setUserRegistrationPending(false);
       }
     } else {
       LOG.debug(
-          "[{}][{}] Endpoint profile is not valid for receiving events. Either no assigned user or no event families in sdk",
+          "[{}][{}] Endpoint profile is not valid for receiving events. "
+              + "Either no assigned user or no event families in sdk",
           endpointKey, actorKey);
       response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
     }
@@ -143,12 +155,15 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
   }
 
   public void processThriftNotification(ActorContext context) {
-    Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
-    LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
+    Set<ChannelMetaData> channels = state.getChannelsByTypes(
+        TransportType.CONFIGURATION, TransportType.NOTIFICATION);
+    LOG.debug("[{}][{}] Processing thrift norification for {} channels",
+        endpointKey, actorKey, channels.size());
     syncChannels(context, channels, true, true);
   }
 
-  public void processUserConfigurationUpdate(ActorContext context, EndpointUserConfigurationUpdateMessage message) {
+  public void processUserConfigurationUpdate(ActorContext context,
+                                             EndpointUserConfigurationUpdateMessage message) {
     if (message.getUserConfigurationUpdate() != null) {
       state.setUcfHash(message.getUserConfigurationUpdate().getHash());
       syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
@@ -163,27 +178,34 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
       processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
     } else if (thriftMsg instanceof ThriftEndpointDeregistrationMessage) {
-      processEndpointDeregistrationMessage(context, (ThriftEndpointDeregistrationMessage) thriftMsg);
+      processEndpointDeregistrationMessage(
+          context, (ThriftEndpointDeregistrationMessage) thriftMsg);
     }
   }
 
-  private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
+  private void processServerProfileUpdateMsg(ActorContext context,
+                                             ThriftServerProfileUpdateMessage thriftMsg) {
     EndpointProfileDto endpointProfile = state.getProfile();
     if (endpointProfile != null) {
       state.setProfile(operationsService.refreshServerEndpointProfile(key));
-      Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
-      LOG.debug("[{}][{}] Processing profile update for {} channels", endpointKey, actorKey, channels.size());
+      Set<ChannelMetaData> channels = state.getChannelsByTypes(
+          TransportType.CONFIGURATION, TransportType.NOTIFICATION);
+      LOG.debug("[{}][{}] Processing profile update for {} channels",
+          endpointKey, actorKey, channels.size());
       syncChannels(context, channels, true, true);
     } else {
-      LOG.warn("[{}][{}] Can't update server profile for an empty state", endpointKey, actorKey);
+      LOG.warn("[{}][{}] Can't update server profile for an empty state",
+          endpointKey, actorKey);
     }
   }
 
-  private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
+  private void processUnicastNotificationMsg(ActorContext context,
+                                             ThriftUnicastNotificationMessage thriftMsg) {
     processNotification(context, NotificationMessage.fromUnicastId(thriftMsg.getNotificationId()));
   }
 
-  private void processEndpointDeregistrationMessage(ActorContext context, ThriftEndpointDeregistrationMessage thriftMsg) {
+  private void processEndpointDeregistrationMessage(
+      ActorContext context, ThriftEndpointDeregistrationMessage thriftMsg) {
     for (ChannelMetaData channel : state.getAllChannels()) {
       sendReply(context, channel.request, new EndpointRevocationException());
     }
@@ -204,12 +226,15 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
       return;
     }
     for (ChannelMetaData channel : channels) {
-      LOG.debug("[{}][{}] processing channel {} and response {}", endpointKey, actorKey, channel,
+      LOG.debug("[{}][{}] processing channel {} and response {}",
+          endpointKey, actorKey, channel,
           channel.getResponseHolder().getResponse());
-      ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(), validNfs,
+      ServerSync syncResponse = operationsService.updateSyncResponse(
+          channel.getResponseHolder().getResponse(), validNfs,
           unicastNotificationId);
       if (syncResponse != null) {
-        LOG.debug("[{}][{}] processed channel {} and response {}", endpointKey, actorKey, channel, syncResponse);
+        LOG.debug("[{}][{}] processed channel {} and response {}",
+            endpointKey, actorKey, channel, syncResponse);
         sendReply(context, channel.getRequestMessage(), syncResponse);
         if (!channel.getType().isAsync()) {
           state.removeChannel(channel);
@@ -227,7 +252,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         state.removeChannel(channel);
       }
     } else {
-      LOG.debug("[{}][{}] Failed to find request by id [{}].", endpointKey, actorKey, message.getRequestId());
+      LOG.debug("[{}][{}] Failed to find request by id [{}].",
+          endpointKey, actorKey, message.getRequestId());
     }
   }
 
@@ -241,7 +267,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
       ClientSync request = mergeRequestForChannel(channel, requestMessage);
 
       ChannelType channelType = channel.getType();
-      LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]", endpointKey, actorKey, request, channelType,
+      LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]",
+          endpointKey, actorKey, request, channelType,
           requestMessage.getChannelUuid());
 
       SyncContext responseHolder = sync(request);
@@ -255,38 +282,43 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         processEvents(context, request, responseHolder);
         notifyAffectedEndpoints(context, request, responseHolder);
       } else {
-        LOG.warn("[{}][{}] Endpoint profile is not set after request processing!", endpointKey, actorKey);
+        LOG.warn("[{}][{}] Endpoint profile is not set after request processing!",
+            endpointKey, actorKey);
       }
 
       LOG.debug("[{}][{}] SyncResponseHolder {}", endpointKey, actorKey, responseHolder);
 
       if (channelType.isAsync()) {
-        LOG.debug("[{}][{}] Adding async request from channel [{}] to map ", endpointKey, actorKey,
+        LOG.debug("[{}][{}] Adding async request from channel [{}] to map ",
+            endpointKey, actorKey,
             requestMessage.getChannelUuid());
         channel.update(responseHolder);
         updateSubscriptionsToTopics(context, responseHolder);
         sendReply(context, requestMessage, responseHolder.getResponse());
       } else {
         if (channelType.isLongPoll() && !responseHolder.requireImmediateReply()) {
-          LOG.debug("[{}][{}] Adding long poll request from channel [{}] to map ", endpointKey, actorKey,
+          LOG.debug("[{}][{}] Adding long poll request from channel [{}] to map ",
+              endpointKey, actorKey,
               requestMessage.getChannelUuid());
           channel.update(responseHolder);
           updateSubscriptionsToTopics(context, responseHolder);
-          scheduleTimeoutMessage(context, requestMessage.getChannelUuid(), getDelay(requestMessage, start));
+          scheduleTimeoutMessage(
+              context, requestMessage.getChannelUuid(), getDelay(requestMessage, start));
         } else {
           sendReply(context, requestMessage, responseHolder.getResponse());
           state.removeChannel(channel);
         }
       }
-    } catch (Exception e) {
-      LOG.error("[{}][{}] processEndpointRequest", endpointKey, actorKey, e);
-      sendReply(context, requestMessage, e);
+    } catch (Exception ex) {
+      LOG.error("[{}][{}] processEndpointRequest", endpointKey, actorKey, ex);
+      sendReply(context, requestMessage, ex);
     }
   }
 
   private SyncContext sync(ClientSync request) throws GetDeltaException {
     if (!request.isValid()) {
-      LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointKey);
+      LOG.warn("[{}] Request is not valid. It does not contain profile information!",
+          endpointKey);
       return SyncContext.failure(request.getRequestId());
     }
     SyncContext context = new SyncContext(new ServerSync());
@@ -297,23 +329,26 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     context.setRequestHash(request.hashCode());
     context.setMetaData(request.getClientSyncMetaData());
 
-
-    LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
+    LOG.trace("[{}][{}] processing sync. Request: {}",
+        endpointKey, context.getRequestHash(), request);
 
     context = operationsService.syncClientProfile(context, request.getProfileSync());
-    context = operationsService.syncUseConfigurationRawSchema(context, request.isUseConfigurationRawSchema());
+    context = operationsService.syncUseConfigurationRawSchema(
+        context, request.isUseConfigurationRawSchema());
 
     if (context.getStatus() != SyncStatus.SUCCESS) {
       return context;
     }
     if (state.isUcfHashRequiresIntialization()) {
       byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
-      LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}", endpointKey, context.getRequestHash(),
+      LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}",
+          endpointKey, context.getRequestHash(),
           Arrays.toString(hash));
       state.setUcfHash(hash);
     }
 
-    context = operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
+    context = operationsService.processEndpointAttachDetachRequests(
+        context, request.getUserSync());
     context = operationsService.processEventListenerRequests(context, request.getEventSync());
 
     if (state.isUserConfigurationUpdatePending()) {
@@ -324,12 +359,15 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
 
     context = operationsService.syncNotification(context, request.getNotificationSync());
 
-    LOG.trace("[{}][{}] processed sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
+    LOG.trace("[{}][{}] processed sync. Response is {}",
+        endpointKey, request.hashCode(), context.getResponse());
 
     return context;
   }
 
-  private void syncChannels(ActorContext context, Set<ChannelMetaData> channels, boolean cfUpdate, boolean nfUpdate) {
+  private void syncChannels(ActorContext context,
+                            Set<ChannelMetaData> channels,
+                            boolean cfUpdate, boolean nfUpdate) {
     for (ChannelMetaData channel : channels) {
       ClientSync originalRequest = channel.getRequestMessage().getRequest();
       ClientSync newRequest = new ClientSync();
@@ -350,15 +388,18 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     }
   }
 
-  private ClientSync mergeRequestForChannel(ChannelMetaData channel, SyncRequestMessage requestMessage) {
+  private ClientSync mergeRequestForChannel(ChannelMetaData channel,
+                                            SyncRequestMessage requestMessage) {
     ClientSync request;
     if (channel.getType().isAsync()) {
       if (channel.isFirstRequest()) {
         request = channel.getRequestMessage().getRequest();
       } else {
-        LOG.debug("[{}][{}] Updating request for async channel {}", endpointKey, actorKey, channel);
+        LOG.debug("[{}][{}] Updating request for async channel {}",
+            endpointKey, actorKey, channel);
         request = channel.mergeRequest(requestMessage);
-        LOG.trace("[{}][{}] Updated request for async channel {} : {}", endpointKey, actorKey, channel, request);
+        LOG.trace("[{}][{}] Updated request for async channel {} : {}",
+            endpointKey, actorKey, channel, request);
       }
     } else {
       request = channel.getRequestMessage().getRequest();
@@ -366,30 +407,39 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     return request;
   }
 
-  private void processUserAttachRequest(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
+  private void processUserAttachRequest(ActorContext context,
+                                        ClientSync syncRequest,
+                                        SyncContext responseHolder) {
     UserClientSync request = syncRequest.getUserSync();
     if (request != null && request.getUserAttachRequest() != null) {
-      UserAttachRequest aRequest = request.getUserAttachRequest();
-      context.parent().tell(new UserVerificationRequestMessage(context.self(), aRequest.getUserVerifierId(),
-          aRequest.getUserExternalId(), aRequest.getUserAccessToken()), context.self());
-      LOG.debug("[{}][{}] received and forwarded user attach request {}", endpointKey, actorKey, request.getUserAttachRequest());
+      UserAttachRequest attachRequest = request.getUserAttachRequest();
+      context.parent().tell(new UserVerificationRequestMessage(
+          context.self(), attachRequest.getUserVerifierId(),
+          attachRequest.getUserExternalId(), attachRequest.getUserAccessToken()), context.self());
+      LOG.debug("[{}][{}] received and forwarded user attach request {}",
+          endpointKey, actorKey, request.getUserAttachRequest());
 
       if (userAttachResponseMap.size() > 0) {
-        Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet().iterator().next();
+        Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet()
+            .iterator()
+            .next();
         updateResponseWithUserAttachResults(responseHolder.getResponse(), entryToSend.getValue());
         userAttachResponseMap.remove(entryToSend.getKey());
       }
     }
   }
 
-  private void updateResponseWithUserAttachResults(ServerSync response, UserVerificationResponseMessage message) {
+  private void updateResponseWithUserAttachResults(ServerSync response,
+                                                   UserVerificationResponseMessage message) {
     if (response.getUserSync() == null) {
       response.setUserSync(new UserServerSync());
     }
     response.getUserSync().setUserAttachResponse(EntityConvertUtils.convert(message));
   }
 
-  private void processEvents(ActorContext context, ClientSync request, SyncContext responseHolder) {
+  private void processEvents(ActorContext context,
+                             ClientSync request,
+                             SyncContext responseHolder) {
     if (request.getEventSync() != null) {
       EventClientSync eventRequest = request.getEventSync();
       processSeqNumber(eventRequest, responseHolder);
@@ -397,7 +447,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         sendEventsIfPresent(context, eventRequest);
       } else {
         LOG.debug(
-            "[{}][{}] Endpoint profile is not valid for send/receive events. Either no assigned user or no event families in sdk",
+            "[{}][{}] Endpoint profile is not valid for send/receive events. "
+                + "Either no assigned user or no event families in sdk",
             endpointKey, actorKey);
       }
     }
@@ -410,7 +461,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         response = new EventServerSync();
         responseHolder.getResponse().setEventSync(response);
       }
-      response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(Math.max(state.getEventSeqNumber(), 0)));
+      response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(
+          Math.max(state.getEventSeqNumber(), 0)));
     }
   }
 
@@ -433,11 +485,14 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     }
   }
 
-  private void processLogUpload(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
+  private void processLogUpload(ActorContext context,
+                                ClientSync syncRequest,
+                                SyncContext responseHolder) {
     LogClientSync request = syncRequest.getLogSync();
     if (request != null) {
       if (request.getLogEntries() != null && request.getLogEntries().size() > 0) {
-        LOG.debug("[{}][{}] Processing log upload request {}", endpointKey, actorKey, request.getLogEntries().size());
+        LOG.debug("[{}][{}] Processing log upload request {}",
+            endpointKey, actorKey, request.getLogEntries().size());
         EndpointProfileDataDto profileDto = convert(responseHolder.getEndpointProfile());
         List<LogEvent> logEvents = new ArrayList<>(request.getLogEntries().size());
         for (LogEntry logEntry : request.getLogEntries()) {
@@ -448,7 +503,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         BaseLogEventPack logPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(),
             responseHolder.getEndpointProfile().getLogSchemaVersion(), logEvents);
         logPack.setUserId(state.getUserId());
-        context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
+        context.parent().tell(new LogEventPackMessage(
+            request.getRequestId(), context.self(), logPack), context.self());
       }
       if (logUploadResponseMap.size() > 0) {
         responseHolder.getResponse().setLogSync(EntityConvertUtils.convert(logUploadResponseMap));
@@ -458,28 +514,39 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
   }
 
   private EndpointProfileDataDto convert(EndpointProfileDto profileDto) {
-    return new EndpointProfileDataDto(profileDto.getId(), endpointKey, profileDto.getClientProfileVersion(),
-        profileDto.getClientProfileBody(), profileDto.getServerProfileVersion(), profileDto.getServerProfileBody());
+    return new EndpointProfileDataDto(
+        profileDto.getId(), endpointKey, profileDto.getClientProfileVersion(),
+        profileDto.getClientProfileBody(), profileDto.getServerProfileVersion(),
+        profileDto.getServerProfileBody());
   }
 
   private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {
-    List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToECFVersions(endpointProfile.getEcfVersionStates());
-    EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions,
-        endpointProfile.getConfigurationVersion(), endpointProfile.getUserConfigurationHash(), appToken, context.self());
-    LOG.debug("[{}][{}] Sending user registration request {}", endpointKey, actorKey, userRegistrationMessage);
+    List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToECFVersions(
+        endpointProfile.getEcfVersionStates());
+    EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(
+        state.getUserId(), key, ecfVersions,
+        endpointProfile.getConfigurationVersion(), endpointProfile.getUserConfigurationHash(),
+        appToken, context.self());
+    LOG.debug("[{}][{}] Sending user registration request {}",
+        endpointKey, actorKey, userRegistrationMessage);
     context.parent().tell(userRegistrationMessage, context.self());
   }
 
-  private void sendDisconnectFromOldUser(ActorContext context, EndpointProfileDto endpointProfile) {
-    LOG.debug("[{}][{}] Detected user change from [{}] to [{}]", endpointKey, actorKey, state.getUserId(),
+  private void sendDisconnectFromOldUser(ActorContext context,
+                                         EndpointProfileDto endpointProfile) {
+    LOG.debug("[{}][{}] Detected user change from [{}] to [{}]",
+        endpointKey, actorKey, state.getUserId(),
         endpointProfile.getEndpointUserId());
-    EndpointUserDisconnectMessage userDisconnectMessage = new EndpointUserDisconnectMessage(state.getUserId(), key, appToken,
+    EndpointUserDisconnectMessage userDisconnectMessage = new EndpointUserDisconnectMessage(
+        state.getUserId(), key, appToken,
         context.self());
     context.parent().tell(userDisconnectMessage, context.self());
   }
 
   private long getDelay(SyncRequestMessage requestMessage, long start) {
-    return requestMessage.getRequest().getClientSyncMetaData().getTimeout() - (System.currentTimeMillis() - start);
+    return requestMessage.getRequest()
+        .getClientSyncMetaData()
+        .getTimeout() - (System.currentTimeMillis() - start);
   }
 
   private ChannelMetaData initChannel(ActorContext context, SyncRequestMessage requestMessage) {
@@ -494,8 +561,12 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.EVENT);
         for (ChannelMetaData oldChannel : channels) {
           if (!oldChannel.getType().isAsync() && channel.getType().isLongPoll()) {
-            LOG.debug("[{}][{}] Closing old long poll channel [{}]", endpointKey, actorKey, oldChannel.getId());
-            sendReply(context, oldChannel.getRequestMessage(), oldChannel.getResponseHolder().getResponse());
+            LOG.debug("[{}][{}] Closing old long poll channel [{}]",
+                endpointKey, actorKey, oldChannel.getId());
+            sendReply(
+                context,
+                oldChannel.getRequestMessage(),
+                oldChannel.getResponseHolder().getResponse());
             state.removeChannel(oldChannel);
           }
         }
@@ -515,25 +586,34 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
   }
 
   private void scheduleKeepAliveCheck(ActorContext context, ChannelMetaData channel) {
-    TimeoutMessage message = new ChannelTimeoutMessage(channel.getId(), channel.getLastActivityTime());
-    LOG.debug("Scheduling channel timeout message: {} to timeout in {}", message, channel.getKeepAlive() * 1000);
+    TimeoutMessage message = new ChannelTimeoutMessage(
+        channel.getId(), channel.getLastActivityTime());
+    LOG.debug("Scheduling channel timeout message: {} to timeout in {}",
+        message, channel.getKeepAlive() * 1000);
     scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
   }
 
-  private void notifyAffectedEndpoints(ActorContext context, ClientSync request, SyncContext responseHolder) {
+  private void notifyAffectedEndpoints(ActorContext context, ClientSync request,
+                                       SyncContext responseHolder) {
     if (responseHolder.getResponse().getUserSync() != null) {
-      List<EndpointAttachResponse> attachResponses = responseHolder.getResponse().getUserSync().getEndpointAttachResponses();
+      List<EndpointAttachResponse> attachResponses = responseHolder.getResponse()
+          .getUserSync()
+          .getEndpointAttachResponses();
       if (attachResponses != null && !attachResponses.isEmpty()) {
         state.resetEventSeqNumber();
         for (EndpointAttachResponse response : attachResponses) {
           if (response.getResult() != SyncStatus.SUCCESS) {
-            LOG.debug("[{}][{}] Skipped unsuccessful attach response [{}]", endpointKey, actorKey, response.getRequestId());
+            LOG.debug("[{}][{}] Skipped unsuccessful attach response [{}]",
+                endpointKey, actorKey, response.getRequestId());
             continue;
           }
           EndpointUserAttachMessage attachMessage = new EndpointUserAttachMessage(
-              EndpointObjectHash.fromBytes(Base64Util.decode(response.getEndpointKeyHash())), state.getUserId(), endpointKey);
+              EndpointObjectHash.fromBytes(
+                  Base64Util.decode(response.getEndpointKeyHash())),
+              state.getUserId(), endpointKey);
           context.parent().tell(attachMessage, context.self());
-          LOG.debug("[{}][{}] Notification to attached endpoint [{}] sent", endpointKey, actorKey, response.getEndpointKeyHash());
+          LOG.debug("[{}][{}] Notification to attached endpoint [{}] sent",
+              endpointKey, actorKey, response.getEndpointKeyHash());
         }
       }
 
@@ -542,18 +622,24 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
       if (detachRequests != null && !detachRequests.isEmpty()) {
         state.resetEventSeqNumber();
         for (EndpointDetachRequest detachRequest : detachRequests) {
-          for (EndpointDetachResponse detachResponse : responseHolder.getResponse().getUserSync().getEndpointDetachResponses()) {
+          List<EndpointDetachResponse> endpointDetachResponses = responseHolder.getResponse()
+              .getUserSync()
+              .getEndpointDetachResponses();
+          for (EndpointDetachResponse detachResponse : endpointDetachResponses) {
             if (detachRequest.getRequestId() == detachResponse.getRequestId()) {
               if (detachResponse.getResult() != SyncStatus.SUCCESS) {
-                LOG.debug("[{}][{}] Skipped unsuccessful detach response [{}]", endpointKey, actorKey,
+                LOG.debug("[{}][{}] Skipped unsuccessful detach response [{}]",
+                    endpointKey, actorKey,
                     detachResponse.getRequestId());
                 continue;
               }
               EndpointUserDetachMessage attachMessage = new EndpointUserDetachMessage(
-                  EndpointObjectHash.fromBytes(Base64Util.decode(detachRequest.getEndpointKeyHash())), state.getUserId(),
+                  EndpointObjectHash.fromBytes(
+                      Base64Util.decode(detachRequest.getEndpointKeyHash())), state.getUserId(),
                   endpointKey);
               context.parent().tell(attachMessage, context.self());
-              LOG.debug("[{}][{}] Notification to detached endpoint [{}] sent", endpointKey, actorKey,
+              LOG.debug("[{}][{}] Notification to detached endpoint [{}] sent",
+                  endpointKey, actorKey,
                   detachRequest.getEndpointKeyHash());
             }
           }
@@ -564,7 +650,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
 
   protected void scheduleActorTimeout(ActorContext context) {
     if (state.isNoChannels()) {
-      scheduleTimeoutMessage(context, new ActorTimeoutMessage(state.getLastActivityTime()), getInactivityTimeout());
+      scheduleTimeoutMessage(
+          context, new ActorTimeoutMessage(state.getLastActivityTime()), getInactivityTimeout());
     }
   }
 
@@ -585,7 +672,10 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
       String subscribedTopic = currentSubscriptionsIterator.next();
       if (!newStates.containsKey(subscribedTopic)) {
         currentSubscriptionsIterator.remove();
-        TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(subscribedTopic, appToken, key,
+        TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(
+            subscribedTopic,
+            appToken,
+            key,
             context.self());
         context.parent().tell(topicSubscriptionMessage, context.self());
       }
@@ -593,8 +683,13 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     // subscribe to new topics;
     for (Entry<String, Integer> entry : newStates.entrySet()) {
       if (!currentStates.containsKey(entry.getKey())) {
-        TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(entry.getKey(), entry.getValue(),
-            response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
+        TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(
+            entry.getKey(), entry.getValue(),
+            response.getSystemNfVersion(),
+            response.getUserNfVersion(),
+            appToken,
+            key,
+            context.self());
         context.parent().tell(topicSubscriptionMessage, context.self());
       }
     }
@@ -606,11 +701,16 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
   }
 
   private void scheduleTimeoutMessage(ActorContext context, TimeoutMessage message, long delay) {
-    context.system().scheduler().scheduleOnce(Duration.create(delay, TimeUnit.MILLISECONDS), context.self(), message,
-        context.dispatcher(), context.self());
+    context.system()
+        .scheduler()
+        .scheduleOnce(
+            Duration.create(delay, TimeUnit.MILLISECONDS), context.self(), message,
+            context.dispatcher(), context.self());
   }
 
-  private void addEventsAndReply(ActorContext context, ChannelMetaData channel, EndpointEventReceiveMessage message) {
+  private void addEventsAndReply(ActorContext context,
+                                 ChannelMetaData channel,
+                                 EndpointEventReceiveMessage message) {
     SyncRequestMessage pendingRequest = channel.getRequestMessage();
     SyncContext pendingResponse = channel.getResponseHolder();
 
@@ -627,21 +727,25 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     }
   }
 
-  private void sendReply(ActorContext context, SyncRequestMessage request, ServerSync syncResponse) {
+  private void sendReply(ActorContext context,
+                         SyncRequestMessage request,
+                         ServerSync syncResponse) {
     sendReply(context, request, null, syncResponse);
   }
 
-  private void sendReply(ActorContext context, SyncRequestMessage request, Exception e) {
-    sendReply(context, request, e, null);
+  private void sendReply(ActorContext context, SyncRequestMessage request, Exception ex) {
+    sendReply(context, request, ex, null);
   }
 
-  private void sendReply(ActorContext context, SyncRequestMessage request, Exception e, ServerSync syncResponse) {
+  private void sendReply(ActorContext context, SyncRequestMessage request,
+                         Exception ex, ServerSync syncResponse) {
     LOG.debug("[{}] response: {}", actorKey, syncResponse);
 
     ServerSync copy = ServerSync.deepCopy(syncResponse);
     ServerSync.cleanup(syncResponse);
 
-    NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, e,
+    NettySessionResponseMessage response = new NettySessionResponseMessage(
+        request.getSession(), copy, ex,
         request.getCommand().getMessageBuilder(), request.getCommand().getErrorBuilder());
 
     tellActor(context, request.getOriginator(), response);
@@ -651,7 +755,8 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
   protected void sendEventsIfPresent(ActorContext context, EventClientSync request) {
     List<Event> events = request.getEvents();
     if (state.getUserId() != null && events != null && !events.isEmpty()) {
-      LOG.debug("[{}][{}] Processing events {} with seq number > {}", endpointKey, actorKey, events, state.getEventSeqNumber());
+      LOG.debug("[{}][{}] Processing events {} with seq number > {}",
+          endpointKey, actorKey, events, state.getEventSeqNumber());
       List<Event> eventsToSend = new ArrayList<>(events.size());
       int maxSentEventSeqNum = state.getEventSeqNumber();
       for (Event event : events) {
@@ -660,29 +765,38 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
           eventsToSend.add(event);
           maxSentEventSeqNum = Math.max(event.getSeqNum(), maxSentEventSeqNum);
         } else {
-          LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}", endpointKey, actorKey, events,
+          LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}",
+              endpointKey, actorKey, events,
               state.getEventSeqNumber());
         }
       }
       state.setEventSeqNumber(maxSentEventSeqNum);
       if (!eventsToSend.isEmpty()) {
-        EndpointEventSendMessage message = new EndpointEventSendMessage(state.getUserId(), eventsToSend, key, appToken,
+        EndpointEventSendMessage message = new EndpointEventSendMessage(
+            state.getUserId(), eventsToSend, key, appToken,
             context.self());
         context.parent().tell(message, context.self());
       }
     }
   }
 
-  public void processEndpointUserActionMessage(ActorContext context, EndpointUserActionMessage message) {
-    Set<ChannelMetaData> eventChannels = state.getChannelsByTypes(TransportType.EVENT, TransportType.USER);
-    LOG.debug("[{}][{}] Current Endpoint was attached/detached from user. Need to close all current event channels {}", endpointKey,
-        actorKey, eventChannels.size());
+  public void processEndpointUserActionMessage(ActorContext context,
+                                               EndpointUserActionMessage message) {
+    Set<ChannelMetaData> eventChannels = state.getChannelsByTypes(
+        TransportType.EVENT, TransportType.USER);
+    LOG.debug("[{}][{}] Current Endpoint was attached/detached from user. "
+            + "Need to close all current event channels {}",
+        endpointKey,
+        actorKey,
+        eventChannels.size());
     state.setUserRegistrationPending(false);
     state.setProfile(operationsService.refreshServerEndpointProfile(key));
     if (message instanceof EndpointUserAttachMessage) {
-      LOG.debug("[{}][{}] Updating endpoint user id to {} in profile", endpointKey, actorKey, message.getUserId());
+      LOG.debug("[{}][{}] Updating endpoint user id to {} in profile",
+          endpointKey, actorKey, message.getUserId());
     } else if (message instanceof EndpointUserDetachMessage) {
-      LOG.debug("[{}][{}] Clanup endpoint user id in profile", endpointKey, actorKey, message.getUserId());
+      LOG.debug("[{}][{}] Clanup endpoint user id in profile",
+          endpointKey, actorKey, message.getUserId());
     }
 
     if (!eventChannels.isEmpty()) {
@@ -700,79 +814,96 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
         if (userSyncResponse != null) {
           if (message instanceof EndpointUserAttachMessage) {
             userSyncResponse
-                .setUserAttachNotification(new UserAttachNotification(message.getUserId(), message.getOriginator()));
+                .setUserAttachNotification(
+                    new UserAttachNotification(message.getUserId(), message.getOriginator()));
             LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
           } else if (message instanceof EndpointUserDetachMessage) {
-            userSyncResponse.setUserDetachNotification(new UserDetachNotification(message.getOriginator()));
+            userSyncResponse.setUserDetachNotification(
+                new UserDetachNotification(message.getOriginator()));
             LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
           }
         }
 
-        LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
+        LOG.debug("[{}][{}] sending reply to [{}] channel",
+            endpointKey, actorKey, channel.getId());
         sendReply(context, pendingRequest, pendingResponse);
         if (!channel.getType().isAsync()) {
           state.removeChannel(channel);
         }
       }
     } else {
-      LOG.debug("[{}][{}] Message ignored due to no channel contexts registered for events", endpointKey, actorKey, message);
+      LOG.debug("[{}][{}] Message ignored due to no channel contexts registered for events",
+          endpointKey, actorKey, message);
     }
   }
 
   public boolean processDisconnectMessage(ActorContext context, ChannelAware message) {
-    LOG.debug("[{}][{}] Received disconnect message for channel [{}]", endpointKey, actorKey, message.getChannelUuid());
+    LOG.debug("[{}][{}] Received disconnect message for channel [{}]",
+        endpointKey, actorKey, message.getChannelUuid());
     ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
     if (channel != null) {
       state.removeChannel(channel);
       scheduleActorTimeout(context);
       return true;
     } else {
-      LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
+      LOG.debug("[{}][{}] Can't find channel by uuid [{}]",
+          endpointKey, actorKey, message.getChannelUuid());
       return false;
     }
   }
 
   public boolean processPingMessage(ActorContext context, ChannelAware message) {
-    LOG.debug("[{}][{}] Received ping message for channel [{}]", endpointKey, actorKey, message.getChannelUuid());
+    LOG.debug("[{}][{}] Received ping message for channel [{}]",
+        endpointKey, actorKey, message.getChannelUuid());
     ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
     if (channel != null) {
       long lastActivityTime = System.currentTimeMillis();
-      LOG.debug("[{}][{}] Updating last activity time for channel [{}] to ", endpointKey, actorKey, message.getChannelUuid(),
+      LOG.debug("[{}][{}] Updating last activity time for channel [{}] to ",
+          endpointKey, actorKey, message.getChannelUuid(),
           lastActivityTime);
       channel.setLastActivityTime(lastActivityTime);
       channel.getContext().writeAndFlush(new PingResponse());
       return true;
     } else {
-      LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
+      LOG.debug("[{}][{}] Can't find channel by uuid [{}]",
+          endpointKey, actorKey, message.getChannelUuid());
       return false;
     }
   }
 
-  public boolean processChannelTimeoutMessage(ActorContext context, ChannelTimeoutMessage message) {
-    LOG.debug("[{}][{}] Received channel timeout message for channel [{}]", endpointKey, actorKey, message.getChannelUuid());
+  public boolean processChannelTimeoutMessage(ActorContext context,
+                                              ChannelTimeoutMessage message) {
+    LOG.debug("[{}][{}] Received channel timeout message for channel [{}]",
+        endpointKey, actorKey, message.getChannelUuid());
     ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
     if (channel != null) {
       if (channel.getLastActivityTime() <= message.getLastActivityTime()) {
-        LOG.debug("[{}][{}] Timeout message accepted for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
-            actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
+        LOG.debug("[{}][{}] Timeout message accepted for channel [{}]. "
+                + "Last activity time {} and timeout is {} ",
+            endpointKey, actorKey, message.getChannelUuid(),
+            channel.getLastActivityTime(), message.getLastActivityTime());
         state.removeChannel(channel);
         scheduleActorTimeout(context);
         return true;
       } else {
-        LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
-            actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
+        LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. "
+                + "Last activity time {} and timeout is {} ",
+            endpointKey, actorKey, message.getChannelUuid(),
+            channel.getLastActivityTime(), message.getLastActivityTime());
         scheduleKeepAliveCheck(context, channel);
         return false;
       }
     } else {
-      LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
+      LOG.debug("[{}][{}] Can't find channel by uuid [{}]",
+          endpointKey, actorKey, message.getChannelUuid());
       scheduleActorTimeout(context);
       return false;
     }
   }
 
   public void processLogDeliveryMessage(ActorContext context, LogDeliveryMessage message) {
-    LOG.debug("[{}][{}] Received log delivery message for request [{}] with status {}", endpointKey, actorKey, message.getRequestId(),
+    LOG.debug("[{}][{}] Received log delivery message for request [{}] with status {}",
+        endpointKey, actorKey, message.getRequestId(),
         message.isSuccess());
     logUploadResponseMap.put(message.getRequestId(), message);
     Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.LOGGING);
@@ -791,12 +922,16 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     logUploadResponseMap.clear();
   }
 
-  public void processUserVerificationMessage(ActorContext context, UserVerificationResponseMessage message) {
-    LOG.debug("[{}][{}] Received user verification message for request [{}] with status {}", endpointKey, actorKey,
+  public void processUserVerificationMessage(ActorContext context,
+                                             UserVerificationResponseMessage message) {
+    LOG.debug("[{}][{}] Received user verification message for request [{}] with status {}",
+        endpointKey, actorKey,
         message.getRequestId(), message.isSuccess());
     userAttachResponseMap.put(message.getRequestId(), message);
     Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.USER);
-    Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet().iterator().next();
+    Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet()
+        .iterator()
+        .next();
     for (ChannelMetaData channel : channels) {
       SyncRequestMessage pendingRequest = channel.getRequestMessage();
       ServerSync pendingResponse = channel.getResponseHolder().getResponse();
@@ -811,7 +946,9 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     }
     userAttachResponseMap.remove(entryToSend.getKey());
     if (message.isSuccess()) {
-      state.setProfile(operationsService.attachEndpointToUser(state.getProfile(), appToken, message.getUserId()));
+      state.setProfile(
+          operationsService.attachEndpointToUser(
+              state.getProfile(), appToken, message.getUserId()));
       updateUserConnection(context);
     }
   }

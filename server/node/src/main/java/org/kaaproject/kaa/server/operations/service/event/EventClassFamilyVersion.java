@@ -19,9 +19,7 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.io.Serializable;
 
 public final class EventClassFamilyVersion implements Serializable {
-  /**
-   *
-   */
+
   private static final long serialVersionUID = 7302504644662229284L;
 
 

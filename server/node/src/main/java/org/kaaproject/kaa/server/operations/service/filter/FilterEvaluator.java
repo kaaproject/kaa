@@ -27,13 +27,15 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 public interface FilterEvaluator {
 
   /**
-   * Initialize Filter evaluator with profile information
+   * Initialize Filter evaluator with profile information.
    *
    * @param profile                   - endpoint profile
    * @param endpointProfileSchemaBody - endpoint profile schema body
    * @param serverProfileSchemaBody   - server profile schema body
    */
-  void init(EndpointProfileDto profile, String endpointProfileSchemaBody, String serverProfileSchemaBody);
+  void init(EndpointProfileDto profile,
+            String endpointProfileSchemaBody,
+            String serverProfileSchemaBody);
 
   /**
    * Evaluates profile filter.

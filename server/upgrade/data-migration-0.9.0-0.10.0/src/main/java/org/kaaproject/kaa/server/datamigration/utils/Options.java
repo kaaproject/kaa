@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.datamigration.utils;
 
 
-final public class Options {
+public final class Options {
   public static final String DEFAULT_USER_NAME = "sqladmin";
   public static final String DEFAULT_PASSWORD = "admin";
   public static final String DEFAULT_DB_NAME = "kaa";
@@ -30,7 +30,7 @@ final public class Options {
   private String password = DEFAULT_PASSWORD;
   private String dbName = DEFAULT_DB_NAME;
   private String host = DEFAULT_HOST;
-  private String noSQL = DEFAULT_NO_SQL;
+  private String noSql = DEFAULT_NO_SQL;
   private String driverClassName = DEFAULT_DRIVER_CLASS_NAME;
   private String jdbcUrl = DEFAULT_JDBC_URL;
 
@@ -66,12 +66,12 @@ final public class Options {
     this.host = host;
   }
 
-  public String getNoSQL() {
-    return noSQL;
+  public String getNoSql() {
+    return noSql;
   }
 
-  public void setNoSQL(String noSQL) {
-    this.noSQL = noSQL;
+  public void setNoSql(String noSql) {
+    this.noSql = noSql;
   }
 
   public String getDriverClassName() {
@@ -92,13 +92,12 @@ final public class Options {
 
   @Override
   public String toString() {
-    return "Options{" +
-        "username='" + username + '\'' +
-        ", password='" + password + '\'' +
-        ", dbName='" + dbName + '\'' +
-        ", host='" + host + '\'' +
-        ", driverClassName='" + driverClassName + '\'' +
-        ", jdbcUrl='" + jdbcUrl + '\'' +
-        '}';
+    return "Options{"
+        + "username='" + username + '\''
+        + ", password='" + password + '\''
+        + ", dbName='" + dbName + '\''
+        + ", host='" + host + '\''
+        + ", driverClassName='" + driverClassName + '\''
+        + ", jdbcUrl='" + jdbcUrl + '\'' + '}';
   }
 }

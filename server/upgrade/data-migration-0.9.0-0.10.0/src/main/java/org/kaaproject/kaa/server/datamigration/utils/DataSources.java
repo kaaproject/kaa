@@ -20,7 +20,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.sql.DataSource;
 
-final public class DataSources {
+public final class DataSources {
 
   public static DataSource getDataSource(Options opt) {
     BasicDataSource bds = new BasicDataSource();

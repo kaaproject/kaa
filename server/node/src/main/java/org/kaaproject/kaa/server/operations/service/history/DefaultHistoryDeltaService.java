@@ -74,10 +74,14 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
    * java.lang.String, int)
    */
   @Override
-  public HistoryDelta getDelta(EndpointProfileDto profile, String applicationToken, int curAppSeqNumber) {
+  public HistoryDelta getDelta(EndpointProfileDto profile,
+                               String applicationToken,
+                               int curAppSeqNumber) {
     String endpointId = Base64Util.encode(profile);
-    ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
-    AppProfileVersionsKey appVersionsKey = new AppProfileVersionsKey(applicationToken, profile.getClientProfileVersion(),
+    ConfigurationIdKey confIdKey = new ConfigurationIdKey(
+        applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
+    AppProfileVersionsKey appVersionsKey = new AppProfileVersionsKey(
+        applicationToken, profile.getClientProfileVersion(),
         profile.getServerProfileVersion());
     List<ProfileFilterDto> filters = filterService.getAllMatchingFilters(appVersionsKey, profile);
     LOG.debug("[{}] Found {} matching filters", endpointId, filters.size());
@@ -87,11 +91,13 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
 
     EndpointGroupStateDto groupAllState = new EndpointGroupStateDto();
     groupAllState.setEndpointGroupId(groupDto.getId());
-    groupAllState.setConfigurationId(cacheService.getConfIdByKey(confIdKey.copyWithNewEGId(groupDto.getId())));
+    groupAllState.setConfigurationId(cacheService.getConfIdByKey(
+        confIdKey.copyWithNewEGId(groupDto.getId())));
     result.add(groupAllState);
 
     for (ProfileFilterDto filter : filters) {
-      String confId = cacheService.getConfIdByKey(confIdKey.copyWithNewEGId(filter.getEndpointGroupId()));
+      String confId = cacheService.getConfIdByKey(
+          confIdKey.copyWithNewEGId(filter.getEndpointGroupId()));
       EndpointGroupStateDto endpointGroupState = new EndpointGroupStateDto();
       endpointGroupState.setEndpointGroupId(filter.getEndpointGroupId());
       endpointGroupState.setProfileFilterId(filter.getId());
@@ -110,7 +116,10 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
    * java.lang.String, int, int)
    */
   @Override
-  public HistoryDelta getDelta(EndpointProfileDto profile, String applicationToken, int oldAppSeqNumber, int curAppSeqNumber) {
+  public HistoryDelta getDelta(EndpointProfileDto profile,
+                               String applicationToken,
+                               int oldAppSeqNumber,
+                               int curAppSeqNumber) {
     String endpointId = Base64Util.encode(profile.getEndpointKeyHash());
 
     HistoryDelta historyDelta = new HistoryDelta();
@@ -119,20 +128,23 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
       if (profile.getGroupState() != null && profile.getGroupState().size() > 0) {
         historyDelta.setEndpointGroupStates(profile.getGroupState());
       } else {
-        historyDelta.setEndpointGroupStates(new ArrayList<EndpointGroupStateDto>());
+        historyDelta.setEndpointGroupStates(new ArrayList<>());
       }
       return historyDelta;
     } else {
       historyDelta.setSeqNumberChanged(true);
     }
 
-    HistoryKey historyKey = new HistoryKey(applicationToken, oldAppSeqNumber, curAppSeqNumber, profile.getConfigurationVersion(),
+    HistoryKey historyKey = new HistoryKey(
+        applicationToken, oldAppSeqNumber, curAppSeqNumber, profile.getConfigurationVersion(),
         profile.getClientProfileVersion(), profile.getServerProfileVersion());
-    ConfigurationIdKey confIdKey = new ConfigurationIdKey(applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
+    ConfigurationIdKey confIdKey = new ConfigurationIdKey(
+        applicationToken, curAppSeqNumber, profile.getConfigurationVersion());
 
     List<EndpointGroupStateDto> endpointGroups;
 
-    LOG.debug("[{}] Fetching changes from history. From seq number: {} to {}", endpointId, historyKey.getOldSeqNumber(),
+    LOG.debug("[{}] Fetching changes from history. From seq number: {} to {}",
+        endpointId, historyKey.getOldSeqNumber(),
         historyKey.getNewSeqNumber());
 
     Map<String, EndpointGroupStateDto> groupsMap = getOldGroupMap(profile);
@@ -156,13 +168,13 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
 
       if (egs != null) {
         if (changeType == ChangeType.REMOVE_TOPIC || changeType == ChangeType.ADD_TOPIC) {
-          LOG.trace("[{}] Detected {} for {} on group {} which means topic list change", endpointId, changeType,
-              change.getTopicId(), change.getEndpointGroupId());
+          LOG.trace("[{}] Detected {} for {} on group {} which means topic list change",
+              endpointId, changeType, change.getTopicId(), change.getEndpointGroupId());
           historyDelta.setTopicListChanged(true);
           continue;
         } else if (changeType == ChangeType.REMOVE_CONF || changeType == ChangeType.ADD_CONF) {
-          LOG.trace("[{}] Detected {} for {} on group {} which means configuration change", endpointId, changeType,
-              change.getConfigurationId(), change.getEndpointGroupId());
+          LOG.trace("[{}] Detected {} for {} on group {} which means configuration change",
+              endpointId, changeType, change.getConfigurationId(), change.getEndpointGroupId());
           if (changeType == ChangeType.ADD_CONF) {
             egs.setConfigurationId(change.getConfigurationId());
           } else {
@@ -170,15 +182,20 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
           }
           historyDelta.setConfigurationChanged(true);
         } else if (changeType == ChangeType.REMOVE_PROF) {
-          LOG.trace("[{}] Detected {} for {} on group {} which means configuration/topic list change", endpointId, changeType,
+          LOG.trace("[{}] Detected {} for {} on group {} which means "
+                  + "configuration/topic list change",
+              endpointId, changeType,
               change.getProfileFilterId(), change.getEndpointGroupId());
           groupsMap.remove(egs.getEndpointGroupId());
           historyDelta.setAllChanged();
         } else if (changeType == ChangeType.ADD_PROF) {
-          LOG.trace("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(),
+          LOG.trace("[{}] Detected {} for {} on group {}",
+              endpointId, changeType, change.getProfileFilterId(),
               change.getEndpointGroupId());
-          if (!filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile)) {
-            LOG.trace("[{}] Detected {} does not match current profile body which means configuration/topic list change",
+          if (!filterService.matches(
+              historyKey.getAppToken(), change.getProfileFilterId(), profile)) {
+            LOG.trace("[{}] Detected {} does not match current profile body "
+                    + "which means configuration/topic list change",
                 endpointId, change.getProfileFilterId());
             groupsMap.remove(egs.getEndpointGroupId());
             historyDelta.setAllChanged();
@@ -188,10 +205,13 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         }
       } else {
         if (changeType == ChangeType.ADD_PROF) {
-          LOG.trace("[{}] Detected {} for {} on group {}", endpointId, changeType, change.getProfileFilterId(),
+          LOG.trace("[{}] Detected {} for {} on group {}",
+              endpointId, changeType, change.getProfileFilterId(),
               change.getEndpointGroupId());
-          if (filterService.matches(historyKey.getAppToken(), change.getProfileFilterId(), profile)) {
-            LOG.trace("[{}] Detected {} match current profile body which means possible configuration/topic list change",
+          if (filterService.matches(
+              historyKey.getAppToken(), change.getProfileFilterId(), profile)) {
+            LOG.trace("[{}] Detected {} match current profile body which means "
+                    + "possible configuration/topic list change",
                 endpointId, change.getProfileFilterId());
             egs = new EndpointGroupStateDto(groupId, change.getProfileFilterId(), null);
             groupsMap.put(groupId, egs);
@@ -210,7 +230,9 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
         if (confId != null) {
           entry.getValue().setConfigurationId(confId);
         } else {
-          LOG.debug("[{}] Attempt failed. This is possibly group with topic list but without configuration", endpointId,
+          LOG.debug("[{}] Attempt failed. This is possibly group with topic "
+                  + "list but without configuration",
+              endpointId,
               entry.getKey());
         }
       }
@@ -229,6 +251,7 @@ public class DefaultHistoryDeltaService implements HistoryDeltaService {
    * @return the old group map
    */
   private Map<String, EndpointGroupStateDto> getOldGroupMap(EndpointProfileDto profile) {
-    return profile.getGroupState().stream().collect(Collectors.toMap(EndpointGroupStateDto::getEndpointGroupId, Function.identity()));
+    return profile.getGroupState().stream().collect(
+        Collectors.toMap(EndpointGroupStateDto::getEndpointGroupId, Function.identity()));
   }
 }
