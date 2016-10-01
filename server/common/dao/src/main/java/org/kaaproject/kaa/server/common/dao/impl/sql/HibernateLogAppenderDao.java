@@ -35,7 +35,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> implements LogAppenderDao<LogAppender> {
+public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender>
+        implements LogAppenderDao<LogAppender> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateLogAppenderDao.class);
 
@@ -62,7 +63,8 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
 
   @Override
   public List<LogAppender> findByAppIdAndSchemaVersion(String appId, int schemaVersion) {
-    LOG.debug("Searching log appenders by application id [{}] and schema version [{}]", appId, schemaVersion);
+    LOG.debug("Searching log appenders by application id [{}] and schema version [{}]",
+            appId, schemaVersion);
     List<LogAppender> appenders = Collections.emptyList();
     if (isNotBlank(appId)) {
       appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
@@ -73,7 +75,8 @@ public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> i
       );
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{}] Search result: {}.", appId, schemaVersion, Arrays.toString(appenders.toArray()));
+      LOG.trace("[{},{}] Search result: {}.", appId, schemaVersion,
+              Arrays.toString(appenders.toArray()));
     } else {
       LOG.debug("[{},{}] Search result: {}.", appId, schemaVersion, appenders.size());
     }

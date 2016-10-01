@@ -68,8 +68,10 @@ public class ApplicationServiceImpl implements ApplicationService {
   private static final String GROUP_ALL = "All";
   private static final String DEFAULT_FILTER_BODY = "true";
 
-  private static final String DEFAULT_CONFIGURATION_SCHEMA_FILE = "/default_configuration_schema.avsc";
-  private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE = "/default_notification_schema.avsc";
+  private static final String DEFAULT_CONFIGURATION_SCHEMA_FILE =
+          "/default_configuration_schema.avsc";
+  private static final String DEFAULT_NOTIFICATION_SCHEMA_FILE =
+          "/default_notification_schema.avsc";
   private static final String DEFAULT_LOG_SCHEMA_FILE = "/default_log_schema.avsc";
   private static final String DEFAULT_SCHEMA_NAME = "Generated";
   private static final String DEFAULT_CREDENTIALS_SERVICE_NAME = "Trustful";
@@ -160,9 +162,12 @@ public class ApplicationServiceImpl implements ApplicationService {
       if (isBlank(applicationDto.getName())) {
         throw new IncorrectParameterException("Can't save/update application with null name");
       }
-      Application checkApplication = applicationDao.findByNameAndTenantId(applicationDto.getName(), applicationDto.getTenantId());
-      if (checkApplication != null && !Objects.equals(checkApplication.getStringId(), applicationDto.getId())) {
-        throw new IncorrectParameterException("Can't save application with same name within one tenant");
+      Application checkApplication = applicationDao.findByNameAndTenantId(applicationDto.getName(),
+              applicationDto.getTenantId());
+      if (checkApplication != null && !Objects.equals(checkApplication.getStringId(),
+              applicationDto.getId())) {
+        throw new IncorrectParameterException(
+                "Can't save application with same name within one tenant");
       }
       if (isBlank(applicationDto.getCredentialsServiceName())) {
         applicationDto.setCredentialsServiceName(DEFAULT_CREDENTIALS_SERVICE_NAME);
@@ -180,7 +185,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
       if (appDto != null) {
         String appId = appDto.getId();
-        List<User> users = userDao.findByTenantIdAndAuthority(appDto.getTenantId(), KaaAuthorityDto.TENANT_ADMIN.name());
+        List<User> users = userDao.findByTenantIdAndAuthority(appDto.getTenantId(),
+                KaaAuthorityDto.TENANT_ADMIN.name());
         String createdUsername = null;
         if (!users.isEmpty()) {
           createdUsername = users.get(0).getUsername();
@@ -191,10 +197,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (groupDto != null) {
           String groupId = groupDto.getId();
           LOG.debug("Saved endpoint group with id [{}]", groupId);
-          EndpointProfileSchemaDto profileSchema = createDefaultProfileSchema(appId, createdUsername);
-          ConfigurationDto configuration = createDefaultConfigurationWithSchema(appId, groupId, createdUsername);
+          EndpointProfileSchemaDto profileSchema = createDefaultProfileSchema(appId,
+                  createdUsername);
+          ConfigurationDto configuration = createDefaultConfigurationWithSchema(appId, groupId,
+                  createdUsername);
           if (profileSchema == null || configuration == null) {
-            LOG.warn("Got error during creation application. Deleted application with id [{}]", appId);
+            LOG.warn("Got error during creation application. Deleted application with id [{}]",
+                    appId);
             removeCascadeApplication(appId);
           }
           LOG.debug("Creating default server profile schema");
@@ -222,7 +231,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     return endpointService.saveEndpointGroup(endpointGroup);
   }
 
-  private EndpointProfileSchemaDto createDefaultProfileSchema(String appId, String createdUsername) {
+  private EndpointProfileSchemaDto createDefaultProfileSchema(String appId,
+                                                              String createdUsername) {
     EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
     profileSchemaDto.setApplicationId(appId);
     CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
@@ -236,7 +246,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     return profileSchemaDto;
   }
 
-  private ConfigurationDto createDefaultConfigurationWithSchema(String appId, String groupId, String createdUsername) {
+  private ConfigurationDto createDefaultConfigurationWithSchema(String appId, String groupId,
+                                                                String createdUsername) {
     ConfigurationSchemaDto schema = new ConfigurationSchemaDto();
     schema.setApplicationId(appId);
     CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
@@ -244,15 +255,18 @@ public class ApplicationServiceImpl implements ApplicationService {
     schema.setName(DEFAULT_SCHEMA_NAME);
     schema.setCreatedUsername(createdUsername);
     ConfigurationSchemaDto savedSchema = configurationService.saveConfSchema(schema, groupId);
-    ConfigurationDto config = configurationService.findConfigurationByAppIdAndVersion(savedSchema.getApplicationId(), savedSchema.getVersion());
+    ConfigurationDto config = configurationService.findConfigurationByAppIdAndVersion(
+            savedSchema.getApplicationId(), savedSchema.getVersion());
     if (config == null) {
-      throw new RuntimeException("Can't find default configuration by schema id " + savedSchema.getId()); //NOSONAR
+      throw new RuntimeException("Can't find default configuration by schema id "
+                                 + savedSchema.getId()); //NOSONAR
     } else {
       return config;
     }
   }
 
-  private ServerProfileSchemaDto createDefaultServerProfileSchema(String appId, String createdUsername) {
+  private ServerProfileSchemaDto createDefaultServerProfileSchema(String appId,
+                                                                  String createdUsername) {
     ServerProfileSchemaDto serverProfileSchemaDto = new ServerProfileSchemaDto();
     serverProfileSchemaDto.setApplicationId(appId);
     CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);
@@ -262,7 +276,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     return serverProfileService.saveServerProfileSchema(serverProfileSchemaDto);
   }
 
-  private NotificationSchemaDto createDefaultNotificationSchema(String appId, String createdUsername) {
+  private NotificationSchemaDto createDefaultNotificationSchema(String appId,
+                                                                String createdUsername) {
     NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
     notificationSchemaDto.setApplicationId(appId);
     CTLSchemaDto ctlSchema = ctlService.getOrCreateEmptySystemSchema(createdUsername);

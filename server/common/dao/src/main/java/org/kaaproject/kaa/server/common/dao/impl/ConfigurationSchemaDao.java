@@ -51,7 +51,7 @@ public interface ConfigurationSchemaDao<T> extends SqlDao<T> {
   T findByAppIdAndVersion(String applicationId, int version);
 
   /**
-   * Find schemas without active/inactive configurations
+   * Find schemas without active/inactive configurations.
    *
    * @param applicationId the application id
    * @param usedSchemaIds The list of schemas with active/inactive configurations

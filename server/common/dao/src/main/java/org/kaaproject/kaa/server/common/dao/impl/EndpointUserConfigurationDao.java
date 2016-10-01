@@ -22,9 +22,10 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import java.util.List;
 
 /**
- * Provides CRUD methods for {@link EndpointUserConfiguration}
+ * Provides CRUD methods for {@link EndpointUserConfiguration}.
  */
-public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguration> extends Dao<T, String> {
+public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguration>
+        extends Dao<T, String> {
 
   /**
    * Find endpoint user configuration by key hash.
@@ -45,7 +46,7 @@ public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguratio
   T findByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
 
   /**
-   * Find user configuration by user id
+   * Find user configuration by user id.
    *
    * @param userId the endpoint user id
    * @return the list of found endpoint user configurations
@@ -59,6 +60,7 @@ public interface EndpointUserConfigurationDao<T extends EndpointUserConfiguratio
    * @param appToken      the application token
    * @param schemaVersion the schema version
    */
-  void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
+  void removeByUserIdAndAppTokenAndSchemaVersion(
+          String userId, String appToken, Integer schemaVersion);
 
 }

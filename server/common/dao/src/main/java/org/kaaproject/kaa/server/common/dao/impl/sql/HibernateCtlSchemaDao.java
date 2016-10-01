@@ -46,9 +46,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Repository
-public class HibernateCTLSchemaDao extends HibernateAbstractDao<CTLSchema> implements CtlSchemaDao<CTLSchema> {
+public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
+        implements CtlSchemaDao<CTLSchema> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HibernateCTLSchemaDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateCtlSchemaDao.class);
 
   @Override
   protected Class<CTLSchema> getEntityClass() {

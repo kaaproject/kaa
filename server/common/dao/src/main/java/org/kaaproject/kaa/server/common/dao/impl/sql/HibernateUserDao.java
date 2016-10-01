@@ -62,7 +62,8 @@ public class HibernateUserDao extends HibernateAbstractDao<User> implements User
   public List<User> findByTenantIdAndAuthorities(String id, String... authorities) {
     if (authorities != null) {
       if (LOG.isTraceEnabled()) {
-        LOG.trace("Searching user by tenant id [{}] and authorities [{}]", id, Arrays.toString(authorities));
+        LOG.trace("Searching user by tenant id [{}] and authorities [{}]",
+                id, Arrays.toString(authorities));
       } else {
         LOG.debug("Searching user by tenant id [{}] and authorities [{}]", id, authorities.length);
       }

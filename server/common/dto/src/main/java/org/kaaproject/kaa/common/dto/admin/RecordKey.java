@@ -103,7 +103,8 @@ public class RecordKey implements Serializable {
 
   @Override
   public String toString() {
-    return "RecordKey [applicationId=" + applicationId + ", schemaVersion=" + schemaVersion + ", recordFiles=" + recordFiles + "]";
+    return "RecordKey [applicationId=" + applicationId + ", schemaVersion=" + schemaVersion
+           + ", recordFiles=" + recordFiles + "]";
   }
 
   public static enum RecordFiles {

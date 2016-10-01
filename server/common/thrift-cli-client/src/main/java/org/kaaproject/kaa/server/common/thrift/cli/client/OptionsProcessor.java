@@ -91,8 +91,8 @@ public class OptionsProcessor {
   public boolean parse(String[] argv) {
     try {
       commandLine = new GnuParser().parse(options, argv);
-    } catch (ParseException e) {
-      System.err.println(e.getMessage()); //NOSONAR
+    } catch (ParseException ex) {
+      System.err.println(ex.getMessage()); //NOSONAR
       printUsage();
       return false;
     }
@@ -116,14 +116,14 @@ public class OptionsProcessor {
 
     if (commandLine.hasOption('c')) {
       String propertyFile = commandLine.getOptionValue('c');
-      File f = new File(propertyFile);
+      File file = new File(propertyFile);
 
       Properties props = new Properties();
       FileInputStream fis;
       try {
-        fis = new FileInputStream(f);
-      } catch (FileNotFoundException e) {
-        LOG.error("Exception catched: ", e);
+        fis = new FileInputStream(file);
+      } catch (FileNotFoundException ex) {
+        LOG.error("Exception catched: ", ex);
         ss.out.println("Thrift property file '" + propertyFile
             + "' does not exists.");
         return false;
@@ -133,9 +133,9 @@ public class OptionsProcessor {
         ss.host = props.getProperty("thrift_host", "localhost");
         ss.port = Integer.parseInt(props.getProperty("thrift_port",
             "9090"));
-      } catch (IOException e) {
+      } catch (IOException ex) {
         ss.out.println("Unable to read property file '" + propertyFile
-            + "'. Error: " + e);
+            + "'. Error: " + ex);
         return false;
       }
     } else {

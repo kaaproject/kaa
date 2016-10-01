@@ -59,7 +59,8 @@ public interface NotificationSchemaDao<T> extends SqlDao<T> {
    * @param majorVersion the major version
    * @return the notification schema
    */
-  T findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int majorVersion);
+  T findNotificationSchemasByAppIdAndTypeAndVersion(
+          String appId, NotificationTypeDto type, int majorVersion);
 
   /**
    * Find latest notification schema by application id.

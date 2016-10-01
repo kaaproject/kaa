@@ -30,7 +30,8 @@ public class EndpointGroupStateDto implements Serializable {
     super();
   }
 
-  public EndpointGroupStateDto(String endpointGroupId, String profileFilterId, String configurationId) {
+  public EndpointGroupStateDto(String endpointGroupId, String profileFilterId,
+                               String configurationId) {
     super();
     this.endpointGroupId = endpointGroupId;
     this.profileFilterId = profileFilterId;
@@ -62,23 +63,26 @@ public class EndpointGroupStateDto implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    EndpointGroupStateDto that = (EndpointGroupStateDto) o;
+    EndpointGroupStateDto that = (EndpointGroupStateDto) obj;
 
-    if (configurationId != null ? !configurationId.equals(that.configurationId) : that.configurationId != null) {
+    if (configurationId != null ? !configurationId.equals(that.configurationId) :
+            that.configurationId != null) {
       return false;
     }
-    if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) : that.endpointGroupId != null) {
+    if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) :
+            that.endpointGroupId != null) {
       return false;
     }
-    if (profileFilterId != null ? !profileFilterId.equals(that.profileFilterId) : that.profileFilterId != null) {
+    if (profileFilterId != null ? !profileFilterId.equals(that.profileFilterId) :
+            that.profileFilterId != null) {
       return false;
     }
 
@@ -95,10 +99,10 @@ public class EndpointGroupStateDto implements Serializable {
 
   @Override
   public String toString() {
-    return "EndpointGroupStateDto{" +
-        "endpointGroupId='" + endpointGroupId + '\'' +
-        ", profileFilterId='" + profileFilterId + '\'' +
-        ", configurationId='" + configurationId + '\'' +
-        '}';
+    return "EndpointGroupStateDto{"
+           + "endpointGroupId='" + endpointGroupId + '\''
+           + ", profileFilterId='" + profileFilterId + '\''
+           + ", configurationId='" + configurationId + '\''
+           + '}';
   }
 }

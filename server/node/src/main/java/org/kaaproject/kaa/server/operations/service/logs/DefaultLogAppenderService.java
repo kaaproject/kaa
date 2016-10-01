@@ -110,7 +110,7 @@ public class DefaultLogAppenderService implements LogAppenderService {
     LOG.debug("Fetching log schema for application {} and version {}", applicationId, logSchemaVersion);
     LogSchema logSchema = null;
     LogSchemaDto logSchemaDto = logSchemaService.findLogSchemaByAppIdAndVersion(applicationId, logSchemaVersion);
-    CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(logSchemaDto.getCtlSchemaId());
+    CTLSchemaDto ctlSchema = ctlService.findCtlSchemaById(logSchemaDto.getCtlSchemaId());
     String logFlatSchema = ctlService.flatExportAsString(ctlSchema);
     if (logSchemaDto != null) {
       logSchema = new LogSchema(logSchemaDto, logFlatSchema);

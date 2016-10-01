@@ -34,7 +34,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier> implements UserVerifierDao<UserVerifier> {
+public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier>
+        implements UserVerifierDao<UserVerifier> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateUserVerifierDao.class);
 
@@ -63,7 +64,8 @@ public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier>
 
   @Override
   public UserVerifier findByAppIdAndVerifierToken(String appId, String verifierToken) {
-    LOG.debug("Searching user verifier by application id [{}] and verifier token [{}]", appId, verifierToken);
+    LOG.debug("Searching user verifier by application id [{}] and verifier token [{}]",
+            appId, verifierToken);
     UserVerifier verifier = null;
     if (isNotBlank(appId) && isNotBlank(verifierToken)) {
       verifier = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,

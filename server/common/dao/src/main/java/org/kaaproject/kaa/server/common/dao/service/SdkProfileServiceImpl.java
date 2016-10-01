@@ -71,7 +71,8 @@ public class SdkProfileServiceImpl implements SdkProfileService {
         if (loaded == null) {
           saved = DaoUtil.getDto(sdkProfileDao.save(entity));
         } else {
-          throw new IncorrectParameterException("An SDK profile with token [" + entity.getToken() + "] already exists.");
+          throw new IncorrectParameterException("An SDK profile with token ["
+                                                + entity.getToken() + "] already exists.");
         }
       }
     }
@@ -98,7 +99,8 @@ public class SdkProfileServiceImpl implements SdkProfileService {
 
   @Override
   public List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId) {
-    Validator.validateId(applicationId, "Unable to find SDK profiles. Invalid application ID: " + applicationId);
+    Validator.validateId(applicationId, "Unable to find SDK profiles. Invalid application ID: "
+                                        + applicationId);
     return DaoUtil.convertDtoList(sdkProfileDao.findSdkProfileByApplicationId(applicationId));
   }
 

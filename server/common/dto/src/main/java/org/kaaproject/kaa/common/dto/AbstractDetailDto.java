@@ -122,8 +122,9 @@ public abstract class AbstractDetailDto implements Serializable {
 
   @Override
   public String toString() {
-    return "AbstractDetailDto [name=" + name + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
-        + "]";
+    return "AbstractDetailDto [name=" + name + ", description=" + description
+           + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
+           + "]";
   }
 
 }

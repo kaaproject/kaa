@@ -132,7 +132,7 @@ public abstract class AbstractServiceImplTest {
       if (isBlank(applicationId)) {
         applicationId = generateApplication(tenantId).getId();
       }
-      CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1));
+      CTLSchemaDto ctlSchemaDto = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN, tenantId, 1));
       EndpointProfileSchemaDto schemaDto;
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {

@@ -80,7 +80,8 @@ public class LogSchemaServiceImpl implements LogSchemaService {
   public LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto) {
     String id = logSchemaDto.getId();
     if (StringUtils.isBlank(id)) {
-      LogSchema logSchema = logSchemaDao.findLatestLogSchemaByAppId(logSchemaDto.getApplicationId());
+      LogSchema logSchema = logSchemaDao.findLatestLogSchemaByAppId(
+              logSchemaDto.getApplicationId());
       int version = 0;
       if (logSchema != null) {
         version = logSchema.getVersion();

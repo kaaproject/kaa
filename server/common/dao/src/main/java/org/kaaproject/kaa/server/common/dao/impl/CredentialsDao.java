@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 
 /**
- * @param <T> A specific security credentials type
+ * @param <T> A specific security credentials type.
  * @author Andrew Shvayka
  * @author Bohdan Khablenko
  */

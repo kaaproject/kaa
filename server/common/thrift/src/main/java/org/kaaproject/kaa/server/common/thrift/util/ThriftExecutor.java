@@ -17,6 +17,7 @@
 /**
  *
  */
+
 package org.kaaproject.kaa.server.common.thrift.util;
 
 import java.util.concurrent.ExecutorService;
@@ -25,7 +26,7 @@ import java.util.concurrent.Executors;
 /**
  * The Class ThriftExecutor.
  *
- * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
+ * @author Andrey Panasenko apanasenko@cybervisiontech.com
  */
 public class ThriftExecutor {
 

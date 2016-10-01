@@ -52,7 +52,8 @@ public class InternalCredentialsService implements CredentialsService {
   }
 
   @Override
-  public CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials) throws CredentialsServiceException {
+  public CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials)
+          throws CredentialsServiceException {
     Validate.notBlank(applicationId, "Invalid application ID provided!");
     Validate.notNull(credentials, "Invalid credentials provided!");
     try {
@@ -60,42 +61,50 @@ public class InternalCredentialsService implements CredentialsService {
       credentials.setId(Base64Utils.encodeToString(Sha1HashUtils.hashToBytes(credentialsBody)));
       return this.credentialsDao.save(applicationId, credentials).toDto();
     } catch (Exception cause) {
-      String message = MessageFormat.format("[{0}] An unexpected exception occured while saving credentials!", applicationId);
+      String message = MessageFormat.format("[{0}] An unexpected exception occured while saving "
+                                            + "credentials!", applicationId);
       LOG.error(message, cause);
       throw new CredentialsServiceException(cause);
     }
   }
 
   @Override
-  public Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId) throws CredentialsServiceException {
+  public Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId)
+          throws CredentialsServiceException {
     Validate.notBlank(applicationId, "Invalid application ID provided!");
     Validate.notBlank(credentialsId, "Invalid credentials ID provided!");
     try {
       return this.credentialsDao.find(applicationId, credentialsId).map(Credentials::toDto);
     } catch (Exception cause) {
-      String message = MessageFormat.format("[{0}] An unexpected exception occured while searching for credentials [{1}]", applicationId, credentialsId);
+      String message = MessageFormat.format("[{0}] An unexpected exception occured while "
+                                            + "searching for credentials [{1}]", applicationId,
+              credentialsId);
       LOG.error(message, cause);
       throw new CredentialsServiceException(cause);
     }
   }
 
   @Override
-  public void markCredentialsInUse(String applicationId, String credentialsId) throws CredentialsServiceException {
+  public void markCredentialsInUse(String applicationId, String credentialsId) throws
+          CredentialsServiceException {
     this.updateStatus(applicationId, credentialsId, CredentialsStatus.IN_USE);
   }
 
   @Override
-  public void markCredentialsRevoked(String applicationId, String credentialsId) throws CredentialsServiceException {
+  public void markCredentialsRevoked(String applicationId, String credentialsId) throws
+          CredentialsServiceException {
     this.updateStatus(applicationId, credentialsId, CredentialsStatus.REVOKED);
   }
 
-  private void updateStatus(String applicationId, String credentialsId, CredentialsStatus status) throws CredentialsServiceException {
+  private void updateStatus(String applicationId, String credentialsId, CredentialsStatus status)
+          throws CredentialsServiceException {
     Validate.notBlank(applicationId, "Invalid application ID provided!");
     Validate.notBlank(credentialsId, "Invalid credentials ID provided!");
     try {
       this.credentialsDao.updateStatus(applicationId, credentialsId, status);
     } catch (Exception cause) {
-      String message = MessageFormat.format("[{0}] An unexpected exception occured while updating credentials [{1}]", applicationId, credentialsId);
+      String message = MessageFormat.format("[{0}] An unexpected exception occured while updating"
+                                            + " credentials [{1}]", applicationId, credentialsId);
       LOG.error(message, cause);
       throw new CredentialsServiceException(cause);
     }

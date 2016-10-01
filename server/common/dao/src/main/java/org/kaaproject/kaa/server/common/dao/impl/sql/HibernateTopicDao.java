@@ -124,9 +124,11 @@ public class HibernateTopicDao extends HibernateAbstractDao<Topic> implements To
   @Override
   public List<Topic> findVacantTopicsByGroupId(String appId, String groupId) {
     List<Topic> topics = Collections.emptyList();
-    LOG.debug("Searching vacant topics for endpoint group with id [{}] and application id [{}]", groupId, appId);
+    LOG.debug("Searching vacant topics for endpoint group with id [{}] and application id [{}]",
+            groupId, appId);
     if (isNotBlank(groupId)) {
-      topics = findListByCriterionWithAlias(ENDPOINT_GROUPS_PROPERTY, ENDPOINT_GROUP_ALIAS, JoinType.LEFT_OUTER_JOIN,
+      topics = findListByCriterionWithAlias(ENDPOINT_GROUPS_PROPERTY, ENDPOINT_GROUP_ALIAS,
+              JoinType.LEFT_OUTER_JOIN,
           and(eq(APPLICATION_REFERENCE, Long.valueOf(appId)), or(
               ne(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
               isNull(ENDPOINT_GROUP_REFERENCE))));

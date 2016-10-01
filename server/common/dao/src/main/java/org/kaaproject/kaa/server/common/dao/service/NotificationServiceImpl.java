@@ -94,9 +94,11 @@ public class NotificationServiceImpl implements NotificationService {
       NotificationSchema foundSchema;
       NotificationTypeDto type = notificationSchemaDto.getType();
       if (type != null) {
-        foundSchema = notificationSchemaDao.findLatestNotificationSchemaByAppId(notificationSchemaDto.getApplicationId(), type);
+        foundSchema = notificationSchemaDao.findLatestNotificationSchemaByAppId(
+                notificationSchemaDto.getApplicationId(), type);
       } else {
-        throw new IncorrectParameterException("Invalid Notification type in Notification Schema object.");
+        throw new IncorrectParameterException(
+                "Invalid Notification type in Notification Schema object.");
       }
       if (foundSchema != null) {
         int lastSchemaVersion = foundSchema.getVersion();
@@ -135,9 +137,10 @@ public class NotificationServiceImpl implements NotificationService {
       }
       try {
         dto.setBody(serializeNotificationBody(dto, schema));
-      } catch (IOException e) {
-        LOG.error("Can't serialize notification body using schema. ", e);
-        throw new DatabaseProcessingException("Can't serialize notification body using schema: " + schemaId);
+      } catch (IOException ex) {
+        LOG.error("Can't serialize notification body using schema. ", ex);
+        throw new DatabaseProcessingException("Can't serialize notification body using schema: "
+                                              + schemaId);
       }
 
       long currentTime = new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTimeInMillis();
@@ -153,7 +156,8 @@ public class NotificationServiceImpl implements NotificationService {
       }
       return updateNotificationDto;
     } else {
-      throw new IncorrectParameterException("Incorrect notification object notification schema id is empty");
+      throw new IncorrectParameterException(
+              "Incorrect notification object notification schema id is empty");
     }
   }
 
@@ -170,8 +174,10 @@ public class NotificationServiceImpl implements NotificationService {
     return notificationDto;
   }
 
-  private byte[] serializeNotificationBody(NotificationDto nf, NotificationSchema nfSchema) throws IOException {
-    GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(nfSchema.getCtlSchema().getBody());
+  private byte[] serializeNotificationBody(NotificationDto nf, NotificationSchema nfSchema)
+          throws IOException {
+    GenericAvroConverter<GenericRecord> converter =
+            new GenericAvroConverter<>(nfSchema.getCtlSchema().getBody());
     String notificationJson = new String(nf.getBody(), Charset.forName("UTF8"));
     GenericRecord notificationAvro = converter.decodeJson(notificationJson);
     return converter.encode(notificationAvro);
@@ -209,7 +215,8 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   public List<VersionDto> findUserNotificationSchemasByAppId(String applicationId) {
     validateId(applicationId, "Can't find schemas. Invalid application id: " + applicationId);
-    List<NotificationSchema> notificationSchemas = notificationSchemaDao.findNotificationSchemasByAppIdAndType(applicationId, NotificationTypeDto.USER);
+    List<NotificationSchema> notificationSchemas = notificationSchemaDao
+            .findNotificationSchemasByAppIdAndType(applicationId, NotificationTypeDto.USER);
     List<VersionDto> schemas = new ArrayList<>();
     for (NotificationSchema notificationSchema : notificationSchemas) {
       schemas.add(notificationSchema.toVersionDto());
@@ -220,8 +227,10 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   public List<VersionDto> findNotificationSchemaVersionsByAppId(
       String applicationId) {
-    validateId(applicationId, "Can't find notification schema versions. Invalid application id: " + applicationId);
-    List<NotificationSchema> notificationSchemas = notificationSchemaDao.findNotificationSchemasByAppId(applicationId);
+    validateId(applicationId, "Can't find notification schema versions. Invalid application id: "
+                              + applicationId);
+    List<NotificationSchema> notificationSchemas =
+            notificationSchemaDao.findNotificationSchemasByAppId(applicationId);
     List<VersionDto> schemas = new ArrayList<>();
     for (NotificationSchema notificationSchema : notificationSchemas) {
       schemas.add(notificationSchema.toVersionDto());
@@ -238,13 +247,16 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
-  public List<NotificationDto> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNum, int sysNfVersion, int userNfVersion) {
+  public List<NotificationDto> findNotificationsByTopicIdAndVersionAndStartSecNum(
+          String topicId, int seqNum, int sysNfVersion, int userNfVersion) {
     validateSqlId(topicId, "Can't find notifications. Invalid topic id: " + topicId);
-    return convertDtoList(notificationDao.findNotificationsByTopicIdAndVersionAndStartSecNum(topicId, seqNum, sysNfVersion, userNfVersion));
+    return convertDtoList(notificationDao.findNotificationsByTopicIdAndVersionAndStartSecNum(
+            topicId, seqNum, sysNfVersion, userNfVersion));
   }
 
   @Override
-  public List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type) {
+  public List<NotificationSchemaDto> findNotificationSchemasByAppIdAndType(
+          String appId, NotificationTypeDto type) {
     validateId(appId, "Can't find notification schemas. Invalid application id: " + appId);
     return convertDtoList(notificationSchemaDao.findNotificationSchemasByAppIdAndType(appId, type));
   }
@@ -253,7 +265,8 @@ public class NotificationServiceImpl implements NotificationService {
   public NotificationSchemaDto findNotificationSchemaByAppIdAndTypeAndVersion(
       String appId, NotificationTypeDto type, int majorVersion) {
     validateId(appId, "Can't find notification schema. Invalid application id: " + appId);
-    return getDto(notificationSchemaDao.findNotificationSchemasByAppIdAndTypeAndVersion(appId, type, majorVersion));
+    return getDto(notificationSchemaDao.findNotificationSchemasByAppIdAndTypeAndVersion(
+            appId, type, majorVersion));
   }
 
   @Override
@@ -263,7 +276,8 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
-  public UpdateNotificationDto<EndpointNotificationDto> saveUnicastNotification(EndpointNotificationDto dto) {
+  public UpdateNotificationDto<EndpointNotificationDto> saveUnicastNotification(
+          EndpointNotificationDto dto) {
     validateObject(dto, "Can't save unicast notification. Invalid endpoint notification object.");
     UpdateNotificationDto<EndpointNotificationDto> updateNotificationDto = null;
     NotificationDto notificationDto = dto.getNotificationDto();
@@ -278,7 +292,8 @@ public class NotificationServiceImpl implements NotificationService {
       if (endpointKeyHash != null) {
         EndpointProfile ep = endpointProfileDao.findByKeyHash(endpointKeyHash);
         if (ep == null) {
-          throw new DatabaseProcessingException("Can't find endpoint profile by hash " + endpointKeyHash);
+          throw new DatabaseProcessingException("Can't find endpoint profile by hash "
+                                                + endpointKeyHash);
         }
         if (ep.getSubscriptions() == null || !ep.getSubscriptions().contains(topicId)) {
           //TODO Error code?
@@ -297,9 +312,10 @@ public class NotificationServiceImpl implements NotificationService {
         notificationDto.setType(schema.getType());
         try {
           notificationDto.setBody(serializeNotificationBody(notificationDto, schema));
-        } catch (IOException e) {
-          LOG.error("Can't serialize notification body using schema. ", e);
-          throw new DatabaseProcessingException("Can't serialize notification body using schema: " + schemaId);
+        } catch (IOException ex) {
+          LOG.error("Can't serialize notification body using schema. ", ex);
+          throw new DatabaseProcessingException("Can't serialize notification body using schema: "
+                                                + schemaId);
         }
       } else {
         throw new DatabaseProcessingException("Can't find notification schema by id " + schemaId);
@@ -342,8 +358,10 @@ public class NotificationServiceImpl implements NotificationService {
 
   private void validateNotificationSchemaObject(NotificationSchemaDto dto) {
     validateObject(dto, "Invalid notification schema object");
-    if (isBlank(dto.getApplicationId()) && !isValidId(dto.getApplicationId()) || dto.getType() == null) {
-      throw new IncorrectParameterException("Invalid notification schema object. Check type or applicationId.");
+    if (isBlank(dto.getApplicationId()) && !isValidId(dto.getApplicationId())
+        || dto.getType() == null) {
+      throw new IncorrectParameterException(
+              "Invalid notification schema object. Check type or applicationId.");
     }
   }
 
@@ -355,7 +373,8 @@ public class NotificationServiceImpl implements NotificationService {
     this.notificationDao = notificationDao;
   }
 
-  public void setUnicastNotificationDao(EndpointNotificationDao<EndpointNotification> unicastNotificationDao) {
+  public void setUnicastNotificationDao(
+          EndpointNotificationDao<EndpointNotification> unicastNotificationDao) {
     this.unicastNotificationDao = unicastNotificationDao;
   }
 }

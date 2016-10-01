@@ -45,7 +45,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
-public class CTLServiceImplTest extends AbstractTest {
+public class CtlServiceImplTest extends AbstractTest {
 
   private static final String TEST_CTL_SCHEMA_ALPHA = "dao/ctl/alpha.json";
   private static final String TEST_CTL_SCHEMA_ALPHA_FLAT = "dao/ctl/alphaFlat.json";
@@ -83,42 +83,42 @@ public class CTLServiceImplTest extends AbstractTest {
         tenant = userService.saveTenant(tn);
         appDto = generateApplicationDto(tenant.getId(), "The app 1");
         appDto2 = generateApplicationDto(tenant.getId(), "The app 2");
-        List<CTLSchemaDto> ctlSchemas = ctlService.findSystemCTLSchemas();
+        List<CTLSchemaDto> ctlSchemas = ctlService.findSystemCtlSchemas();
         defaultSystemSchema = ctlSchemas.get(0);
       }
     }
     Set<CTLSchemaDto> dependency = new HashSet<>();
-    firstSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 1, tenant.getId(), null, 1));
+    firstSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 1, tenant.getId(), null, 1));
     dependency.add(firstSchema);
-    secondSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 2, tenant.getId(), null, 2));
+    secondSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 2, tenant.getId(), null, 2));
     dependency.add(secondSchema);
-    thirdSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 3, tenant.getId(), null, 3));
+    thirdSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 3, tenant.getId(), null, 3));
     dependency.add(thirdSchema);
-    fourthSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 4, tenant.getId(), null, 4));
+    fourthSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 4, tenant.getId(), null, 4));
     dependency.add(fourthSchema);
     mainSchema = generateCTLSchemaDto(DEFAULT_FQN + 5, tenant.getId(), null, 7);
     mainSchema.setDependencySet(dependency);
-    mainSchema = ctlService.saveCTLSchema(mainSchema);
-    systemSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 6, null, null, 50));
-    tenantSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 7, tenant.getId(), null, 77));
-    tenantSchema2 = ctlService.saveCTLSchema(generateCTLSchemaDto(DEFAULT_FQN + 7, tenant.getId(), null, 78));
+    mainSchema = ctlService.saveCtlSchema(mainSchema);
+    systemSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 6, null, null, 50));
+    tenantSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 7, tenant.getId(), null, 77));
+    tenantSchema2 = ctlService.saveCtlSchema(generateCTLSchemaDto(DEFAULT_FQN + 7, tenant.getId(), null, 78));
     CTLSchemaDto unsaved = generateCTLSchemaDto(DEFAULT_FQN + 8, tenant.getId(), appDto.getId(), 80);
-    appSchema = ctlService.saveCTLSchema(unsaved);
+    appSchema = ctlService.saveCtlSchema(unsaved);
     unsaved = generateCTLSchemaDto(DEFAULT_FQN + 8, tenant.getId(), appDto.getId(), 81);
-    appSchema2 = ctlService.saveCTLSchema(unsaved);
+    appSchema2 = ctlService.saveCtlSchema(unsaved);
     unsaved = generateCTLSchemaDto(DEFAULT_FQN + 9, tenant.getId(), appDto.getId(), 2);
-    appSchema3 = ctlService.saveCTLSchema(unsaved);
+    appSchema3 = ctlService.saveCtlSchema(unsaved);
     unsaved = generateCTLSchemaDto(DEFAULT_FQN + 8, tenant.getId(), appDto2.getId(), 11);
-    app2Schema = ctlService.saveCTLSchema(unsaved);
+    app2Schema = ctlService.saveCtlSchema(unsaved);
 
     gamma = new CTLSchemaDto();
     CTLSchemaMetaInfoDto gammaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Gamma", tenant.getId());
     gamma.setMetaInfo(gammaMetaInfo);
     gamma.setVersion(1);
     gamma.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_GAMMA));
-    gamma = ctlService.saveCTLSchema(gamma);
+    gamma = ctlService.saveCtlSchema(gamma);
 
-    gamma = ctlService.findCTLSchemaById(gamma.getId());
+    gamma = ctlService.findCtlSchemaById(gamma.getId());
 
     beta = new CTLSchemaDto();
     CTLSchemaMetaInfoDto betaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Beta", tenant.getId());
@@ -128,9 +128,9 @@ public class CTLServiceImplTest extends AbstractTest {
     betaDependencies.add(gamma);
     beta.setDependencySet(betaDependencies);
     beta.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_BETA));
-    beta = ctlService.saveCTLSchema(beta);
+    beta = ctlService.saveCtlSchema(beta);
 
-    beta = ctlService.findCTLSchemaById(beta.getId());
+    beta = ctlService.findCtlSchemaById(beta.getId());
 
     alpha = new CTLSchemaDto();
     CTLSchemaMetaInfoDto alphaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Alpha", tenant.getId());
@@ -141,50 +141,50 @@ public class CTLServiceImplTest extends AbstractTest {
     alpha.setDependencySet(alphaDependencies);
     alpha.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_ALPHA));
 
-    alpha = ctlService.saveCTLSchema(alpha);
+    alpha = ctlService.saveCtlSchema(alpha);
 
-    alpha = ctlService.findCTLSchemaById(alpha.getId());
+    alpha = ctlService.findCtlSchemaById(alpha.getId());
   }
 
   @Test
   public void testRemoveCTLSchemaByFqnAndVerAndTenantIdAndApplicationId() {
     String schemaId = tenantSchema.getId();
-    ctlService.removeCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(tenantSchema.getMetaInfo().getFqn(), tenantSchema.getVersion(),
+    ctlService.removeCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(tenantSchema.getMetaInfo().getFqn(), tenantSchema.getVersion(),
         tenantSchema.getMetaInfo().getTenantId(), tenantSchema.getMetaInfo().getApplicationId());
-    Assert.assertNull(ctlService.findCTLSchemaById(schemaId));
+    Assert.assertNull(ctlService.findCtlSchemaById(schemaId));
   }
 
   @Test
   public void testRemoveCTLSchemaByFqnAndVerAndWithoutTenantId() {
     String schemaId = systemSchema.getId();
-    ctlService.removeCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(systemSchema.getMetaInfo().getFqn(), systemSchema.getVersion(),
+    ctlService.removeCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(systemSchema.getMetaInfo().getFqn(), systemSchema.getVersion(),
         systemSchema.getMetaInfo().getTenantId(), systemSchema.getMetaInfo().getApplicationId());
-    Assert.assertNull(ctlService.findCTLSchemaById(schemaId));
+    Assert.assertNull(ctlService.findCtlSchemaById(schemaId));
   }
 
   @Test
   public void testFindCTLSchemaByFqnAndVerAndTenantIdAndApplicationId() {
     CTLSchemaMetaInfoDto metaInfo = firstSchema.getMetaInfo();
-    CTLSchemaDto found = ctlService.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(metaInfo.getFqn(),
+    CTLSchemaDto found = ctlService.findCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(metaInfo.getFqn(),
         firstSchema.getVersion(), metaInfo.getTenantId(), metaInfo.getApplicationId());
     Assert.assertEquals(firstSchema, found);
   }
 
   @Test
   public void testFindCTLSchemaById() {
-    CTLSchemaDto found = ctlService.findCTLSchemaById(firstSchema.getId());
+    CTLSchemaDto found = ctlService.findCtlSchemaById(firstSchema.getId());
     Assert.assertEquals(firstSchema, found);
   }
 
   @Test
   public void testFindSystemCTLSchemas() {
-    List<CTLSchemaDto> appSchemas = ctlService.findSystemCTLSchemas();
+    List<CTLSchemaDto> appSchemas = ctlService.findSystemCtlSchemas();
     Assert.assertEquals(getIdsDto(Arrays.asList(defaultSystemSchema, systemSchema)), getIdsDto(appSchemas));
   }
 
   @Test
   public void testFindSystemCTLSchemasMetaInfo() {
-    List<CTLSchemaMetaInfoDto> appSchemas = ctlService.findSystemCTLSchemasMetaInfo();
+    List<CTLSchemaMetaInfoDto> appSchemas = ctlService.findSystemCtlSchemasMetaInfo();
     Comparator<HasId> comparator = new Comparator<HasId>() {
       @Override
       public int compare(HasId o1, HasId o2) {
@@ -199,9 +199,9 @@ public class CTLServiceImplTest extends AbstractTest {
 
   @Test
   public void testFindLatestCTLSchemaByFqn() {
-    CTLSchemaDto latestTenantScope = ctlService.findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(DEFAULT_FQN + 7, tenant.getId(), null);
+    CTLSchemaDto latestTenantScope = ctlService.findLatestCtlSchemaByFqnAndTenantIdAndApplicationId(DEFAULT_FQN + 7, tenant.getId(), null);
     Assert.assertEquals(Integer.valueOf(78), latestTenantScope.getVersion());
-    CTLSchemaDto latestAppScope = ctlService.findLatestCTLSchemaByFqnAndTenantIdAndApplicationId(DEFAULT_FQN + 8, tenant.getId(), appDto.getId());
+    CTLSchemaDto latestAppScope = ctlService.findLatestCtlSchemaByFqnAndTenantIdAndApplicationId(DEFAULT_FQN + 8, tenant.getId(), appDto.getId());
     Assert.assertEquals(Integer.valueOf(81), latestAppScope.getVersion());
   }
 
@@ -209,8 +209,8 @@ public class CTLServiceImplTest extends AbstractTest {
   public void testScopeUpdate() {
     CTLSchemaMetaInfoDto metaInfo = appSchema3.getMetaInfo();
     metaInfo.setApplicationId(null);
-    ctlService.updateCTLSchemaMetaInfoScope(metaInfo);
-    CTLSchemaDto found = ctlService.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(metaInfo.getFqn(), appSchema3.getVersion(), metaInfo.getTenantId(), null);
+    ctlService.updateCtlSchemaMetaInfoScope(metaInfo);
+    CTLSchemaDto found = ctlService.findCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(metaInfo.getFqn(), appSchema3.getVersion(), metaInfo.getTenantId(), null);
     Assert.assertEquals(appSchema3, found);
   }
 
@@ -218,7 +218,7 @@ public class CTLServiceImplTest extends AbstractTest {
   public void testScopeUpdateForbidden() {
     CTLSchemaMetaInfoDto metaInfo = appSchema.getMetaInfo();
     metaInfo.setApplicationId(null);
-    ctlService.updateCTLSchemaMetaInfoScope(metaInfo);
+    ctlService.updateCtlSchemaMetaInfoScope(metaInfo);
   }
 
   @Test
@@ -233,20 +233,20 @@ public class CTLServiceImplTest extends AbstractTest {
 
   @Test
   public void testFindCTLSchemaDependentsByFqnVersionTenantId() {
-    List<CTLSchemaDto> appSchemas = ctlService.findCTLSchemaDependents(firstSchema.getMetaInfo().getFqn(), firstSchema.getVersion(),
+    List<CTLSchemaDto> appSchemas = ctlService.findCtlSchemaDependents(firstSchema.getMetaInfo().getFqn(), firstSchema.getVersion(),
         tenant.getId(), null);
     Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-    appSchemas = ctlService.findCTLSchemaDependents(secondSchema.getMetaInfo().getFqn(), secondSchema.getVersion(), tenant.getId(), null);
+    appSchemas = ctlService.findCtlSchemaDependents(secondSchema.getMetaInfo().getFqn(), secondSchema.getVersion(), tenant.getId(), null);
     Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-    appSchemas = ctlService.findCTLSchemaDependents(thirdSchema.getMetaInfo().getFqn(), thirdSchema.getVersion(), tenant.getId(), null);
+    appSchemas = ctlService.findCtlSchemaDependents(thirdSchema.getMetaInfo().getFqn(), thirdSchema.getVersion(), tenant.getId(), null);
     Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-    appSchemas = ctlService.findCTLSchemaDependents(fourthSchema.getMetaInfo().getFqn(), fourthSchema.getVersion(), tenant.getId(), null);
+    appSchemas = ctlService.findCtlSchemaDependents(fourthSchema.getMetaInfo().getFqn(), fourthSchema.getVersion(), tenant.getId(), null);
     Assert.assertEquals(Arrays.asList(mainSchema), appSchemas);
 
-    appSchemas = ctlService.findCTLSchemaDependents(mainSchema.getMetaInfo().getFqn(), mainSchema.getVersion(), tenant.getId(), null);
+    appSchemas = ctlService.findCtlSchemaDependents(mainSchema.getMetaInfo().getFqn(), mainSchema.getVersion(), tenant.getId(), null);
     Assert.assertTrue(appSchemas.isEmpty());
 
   }
@@ -260,7 +260,7 @@ public class CTLServiceImplTest extends AbstractTest {
         public CTLSchemaDto call() {
           CTLSchemaDto sch = null;
           try {
-            sch = ctlService.saveCTLSchema(generateCTLSchemaDto(generateTenantDto().getId()));
+            sch = ctlService.saveCtlSchema(generateCTLSchemaDto(generateTenantDto().getId()));
           } catch (Throwable t) {
             throw t;
           }
@@ -279,7 +279,7 @@ public class CTLServiceImplTest extends AbstractTest {
     }
     Assert.assertEquals(100, schemas.size());
     for (CTLSchemaDto schema : schemas) {
-      CTLSchemaDto savedSchema = ctlService.findCTLSchemaByFqnAndVerAndTenantIdAndApplicationId(DEFAULT_FQN, 100, schema.getMetaInfo().getTenantId(), null);
+      CTLSchemaDto savedSchema = ctlService.findCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(DEFAULT_FQN, 100, schema.getMetaInfo().getTenantId(), null);
       Assert.assertNotNull(savedSchema);
       Assert.assertEquals(schema, savedSchema);
     }

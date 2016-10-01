@@ -87,6 +87,9 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
         listCommands(writer);
       }
     };
+
+    addCommand(helpCommand);
+
     Command memoryCommand = new Command("memory",
         "display server memory info") {
 
@@ -95,6 +98,8 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
         printMemory(writer, line.hasOption('g'));
       }
     };
+
+    addCommand(memoryCommand);
 
     memoryCommand.addOption(new Option("g", "gc", false,
         "Force Garbage Collector before memory status"));
@@ -107,17 +112,15 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
       }
     };
 
-    Command shutdownCommand = new Command("shutdown", "shutdown server") {
+    addCommand(threadsCommand);
 
+    Command shutdownCommand = new Command("shutdown", "shutdown server") {
       @Override
       public void runCommand(CommandLine line, PrintWriter writer) {
         shutdown(writer);
       }
     };
 
-    addCommand(helpCommand);
-    addCommand(memoryCommand);
-    addCommand(threadsCommand);
     addCommand(shutdownCommand);
   }
 
@@ -277,12 +280,12 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
       max = Math.max(max, command.length());
     }
     for (String command : commandsMap.keySet()) {
-      String desc = commandsMap.get(command).getDesc();
       StringBuffer commandBuf = new StringBuffer();
       commandBuf.append(command);
       if (commandBuf.length() < max) {
         commandBuf.append(createPadding(max - commandBuf.length()));
       }
+      String desc = commandsMap.get(command).getDesc();
       commandBuf.append("     ");
       commandBuf.append(desc);
       writer.println(commandBuf.toString());
@@ -295,13 +298,13 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
    * Prints service memory usage.
    *
    * @param writer  the writer to output memory usage info
-   * @param forceGC force Garbage Collection before obtaining memory information
+   * @param forceGc force Garbage Collection before obtaining memory information
    */
-  private void printMemory(PrintWriter writer, boolean forceGC) {
+  private void printMemory(PrintWriter writer, boolean forceGc) {
     writer.println("Memory Usage:");
     writer.println();
     try {
-      MemoryUsage memUsage = getMemoryUsage(forceGC);
+      MemoryUsage memUsage = getMemoryUsage(forceGc);
 
       NumberFormat format = new DecimalFormat("0.#");
 
@@ -370,38 +373,37 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
       threadStatistics.put(thread.ti.getThreadState(), count);
     }
 
-    int idColumnLength = 4;
-    int groupColumnLength = maxGroup + 1;
-    int nameColumnLength = maxName + 1;
-    int priorityColumnLength = 10;
-    int stateColumnLength = 14;
-    int daemonColumnLengh = 7;
-    int aliveColumnLengh = 6;
-    int cpuTimeColumnLengh = 14;
-
     StringBuffer header = new StringBuffer();
     header.append("ID");
+    int idColumnLength = 4;
     int length = idColumnLength;
     header.append(createPadding(length - header.length()));
     header.append("GROUP");
+    int groupColumnLength = maxGroup + 1;
     length += groupColumnLength;
     header.append(createPadding(length - header.length()));
     header.append("NAME");
+    int nameColumnLength = maxName + 1;
     length += nameColumnLength;
     header.append(createPadding(length - header.length()));
     header.append("PRIORITY");
+    int priorityColumnLength = 10;
     length += priorityColumnLength;
     header.append(createPadding(length - header.length()));
     header.append("STATE");
+    int stateColumnLength = 14;
     length += stateColumnLength;
     header.append(createPadding(length - header.length()));
     header.append("DAEMON");
+    int daemonColumnLengh = 7;
     length += daemonColumnLengh;
     header.append(createPadding(length - header.length()));
     header.append("ALIVE");
+    int aliveColumnLengh = 6;
     length += aliveColumnLengh;
     header.append(createPadding(length - header.length()));
     header.append("CPU TIME (SEC)");
+    int cpuTimeColumnLengh = 14;
     length += cpuTimeColumnLengh;
     header.append(createPadding(length - header.length()));
     writer.println(header);
@@ -473,19 +475,19 @@ public abstract class BaseCliThriftService implements CliThriftService.Iface {
    */
   private void allThreadsFromGroup(ThreadGroup group,
                                    Map<Long, ThreadStruct> threadsMap) {
-    int tCount = group.activeCount();
-    int gCount = group.activeGroupCount();
-    Thread[] gThreads = new Thread[tCount];
-    ThreadGroup[] tGroups = new ThreadGroup[gCount];
-    group.enumerate(gThreads, false);
-    group.enumerate(tGroups, false);
-    for (Thread t : gThreads) {
+    int threadCount = group.activeCount();
+    int groupCount = group.activeGroupCount();
+    Thread[] groupThreads = new Thread[threadCount];
+    ThreadGroup[] threadGroups = new ThreadGroup[groupCount];
+    group.enumerate(groupThreads, false);
+    group.enumerate(threadGroups, false);
+    for (Thread t : groupThreads) {
       if (t != null) {
         ThreadStruct ts = threadsMap.get(t.getId());
         ts.thread = t;
       }
     }
-    for (ThreadGroup tg : tGroups) {
+    for (ThreadGroup tg : threadGroups) {
       allThreadsFromGroup(tg, threadsMap);
     }
   }

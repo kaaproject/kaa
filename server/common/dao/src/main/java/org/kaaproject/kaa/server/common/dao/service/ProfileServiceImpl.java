@@ -96,14 +96,17 @@ public class ProfileServiceImpl implements ProfileService {
 
   @Override
   public List<EndpointProfileSchemaDto> findProfileSchemasByAppId(String applicationId) {
-    validateSqlId(applicationId, "Can't find profile schema. Invalid application id: " + applicationId);
+    validateSqlId(applicationId, "Can't find profile schema. Invalid application id: "
+                                 + applicationId);
     return convertDtoList(profileSchemaDao.findByApplicationId(applicationId));
   }
 
   @Override
   public List<VersionDto> findProfileSchemaVersionsByAppId(String applicationId) {
-    validateSqlId(applicationId, "Can't find profile schemas. Invalid application id: " + applicationId);
-    List<EndpointProfileSchema> endpointProfileSchemas = profileSchemaDao.findByApplicationId(applicationId);
+    validateSqlId(applicationId, "Can't find profile schemas. Invalid application id: "
+                                 + applicationId);
+    List<EndpointProfileSchema> endpointProfileSchemas =
+            profileSchemaDao.findByApplicationId(applicationId);
     List<VersionDto> schemas = new ArrayList<>();
     for (EndpointProfileSchema endpointProfileSchema : endpointProfileSchemas) {
       schemas.add(endpointProfileSchema.toVersionDto());
@@ -120,7 +123,8 @@ public class ProfileServiceImpl implements ProfileService {
   @Override
   public EndpointProfileSchemaDto saveProfileSchema(EndpointProfileSchemaDto profileSchemaDto) {
     if (profileSchemaDto == null) {
-      throw new IncorrectParameterException("Can't save profile schema. Invalid profile schema object.");
+      throw new IncorrectParameterException("Can't save profile schema. "
+                                            + "Invalid profile schema object.");
     }
     String appId = profileSchemaDto.getApplicationId();
     if (isNotBlank(appId)) {
@@ -147,13 +151,15 @@ public class ProfileServiceImpl implements ProfileService {
       }
       return getDto(profileSchemaDao.save(new EndpointProfileSchema(profileSchemaDto)));
     } else {
-      throw new IncorrectParameterException("Invalid profile schema object. Incorrect application id" + appId);
+      throw new IncorrectParameterException("Invalid profile schema object. "
+                                            + "Incorrect application id" + appId);
     }
   }
 
   @Override
   public void removeProfileSchemasByAppId(String applicationId) {
-    validateSqlId(applicationId, "Can't remove profile schema. Invalid application id: " + applicationId);
+    validateSqlId(applicationId, "Can't remove profile schema. Invalid application id: "
+                                 + applicationId);
     List<EndpointProfileSchema> schemas = profileSchemaDao.findByApplicationId(applicationId);
     if (schemas != null && !schemas.isEmpty()) {
       LOG.debug("Remove profile shemas by application id {}", applicationId);
@@ -171,14 +177,18 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public Collection<ProfileFilterRecordDto> findAllProfileFilterRecordsByEndpointGroupId(String endpointGroupId, boolean includeDeprecated) {
-    Collection<ProfileFilterDto> profileFilters = convertDtoList(profileFilterDao.findActualByEndpointGroupId(endpointGroupId));
-    List<ProfileFilterRecordDto> records = ProfileFilterRecordDto.convertToProfileFilterRecords(profileFilters);
+  public Collection<ProfileFilterRecordDto> findAllProfileFilterRecordsByEndpointGroupId(
+          String endpointGroupId, boolean includeDeprecated) {
+    Collection<ProfileFilterDto> profileFilters = convertDtoList(
+            profileFilterDao.findActualByEndpointGroupId(endpointGroupId));
+    List<ProfileFilterRecordDto> records = ProfileFilterRecordDto.convertToProfileFilterRecords(
+            profileFilters);
     if (includeDeprecated) {
       List<ProfileVersionPairDto> versions = findVacantSchemasByEndpointGroupId(endpointGroupId);
       for (ProfileVersionPairDto version : versions) {
         ProfileFilterDto deprecatedProfileFilter = getDto(profileFilterDao.findLatestDeprecated(
-            version.getEndpointProfileSchemaid(), version.getServerProfileSchemaid(), endpointGroupId));
+            version.getEndpointProfileSchemaid(), version.getServerProfileSchemaid(),
+                endpointGroupId));
         if (deprecatedProfileFilter != null) {
           ProfileFilterRecordDto record = new ProfileFilterRecordDto();
           record.setActiveStructureDto(deprecatedProfileFilter);
@@ -191,10 +201,12 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public ProfileFilterRecordDto findProfileFilterRecordBySchemaIdAndEndpointGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) {
+  public ProfileFilterRecordDto findProfileFilterRecordBySchemaIdAndEndpointGroupId(
+          String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) {
     validateFilterSchemaIds(endpointProfileSchemaId, serverProfileSchemaId);
     ProfileFilterRecordDto record = new ProfileFilterRecordDto();
-    Collection<ProfileFilterDto> profileFilters = convertDtoList(profileFilterDao.findActualBySchemaIdAndGroupId(endpointProfileSchemaId,
+    Collection<ProfileFilterDto> profileFilters = convertDtoList(
+            profileFilterDao.findActualBySchemaIdAndGroupId(endpointProfileSchemaId,
         serverProfileSchemaId, endpointGroupId));
     if (profileFilters != null) {
       for (ProfileFilterDto profileFilter : profileFilters) {
@@ -206,27 +218,32 @@ public class ProfileServiceImpl implements ProfileService {
       }
     }
     if (!record.hasActive()) {
-      ProfileFilterDto deprecatedProfileFilter = getDto(profileFilterDao.findLatestDeprecated(endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId));
+      ProfileFilterDto deprecatedProfileFilter = getDto(
+              profileFilterDao.findLatestDeprecated(endpointProfileSchemaId, serverProfileSchemaId,
+                      endpointGroupId));
       if (deprecatedProfileFilter != null) {
         record.setActiveStructureDto(deprecatedProfileFilter);
       }
     }
     if (record.isEmpty()) {
-      LOG.debug("Can't find related profile filter record for endpoint schema {}, server schema {} and group {}.", endpointProfileSchemaId,
+      LOG.debug("Can't find related profile filter record for endpoint schema {}, "
+                + "server schema {} and group {}.", endpointProfileSchemaId,
           serverProfileSchemaId, endpointGroupId);
-      throw new NotFoundException("Profile filter record not found, endpointProfileSchemaId: " + endpointProfileSchemaId
-          + ", serverProfileSchemaId: " + serverProfileSchemaId + " endpointGroupId: " + endpointGroupId);
+      throw new NotFoundException("Profile filter record not found, endpointProfileSchemaId: "
+                                  + endpointProfileSchemaId + ", serverProfileSchemaId: "
+                                  + serverProfileSchemaId + " endpointGroupId: " + endpointGroupId);
     }
     return record;
   }
 
   @Override
   public List<ProfileVersionPairDto> findVacantSchemasByEndpointGroupId(String endpointGroupId) {
-    validateSqlId(endpointGroupId, "Can't find vacant schemas. Invalid endpoint group id: " + endpointGroupId);
+    validateSqlId(endpointGroupId, "Can't find vacant schemas. Invalid endpoint group id: "
+                                   + endpointGroupId);
     EndpointGroup group = endpointGroupDao.findById(endpointGroupId);
-    List<ProfileFilter> profileFilters = profileFilterDao.findActualByEndpointGroupId(endpointGroupId);
     String appId = group.getApplicationId();
-    List<ServerProfileSchemaDto> serverSchemas = serverProfileService.findServerProfileSchemasByAppId(appId);
+    List<ServerProfileSchemaDto> serverSchemas = serverProfileService
+            .findServerProfileSchemasByAppId(appId);
     Collections.sort(serverSchemas);
     List<EndpointProfileSchemaDto> endpointProfileSchemas = findProfileSchemasByAppId(appId);
     Collections.sort(endpointProfileSchemas);
@@ -236,14 +253,19 @@ public class ProfileServiceImpl implements ProfileService {
       EndpointProfileSchemaDto endSchema = endpointProfileSchemas.get(i);
       for (ServerProfileSchemaDto serverSchema : serverSchemas) {
         if (i == 0) {
-          pairVersionSet.add(new ProfileVersionPairDto(serverSchema.getId(), serverSchema.getVersion()));
+          pairVersionSet.add(new ProfileVersionPairDto(serverSchema.getId(),
+                  serverSchema.getVersion()));
         }
-        pairVersionSet.add(new ProfileVersionPairDto(endSchema.getId(), endSchema.getVersion(), serverSchema.getId(), serverSchema.getVersion()));
+        pairVersionSet.add(new ProfileVersionPairDto(endSchema.getId(), endSchema.getVersion(),
+                serverSchema.getId(), serverSchema.getVersion()));
       }
       pairVersionSet.add(new ProfileVersionPairDto(endSchema.getVersion(), endSchema.getId()));
     }
+    List<ProfileFilter> profileFilters = profileFilterDao.findActualByEndpointGroupId(
+            endpointGroupId);
     for (ProfileFilter pf : profileFilters) {
-      pairVersionSet.remove(new ProfileVersionPairDto(pf.getEndpointProfileSchemaId(), pf.getEndpointProfileSchemaVersion(),
+      pairVersionSet.remove(new ProfileVersionPairDto(pf.getEndpointProfileSchemaId(),
+              pf.getEndpointProfileSchemaVersion(),
           pf.getServerProfileSchemaId(), pf.getServerProfileSchemaVersion()));
     }
     return new ArrayList<>(pairVersionSet);
@@ -263,7 +285,8 @@ public class ProfileServiceImpl implements ProfileService {
     if (isNotBlank(id)) {
       ProfileFilterDto oldProfileFilter = findProfileFilterById(id);
       if (oldProfileFilter != null && oldProfileFilter.getStatus() != INACTIVE) {
-        throw new UpdateStatusConflictException("Can't update profile filter, invalid old profile filter with id " + id);
+        throw new UpdateStatusConflictException("Can't update profile filter, "
+                                                + "invalid old profile filter with id " + id);
       }
     } else {
       String endProfSchemaId = profileFilterDto.getEndpointProfileSchemaId();
@@ -271,25 +294,30 @@ public class ProfileServiceImpl implements ProfileService {
       String groupId = profileFilterDto.getEndpointGroupId();
       EndpointGroup group = endpointGroupDao.findById(groupId);
       if (group.getWeight() == 0) {
-        throw new UpdateStatusConflictException("Add profile filter to default group is forbidden!");
+        throw new UpdateStatusConflictException(
+                "Add profile filter to default group is forbidden!");
       }
       EndpointProfileSchemaDto endpointProfileSchemaDto = null;
       if (endProfSchemaId != null) {
         endpointProfileSchemaDto = findProfileSchemaById(endProfSchemaId);
         if (endpointProfileSchemaDto == null) {
-          throw new IncorrectParameterException("Can't update profile filter, endpoint profile schema not found!");
+          throw new IncorrectParameterException("Can't update profile filter, "
+                                                + "endpoint profile schema not found!");
         }
       }
       ServerProfileSchemaDto serverProfileSchemaDto = null;
       if (srvProfSchemaId != null) {
         serverProfileSchemaDto = serverProfileService.findServerProfileSchema(srvProfSchemaId);
         if (serverProfileSchemaDto == null) {
-          throw new IncorrectParameterException("Can't update profile filter, server profile schema not found!");
+          throw new IncorrectParameterException("Can't update profile filter, "
+                                                + "server profile schema not found!");
         }
       }
       if (endpointProfileSchemaDto != null || serverProfileSchemaDto != null) {
-        ProfileFilter inactiveFilter = profileFilterDao.findInactiveFilter(endProfSchemaId, srvProfSchemaId, groupId);
-        ProfileFilter latestFilter = profileFilterDao.findLatestFilter(endProfSchemaId, srvProfSchemaId, groupId);
+        ProfileFilter inactiveFilter = profileFilterDao.findInactiveFilter(endProfSchemaId,
+                srvProfSchemaId, groupId);
+        ProfileFilter latestFilter = profileFilterDao.findLatestFilter(endProfSchemaId,
+                srvProfSchemaId, groupId);
         if (inactiveFilter != null) {
           profileFilterDto.setId(inactiveFilter.getId().toString());
           profileFilterDto.setSequenceNumber(inactiveFilter.getSequenceNumber());
@@ -303,7 +331,8 @@ public class ProfileServiceImpl implements ProfileService {
         }
         profileFilterDto.setCreatedTime(System.currentTimeMillis());
       } else {
-        throw new IncorrectParameterException("Can't update profile filter, profile schemas not set!");
+        throw new IncorrectParameterException("Can't update profile filter, "
+                                              + "profile schemas not set!");
       }
     }
     profileFilterDto.setStatus(UpdateStatus.INACTIVE);
@@ -312,10 +341,12 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public ChangeProfileFilterNotification activateProfileFilter(String id, String activatedUsername) {
+  public ChangeProfileFilterNotification activateProfileFilter(String id,
+                                                               String activatedUsername) {
     ChangeProfileFilterNotification profileNotification;
     ProfileFilterDto profileFilter;
-    validateSqlId(id, "Can't activate profile filter. Invalid profile filter id: " + id);
+    validateSqlId(id, "Can't activate profile filter. Invalid profile filter id: "
+                      + id);
     ProfileFilter oldProfileFilter = profileFilterDao.findById(id);
     if (oldProfileFilter != null) {
       UpdateStatus status = oldProfileFilter.getStatus();
@@ -324,9 +355,11 @@ public class ProfileServiceImpl implements ProfileService {
         String srvProfSchemaId = oldProfileFilter.getServerProfileSchemaId();
         String groupId = oldProfileFilter.getGroupId();
         if (groupId != null) {
-          profileFilterDao.deactivateOldFilter(endProfSchemaId, srvProfSchemaId, groupId, activatedUsername);
+          profileFilterDao.deactivateOldFilter(endProfSchemaId, srvProfSchemaId, groupId,
+                  activatedUsername);
         } else {
-          throw new DatabaseProcessingException("Incorrect old profile filters. Profile schema id is empty.");
+          throw new DatabaseProcessingException("Incorrect old profile filters. "
+                                                + "Profile schema id is empty.");
         }
         profileFilter = getDto(profileFilterDao.activate(id, activatedUsername));
         if (profileFilter != null) {
@@ -339,7 +372,8 @@ public class ProfileServiceImpl implements ProfileService {
           throw new DatabaseProcessingException("Can't activate profile filter.");
         }
       } else {
-        throw new UpdateStatusConflictException("Incorrect status for activating profile filter " + status);
+        throw new UpdateStatusConflictException("Incorrect status for activating profile filter "
+                                                + status);
       }
     } else {
       throw new IncorrectParameterException("Can't find profile filter with id " + id);
@@ -348,7 +382,8 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public ChangeProfileFilterNotification deactivateProfileFilter(String id, String deactivatedUsername) {
+  public ChangeProfileFilterNotification deactivateProfileFilter(
+          String id, String deactivatedUsername) {
     ChangeProfileFilterNotification profileNotification;
     validateSqlId(id, "Incorrect profile filter id. Can't deactivate profile filter with id " + id);
     ProfileFilter oldProfileFilter = profileFilterDao.findById(id);
@@ -362,14 +397,17 @@ public class ProfileServiceImpl implements ProfileService {
         }
       }
       if (status != null && status == ACTIVE) {
-        ProfileFilterDto profileFilterDto = getDto(profileFilterDao.deactivate(id, deactivatedUsername));
+        ProfileFilterDto profileFilterDto = getDto(profileFilterDao.deactivate(
+                id, deactivatedUsername));
         HistoryDto historyDto = addHistory(profileFilterDto, ChangeType.REMOVE_PROF);
-        ChangeNotificationDto changeNotificationDto = createNotification(profileFilterDto, historyDto);
+        ChangeNotificationDto changeNotificationDto = createNotification(
+                profileFilterDto, historyDto);
         profileNotification = new ChangeProfileFilterNotification();
         profileNotification.setProfileFilterDto(profileFilterDto);
         profileNotification.setChangeNotificationDto(changeNotificationDto);
       } else {
-        throw new UpdateStatusConflictException("Incorrect status for activating profile filter " + status);
+        throw new UpdateStatusConflictException("Incorrect status for activating profile filter "
+                                                + status);
       }
     } else {
       throw new IncorrectParameterException("Can't find profile filter with id " + id);
@@ -378,28 +416,34 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public ChangeProfileFilterNotification deleteProfileFilterRecord(String endpointProfileSchemaId, String serverProfileSchemaId,
-                                                                   String groupId, String deactivatedUsername) {
+  public ChangeProfileFilterNotification deleteProfileFilterRecord(String endpointProfileSchemaId,
+                                                                   String serverProfileSchemaId,
+                                                                   String groupId,
+                                                                   String deactivatedUsername) {
     validateFilterSchemaIds(endpointProfileSchemaId, serverProfileSchemaId);
     validateSqlId(groupId, "Incorrect group id " + groupId + ".");
     ChangeProfileFilterNotification profileNotification = null;
-    ProfileFilterDto profileFilterDto = getDto(profileFilterDao.deactivateOldFilter(endpointProfileSchemaId, serverProfileSchemaId,
+    ProfileFilterDto profileFilterDto = getDto(profileFilterDao.deactivateOldFilter(
+            endpointProfileSchemaId, serverProfileSchemaId,
         groupId, deactivatedUsername));
     if (profileFilterDto != null) {
       HistoryDto historyDto = addHistory(profileFilterDto, ChangeType.REMOVE_PROF);
-      ChangeNotificationDto changeNotificationDto = createNotification(profileFilterDto, historyDto);
+      ChangeNotificationDto changeNotificationDto = createNotification(
+              profileFilterDto, historyDto);
       profileNotification = new ChangeProfileFilterNotification();
       profileNotification.setProfileFilterDto(profileFilterDto);
       profileNotification.setChangeNotificationDto(changeNotificationDto);
     }
-    ProfileFilter profileFilter = profileFilterDao.findInactiveFilter(endpointProfileSchemaId, serverProfileSchemaId, groupId);
+    ProfileFilter profileFilter = profileFilterDao.findInactiveFilter(
+            endpointProfileSchemaId, serverProfileSchemaId, groupId);
     if (profileFilter != null) {
       profileFilterDao.removeById(profileFilter.getId().toString());
     }
     return profileNotification;
   }
 
-  private ChangeNotificationDto createNotification(ProfileFilterDto profileFilter, HistoryDto historyDto) {
+  private ChangeNotificationDto createNotification(ProfileFilterDto profileFilter,
+                                                   HistoryDto historyDto) {
     LOG.debug("Create notification after profile filter update.");
     ChangeNotificationDto changeNotificationDto = null;
     if (historyDto != null) {
@@ -425,22 +469,27 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public List<ProfileFilterDto> findProfileFiltersByAppIdAndVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion) {
+  public List<ProfileFilterDto> findProfileFiltersByAppIdAndVersionsCombination(
+          String appId, int endpointSchemaVersion, int serverSchemaVersion) {
     validateId(appId, "Can't find profile filter. Invalid application id: " + appId);
-    return convertDtoList(profileFilterDao.findByAppIdAndSchemaVersionsCombination(appId, endpointSchemaVersion, serverSchemaVersion));
+    return convertDtoList(profileFilterDao.findByAppIdAndSchemaVersionsCombination(
+            appId, endpointSchemaVersion, serverSchemaVersion));
   }
 
   @Override
-  public EndpointProfileSchemaDto findProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) {
+  public EndpointProfileSchemaDto findProfileSchemaByAppIdAndVersion(
+          String appId, int schemaVersion) {
     validateId(appId, "Can't find profile schema. Invalid application id: " + appId);
     return getDto(profileSchemaDao.findByAppIdAndVersion(appId, schemaVersion));
   }
 
   @Override
-  public ProfileFilterDto findLatestFilterBySchemaIdsAndGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
+  public ProfileFilterDto findLatestFilterBySchemaIdsAndGroupId(
+          String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
     validateFilterSchemaIds(endpointProfileSchemaId, serverProfileSchemaId);
     validateId(groupId, "Can't find profile filter. Invalid group id: " + groupId);
-    return getDto(profileFilterDao.findLatestFilter(endpointProfileSchemaId, serverProfileSchemaId, groupId));
+    return getDto(profileFilterDao.findLatestFilter(
+            endpointProfileSchemaId, serverProfileSchemaId, groupId));
   }
 
   @Override
@@ -464,7 +513,8 @@ public class ProfileServiceImpl implements ProfileService {
     return historyService.saveHistory(history);
   }
 
-  private void validateFilterSchemaIds(String endpointProfileSchemaId, String serverProfileSchemaId) {
+  private void validateFilterSchemaIds(String endpointProfileSchemaId,
+                                       String serverProfileSchemaId) {
     if (isBlank(endpointProfileSchemaId) && isBlank(serverProfileSchemaId)) {
       throw new IncorrectParameterException("Both profile schema ids can't be empty");
     }
@@ -475,11 +525,13 @@ public class ProfileServiceImpl implements ProfileService {
       throw new IncorrectParameterException("Can't save profile filter. Incorrect object.");
     }
     if (dto.getEndpointProfileSchemaId() == null && dto.getServerProfileSchemaId() == null) {
-      throw new IncorrectParameterException("Profile Filter object invalid. Both schemas are empty.");
+      throw new IncorrectParameterException(
+              "Profile Filter object invalid. Both schemas are empty.");
     }
     if (StringUtils.isBlank(dto.getEndpointGroupId())) {
-      throw new IncorrectParameterException("Profile Filter object invalid. Endpoint Group id invalid:"
-          + dto.getEndpointGroupId());
+      throw new IncorrectParameterException(
+              "Profile Filter object invalid. Endpoint Group id invalid:"
+              + dto.getEndpointGroupId());
     }
   }
 }

@@ -66,7 +66,8 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
     List<ApplicationEventFamilyMapDto> eventFamilyMaps;
     if (isValidSqlId(applicationId)) {
       LOG.debug("Find application event family maps by applicationId id [{}]", applicationId);
-      eventFamilyMaps = convertDtoList(applicationEventFamilyMapDao.findByApplicationId(applicationId));
+      eventFamilyMaps = convertDtoList(applicationEventFamilyMapDao.findByApplicationId(
+              applicationId));
     } else {
       throw new IncorrectParameterException("Incorrect applicationId id: " + applicationId);
     }
@@ -84,14 +85,18 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
   }
 
   @Override
-  public List<ApplicationEventFamilyMapDto> findByEcfIdAndVersion(String eventClassFamilyId, int version) {
-    LOG.debug("Find application event family maps by ecf id [{}] and version", eventClassFamilyId, version);
-    return convertDtoList(applicationEventFamilyMapDao.findByEcfIdAndVersion(eventClassFamilyId, version));
+  public List<ApplicationEventFamilyMapDto> findByEcfIdAndVersion(String eventClassFamilyId,
+                                                                  int version) {
+    LOG.debug("Find application event family maps by ecf id [{}] and version",
+            eventClassFamilyId, version);
+    return convertDtoList(applicationEventFamilyMapDao.findByEcfIdAndVersion(
+            eventClassFamilyId, version));
   }
 
   @Override
   public ApplicationEventFamilyMapDto findApplicationEventFamilyMapById(String id) {
-    validateSqlId(id, "Application event family map id is incorrect. Can't find application event family map by id " + id);
+    validateSqlId(id, "Application event family map id is incorrect. "
+                      + "Can't find application event family map by id " + id);
     return getDto(applicationEventFamilyMapDao.findById(id));
   }
 
@@ -101,18 +106,25 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
     ApplicationEventFamilyMapDto savedApplicationEventFamilyMap = null;
     if (isValidSqlObject(applicationEventFamilyMapDto)) {
       if (isValidSqlId(applicationEventFamilyMapDto.getId())) {
-        ApplicationEventFamilyMapDto previousApplicationEventFamilyMapDto = findApplicationEventFamilyMapById(applicationEventFamilyMapDto.getId());
+        ApplicationEventFamilyMapDto previousApplicationEventFamilyMapDto =
+                findApplicationEventFamilyMapById(applicationEventFamilyMapDto.getId());
         if (previousApplicationEventFamilyMapDto != null) {
           LOG.debug("Can't save application event family map. Update is forbidden.");
-          throw new IncorrectParameterException("Can't save application event family map. Update is forbidden.");
+          throw new IncorrectParameterException("Can't save application event family map. "
+                                                + "Update is forbidden.");
         }
       }
-      if (applicationEventFamilyMapDao.validateApplicationEventFamilyMap(applicationEventFamilyMapDto.getApplicationId(), applicationEventFamilyMapDto.getEcfId(), applicationEventFamilyMapDto.getVersion())) {
+      if (applicationEventFamilyMapDao.validateApplicationEventFamilyMap(
+              applicationEventFamilyMapDto.getApplicationId(),
+              applicationEventFamilyMapDto.getEcfId(),
+              applicationEventFamilyMapDto.getVersion())) {
         applicationEventFamilyMapDto.setCreatedTime(System.currentTimeMillis());
-        savedApplicationEventFamilyMap = getDto(applicationEventFamilyMapDao.save(new ApplicationEventFamilyMap(applicationEventFamilyMapDto)));
+        savedApplicationEventFamilyMap = getDto(applicationEventFamilyMapDao
+                .save(new ApplicationEventFamilyMap(applicationEventFamilyMapDto)));
       } else {
         LOG.debug("Can't save application event family map. Uniqueness violation.");
-        throw new IncorrectParameterException("Incorrect application event family map. Uniqueness violation within the application.");
+        throw new IncorrectParameterException("Incorrect application event family map. "
+                                              + "Uniqueness violation within the application.");
       }
     }
     return savedApplicationEventFamilyMap;
@@ -140,7 +152,8 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
           for (EventClassFamily eventClassFamily : eventClassFamilies) {
 
             if (eventClassFamily.getSchemas() != null) {
-              for (EventClassFamilyVersion eventClassFamilyVersion : eventClassFamily.getSchemas()) {
+              for (EventClassFamilyVersion eventClassFamilyVersion :
+                      eventClassFamily.getSchemas()) {
                 EcfInfoDto ecf = new EcfInfoDto();
                 ecf.setEcfId(String.valueOf(eventClassFamily.getId()));
                 ecf.setEcfName(eventClassFamily.getName());
@@ -162,7 +175,8 @@ public class ApplicationEventMapServiceImpl implements ApplicationEventMapServic
   @Override
   public List<AefMapInfoDto> findEventClassFamiliesByApplicationId(
       String applicationId) {
-    List<ApplicationEventFamilyMapDto> eventFamilyMaps = findApplicationEventFamilyMapsByApplicationId(applicationId);
+    List<ApplicationEventFamilyMapDto> eventFamilyMaps =
+            findApplicationEventFamilyMapsByApplicationId(applicationId);
     List<AefMapInfoDto> aefMaps = new ArrayList<>();
     if (eventFamilyMaps != null) {
       for (ApplicationEventFamilyMapDto eventFamilyMap : eventFamilyMaps) {

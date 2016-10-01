@@ -54,7 +54,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = TOPIC_TABLE_NAME, uniqueConstraints = {
     @UniqueConstraint(columnNames = {TOPIC_NAME, ENDPOINT_GROUP_APPLICATION_ID})
-})
+    })
 public class Topic extends GenericModel<TopicDto> implements Serializable {
 
   private static final long serialVersionUID = -5617352698933455002L;
@@ -274,7 +274,8 @@ public class Topic extends GenericModel<TopicDto> implements Serializable {
 
   @Override
   public String toString() {
-    return "Topic [name=" + name + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
+    return "Topic [name=" + name + ", description=" + description + ", createdUsername="
+           + createdUsername + ", createdTime=" + createdTime
         + ", sequenceNumber=" + sequenceNumber + ", type=" + type + ", id=" + id + "]";
   }
 
