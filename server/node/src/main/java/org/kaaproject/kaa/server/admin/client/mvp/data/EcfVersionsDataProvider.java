@@ -36,6 +36,11 @@ public class EcfVersionsDataProvider
     super(dataGrid, hasErrorMessage);
   }
 
+  /**
+   * Sets the event class family version list.
+   *
+   * @param schemas schema list
+   */
   public void setSchemas(List<EventClassFamilyVersionDto> schemas) {
     this.schemas.clear();
     if (schemas != null) {

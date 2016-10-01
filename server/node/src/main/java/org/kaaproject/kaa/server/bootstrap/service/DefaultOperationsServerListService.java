@@ -50,8 +50,10 @@ import java.util.concurrent.FutureTask;
  * @author Andrey Shvayka
  */
 @Service
-public class DefaultOperationsServerListService implements OperationsServerListService, OperationsNodeListener {
-  private static final Logger LOG = LoggerFactory.getLogger(DefaultOperationsServerListService.class);
+public class DefaultOperationsServerListService
+    implements OperationsServerListService, OperationsNodeListener {
+  private static final Logger LOG =
+      LoggerFactory.getLogger(DefaultOperationsServerListService.class);
   private Map<String, OperationsNodeInfo> opsMap;
   private Memorizer<List<ProtocolVersionId>, Set<ProtocolConnectionData>> cache;
   private Object listenerLock = new Object();
@@ -65,7 +67,8 @@ public class DefaultOperationsServerListService implements OperationsServerListS
         new Computable<List<ProtocolVersionId>, Set<ProtocolConnectionData>>() {
 
           @Override
-          public Set<ProtocolConnectionData> compute(List<ProtocolVersionId> protocolVersions) throws InterruptedException {
+          public Set<ProtocolConnectionData> compute(List<ProtocolVersionId> protocolVersions)
+              throws InterruptedException {
             return filterProtocolInstances(protocolVersions);
           }
 
@@ -90,9 +93,9 @@ public class DefaultOperationsServerListService implements OperationsServerListS
   public Set<ProtocolConnectionData> filter(List<ProtocolVersionId> keys) {
     try {
       return cache.compute(keys);
-    } catch (InterruptedException e) {
-      LOG.info("Failed to filter protocols", e);
-      throw new RuntimeException(e);
+    } catch (InterruptedException ex) {
+      LOG.info("Failed to filter protocols", ex);
+      throw new RuntimeException(ex);
     }
   }
 
@@ -135,7 +138,7 @@ public class DefaultOperationsServerListService implements OperationsServerListS
   }
 
   protected Set<ProtocolConnectionData> filterProtocolInstances(List<ProtocolVersionId> keys) {
-    Set<ProtocolConnectionData> result = new HashSet<ProtocolConnectionData>();
+    Set<ProtocolConnectionData> result = new HashSet<>();
     for (ProtocolVersionId key : keys) {
       for (OperationsNodeInfo node : opsMap.values()) {
         for (TransportMetaData md : node.getTransports()) {
@@ -149,14 +152,19 @@ public class DefaultOperationsServerListService implements OperationsServerListS
     return result;
   }
 
-  private ProtocolConnectionData toProtocolConnectionData(OperationsNodeInfo node, TransportMetaData md, int version) {
+  private ProtocolConnectionData toProtocolConnectionData(OperationsNodeInfo node,
+                                                          TransportMetaData md,
+                                                          int version) {
     byte[] connectionData = null;
     for (VersionConnectionInfoPair pair : md.getConnectionInfo()) {
       if (version == pair.getVersion()) {
         connectionData = pair.getConenctionInfo().array();
       }
     }
-    return new ProtocolConnectionData(ServerNameUtil.crc32(node.getConnectionInfo()), new ProtocolVersionId(md.getId(), version), connectionData);
+    return new ProtocolConnectionData(
+        ServerNameUtil.crc32(node.getConnectionInfo()),
+        new ProtocolVersionId(md.getId(), version),
+        connectionData);
   }
 
 
@@ -165,36 +173,36 @@ public class DefaultOperationsServerListService implements OperationsServerListS
   }
 
   public class Memorizer<A, V> implements Computable<A, V> {
-    private final ConcurrentMap<A, Future<V>> cache = new ConcurrentHashMap<A, Future<V>>();
-    private final Computable<A, V> c;
+    private final ConcurrentMap<A, Future<V>> cache = new ConcurrentHashMap<>();
+    private final Computable<A, V> computable;
 
     public Memorizer(Computable<A, V> c) {
-      this.c = c;
+      this.computable = c;
     }
 
     public V compute(final A arg) throws InterruptedException {
       while (true) {
-        Future<V> f = cache.get(arg);
-        if (f == null) {
+        Future<V> future = cache.get(arg);
+        if (future == null) {
           Callable<V> eval = new Callable<V>() {
             public V call() throws InterruptedException {
-              return c.compute(arg);
+              return computable.compute(arg);
             }
           };
           FutureTask<V> ft = new FutureTask<V>(eval);
-          f = cache.putIfAbsent(arg, ft);
-          if (f == null) {
-            f = ft;
+          future = cache.putIfAbsent(arg, ft);
+          if (future == null) {
+            future = ft;
             ft.run();
           }
         }
         try {
-          return f.get();
-        } catch (CancellationException e) {
-          LOG.error("Cancellation exception exception ", e);
-          cache.remove(arg, f);
-        } catch (ExecutionException e) {
-          LOG.error("Cache execution exception ", e);
+          return future.get();
+        } catch (CancellationException ex) {
+          LOG.error("Cancellation exception exception ", ex);
+          cache.remove(arg, future);
+        } catch (ExecutionException ex) {
+          LOG.error("Cache execution exception ", ex);
         }
       }
     }

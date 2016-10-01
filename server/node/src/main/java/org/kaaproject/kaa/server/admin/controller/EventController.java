@@ -43,7 +43,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@Api(value = "Events", description = "Provides function for manage events", basePath = "/kaaAdmin/rest")
+@Api(value = "Events",
+    description = "Provides function for manage events",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class EventController extends AbstractAdminController {
 
@@ -54,12 +56,16 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get event class families",
-      notes = "Returns all event class families for the current authorized user within the current tenant. Only users with the TENANT_ADMIN role are " +
-          "allowed to request this information.")
+      notes = "Returns all event class families for the current authorized user "
+          + "within the current tenant. Only users with the TENANT_ADMIN role are "
+          + "allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the TENANT_ADMIN role"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the TENANT_ADMIN role"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "eventClassFamilies", method = RequestMethod.GET)
   @ResponseBody
   public List<EventClassFamilyDto> getEventClassFamilies() throws KaaAdminServiceException {
@@ -74,17 +80,25 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get event class family",
-      notes = "Returns an event class family by event class family ID. Only users with the TENANT_ADMIN role are allowed to request this information.")
+      notes = "Returns an event class family by event class family ID. "
+          + "Only users with the TENANT_ADMIN role are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role TENANT_ADMIN or the Tenant ID of the event class " +
-          "family does not match the Tenant ID of the user"),
-      @ApiResponse(code = 404, message = "An event class family with the specified eventClassFamilyId does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "TENANT_ADMIN or the Tenant ID of the event class "
+              + "family does not match the Tenant ID of the user"),
+      @ApiResponse(code = 404,
+          message = "An event class family with the specified eventClassFamilyId does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "eventClassFamily/{eventClassFamilyId}", method = RequestMethod.GET)
   @ResponseBody
   public EventClassFamilyDto getEventClassFamily(
-      @ApiParam(name = "eventClassFamilyId", value = "A unique event class family identifier", required = true)
+      @ApiParam(name = "eventClassFamilyId",
+          value = "A unique event class family identifier",
+          required = true)
       @PathVariable String eventClassFamilyId) throws KaaAdminServiceException {
     return eventService.getEventClassFamily(eventClassFamilyId);
   }
@@ -97,19 +111,29 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit event class family",
-      notes = "Creates or edits an event class family. To create event class family you do not need to specify the event class family ID. To edit the " +
-          "event class family specify the event class family ID. If an event class family with the specified ID exists, it will be updated. Only " +
-          "users with the TENANT_ADMIN role are allowed to perform this operation.")
+      notes = "Creates or edits an event class family. To create event class family "
+          + "you do not need to specify the event class family ID. To edit the "
+          + "event class family specify the event class family ID. "
+          + "If an event class family with the specified ID exists, it will be updated. Only "
+          + "users with the TENANT_ADMIN role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the editing event " +
-          "class family does not match the Tenant ID of the user"),
-      @ApiResponse(code = 404, message = "An event class family to be edited with the specified eventClassFamilyId does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_ADMIN) or the Tenant ID of the editing event "
+              + "class family does not match the Tenant ID of the user"),
+      @ApiResponse(code = 404,
+          message = "An event class family to be edited with the specified "
+              + "eventClassFamilyId does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "eventClassFamily", method = RequestMethod.POST)
   @ResponseBody
   public EventClassFamilyDto editEventClassFamily(
-      @ApiParam(name = "eventClassFamily", value = "EventClassFamilyDto body. Mandatory fields: name, className, namespace", required = true)
+      @ApiParam(name = "eventClassFamily",
+          value = "EventClassFamilyDto body. Mandatory fields: name, className, namespace",
+          required = true)
       @RequestBody EventClassFamilyDto eventClassFamily) throws KaaAdminServiceException {
     return eventService.editEventClassFamily(eventClassFamily);
   }
@@ -124,23 +148,36 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get event classes",
-      notes = "Gets event classes by event class family ID, version and type. Only users with the TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER role " +
-          "are allowed to request this information.")
+      notes = "Gets event classes by event class family ID, version and type. "
+          + "Only users with the TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER role "
+          + "are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "One of the url parameters is empty (eventClassFamilyId, version or type)"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER) or " +
-          "the Tenant ID of the event class family does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An event class family with the specified eventClassFamilyId does not exist"),
+      @ApiResponse(code = 400,
+          message = "One of the url parameters is empty (eventClassFamilyId, version or type)"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER) or "
+              + "the Tenant ID of the event class family does not match "
+              + "the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An event class family with the specified eventClassFamilyId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "eventClasses", method = RequestMethod.GET)
   @ResponseBody
   public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(
-      @ApiParam(name = "eventClassFamilyId", value = "A unique event class family identifier", required = true)
+      @ApiParam(name = "eventClassFamilyId",
+          value = "A unique event class family identifier",
+          required = true)
       @RequestParam(value = "eventClassFamilyId") String eventClassFamilyId,
-      @ApiParam(name = "version", value = "The version of the event class family schema", required = true)
+      @ApiParam(name = "version",
+          value = "The version of the event class family schema",
+          required = true)
       @RequestParam(value = "version") int version,
-      @ApiParam(name = "type", value = "The event classes type, one of [\"EVENT\", \"OBJECT\"]", required = true)
+      @ApiParam(name = "type",
+          value = "The event classes type, one of [\"EVENT\", \"OBJECT\"]",
+          required = true)
       @RequestParam(value = "type") EventClassType type) throws KaaAdminServiceException {
     return eventService.getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, version, type);
   }
@@ -153,18 +190,25 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get application event family maps",
-      notes = "Returns all application event family maps for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are " +
-          "allowed to request this information.")
+      notes = "Returns all application event family maps for the specified application. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are "
+          + "allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application with the specified applicationToken does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "applicationEventMaps/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier", required = true)
       @PathVariable String applicationToken)
       throws KaaAdminServiceException {
     return eventService.getApplicationEventFamilyMapsByApplicationToken(applicationToken);
@@ -178,18 +222,28 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get application event family map",
-      notes = "Returns an application event family map by application event family map ID. Only users with the TENANT_DEVELOPER or TENANT_USER role " +
-          "are allowed to request this information.")
+      notes = "Returns an application event family map by application event "
+          + "family map ID. Only users with the TENANT_DEVELOPER or TENANT_USER role "
+          + "are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application event family map with the specified applicationEventFamilyMapId does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "applicationEventMap/{applicationEventFamilyMapId}", method = RequestMethod.GET)
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application event family map with the specified "
+              + "applicationEventFamilyMapId does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
+  @RequestMapping(value = "applicationEventMap/{applicationEventFamilyMapId}",
+      method = RequestMethod.GET)
   @ResponseBody
   public ApplicationEventFamilyMapDto getApplicationEventFamilyMap(
-      @ApiParam(name = "applicationEventFamilyMapId", value = "A unique application event family map identifier", required = true)
+      @ApiParam(name = "applicationEventFamilyMapId",
+          value = "A unique application event family map identifier",
+          required = true)
       @PathVariable String applicationEventFamilyMapId)
       throws KaaAdminServiceException {
     return eventService.getApplicationEventFamilyMap(applicationEventFamilyMapId);
@@ -203,20 +257,29 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit application event family map",
-      notes = "Creates or edits an application event family map. If an application event family map with the specified ID does not exist, it will be " +
-          "created. If an application event family map with the specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or " +
-          "TENANT_USER role are allowed to perform this operation.")
+      notes = "Creates or edits an application event family map. If "
+          + "an application event family map with the specified ID does not exist, it will be "
+          + "created. If an application event family map with the specified ID exists, "
+          + "it will be updated. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application event family map to be edited with the specified applicationEventFamilyMapId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application event family map to be edited with the specified "
+              + "applicationEventFamilyMapId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "applicationEventMap", method = RequestMethod.POST)
   @ResponseBody
   public ApplicationEventFamilyMapDto editApplicationEventFamilyMap(
-      @ApiParam(name = "applicationEventFamilyMap", value = "ApplicationEventFamilyMapDto body. Mandatory fields: applicationId, ecfId, ecfName, " +
-          "eventMaps", required = true)
+      @ApiParam(name = "applicationEventFamilyMap",
+          value = "ApplicationEventFamilyMapDto body. "
+              + "Mandatory fields: applicationId, ecfId, ecfName, "
+              + "eventMaps", required = true)
       @RequestBody ApplicationEventFamilyMapDto applicationEventFamilyMap)
       throws KaaAdminServiceException {
     return eventService.editApplicationEventFamilyMap(applicationEventFamilyMap);
@@ -230,18 +293,28 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get vacant event class families",
-      notes = "Returns all vacant (not being used by application event family maps) event class families for the specified application. Only users " +
-          "with the  TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+      notes = "Returns all vacant (not being used by application event family maps) "
+          + "event class families for the specified application. Only users "
+          + "with the  TENANT_DEVELOPER or TENANT_USER role are "
+          + "allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application with the specified applicationToken does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "vacantEventClassFamilies/{applicationToken}", method = RequestMethod.GET)
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
+  @RequestMapping(value = "vacantEventClassFamilies/{applicationToken}",
+      method = RequestMethod.GET)
   @ResponseBody
   public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
     return eventService.getVacantEventClassFamiliesByApplicationToken(applicationToken);
   }
@@ -254,18 +327,25 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get application event class families",
-      notes = "Returns all event class families for the specified application (being used by application event family maps). Only users with the " +
-          "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+      notes = "Returns all event class families for the specified application "
+          + "(being used by application event family maps). Only users with the "
+          + "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application with the specified applicationToken does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "eventClassFamilies/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
     return eventService.getEventClassFamiliesByApplicationToken(applicationToken);
   }
@@ -278,18 +358,28 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Gets the event class family versions",
-      notes = "Returns all event class family versions for the specified family. Only users with the " +
-          "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+      notes = "Returns all event class family versions "
+          + "for the specified family. Only users with the "
+          + "TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the event class family does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An event class family with the specified id does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "eventClassFamilyVersions/{eventClassFamilyId}", method = RequestMethod.GET)
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the event class family does not match "
+              + "the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An event class family with the specified id does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
+  @RequestMapping(value = "eventClassFamilyVersions/{eventClassFamilyId}",
+      method = RequestMethod.GET)
   @ResponseBody
   public List<EventClassFamilyVersionDto> getEventClassFamilyVersions(
-      @ApiParam(name = "eventClassFamilyId", value = "An id of event class family", required = true)
+      @ApiParam(name = "eventClassFamilyId",
+          value = "An id of event class family",
+          required = true)
       @PathVariable String eventClassFamilyId) throws KaaAdminServiceException {
     return eventService.getEventClassFamilyVersions(eventClassFamilyId);
   }
@@ -303,23 +393,35 @@ public class EventController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Add event class family schema",
-      notes = "Adds the event class family schema to the event class family with the specified ID. The current user will be marked as the creator of " +
-          "schema. Only users with the TENANT_ADMIN role are allowed to perform this operation.")
+      notes = "Adds the event class family schema to the event class family "
+          + "with the specified ID. The current user will be marked as the creator of "
+          + "schema. Only users with the TENANT_ADMIN role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "The specified event class family schema is not a valid avro schema"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_ADMIN) or the Tenant ID of the specified " +
-          "event class family does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "A file with the event class family schema was not found in the form data or an event class family with the " +
-          "specified ID does not exist"),
+      @ApiResponse(code = 400,
+          message = "The specified event class family schema is not a valid avro schema"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_ADMIN) or the Tenant ID of the specified "
+              + "event class family does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404, message = "A file with the event class family schema was "
+          + "not found in the form data or an event class family with the "
+          + "specified ID does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "addEventClassFamilyVersion", method = RequestMethod.POST, consumes = {"multipart/mixed", "multipart/form-data"})
+  @RequestMapping(value = "addEventClassFamilyVersion",
+      method = RequestMethod.POST,
+      consumes = {"multipart/mixed", "multipart/form-data"})
   @ResponseStatus(value = HttpStatus.OK)
   public void addEventClassFamilyVersion(
-      @ApiParam(name = "eventClassFamilyId", value = "A unique event class family identifier", required = true)
+      @ApiParam(name = "eventClassFamilyId",
+          value = "A unique event class family identifier",
+          required = true)
       @RequestPart(value = "eventClassFamilyId") String eventClassFamilyId,
       @ApiParam(name = "eventClassFamilyVersion", value = "Version of ECF", required = true)
-      @RequestPart(value = "eventClassFamilyVersion") EventClassFamilyVersionDto eventClassFamilyVersion) throws KaaAdminServiceException {
+      @RequestPart(
+          value = "eventClassFamilyVersion") EventClassFamilyVersionDto eventClassFamilyVersion)
+      throws KaaAdminServiceException {
     eventService.addEventClassFamilyVersion(eventClassFamilyId, eventClassFamilyVersion);
   }
 

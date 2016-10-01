@@ -39,7 +39,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@Api(value = "Profiling", description = "Provides function for manage profiles", basePath = "/kaaAdmin/rest")
+@Api(value = "Profiling",
+    description = "Provides function for manage profiles",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class ProfileController extends AbstractAdminController {
 
@@ -51,18 +53,27 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get client-side endpoint profile schemas",
-      notes = "Returns the client-side endpoint profile schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are " +
-          "allowed to request this information. A users can only request schemas for applications associated with the same user.")
+      notes = "Returns the client-side endpoint profile schemas for an application. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are "
+          + "allowed to request this information. A users can only request schemas "
+          + "for applications associated with the same user.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "Application with the specified applicationToken does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "Application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "profileSchemas/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<EndpointProfileSchemaDto> getProfileSchemasByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken)
       throws KaaAdminServiceException {
     return profileService.getProfileSchemasByApplicationToken(applicationToken);
@@ -76,19 +87,27 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get client-side endpoint profile schema",
-      notes = "Returns the client-side endpoint profile schema by Profile Schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are " +
-          "allowed to request this information.")
+      notes = "Returns the client-side endpoint profile schema by Profile Schema ID. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are "
+          + "allowed to request this information.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid profileSchemaId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "The client-side endpoint profile schema with the specified profileSchemaId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "The client-side endpoint profile schema with the specified "
+              + "profileSchemaId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "profileSchema/{profileSchemaId}", method = RequestMethod.GET)
   @ResponseBody
   public EndpointProfileSchemaDto getProfileSchema(
-      @ApiParam(name = "profileSchemaId", value = "A unique client-side endpoint profile schema identifier", required = true)
+      @ApiParam(name = "profileSchemaId",
+          value = "A unique client-side endpoint profile schema identifier",
+          required = true)
       @PathVariable String profileSchemaId) throws KaaAdminServiceException {
     return profileService.getProfileSchema(profileSchemaId);
   }
@@ -101,20 +120,28 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create client-side endpoint profile schema",
-      notes = "Uploads a client-side endpoint profile schema. A unique version number will be generated (incrementally) for the uploaded schema, " +
-          "and the createdUsername field of the schema will be set to the name of the user who uploaded it. Only users with the TENANT_DEVELOPER " +
-          "or TENANT_USER role are allowed to perform this operation.")
+      notes = "Uploads a client-side endpoint profile schema. A unique version number will "
+          + "be generated (incrementally) for the uploaded schema, "
+          + "and the createdUsername field of the schema will be set to the name of "
+          + "the user who uploaded it. Only users with the TENANT_DEVELOPER "
+          + "or TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Specified request body is not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "Application or referenced CT schema is not found"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "saveProfileSchema", method = RequestMethod.POST)
   @ResponseBody
   public EndpointProfileSchemaDto saveProfileSchema(
-      @ApiParam(name = "profileSchema", value = "EndpointProfileSchemaDto body. Mandatory fields: applicationId, ctlSchemaId, name", required = true)
+      @ApiParam(name = "profileSchema",
+          value = "EndpointProfileSchemaDto body. Mandatory fields: applicationId, "
+              + "ctlSchemaId, name",
+          required = true)
       @RequestBody EndpointProfileSchemaDto profileSchema) throws KaaAdminServiceException {
     return profileService.saveProfileSchema(profileSchema);
   }
@@ -127,18 +154,26 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get server-side endpoint profile schemas",
-      notes = "Returns the server-side endpoint profile schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are " +
-          "allowed to request this information. A users can only request schemas for applications associated with the same user.")
+      notes = "Returns the server-side endpoint profile schemas for an application. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are "
+          + "allowed to request this information. A users can only request schemas"
+          + "for applications associated with the same user.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "Application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role"
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "Application with the specified applicationToken does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "serverProfileSchemas/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<ServerProfileSchemaDto> getServerProfileSchemasByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken)
       throws KaaAdminServiceException {
     return profileService.getServerProfileSchemasByApplicationToken(applicationToken);
@@ -152,19 +187,28 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get server-side endpoint profile schema",
-      notes = "Returns the server-side endpoint profile schema by Server Profile Schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role " +
-          "are allowed to request this information.")
+      notes = "Returns the server-side endpoint profile schema by Server Profile Schema ID. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role "
+          + "are allowed to request this information.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid serverProfileSchemaId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "Server-side endpoint profile schema with the specified serverProfileSchemaId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "Server-side endpoint profile schema with the specified "
+              + "serverProfileSchemaId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "serverProfileSchema/{serverProfileSchemaId}", method = RequestMethod.GET)
+  @RequestMapping(value = "serverProfileSchema/{serverProfileSchemaId}",
+      method = RequestMethod.GET)
   @ResponseBody
   public ServerProfileSchemaDto getServerProfileSchema(
-      @ApiParam(name = "serverProfileSchemaId", value = "A unique server-side endpoint profile schema identifier", required = true)
+      @ApiParam(name = "serverProfileSchemaId",
+          value = "A unique server-side endpoint profile schema identifier",
+          required = true)
       @PathVariable String serverProfileSchemaId) throws KaaAdminServiceException {
     return profileService.getServerProfileSchema(serverProfileSchemaId);
   }
@@ -177,20 +221,28 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create server-side endpoint profile schema",
-      notes = "Uploads a server-side endpoint profile schema. A unique version number will be generated (incrementally) for the uploaded schema, " +
-          "and the createdUsername field of the schema will be set to the name of the user who uploaded it. Only users with the TENANT_DEVELOPER " +
-          "or TENANT_USER role are allowed to perform this operation.")
+      notes = "Uploads a server-side endpoint profile schema. A unique version "
+          + "number will be generated (incrementally) for the uploaded schema, "
+          + "and the createdUsername field of the schema will be set to the name of "
+          + "the user who uploaded it. Only users with the TENANT_DEVELOPER "
+          + "or TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Specified request body is not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "Application or referenced CT schema is not found"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "saveServerProfileSchema", method = RequestMethod.POST)
   @ResponseBody
   public ServerProfileSchemaDto saveServerProfileSchema(
-      @ApiParam(name = "serverProfileSchema", value = "ServerProfileSchemaDto body. Mandatory fields: applicationId, ctlSchemaId, name", required = true)
+      @ApiParam(name = "serverProfileSchema",
+          value = "ServerProfileSchemaDto body. Mandatory fields: "
+              + "applicationId, ctlSchemaId, name",
+          required = true)
       @RequestBody ServerProfileSchemaDto serverProfileSchema)
       throws KaaAdminServiceException {
     return profileService.saveServerProfileSchema(serverProfileSchema);
@@ -206,20 +258,31 @@ public class ProfileController extends AbstractAdminController {
    * @throws Exception the exception
    */
   @ApiOperation(value = "Update server-side endpoint profile",
-      notes = "Update a server-side endpoint profile. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Update a server-side endpoint profile. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "Specified server-side endpoint profile body is not valid"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER)"),
+      @ApiResponse(code = 400,
+          message = "Specified server-side endpoint profile body is not valid"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER)"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "updateServerProfile", method = RequestMethod.POST)
   @ResponseBody
   public EndpointProfileDto updateServerProfile(
-      @ApiParam(name = "endpointProfileKey", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
+      @ApiParam(name = "endpointProfileKey",
+          value = "The key hash of the endpoint in Base64 URL safe format",
+          required = true)
       @RequestParam(value = "endpointProfileKey") String endpointProfileKey,
-      @ApiParam(name = "version", value = "The version of the server-side endpoint profile schema", required = true)
+      @ApiParam(name = "version",
+          value = "The version of the server-side endpoint profile schema",
+          required = true)
       @RequestParam(value = "version") int version,
-      @ApiParam(name = "serverProfileBody", value = "The server-side endpoint profile body", required = true)
+      @ApiParam(name = "serverProfileBody",
+          value = "The server-side endpoint profile body",
+          required = true)
       @RequestParam(value = "serverProfileBody") String serverProfileBody)
       throws Exception {
     return profileService.updateServerProfile(endpointProfileKey, version, serverProfileBody);
@@ -233,18 +296,25 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get profile based on endpoint key",
-      notes = "Returns the endpoint profile based on endpoint key hash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed " +
-          "to request this information.")
+      notes = "Returns the endpoint profile based on endpoint key hash. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed "
+          + "to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "The endpoint profile with the specified endpointProfileKey does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "The endpoint profile with the specified endpointProfileKey does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "endpointProfile/{endpointProfileKey}", method = RequestMethod.GET)
   @ResponseBody
   public EndpointProfileDto getEndpointProfileByKeyHash(
-      @ApiParam(name = "endpointProfileKey", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
+      @ApiParam(name = "endpointProfileKey",
+          value = "The key hash of the endpoint in Base64 URL safe format",
+          required = true)
       @PathVariable String endpointProfileKey) throws KaaAdminServiceException {
     return profileService.getEndpointProfileByKeyHash(endpointProfileKey);
   }
@@ -256,19 +326,28 @@ public class ProfileController extends AbstractAdminController {
    * @return the endpoint profile body dto
    * @throws KaaAdminServiceException the kaa admin service exception
    */
-  @ApiOperation(value = "Get client- and server-side endpoint profile bodies based on endpoint key",
-      notes = "Returns the client- and server-side endpoint profile bodies based on endpoint key hash. Only users with the TENANT_DEVELOPER or " +
-          "TENANT_USER role are allowed to request this information.")
+  @ApiOperation(value = "Get client- and server-side "
+      + "endpoint profile bodies based on endpoint key",
+      notes = "Returns the client- and server-side endpoint profile bodies "
+          + "based on endpoint key hash. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group to be edited with the specified endpointGroupId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An endpoint group to be edited with the specified "
+              + "endpointGroupId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "endpointProfileBody/{endpointProfileKey}", method = RequestMethod.GET)
   @ResponseBody
   public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(
-      @ApiParam(name = "endpointProfileKey", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
+      @ApiParam(name = "endpointProfileKey",
+          value = "The key hash of the endpoint in Base64 URL safe format",
+          required = true)
       @PathVariable String endpointProfileKey) throws KaaAdminServiceException {
     return profileService.getEndpointProfileBodyByKeyHash(endpointProfileKey);
   }
@@ -282,20 +361,29 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException - if an exception occures.
    */
   @ApiOperation(value = "Get endpoint profiles by owner ID",
-      notes = "Returns a list of endpoint profiles by the ID of the endpoint owner. (Requires TENANT_DEVELOPER or TENANT_USER to request this " +
-          "information).")
+      notes = "Returns a list of endpoint profiles by the ID of the endpoint owner. "
+          + "(Requires TENANT_DEVELOPER or TENANT_USER to request this "
+          + "information).")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid userExternalId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "The endpoint user with the given ID not found"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "endpointProfiles", params = {"userExternalId"}, method = RequestMethod.GET)
+  @RequestMapping(value = "endpointProfiles",
+      params = {"userExternalId"},
+      method = RequestMethod.GET)
   @ResponseBody
   public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(
-      @ApiParam(name = "userExternalId", value = "A unique endpoint owner identifier", required = true)
-      @RequestParam("userExternalId") String endpointUserExternalId) throws KaaAdminServiceException {
+      @ApiParam(name = "userExternalId",
+          value = "A unique endpoint owner identifier",
+          required = true)
+      @RequestParam("userExternalId") String endpointUserExternalId)
+      throws KaaAdminServiceException {
     return this.profileService.getEndpointProfilesByUserExternalId(endpointUserExternalId);
   }
 
@@ -306,19 +394,28 @@ public class ProfileController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Delete endpoint",
-      notes = "Delete endpoint profile based on endpoint key hash. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform " +
-          "this operation")
+      notes = "Delete endpoint profile based on endpoint key hash. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform "
+          + "this operation")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint profile to be deleted with the specified endpointProfileKeyHash does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role"
+              + " (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An endpoint profile to be deleted with the specified "
+              + "endpointProfileKeyHash does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "removeEndpointProfileByKeyHash", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void removeEndpointProfileByKeyHash(
-      @ApiParam(name = "endpointProfileKeyHash", value = "The key hash of the endpoint in Base64 URL safe format", required = true)
-      @RequestParam(value = "endpointProfileKeyHash") String endpointProfileKeyHash) throws KaaAdminServiceException {
+      @ApiParam(name = "endpointProfileKeyHash",
+          value = "The key hash of the endpoint in Base64 URL safe format",
+          required = true)
+      @RequestParam(value = "endpointProfileKeyHash") String endpointProfileKeyHash)
+      throws KaaAdminServiceException {
     profileService.removeEndpointProfileByKeyHash(endpointProfileKeyHash);
   }
 

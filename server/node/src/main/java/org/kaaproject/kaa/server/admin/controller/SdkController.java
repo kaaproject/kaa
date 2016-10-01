@@ -44,7 +44,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Api(value = "SDK profiles", description = "Provides function for manage SDK profiles", basePath = "/kaaAdmin/rest")
+@Api(value = "SDK profiles",
+    description = "Provides function for manage SDK profiles",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class SdkController extends AbstractAdminController {
 
@@ -61,17 +63,24 @@ public class SdkController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create SDK profile",
-      notes = "Creates an SDK profile for further endpoint SDK generation. (Requires TENANT_DEVELOPER or TENANT_USER to perform this operation).")
+      notes = "Creates an SDK profile for further endpoint SDK generation. "
+          + "(Requires TENANT_DEVELOPER or TENANT_USER to perform this operation).")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "createSdkProfile", method = RequestMethod.POST)
   @ResponseBody
   public SdkProfileDto createSdkProfile(
-      @ApiParam(name = "sdkProfile", value = "SdkProfileDto body. Mandatory fields: applicationId, configurationSchemaVersion, logSchemaVersion, " +
-          "notificationSchemaVersion, profileSchemaVersion, name", required = true)
+      @ApiParam(name = "sdkProfile",
+          value = "SdkProfileDto body. Mandatory fields: applicationId, "
+              + "configurationSchemaVersion, logSchemaVersion, "
+              + "notificationSchemaVersion, profileSchemaVersion, name",
+          required = true)
       @RequestBody SdkProfileDto sdkProfile) throws KaaAdminServiceException {
     return sdkService.createSdkProfile(sdkProfile);
   }
@@ -83,18 +92,25 @@ public class SdkController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Delete SDK profile",
-      notes = "Deletes an SDK profile from the database. (Requires TENANT_DEVELOPER or TENANT_USER to perform this operation).")
+      notes = "Deletes an SDK profile from the database. "
+          + "(Requires TENANT_DEVELOPER or TENANT_USER to perform this operation).")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid sdkProfileId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "The SDK profile with the specified sdkProfileId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "The SDK profile with the specified sdkProfileId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "deleteSdkProfile", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteSdkProfile(
-      @ApiParam(name = "sdkProfileId", value = "A unique SDK profile identifier", required = true)
+      @ApiParam(name = "sdkProfileId",
+          value = "A unique SDK profile identifier",
+          required = true)
       @RequestParam(value = "sdkProfileId") String sdkProfileId) throws KaaAdminServiceException {
     sdkService.deleteSdkProfile(sdkProfileId);
   }
@@ -107,17 +123,23 @@ public class SdkController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get SDK profiles for application",
-      notes = "Returns a list of SDK profiles for the given application. (Requires TENANT_DEVELOPER or TENANT_USER to request this information).")
+      notes = "Returns a list of SDK profiles for the given application. "
+          + "(Requires TENANT_DEVELOPER or TENANT_USER to request this information).")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "The application with the specified ID does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "sdkProfiles/{applicationToken}")
   @ResponseBody
   public List<SdkProfileDto> getSdkProfilesByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
     return sdkService.getSdkProfilesByApplicationToken(applicationToken);
   }
@@ -130,12 +152,16 @@ public class SdkController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get specific SDK profile",
-      notes = "Returns the SDK profile by its identifier. (Requires TENANT_DEVELOPER or TENANT_USER to request this information).")
+      notes = "Returns the SDK profile by its identifier. (Requires TENANT_DEVELOPER or "
+          + "TENANT_USER to request this information).")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid sdkProfileId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "The SDK profile with the specified ID does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "sdkProfile/{sdkProfileId}")
@@ -156,13 +182,18 @@ public class SdkController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Generate endpoint SDK",
-      notes = "Generates the endpoint SDK based on the SDK profile. (Requires TENANT_DEVELOPER or TENANT_USER to perform this operation). For android " +
-          "or java client file extension must be .jar, for other platforms extension must be .tar.gz.")
+      notes = "Generates the endpoint SDK based on the SDK profile. "
+          + "(Requires TENANT_DEVELOPER or TENANT_USER to perform this operation). For android "
+          + "or java client file extension must be .jar, for other platforms "
+          + "extension must be .tar.gz.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "An unknown target platform was specified"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "The SDK profile with the given ID does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "sdk", method = RequestMethod.POST)
@@ -170,20 +201,25 @@ public class SdkController extends AbstractAdminController {
   public void getSdk(
       @ApiParam(name = "sdkProfileId", value = "A unique SDK profile identifier", required = true)
       @RequestParam(value = "sdkProfileId") String sdkProfileId,
-      @ApiParam(name = "targetPlatform", value = "The target platform's name (either JAVA, ANDROID, CPP, C or OBJC)", required = true)
-      @RequestParam(value = "targetPlatform") String targetPlatform, HttpServletRequest request, HttpServletResponse response)
+      @ApiParam(name = "targetPlatform",
+          value = "The target platform's name (either JAVA, ANDROID, CPP, C or OBJC)",
+          required = true)
+      @RequestParam(value = "targetPlatform") String targetPlatform,
+      HttpServletRequest request,
+      HttpServletResponse response)
       throws KaaAdminServiceException {
     try {
       SdkProfileDto sdkProfile = sdkService.getSdkProfile(sdkProfileId);
-      FileData sdkData = sdkService.getSdk(sdkProfile, SdkPlatform.valueOf(targetPlatform.toUpperCase()));
+      FileData sdkData = sdkService.getSdk(
+          sdkProfile, SdkPlatform.valueOf(targetPlatform.toUpperCase()));
       response.setContentType(sdkData.getContentType());
       ServletUtils.prepareDisposition(request, response, sdkData.getFileName());
       response.setContentLength(sdkData.getFileData().length);
       response.setBufferSize(BUFFER);
       response.getOutputStream().write(sdkData.getFileData());
       response.flushBuffer();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -197,8 +233,8 @@ public class SdkController extends AbstractAdminController {
   public void flushSdkCache() throws KaaAdminServiceException {
     try {
       sdkService.flushSdkCache();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -211,7 +247,8 @@ public class SdkController extends AbstractAdminController {
    */
   @RequestMapping(value = "schemaVersions/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
-  public SchemaVersions getSchemaVersionsByApplicationToken(@PathVariable String applicationToken) throws KaaAdminServiceException {
+  public SchemaVersions getSchemaVersionsByApplicationToken(@PathVariable String applicationToken)
+      throws KaaAdminServiceException {
     return sdkService.getSchemaVersionsByApplicationToken(applicationToken);
   }
 

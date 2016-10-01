@@ -46,7 +46,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Api(value = "Logging", description = "Provides function for manage logging", basePath = "/kaaAdmin/rest")
+@Api(value = "Logging",
+    description = "Provides function for manage logging",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class LoggingController extends AbstractAdminController {
 
@@ -69,18 +71,26 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get log schemas",
-      notes = "Returns all log schemas for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request " +
-          "this information. The Tenant ID value of the application must match Tenant ID of the request submitter.")
+      notes = "Returns all log schemas for the specified application. Only users "
+          + "with the TENANT_DEVELOPER or TENANT_USER role are allowed to request "
+          + "this information. The Tenant ID value of the application "
+          + "must match Tenant ID of the request submitter.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application with the specified applicationToken does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "logSchemas/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<LogSchemaDto> getLogSchemasByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
     return loggingService.getLogSchemasByApplicationToken(applicationToken);
   }
@@ -93,12 +103,17 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get log schema",
-      notes = "Returns a log schema by log schema ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+      notes = "Returns a log schema by log schema ID. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "A log schema with the specified logSchemaId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "A log schema with the specified logSchemaId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "logSchema/{logSchemaId}", method = RequestMethod.GET)
   @ResponseBody
@@ -117,23 +132,35 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get log schema by application token and schema version",
-      notes = "Returns a log schema for the specified schema version and application token. Only users with the TENANT_DEVELOPER or TENANT_USER role " +
-          "are allowed to request this information.")
+      notes = "Returns a log schema for the specified schema version and application token. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role "
+          + "are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group to be edited with the specified endpointGroupId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An endpoint group to be edited with the specified "
+              + "endpointGroupId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "logSchema/{applicationToken}/{schemaVersion}", method = RequestMethod.GET)
+  @RequestMapping(value = "logSchema/{applicationToken}/{schemaVersion}",
+      method = RequestMethod.GET)
   @ResponseBody
   public LogSchemaDto getLogSchemaByApplicationTokenAndVersion(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken,
-      @ApiParam(name = "schemaVersion", value = "The version of the requested log schema", required = true)
+      @ApiParam(name = "schemaVersion",
+          value = "The version of the requested log schema",
+          required = true)
       @PathVariable int schemaVersion)
       throws KaaAdminServiceException {
-    return loggingService.getLogSchemaByApplicationTokenAndVersion(applicationToken, schemaVersion);
+    return loggingService.getLogSchemaByApplicationTokenAndVersion(
+        applicationToken, schemaVersion);
   }
 
   /**
@@ -158,14 +185,19 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit log schema",
-      notes = "Creates or updates a log schema. If a log schema with the specified ID does not exist, then it will be created and its createUsername " +
-          "field of the schema will be set to the name of the user who has uploaded it, a unique version number will be generated (incrementally) " +
-          "for this schema. If a configuration with the specified ID exists, the configuration will be updated. Only users with the " +
-          "TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Creates or updates a log schema. If a log schema with the specified ID "
+          + "does not exist, then it will be created and its createUsername "
+          + "field of the schema will be set to the name of the user who has uploaded it, "
+          + "a unique version number will be generated (incrementally) "
+          + "for this schema. If a configuration with the specified ID exists, "
+          + "the configuration will be updated. Only users with the "
+          + "TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403, message = "The authenticated user does not have the "
+          + "required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+          + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "saveLogSchema", method = RequestMethod.POST)
   @ResponseBody
@@ -183,18 +215,25 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get log appenders",
-      notes = "Returns all log appenders for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to " +
-          "request this information.")
+      notes = "Returns all log appenders for the specified application. "
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to "
+          + "request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application with the specified applicationToken does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application with the specified applicationToken does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "logAppenders/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<LogAppenderDto> getLogAppendersByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
     return loggingService.getRestLogAppendersByApplicationToken(applicationToken);
   }
@@ -207,19 +246,26 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get log appender",
-      notes = "Returns a log appender by log appender ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this " +
-          "information.")
+      notes = "Returns a log appender by log appender ID. Only users with the TENANT_DEVELOPER "
+          + "or TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid endpointGroupId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "A log appender with the specified logAppenderId does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "A log appender with the specified logAppenderId does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "logAppender/{logAppenderId}", method = RequestMethod.GET)
   @ResponseBody
   public LogAppenderDto getLogAppender(
-      @ApiParam(name = "logAppenderId", value = "A unique log appender identifier", required = true)
+      @ApiParam(name = "logAppenderId",
+          value = "A unique log appender identifier",
+          required = true)
       @PathVariable String logAppenderId) throws KaaAdminServiceException {
     return loggingService.getRestLogAppender(logAppenderId);
   }
@@ -232,14 +278,21 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit log appender",
-      notes = "Creates or edits a log appender. If a log appender with the specified ID does not exist, it will be created. If a log appender with the " +
-          "specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Creates or edits a log appender. If a log appender with the specified "
+          + "ID does not exist, it will be created. If a log appender with the "
+          + "specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "A log appender to be edited with the specified id does not exist"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required "
+              + "role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "A log appender to be edited with the specified id does not exist"),
+      @ApiResponse(code = 500,
+          message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "logAppender", method = RequestMethod.POST)
   @ResponseBody
   public LogAppenderDto editLogAppender(
@@ -255,19 +308,28 @@ public class LoggingController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Delete log appender",
-      notes = "Deletes a log appender by log appender ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+      notes = "Deletes a log appender by log appender ID."
+          + "Only users with the TENANT_DEVELOPER or TENANT_USER "
+          + "role are allowed to perform this operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid endpointGroupId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "A log appender with the specified logAppenderId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "A log appender with the specified logAppenderId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "delLogAppender", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteLogAppender(
-      @ApiParam(name = "logAppenderId", value = "A unique log appender identifier", required = true)
-      @RequestParam(value = "logAppenderId") String logAppenderId) throws KaaAdminServiceException {
+      @ApiParam(name = "logAppenderId",
+          value = "A unique log appender identifier",
+          required = true)
+      @RequestParam(value = "logAppenderId") String logAppenderId)
+      throws KaaAdminServiceException {
     loggingService.deleteLogAppender(logAppenderId);
   }
 
@@ -292,8 +354,8 @@ public class LoggingController extends AbstractAdminController {
       response.setBufferSize(BUFFER);
       response.getOutputStream().write(file.getFileData());
       response.flushBuffer();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
@@ -318,8 +380,8 @@ public class LoggingController extends AbstractAdminController {
       response.setBufferSize(BUFFER);
       response.getOutputStream().write(file.getFileData());
       response.flushBuffer();
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 
