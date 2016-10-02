@@ -116,7 +116,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif ()
 
 # Creates variable to specify thirdparty libraries.
-set(KAA_THIRDPARTY_LIBRARIES "")
+set(KAA_THIRDPARTY_LIBRARIES mbedtls)
 
 # Sets the default build platform to POSIX.
 if (NOT DEFINED KAA_PLATFORM)
