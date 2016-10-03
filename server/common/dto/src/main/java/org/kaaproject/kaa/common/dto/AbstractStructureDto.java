@@ -43,6 +43,9 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
   public AbstractStructureDto() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public AbstractStructureDto(AbstractStructureDto other) {
     this.id = other.id;
     this.applicationId = other.applicationId;

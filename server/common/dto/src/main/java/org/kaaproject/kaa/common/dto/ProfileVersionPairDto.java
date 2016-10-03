@@ -41,6 +41,9 @@ public class ProfileVersionPairDto implements Serializable, Comparable<ProfileVe
     this.serverProfileSchemaVersion = serverProfileSchemaVersion;
   }
 
+  /**
+   * All-args constructor.
+   */
   public ProfileVersionPairDto(String endpointProfileSchemaid, Integer endpointProfileSchemaVersion,
                                String serverProfileSchemaid,
                                Integer serverProfileSchemaVersion) {

@@ -43,6 +43,9 @@ public final class TransportContext {
   private final RedirectionTransport redirectionTransport;
   private final LogTransport logTransport;
 
+  /**
+   * All-args constructor.
+   */
   public TransportContext(MetaDataTransport mdTransport, BootstrapTransport bootstrapTransport,
                           ProfileTransport profileTransport, EventTransport eventTransport,
                           NotificationTransport notificationTransport,
@@ -97,6 +100,12 @@ public final class TransportContext {
     return logTransport;
   }
 
+  /**
+   * Initialize transports.
+   *
+   * @param channelManager channel manager
+   * @param clientState    kaa client state
+   */
   public void initTransports(KaaChannelManager channelManager, KaaClientState clientState) {
     for (KaaTransport transport : Arrays.asList(bootstrapTransport, profileTransport,
             eventTransport, notificationTransport, configurationTransport, userTransport,

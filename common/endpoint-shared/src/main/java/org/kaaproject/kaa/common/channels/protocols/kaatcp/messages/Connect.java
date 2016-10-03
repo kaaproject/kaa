@@ -64,17 +64,17 @@ public class Connect extends MqttFrame {
   private int nextProtocolId;
 
   /**
-   * AES session key
+   * AES session key.
    */
   private byte[] aesSessionKey;
 
   /**
-   * Signature of aesSessionKey and endpointPublicKeyHash
+   * Signature of aesSessionKey and endpointPublicKeyHash.
    */
   private byte[] signature;
 
   /**
-   * SyncRequest in Connect message
+   * SyncRequest in Connect message.
    */
   private byte[] syncRequest;
 
@@ -83,7 +83,7 @@ public class Connect extends MqttFrame {
   private boolean hasAesSessionKey = false;
 
   /**
-   * Default Constructor
+   * Default Constructor.
    *
    * @param keepAlive      the keep alive in seconds, max value 65535 seconds.
    * @param nextProtocolId the next protocol id
@@ -119,7 +119,7 @@ public class Connect extends MqttFrame {
 
 
   /**
-   *
+   * Establish connection.
    */
   public Connect() {
     super();
@@ -145,9 +145,8 @@ public class Connect extends MqttFrame {
   }
 
   /**
-   * Pack Connect variable header
+   * Pack Connect variable header.
    *
-   * @param pos - start position in buffer
    * @return - number of packed bytes.
    */
   private void packVeriableHeader() {
@@ -203,7 +202,7 @@ public class Connect extends MqttFrame {
   }
 
   /**
-   * AES Session Key getter
+   * AES Session Key getter.
    *
    * @return byte[] aesSessionKey
    */
@@ -246,6 +245,8 @@ public class Connect extends MqttFrame {
 
 
   /**
+   * Returns a sync request.
+   *
    * @return the syncRequest
    */
   public byte[] getSyncRequest() {
@@ -254,6 +255,8 @@ public class Connect extends MqttFrame {
 
 
   /**
+   * Sets a sync request.
+   *
    * @param syncRequest the syncRequest to set
    */
   public void setSyncRequest(byte[] syncRequest) {
@@ -281,9 +284,6 @@ public class Connect extends MqttFrame {
   }
 
 
-  /**
-   *
-   */
   private void decodeSyncRequest() {
     int syncRequestSize = buffer.capacity() - buffer.position();
     if (syncRequestSize > 0) {
@@ -293,18 +293,12 @@ public class Connect extends MqttFrame {
   }
 
 
-  /**
-   *
-   */
   private void decodeSignature() {
     signature = new byte[CONNECT_SIGNATURE_LENGTH];
     buffer.get(signature);
   }
 
 
-  /**
-   *
-   */
   private void decodeSessionKey() {
     aesSessionKey = new byte[CONNECT_AES_SESSION_KEY_LENGTH];
     buffer.get(aesSessionKey);

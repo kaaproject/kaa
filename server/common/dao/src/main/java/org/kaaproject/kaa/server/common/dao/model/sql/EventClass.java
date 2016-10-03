@@ -86,7 +86,7 @@ public class EventClass extends BaseSchema<EventClassDto> {
     this.createdTime = dto.getCreatedTime();
     Long ctlId = getLongId(dto.getCtlSchemaId());
     if (ctlId != null) {
-      this.setCtlSchema(new CTLSchema(ctlId));
+      this.setCtlSchema(new CtlSchema(ctlId));
     }
   }
 

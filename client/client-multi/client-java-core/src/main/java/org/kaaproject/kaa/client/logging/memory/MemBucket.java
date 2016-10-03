@@ -33,6 +33,9 @@ public class MemBucket {
   protected long size;
   private MemBucketState state;
 
+  /**
+   * All-args constructor.
+   */
   public MemBucket(int id, long maxSize, int maxRecordCount) {
     super();
     this.id = id;
@@ -66,6 +69,12 @@ public class MemBucket {
     this.state = state;
   }
 
+  /**
+   * Adds a record to a bucket.
+   *
+   * @param record record
+   * @return       true if record is added otherwise false
+   */
   public boolean addRecord(LogRecord record) {
     if (size + record.getSize() > maxSize) {
       LOG.trace("No space left in bucket. Current size: {}, record size: {}, max size: {}",

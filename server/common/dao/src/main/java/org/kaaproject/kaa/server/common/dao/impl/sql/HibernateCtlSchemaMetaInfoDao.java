@@ -24,7 +24,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
-import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
+import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ import java.util.List;
 
 @Repository
 public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchemaMetaInfo>
-        implements CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> {
+        implements CtlSchemaMetaInfoDao<CTLSchemaMetaInfo> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateCtlSchemaMetaInfoDao.class);
 

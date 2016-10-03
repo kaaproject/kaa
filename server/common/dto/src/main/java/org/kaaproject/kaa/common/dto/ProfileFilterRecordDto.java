@@ -39,6 +39,9 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
     super(activeProfileFilter, inactiveProfileFilter);
   }
 
+  /**
+   * All-args constructor.
+   */
   public static List<ProfileFilterRecordDto> convertToProfileFilterRecords(
           Collection<ProfileFilterDto> profileFilters) {
     Map<ProfileVersionPairDto, ProfileFilterRecordDto> profileFiltterRecordsMap = new HashMap<>();
@@ -82,24 +85,29 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
 
   @JsonIgnore
   public String getServerProfileSchemaId() {
-    return activeStructureDto != null ? activeStructureDto.getServerProfileSchemaId() :
-            inactiveStructureDto.getServerProfileSchemaId();
+    return activeStructureDto != null
+        ? activeStructureDto.getServerProfileSchemaId()
+        : inactiveStructureDto.getServerProfileSchemaId();
   }
 
   @Override
   public int compareTo(ProfileFilterRecordDto profileFilterRecordDto) {
-    int endpointProfileShemaVersion = getEndpointProfileSchemaVersion() != null ?
-        getEndpointProfileSchemaVersion() : -1;
-    int otherEndpointProfileShemaVersion = profileFilterRecordDto.getEndpointProfileSchemaVersion()
-                                           != null ? profileFilterRecordDto
-            .getEndpointProfileSchemaVersion() : -1;
+    int endpointProfileShemaVersion = getEndpointProfileSchemaVersion() != null
+        ? getEndpointProfileSchemaVersion()
+        : -1;
+    int otherEndpointProfileShemaVersion =
+        profileFilterRecordDto.getEndpointProfileSchemaVersion() != null
+            ? profileFilterRecordDto.getEndpointProfileSchemaVersion()
+            : -1;
     int result = endpointProfileShemaVersion - otherEndpointProfileShemaVersion;
     if (result == 0) {
-      int serverProfileShemaVersion = getServerProfileSchemaVersion() != null ?
-          getServerProfileSchemaVersion() : -1;
-      int otherServerProfileShemaVersion = profileFilterRecordDto.getServerProfileSchemaVersion()
-                                           != null ? profileFilterRecordDto
-              .getServerProfileSchemaVersion() : -1;
+      int serverProfileShemaVersion = getServerProfileSchemaVersion() != null
+          ? getServerProfileSchemaVersion()
+          : -1;
+      int otherServerProfileShemaVersion =
+          profileFilterRecordDto.getServerProfileSchemaVersion() != null
+              ? profileFilterRecordDto.getServerProfileSchemaVersion()
+              : -1;
       result = serverProfileShemaVersion - otherServerProfileShemaVersion;
     }
     return result;

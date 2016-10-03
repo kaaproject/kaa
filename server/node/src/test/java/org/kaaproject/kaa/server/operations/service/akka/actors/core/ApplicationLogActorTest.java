@@ -32,7 +32,7 @@ import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
@@ -73,7 +73,7 @@ public class ApplicationLogActorTest {
   private LogAppenderService logAppenderService;
   private ApplicationService applicationService;
   private CacheService cacheService;
-  private CTLService ctlService;
+  private CtlService ctlService;
   private ApplicationDto applicationDto;
   private List<LogAppender> logAppenders;
   private LogSchema logSchema;
@@ -86,7 +86,7 @@ public class ApplicationLogActorTest {
     applicationService = mock(ApplicationService.class);
     cacheService = mock(CacheService.class);
     applicationDto = mock(ApplicationDto.class);
-    ctlService = mock(CTLService.class);
+    ctlService = mock(CtlService.class);
 
     when(context.getCacheService()).thenReturn(cacheService);
     when(context.getApplicationService()).thenReturn(applicationService);

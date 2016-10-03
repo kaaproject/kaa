@@ -75,7 +75,7 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = BASE_SCHEMA_CTL_SCHEMA_ID, nullable = false,
       foreignKey = @ForeignKey(name = BASE_SCHEMA_FK_CTL_SCHEMA_ID))
-  private CTLSchema ctlSchema;
+  private CtlSchema ctlSchema;
 
   public BaseSchema() {
   }
@@ -97,7 +97,7 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
       Long appId = getLongId(dto.getApplicationId());
       this.application = appId != null ? new Application(appId) : null;
       Long ctlSchemaId = getLongId(dto.getCtlSchemaId());
-      this.ctlSchema = ctlSchemaId != null ? new CTLSchema(ctlSchemaId) : null;
+      this.ctlSchema = ctlSchemaId != null ? new CtlSchema(ctlSchemaId) : null;
       this.name = dto.getName();
       this.description = dto.getDescription();
       this.createdUsername = dto.getCreatedUsername();
@@ -153,11 +153,11 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
     this.application = application;
   }
 
-  public CTLSchema getCtlSchema() {
+  public CtlSchema getCtlSchema() {
     return ctlSchema;
   }
 
-  public void setCtlSchema(CTLSchema ctlSchema) {
+  public void setCtlSchema(CtlSchema ctlSchema) {
     this.ctlSchema = ctlSchema;
   }
 

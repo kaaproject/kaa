@@ -215,6 +215,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
     }
   };
 
+  /**
+   * All-args constructor.
+   */
   public DefaultOperationTcpChannel(KaaClientState state, FailoverManager failoverManager,
                                     FailureListener failureListener) {
     this.state = state;

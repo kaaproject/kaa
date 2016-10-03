@@ -45,6 +45,9 @@ public abstract class AbstractConfigurationManager implements ConfigurationManag
   private ConfigurationHashContainer container = new HashContainer();
   private KaaClientState state;
 
+  /**
+   * All-args constructor.
+   */
   public AbstractConfigurationManager(KaaClientProperties properties, KaaClientState state,
                                       ExecutorContext executorContext) {
     super();

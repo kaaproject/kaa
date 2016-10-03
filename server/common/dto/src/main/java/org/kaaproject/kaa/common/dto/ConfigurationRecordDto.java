@@ -39,6 +39,12 @@ public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
     super(activeConfiguration, inactiveConfiguration);
   }
 
+  /**
+   * Converts a configuration into a configuration record.
+   *
+   * @param configurations
+   * @return
+   */
   public static List<ConfigurationRecordDto> convertToConfigurationRecords(
           Collection<ConfigurationDto> configurations) {
     Map<String, ConfigurationRecordDto> configurationRecordsMap = new HashMap<>();

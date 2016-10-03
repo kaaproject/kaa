@@ -31,6 +31,11 @@ public class EndpointProfilesBodyDto extends AbstractEndpointProfilesDto {
     this.endpointProfilesBody = endpointProfileBody;
   }
 
+  /**
+   * Tests whether endpoint body is present.
+   *
+   * @return true if endpoint body is present otherwise false
+   */
   public boolean hasEndpointBodies() {
     boolean result = false;
     if (endpointProfilesBody != null) {

@@ -30,10 +30,16 @@ public class MongoRoleDto implements HasId, Serializable {
   private List<MongoPrivilegeDto> privileges;
   private List<String> roles;
 
+  /**
+   * Instantiates the MongoUserDto.
+   */
   public MongoRoleDto() {
 
   }
 
+  /**
+   * All-args constructor.
+   */
   public MongoRoleDto(String role, List<MongoPrivilegeDto> privileges, List<String> roles) {
     this.role = role;
     this.privileges = privileges;

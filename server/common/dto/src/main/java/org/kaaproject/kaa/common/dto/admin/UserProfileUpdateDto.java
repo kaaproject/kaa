@@ -26,12 +26,18 @@ public class UserProfileUpdateDto implements Serializable {
   private String lastName;
   private String mail;
 
+  /**
+   * Instantiates the UserProfileUpdateDto.
+   */
   public UserProfileUpdateDto(String firstName, String lastName, String mail) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.mail = mail;
   }
 
+  /**
+   * Instantiates the UserProfileUpdateDto.
+   */
   public UserProfileUpdateDto(UserDto userDto) {
     this.firstName = userDto.getFirstName();
     this.lastName = userDto.getLastName();

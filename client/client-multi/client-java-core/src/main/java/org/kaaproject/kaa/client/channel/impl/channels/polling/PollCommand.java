@@ -37,6 +37,9 @@ public class PollCommand implements Command {
   private final IpTransportInfo serverInfo;
   private volatile boolean canceled = false;
 
+  /**
+   * All-args constructor.
+   */
   public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType,
           ChannelDirection> transportTypes, IpTransportInfo serverInfo) {
     this.httpClient = client;

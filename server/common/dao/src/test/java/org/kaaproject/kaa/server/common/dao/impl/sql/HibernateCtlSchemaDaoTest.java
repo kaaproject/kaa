@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.server.common.dao.CTLService;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.CtlService;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class HibernateCtlSchemaDaoTest extends HibernateAbstractTest {
   private static final Logger LOG = LoggerFactory.getLogger(HibernateCtlSchemaDaoTest.class);
   private static final String SYSTEM_FQN = "org.kaaproject.kaa.ctl.SystemSchema";
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
   private TenantDto tenant;
   private CTLSchemaDto firstSchema;
   private CTLSchemaDto secondSchema;
@@ -93,8 +93,8 @@ public class HibernateCtlSchemaDaoTest extends HibernateAbstractTest {
     ctlSchemaDao.save(generateCTLSchema(DEFAULT_FQN, null, 11, null));
   }
 
-  private CTLSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
-    CTLSchema ctlSchema = new CTLSchema();
+  private CtlSchema generateCTLSchema(String fqn, Tenant tenant, int version, String body) {
+    CtlSchema ctlSchema = new CtlSchema();
     if (tenant == null) {
       tenant = generateTenant();
     }
@@ -124,7 +124,7 @@ public class HibernateCtlSchemaDaoTest extends HibernateAbstractTest {
 
   @Test
   public void testFindByFqnAndVerAndTenantIdAndApplicationId() {
-    CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(firstSchema.getMetaInfo().getFqn(),
+    CtlSchema found = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(firstSchema.getMetaInfo().getFqn(),
         firstSchema.getVersion(),
         firstSchema.getMetaInfo().getTenantId(),
         firstSchema.getMetaInfo().getApplicationId());
@@ -133,26 +133,26 @@ public class HibernateCtlSchemaDaoTest extends HibernateAbstractTest {
 
   @Test
   public void testFindSystemByFqnAndVerAndTenantIdAndApplicationId() {
-    CTLSchema found = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(systemSchema.getMetaInfo().getFqn(),
+    CtlSchema found = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(systemSchema.getMetaInfo().getFqn(),
         systemSchema.getVersion(), null, null);
     Assert.assertEquals(systemSchema, found.toDto());
   }
 
   @Test
   public void testFindSystemSchemas() {
-    List<CTLSchema> found = ctlSchemaDao.findSystemSchemas();
+    List<CtlSchema> found = ctlSchemaDao.findSystemSchemas();
     Assert.assertEquals(getIdsDto(Arrays.asList(systemSchema)), getIds(found));
   }
 
   @Test
   public void testFindLatestByFqn() {
-    CTLSchema latest = ctlSchemaDao.findLatestByFqnAndTenantIdAndApplicationId(SYSTEM_FQN, null, null);
+    CtlSchema latest = ctlSchemaDao.findLatestByFqnAndTenantIdAndApplicationId(SYSTEM_FQN, null, null);
     Assert.assertEquals(systemSchema, latest.toDto());
   }
 
   @Test
   public void testFindAvailableSchemasForTenant() {
-    List<CTLSchema> found = ctlSchemaDao.findAvailableSchemasForTenant(tenant.getId());
+    List<CtlSchema> found = ctlSchemaDao.findAvailableSchemasForTenant(tenant.getId());
     Assert.assertEquals(getIdsDto(Arrays.asList(firstSchema, secondSchema, thirdSchema, fourthSchema, mainSchema, systemSchema)), getIds(found));
   }
 }

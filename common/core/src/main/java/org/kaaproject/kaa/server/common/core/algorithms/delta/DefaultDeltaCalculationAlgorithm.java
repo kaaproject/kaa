@@ -680,6 +680,16 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
     }
   }
 
+
+  /**
+   * Calculates a delta.
+   *
+   * @param endpointConfiguration     old configuration data (binary)
+   * @param newConfigurationBody      the new configuration body (binary)
+   * @return                          delta
+   * @throws IOException              the io exception
+   * @throws DeltaCalculatorException the delta calculation exception
+   */
   @Override
   public RawBinaryDelta calculate(BaseData endpointConfiguration, BaseData newConfigurationBody)
       throws IOException, DeltaCalculatorException {
@@ -688,6 +698,15 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
     return calculate(oldRoot, newRoot);
   }
 
+
+  /**
+   *  Calculates a delta.
+   *
+   * @param newConfigurationBody      the new configuration body (binary)
+   * @return                          delta
+   * @throws IOException              the io exception
+   * @throws DeltaCalculatorException the delta calculation exception
+   */
   @Override
   public RawBinaryDelta calculate(BaseData newConfigurationBody)
           throws IOException, DeltaCalculatorException {
@@ -695,6 +714,14 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
     return calculate(newRoot);
   }
 
+  /**
+   * Calculates a delta.
+   *
+   * @param oldConfig                 old config
+   * @param newConfig                 new config
+   * @return                          delta
+   * @throws DeltaCalculatorException the delta calculation exception
+   */
   public RawBinaryDelta calculate(GenericRecord oldConfig, GenericRecord newConfig)
           throws DeltaCalculatorException {
     resultDelta = new AvroBinaryDelta(deltaSchema);
@@ -703,6 +730,13 @@ public class DefaultDeltaCalculationAlgorithm implements DeltaCalculationAlgorit
     return resultDelta;
   }
 
+  /**
+   * Calculates a delta.
+   *
+   * @param newConfig                 new config
+   * @return                          delta
+   * @throws DeltaCalculatorException the delta calculation exception
+   */
   public RawBinaryDelta calculate(GenericRecord newConfig) throws DeltaCalculatorException {
     resultDelta = new AvroBinaryDelta(deltaSchema);
     Schema deltaSubSchema = getDeltaSchemaByFullName(getFullName(newConfig));

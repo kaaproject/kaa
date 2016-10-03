@@ -26,6 +26,9 @@ public class EndpointProfileDataDto {
   private final int clientProfileVersion;
   private final int serverProfileVersion;
 
+  /**
+   * All-args constructor.
+   */
   public EndpointProfileDataDto(String id, String endpointKey, int clientProfileVersion,
                                 String clientProfileBody,
                                 int serverProfileVersion, String serverProfileBody) {

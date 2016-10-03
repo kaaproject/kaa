@@ -203,6 +203,12 @@ public abstract class HibernateAbstractDao<T extends GenericModel<?>> implements
   }
 
 
+  /**
+   * Updates an entity.
+   *
+   * @param obj entity
+   * @return    updated entity.
+   */
   public T update(T obj) {
     LOG.trace("Updated {} entity: {} ", getSimpleClassName(), obj);
     getSession().update(obj);

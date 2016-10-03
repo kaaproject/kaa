@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.appenders.mongo.appender.LogEventDao;
 import org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -58,7 +58,7 @@ public class DefaultLogAppenderServiceTest {
   private ApplicationService applicationService;
   private LogSchemaService logSchemaService;
   private LogEventDao logEventDao;
-  private CTLService ctlService;
+  private CtlService ctlService;
 
   private LogAppendersService logAppendersService;
 
@@ -73,7 +73,7 @@ public class DefaultLogAppenderServiceTest {
     logAppenderService = new DefaultLogAppenderService();
     applicationService = mock(ApplicationService.class);
     logSchemaService = mock(LogSchemaService.class);
-    ctlService = mock(CTLService.class);
+    ctlService = mock(CtlService.class);
     logEventDao = mock(LogEventDao.class);
     logAppendersService = mock(LogAppendersService.class);
 

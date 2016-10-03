@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Common type library service.
  */
-public interface CTLService {
+public interface CtlService {
 
   public static final String DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN =
           "org.kaaproject.kaa.schema.system.EmptyData";

@@ -58,6 +58,9 @@ public class DefaultEventManager implements EventManager {
   private final Map<TransactionId, List<Event>> transactions = new HashMap<>();
   private Boolean isEngaged = false;
 
+  /**
+   * All-args constructor.
+   */
   public DefaultEventManager(KaaClientState state, ExecutorContext executorContext,
                              EventTransport transport) {
     this.state = state;

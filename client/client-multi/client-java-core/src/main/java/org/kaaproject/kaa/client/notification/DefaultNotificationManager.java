@@ -55,6 +55,9 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
   private Map<Long, Topic> topics = new HashMap<>();
   private volatile NotificationTransport transport;
 
+  /**
+   * All-args constructor.
+   */
   public DefaultNotificationManager(KaaClientState state, ExecutorContext executorContext,
                                     NotificationTransport transport) {
     this.state = state;

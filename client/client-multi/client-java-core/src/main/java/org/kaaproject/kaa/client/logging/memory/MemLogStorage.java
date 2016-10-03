@@ -54,6 +54,9 @@ public class MemLogStorage implements LogStorage, LogStorageStatus {
     this(DEFAULT_MAX_STORAGE_SIZE, bucketSize, bucketRecordCount);
   }
 
+  /**
+   * All-args constructor.
+   */
   public MemLogStorage(long maxStorageSize, long bucketSize, int bucketRecordCount) {
     super();
     this.maxStorageSize = maxStorageSize;

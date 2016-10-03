@@ -28,10 +28,16 @@ public class SyncTask {
   private final boolean ackOnly;
   private final boolean all;
 
+  /**
+   * Instantiates the SyncTask.
+   */
   public SyncTask(TransportType type, boolean ackOnly, boolean all) {
     this(Collections.singleton(type), ackOnly, all);
   }
 
+  /**
+   * Instantiates the SyncTask.
+   */
   public SyncTask(Set<TransportType> types, boolean ackOnly, boolean all) {
     super();
     this.types = types;
@@ -39,8 +45,15 @@ public class SyncTask {
     this.all = all;
   }
 
+  /**
+   * Merges sync tasks.
+   *
+   * @param syncTask        sync task
+   * @param additionalTasks additional sync tasks
+   * @return                merged sync task
+   */
   public static SyncTask merge(SyncTask syncTask, List<SyncTask> additionalTasks) {
-    Set<TransportType> types = new HashSet<TransportType>();
+    Set<TransportType> types = new HashSet<>();
     types.addAll(syncTask.types);
     boolean ack = syncTask.ackOnly;
     boolean all = syncTask.all;

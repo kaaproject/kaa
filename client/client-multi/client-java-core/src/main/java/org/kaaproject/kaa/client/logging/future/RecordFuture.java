@@ -88,6 +88,12 @@ public class RecordFuture implements Future<RecordInfo> {
     return true;
   }
 
+  /**
+   * Sets value.
+   *
+   * @param value      value
+   * @param arriveTime arrive time
+   */
   public void setValue(RecordInfo value, Long arriveTime) {
     try {
       value.setRecordAddedTimestampMs(recordAddedTimestampMs);

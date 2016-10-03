@@ -39,6 +39,11 @@ public class EndpointProfilesPageDto extends AbstractEndpointProfilesDto {
     this.endpointProfiles = endpointProfiles;
   }
 
+  /**
+   * Checks whether endpoint profiles exists.
+   *
+   * @return true if endpoint profiles exists otherwise false
+   */
   public boolean hasEndpointProfiles() {
     boolean result = false;
     if (endpointProfiles != null) {

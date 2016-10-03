@@ -30,6 +30,9 @@ public final class TopicListEntryDto implements Serializable {
 
   private List<TopicDto> topics;
 
+  /**
+   * All-args constructor.
+   */
   public TopicListEntryDto(int simpleHash, byte[] hash, List<TopicDto> topics) {
     this.simpleHash = simpleHash;
     this.hash = hash;

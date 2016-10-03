@@ -32,6 +32,12 @@ public enum KaaAuthorityDto {
     this.key = key;
   }
 
+  /**
+   * Parses the KaaAuthorityDto from a string.
+   *
+   * @param value string value
+   * @return      KaaAuthorityDto
+   */
   public static KaaAuthorityDto parse(String value) {
     KaaAuthorityDto authority = null;
     if (value != null && value.length() != 0) {
@@ -45,6 +51,12 @@ public enum KaaAuthorityDto {
     return authority;
   }
 
+  /**
+   * Parses KaaAuthorityDtos from strins.
+   *
+   * @param values string values
+   * @return       KaaAuthorityDtos
+   */
   public static List<KaaAuthorityDto> parseList(String... values) {
     List<KaaAuthorityDto> authorities = null;
     if (values != null && values.length != 0) {

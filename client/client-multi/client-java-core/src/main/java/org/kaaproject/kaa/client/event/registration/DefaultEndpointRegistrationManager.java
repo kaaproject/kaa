@@ -68,6 +68,9 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
   private volatile UserTransport userTransport;
   private volatile ProfileTransport profileTransport;
 
+  /**
+   * All-args constructor.
+   */
   public DefaultEndpointRegistrationManager(KaaClientState state, ExecutorContext executorContext,
                                             UserTransport userTransport,
                                             ProfileTransport profileTransport) {
@@ -88,6 +91,12 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
     return newEndpointAccessToken;
   }
 
+
+  /**
+   * Updates an endpoint access token.
+   *
+   * @param token new endpoint access token
+   */
   public void updateEndpointAccessToken(String token) {
     state.setEndpointAccessToken(token);
     state.setIfNeedProfileResync(true);

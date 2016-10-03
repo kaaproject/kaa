@@ -28,6 +28,9 @@ public class ByteArrayBody extends AbstractContentBody {
 
   private final String filename;
 
+  /**
+   * All-args constructor.
+   */
   public ByteArrayBody(final byte[] data, final String mimeType, final String filename) {
     super(mimeType);
     if (data == null) {

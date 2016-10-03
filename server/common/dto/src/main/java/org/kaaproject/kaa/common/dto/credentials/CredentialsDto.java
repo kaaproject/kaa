@@ -46,6 +46,9 @@ public class CredentialsDto implements HasId, Serializable {
     this(null, credentialsBody, status);
   }
 
+  /**
+   * Instantiates the CredentialsDto.
+   */
   public CredentialsDto(String credentialsId, byte[] credentialsBody, CredentialsStatus status) {
     this.id = credentialsId;
     this.credentialsBody = credentialsBody != null ? Arrays.copyOf(credentialsBody,

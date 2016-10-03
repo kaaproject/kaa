@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @param <T> the model type parameter.
  */
-public interface CTLSchemaMetaInfoDao<T> extends SqlDao<T> {
+public interface CtlSchemaMetaInfoDao<T> extends SqlDao<T> {
 
   /**
    * Find a CTL schema meta info of the given fully qualified name, tenant and application

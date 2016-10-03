@@ -35,6 +35,9 @@ public class SdkProfileDto extends SdkTokenDto implements HasId {
     super();
   }
 
+  /**
+   * All-args constructor.
+   */
   public SdkProfileDto(String applicationId, Integer configurationSchemaVersion,
                        Integer profileSchemaVersion, Integer notificationSchemaVersion,
                        Integer logSchemaVersion,
@@ -103,6 +106,11 @@ public class SdkProfileDto extends SdkTokenDto implements HasId {
     this.id = id;
   }
 
+  /**
+   * Converts the current sdk profile to a sdk token.
+   *
+   * @return sdk token
+   */
   public SdkTokenDto toSdkTokenDto() {
     return new SdkTokenDto(configurationSchemaVersion,
         profileSchemaVersion,

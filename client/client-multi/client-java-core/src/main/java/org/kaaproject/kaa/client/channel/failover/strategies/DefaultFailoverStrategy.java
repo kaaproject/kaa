@@ -42,6 +42,9 @@ public class DefaultFailoverStrategy implements FailoverStrategy {
   private long noConnectivityRetryPeriod;
   private TimeUnit timeUnit;
 
+  /**
+   * Instantiates the DelautFailoverStrategy.
+   */
   public DefaultFailoverStrategy() {
     this(DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD,
         DEFAULT_OPERATION_SERVERS_RETRY_PERIOD,
@@ -49,6 +52,9 @@ public class DefaultFailoverStrategy implements FailoverStrategy {
         DEFAULT_TIME_UNIT);
   }
 
+  /**
+   * All-args constructor.
+   */
   public DefaultFailoverStrategy(long bootstrapServersRetryPeriod,
                                  long operationsServersRetryPeriod,
                                  long noConnectivityRetryPeriod,

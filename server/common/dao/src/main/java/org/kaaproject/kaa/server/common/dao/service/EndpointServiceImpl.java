@@ -46,7 +46,7 @@ import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.hash.Sha1HashUtils;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
@@ -93,7 +93,7 @@ public class EndpointServiceImpl implements EndpointService {
   private ServerProfileService serverProfileService;
 
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
 
   @Autowired
   private TopicDao<Topic> topicDao;
