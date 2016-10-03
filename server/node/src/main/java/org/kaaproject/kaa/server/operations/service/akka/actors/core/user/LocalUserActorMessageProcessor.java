@@ -20,7 +20,7 @@ import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.LocalActorRef;
 import akka.actor.Terminated;
-import scala.concurrent.duration.Duration;
+
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -53,8 +53,10 @@ import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
 import org.kaaproject.kaa.server.operations.service.event.UserRouteInfo;
 import org.kaaproject.kaa.server.sync.Event;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,7 +110,7 @@ public class LocalUserActorMessageProcessor {
     this.versionMap = new EndpointECFVersionMap();
     this.eventStorage = new EventStorage();
     this.eventDeliveryTable = new EventDeliveryTable();
-    this.localRoutes = new HashMap<RouteTableAddress, GlobalRouteInfo>();
+    this.localRoutes = new HashMap<>();
     this.mainUserNode = eventService.getUserNode(userId);
   }
 
@@ -135,7 +137,8 @@ public class LocalUserActorMessageProcessor {
     }
   }
 
-  void processEndpointDisconnectMessage(ActorContext context, EndpointUserDisconnectMessage message) {
+  void processEndpointDisconnectMessage(ActorContext context,
+                                        EndpointUserDisconnectMessage message) {
     List<String> actorsToRemove = new LinkedList<>();
     for (Entry<String, EndpointObjectHash> entry : endpoints.entrySet()) {
       if (entry.getValue().equals(message.getKey())) {
@@ -163,7 +166,8 @@ public class LocalUserActorMessageProcessor {
     processEvent(context, localEvent);
   }
 
-  void processEndpointEventTimeoutMessage(ActorContext context, EndpointEventTimeoutMessage message) {
+  void processEndpointEventTimeoutMessage(ActorContext context,
+                                          EndpointEventTimeoutMessage message) {
     LOG.debug("[{}] processing event timeout message for [{}]", userId, message.getEvent().getId());
     if (eventStorage.clear(message.getEvent())) {
       LOG.debug("[{}] removed event [{}] from storage", userId, message.getEvent().getId());
@@ -173,17 +177,21 @@ public class LocalUserActorMessageProcessor {
     }
   }
 
-  void processEndpointEventDeliveryMessage(ActorContext context, EndpointEventDeliveryMessage message) {
-    LOG.debug("[{}] processing event delivery message for [{}] with status {}", userId, message.getMessage().getAddress(),
+  void processEndpointEventDeliveryMessage(ActorContext context,
+                                           EndpointEventDeliveryMessage message) {
+    LOG.debug("[{}] processing event delivery message for [{}] with status {}",
+        userId, message.getMessage().getAddress(),
         message.getStatus());
     boolean success = message.getStatus() == EventDeliveryStatus.SUCCESS;
     RouteTableAddress address = message.getMessage().getAddress();
     for (EndpointEvent event : message.getMessage().getEndpointEvents()) {
       if (success) {
-        LOG.debug("[{}] registering successful delivery of event [{}] to address {}", userId, event.getId(), address);
+        LOG.debug("[{}] registering successful delivery of event [{}] to address {}",
+            userId, event.getId(), address);
         eventDeliveryTable.registerDeliverySuccess(event, address);
       } else {
-        LOG.debug("[{}] registering failure to delivery of event [{}] to address {}", userId, event.getId(), address);
+        LOG.debug("[{}] registering failure to delivery of event [{}] to address {}",
+            userId, event.getId(), address);
         eventDeliveryTable.registerDeliveryFailure(event, address);
       }
     }
@@ -192,12 +200,15 @@ public class LocalUserActorMessageProcessor {
   void processRouteInfoMessage(ActorContext context, RouteInfoMessage message) {
     RouteInfo routeInfo = message.getRouteInfo();
     if (RouteOperation.DELETE.equals(routeInfo.getRouteOperation())) {
-      LOG.debug("[{}] Removing all routes from route table by address {}", userId, routeInfo.getAddress());
+      LOG.debug("[{}] Removing all routes from route table by address {}",
+          userId, routeInfo.getAddress());
       routeTable.removeByAddress(routeInfo.getAddress());
     } else {
       for (EventClassFamilyVersion ecfVersion : routeInfo.getEcfVersions()) {
-        RouteTableKey key = new RouteTableKey(routeInfo.getAddress().getApplicationToken(), ecfVersion);
-        LOG.debug("[{}] Updating route table with key {} and address {}", userId, key, routeInfo.getAddress());
+        RouteTableKey key = new RouteTableKey(routeInfo.getAddress().getApplicationToken(),
+            ecfVersion);
+        LOG.debug("[{}] Updating route table with key {} and address {}",
+            userId, key, routeInfo.getAddress());
         updateRouteTable(context, key, routeInfo.getAddress());
       }
     }
@@ -206,7 +217,8 @@ public class LocalUserActorMessageProcessor {
 
   void processUserRouteInfoMessage(ActorContext context, UserRouteInfoMessage message) {
     UserRouteInfo userRouteInfo = message.getRouteInfo();
-    LOG.debug("[{}] Cleanup all route table data related to serverId: {}", userId, userRouteInfo.getServerId());
+    LOG.debug("[{}] Cleanup all route table data related to serverId: {}",
+        userId, userRouteInfo.getServerId());
     routeTable.clearRemoteServerData(userRouteInfo.getServerId());
     if (!RouteOperation.DELETE.equals(userRouteInfo.getRouteOperation())) {
       reportAllLocalRoutes(userRouteInfo.getServerId());
@@ -240,7 +252,8 @@ public class LocalUserActorMessageProcessor {
     }
   }
 
-  private void registerEndpointForEvents(ActorContext context, EndpointUserConnectMessage message, RouteTableAddress address) {
+  private void registerEndpointForEvents(ActorContext context, EndpointUserConnectMessage message,
+                                         RouteTableAddress address) {
     List<EventClassFamilyVersion> ecfVersions = message.getEcfVersions();
     if (!ecfVersions.isEmpty()) {
       for (EventClassFamilyVersion ecfVersion : ecfVersions) {
@@ -254,8 +267,10 @@ public class LocalUserActorMessageProcessor {
       }
       for (String serverId : routeTable.getRemoteServers()) {
         if (routeTable.isDeliveryRequired(serverId, address)) {
-          LOG.debug("[{}] Sending route info about address {} to server {}", userId, address, serverId);
-          eventService.sendRouteInfo(new RouteInfo(tenantId, userId, address, ecfVersions), serverId);
+          LOG.debug("[{}] Sending route info about address {} to server {}",
+              userId, address, serverId);
+          eventService
+              .sendRouteInfo(new RouteInfo(tenantId, userId, address, ecfVersions), serverId);
         }
       }
       versionMap.put(address.getEndpointKey(), message.getEcfVersions());
@@ -266,8 +281,10 @@ public class LocalUserActorMessageProcessor {
     return actorRef.path().name();
   }
 
-  private void addGlobalRoute(ActorContext context, EndpointUserConnectMessage message, RouteTableAddress address) {
-    GlobalRouteInfo route = GlobalRouteInfo.add(tenantId, userId, address, message.getCfVersion(), message.getUcfHash());
+  private void addGlobalRoute(ActorContext context,
+                              EndpointUserConnectMessage message, RouteTableAddress address) {
+    GlobalRouteInfo route = GlobalRouteInfo
+        .add(tenantId, userId, address, message.getCfVersion(), message.getUcfHash());
     localRoutes.put(address, route);
     sendGlobalRouteUpdate(context, route);
   }
@@ -281,26 +298,30 @@ public class LocalUserActorMessageProcessor {
     }
   }
 
-  private void updateRouteTable(ActorContext context, RouteTableKey key, RouteTableAddress address) {
+  private void updateRouteTable(ActorContext context, RouteTableKey key,
+                                RouteTableAddress address) {
     LOG.debug("[{}] adding to route table key: {} address: {}", userId, key, address);
     routeTable.add(key, address);
     sendPendingEvents(context, key, address);
   }
 
-  private void sendPendingEvents(ActorContext context, RouteTableKey key, RouteTableAddress address) {
+  private void sendPendingEvents(ActorContext context,
+                                 RouteTableKey key, RouteTableAddress address) {
     List<EndpointEvent> events = eventStorage.getEvents(key, address);
     if (events.size() > 0) {
       sendEventsToRecepient(context, address, events);
     }
   }
 
-  private void sendEventToRecepients(ActorContext context, EndpointEvent event, Collection<RouteTableAddress> recipients) {
+  private void sendEventToRecepients(ActorContext context, EndpointEvent event,
+                                     Collection<RouteTableAddress> recipients) {
     for (RouteTableAddress recipient : recipients) {
       sendEventsToRecepient(context, recipient, Collections.singletonList(event));
     }
   }
 
-  private void sendEventsToRecepient(ActorContext context, RouteTableAddress recipient, List<EndpointEvent> events) {
+  private void sendEventsToRecepient(ActorContext context, RouteTableAddress recipient,
+                                     List<EndpointEvent> events) {
     List<EndpointEvent> eventsToSend = new ArrayList<>(events.size());
     for (EndpointEvent event : events) {
       if (!eventDeliveryTable.isDeliveryStarted(event, recipient)) {
@@ -315,18 +336,21 @@ public class LocalUserActorMessageProcessor {
             LOG.trace("[{}] forwarding event {} to local recepient {}", userId, event, recipient);
           }
         }
-        EndpointEventReceiveMessage message = new EndpointEventReceiveMessage(userId, eventsToSend, recipient, context.self());
+        EndpointEventReceiveMessage message = new EndpointEventReceiveMessage(userId,
+            eventsToSend, recipient, context.self());
         sendEventToLocal(context, message);
       } else {
         for (EndpointEvent event : eventsToSend) {
           LOG.trace("[{}] forwarding event {} to remote recepient {}", userId, event, recipient);
-          RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(tenantId, userId, event, recipient);
+          RemoteEndpointEvent remoteEvent = new RemoteEndpointEvent(tenantId, userId,
+              event, recipient);
           eventService.sendEvent(remoteEvent);
         }
       }
 
       for (EndpointEvent event : eventsToSend) {
-        LOG.debug("[{}] registering delivery attempt of event {} to recepient {}", userId, event, recipient);
+        LOG.debug("[{}] registering delivery attempt of event {} to recepient {}",
+            userId, event, recipient);
         eventDeliveryTable.registerDeliveryAttempt(event, recipient);
       }
     }
@@ -348,9 +372,11 @@ public class LocalUserActorMessageProcessor {
     }
     if (version != null && version > 0) {
       event.setVersion(version);
-      Set<RouteTableKey> recipientKeys = cacheService.getRouteKeys(new EventClassFqnVersion(tenantId, fqn, version));
+      Set<RouteTableKey> recipientKeys = cacheService
+          .getRouteKeys(new EventClassFqnVersion(tenantId, fqn, version));
       if (!recipientKeys.isEmpty()) {
-        LOG.debug("[{}] Put event {} with {} recipient keys to storage", userId, event.getId(), recipientKeys.size());
+        LOG.debug("[{}] Put event {} with {} recipient keys to storage",
+            userId, event.getId(), recipientKeys.size());
         eventStorage.put(event, recipientKeys);
 
         Set<RouteTableAddress> recipients = routeTable.getRoutes(recipientKeys, event.getTarget());
@@ -360,12 +386,14 @@ public class LocalUserActorMessageProcessor {
         if (!recipients.isEmpty()) {
           sendEventToRecepients(context, event, recipients);
         } else {
-          LOG.debug("[{}] there is no recipients for event with class fqn {} and version {} yet", userId, fqn, version);
+          LOG.debug("[{}] there is no recipients for event with class fqn {} and version {} yet",
+              userId, fqn, version);
         }
 
         scheduleTimeoutMessage(context, event);
       } else {
-        LOG.debug("[{}] event {} is ignored due to it does not have any potential recepients", userId, event.getId());
+        LOG.debug("[{}] event {} is ignored due to it does not have any potential recepients",
+            userId, event.getId());
       }
     }
   }
@@ -373,17 +401,21 @@ public class LocalUserActorMessageProcessor {
   protected Integer lookupVersion(EndpointEvent event, String fqn) {
     Integer version;
     LOG.debug("[{}] Lookup event class family id using event class fqn {}", userId, fqn);
-    String ecfId = cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(tenantId, fqn));
+    String ecfId = cacheService
+        .getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(tenantId, fqn));
 
-    LOG.debug("[{}] Lookup event {} version from user's version map using ecfId {} ", userId, fqn, ecfId);
+    LOG.debug("[{}] Lookup event {} version from user's version map using ecfId {} ",
+        userId, fqn, ecfId);
     version = versionMap.get(event.getSender(), ecfId);
     if (version == null) {
-      LOG.warn("[{}] Lookup event {} version from user's version map using ecfId {} FAILED!", userId, fqn, ecfId);
+      LOG.warn("[{}] Lookup event {} version from user's version map using ecfId {} FAILED!",
+          userId, fqn, ecfId);
     }
     return version;
   }
 
-  protected Set<RouteTableAddress> filterOutRecipientsByKeyHash(EndpointEvent event, Set<RouteTableAddress> recipients) {
+  protected Set<RouteTableAddress> filterOutRecipientsByKeyHash(EndpointEvent event,
+                                                                Set<RouteTableAddress> recipients) {
     Iterator<RouteTableAddress> recipientsIterator = recipients.iterator();
     while (recipientsIterator.hasNext()) {
       RouteTableAddress recipient = recipientsIterator.next();
@@ -399,8 +431,10 @@ public class LocalUserActorMessageProcessor {
     RouteTableAddress address = routeTable.removeLocal(endpoint);
     versionMap.remove(endpoint);
     for (String serverId : routeTable.getRemoteServers()) {
-      LOG.debug("[{}] removing endpoint [{}] from remote route table on server {}", userId, endpoint, serverId);
-      eventService.sendRouteInfo(RouteInfo.deleteRouteFromAddress(tenantId, userId, address), serverId);
+      LOG.debug("[{}] removing endpoint [{}] from remote route table on server {}",
+          userId, endpoint, serverId);
+      eventService
+          .sendRouteInfo(RouteInfo.deleteRouteFromAddress(tenantId, userId, address), serverId);
     }
     // cleanup and notify global route actor
     GlobalRouteInfo route = GlobalRouteInfo.delete(tenantId, userId, address);
@@ -423,13 +457,16 @@ public class LocalUserActorMessageProcessor {
         for (RouteTableKey routeKey : routeKeys) {
           ecfVersions.add(routeKey.getEcfVersion());
         }
-        localRoutes.add(new RouteInfo(tenantId, userId, localAddress, new ArrayList<>(ecfVersions)));
+        localRoutes
+            .add(new RouteInfo(tenantId, userId, localAddress, new ArrayList<>(ecfVersions)));
       } else {
-        LOG.debug("[{}] Address {} is already delivered to serverId {} and will not be sent again", userId, localAddress, serverId);
+        LOG.debug("[{}] Address {} is already delivered to serverId {} and will not be sent again",
+            userId, localAddress, serverId);
       }
     }
 
-    LOG.debug("[{}] Reporting {}/{} local addresses/routes count", userId, localAddresses.size(), localRoutes.size());
+    LOG.debug("[{}] Reporting {}/{} local addresses/routes count",
+        userId, localAddresses.size(), localRoutes.size());
     if (!localRoutes.isEmpty()) {
       eventService.sendRouteInfo(localRoutes, serverId);
       routeTable.registerRouteInfoReport(localAddresses, serverId);
@@ -439,11 +476,11 @@ public class LocalUserActorMessageProcessor {
   void scheduleTimeoutMessage(ActorContext context, EndpointEvent event) {
     context.system()
         .scheduler()
-        .scheduleOnce(Duration.create(getTTL(event), TimeUnit.MILLISECONDS), context.self(),
+        .scheduleOnce(Duration.create(getTtl(event), TimeUnit.MILLISECONDS), context.self(),
             new EndpointEventTimeoutMessage(event), context.dispatcher(), context.self());
   }
 
-  private long getTTL(EndpointEvent event) {
+  private long getTtl(EndpointEvent event) {
     return Math.max(eventTimeout - (System.currentTimeMillis() - event.getCreateTime()), 0L);
   }
 }
