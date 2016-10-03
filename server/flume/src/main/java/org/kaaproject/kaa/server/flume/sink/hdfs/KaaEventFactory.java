@@ -41,8 +41,9 @@ public class KaaEventFactory {
     avroReader = new SpecificDatumReader<>(RecordData.class);
   }
 
-  public Map<KaaSinkKey, List<KaaRecordEvent>> processIncomingFlumeEvent(Event event) throws IOException {
-    Map<KaaSinkKey, List<KaaRecordEvent>> eventsMap = new LinkedHashMap<KaaSinkKey, List<KaaRecordEvent>>();
+  public Map<KaaSinkKey, List<KaaRecordEvent>> processIncomingFlumeEvent(Event event)
+      throws IOException {
+    final Map<KaaSinkKey, List<KaaRecordEvent>> eventsMap = new LinkedHashMap<>();
 
     byte[] body = event.getBody();
     decoder = DecoderFactory.get().binaryDecoder(body, decoder);
@@ -57,7 +58,8 @@ public class KaaEventFactory {
     }
     List<KaaRecordEvent> events = Lists.newArrayList();
     for (ByteBuffer eventData : data.getEventRecords()) {
-      KaaRecordEvent kaaRecordEvent = new KaaRecordEvent(data.getRecordHeader(), headers, eventData.array());
+      KaaRecordEvent kaaRecordEvent = new KaaRecordEvent(data.getRecordHeader(),
+          headers, eventData.array());
       events.add(kaaRecordEvent);
     }
     eventsMap.put(sinkKey, events);
