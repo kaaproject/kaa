@@ -1,0 +1,120 @@
+# Kaa Docker image
+
+This readme contains information about Kaa Docker image deployment.
+
+Default environments that comes in this package is:
+  - Fully functional Kaa cluster (Nx Kaa node, 1x Zookeeper node, 1x Database SQL node, 1x Database NoSQL node)
+    - Kaa node
+    - Zookeeper node
+    - MariaDb/PostgreSQL
+    - MongoDB/Cassandra
+
+Base image configuration is done using the following environment variables:
+
+ | VARIABLE         		       	|   DEFAULT					| NOTE / POSSIBLE VALUES
+ | -----------------------------	|--------------------------	| ----------------------------
+ | SERVICES_WAIT_TIMEOUT			| -1 (forever)				| Seconds (integer) before timeout while waiting for ZK/SQL/NoSQL to be ready, otherwise abort.<br>10: wait 10 seconds.<br>0: don't wait<br>-1: wait forever.
+ |								|							|
+ | ZOOKEEPER_NODE_LIST			| localhost:2181			| <i>comma separated list</i>
+ | 								| 							|
+ | SQL_PROVIDER_NAME				| mariadb 					| mariadb , postgresql
+ | JDBC_HOST						| localhost					|
+ | JDBC_PORT						| if mariadb: 3306<br>if postgresql: 5432 |
+ | JDBC_USERNAME					| sqladmin					|
+ | JDBC_PASSWORD					| admin						|
+ | JDBC_DB_NAME					| kaa 						|
+ 								| 							|
+ | CASSANDRA_CLUSTER_NAME		| Kaa Cluster 				|
+ | CASSANDRA_KEYSPACE_NAME		| kaa 						|
+ | CASSANDRA_NODE_LIST			| localhost:9042 			| <i>comma separated list</i>
+ | CASSANDRA_USE_SSL				| false 					|
+ | CASSANDRA_USE_JMX				| true 						|
+ | CASSANDRA_USE_CREDENTIALS		| false 					|
+ | CASSANDRA_USERNAME 			| (empty) 					|
+ | CASSANDRA_PASSWORD 			| (empty) 					| 
+ | 								| 							| 
+ | MONGODB_NODE_LIST 			| localhost:27017 			| 
+ | MONGODB_DB_NAME				| kaa 						| 
+ | MONGODB_WRITE_CONCERN 		| acknowledged 				| 
+ | 								| 							| 
+ | NOSQL_PROVIDER_NAME			| mongodb 					| mongodb , cassandra
+ |								|							|
+ | CONTROL_SERVER_ENABLED		| true						| true/false
+ | BOOTSTRAP_SERVER_ENABLED		| true						| true/false
+ | OPERATIONS_SERVER_ENABLED		| true						| true/false
+ | THRIFT_HOST					| localhost					| 
+ | THRIFT_PORT					| 9090						| 
+ | ADMIN_PORT					| 8080						| 
+ | SUPPORT_UNENCRYPTED_CONNECTION | true						| true/false
+ | TRANSPORT_BIND_INTERFACE		| 0.0.0.0					| 
+ | TRANSPORT_PUBLIC_INTERFACE	| current public host					|
+ | METRICS_ENABLED				| true 						| true/false
+ 
+## Steps to deploy
+
+1. Download Kaa debian package from http://www.kaaproject.org/download-kaa/
+ or build Kaa project local and get kaa-node.deb from server/node/target/kaa-node.deb.
+ Place debian package in server/containers/docker/ folder.
+
+2. From server/containers/docker folder execute:
+```sh
+$ docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .
+```
+or
+```sh
+$ sh build.sh
+```
+3. From server/containers/docker/using-compose folder run:
+```sh
+$ python launch-kaa.py mariadb-mongodb
+```
+If you want deploy Kaa in cluster mode, run previous command with additional optional
+```sh
+$ python launch-kaa.py mariadb-mongodb NODE_COUNT
+```
+All available options:
+
+* mariadb-mongodb
+* mariadb-cassandra
+* postgresql-mongodb
+* postgresql-cassandra
+
+4. Execute following command to get into running container:
+```sh
+$ docker exec -it usingcompose_KAA_SERVICE_NAME_1 /bin/bash -c "export TERM=xterm; exec bash"
+```
+
+In this example usingcompose - it's name of folder where located docker-compose.yml files.
+
+## Logs
+ 
+When you run your Docker container as a daemon, you won't see its output. So you can use:
+```sh
+$ docker-compose -f kaa-docker-compose.yml -p usingcompose exec KAA_SERVICE_NAME sh /kaa/tail-node.sh
+```
+KAA_SERVICE_NAME it's Kaa service name in kaa-docker-compose.yml file.
+
+Or simply run the shortcut script 'view-kaa-node-logs.sh' in the examples.
+
+Also you can use
+```sh
+$ docker logs SERVICE_NAME
+```
+For getting names of all Docker running containers, just run:
+
+```sh
+$ docker ps
+```
+
+## Templates
+
+Also you can use some prepared in advance docker-compose files in 'templates' folder.
+Just go into any one of the possible folders in 'templates' and just run
+```sh
+$ docker-compose up
+```
+or if you want run Docker container as a daemon, run
+
+```sh
+$ docker-compose up -d
+```
