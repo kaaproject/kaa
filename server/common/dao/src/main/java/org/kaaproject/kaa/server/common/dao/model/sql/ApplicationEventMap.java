@@ -60,6 +60,9 @@ public class ApplicationEventMap extends GenericModel<ApplicationEventMapDto> {
     this.id = id;
   }
 
+  /**
+   * Instantiates the ApplicationEventMap.
+   */
   public ApplicationEventMap(ApplicationEventMapDto dto) {
     this.id = getLongId(dto.getId());
     Long eventClassId = getLongId(dto.getEventClassId());

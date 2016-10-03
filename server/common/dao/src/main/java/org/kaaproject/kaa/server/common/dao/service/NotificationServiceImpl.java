@@ -161,6 +161,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
   }
 
+  /**
+   * Sends a notification and increments a topic sequence number.
+   *
+   * @param dto notification
+   * @return    saved notification
+   */
   public NotificationDto saveNotificationAndIncTopicSecNum(NotificationDto dto) {
     NotificationDto notificationDto = null;
     Topic topic = topicDao.getNextSeqNumber(dto.getTopicId());

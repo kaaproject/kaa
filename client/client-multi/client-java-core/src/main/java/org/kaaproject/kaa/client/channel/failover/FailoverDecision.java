@@ -33,6 +33,9 @@ public class FailoverDecision {
     this.action = action;
   }
 
+  /**
+   * All-args constructor.
+   */
   public FailoverDecision(FailoverAction action, long retryPeriod, TimeUnit timeUnit) {
     this.action = action;
     this.retryPeriod = retryPeriod;

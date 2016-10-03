@@ -97,7 +97,8 @@ Copyright 2014-2016 CyberVision, Inc.
         <findbugs.version>2.5.2</findbugs.version>
         <checkstyle.version>2.17</checkstyle.version>
         <checkstyle.tools.version>7.0</checkstyle.tools.version>
-        <checkstyle.exclusions>**/gen/**, **/target/**, **/org/kaaproject/kaa/schema/**</checkstyle.exclusions>
+        <checkstyle.exclusions>**/gen/**, **/target/**, **/org/kaaproject/kaa/schema/**,
+            **/org/kaaproject/kaa/common/dto/ctl/**</checkstyle.exclusions>
         <rat.version>0.10</rat.version>
         <javassist.version>3.18.1-GA</javassist.version>
         <signpost-core.version>1.2.1.2</signpost-core.version>

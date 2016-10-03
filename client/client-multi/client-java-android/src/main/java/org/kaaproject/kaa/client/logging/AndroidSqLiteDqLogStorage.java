@@ -58,10 +58,16 @@ public class AndroidSqLiteDqLogStorage implements LogStorage, LogStorageStatus {
   private SQLiteStatement updateBucketStateStatement;
   private SQLiteStatement resetBucketIdStatement;
 
+  /**
+   * Instantiates the AndroidSqLiteDqLogStorage.
+   */
   public AndroidSqLiteDqLogStorage(Context context, long maxBucketSize, int maxRecordCount) {
     this(context, PersistentLogStorageConstants.DEFAULT_DB_NAME, maxBucketSize, maxRecordCount);
   }
 
+  /**
+   * Instantiates the AndroidSqLiteDqLogStorage.
+   */
   public AndroidSqLiteDqLogStorage(Context context, String dbName, long bucketSize,
                                    int recordCount) {
     Log.i(TAG, "Connecting to db with name: " + dbName);
@@ -245,8 +251,8 @@ public class AndroidSqLiteDqLogStorage implements LogStorage, LogStorageStatus {
 
         if (removedRecordsCount > 0) {
           totalRecordCount -= removedRecordsCount;
-          Log.i(TAG, "Removed " + removedRecordsCount +
-                     " records from storage. Total log record count: " + totalRecordCount);
+          Log.i(TAG, "Removed " + removedRecordsCount
+              + " records from storage. Total log record count: " + totalRecordCount);
         } else {
           Log.i(TAG, "No records were removed from storage");
         }

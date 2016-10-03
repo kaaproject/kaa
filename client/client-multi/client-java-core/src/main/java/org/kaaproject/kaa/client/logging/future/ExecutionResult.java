@@ -21,6 +21,9 @@ public class ExecutionResult<T> {
   private final T obj;
   private final Exception ex;
 
+  /**
+   * All-args constructor.
+   */
   public ExecutionResult(T obj, Exception ex) {
     super();
     this.obj = obj;

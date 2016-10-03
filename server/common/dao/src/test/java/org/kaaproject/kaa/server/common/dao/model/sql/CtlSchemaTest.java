@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
 
-public class CTLSchemaMetaInfoTest {
+
+public class CtlSchemaTest {
   @Test
   public void hashCodeEqualsTest() {
-    EqualsVerifier.forClass(CTLSchemaMetaInfo.class).usingGetClass().verify();
+    EqualsVerifier.forClass(CtlSchema.class).usingGetClass().verify();
   }
 }

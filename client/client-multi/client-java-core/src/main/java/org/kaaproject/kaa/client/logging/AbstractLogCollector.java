@@ -66,6 +66,9 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
   private LogDeliveryListener logDeliveryListener;
   private boolean uploadCheckInProgress = false;
 
+  /**
+   * All-args constructor.
+   */
   public AbstractLogCollector(LogTransport transport, ExecutorContext executorContext,
                               KaaChannelManager channelManager, FailoverManager failoverManager) {
     this.strategy = new DefaultLogUploadStrategy();

@@ -75,7 +75,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.common.hash.Sha1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.exception.CredentialsServiceException;
 import org.kaaproject.kaa.server.common.dao.exception.EndpointRegistrationServiceException;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -204,7 +204,7 @@ public class DefaultAkkaServiceTest {
   private NotificationDto topicNotification;
   private LogAppenderService logAppenderService;
   private EndpointUserService endpointUserService;
-  private CTLService ctlService;
+  private CtlService ctlService;
   private CredentialsServiceLocator credentialsServiceLocator;
   private CredentialsService credentialsService;
   private RegistrationService registrationService;
@@ -236,7 +236,7 @@ public class DefaultAkkaServiceTest {
     eventService = mock(EventService.class);
     logAppenderService = mock(LogAppenderService.class);
     endpointUserService = mock(EndpointUserService.class);
-    ctlService = mock(CTLService.class);
+    ctlService = mock(CtlService.class);
     credentialsServiceLocator = mock(CredentialsServiceLocator.class);
     credentialsService = mock(CredentialsService.class);
     registrationService = mock(RegistrationService.class);

@@ -44,6 +44,9 @@ public class NotificationSchema extends BaseSchema<NotificationSchemaDto> implem
     this.id = id;
   }
 
+  /**
+   * Instantiates the NotificationSchema.
+   */
   public NotificationSchema(NotificationSchemaDto dto) {
     super(dto);
     if (dto != null) {
@@ -77,18 +80,18 @@ public class NotificationSchema extends BaseSchema<NotificationSchemaDto> implem
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
+    if (!super.equals(obj)) {
       return false;
     }
 
-    NotificationSchema that = (NotificationSchema) o;
+    NotificationSchema that = (NotificationSchema) obj;
 
     if (type != that.type) {
       return false;

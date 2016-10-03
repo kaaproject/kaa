@@ -89,7 +89,7 @@ import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
@@ -296,7 +296,7 @@ public class DefaultControlService implements ControlService {
   private SdkProfileService sdkProfileService;
 
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
 
   @Autowired
   @Qualifier("rootCredentialsServiceLocator")

@@ -61,6 +61,9 @@ public abstract class AbstractHttpChannel implements KaaDataChannel {
   private KaaDataDemultiplexer demultiplexer;
   private KaaDataMultiplexer multiplexer;
 
+  /**
+   * All-args constructor.
+   */
   public AbstractHttpChannel(AbstractKaaClient client, KaaClientState state,
                              FailoverManager failoverManager) {
     this.client = client;

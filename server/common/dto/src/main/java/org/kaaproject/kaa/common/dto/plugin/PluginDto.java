@@ -43,6 +43,9 @@ public abstract class PluginDto extends AbstractDetailDto implements HasId, Seri
     super();
   }
 
+  /**
+   * Instantiates the PluginDto.
+   */
   public PluginDto(PluginDto pluginDto) {
     super(pluginDto);
     this.id = pluginDto.getId();

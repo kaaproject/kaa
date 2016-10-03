@@ -30,6 +30,9 @@ public class GenericTransportInfo implements TransportConnectionInfo {
   protected final TransportProtocolId transportId;
   protected final ProtocolMetaData md;
 
+  /**
+   * All-args constructor.
+   */
   public GenericTransportInfo(ServerType serverType, ProtocolMetaData md) {
     super();
     this.serverType = serverType;

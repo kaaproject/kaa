@@ -58,7 +58,7 @@ import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
@@ -104,7 +104,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
 
   @Autowired
   private SchemaGenerationAlgorithmFactory schemaGeneratorFactory;

@@ -28,7 +28,7 @@ import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Change;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
@@ -160,7 +160,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
       if (app == null) {
         app = generateApplication(null);
       }
-      CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
+      CtlSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
       ConfigurationSchema schema;
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {
@@ -219,7 +219,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
       if (app == null) {
         app = generateApplication(null);
       }
-      CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
+      CtlSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
       EndpointProfileSchema schemaDto;
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {
@@ -240,7 +240,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
     return schemas;
   }
 
-  protected CTLSchema generateCTLSchema(String fqn, int version, Tenant tenant, CTLSchemaScopeDto scope) {
+  protected CtlSchema generateCTLSchema(String fqn, int version, Tenant tenant, CTLSchemaScopeDto scope) {
     if (scope == null) {
       if (tenant == null) {
         scope = CTLSchemaScopeDto.SYSTEM;
@@ -252,11 +252,11 @@ public abstract class HibernateAbstractTest extends AbstractTest {
     metaInfo.setFqn(fqn);
     metaInfo.setTenant(tenant);
     metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
-    CTLSchema ctlSchema = new CTLSchema();
+    CtlSchema ctlSchema = new CtlSchema();
     ctlSchema.setMetaInfo(metaInfo);
     ctlSchema.setVersion(version);
     ctlSchema.setBody(UUID.randomUUID().toString());
-    ctlSchema.setDependencySet(new HashSet<CTLSchema>());
+    ctlSchema.setDependencySet(new HashSet<CtlSchema>());
     ctlSchema = ctlSchemaDao.save(ctlSchema);
     return ctlSchema;
   }
@@ -267,7 +267,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
       if (app == null) {
         app = generateApplication(null);
       }
-      CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, app.getTenant(), null);
+      CtlSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, app.getTenant(), null);
       NotificationSchema schemaDto;
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {
@@ -409,7 +409,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         EventClass ec = new EventClass();
         ec.setTenant(eventClassFamily.getTenant());
 
-        Optional<CTLSchema> ctlMaxVersion = ctlSchemaDao.find().stream()
+        Optional<CtlSchema> ctlMaxVersion = ctlSchemaDao.find().stream()
             .max((ctl1, ctl2) -> Integer.compare(ctl1.getVersion(), ctl2.getVersion()));
         int version = ctlMaxVersion.isPresent() ? (ctlMaxVersion.get().getVersion() + 1) : 1;
 
@@ -487,7 +487,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
       if (application == null) {
         application = generateApplication(tenant);
       }
-      CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, application.getTenant(), null);
+      CtlSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, application.getTenant(), null);
       LogSchema schema;
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {

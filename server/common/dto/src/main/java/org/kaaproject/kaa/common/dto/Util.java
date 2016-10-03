@@ -23,6 +23,12 @@ public class Util {
   private Util() {
   }
 
+  /**
+   * Copies an array.
+   *
+   * @param array array
+   * @return      array copy
+   */
   public static byte[] getArrayCopy(byte[] array) {
     byte[] bytes = null;
     if (array != null) {

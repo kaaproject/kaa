@@ -60,12 +60,19 @@ public class AvroUtils {
     return new GenericData.Fixed(avroSchema, generateUuidBytes());
   }
 
-  public static Schema getSchemaByType(Schema schema, Schema.Type type) {
-    if (schema.getType().equals(type)) {
-      return schema;
+  /**
+   * Returns schema from container (union or schema itself) by its type.
+   *
+   * @param container schema container
+   * @param type      schema type
+   * @return          schema with a specified type
+   */
+  public static Schema getSchemaByType(Schema container, Schema.Type type) {
+    if (container.getType().equals(type)) {
+      return container;
     }
-    if (schema.getType().equals(Type.UNION)) {
-      List<Schema> types = schema.getTypes();
+    if (container.getType().equals(Type.UNION)) {
+      List<Schema> types = container.getTypes();
       if (types != null) {
         for (Schema typeIter : types) {
           if (typeIter.getType().equals(type)) {
@@ -77,6 +84,12 @@ public class AvroUtils {
     return null;
   }
 
+  /**
+   * Returns whether schema is complex.
+   *
+   * @param schema schema
+   * @return       true if schema is complex otherwise false
+   */
   public static boolean isComplexSchema(Schema schema) {
     switch (schema.getType()) {
       case RECORD:
@@ -90,6 +103,12 @@ public class AvroUtils {
     }
   }
 
+  /**
+   * Copies json properties.
+   *
+   * @param src source
+   * @param dst destination
+   */
   public static void copyJsonProperties(JsonProperties src, JsonProperties dst) {
     for (Map.Entry<String, JsonNode> prop : src.getJsonProps().entrySet()) {
       dst.addProp(prop.getKey(), prop.getValue());
@@ -142,6 +161,11 @@ public class AvroUtils {
     return json;
   }
 
+  /**
+   * Removes UUIDs from a json tree.
+   *
+   * @param json json tree node
+   */
   public static void removeUuids(JsonNode json) {
     boolean containerWithId = json.isContainerNode() && json.has(UUID_FIELD);
     boolean isArray = json.isArray();

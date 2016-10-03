@@ -59,7 +59,7 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
-import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
+import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
@@ -85,7 +85,7 @@ import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -173,7 +173,7 @@ public class AbstractTest {
   @Autowired
   protected LogAppendersService logAppendersService;
   @Autowired
-  protected CTLService ctlService;
+  protected CtlService ctlService;
   @Autowired
   protected ServerProfileService serverProfileService;
 
@@ -216,9 +216,9 @@ public class AbstractTest {
   @Autowired
   protected SdkProfileDao<SdkProfile> sdkProfileDao;
   @Autowired
-  protected CtlSchemaDao<CTLSchema> ctlSchemaDao;
+  protected CtlSchemaDao<CtlSchema> ctlSchemaDao;
   @Autowired
-  protected CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
+  protected CtlSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
   @Autowired
   protected ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
 

@@ -37,7 +37,7 @@ import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
@@ -84,7 +84,7 @@ public class ApplicationServiceImpl implements ApplicationService {
   private EndpointService endpointService;
 
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
 
   @Autowired
   private ConfigurationService configurationService;

@@ -30,7 +30,7 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
@@ -89,7 +89,7 @@ public class ApplicationLogActorMessageProcessorTest {
   private LogAppenderService logAppenderService;
 
   private CacheService cacheService;
-  private CTLService ctlService;
+  private CtlService ctlService;
 
   private LogEventPackMessage message;
 
@@ -139,7 +139,7 @@ public class ApplicationLogActorMessageProcessorTest {
     serverProfileSchema.setCtlSchemaId(SERVER_PROFILE_SCHEMA_CTL_SCHEMA_ID);
 
     cacheService = Mockito.mock(CacheService.class);
-    ctlService = Mockito.mock(CTLService.class);
+    ctlService = Mockito.mock(CtlService.class);
 
     // Cache services
     AppVersionKey key;

@@ -42,6 +42,9 @@ public class UserDto extends org.kaaproject.kaa.common.dto.UserDto {
   public UserDto() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public UserDto(String externalUid,
                  String username,
                  String firstName,

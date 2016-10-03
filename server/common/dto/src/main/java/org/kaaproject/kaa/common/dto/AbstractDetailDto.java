@@ -30,6 +30,9 @@ public abstract class AbstractDetailDto implements Serializable {
   public AbstractDetailDto() {
   }
 
+  /**
+   * Instantiates the AbstractDetailDto.
+   */
   public AbstractDetailDto(AbstractDetailDto detailsDto) {
     this.name = detailsDto.getName();
     this.description = detailsDto.getDescription();

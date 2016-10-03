@@ -68,6 +68,9 @@ public class User extends GenericModel<UserDto> implements Serializable {
     this.id = id;
   }
 
+  /**
+   * Instantiates new user.
+   */
   public User(UserDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);

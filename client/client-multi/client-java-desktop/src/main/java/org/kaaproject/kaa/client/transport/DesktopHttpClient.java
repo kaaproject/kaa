@@ -48,6 +48,9 @@ public class DesktopHttpClient extends AbstractHttpClient {
   private CloseableHttpClient httpClient;
   private volatile HttpPost method;
 
+  /**
+   * All-args constructor.
+   */
   public DesktopHttpClient(String url, PrivateKey privateKey,
                            PublicKey publicKey, PublicKey remotePublicKey) {
     super(url, privateKey, publicKey, remotePublicKey);

@@ -67,6 +67,9 @@ public class Configuration extends AbstractStructure<ConfigurationDto> implement
     this.id = id;
   }
 
+  /**
+   * Instantiates the Configuration.
+   */
   public Configuration(ConfigurationDto dto) {
     super(dto);
     if (dto != null) {
@@ -157,7 +160,9 @@ public class Configuration extends AbstractStructure<ConfigurationDto> implement
     dto.setBody(binaryToString(configurationBody));
     dto.setSchemaId(ModelUtils.getStringId(configurationSchema.getId()));
     dto.setSchemaVersion(schemaVersion);
-    dto.setProtocolSchema(configurationSchema != null ? configurationSchema.getProtocolSchema() : null);
+    dto.setProtocolSchema(configurationSchema != null
+        ? configurationSchema.getProtocolSchema()
+        : null);
     return dto;
   }
 
@@ -191,10 +196,13 @@ public class Configuration extends AbstractStructure<ConfigurationDto> implement
   @Override
   public String toString() {
     return "Configuration [sequenceNumber=" + sequenceNumber + ", schemaVersion="
-        + schemaVersion + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime="
-        + lastModifyTime + ", activatedTime=" + activatedTime + ", deactivatedTime=" + deactivatedTime + ", createdUsername=" + createdUsername
-        + ", modifiedUsername=" + modifiedUsername + ", activatedUsername=" + activatedUsername + ", deactivatedUsername=" + deactivatedUsername
-        + ", endpointCount=" + endpointCount + ", status=" + status + ", id=" + id + ", version=" + getVersion() + "]";
+        + schemaVersion + ", description=" + description + ", createdTime="
+        + createdTime + ", lastModifyTime="
+        + lastModifyTime + ", activatedTime=" + activatedTime + ", deactivatedTime="
+        + deactivatedTime + ", createdUsername=" + createdUsername
+        + ", modifiedUsername=" + modifiedUsername + ", activatedUsername=" + activatedUsername
+        + ", deactivatedUsername=" + deactivatedUsername + ", endpointCount=" + endpointCount
+        + ", status=" + status + ", id=" + id + ", version=" + getVersion() + "]";
   }
 
 }

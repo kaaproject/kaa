@@ -31,6 +31,11 @@ public class SdkTokenGenerator {
   private SdkTokenGenerator() {
   }
 
+  /**
+   * Generates the SDK token.
+   *
+   * @param sdkProfileDto SDK profile
+   */
   public static void generateSdkToken(SdkProfileDto sdkProfileDto) {
     if (StringUtils.isEmpty(sdkProfileDto.getToken())) {
       try {

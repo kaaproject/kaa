@@ -18,17 +18,17 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class CTLDataDto implements Serializable {
+public class CtlDataDto implements Serializable {
 
   private static final long serialVersionUID = -9107671325547868060L;
 
   private int serverProfileVersion;
   private String body;
 
-  public CTLDataDto() {
+  public CtlDataDto() {
   }
 
-  public CTLDataDto(int serverProfileVersion, String body) {
+  public CtlDataDto(int serverProfileVersion, String body) {
     this.serverProfileVersion = serverProfileVersion;
     this.body = body;
   }
@@ -69,7 +69,7 @@ public class CTLDataDto implements Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    CTLDataDto other = (CTLDataDto) obj;
+    CtlDataDto other = (CtlDataDto) obj;
     if (body == null) {
       if (other.body != null) {
         return false;
@@ -86,7 +86,7 @@ public class CTLDataDto implements Serializable {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("CTLDataDto [serverProfileVersion=");
+    builder.append("CtlDataDto [serverProfileVersion=");
     builder.append(serverProfileVersion);
     builder.append(", body=");
     builder.append(body);

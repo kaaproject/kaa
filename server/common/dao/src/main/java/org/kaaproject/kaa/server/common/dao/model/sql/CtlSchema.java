@@ -52,14 +52,17 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = CTL_SCHEMA_TABLE_NAME, uniqueConstraints =
-@UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_ID, CTL_SCHEMA_VERSION}, name = CTL_SCHEMA_UNIQUE_CONSTRAINT))
-public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializable {
+@Table(name = CTL_SCHEMA_TABLE_NAME,
+    uniqueConstraints =
+    @UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_ID, CTL_SCHEMA_VERSION},
+        name = CTL_SCHEMA_UNIQUE_CONSTRAINT))
+public class CtlSchema extends GenericModel<CTLSchemaDto> implements Serializable {
 
   private static final long serialVersionUID = -1179381742235545494L;
 
   @ManyToOne(optional = true, fetch = FetchType.EAGER)
-  @JoinColumn(nullable = false, name = CTL_SCHEMA_META_INFO_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_FK))
+  @JoinColumn(nullable = false, name = CTL_SCHEMA_META_INFO_ID,
+      foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_FK))
   private CTLSchemaMetaInfo metaInfo;
   @Column(name = CTL_SCHEMA_VERSION)
   private Integer version;
@@ -76,18 +79,20 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = CTL_SCHEMA_JOIN_TABLE_NAME,
-      joinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_PARENT_ID)}, foreignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_PARENT_FK),
-      inverseJoinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_CHILD_ID)}, inverseForeignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_CHILD_FK))
-  private Set<CTLSchema> dependencySet = new HashSet<>();
+      joinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_PARENT_ID)},
+      foreignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_PARENT_FK),
+      inverseJoinColumns = {@JoinColumn(name = CTL_SCHEMA_JOIN_TABLE_CHILD_ID)},
+      inverseForeignKey = @ForeignKey(name = CTL_SCHEMA_JOIN_TABLE_CHILD_FK))
+  private Set<CtlSchema> dependencySet = new HashSet<>();
 
-  public CTLSchema() {
+  public CtlSchema() {
   }
 
-  public CTLSchema(Long id) {
+  public CtlSchema(Long id) {
     this.id = id;
   }
 
-  public CTLSchema(CTLSchemaDto dto) {
+  public CtlSchema(CTLSchemaDto dto) {
     this.id = getLongId(dto.getId());
     this.metaInfo = new CTLSchemaMetaInfo(dto.getMetaInfo());
     this.version = dto.getVersion();
@@ -102,7 +107,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     Set<CTLSchemaDto> dependencies = dto.getDependencySet();
     if (dependencies != null && !dependencies.isEmpty()) {
       for (CTLSchemaDto dependency : dependencies) {
-        dependencySet.add(new CTLSchema(dependency));
+        dependencySet.add(new CtlSchema(dependency));
       }
     }
   }
@@ -139,11 +144,11 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     this.defaultRecord = defaultRecord;
   }
 
-  public Set<CTLSchema> getDependencySet() {
+  public Set<CtlSchema> getDependencySet() {
     return dependencySet;
   }
 
-  public void setDependencySet(Set<CTLSchema> dependencySet) {
+  public void setDependencySet(Set<CtlSchema> dependencySet) {
     this.dependencySet = dependencySet;
   }
 
@@ -170,7 +175,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
   @Override
   protected GenericModel<CTLSchemaDto> newInstance(Long id) {
-    return new CTLSchema(id);
+    return new CtlSchema(id);
   }
 
   @Override
@@ -212,7 +217,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     if (getClass() != obj.getClass()) {
       return false;
     }
-    CTLSchema other = (CTLSchema) obj;
+    CtlSchema other = (CtlSchema) obj;
     if (body == null) {
       if (other.body != null) {
         return false;
@@ -264,7 +269,7 @@ public class CTLSchema extends GenericModel<CTLSchemaDto> implements Serializabl
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("CTLSchema [metaInfo=");
+    builder.append("CtlSchema [metaInfo=");
     builder.append(metaInfo);
     builder.append(", version=");
     builder.append(version);

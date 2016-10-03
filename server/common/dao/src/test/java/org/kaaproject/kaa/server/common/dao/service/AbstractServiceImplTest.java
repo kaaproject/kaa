@@ -28,7 +28,7 @@ import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
@@ -63,7 +63,7 @@ public abstract class AbstractServiceImplTest {
   @Autowired
   protected ApplicationService applicationService;
   @Autowired
-  protected CTLService ctlService;
+  protected CtlService ctlService;
   @Autowired
   protected ProfileService profileService;
   @Autowired
