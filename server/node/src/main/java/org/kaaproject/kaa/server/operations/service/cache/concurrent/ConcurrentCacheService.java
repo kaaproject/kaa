@@ -44,7 +44,7 @@ import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.structure.Pair;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
@@ -269,7 +269,7 @@ public class ConcurrentCacheService implements CacheService {
   @Autowired
   private ServerProfileService serverProfileService;
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
   /**
    * The history service.
    */

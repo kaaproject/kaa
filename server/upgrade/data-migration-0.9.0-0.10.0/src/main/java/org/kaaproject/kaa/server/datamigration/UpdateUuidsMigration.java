@@ -54,26 +54,35 @@ public class UpdateUuidsMigration {
   private String dbName;
   private String nosql;
 
-  public UpdateUuidsMigration(Connection connection, String host, String db, String nosql) {
+  /**
+   * Create a new instance of UpdateUuidsMigration.
+   *
+   * @param connection the connection to relational database
+   * @param options    the options for configuring NoSQL databases
+   */
+  public UpdateUuidsMigration(Connection connection, Options options) {
     this.connection = connection;
-    client = new MongoClient(host);
+    client = new MongoClient(options.getHost());
     cluster = Cluster.builder()
-        .addContactPoint(host)
+        .addContactPoint(options.getHost())
         .build();
-    dbName = db;
-    this.nosql = nosql;
+    dbName = options.getDbName();
+    this.nosql = options.getNoSql();
   }
 
   public void transform() throws IOException, SQLException {
     QueryRunner run = new QueryRunner();
-    ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<Configuration>(Configuration.class);
+    ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<>(Configuration.class);
     List<Configuration> configs = run.query(connection, "SELECT * FROM configuration", rsHandler);
     for (Configuration config : configs) {
       JsonNode json = new ObjectMapper().readTree(config.getConfigurationBody());
       JsonNode jsonEncoded = encodeUuids(json);
       byte[] encodedConfigurationBody = jsonEncoded.toString().getBytes();
 
-      int updates = run.update(connection, "UPDATE configuration SET configuration_body=? WHERE id=?", encodedConfigurationBody, config.getId());
+      int updates = run.update(connection,
+          "UPDATE configuration SET configuration_body=? WHERE id=?",
+          encodedConfigurationBody, config.getId()
+      );
       if (updates != 1) {
         System.err.println("Error: failed to update configuration: " + config);
       }
@@ -87,7 +96,10 @@ public class UpdateUuidsMigration {
         String body = (String) d.get("body");
         JsonNode json = new ObjectMapper().readTree(body);
         JsonNode jsonEncoded = encodeUuids(json);
-        userConfiguration.updateOne(Filters.eq("_id", d.get("_id")), Filters.eq("$set", Filters.eq("body", jsonEncoded)));
+        userConfiguration.updateOne(
+            Filters.eq("_id", d.get("_id")),
+            Filters.eq("$set", Filters.eq("body", jsonEncoded))
+        );
       }
 
     } else {

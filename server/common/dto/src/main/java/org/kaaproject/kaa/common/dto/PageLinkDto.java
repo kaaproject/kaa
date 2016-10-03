@@ -35,6 +35,9 @@ public class PageLinkDto implements Serializable {
   public PageLinkDto() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public PageLinkDto(String endpointGroupId, String limit, String offset) {
     this.endpointGroupId = endpointGroupId;
     this.limit = limit;
@@ -83,6 +86,11 @@ public class PageLinkDto implements Serializable {
     this.applicationId = applicationId;
   }
 
+  /**
+   * Returns the next url part.
+   *
+   * @return next url part
+   */
   public String getNextUrlPart() {
     String nextUrlPart = null;
     if (limit != null && offset != null) {

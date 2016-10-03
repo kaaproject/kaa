@@ -48,7 +48,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
@@ -245,11 +245,11 @@ public class OperationsServiceIT extends AbstractTest {
 
     metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);
 
-    CTLSchema ctlSchema = new CTLSchema();
+    CtlSchema ctlSchema = new CtlSchema();
     ctlSchema.setMetaInfo(metaInfo);
     ctlSchema.setVersion(1);
     ctlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
-    ctlSchema.setDependencySet(new HashSet<CTLSchema>());
+    ctlSchema.setDependencySet(new HashSet<CtlSchema>());
 
     ctlSchema = ctlSchemaDao.save(ctlSchema);
 

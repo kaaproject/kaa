@@ -51,6 +51,9 @@ public class EventClassFamilyVersion extends GenericModel<EventClassFamilyVersio
   public EventClassFamilyVersion() {
   }
 
+  /**
+   * Instantiates the EventClassFamilyVersion.
+   */
   public EventClassFamilyVersion(EventClassFamilyVersionDto dto) {
     this.id = getLongId(dto.getId());
     this.version = dto.getVersion();
@@ -102,19 +105,31 @@ public class EventClassFamilyVersion extends GenericModel<EventClassFamilyVersio
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
 
-    EventClassFamilyVersion that = (EventClassFamilyVersion) o;
-
-    if (createdTime != that.createdTime) return false;
-    if (version != that.version) return false;
-    if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null)
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
-    if (records != null ? !records.equals(that.records) : that.records != null) return false;
+    }
 
-    return true;
+    EventClassFamilyVersion that = (EventClassFamilyVersion) obj;
+
+    if (createdTime != that.createdTime) {
+      return false;
+    }
+
+    if (version != that.version) {
+      return false;
+    }
+
+    if (createdUsername != null
+        ? !createdUsername.equals(that.createdUsername)
+        : that.createdUsername != null) {
+      return false;
+    }
+    return !(records != null ? !records.equals(that.records) : that.records != null);
   }
 
   @Override
@@ -157,7 +172,8 @@ public class EventClassFamilyVersion extends GenericModel<EventClassFamilyVersio
 
   @Override
   public String toString() {
-    return "EventClassFamilyVersion [version=" + version + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
+    return "EventClassFamilyVersion [version=" + version + ", createdUsername="
+        + createdUsername + ", createdTime=" + createdTime
         + ", id=" + id + "]";
   }
 }

@@ -36,6 +36,9 @@ public class SdkTokenDto implements Serializable {
     super();
   }
 
+  /**
+   * All-args constructor.
+   */
   public SdkTokenDto(Integer configurationSchemaVersion,
                      Integer profileSchemaVersion, Integer notificationSchemaVersion,
                      Integer logSchemaVersion, List<String> aefMapIds,

@@ -34,6 +34,12 @@ public enum ChangeType {
   REMOVE_NOTIFICATION_VERSION;
 
 
+  /**
+   * Returns the ChangeType from a string.
+   *
+   * @param stringType string type value
+   * @return           change type
+   */
   public static ChangeType typeFromString(String stringType) {
     for (ChangeType type : ChangeType.values()) {
       if (type.name().equalsIgnoreCase(stringType)) {

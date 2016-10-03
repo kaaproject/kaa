@@ -36,18 +36,36 @@ public abstract class AbstractCtlMigration {
   protected DataDefinition dd;
   protected Long idShift;
 
+
+  /**
+   * Create entity that responsible for data migration from old tables to new ctl based ones.
+   *
+   * @param connection the connection to relational database
+   */
   public AbstractCtlMigration(Connection connection) {
     this.connection = connection;
     runner = new QueryRunner();
     dd = new DataDefinition(connection);
   }
 
+
+  /**
+   * Do necessary operation to database before execution of {@link AbstractCtlMigration#transform()}
+   * method.
+   *
+   * @throws SQLException the sql exception
+   */
   public void beforeTransform() throws SQLException {
     // delete relation between <table_prefix>_schems to schems
     dd.dropUnnamedFk(getPrefixTableName() + "_schems", "schems");
   }
 
 
+  /**
+   * Do main part of data migration from old tables to new ctl based ones.
+   *
+   * @throws SQLException the sql exception
+   */
   protected List<Schema> transform() throws SQLException {
     // fetch schemas of appropriate feature like configuration
     List<Schema> schemas = runner.query(connection, "select "
@@ -76,6 +94,12 @@ public abstract class AbstractCtlMigration {
   }
 
 
+  /**
+   * Do necessary operation to database after execution of  {@link AbstractCtlMigration#transform()}
+   * method.
+   *
+   * @throws SQLException the sql exception
+   */
   public void afterTransform() throws SQLException {
     dd.alterTable(getPrefixTableName() + "_schems")
         .add(Constraint.constraint("FK_" + getPrefixTableName() + "_base_schems_id")

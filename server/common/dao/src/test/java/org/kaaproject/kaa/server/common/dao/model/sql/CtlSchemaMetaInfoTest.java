@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.kaaproject.kaa.server.common.dao.service;
+package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/cassandra-dao-test-context.xml")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class CassandraCTLSchemaServiceImplTest extends CtlServiceImplTest {
+import nl.jqno.equalsverifier.EqualsVerifier;
 
+import org.junit.Test;
+
+public class CtlSchemaMetaInfoTest {
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(CTLSchemaMetaInfo.class).usingGetClass().verify();
+  }
 }

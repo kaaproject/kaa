@@ -18,10 +18,10 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import akka.actor.ActorRef;
 
-public class LocalEndpointActorMD extends EndpointActorMD {
+public class LocalEndpointActorMetaData extends EndpointActorMetaData {
   String globalActorNodeId;
 
-  LocalEndpointActorMD(ActorRef actorRef, String actorId, String globalActorNodeId) {
+  LocalEndpointActorMetaData(ActorRef actorRef, String actorId, String globalActorNodeId) {
     super(actorRef, actorId);
     this.globalActorNodeId = globalActorNodeId;
   }

@@ -104,6 +104,11 @@ public class KaaClientProperties extends Properties {
     }
   }
 
+  /**
+   * Calculates a hash for SDK properties.
+   *
+   * @return hash for SDK properties
+   */
   public byte[] getPropertiesHash() {
     if (propertiesHash == null) {
       try {

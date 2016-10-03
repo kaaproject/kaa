@@ -33,6 +33,9 @@ public class AuthResultDto implements Serializable {
   public AuthResultDto() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public AuthResultDto(String username, String displayName, KaaAuthorityDto authority) {
     super();
     this.username = username;

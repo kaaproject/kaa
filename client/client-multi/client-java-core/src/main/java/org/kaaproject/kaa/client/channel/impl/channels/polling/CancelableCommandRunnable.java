@@ -37,6 +37,9 @@ public abstract class CancelableCommandRunnable implements CancelableRunnable {
     }
   }
 
+  /**
+   * Waits until a command executed.
+   */
   public void waitUntilExecuted() {
     while (isRunning) {
       synchronized (this) {

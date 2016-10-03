@@ -20,7 +20,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
 import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -88,7 +88,7 @@ public class AkkaContext {
   @Autowired
   private RegistrationService registrationService;
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
   @Value("#{properties[support_unencrypted_connection]}")
   private Boolean supportUnencryptedConnection;
 
@@ -156,7 +156,7 @@ public class AkkaContext {
     return endpointUserService;
   }
 
-  public CTLService getCtlService() {
+  public CtlService getCtlService() {
     return ctlService;
   }
 

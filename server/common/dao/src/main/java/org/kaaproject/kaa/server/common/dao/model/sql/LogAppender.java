@@ -68,6 +68,9 @@ public class LogAppender extends Plugin<LogAppenderDto> implements Serializable 
     this.id = id;
   }
 
+  /**
+   * Instantiates a log appender.
+   */
   public LogAppender(LogAppenderDto dto) {
     super(dto);
     if (dto != null) {
@@ -121,7 +124,9 @@ public class LogAppender extends Plugin<LogAppenderDto> implements Serializable 
     dto.setMinLogSchemaVersion(minLogSchemaVersion);
     dto.setMaxLogSchemaVersion(maxLogSchemaVersion);
     dto.setConfirmDelivery(confirmDelivery);
-    dto.setHeaderStructure(headerStructure != null ? new ArrayList<>(headerStructure) : new ArrayList<LogHeaderStructureDto>());
+    dto.setHeaderStructure(headerStructure != null
+        ? new ArrayList<>(headerStructure)
+        : new ArrayList<>());
     return dto;
   }
 

@@ -48,6 +48,9 @@ public class DefaultFailoverManager implements FailoverManager {
             DEFAULT_FAILURE_RESOLUTION_TIMEOUT, DEFAULT_TIME_UNIT);
   }
 
+  /**
+   * All-args constructor.
+   */
   public DefaultFailoverManager(KaaChannelManager channelManager,
                                 ExecutorContext context,
                                 FailoverStrategy failoverStrategy,

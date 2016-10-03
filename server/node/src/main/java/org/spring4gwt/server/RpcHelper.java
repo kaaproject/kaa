@@ -28,21 +28,25 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class RPCHelper {
+public class RpcHelper {
 
-  private static final Log LOG = LogFactory.getLog(RPCHelper.class);
+  private static final Log LOG = LogFactory.getLog(RpcHelper.class);
 
-  private RPCHelper() {
+  private RpcHelper() {
   }
 
-  public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
-                                               SerializationPolicy serializationPolicy) throws SerializationException {
+  public static String invokeAndEncodeResponse(Object target,
+                                               Method serviceMethod,
+                                               Object[] args,
+                                               SerializationPolicy serializationPolicy)
+      throws SerializationException {
     return invokeAndEncodeResponse(target, serviceMethod, args, serializationPolicy,
         AbstractSerializationStream.DEFAULT_FLAGS);
   }
 
   public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
-                                               SerializationPolicy serializationPolicy, int flags) throws SerializationException {
+                                               SerializationPolicy serializationPolicy,
+                                               int flags) throws SerializationException {
     if (serviceMethod == null) {
       throw new NullPointerException("serviceMethod");
     }
@@ -55,26 +59,29 @@ public class RPCHelper {
     try {
       Object result = serviceMethod.invoke(target, args);
 
-      responsePayload = RPC.encodeResponseForSuccess(serviceMethod, result, serializationPolicy, flags);
-    } catch (IllegalAccessException e) {
+      responsePayload = RPC.encodeResponseForSuccess(serviceMethod, result,
+          serializationPolicy, flags);
+
+    } catch (IllegalAccessException ex) {
       SecurityException securityException =
           new SecurityException(formatIllegalAccessErrorMessage(target, serviceMethod));
-      securityException.initCause(e);
+      securityException.initCause(ex);
       throw securityException;
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException ex) {
       SecurityException securityException =
           new SecurityException(formatIllegalArgumentErrorMessage(target, serviceMethod, args));
-      securityException.initCause(e);
+      securityException.initCause(ex);
       throw securityException;
-    } catch (InvocationTargetException e) {
+    } catch (InvocationTargetException ex) {
       // Try to encode the caught exception
       //
-      Throwable cause = e.getCause();
+      Throwable cause = ex.getCause();
 
       LOG.error("Unexpected exception occured while invoking service method - "
-          + (serviceMethod != null ? serviceMethod.getName() : "null"), e);
+          + serviceMethod.getName(), ex);
 
-      responsePayload = RPC.encodeResponseForFailure(serviceMethod, cause, serializationPolicy, flags);
+      responsePayload = RPC
+          .encodeResponseForFailure(serviceMethod, cause, serializationPolicy, flags);
     }
 
     return responsePayload;

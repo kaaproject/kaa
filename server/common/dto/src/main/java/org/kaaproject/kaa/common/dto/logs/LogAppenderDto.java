@@ -36,6 +36,9 @@ public class LogAppenderDto extends PluginDto {
     super();
   }
 
+  /**
+   * All-args constructor.
+   */
   public LogAppenderDto(LogAppenderDto logAppenderDto) {
     super(logAppenderDto);
     this.applicationToken = logAppenderDto.getApplicationToken();

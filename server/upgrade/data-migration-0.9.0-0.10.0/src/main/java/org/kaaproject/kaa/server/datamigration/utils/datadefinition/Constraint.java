@@ -61,6 +61,12 @@ public class Constraint {
     return onUpdateOpt;
   }
 
+
+  /**
+   * Set unique constraint on specified field.
+   *
+   * @param field the name of field
+   */
   public Constraint unique(String field) {
     if (this.type != null) {
       throw new BuilderException("Incorrect sequence of builder's methods");
@@ -70,6 +76,11 @@ public class Constraint {
     return this;
   }
 
+  /**
+   * Set primary key constraint on specified field.
+   *
+   * @param field the name of field
+   */
   public Constraint primaryKey(String field) {
     if (this.type != null) {
       throw new BuilderException("Incorrect sequence of builder's methods");
@@ -79,6 +90,11 @@ public class Constraint {
     return this;
   }
 
+  /**
+   * Set foreign key constraint on specified field.
+   *
+   * @param field the name of field
+   */
   public Constraint foreignKey(String field) {
     if (this.type != null) {
       throw new BuilderException("Incorrect sequence of builder's methods");
@@ -89,6 +105,13 @@ public class Constraint {
   }
 
 
+  /**
+   * Specify referenced table and field for foreign key constraint.
+   *
+   * @param referencedTable the name of referenced table
+   * @param referencedField the name of  referenced field
+   * @return the constraint
+   */
   public Constraint references(String referencedTable, String referencedField) {
     if (this.type != ConstraintType.FK) {
       throw new BuilderException("Constraint type should be FK");
@@ -98,6 +121,11 @@ public class Constraint {
     return this;
   }
 
+  /**
+   *  Specify reference option for referential <b>on delete</b> action.
+   *
+   * @param referenceOption  reference option, i. e. RESTRICT or CASCADE
+   */
   public Constraint onDelete(ReferenceOptions referenceOption) {
     if (this.type != ConstraintType.FK) {
       throw new BuilderException("Constraint type should be FK");
@@ -109,6 +137,11 @@ public class Constraint {
     return this;
   }
 
+  /**
+   *  Specify reference option for referential <b>on update</b> action.
+   *
+   * @param referenceOption  reference option, i. e. RESTRICT or CASCADE
+   */
   public Constraint onUpdate(ReferenceOptions referenceOption) {
     if (this.type != ConstraintType.FK) {
       throw new BuilderException("Constraint type should be FK");

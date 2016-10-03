@@ -36,6 +36,13 @@ public class DtoByteMarshaller {
   private DtoByteMarshaller() {
   }
 
+  /**
+   * Converts an object ot byte array.
+   *
+   * @param object object
+   * @param <T>    generic type
+   * @return       byte array
+   */
   public static <T> byte[] toBytes(T object) {
     ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
     try {
@@ -47,6 +54,11 @@ public class DtoByteMarshaller {
     return byteStream.toByteArray();
   }
 
+  /**
+   * Converts a byte array to an object.
+   *
+   * @param bytes byte array
+   */
   @SuppressWarnings("unchecked")
   public static <T> T fromBytes(byte[] bytes) {
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);

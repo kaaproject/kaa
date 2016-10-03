@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
 import org.apache.hadoop.fs.Path;
@@ -24,8 +25,7 @@ public class KaaSinkKey implements EventConstants {
   private final String applicationToken;
   private final int schemaVersion;
 
-  public KaaSinkKey(String applicationToken,
-                    int schemaVersion) {
+  public KaaSinkKey(String applicationToken, int schemaVersion) {
     super();
     this.applicationToken = applicationToken;
     this.schemaVersion = schemaVersion;

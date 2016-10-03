@@ -35,7 +35,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -46,14 +46,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Repository
-public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
-        implements CtlSchemaDao<CTLSchema> {
+public class HibernateCtlSchemaDao extends HibernateAbstractDao<CtlSchema>
+        implements CtlSchemaDao<CtlSchema> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateCtlSchemaDao.class);
 
   @Override
-  protected Class<CTLSchema> getEntityClass() {
-    return CTLSchema.class;
+  protected Class<CtlSchema> getEntityClass() {
+    return CtlSchema.class;
   }
 
   private Criterion buildScopeCriterion(String tenantId, String applicationId) {
@@ -85,20 +85,20 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public CTLSchema save(CTLSchema object) {
+  public CtlSchema save(CtlSchema object) {
     return super.save(object);
   }
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public CTLSchema save(CTLSchema object, boolean flush) {
+  public CtlSchema save(CtlSchema object, boolean flush) {
     return super.save(object, flush);
   }
 
   @Override
-  public List<CTLSchema> findSystemSchemas() {
+  public List<CtlSchema> findSystemSchemas() {
     LOG.debug("Searching system ctl metadata");
-    List<CTLSchema> schemas = findListByCriterionWithAlias(
+    List<CtlSchema> schemas = findListByCriterionWithAlias(
         CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS,
         buildScopeCriterion(null, null));
     if (LOG.isTraceEnabled()) {
@@ -110,9 +110,9 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public List<CTLSchema> findAvailableSchemasForTenant(String tenantId) {
+  public List<CtlSchema> findAvailableSchemasForTenant(String tenantId) {
     LOG.debug("Searching available ctl schemas for tenant with id [{}]", tenantId);
-    List<CTLSchema> availableSchemas = findListByCriterionWithAlias(
+    List<CtlSchema> availableSchemas = findListByCriterionWithAlias(
         CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS,
         buildScopeCriterion(tenantId, null));
     if (LOG.isTraceEnabled()) {
@@ -124,11 +124,11 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public List<CTLSchema> findAvailableSchemasForApplication(String tenantId, String appId) {
+  public List<CtlSchema> findAvailableSchemasForApplication(String tenantId, String appId) {
     LOG.debug("Searching available ctl schemas for application by tenant id [{}] "
             + "and application id [{}]",
         tenantId, appId);
-    List<CTLSchema> availableSchemas = findListByCriterionWithAlias(
+    List<CtlSchema> availableSchemas = findListByCriterionWithAlias(
         CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS,
         buildScopeCriterion(tenantId, appId));
 
@@ -142,9 +142,9 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public CTLSchema findByFqnAndVerAndTenantIdAndApplicationId(
+  public CtlSchema findByFqnAndVerAndTenantIdAndApplicationId(
       String fqn, Integer version, String tenantId, String applicationId) {
-    CTLSchema ctlSchema = null;
+    CtlSchema ctlSchema = null;
     LOG.debug("Searching ctl schema by fqn [{}], version [{}], tenant [{}] and applicationId [{}]",
         fqn, version, tenantId, applicationId);
     if (isNotBlank(fqn) && version != null) {
@@ -177,8 +177,8 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public CTLSchema findByMetaInfoIdAndVer(String metaInfoId, Integer version) {
-    CTLSchema ctlSchema = null;
+  public CtlSchema findByMetaInfoIdAndVer(String metaInfoId, Integer version) {
+    CtlSchema ctlSchema = null;
     LOG.debug("Searching ctl schema by meta info id [{}] and version [{}]",
         metaInfoId, version);
     if (isNotBlank(metaInfoId) && version != null) {
@@ -199,11 +199,11 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public CTLSchema findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn,
+  public CtlSchema findAnyByFqnAndVerAndTenantIdAndApplicationId(String fqn,
                                                                  Integer version,
                                                                  String tenantId,
                                                                  String applicationId) {
-    CTLSchema ctlSchema = null;
+    CtlSchema ctlSchema = null;
     LOG.debug("Searching any ctl schema by fqn [{}], version [{}], "
             + "tenant [{}] and applicationId [{}]",
         fqn, version, tenantId, applicationId);
@@ -226,7 +226,7 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public CTLSchema findLatestByFqnAndTenantIdAndApplicationId(String fqn,
+  public CtlSchema findLatestByFqnAndTenantIdAndApplicationId(String fqn,
                                                               String tenantId,
                                                               String applicationId) {
     LOG.debug("Searching latest ctl schema by fqn [{}], tenantId [{}] and applicationId [{}]",
@@ -248,7 +248,7 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
                 : Restrictions.isNull(CTL_SCHEMA_META_INFO_ALIAS_APPLICATION_ID))
         ).addOrder(Order.desc(CTL_SCHEMA_VERSION))
         .setMaxResults(FIRST);
-    CTLSchema latestSchema = findOneByCriteria(criteria);
+    CtlSchema latestSchema = findOneByCriteria(criteria);
     if (LOG.isTraceEnabled()) {
       LOG.trace("[{},{},{}] Search result: [{}].",
           fqn, tenantId, applicationId, latestSchema);
@@ -260,8 +260,8 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public CTLSchema findLatestByMetaInfoId(String metaInfoId) {
-    CTLSchema latestSchema = null;
+  public CtlSchema findLatestByMetaInfoId(String metaInfoId) {
+    CtlSchema latestSchema = null;
     LOG.debug("Searching latest version of ctl schema by meta info id [{}]",
         metaInfoId);
     if (isNotBlank(metaInfoId)) {
@@ -281,7 +281,7 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public List<CTLSchema> findAllByFqnAndTenantIdAndApplicationId(String fqn,
+  public List<CtlSchema> findAllByFqnAndTenantIdAndApplicationId(String fqn,
                                                                  String tenantId,
                                                                  String applicationId) {
     LOG.debug("Searching available version of ctl schema by fqn [{}], "
@@ -304,7 +304,7 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
                 : Restrictions.isNull(CTL_SCHEMA_META_INFO_ALIAS_APPLICATION_ID))
         ).addOrder(Order.asc(CTL_SCHEMA_VERSION));
 
-    List<CTLSchema> schemas = findListByCriteria(criteria);
+    List<CtlSchema> schemas = findListByCriteria(criteria);
     if (LOG.isTraceEnabled()) {
       LOG.trace("Search result: [{}].", Arrays.toString(schemas.toArray()));
     } else {
@@ -314,13 +314,13 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public List<CTLSchema> findAllByMetaInfoId(String metaInfoId) {
+  public List<CtlSchema> findAllByMetaInfoId(String metaInfoId) {
     LOG.debug("Searching available version of ctl schema by meta info id [{}]", metaInfoId);
     Criteria criteria = getCriteria()
         .createAlias(CTL_SCHEMA_META_INFO_PROPERTY, CTL_SCHEMA_META_INFO_ALIAS)
         .add(Restrictions.eq(CTL_SCHEMA_META_INFO_ALIAS_ID, Long.valueOf(metaInfoId)))
         .addOrder(Order.asc(CTL_SCHEMA_VERSION));
-    List<CTLSchema> schemas = findListByCriteria(criteria);
+    List<CtlSchema> schemas = findListByCriteria(criteria);
     if (LOG.isTraceEnabled()) {
       LOG.trace("Search result: [{}].", Arrays.toString(schemas.toArray()));
     } else {
@@ -330,9 +330,9 @@ public class HibernateCtlSchemaDao extends HibernateAbstractDao<CTLSchema>
   }
 
   @Override
-  public List<CTLSchema> findDependentSchemas(String schemaId) {
+  public List<CtlSchema> findDependentSchemas(String schemaId) {
     LOG.debug("Searching dependents ctl schemas for schema with id [{}]", schemaId);
-    List<CTLSchema> dependentsList = findListByCriterionWithAlias(
+    List<CtlSchema> dependentsList = findListByCriterionWithAlias(
         CTL_SCHEMA_DEPENDENCY_PROP,
         CTL_SCHEMA_DEPENDENCY_ALIAS,
         JoinType.INNER_JOIN,

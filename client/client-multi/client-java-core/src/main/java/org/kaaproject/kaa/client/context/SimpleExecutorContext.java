@@ -48,6 +48,9 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
     this(SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD);
   }
 
+  /**
+   * All-args constructor.
+   */
   public SimpleExecutorContext(int lifeCycleThreadCount, int apiThreadCount,
                                int callbackThreadCount, int scheduledThreadCount) {
     super();

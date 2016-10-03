@@ -20,6 +20,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
+import static java.lang.Long.parseLong;
 
 import com.datastax.driver.core.BatchStatement;
 import com.datastax.driver.core.Cluster;
@@ -50,14 +51,21 @@ public class CtlNotificationMigration extends AbstractCtlMigration {
   private String dbName;
   private String nosql;
 
-  public CtlNotificationMigration(Connection connection, String host, String db, String nosql) {
+  /**
+   * Create entity that responsible for data migration from old tables notification to
+   * new ctl based ones.
+   *
+   * @param connection the connection to relational database
+   * @param options    the options for configuring NoSQL databases
+   */
+  public CtlNotificationMigration(Connection connection, Options options) {
     super(connection);
-    client = new MongoClient(host);
+    client = new MongoClient(options.getHost());
     cluster = Cluster.builder()
-        .addContactPoint(host)
+        .addContactPoint(options.getHost())
         .build();
-    dbName = db;
-    this.nosql = nosql;
+    dbName = options.getDbName();
+    this.nosql = options.getDbName();
   }
 
 
@@ -73,15 +81,24 @@ public class CtlNotificationMigration extends AbstractCtlMigration {
       FindIterable<Document> cursor = notification.find();
       for (Document document : cursor) {
         Object id = document.get("_id");
-        Long schemaId = Long.parseLong((String) document.get("notification_schema_id"));
-        notification.updateMany(Filters.eq("_id", id), Filters.eq("$set", Filters.eq("notification_schema_id", schemaId + idShift)));
+        Long schemaId = parseLong((String) document.get("notification_schema_id"));
+        notification.updateMany(
+            Filters.eq("_id", id),
+            Filters.eq("$set", Filters.eq("notification_schema_id", schemaId + idShift))
+        );
       }
 
       cursor = enpNotification.find();
       for (Document document : cursor) {
         Object id = document.get("_id");
-        Long schemaId = Long.parseLong((String) document.get("notification.notification_schema_id"));
-        notification.updateMany(Filters.eq("_id", id), Filters.eq("$set", Filters.eq("notification.notification_schema_id", schemaId + idShift)));
+        Long schemaId = parseLong((String) document.get("notification.notification_schema_id"));
+        notification.updateMany(
+            Filters.eq("_id", id),
+            Filters.eq("$set", Filters.eq(
+                "notification.notification_schema_id",
+                schemaId + idShift)
+            )
+        );
       }
     } else {
       Session session = cluster.connect(dbName);
@@ -91,7 +108,7 @@ public class CtlNotificationMigration extends AbstractCtlMigration {
       ResultSet results = session.execute(select().from("notification"));
       for (Row row : results) {
         String id = row.getString("nf_id");
-        Long schemaId = Long.parseLong(row.getString("schema_id"));
+        Long schemaId = parseLong(row.getString("schema_id"));
         String[] ids = id.split("::");
 
         batchStatement.add(
@@ -108,7 +125,7 @@ public class CtlNotificationMigration extends AbstractCtlMigration {
       results = session.execute(select().from("ep_nfs"));
       for (Row row : results) {
         String id = row.getString("nf_id");
-        Long schemaId = Long.parseLong(row.getString("schema_id"));
+        Long schemaId = parseLong(row.getString("schema_id"));
         String[] ids = id.split("::");
         ByteBuffer epKeyHash = Bytes.fromHexString(ids[0]);
         Date lastModTime = new Date(Long.valueOf(ids[1]));

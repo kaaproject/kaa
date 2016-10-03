@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryCallback;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode;
@@ -58,7 +58,7 @@ public class ApplicationLogActorMessageProcessor {
 
   private final LogAppenderService logAppenderService;
   private final CacheService cacheService;
-  private final CTLService ctlService;
+  private final CtlService ctlService;
 
   private final Map<String, LogAppender> logAppenders;
 

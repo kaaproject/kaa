@@ -34,7 +34,7 @@ import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterExceptio
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamilyVersion;
@@ -70,7 +70,7 @@ public class EventClassServiceImpl implements EventClassService {
   private EventSchemaProcessor eventSchemaProcessor;
 
   @Autowired
-  private CtlSchemaDao<CTLSchema> ctlSchemaDao;
+  private CtlSchemaDao<CtlSchema> ctlSchemaDao;
 
   @Override
   public List<EventClassFamilyDto> findEventClassFamiliesByTenantId(

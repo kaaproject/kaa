@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
-import org.kaaproject.kaa.common.dto.CTLDataDto;
+import org.kaaproject.kaa.common.dto.CtlDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
@@ -121,7 +121,7 @@ public abstract class AbstractCassandraTest {
     return configurations;
   }
 
-  protected EndpointProfileDto generateEndpointProfile(CTLDataDto dataDto) {
+  protected EndpointProfileDto generateEndpointProfile(CtlDataDto dataDto) {
     return generateEndpointProfile(null, null, null, null, dataDto);
   }
 
@@ -129,7 +129,7 @@ public abstract class AbstractCassandraTest {
     return generateEndpointProfile(appId, sdkToken, accessToken, topicIds, null);
   }
 
-  protected EndpointProfileDto generateEndpointProfile(String appId, String sdkToken, String accessToken, List<String> topicIds, CTLDataDto ctlDataDto) {
+  protected EndpointProfileDto generateEndpointProfile(String appId, String sdkToken, String accessToken, List<String> topicIds, CtlDataDto ctlDataDto) {
     byte[] keyHash = generateBytes();
 
     if (appId == null) {

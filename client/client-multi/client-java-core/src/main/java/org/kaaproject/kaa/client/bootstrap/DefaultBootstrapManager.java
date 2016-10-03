@@ -65,6 +65,9 @@ public class DefaultBootstrapManager implements BootstrapManager {
   private Integer serverToApply;
   private ExecutorContext executorContext;
 
+  /**
+   * All-args constructor.
+   */
   public DefaultBootstrapManager(BootstrapTransport transport, ExecutorContext executorContext,
                                  FailureListener failureListener) {
     this.transport = transport;

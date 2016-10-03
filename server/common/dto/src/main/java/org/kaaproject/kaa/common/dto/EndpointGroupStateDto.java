@@ -30,6 +30,9 @@ public class EndpointGroupStateDto implements Serializable {
     super();
   }
 
+  /**
+   * All-args constructor.
+   */
   public EndpointGroupStateDto(String endpointGroupId, String profileFilterId,
                                String configurationId) {
     super();

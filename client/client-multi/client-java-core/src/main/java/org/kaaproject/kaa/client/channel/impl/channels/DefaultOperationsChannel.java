@@ -115,6 +115,9 @@ public class DefaultOperationsChannel implements KaaDataChannel, RawDataProcesso
   private volatile boolean isShutdown = false;
   private volatile boolean isPaused = false;
 
+  /**
+   * All-args constructor.
+   */
   public DefaultOperationsChannel(AbstractKaaClient client, KaaClientState state,
                                   FailoverManager failoverManager) {
     this.client = client;

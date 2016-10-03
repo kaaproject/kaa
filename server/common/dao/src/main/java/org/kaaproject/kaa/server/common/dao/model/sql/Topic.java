@@ -93,6 +93,9 @@ public class Topic extends GenericModel<TopicDto> implements Serializable {
     this.id = id;
   }
 
+  /**
+   * Instantiates new topic.
+   */
   public Topic(TopicDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);

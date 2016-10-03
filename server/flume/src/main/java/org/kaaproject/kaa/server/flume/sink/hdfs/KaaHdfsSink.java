@@ -147,8 +147,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
 
     // we already have logged in successfully
     if (curUser != null && curUser.getUserName().equals(principal)) {
-      LOG.debug("{}: Using existing principal ({}): {}",
-          new Object[]{sink, principal, curUser});
+      LOG.debug("{}: Using existing principal ({}): {}", new Object[]{sink, principal, curUser});
 
       // no principal found
     } else {
@@ -325,9 +324,9 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         return Status.BACKOFF;
       }
       return Status.READY;
-    } catch (IOException eIo) {
+    } catch (IOException ex) {
       transaction.rollback();
-      LOG.warn("HDFS IO error", eIo);
+      LOG.warn("HDFS IO error", ex);
       return Status.BACKOFF;
     } catch (Throwable th) { //NOSONAR
       transaction.rollback();
@@ -391,7 +390,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         .removalListener(this)
         .build(bucketWriterLoader);
 
-    writerFlushMap = new HashMap<HdfsSinkKey, BucketWriter>();
+    writerFlushMap = new HashMap<>();
 
     sinkCounter.start();
     started = true;
@@ -424,12 +423,12 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       statisticsFuture = null;
     }
     // shut down all our thread pools
-    ExecutorService toShutdown[] = {callTimeoutPool, timedRollerPool, statisticsPool};
+    ExecutorService[] toShutdown = {callTimeoutPool, timedRollerPool, statisticsPool};
     for (ExecutorService execService : toShutdown) {
       if (execService != null) {
         execService.shutdown();
         try {
-          while (execService.isTerminated() == false) {
+          while (!execService.isTerminated()) {
             execService.awaitTermination(
                 Math.max(
                     ConfigurationConstants.DEFAULT_HDFS_CALL_TIMEOUT, callTimeout),
@@ -462,8 +461,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
   }
 
   @Override
-  public void onRemoval(
-      RemovalNotification<HdfsSinkKey, BucketWriter> entry) {
+  public void onRemoval(RemovalNotification<HdfsSinkKey, BucketWriter> entry) {
     if (started) {
       RemovalCause cause = entry.getCause();
       HdfsSinkKey key = entry.getKey();

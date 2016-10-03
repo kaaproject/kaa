@@ -36,6 +36,9 @@ public class EndpointProfileBodyDto implements Serializable {
   public EndpointProfileBodyDto() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public EndpointProfileBodyDto(byte[] endpointKeyHash, String clientSideProfile,
                                 String serverSideProfile, int clientSideProfileVersion,
                                 int serverSideProfileVersion, String appId) {

@@ -36,6 +36,9 @@ public class IpTransportInfo extends GenericTransportInfo {
   private final int port;
   private final PublicKey publicKey;
 
+  /**
+   * All-args constructor.
+   */
   public IpTransportInfo(TransportConnectionInfo parent) {
     super(parent.getServerType(), new ProtocolMetaData(parent.getAccessPointId(),
             new ProtocolVersionPair(parent.getTransportId()

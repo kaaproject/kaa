@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.io;
 
+
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.japi.Creator;
-import scala.concurrent.duration.Duration;
 
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -28,8 +28,11 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.io.response.Se
 import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import scala.concurrent.duration.Duration;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,24 +40,17 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-/**
- * The Class EncDecActor.
- */
+
 public class EncDecActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(EncDecActor.class);
 
   private final EncDecActorMessageProcessor messageProcessor;
   /**
-   * Current redirection rules
+   * Current redirection rules.
    */
   private final HashMap<Long, RedirectionRule> redirectionRules; // NOSONAR
-  /**
-   * random
-   */
+
   private final Random random;
 
   /**
@@ -71,18 +67,31 @@ public class EncDecActor extends UntypedActor {
     this.random = new Random();
   }
 
-  public static RedirectionRule checkInitRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) {
+  public static RedirectionRule checkInitRedirection(
+      HashMap<Long, RedirectionRule> redirectionRules, double random) {
     return checkRedirection(redirectionRules, random, true);
   }
 
-  public static RedirectionRule checkSessionRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random) {
+  public static RedirectionRule checkSessionRedirection(
+      HashMap<Long, RedirectionRule> redirectionRules, double random) {
     return checkRedirection(redirectionRules, random, false);
   }
 
-  public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules, double random, boolean initSession) { // NOSONAR
+
+  /**
+   * Check redirection redirection rule.
+   *
+   * @param redirectionRules the redirection rules
+   * @param random           the random
+   * @param initSession      determines if the session is initial
+   * @return the redirection rule
+   */
+  public static RedirectionRule checkRedirection(HashMap<Long, RedirectionRule> redirectionRules,
+                                                 double random, boolean initSession) { // NOSONAR
     RedirectionRule result = null;
     for (RedirectionRule rule : redirectionRules.values()) {
-      double redirectionProbability = initSession ? rule.initRedirectProbability : rule.sessionRedirectProbability;
+      double redirectionProbability = initSession
+          ? rule.initRedirectProbability : rule.sessionRedirectProbability;
       if (random <= redirectionProbability) {
         result = rule;
         break;
@@ -130,7 +139,8 @@ public class EncDecActor extends UntypedActor {
       }
     } else if (message instanceof SessionAware) {
       if (message instanceof SessionAwareMessage) {
-        RedirectionRule redirection = checkSessionRedirection(redirectionRules, random.nextDouble());
+        RedirectionRule redirection = checkSessionRedirection(
+            redirectionRules, random.nextDouble());
         if (redirection == null) {
           messageProcessor.decodeAndForward(context(), (SessionAwareMessage) message);
         } else {
@@ -152,7 +162,8 @@ public class EncDecActor extends UntypedActor {
     context()
         .system()
         .scheduler()
-        .scheduleOnce(Duration.create(body.ruleTTL, TimeUnit.MILLISECONDS), self(), new RuleTimeoutMessage(body.getRuleId()),
+        .scheduleOnce(Duration.create(body.ruleTTL, TimeUnit.MILLISECONDS), self(),
+            new RuleTimeoutMessage(body.getRuleId()),
             context().dispatcher(), self());
     redirectionRules.put(body.getRuleId(), body);
   }
@@ -163,24 +174,14 @@ public class EncDecActor extends UntypedActor {
     }
   }
 
-  /**
-   * The Class ActorCreator.
-   */
+
   public static class ActorCreator implements Creator<EncDecActor> {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The eps actor.
-     */
     private final ActorRef epsActor;
 
-    /**
-     * The Akka service context
-     */
+
     private final AkkaContext context;
 
     private final Set<String> platformProtocols;
@@ -196,7 +197,7 @@ public class EncDecActor extends UntypedActor {
       super();
       this.epsActor = epsActor;
       this.context = context;
-      this.platformProtocols = new HashSet<String>(platformProtocols);
+      this.platformProtocols = new HashSet<>(platformProtocols);
     }
 
     /*

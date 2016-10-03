@@ -36,7 +36,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.schema.system.EmptyData;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
 import org.kaaproject.kaa.server.common.dao.UserService;
 import org.kaaproject.kaa.server.common.dao.model.sql.SdkProfile;
@@ -87,7 +87,7 @@ public class ProfileServiceIT extends AbstractTest {
   @Autowired
   protected org.kaaproject.kaa.server.common.dao.ProfileService daoProfileService;
   @Autowired
-  protected CTLService ctlService;
+  protected CtlService ctlService;
   private String sdkToken;
   private String newSdkToken;
   private TenantDto tenant;

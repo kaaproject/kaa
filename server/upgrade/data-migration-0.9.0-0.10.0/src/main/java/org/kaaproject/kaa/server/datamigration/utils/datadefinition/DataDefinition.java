@@ -59,7 +59,7 @@ public class DataDefinition {
     private String tableName;
     private List<Constraint> addConstrains = new ArrayList<>();
 
-    public AlterBuilder(String tableName) {
+    AlterBuilder(String tableName) {
       this.tableName = tableName;
     }
 
@@ -68,6 +68,11 @@ public class DataDefinition {
       return this;
     }
 
+    /**
+     * Execute created query.
+     *
+     * @throws SQLException the sql exception
+     */
     public void execute() throws SQLException {
       StringBuilder sql = new StringBuilder("ALTER TABLE " + tableName + "\n");
       for (int i = 0; i < addConstrains.size(); i++) {

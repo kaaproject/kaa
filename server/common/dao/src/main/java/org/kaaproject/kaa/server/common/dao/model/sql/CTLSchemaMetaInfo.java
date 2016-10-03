@@ -88,6 +88,12 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     this.id = id;
   }
 
+  /**
+   * Updates scope.
+   *
+   * @param tenantId      tenant identifier
+   * @param applicationId application identifier
+   */
   public void updateScope(String tenantId, String applicationId) {
     Long tenId = getLongId(tenantId);
     this.tenant = tenId != null ? new Tenant(tenId) : null;

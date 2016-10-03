@@ -43,6 +43,9 @@ public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
     this(properties, new SimpleExecutorContext());
   }
 
+  /**
+   * All-args constructor.
+   */
   public DesktopKaaPlatformContext(
           KaaClientProperties properties, ExecutorContext executorContext) {
     super();

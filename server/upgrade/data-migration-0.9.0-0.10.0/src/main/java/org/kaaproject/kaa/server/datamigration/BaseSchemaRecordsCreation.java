@@ -32,12 +32,23 @@ public class BaseSchemaRecordsCreation {
   protected QueryRunner runner;
   protected DataDefinition dd;
 
+  /**
+   * Create new instance of BaseSchemaRecordsCreation.
+   *
+   * @param connection the connection to relational database
+   */
   public BaseSchemaRecordsCreation(Connection connection) {
     this.connection = connection;
     runner = new QueryRunner();
     dd = new DataDefinition(connection);
   }
 
+  /**
+   * Final phase of migration -- add created ctl based schemas to database.
+   *
+   * @param ctlToSchemas mapping of common type to a couple of schemas
+   * @throws SQLException the sql exception
+   */
   public void create(Map<Ctl, List<Schema>> ctlToSchemas) throws SQLException {
     List<Object[]> params = new ArrayList<>();
     int schemaCounter = 0;
@@ -57,7 +68,8 @@ public class BaseSchemaRecordsCreation {
       }
     }
 
-    runner.batch(connection, "insert into base_schems values(?, ?, ?, ?, ?, ?, ?, ?)", params.toArray(new Object[schemaCounter][]));
+    runner.batch(connection, "insert into base_schems values(?, ?, ?, ?, ?, ?, ?, ?)",
+        params.toArray(new Object[schemaCounter][]));
   }
 
 }

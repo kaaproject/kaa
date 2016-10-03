@@ -56,6 +56,11 @@ public class CtlAggregation {
   private Set<Ctl> ctls;
 
 
+  /**
+   * Create a new instance that aggregate the same CTL schemas.
+   *
+   * @param connection the connection to relational database
+   */
   public CtlAggregation(Connection connection) {
     this.connection = connection;
     runner = new QueryRunner();
@@ -65,9 +70,9 @@ public class CtlAggregation {
   }
 
 
-  /*
-  * Return schemas and CTLs map that further used for creating new records in base_schema table
-  * */
+  /**
+  * Return schemas and CTLs map that further used for creating new records in base_schema table.
+  */
   public Map<Ctl, List<Schema>> aggregate(List<Schema> schemas)
       throws SQLException, ConfigurationGenerationException, IOException {
     Long currentCtlMetaId = runner.query(connection,
@@ -102,7 +107,7 @@ public class CtlAggregation {
       DefaultRecordGenerationAlgorithm<RawData> algorithm =
           new DefaultRecordGenerationAlgorithmImpl<>(rawSchema, new RawDataFactory());
       String defaultRecord = algorithm.getRootData().getRawData();
-      Long tenantId = null;
+      Long tenantId;
       if (schema.getAppId() != null) {
         tenantId = runner.query(
             connection,

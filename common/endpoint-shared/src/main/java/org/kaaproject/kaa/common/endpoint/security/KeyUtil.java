@@ -158,6 +158,12 @@ public abstract class KeyUtil {
     return null;
   }
 
+  /**
+   * Generates a key pair.
+   *
+   * @return key pair
+   * @throws NoSuchAlgorithmException no such algorithm
+   */
   public static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
     KeyPairGenerator clientKeyGen = KeyPairGenerator.getInstance(RSA);
     clientKeyGen.initialize(2048);

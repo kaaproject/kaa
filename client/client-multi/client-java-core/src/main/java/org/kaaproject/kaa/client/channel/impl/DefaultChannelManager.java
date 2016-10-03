@@ -72,6 +72,9 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
   private KaaDataMultiplexer bootstrapMultiplexer;
   private KaaDataDemultiplexer bootstrapDemultiplexer;
 
+  /**
+   * All-args constructor.
+   */
   public DefaultChannelManager(BootstrapManager manager, Map<TransportProtocolId,
       List<TransportConnectionInfo>> bootststrapServers, ExecutorContext executorContext,
                                FailureListener failureListener) {

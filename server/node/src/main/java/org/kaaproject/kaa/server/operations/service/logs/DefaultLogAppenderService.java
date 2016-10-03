@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.operations.service.logs;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -47,7 +47,7 @@ public class DefaultLogAppenderService implements LogAppenderService {
   private LogAppenderBuilder logAppenderResolver;
 
   @Autowired
-  private CTLService ctlService;
+  private CtlService ctlService;
 
   @Autowired
   private LogAppendersService logAppendersService;

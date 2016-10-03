@@ -45,13 +45,12 @@ import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecord
 import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
-import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.CTLSchemaMetaInfoDao;
+import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,13 +73,13 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 @Transactional
-public class CtlServiceImpl implements CTLService {
+public class CtlService implements CtlService {
 
   private static final String JSON = "application/json";
   private static final String ZIP = "application/zip";
   private static final String VERSION = "version";
   private static final String FQN = "fqn";
-  private static final Logger LOG = LoggerFactory.getLogger(CtlServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CtlService.class);
   private static final String DEPENDENCIES = "dependencies";
   private static final String DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE = "/default_system_empty_schema"
                                                                  + ".avsc";
@@ -103,10 +102,10 @@ public class CtlServiceImpl implements CTLService {
   private static final ObjectMapper FORMATTER = new ObjectMapper();
   private final LockOptions lockOptions = new LockOptions(LockMode.PESSIMISTIC_WRITE);
   @Autowired
-  private CtlSchemaDao<CTLSchema> ctlSchemaDao;
+  private CtlSchemaDao<CtlSchema> ctlSchemaDao;
 
   @Autowired
-  private CTLSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
+  private CtlSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
 
   @Override
   public CTLSchemaDto getOrCreateEmptySystemSchema(String createdUsername) {
@@ -119,7 +118,7 @@ public class CtlServiceImpl implements CTLService {
       ctlSchema.setVersion(DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION);
       ctlSchema.setCreatedUsername(createdUsername);
       ctlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
-      String body = getStringFromFile(DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE, CtlServiceImpl.class);
+      String body = getStringFromFile(DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE, CtlService.class);
       if (!body.isEmpty()) {
         ctlSchema.setBody(body);
       } else {
@@ -151,7 +150,7 @@ public class CtlServiceImpl implements CTLService {
         CTLSchemaMetaInfo uniqueMetaInfo = ctlSchemaMetaInfoDao.save(
                 new CTLSchemaMetaInfo(metaInfo));
         ctlSchemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(uniqueMetaInfo);
-        CTLSchema ctlSchema = new CTLSchema(unSavedSchema);
+        CtlSchema ctlSchema = new CtlSchema(unSavedSchema);
         ctlSchema.setMetaInfo(uniqueMetaInfo);
         ctlSchema.setCreatedTime(System.currentTimeMillis());
         ctlSchemaMetaInfoDao.refresh(uniqueMetaInfo);
@@ -210,7 +209,7 @@ public class CtlServiceImpl implements CTLService {
   public CTLSchemaDto updateCtlSchema(CTLSchemaDto ctlSchema) {
     validateCtlSchemaObject(ctlSchema);
     LOG.debug("Update ctl schema with id [{}]", ctlSchema.getId());
-    CTLSchema schema = ctlSchemaDao.findById(ctlSchema.getId());
+    CtlSchema schema = ctlSchemaDao.findById(ctlSchema.getId());
     if (schema != null) {
       synchronized (this) {
         if (ctlSchema.getVersion()
@@ -316,18 +315,18 @@ public class CtlServiceImpl implements CTLService {
     }
     LOG.debug("Remove ctl schema by fqn {} version {}, tenant id {} and application id {}", fqn,
             version, tenantId, applicationId);
-    CTLSchema ctlSchema = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(fqn, version,
+    CtlSchema ctlSchema = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(fqn, version,
             tenantId, applicationId);
     if (ctlSchema
         != null) {
-      List<CTLSchema> dependsList = ctlSchemaDao.findDependentSchemas(ctlSchema.getStringId());
+      List<CtlSchema> dependsList = ctlSchemaDao.findDependentSchemas(ctlSchema.getStringId());
       if (dependsList.isEmpty()) {
         synchronized (this) {
           CTLSchemaMetaInfo metaInfo = ctlSchema.getMetaInfo();
           ctlSchemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(metaInfo);
           try {
             ctlSchemaDao.removeById(ctlSchema.getStringId());
-            List<CTLSchema> schemas = ctlSchemaDao.findAllByMetaInfoId(metaInfo.getStringId());
+            List<CtlSchema> schemas = ctlSchemaDao.findAllByMetaInfoId(metaInfo.getStringId());
             if (schemas == null || schemas.isEmpty()) {
               ctlSchemaMetaInfoDao.removeById(metaInfo.getStringId());
             }
@@ -451,7 +450,7 @@ public class CtlServiceImpl implements CTLService {
     validateSqlId(schemaId, "Incorrect schema id for ctl schema request.");
     LOG.debug("Find dependents schemas for schema with id [{}]", schemaId);
     List<CTLSchemaDto> list = Collections.emptyList();
-    CTLSchema schemaDto = ctlSchemaDao.findById(schemaId);
+    CtlSchema schemaDto = ctlSchemaDao.findById(schemaId);
     if (schemaDto
         != null) {
       list = convertDtoList(ctlSchemaDao.findDependentSchemas(schemaDto.getStringId()));
@@ -468,7 +467,7 @@ public class CtlServiceImpl implements CTLService {
     LOG.debug("Find dependents schemas for schema with fqn {} version {}, tenantId {} and "
               + "applicationId ()", fqn, version, tenantId, applicationId);
     List<CTLSchemaDto> schemas = Collections.emptyList();
-    CTLSchema schema = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(fqn, version,
+    CtlSchema schema = ctlSchemaDao.findByFqnAndVerAndTenantIdAndApplicationId(fqn, version,
             tenantId, applicationId);
     if (schema
         != null) {
@@ -490,10 +489,10 @@ public class CtlServiceImpl implements CTLService {
     }
   }
 
-  private List<CTLSchemaMetaInfoDto> getMetaInfoFromCtlSchema(List<CTLSchema> schemas) {
+  private List<CTLSchemaMetaInfoDto> getMetaInfoFromCtlSchema(List<CtlSchema> schemas) {
     Map<String, CTLSchemaMetaInfoDto> metaInfoMap = new HashMap<>();
     if (!schemas.isEmpty()) {
-      for (CTLSchema schema : schemas) {
+      for (CtlSchema schema : schemas) {
         String metaInfoId = schema.getMetaInfo().getStringId();
         CTLSchemaMetaInfoDto metaInfoDto = metaInfoMap.get(metaInfoId);
         if (metaInfoDto == null) {

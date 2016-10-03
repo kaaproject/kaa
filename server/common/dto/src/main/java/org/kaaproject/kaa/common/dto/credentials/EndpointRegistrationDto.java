@@ -39,6 +39,9 @@ public final class EndpointRegistrationDto implements HasId, Serializable {
   public EndpointRegistrationDto() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public EndpointRegistrationDto(String applicationId, String endpointId, String credentialsId,
                                  Integer serverProfileVersion, String serverProfileBody) {
     this.applicationId = applicationId;

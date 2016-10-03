@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
 import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.COMPRESSION_CODEC;
 import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.DEFAULT_COMPRESSION_CODEC;
 import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.DEFAULT_SYNC_INTERVAL_BYTES;
 import static org.apache.flume.serialization.AvroEventSerializerConfigurationConstants.SYNC_INTERVAL_BYTES;
+import static org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD;
+import static org.kaaproject.kaa.server.common.log.shared.RecordWrapperSchemaGenerator.generateRecordWrapperSchema;
 
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
@@ -46,11 +49,11 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AvroKaaEventSerializer implements EventSerializer, Configurable,
-    EventConstants {
+public class AvroKaaEventSerializer
+    implements EventSerializer, Configurable, EventConstants {
 
   private static final Logger LOG = LoggerFactory.getLogger(AvroKaaEventSerializer.class);
-  private static Map<KaaSinkKey, Schema> schemaCache = new HashMap<KaaSinkKey, Schema>();
+  private static Map<KaaSinkKey, Schema> schemaCache = new HashMap<>();
   private final OutputStream out;
   private DatumReader<GenericRecord> datumReader;
   private BinaryDecoder binaryDecoder;
@@ -100,23 +103,22 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
     binaryDecoder = DecoderFactory.get().binaryDecoder(kaaRecordEvent.getBody(), binaryDecoder);
     GenericRecord recordData = datumReader.read(null, binaryDecoder);
 
-    wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD, kaaRecordEvent.getRecordHeader());
+    wrapperRecord.put(RECORD_HEADER_FIELD, kaaRecordEvent.getRecordHeader());
     wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_DATA_FIELD, recordData);
 
     dataFileWriter.append(wrapperRecord);
   }
 
   private void initialize(Event event) throws IOException {
-    Schema schema = null;
-    Schema wrapperSchema = null;
+    Schema schema;
     KaaSinkKey key = new KaaSinkKey(event.getHeaders());
     schema = schemaCache.get(key);
     if (schema == null) {
       try {
         schema = schemaSource.loadByKey(key);
-      } catch (Exception e) {
+      } catch (Exception ex) {
         LOG.error("Unable to load schema by key {}", key);
-        LOG.error("Caused by: ", e);
+        LOG.error("Caused by: ", ex);
         throw new FlumeException("Could not find schema for event "
             + event);
       }
@@ -133,12 +135,12 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
       schema = new Schema.Parser().parse(schemaString);
     }
 
-    datumReader = new GenericDatumReader<GenericRecord>(schema);
+    datumReader = new GenericDatumReader<>(schema);
 
-    wrapperSchema = RecordWrapperSchemaGenerator.generateRecordWrapperSchema(schema.toString());
+    Schema wrapperSchema = generateRecordWrapperSchema(schema.toString());
 
-    writer = new GenericDatumWriter<Object>(wrapperSchema);
-    dataFileWriter = new DataFileWriter<Object>(writer);
+    writer = new GenericDatumWriter<>(wrapperSchema);
+    dataFileWriter = new DataFileWriter<>(writer);
 
     dataFileWriter.setSyncInterval(syncIntervalBytes);
 
@@ -146,10 +148,10 @@ public class AvroKaaEventSerializer implements EventSerializer, Configurable,
       CodecFactory codecFactory = CodecFactory
           .fromString(compressionCodec);
       dataFileWriter.setCodec(codecFactory);
-    } catch (AvroRuntimeException e) {
+    } catch (AvroRuntimeException ex) {
       LOG.warn("Unable to instantiate avro codec with name ("
           + compressionCodec
-          + "). Compression disabled. Exception follows.", e);
+          + "). Compression disabled. Exception follows.", ex);
     }
 
     dataFileWriter.create(wrapperSchema, out);

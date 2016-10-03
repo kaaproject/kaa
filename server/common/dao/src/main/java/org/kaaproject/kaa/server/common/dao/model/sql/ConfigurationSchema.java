@@ -37,7 +37,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = CONFIGURATION_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class ConfigurationSchema extends BaseSchema<ConfigurationSchemaDto> implements Serializable {
+public class ConfigurationSchema
+    extends BaseSchema<ConfigurationSchemaDto>
+    implements Serializable {
 
   private static final long serialVersionUID = -8854035430683210037L;
 
@@ -120,7 +122,8 @@ public class ConfigurationSchema extends BaseSchema<ConfigurationSchemaDto> impl
   @Override
   public String toString() {
     return "ConfigurationSchema [version=" + version + ", name=" + name + ", description="
-        + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", id=" + id
+        + description + ", createdUsername=" + createdUsername + ", createdTime="
+        + createdTime + ", id=" + id
         + "]";
   }
 

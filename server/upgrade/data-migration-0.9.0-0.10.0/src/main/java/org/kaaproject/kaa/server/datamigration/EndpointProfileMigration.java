@@ -26,6 +26,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import org.bson.Document;
+import org.kaaproject.kaa.server.datamigration.utils.Options;
 
 public class EndpointProfileMigration {
   private String host;
@@ -33,10 +34,15 @@ public class EndpointProfileMigration {
   private String nosql;
 
 
-  public EndpointProfileMigration(String host, String db, String nosql) {
-    dbName = db;
-    this.host = host;
-    this.nosql = nosql;
+  /**
+   * Create new instance of object that responsible for migration endpoint profiles.
+   *
+   * @param options the options
+   */
+  public EndpointProfileMigration(Options options) {
+    dbName = options.getDbName();
+    this.host = options.getHost();
+    this.nosql = options.getNoSql();
   }
 
   /**

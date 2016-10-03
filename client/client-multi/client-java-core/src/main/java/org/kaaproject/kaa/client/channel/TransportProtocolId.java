@@ -27,6 +27,9 @@ public final class TransportProtocolId {
   private final int id;
   private final int version;
 
+  /**
+   * All-args constructor.
+   */
   public TransportProtocolId(int protocolId, int protocolVersion) {
     super();
     this.id = protocolId;

@@ -30,10 +30,16 @@ public class MongoUserDto implements HasId, Serializable {
   private String pwd;
   private List<String> roles;
 
+  /**
+   * Instantiates the MongoUserDto.
+   */
   public MongoUserDto() {
 
   }
 
+  /**
+   * All-args constructor.
+   */
   public MongoUserDto(String user, String pwd, List<String> roles) {
     this.user = user;
     this.pwd = pwd;

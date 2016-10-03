@@ -29,6 +29,9 @@ public class RecordKey implements Serializable {
   public RecordKey() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public RecordKey(String applicationId, int schemaVersion, RecordFiles recordFiles) {
     this.applicationId = applicationId;
     this.schemaVersion = schemaVersion;

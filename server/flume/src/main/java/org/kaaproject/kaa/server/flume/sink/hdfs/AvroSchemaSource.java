@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
 import com.google.common.base.Preconditions;
@@ -48,7 +49,8 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
 
   public static final String SCHEMA_SOURCE = "flume.avro.schema.source";
   private static final String KAA_ADMIN_REST_API_LOG_SCHEMA = "/kaaAdmin/rest/api/logSchema/";
-  private static final String KAA_ADMIN_REST_API_CTL_SCHEMA = "/kaaAdmin/rest/api/CTL/getFlatSchemaByCtlSchemaId?id=";
+  private static final String KAA_ADMIN_REST_API_CTL_SCHEMA = "/kaaAdmin/rest/api/CTL/"
+      + "getFlatSchemaByCtlSchemaId?id=";
   private String schemaSourceType;
   private String kaaRestHost;
   private int kaaRestPort;
@@ -62,7 +64,9 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
 
   @Override
   public void configure(Context context) {
-    schemaSourceType = context.getString(CONFIG_AVRO_EVENT_SERIALIZER_SCHEMA_SOURCE, DEFAULT_AVRO_EVENT_SERIALIZER_SCHEMA_SOURCE);
+    schemaSourceType = context
+        .getString(CONFIG_AVRO_EVENT_SERIALIZER_SCHEMA_SOURCE,
+            DEFAULT_AVRO_EVENT_SERIALIZER_SCHEMA_SOURCE);
     if (schemaSourceType.equals(SCHEMA_SOURCE_REST)) {
       kaaRestHost = context.getString(CONFIG_KAA_REST_HOST, DEFAULT_KAA_REST_HOST);
       kaaRestPort = context.getInteger(CONFIG_KAA_REST_PORT, DEFAULT_KAA_REST_PORT);
@@ -70,16 +74,20 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
       kaaRestPassword = context.getString(CONFIG_KAA_REST_PASSWORD);
 
       Preconditions.checkArgument(kaaRestUser != null && kaaRestUser.length() > 0,
-          CONFIG_KAA_REST_USER + " must be specified for " + SCHEMA_SOURCE_REST + " avro schema source");
+          CONFIG_KAA_REST_USER + " must be specified for "
+              + SCHEMA_SOURCE_REST + " avro schema source");
+
       Preconditions.checkArgument(kaaRestPassword != null && kaaRestPassword.length() > 0,
-          CONFIG_KAA_REST_PASSWORD + " must be specified for " + SCHEMA_SOURCE_REST + " avro schema source");
+          CONFIG_KAA_REST_PASSWORD + " must be specified for "
+              + SCHEMA_SOURCE_REST + " avro schema source");
 
       initHttpRestClient();
     } else {
       schemaLocalRoot = context.getString(CONFIG_AVRO_EVENT_SERIALIZER_SCHEMA_LOCAL_ROOT);
 
       Preconditions.checkArgument(schemaLocalRoot != null && schemaLocalRoot.length() > 0,
-          CONFIG_AVRO_EVENT_SERIALIZER_SCHEMA_LOCAL_ROOT + " must be specified for " + SCHEMA_SOURCE_LOCAL + " avro schema source");
+          CONFIG_AVRO_EVENT_SERIALIZER_SCHEMA_LOCAL_ROOT
+              + " must be specified for " + SCHEMA_SOURCE_LOCAL + " avro schema source");
     }
   }
 
@@ -107,17 +115,20 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
     String schemaString = null;
     String logSchema = null;
     if (schemaSourceType.equals(SCHEMA_SOURCE_REST)) {
-      HttpGet getRequest = new HttpGet(KAA_ADMIN_REST_API_LOG_SCHEMA + key.getApplicationToken() + "/" + key.getSchemaVersion());
+      HttpGet getRequest = new HttpGet(KAA_ADMIN_REST_API_LOG_SCHEMA + key.getApplicationToken()
+          + "/" + key.getSchemaVersion());
       HttpResponse httpResponse = httpClient.execute(restHost, getRequest, httpContext);
       HttpEntity entity = httpResponse.getEntity();
       if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK && entity != null) {
         String content = EntityUtils.toString(entity);
         ObjectMapper mapper = new ObjectMapper();
         LogSchemaDto logSchemaDto = mapper.readValue(content, LogSchemaDto.class);
-        HttpGet getCtlRequest = new HttpGet(KAA_ADMIN_REST_API_CTL_SCHEMA + logSchemaDto.getCtlSchemaId());
+        HttpGet getCtlRequest = new HttpGet(KAA_ADMIN_REST_API_CTL_SCHEMA
+            + logSchemaDto.getCtlSchemaId());
         HttpResponse httpCtlResponse = httpClient.execute(restHost, getCtlRequest, httpContext);
         HttpEntity ctlEntity = httpCtlResponse.getEntity();
-        if (httpCtlResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK && ctlEntity != null) {
+        if (httpCtlResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK
+            && ctlEntity != null) {
           String ctlContent = EntityUtils.toString(entity);
           ObjectMapper ctlMapper = new ObjectMapper();
           logSchema = ctlMapper.readValue(ctlContent, String.class);
@@ -129,7 +140,8 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
       String applicationToken = key.getApplicationToken();
       int version = key.getSchemaVersion();
       String separator = System.getProperty("file.separator");
-      File schemaFile = new File(schemaLocalRoot + separator + applicationToken + separator + "schema_v" + version);
+      File schemaFile = new File(schemaLocalRoot + separator + applicationToken
+          + separator + "schema_v" + version);
       if (schemaFile.exists()) {
         schemaString = FileUtils.readFileToString(schemaFile);
       }

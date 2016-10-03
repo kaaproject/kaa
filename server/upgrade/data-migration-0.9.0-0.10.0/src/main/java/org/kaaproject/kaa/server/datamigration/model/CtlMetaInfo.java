@@ -22,6 +22,14 @@ public class CtlMetaInfo {
   private final Long appId;
   private final Long tenantId;
 
+  /**
+   * Create new instance of ctl meta info.
+   *
+   * @param id       the uniq identifier
+   * @param fqn      the full qualified name of type
+   * @param appId    the application id
+   * @param tenantId the tenant id
+   */
   public CtlMetaInfo(Long id, String fqn, Long appId, Long tenantId) {
     this.id = id;
     this.fqn = fqn;

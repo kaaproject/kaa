@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
 import akka.actor.ActorContext;
-import scala.concurrent.duration.Duration;
+
 
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
@@ -84,6 +84,7 @@ import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
