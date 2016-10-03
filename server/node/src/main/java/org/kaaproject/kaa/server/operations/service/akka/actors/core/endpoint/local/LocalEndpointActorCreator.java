@@ -24,7 +24,8 @@ public class LocalEndpointActorCreator extends EndpointActorCreator<LocalEndpoin
 
   private static final long serialVersionUID = 9080174513879065821L;
 
-  public LocalEndpointActorCreator(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
+  public LocalEndpointActorCreator(AkkaContext context, String endpointActorKey, String appToken,
+                                   EndpointObjectHash key) {
     super(context, endpointActorKey, appToken, key);
   }
 

@@ -105,7 +105,8 @@ public class KaaRestTemplate extends RestTemplate {
   }
 
   @Override
-  protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor)
+  protected <T> T doExecute(URI url, HttpMethod method, RequestCallback requestCallback,
+                            ResponseExtractor<T> responseExtractor)
       throws ResourceAccessException {
     int maxRetry = hosts.length;
     while (true) {
@@ -136,7 +137,7 @@ public class KaaRestTemplate extends RestTemplate {
                 getCurHost(), getCurPort(), exception);
             continue;
           }
-          url = updateURL(url);
+          url = updateUrl(url);
           isRequestFactorySet = true;
         }
       } catch (RestClientException ex) {
@@ -145,19 +146,21 @@ public class KaaRestTemplate extends RestTemplate {
     }
   }
 
-  private URI updateURL(URI url) {
-    String currentURI = url.toString();
+  private URI updateUrl(URI url) {
+    String currentUri = url.toString();
 
-    int sufixPartIdx = currentURI.indexOf(restApiSuffix);
+    int sufixPartIdx = currentUri.indexOf(restApiSuffix);
 
-    String defaultURIPartWithVariableHostPort = currentURI.substring(0, sufixPartIdx);
-    String sufixPart = currentURI.substring(sufixPartIdx);
+    String defaultUriPartWithVariableHostPort = currentUri.substring(0, sufixPartIdx);
+    String sufixPart = currentUri.substring(sufixPartIdx);
 
-    defaultURIPartWithVariableHostPort = defaultURIPartWithVariableHostPort.replaceFirst(url.getHost(), getCurHost());
-    defaultURIPartWithVariableHostPort = defaultURIPartWithVariableHostPort.replaceFirst(String.valueOf(url.getPort()),
+    defaultUriPartWithVariableHostPort = defaultUriPartWithVariableHostPort
+        .replaceFirst(url.getHost(), getCurHost());
+    defaultUriPartWithVariableHostPort = defaultUriPartWithVariableHostPort
+        .replaceFirst(String.valueOf(url.getPort()),
         String.valueOf(getCurPort()));
 
-    return URI.create(defaultURIPartWithVariableHostPort + sufixPart);
+    return URI.create(defaultUriPartWithVariableHostPort + sufixPart);
   }
 
   private int getCurPort() {
@@ -181,7 +184,8 @@ public class KaaRestTemplate extends RestTemplate {
   public void login(String username, String password) {
     this.username = username;
     this.password = password;
-    HttpComponentsRequestFactoryBasicAuth requestFactory = (HttpComponentsRequestFactoryBasicAuth) getRequestFactory();
+    HttpComponentsRequestFactoryBasicAuth requestFactory =
+        (HttpComponentsRequestFactoryBasicAuth) getRequestFactory();
     requestFactory.setCredentials(username, password);
   }
 

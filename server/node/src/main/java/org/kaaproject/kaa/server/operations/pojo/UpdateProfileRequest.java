@@ -50,7 +50,8 @@ public class UpdateProfileRequest {
    * @param profile         the profile
    * @param sdkToken        the sdk token
    */
-  public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash, String accessToken, byte[] profile, String sdkToken) {
+  public UpdateProfileRequest(String appToken, EndpointObjectHash endpointKeyHash,
+                              String accessToken, byte[] profile, String sdkToken) {
     super();
     this.appToken = appToken;
     this.endpointKeyHash = endpointKeyHash;
@@ -59,47 +60,23 @@ public class UpdateProfileRequest {
     this.sdkToken = sdkToken;
   }
 
-  /**
-   * Gets the endpoint key hash.
-   *
-   * @return the endpoint key hash
-   */
+
   public EndpointObjectHash getEndpointKeyHash() {
     return endpointKeyHash;
   }
 
-  /**
-   * Gets the profile.
-   *
-   * @return the profile
-   */
   public byte[] getProfile() {
     return Arrays.copyOf(profile, profile.length);
   }
 
-  /**
-   * Gets the application token.
-   *
-   * @return the application token
-   */
   public String getApplicationToken() {
     return appToken;
   }
 
-  /**
-   * Gets the access token.
-   *
-   * @return the access token
-   */
   public String getAccessToken() {
     return accessToken;
   }
 
-  /**
-   * Gets the sdk token.
-   *
-   * @return the sdk token
-   */
   public String getSdkToken() {
     return sdkToken;
   }

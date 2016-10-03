@@ -34,19 +34,10 @@ import java.util.Set;
 
 public class GetNotificationResponse {
 
-  /**
-   * The notifications.
-   */
   private List<NotificationDto> notifications;
 
-  /**
-   * The topic list.
-   */
   private List<TopicDto> topicList;
 
-  /**
-   * The subscription states.
-   */
   private Map<String, Integer> subscriptionStates;
 
   private Set<String> subscriptionSet;
@@ -120,7 +111,8 @@ public class GetNotificationResponse {
    * @return true, if successful
    */
   public boolean hasDelta() {
-    return (notifications != null && !notifications.isEmpty()) || (topicList != null && !topicList.isEmpty());
+    return (notifications != null && !notifications.isEmpty())
+        || (topicList != null && !topicList.isEmpty());
   }
 
   public boolean isSubscriptionListChanged() {

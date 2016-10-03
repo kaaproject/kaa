@@ -28,17 +28,17 @@ import org.slf4j.LoggerFactory;
 
 public class GlobalEndpointActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(GlobalEndpointActor.class);
 
   private final String actorKey;
 
   private final GlobalEndpointActorMessageProcessor messageProcessor;
 
-  GlobalEndpointActor(AkkaContext context, String actorKey, String appToken, EndpointObjectHash endpointKey) {
-    this.messageProcessor = new GlobalEndpointActorMessageProcessor(context, appToken, endpointKey, actorKey);
+  GlobalEndpointActor(AkkaContext context, String actorKey, String appToken,
+                      EndpointObjectHash endpointKey) {
+    this.messageProcessor = new GlobalEndpointActorMessageProcessor(
+        context, appToken, endpointKey, actorKey);
     this.actorKey = actorKey;
   }
 

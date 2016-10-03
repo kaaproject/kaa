@@ -24,7 +24,8 @@ public class GlobalEndpointActorCreator extends EndpointActorCreator<GlobalEndpo
 
   private static final long serialVersionUID = 9080174513879065821L;
 
-  public GlobalEndpointActorCreator(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
+  public GlobalEndpointActorCreator(AkkaContext context, String endpointActorKey,
+                                    String appToken, EndpointObjectHash key) {
     super(context, endpointActorKey, appToken, key);
   }
 

@@ -32,29 +32,14 @@ import java.util.List;
 
 public class GetNotificationRequest {
 
-  /**
-   * The topic hash
-   */
   private final int topicHash;
 
-  /**
-   * The subscription commands.
-   */
   private List<SubscriptionCommand> subscriptionCommands;
 
-  /**
-   * The accepted unicast notifications.
-   */
   private List<String> acceptedUnicastNotifications;
 
-  /**
-   * The topic states.
-   */
   private List<TopicState> topicStates;
 
-  /**
-   * The profile.
-   */
   private EndpointProfileDto profile;
 
   /**
@@ -66,8 +51,10 @@ public class GetNotificationRequest {
    * @param acceptedUnicastNotifications the accepted unicast notifications
    * @param topicStates                  the topic states
    */
-  public GetNotificationRequest(int topicHash, EndpointProfileDto profile, List<SubscriptionCommand> subscriptionCommands,
-                                List<String> acceptedUnicastNotifications, List<TopicState> topicStates) {
+  public GetNotificationRequest(int topicHash, EndpointProfileDto profile,
+                                List<SubscriptionCommand> subscriptionCommands,
+                                List<String> acceptedUnicastNotifications,
+                                List<TopicState> topicStates) {
     super();
     this.topicHash = topicHash;
     this.profile = profile;
@@ -76,47 +63,26 @@ public class GetNotificationRequest {
     this.topicStates = topicStates;
   }
 
-  /**
-   * Gets the topic hash
-   *
-   * @return topic hash
-   */
+
   public int getTopicHash() {
     return topicHash;
   }
 
-  /**
-   * Gets the subscription commands.
-   *
-   * @return the subscription commands
-   */
+
   public List<SubscriptionCommand> getSubscriptionCommands() {
     return subscriptionCommands;
   }
 
-  /**
-   * Gets the accepted unicast notifications.
-   *
-   * @return the accepted unicast notifications
-   */
   public List<String> getAcceptedUnicastNotifications() {
     return acceptedUnicastNotifications;
   }
 
-  /**
-   * Gets the topic states.
-   *
-   * @return the topic states
-   */
+
   public List<TopicState> getTopicStates() {
     return topicStates;
   }
 
-  /**
-   * Gets the profile.
-   *
-   * @return the profile
-   */
+
   public EndpointProfileDto getProfile() {
     return profile;
   }

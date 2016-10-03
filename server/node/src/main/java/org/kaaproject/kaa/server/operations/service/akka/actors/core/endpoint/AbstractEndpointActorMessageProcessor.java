@@ -30,42 +30,36 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEndpointActorState> {
 
-  /**
-   * The Constant LOG.
-   */
-  private static final Logger LOG = LoggerFactory.getLogger(AbstractEndpointActorMessageProcessor.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(AbstractEndpointActorMessageProcessor.class);
 
   protected final T state;
 
-  /**
-   * The operations service.
-   */
+
   protected final OperationsService operationsService;
 
-  /**
-   * The app token.
-   */
+
   protected final String appToken;
 
-  /**
-   * The key.
-   */
+
   protected final EndpointObjectHash key;
 
-  /**
-   * The actor key.
-   */
+
   protected final String actorKey;
 
-  /**
-   * The endpoint key.
-   */
+
   protected final String endpointKey;
 
   private final long inactivityTimeout;
 
-  public AbstractEndpointActorMessageProcessor(T state, OperationsService operationsService, String appToken, EndpointObjectHash key,
-                                               String actorKey, String endpointKey, long inactivityTimeout) {
+  /**
+   * Create new instance of AbstractEndpointActorMessageProcessor.
+   *
+   */
+  public AbstractEndpointActorMessageProcessor(T state, OperationsService operationsService,
+                                               String appToken, EndpointObjectHash key,
+                                               String actorKey, String endpointKey,
+                                               long inactivityTimeout) {
     super();
     this.state = state;
     this.operationsService = operationsService;
@@ -76,13 +70,18 @@ public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEn
     this.endpointKey = endpointKey;
   }
 
+  /**
+   * Get inactivity timeout.
+   *
+   */
   public long getInactivityTimeout() {
     return inactivityTimeout;
   }
 
   public void processActorTimeoutMessage(ActorContext context, ActorTimeoutMessage message) {
     if (state.getLastActivityTime() <= message.getLastActivityTime()) {
-      LOG.debug("[{}][{}] Request stop of endpoint actor due to inactivity timeout", endpointKey, actorKey);
+      LOG.debug("[{}][{}] Request stop of endpoint actor due to inactivity timeout",
+          endpointKey, actorKey);
       tellParent(context, new EndpointStopMessage(key, actorKey, context.self()));
     }
   }
@@ -101,5 +100,5 @@ public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEn
     }
   }
 
-  abstract protected void processThriftMsg(ActorContext context, ThriftEndpointActorMsg<?> msg);
+  protected abstract void processThriftMsg(ActorContext context, ThriftEndpointActorMsg<?> msg);
 }

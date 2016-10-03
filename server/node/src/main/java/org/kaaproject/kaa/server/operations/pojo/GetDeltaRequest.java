@@ -53,7 +53,15 @@ public class GetDeltaRequest {
   }
 
 
-  public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, boolean resyncOnly) {
+  /**
+   * Create anew instance of GetDeltaRequest.
+   *
+   * @param applicationToken  the application token
+   * @param configurationHash the configuration hash
+   * @param resyncOnly        specify if it is only resync
+   */
+  public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash,
+                         boolean resyncOnly) {
     super();
     this.applicationToken = applicationToken;
     this.configurationHash = configurationHash;
@@ -90,6 +98,8 @@ public class GetDeltaRequest {
   }
 
   public boolean isFirstRequest() {
-    return getConfigurationHash() == null || getConfigurationHash().getData() == null || getConfigurationHash().getData().length == 0;
+    return getConfigurationHash() == null
+        || getConfigurationHash().getData() == null
+        || getConfigurationHash().getData().length == 0;
   }
 }

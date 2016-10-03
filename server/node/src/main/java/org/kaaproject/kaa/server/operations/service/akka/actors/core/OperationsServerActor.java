@@ -44,24 +44,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * The Class OperationsServerActor.
- */
 public class OperationsServerActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(OperationsServerActor.class);
 
-  /**
-   * The Akka service context
-   */
   private final AkkaContext context;
 
-  /**
-   * The tenants id-actor map.
-   */
   private final Map<String, ActorRef> tenants;
 
   private final Map<UUID, StatusRequestState> statusRequestStatesMap;
@@ -141,7 +129,8 @@ public class OperationsServerActor extends UntypedActor {
   }
 
   private void processSessionControlMessage(SessionControlMessage message) {
-    ActorRef tenantActor = getOrCreateTenantActorByAppToken(message.getSessionInfo().getApplicationToken());
+    ActorRef tenantActor = getOrCreateTenantActorByAppToken(
+        message.getSessionInfo().getApplicationToken());
     tenantActor.tell(message, self());
   }
 
@@ -198,7 +187,8 @@ public class OperationsServerActor extends UntypedActor {
     ActorRef tenantActor = tenants.get(tenantId);
     if (tenantActor == null) {
       tenantActor = context().actorOf(
-          Props.create(new TenantActor.ActorCreator(context, tenantId)).withDispatcher(CORE_DISPATCHER_NAME), tenantId);
+          Props.create(new TenantActor.ActorCreator(context, tenantId))
+              .withDispatcher(CORE_DISPATCHER_NAME), tenantId);
       tenants.put(tenantId, tenantActor);
     }
     return tenantActor;
@@ -224,19 +214,12 @@ public class OperationsServerActor extends UntypedActor {
     LOG.info("Stoped {}", this);
   }
 
-  /**
-   * The Class ActorCreator.
-   */
+
   public static class ActorCreator implements Creator<OperationsServerActor> {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The Akka service context
-     */
+
     private final AkkaContext context;
 
     /**

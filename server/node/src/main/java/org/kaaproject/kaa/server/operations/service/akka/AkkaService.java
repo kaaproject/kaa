@@ -23,9 +23,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
 
-/**
- * The Interface AkkaService.
- */
+
 public interface AkkaService extends MessageHandler {
 
   /**
@@ -36,7 +34,7 @@ public interface AkkaService extends MessageHandler {
   ActorSystem getActorSystem();
 
   /**
-   * On redirection rule set
+   * On redirection rule set.
    *
    * @param redirectionRule the redirection rule
    */
@@ -50,13 +48,14 @@ public interface AkkaService extends MessageHandler {
   void onNotification(Notification notification);
 
   /**
-   * Reports update of user configuration to the global user actor
+   * Reports update of user configuration to the global user actor.
    *
    * @param update - user configuration update
    */
   void onUserConfigurationUpdate(UserConfigurationUpdate update);
 
-  void setStatusListener(AkkaStatusListener defaultLoadBalancingService, long loadStatsUpdateFrequency);
+  void setStatusListener(AkkaStatusListener defaultLoadBalancingService,
+                         long loadStatsUpdateFrequency);
 
   void removeStatusListener();
 }

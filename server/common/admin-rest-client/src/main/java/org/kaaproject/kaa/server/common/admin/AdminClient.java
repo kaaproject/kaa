@@ -964,8 +964,10 @@ public class AdminClient {
   }
 
 
+  //CHECKSTYLE:OFF
   public CTLSchemaDto saveCTLSchemaWithAppToken(String body, String tenantId,
                                                 String applicationToken) {
+    //CHECKSTYLE:ON
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("body", body);
     if (tenantId != null) {
@@ -978,10 +980,12 @@ public class AdminClient {
         params, CTLSchemaDto.class);
   }
 
+  //CHECKSTYLE:OFF
   public void deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken(String fqn,
                                                                      Integer version,
                                                                      String tenantId,
                                                                      String applicationToken) {
+    //CHECKSTYLE:ON
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("fqn", fqn);
     params.add("version", version);
@@ -994,8 +998,10 @@ public class AdminClient {
     restTemplate.postForLocation(restTemplate.getUrl() + "CTL/deleteSchema", params);
   }
 
+  //CHECKSTYLE:OFF
   public CTLSchemaDto getCTLSchemaByFqnVersionTenantIdAndApplicationToken(
       String fqn, Integer version, String tenantId, String applicationToken) {
+    //CHECKSTYLE:ON
     if (tenantId != null && applicationToken != null) {
       return restTemplate.getForObject(
           restTemplate.getUrl() + "CTL/getSchema?fqn={fqn}&version={version}&tenantId={tenantId}"
@@ -1012,7 +1018,9 @@ public class AdminClient {
     }
   }
 
+  //CHECKSTYLE:OFF
   public CTLSchemaDto getCTLSchemaById(String id) {
+    //CHECKSTYLE:ON
     return restTemplate.getForObject(restTemplate.getUrl() + "CTL/getSchemaById?id={id}",
         CTLSchemaDto.class, id);
   }
@@ -1042,22 +1050,28 @@ public class AdminClient {
         params, CTLSchemaMetaInfoDto.class);
   }
 
+  //CHECKSTYLE:OFF
   public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {
+    //CHECKSTYLE:ON
     ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "CTL/getSystemSchemas",
         HttpMethod.GET, null, new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {});
     return entity.getBody();
   }
 
+  //CHECKSTYLE:OFF
   public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() {
+    //CHECKSTYLE:ON
     ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "CTL/getTenantSchemas",
         HttpMethod.GET, null,  new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {});
     return entity.getBody();
   }
 
+  //CHECKSTYLE:OFF
   public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(
       String applicationToken) {
+    //CHECKSTYLE:ON
     ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "CTL/getApplicationSchemas/" + applicationToken,
         HttpMethod.GET, null,  new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {});

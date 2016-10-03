@@ -35,9 +35,6 @@ import org.slf4j.LoggerFactory;
 
 public class LocalUserActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(LocalUserActor.class);
 
   private final String userId;
@@ -119,19 +116,11 @@ public class LocalUserActor extends UntypedActor {
     messageProcessor.processTerminationMessage(context(), message);
   }
 
-  /**
-   * The Class ActorCreator.
-   */
+
   public static class ActorCreator implements Creator<LocalUserActor> {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The Akka service context
-     */
     private final AkkaContext context;
 
     private final String userId;

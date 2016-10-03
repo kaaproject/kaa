@@ -50,9 +50,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ApplicationLogActorMessageProcessor {
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG =
       LoggerFactory.getLogger(ApplicationLogActorMessageProcessor.class);
 
@@ -76,6 +74,12 @@ public class ApplicationLogActorMessageProcessor {
 
   private final VoidCallback voidCallback;
 
+  /**
+   * Create a new instance of ApplicationLogActorMessageProcessor.
+   *
+   * @param context          the akka context
+   * @param applicationToken the application token
+   */
   public ApplicationLogActorMessageProcessor(AkkaContext context, String applicationToken) {
     super();
     this.logAppenderService = context.getLogAppenderService();
@@ -135,9 +139,9 @@ public class ApplicationLogActorMessageProcessor {
   /**
    * Sends a response to the endpoint.
    *
-   * Please note that this method was introduced purely as a workaround to
+   * <p>Please note that this method was introduced purely as a workaround to
    * mocking an instance of {@link akka.actor.ActorRef}. Change the method
-   * body with caution!
+   * body with caution!</p>
    *
    * @param message A message to respond to
    */
@@ -150,6 +154,13 @@ public class ApplicationLogActorMessageProcessor {
     }
   }
 
+  /**
+   * Filter appenders list by schema version and delivery confirmation.
+   *
+   * @param schemaVersion   the schema version
+   * @param confirmDelivery the confirm delivery
+   * @return the list
+   */
   public List<LogAppender> filterAppenders(int schemaVersion, boolean confirmDelivery) {
     LogAppenderFilterKey key = new LogAppenderFilterKey(schemaVersion, confirmDelivery);
     List<LogAppender> result = logAppendersCache.get(key);
