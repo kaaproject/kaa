@@ -63,27 +63,29 @@ or
 ```sh
 $ sh build.sh
 ```
-3. From server/containers/docker/using-compose folder run:
+3. From server/containers/docker/using-compose folder run command:
 ```sh
-$ python launch-kaa.py mariadb-mongodb
+$ python launch-kaa.py SQL-NoSQL
 ```
+And specify SQL-NoSQL databases which you wan to use
+All available options of SQL-NoSQL databases:
+    * mariadb-mongodb
+    * mariadb-cassandra
+    * postgresql-mongodb
+    * postgresql-cassandra 
 If you want deploy Kaa in cluster mode, run previous command with additional optional
 ```sh
-$ python launch-kaa.py mariadb-mongodb NODE_COUNT
+$ python launch-kaa.py SQL-NoSQL NODE_COUNT
 ```
-All available options:
-
-* mariadb-mongodb
-* mariadb-cassandra
-* postgresql-mongodb
-* postgresql-cassandra
-
 4. Execute following command to get into running container:
 ```sh
 $ docker exec -it usingcompose_KAA_SERVICE_NAME_1 /bin/bash -c "export TERM=xterm; exec bash"
 ```
 
 Wait a few seconds until the service kaa-node starts.
+
+Open your browser on localhost:8080 (You can see there some error, just refresh page. It's mean that's service kaa-node does not start yet. 
+You can verify this by looking logs of kaa-node containers.)
 
 In this example usingcompose - it's name of folder where located docker-compose.yml files.
 
