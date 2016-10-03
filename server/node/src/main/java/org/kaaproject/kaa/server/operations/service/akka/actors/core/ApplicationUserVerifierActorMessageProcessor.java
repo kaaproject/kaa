@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
+import static org.kaaproject.kaa.server.common.verifier.UserVerifierErrorCode.NO_VERIFIER_CONFIGURED;
+import static org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage.failure;
+import static org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationResponseMessage.success;
+
 import akka.actor.ActorRef;
 
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -38,33 +42,33 @@ import java.util.UUID;
 
 public class ApplicationUserVerifierActorMessageProcessor {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ApplicationUserVerifierActorMessageProcessor.class);
+  private static final Logger LOG = LoggerFactory
+      .getLogger(ApplicationUserVerifierActorMessageProcessor.class);
 
   private final EndpointUserService endpointUserService;
 
   private final String applicationId;
 
-  /**
-   * The log appenders
-   */
+
   private Map<String, UserVerifier> userVerifiers;
 
-  ApplicationUserVerifierActorMessageProcessor(EndpointUserService endpointUserService, String applicationId) {
+  ApplicationUserVerifierActorMessageProcessor(EndpointUserService endpointUserService,
+                                               String applicationId) {
     this.applicationId = applicationId;
     this.endpointUserService = endpointUserService;
     initUserVerifiers();
   }
 
   private void initUserVerifiers() {
-    this.userVerifiers = new HashMap<String, UserVerifier>();
+    this.userVerifiers = new HashMap<>();
     for (UserVerifierDto dto : endpointUserService.findUserVerifiers(applicationId)) {
       try {
         LOG.trace("Initializing user verifier for {}", dto);
         UserVerifier verifier = createUserVerifier(dto);
         LOG.trace("Registering user verifier with token {}", dto.getVerifierToken());
         userVerifiers.put(dto.getVerifierToken(), verifier);
-      } catch (Exception e) {
-        LOG.error("Failed to create user verifier", e);
+      } catch (Exception ex) {
+        LOG.error("Failed to create user verifier", ex);
       }
     }
   }
@@ -75,27 +79,34 @@ public class ApplicationUserVerifierActorMessageProcessor {
     }
     try {
       @SuppressWarnings("unchecked")
-      Class<UserVerifier> verifierClass = (Class<UserVerifier>) Class.forName(verifierDto.getPluginClassName());
+      Class<UserVerifier> verifierClass = (Class<UserVerifier>) Class
+          .forName(verifierDto.getPluginClassName());
+
       UserVerifier userVerifier = verifierClass.newInstance();
       userVerifier.init(new UserVerifierContext(verifierDto));
       userVerifier.start();
       return userVerifier;
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException ex) {
       LOG.error("Unable to find custom verifier class {}", verifierDto.getPluginClassName());
-      throw e;
-    } catch (InstantiationException | IllegalAccessException | UserVerifierLifecycleException e) {
-      LOG.error("Unable to instantiate custom verifier from class {}", verifierDto.getPluginClassName());
-      throw e;
+      throw ex;
+    } catch (InstantiationException
+        | IllegalAccessException
+        | UserVerifierLifecycleException ex) {
+      LOG.error("Unable to instantiate custom verifier from class {}",
+          verifierDto.getPluginClassName());
+      throw ex;
     }
   }
 
   public void verifyUser(UserVerificationRequestMessage message) {
     UserVerifier verifier = userVerifiers.get(message.getVerifierId());
     if (verifier != null) {
-      verifier.checkAccessToken(message.getUserId(), message.getAccessToken(), new DefaultVerifierCallback(message));
+      verifier.checkAccessToken(message.getUserId(), message.getAccessToken(),
+          new DefaultVerifierCallback(message));
     } else {
       LOG.debug("Failed to find verifier with token {}", message.getVerifierId());
-      message.getOriginator().tell(UserVerificationResponseMessage.failure(message.getRequestid(), message.getUserId(), UserVerifierErrorCode.NO_VERIFIER_CONFIGURED),
+      message.getOriginator()
+          .tell(failure(message.getRequestid(), message.getUserId(), NO_VERIFIER_CONFIGURED),
           ActorRef.noSender());
     }
   }
@@ -115,20 +126,22 @@ public class ApplicationUserVerifierActorMessageProcessor {
         addUserVerifier(verifierToken);
         break;
       default:
-        LOG.debug("[{}][{}] Operation [{}] is not supported.", applicationId, verifierToken, notification.getOp());
+        LOG.debug("[{}][{}] Operation [{}] is not supported.",
+            applicationId, verifierToken, notification.getOp());
     }
   }
 
   private void addUserVerifier(String verifierToken) {
     LOG.info("[{}] Adding user verifier with token [{}].", applicationId, verifierToken);
     if (!userVerifiers.containsKey(verifierToken)) {
-      UserVerifierDto verifierDto = endpointUserService.findUserVerifier(applicationId, verifierToken);
+      UserVerifierDto verifierDto = endpointUserService
+          .findUserVerifier(applicationId, verifierToken);
       if (verifierDto != null) {
         try {
           userVerifiers.put(verifierToken, createUserVerifier(verifierDto));
           LOG.info("[{}] user verifier [{}] registered.", applicationId, verifierToken);
-        } catch (Exception e) {
-          LOG.error("Failed to create user verifier", e);
+        } catch (Exception ex) {
+          LOG.error("Failed to create user verifier", ex);
         }
       }
     } else {
@@ -141,7 +154,8 @@ public class ApplicationUserVerifierActorMessageProcessor {
       LOG.info("[{}] Stopping user verifier with token [{}].", applicationId, verifierToken);
       userVerifiers.remove(verifierToken).stop();
     } else {
-      LOG.warn("[{}] Can't remove unregistered user verifier with token [{}]", applicationId, verifierToken);
+      LOG.warn("[{}] Can't remove unregistered user verifier with token [{}]",
+          applicationId, verifierToken);
     }
   }
 
@@ -176,12 +190,12 @@ public class ApplicationUserVerifierActorMessageProcessor {
     }
 
     private void tellFailure(UserVerifierErrorCode errorCode, String reason) {
-      endpointActor.tell(UserVerificationResponseMessage.failure(requestId, reason, errorCode, reason), ActorRef.noSender());
+      endpointActor.tell(failure(requestId, reason, errorCode, reason), ActorRef.noSender());
     }
 
     @Override
     public void onSuccess() {
-      endpointActor.tell(UserVerificationResponseMessage.success(requestId, userId), ActorRef.noSender());
+      endpointActor.tell(success(requestId, userId), ActorRef.noSender());
     }
 
     @Override

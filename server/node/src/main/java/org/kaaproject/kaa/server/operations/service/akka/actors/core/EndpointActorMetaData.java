@@ -18,10 +18,19 @@ package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
 import akka.actor.ActorRef;
 
-public class GlobalEndpointActorMD extends EndpointActorMD {
+public class EndpointActorMetaData {
+  final ActorRef actorRef;
+  final String actorId;
 
-  public GlobalEndpointActorMD(ActorRef actorRef, String actorId) {
-    super(actorRef, actorId);
+  /**
+   * Instantiates a new Endpoint actor meta data.
+   *
+   * @param actorRef  actor reference
+   * @param actorId  uniq actor identifier
+   */
+  public EndpointActorMetaData(ActorRef actorRef, String actorId) {
+    this.actorRef = actorRef;
+    this.actorId = actorId;
   }
 
 }

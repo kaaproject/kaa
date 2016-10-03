@@ -70,9 +70,6 @@ import java.util.Set;
 
 public class EncDecActorMessageProcessor {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(EncDecActorMessageProcessor.class);
 
   private final CacheService cacheService;
@@ -87,9 +84,6 @@ public class EncDecActorMessageProcessor {
 
   private final Boolean supportUnencryptedConnection;
 
-  /**
-   * The eps actor.
-   */
   private final ActorRef opsActor;
 
   private final MeterClient sessionInitMeter;
@@ -155,7 +149,7 @@ public class EncDecActorMessageProcessor {
   }
 
   public void forward(ActorContext context, SessionAware message) {
-    if (isSDKTokenValid(message.getSessionInfo().getSdkToken())) {
+    if (isSdkTokenValid(message.getSessionInfo().getSdkToken())) {
       LOG.debug("Forwarding session aware message: {}", message);
       this.opsActor.tell(message, context.self());
     } else {
@@ -220,7 +214,7 @@ public class EncDecActorMessageProcessor {
     ClientSync request = decodeRequest(message);
     EndpointObjectHash key = getEndpointObjectHash(request);
     String sdkToken = getSdkToken(request);
-    if (isSDKTokenValid(sdkToken)) {
+    if (isSdkTokenValid(sdkToken)) {
       String appToken = getAppToken(sdkToken);
       verifyEndpoint(key, appToken);
       SessionInfo session = new SessionInfo(
@@ -306,7 +300,7 @@ public class EncDecActorMessageProcessor {
   private void processSessionRequest(ActorContext context, SessionAwareMessage message)
       throws GeneralSecurityException, PlatformEncDecException, InvalidSdkTokenException {
     ClientSync request = decodeRequest(message);
-    if (isSDKTokenValid(message.getSessionInfo().getSdkToken())) {
+    if (isSdkTokenValid(message.getSessionInfo().getSdkToken())) {
       forwardToOpsActor(context, message.getSessionInfo(), request, message);
     } else {
       LOG.info("Invalid sdk token received: {}", message.getSessionInfo().getSdkToken());
@@ -347,7 +341,7 @@ public class EncDecActorMessageProcessor {
 
   private ClientSync decodeRequest(SessionInitMessage message)
       throws GeneralSecurityException, PlatformEncDecException {
-    ClientSync syncRequest = null;
+    ClientSync syncRequest;
     if (message.isEncrypted()) {
       syncRequest = decodeEncryptedRequest(message);
     } else if (supportUnencryptedConnection) {
@@ -359,6 +353,23 @@ public class EncDecActorMessageProcessor {
     }
     return syncRequest;
   }
+
+
+  private ClientSync decodeRequest(SessionAwareMessage message)
+      throws GeneralSecurityException, PlatformEncDecException {
+    ClientSync syncRequest;
+    if (message.isEncrypted()) {
+      syncRequest = decodeEncryptedRequest(message);
+    } else if (supportUnencryptedConnection) {
+      syncRequest = decodeUnencryptedRequest(message);
+    } else {
+      LOG.warn("Received unencrypted aware message, "
+          + "but unencrypted connection forbidden by configuration.");
+      throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
+    }
+    return syncRequest;
+  }
+
 
   private ClientSync decodeEncryptedRequest(SessionInitMessage message)
       throws GeneralSecurityException, PlatformEncDecException {
@@ -385,6 +396,17 @@ public class EncDecActorMessageProcessor {
     return request;
   }
 
+  private ClientSync decodeEncryptedRequest(SessionAwareMessage message)
+      throws GeneralSecurityException, PlatformEncDecException {
+    SessionInfo session = message.getSessionInfo();
+    crypt.setSessionCipherPair(session.getCipherPair());
+    byte[] requestRaw = crypt.decodeData(message.getEncodedMessageData());
+    LOG.trace("Request data decrypted");
+    ClientSync request = decodePlatformLevelData(message.getPlatformId(), requestRaw);
+    LOG.trace("Request data deserialized");
+    return request;
+  }
+
   private ClientSync decodeUnencryptedRequest(SessionInitMessage message)
       throws GeneralSecurityException, PlatformEncDecException {
     byte[] requestRaw = message.getEncodedMessageData();
@@ -401,17 +423,6 @@ public class EncDecActorMessageProcessor {
     return request;
   }
 
-  private ClientSync decodeEncryptedRequest(SessionAwareMessage message)
-      throws GeneralSecurityException, PlatformEncDecException {
-    SessionInfo session = message.getSessionInfo();
-    crypt.setSessionCipherPair(session.getCipherPair());
-    byte[] requestRaw = crypt.decodeData(message.getEncodedMessageData());
-    LOG.trace("Request data decrypted");
-    ClientSync request = decodePlatformLevelData(message.getPlatformId(), requestRaw);
-    LOG.trace("Request data deserialized");
-    return request;
-  }
-
   private ClientSync decodeUnencryptedRequest(SessionAwareMessage message)
       throws PlatformEncDecException {
     byte[] requestRaw = message.getEncodedMessageData();
@@ -420,44 +431,34 @@ public class EncDecActorMessageProcessor {
     return request;
   }
 
-  private byte[] encodePlatformLevelData(int platformID, SessionResponse message)
+
+
+
+  private byte[] encodePlatformLevelData(int platformId, SessionResponse message)
       throws PlatformEncDecException {
-    PlatformEncDec encDec = platformEncDecMap.get(platformID);
+    PlatformEncDec encDec = platformEncDecMap.get(platformId);
     if (encDec != null) {
-      return platformEncDecMap.get(platformID).encode(message.getResponse());
+      return platformEncDecMap.get(platformId).encode(message.getResponse());
     } else {
       throw new PlatformEncDecException(
-          MessageFormat.format("Encoder for platform protocol [{0}] is not defined", platformID));
+          MessageFormat.format("Encoder for platform protocol [{0}] is not defined", platformId));
     }
   }
 
-  private ClientSync decodePlatformLevelData(Integer platformID, byte[] requestRaw)
+  private ClientSync decodePlatformLevelData(Integer platformId, byte[] requestRaw)
       throws PlatformEncDecException {
-    PlatformEncDec encDec = platformEncDecMap.get(platformID);
+    PlatformEncDec encDec = platformEncDecMap.get(platformId);
     if (encDec != null) {
-      ClientSync syncRequest = platformEncDecMap.get(platformID).decode(requestRaw);
+      ClientSync syncRequest = platformEncDecMap.get(platformId).decode(requestRaw);
       addAppTokenToClientSyncMetaData(syncRequest.getClientSyncMetaData());
       return syncRequest;
     } else {
       throw new PlatformEncDecException(
-          MessageFormat.format("Decoder for platform protocol [{0}] is not defined", platformID));
+          MessageFormat.format("Decoder for platform protocol [{0}] is not defined", platformId));
     }
   }
 
-  private ClientSync decodeRequest(SessionAwareMessage message)
-      throws GeneralSecurityException, PlatformEncDecException {
-    ClientSync syncRequest = null;
-    if (message.isEncrypted()) {
-      syncRequest = decodeEncryptedRequest(message);
-    } else if (supportUnencryptedConnection) {
-      syncRequest = decodeUnencryptedRequest(message);
-    } else {
-      LOG.warn("Received unencrypted aware message, "
-          + "but unencrypted connection forbidden by configuration.");
-      throw new GeneralSecurityException("Unencrypted connection forbidden by configuration.");
-    }
-    return syncRequest;
-  }
+
 
   private PublicKey getPublicKey(ClientSync request) throws GeneralSecurityException {
     PublicKey endpointKey = null;
@@ -498,7 +499,7 @@ public class EncDecActorMessageProcessor {
     return cacheService.getAppTokenBySdkToken(sdkToken);
   }
 
-  private boolean isSDKTokenValid(String sdkToken) {
+  private boolean isSdkTokenValid(String sdkToken) {
     return sdkToken != null && getAppToken(sdkToken) != null;
   }
 

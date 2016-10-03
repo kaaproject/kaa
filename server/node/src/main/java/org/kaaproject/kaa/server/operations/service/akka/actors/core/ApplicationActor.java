@@ -69,26 +69,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/**
- * The Class ApplicationActor.
- */
+
 public class ApplicationActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(ApplicationActor.class);
 
-  /**
-   * The Akka service context
-   */
   private final AkkaContext context;
 
-  private final Map<EndpointObjectHash, GlobalEndpointActorMD> globalEndpointSessions;
+  private final Map<EndpointObjectHash, GlobalEndpointActorMetaData> globalEndpointSessions;
   /**
    * The endpoint sessions.
    */
-  private final Map<EndpointObjectHash, LocalEndpointActorMD> localEndpointSessions;
+  private final Map<EndpointObjectHash, LocalEndpointActorMetaData> localEndpointSessions;
 
   private final Map<String, EndpointObjectHash> endpointActorMap;
 
@@ -182,7 +174,8 @@ public class ApplicationActor extends UntypedActor {
     } else if (message instanceof EndpointUserActionMessage) {
       processEndpointUserActionMessage((EndpointUserActionMessage) message, true);
     } else if (message instanceof EndpointUserActionRouteMessage) {
-      processEndpointUserActionMessage(((EndpointUserActionRouteMessage) message).getMessage(), false);
+      processEndpointUserActionMessage(((EndpointUserActionRouteMessage) message).getMessage(),
+          false);
     } else if (message instanceof StatusRequestMessage) {
       processStatusRequest((StatusRequestMessage) message);
     } else if (message instanceof ClusterUpdateMessage) {
@@ -199,27 +192,29 @@ public class ApplicationActor extends UntypedActor {
     if (classifier == ActorClassifier.APPLICATION) {
       boolean processed = false;
       if (message instanceof ThriftEndpointActorMsg<?>) {
-        processed = processCommonThriftEndpointActorMsg(endpointId, (ThriftEndpointActorMsg<?>) message);
+        processed = processCommonThriftEndpointActorMsg(
+            endpointId, (ThriftEndpointActorMsg<?>) message);
       }
       if (!processed) {
         LOG.warn("[{}] Failed to lookup processor for endpoint msg {}.", endpointId, message);
       }
     } else {
-      EndpointActorMD actorMD = null;
+      EndpointActorMetaData actorMetaData = null;
       if (classifier == ActorClassifier.GLOBAL) {
-        actorMD = globalEndpointSessions.get(endpointId);
+        actorMetaData = globalEndpointSessions.get(endpointId);
       } else if (classifier == ActorClassifier.LOCAL) {
-        actorMD = localEndpointSessions.get(endpointId);
+        actorMetaData = localEndpointSessions.get(endpointId);
       }
-      if (actorMD != null) {
-        actorMD.actorRef.tell(message, context().self());
+      if (actorMetaData != null) {
+        actorMetaData.actorRef.tell(message, context().self());
       } else {
         LOG.warn("[{}] Failed to lookup {} actor for endpoint.", endpointId, classifier.name());
       }
     }
   }
 
-  private boolean processCommonThriftEndpointActorMsg(EndpointObjectHash endpointId, ThriftEndpointActorMsg<?> msg) {
+  private boolean processCommonThriftEndpointActorMsg(EndpointObjectHash endpointId,
+                                                      ThriftEndpointActorMsg<?> msg) {
     if (msg.getMsg() instanceof ThriftEndpointDeregistrationMessage) {
       forwardMessageQuietly(globalEndpointSessions.get(endpointId), msg);
       forwardMessageQuietly(localEndpointSessions.get(endpointId), msg);
@@ -229,21 +224,22 @@ public class ApplicationActor extends UntypedActor {
     }
   }
 
-  private void forwardMessageQuietly(EndpointActorMD actorMD, Object msg) {
-    if (actorMD != null) {
-      actorMD.actorRef.tell(msg, context().self());
+  private void forwardMessageQuietly(EndpointActorMetaData actorMetaData, Object msg) {
+    if (actorMetaData != null) {
+      actorMetaData.actorRef.tell(msg, context().self());
     }
   }
 
   private void processClusterUpdate(ClusterUpdateMessage message) {
-    for (Entry<EndpointObjectHash, LocalEndpointActorMD> entry : localEndpointSessions.entrySet()) {
+    for (Entry<EndpointObjectHash, LocalEndpointActorMetaData> entry :
+        localEndpointSessions.entrySet()) {
       String globalActorNodeId = getGlobalEndpointActorNodeId(entry.getKey());
       if (!globalActorNodeId.equals(entry.getValue().globalActorNodeId)) {
         entry.getValue().globalActorNodeId = globalActorNodeId;
         notifyGlobalEndpointActor(entry.getKey(), globalActorNodeId);
       }
     }
-    for (GlobalEndpointActorMD entry : globalEndpointSessions.values()) {
+    for (GlobalEndpointActorMetaData entry : globalEndpointSessions.values()) {
       entry.actorRef.tell(message, context().self());
     }
   }
@@ -279,7 +275,9 @@ public class ApplicationActor extends UntypedActor {
   private void processStatusRequest(StatusRequestMessage message) {
     LOG.debug("[{}] Processing status request", message.getId());
     int endpointCount = localEndpointSessions.size();
-    context().parent().tell(new ApplicationActorStatusResponse(message.getId(), endpointCount), ActorRef.noSender());
+    context().parent()
+        .tell(new ApplicationActorStatusResponse(message.getId(), endpointCount),
+            ActorRef.noSender());
   }
 
   /**
@@ -325,8 +323,10 @@ public class ApplicationActor extends UntypedActor {
     ActorRef topicActor = topicSessions.get(topicId);
     if (topicActor == null) {
       topicActor = context().actorOf(
-          Props.create(new TopicActor.ActorCreator(context.getNotificationDeltaService())).withDispatcher(TOPIC_DISPATCHER_NAME),
-          buildTopicKey(topicId));
+          Props.create(new TopicActor.ActorCreator(context.getNotificationDeltaService()))
+              .withDispatcher(TOPIC_DISPATCHER_NAME),
+          buildTopicKey(topicId)
+      );
       topicSessions.put(topicId, topicActor);
       context().watch(topicActor);
     }
@@ -339,7 +339,7 @@ public class ApplicationActor extends UntypedActor {
    * @param message the message
    */
   private void broadcastToAllEndpoints(ThriftNotificationMessage message) {
-    for (LocalEndpointActorMD endpoint : localEndpointSessions.values()) {
+    for (LocalEndpointActorMetaData endpoint : localEndpointSessions.values()) {
       endpoint.actorRef.tell(message, self());
     }
   }
@@ -371,21 +371,25 @@ public class ApplicationActor extends UntypedActor {
    * @param message the message
    */
   private void processSessionAwareMessage(SessionAware message) {
-    LocalEndpointActorMD endpointMetaData = localEndpointSessions.get(message.getSessionInfo().getKey());
+    LocalEndpointActorMetaData endpointMetaData = localEndpointSessions
+        .get(message.getSessionInfo().getKey());
     if (endpointMetaData != null) {
       endpointMetaData.actorRef.tell(message, self());
     } else {
-      LOG.debug("[{}] Can't find endpoint actor that corresponds to {}", appToken, message.getSessionInfo().getKey());
+      LOG.debug("[{}] Can't find endpoint actor that corresponds to {}",
+          appToken, message.getSessionInfo().getKey());
     }
   }
 
   private void processEndpointEventReceiveMessage(EndpointEventReceiveMessage message) {
-    LocalEndpointActorMD endpointActor = localEndpointSessions.get(message.getKey());
+    LocalEndpointActorMetaData endpointActor = localEndpointSessions.get(message.getKey());
     if (endpointActor != null) {
       endpointActor.actorRef.tell(message, self());
     } else {
-      LOG.debug("[{}] Can't find endpoint actor that corresponds to {}", appToken, message.getKey());
-      context().parent().tell(new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE), self());
+      LOG.debug("[{}] Can't find endpoint actor that corresponds to {}",
+          appToken, message.getKey());
+      context().parent()
+          .tell(new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE), self());
     }
   }
 
@@ -433,22 +437,27 @@ public class ApplicationActor extends UntypedActor {
    * @param message the message
    */
   private void processEndpointRequest(EndpointAwareMessage message) {
-    LocalEndpointActorMD actorMD = localEndpointSessions.get(message.getKey());
-    if (actorMD == null) {
+    LocalEndpointActorMetaData actorMetaData = localEndpointSessions.get(message.getKey());
+    if (actorMetaData == null) {
       EndpointObjectHash endpointKey = message.getKey();
       String endpointActorId = LocalEndpointActorCreator.generateActorKey();
       LOG.debug("[{}] Creating actor with endpointKey: {}", appToken, endpointActorId);
       String globalActorNodeId = getGlobalEndpointActorNodeId(endpointKey);
-      actorMD = new LocalEndpointActorMD(context()
-          .actorOf(Props.create(new LocalEndpointActorCreator(context, endpointActorId, message.getAppToken(), message.getKey()))
-              .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId),
+      actorMetaData = new LocalEndpointActorMetaData(context()
+          .actorOf(Props
+              .create(new LocalEndpointActorCreator(
+                  context,
+                  endpointActorId,
+                  message.getAppToken(),
+                  message.getKey()
+              )).withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId),
           endpointActorId, globalActorNodeId);
-      localEndpointSessions.put(message.getKey(), actorMD);
+      localEndpointSessions.put(message.getKey(), actorMetaData);
       endpointActorMap.put(endpointActorId, message.getKey());
-      context().watch(actorMD.actorRef);
+      context().watch(actorMetaData.actorRef);
       notifyGlobalEndpointActor(endpointKey, globalActorNodeId);
     }
-    actorMD.actorRef.tell(message, self());
+    actorMetaData.actorRef.tell(message, self());
   }
 
   private String getGlobalEndpointActorNodeId(EndpointObjectHash endpointKey) {
@@ -459,8 +468,10 @@ public class ApplicationActor extends UntypedActor {
     notifyGlobalEndpointActor(endpointKey, globalActorNodeId, RouteOperation.ADD);
   }
 
-  private void notifyGlobalEndpointActor(EndpointObjectHash endpointKey, String globalActorNodeId, RouteOperation operation) {
-    EndpointRouteMessage msg = new EndpointRouteMessage(new EndpointClusterAddress(nodeId, tenantId, appToken, endpointKey), operation);
+  private void notifyGlobalEndpointActor(EndpointObjectHash endpointKey,
+                                         String globalActorNodeId, RouteOperation operation) {
+    EndpointRouteMessage msg = new EndpointRouteMessage(
+        new EndpointClusterAddress(nodeId, tenantId, appToken, endpointKey), operation);
     if (globalActorNodeId.equals(nodeId)) {
       processEndpointRouteMessage(msg);
     } else {
@@ -476,28 +487,32 @@ public class ApplicationActor extends UntypedActor {
 
   private void processEndpointRouteMessage(EndpointRouteMessage msg) {
     EndpointObjectHash endpointKey = msg.getAddress().getEndpointKey();
-    GlobalEndpointActorMD actorMD = globalEndpointSessions.get(endpointKey);
-    if (actorMD == null) {
+    GlobalEndpointActorMetaData actorMetaData = globalEndpointSessions.get(endpointKey);
+    if (actorMetaData == null) {
       String endpointActorId = GlobalEndpointActorCreator.generateActorKey();
       LOG.debug("[{}] Creating global endpoint actor for endpointKey: {}", appToken, endpointKey);
-      actorMD = new GlobalEndpointActorMD(
-          context().actorOf(Props.create(new GlobalEndpointActorCreator(context, endpointActorId, appToken, endpointKey))
+      actorMetaData = new GlobalEndpointActorMetaData(
+          context().actorOf(Props.create(
+              new GlobalEndpointActorCreator(context, endpointActorId, appToken, endpointKey))
               .withDispatcher(ENDPOINT_DISPATCHER_NAME), endpointActorId),
           endpointActorId);
-      globalEndpointSessions.put(endpointKey, actorMD);
-      context().watch(actorMD.actorRef);
+      globalEndpointSessions.put(endpointKey, actorMetaData);
+      context().watch(actorMetaData.actorRef);
     }
-    actorMD.actorRef.tell(msg, self());
+    actorMetaData.actorRef.tell(msg, self());
   }
 
-  private void processEndpointUserActionMessage(EndpointUserActionMessage message, boolean escalate) {
-    LocalEndpointActorMD endpointMetaData = localEndpointSessions.get(message.getKey());
+  private void processEndpointUserActionMessage(EndpointUserActionMessage message,
+                                                boolean escalate) {
+    LocalEndpointActorMetaData endpointMetaData = localEndpointSessions.get(message.getKey());
     if (endpointMetaData != null) {
       LOG.debug("[{}] Found affected endpoint and forwarding message to it", appToken);
       endpointMetaData.actorRef.tell(message, self());
     } else if (escalate) {
-      LOG.debug("[{}] Failed to fing affected endpoint in scope of current application. Forwarding message to tenant actor", appToken);
-      EndpointUserActionRouteMessage routeMessage = new EndpointUserActionRouteMessage(message, appToken);
+      LOG.debug("[{}] Failed to fing affected endpoint in scope of current application."
+          + " Forwarding message to tenant actor", appToken);
+      EndpointUserActionRouteMessage routeMessage =
+          new EndpointUserActionRouteMessage(message, appToken);
       context().parent().tell(routeMessage, self());
     }
   }
@@ -506,7 +521,7 @@ public class ApplicationActor extends UntypedActor {
     String actorKey = message.getActorKey();
     EndpointObjectHash endpointKey = message.getEndpointKey();
     LOG.debug("[{}] Stoping actor [{}] with [{}]", appToken, message.getActorKey(), endpointKey);
-    LocalEndpointActorMD endpointMetaData = localEndpointSessions.get(endpointKey);
+    LocalEndpointActorMetaData endpointMetaData = localEndpointSessions.get(endpointKey);
     if (endpointMetaData != null) {
       if (actorKey.equals(endpointMetaData.actorId)) {
         localEndpointSessions.remove(endpointKey);
@@ -531,11 +546,12 @@ public class ApplicationActor extends UntypedActor {
       String name = localActor.path().name();
       EndpointObjectHash endpointHash = endpointActorMap.remove(name);
       if (endpointHash != null) {
-        LocalEndpointActorMD actorMetaData = localEndpointSessions.get(endpointHash);
+        LocalEndpointActorMetaData actorMetaData = localEndpointSessions.get(endpointHash);
         if (actorMetaData != null && actorMetaData.actorRef.equals(localActor)) {
           localEndpointSessions.remove(endpointHash);
           LOG.debug("[{}] removed endpoint: {}", appToken, localActor);
-          notifyGlobalEndpointActor(endpointHash, actorMetaData.globalActorNodeId, RouteOperation.DELETE);
+          notifyGlobalEndpointActor(endpointHash,
+              actorMetaData.globalActorNodeId, RouteOperation.DELETE);
         }
       } else if (topicSessions.remove(name) != null) {
         LOG.debug("[{}] removed topic: {}", appToken, localActor);
@@ -561,7 +577,9 @@ public class ApplicationActor extends UntypedActor {
     ActorRef logActor = logsSessions.get(name);
     if (logActor == null) {
       logActor = context().actorOf(
-          Props.create(new ApplicationLogActor.ActorCreator(context, appToken)).withDispatcher(LOG_DISPATCHER_NAME));
+          Props.create(new ApplicationLogActor.ActorCreator(context, appToken))
+              .withDispatcher(LOG_DISPATCHER_NAME)
+      );
       context().watch(logActor);
       logsSessions.put(logActor.path().name(), logActor);
     }
@@ -577,8 +595,9 @@ public class ApplicationActor extends UntypedActor {
     if (userVerifierActor == null) {
       userVerifierActor = context()
           .actorOf(
-              Props.create(new ApplicationUserVerifierActor.ActorCreator(context, appToken)).withDispatcher(
-                  VERIFIER_DISPATCHER_NAME));
+              Props.create(new ApplicationUserVerifierActor.ActorCreator(context, appToken))
+                  .withDispatcher(VERIFIER_DISPATCHER_NAME)
+          );
       context().watch(userVerifierActor);
       userVerifierSessions.put(userVerifierActor.path().name(), userVerifierActor);
     }
@@ -605,19 +624,11 @@ public class ApplicationActor extends UntypedActor {
     LOG.info("[{}] Stoped ", appToken);
   }
 
-  /**
-   * The Class ActorCreator.
-   */
+
   public static class ActorCreator implements Creator<ApplicationActor> {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The Akka service context
-     */
     private final AkkaContext context;
 
     private final String tenantId;

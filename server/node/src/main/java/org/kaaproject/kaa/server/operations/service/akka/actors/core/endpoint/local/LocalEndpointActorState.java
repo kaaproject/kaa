@@ -126,12 +126,17 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
   }
 
   boolean isValidForUser() {
-    return endpointProfile != null && endpointProfile.getEndpointUserId() != null && !endpointProfile.getEndpointUserId().isEmpty();
+    return endpointProfile != null
+        && endpointProfile.getEndpointUserId() != null
+        && !endpointProfile.getEndpointUserId().isEmpty();
   }
 
   boolean isValidForEvents() {
-    return endpointProfile != null && endpointProfile.getEndpointUserId() != null && !endpointProfile.getEndpointUserId().isEmpty()
-        && endpointProfile.getEcfVersionStates() != null && !endpointProfile.getEcfVersionStates().isEmpty();
+    return endpointProfile != null
+        && endpointProfile.getEndpointUserId() != null
+        && !endpointProfile.getEndpointUserId().isEmpty()
+        && endpointProfile.getEcfVersionStates() != null
+        && !endpointProfile.getEcfVersionStates().isEmpty();
   }
 
   boolean userIdMismatch() {
@@ -163,14 +168,11 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
   }
 
   public void setSubscriptionStates(Map<String, Integer> subscriptionStates) {
-    this.subscriptionStates = new HashMap<String, Integer>(subscriptionStates);
+    this.subscriptionStates = new HashMap<>(subscriptionStates);
   }
 
   public boolean isUcfHashRequiresIntialization() {
-    if (!isValidForUser()) {
-      return false;
-    }
-    return !ucfHashIntialized;
+    return isValidForUser() && !ucfHashIntialized;
   }
 
   public boolean isUserConfigurationUpdatePending() {
@@ -190,12 +192,13 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
   }
 
   public List<NotificationDto> filter(List<NotificationDto> notifications) {
-    List<NotificationDto> list = new ArrayList<NotificationDto>(notifications.size());
+    List<NotificationDto> list = new ArrayList<>(notifications.size());
     for (NotificationDto nf : notifications) {
       if (subscriptionStates.containsKey(nf.getTopicId())) {
         list.add(nf);
       } else {
-        LOG.trace("[{}][{}] Notification {} is no longer valid due to subscription state", endpointKey, actorKey, nf);
+        LOG.trace("[{}][{}] Notification {} is no longer valid due to subscription state",
+            endpointKey, actorKey, nf);
       }
     }
     return list;

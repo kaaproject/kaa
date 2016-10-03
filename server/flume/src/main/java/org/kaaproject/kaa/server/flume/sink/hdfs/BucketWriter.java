@@ -47,15 +47,14 @@ import java.util.concurrent.TimeUnit;
  */
 class BucketWriter {
 
-  private static final Logger LOG = LoggerFactory
-      .getLogger(BucketWriter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BucketWriter.class);
 
   private static final String IN_USE_EXT = ".tmp";
   private static final String AVRO_EXT = ".avro";
   /**
    * This lock ensures that only one thread can open a file at a time.
    */
-  private static final Integer staticLock = new Integer(1);
+  private static final Integer staticLock = 1;
 
   private final HDFSWriter writer;
   private final long rollInterval;
@@ -75,7 +74,8 @@ class BucketWriter {
   private volatile boolean isOpen;
   private volatile ScheduledFuture<Void> timedRollFuture;
 
-  BucketWriter(long rollInterval, long rollSize, long rollCount, long batchSize, long defaultBlockSize,
+  BucketWriter(long rollInterval, long rollSize, long rollCount, long batchSize,
+               long defaultBlockSize,
                Context context, String filePath, HDFSWriter writer,
                ScheduledThreadPoolExecutor timedRollerPool, UserGroupInformation user,
                SinkCounter sinkCounter) {
@@ -96,7 +96,7 @@ class BucketWriter {
   }
 
   /**
-   * Allow methods to act as another user (typically used for HDFS Kerberos)
+   * Allow methods to act as another user (typically used for HDFS Kerberos).
    */
   private <T> T runPrivileged(final PrivilegedExceptionAction<T> action)
       throws IOException, InterruptedException {
@@ -106,11 +106,7 @@ class BucketWriter {
     } else {
       try {
         return action.run();
-      } catch (IOException ex) {
-        throw ex;
-      } catch (InterruptedException ex) {
-        throw ex;
-      } catch (RuntimeException ex) {
+      } catch (IOException | InterruptedException | RuntimeException ex) {
         throw ex;
       } catch (Exception ex) {
         throw new RuntimeException("Unexpected exception.", ex);
@@ -119,7 +115,7 @@ class BucketWriter {
   }
 
   /**
-   * Clear the class counters
+   * Clear the class counters.
    */
   private void resetCounters() {
     eventCounter = 0;
@@ -128,7 +124,7 @@ class BucketWriter {
   }
 
   /**
-   * open() is called by append()
+   * open() is called by append().
    */
   private void open(final long serial) throws IOException, InterruptedException {
     runPrivileged(new PrivilegedExceptionAction<Void>() {
@@ -141,7 +137,7 @@ class BucketWriter {
   }
 
   /**
-   * doOpen() must only be called by open()
+   * doOpen() must only be called by open().
    */
   private void doOpen(long serial) throws IOException {
     if ((filePath == null) || (writer == null)) {
@@ -193,8 +189,8 @@ class BucketWriter {
               bucketPath + IN_USE_EXT, rollInterval);
           try {
             close();
-          } catch (Throwable t) { //NOSONAR
-            LOG.error("Unexpected error", t);
+          } catch (Throwable throwable) { //NOSONAR
+            LOG.error("Unexpected error", throwable);
           }
           return null;
         }
@@ -224,7 +220,7 @@ class BucketWriter {
   }
 
   /**
-   * doClose() must only be called by close()
+   * doClose() must only be called by close().
    */
   private void doClose() throws IOException {
     String currentBucket = bucketPath + IN_USE_EXT;
@@ -233,8 +229,10 @@ class BucketWriter {
       try {
         writer.close(); // could block
         sinkCounter.incrementConnectionClosedCount();
-      } catch (IOException e) {
-        LOG.warn("failed to close() HDFSWriter for file (" + currentBucket + "). Exception follows.", e);
+      } catch (IOException ex) {
+        LOG.warn("failed to close() HDFSWriter for file ("
+            + currentBucket
+            + "). Exception follows.", ex);
         sinkCounter.incrementConnectionFailedCount();
       }
       isOpen = false;
@@ -258,7 +256,7 @@ class BucketWriter {
   }
 
   /**
-   * flush the data
+   * flush the data.
    */
   public synchronized void flush() throws IOException, InterruptedException {
     if (!isBatchComplete()) {
@@ -273,7 +271,7 @@ class BucketWriter {
   }
 
   /**
-   * doFlush() must only be called by flush()
+   * doFlush() must only be called by flush().
    */
   private void doFlush() throws IOException {
     writer.sync(); // could block
@@ -304,17 +302,17 @@ class BucketWriter {
     try {
       sinkCounter.incrementEventDrainAttemptCount();
       writer.append(event); // could block
-    } catch (IOException e) {
-      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file (" +
-              bucketPath + IN_USE_EXT + ") and rethrowing exception.",
-          e.getMessage());
+    } catch (IOException ex) {
+      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file ("
+          + bucketPath + IN_USE_EXT + ") and rethrowing exception.",
+          ex.getMessage());
       try {
         close();
-      } catch (IOException e2) {
-        LOG.warn("Caught IOException while closing file (" +
-            bucketPath + IN_USE_EXT + "). Exception follows.", e2);
+      } catch (IOException ex2) {
+        LOG.warn("Caught IOException while closing file ("
+            + bucketPath + IN_USE_EXT + "). Exception follows.", ex2);
       }
-      throw e;
+      throw ex;
     }
 
     // update statistics
@@ -327,7 +325,8 @@ class BucketWriter {
     }
   }
 
-  public synchronized void appendBatch(List<KaaRecordEvent> events) throws IOException, InterruptedException {
+  public synchronized void appendBatch(List<KaaRecordEvent> events)
+      throws IOException, InterruptedException {
     if (events.isEmpty()) {
       return;
     }
@@ -348,17 +347,17 @@ class BucketWriter {
         writer.append(event); // could block
         processSize += event.getBody().length;
       }
-    } catch (IOException e) {
-      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file (" +
-              bucketPath + IN_USE_EXT + ") and rethrowing exception.",
-          e.getMessage());
+    } catch (IOException ex) {
+      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file ("
+          + bucketPath + IN_USE_EXT + ") and rethrowing exception.",
+          ex.getMessage());
       try {
         close();
-      } catch (IOException e2) {
-        LOG.warn("Caught IOException while closing file (" +
-            bucketPath + IN_USE_EXT + "). Exception follows.", e2);
+      } catch (IOException ex2) {
+        LOG.warn("Caught IOException while closing file ("
+            + bucketPath + IN_USE_EXT + "). Exception follows.", ex2);
       }
-      throw e;
+      throw ex;
     }
 
     // update statistics
@@ -372,7 +371,7 @@ class BucketWriter {
   }
 
   /**
-   * check if time to rotate the file
+   * Check if time to rotate the file.
    */
   private boolean shouldRotate() {
     boolean doRotate = false;
@@ -404,8 +403,10 @@ class BucketWriter {
 
   @Override
   public String toString() {
-    return "[ " + this.getClass().getSimpleName() + " filePath = " + filePath +
-        ", bucketPath = " + bucketPath + " ]";
+    return "[ " + this.getClass().getSimpleName()
+        + " filePath = " + filePath
+        + ", bucketPath = " + bucketPath
+        + " ]";
   }
 
   private boolean isBatchComplete() {
@@ -414,6 +415,8 @@ class BucketWriter {
 
   private long generateSerial(Event event) {
     long timestamp = System.currentTimeMillis();
-    return Arrays.hashCode(event.getBody()) + ManagementFactory.getRuntimeMXBean().getName().hashCode() + (int) (timestamp ^ (timestamp >>> 32));
+    return Arrays.hashCode(event.getBody())
+        + ManagementFactory.getRuntimeMXBean().getName().hashCode()
+        + (int) (timestamp ^ (timestamp >>> 32));
   }
 }
