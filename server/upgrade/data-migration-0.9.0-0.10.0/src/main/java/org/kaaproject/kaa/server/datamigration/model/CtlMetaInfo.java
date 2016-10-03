@@ -30,16 +30,25 @@ public class CtlMetaInfo {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
 
-    CtlMetaInfo that = (CtlMetaInfo) o;
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
 
-    if (!fqn.equals(that.fqn)) return false;
-    if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
+    CtlMetaInfo that = (CtlMetaInfo) obj;
+
+    if (!fqn.equals(that.fqn)) {
+      return false;
+    }
+
+    if (appId != null ? !appId.equals(that.appId) : that.appId != null) {
+      return false;
+    }
     return tenantId != null ? tenantId.equals(that.tenantId) : that.tenantId == null;
-
   }
 
   @Override

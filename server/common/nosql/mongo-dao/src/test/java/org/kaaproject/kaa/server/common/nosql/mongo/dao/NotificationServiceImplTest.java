@@ -79,7 +79,7 @@ public class NotificationServiceImplTest extends AbstractMongoTest {
 
     NotificationSchemaDto notificationSchemaDto = new NotificationSchemaDto();
     notificationSchemaDto.setApplicationId(app.getId());
-    CTLSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
+    CTLSchemaDto ctlSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(app.getTenantId()));
     notificationSchemaDto.setCtlSchemaId(ctlSchema.getId());
     if (notificationSchemaDto == null) {
       throw new RuntimeException("Can't save default profile schema "); //NOSONAR

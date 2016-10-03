@@ -29,14 +29,14 @@ public interface EventServiceListener {
   void onServerError(String serverId);
 
   /**
-   * Reports information about endpoint to global user actor
+   * Reports information about endpoint to global user actor.
    *
    * @param update - information about endpoint activity
    */
   void onEndpointRouteUpdate(GlobalRouteInfo update);
 
   /**
-   * Reports update of user configuration to the endpoint user actor
+   * Reports update of user configuration to the endpoint user actor.
    *
    * @param update - endpoint user configuration update
    */

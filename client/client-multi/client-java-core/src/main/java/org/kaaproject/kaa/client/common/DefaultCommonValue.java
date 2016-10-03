@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.common;
 import java.nio.ByteBuffer;
 
 /**
- * @author Yaroslav Zeygerman
+ * @author Yaroslav Zeygerman.
  */
 public final class DefaultCommonValue implements CommonValue {
   private final Object value;

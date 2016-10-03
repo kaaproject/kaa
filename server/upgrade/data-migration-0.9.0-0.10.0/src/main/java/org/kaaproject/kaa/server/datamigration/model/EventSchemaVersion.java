@@ -18,9 +18,9 @@ package org.kaaproject.kaa.server.datamigration.model;
 
 public class EventSchemaVersion {
   private Long id;
-  private String schems;
-  private Long created_time;
-  private String created_username;
+  private String schemas;
+  private Long createdTime;
+  private String createdUsername;
 
   public Long getId() {
     return id;
@@ -30,43 +30,36 @@ public class EventSchemaVersion {
     this.id = id;
   }
 
-  public String getSchems() {
-    return schems;
+  public String getSchemas() {
+    return schemas;
   }
 
-  public void setSchems(String schems) {
-    this.schems = schems;
+  public void setSchemas(String schemas) {
+    this.schemas = schemas;
   }
 
   @Override
   public String toString() {
-    return "EventSchemaVersion{" +
-        "id=" + id +
-        ", schems=" + schems +
-        '}';
+    return "EventSchemaVersion{"
+        + "id=" + id
+        + ", schemas=" + schemas
+        + '}';
   }
+
 
   public Long getCreatedTime() {
-    return created_time;
+    return createdTime;
   }
 
-  public Long getCreated_time() {
-    return created_time;
-  }
-
-  public void setCreated_time(Long created_time) {
-    this.created_time = created_time;
+  public void setCreatedTime(Long createdTime) {
+    this.createdTime = createdTime;
   }
 
   public String getCreatedUsername() {
-    return created_username;
+    return createdUsername;
   }
 
-  public String getCreated_username() {
-    return created_username;
-  }
-
-  public void setCreated_username(String created_username) {
-    this.created_username = created_username;
+  public void setCreatedUsername(String createdUsername) {
+    this.createdUsername = createdUsername;
   }
 }

@@ -43,18 +43,20 @@ public class ChangeProfileFilterNotification implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof ChangeProfileFilterNotification)) {
+    if (!(obj instanceof ChangeProfileFilterNotification)) {
       return false;
     }
-    ChangeProfileFilterNotification that = (ChangeProfileFilterNotification) o;
-    if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) : that.changeNotificationDto != null) {
+    ChangeProfileFilterNotification that = (ChangeProfileFilterNotification) obj;
+    if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) :
+            that.changeNotificationDto != null) {
       return false;
     }
-    if (profileFilterDto != null ? !profileFilterDto.equals(that.profileFilterDto) : that.profileFilterDto != null) {
+    if (profileFilterDto != null ? !profileFilterDto.equals(that.profileFilterDto) :
+            that.profileFilterDto != null) {
       return false;
     }
 
@@ -70,9 +72,9 @@ public class ChangeProfileFilterNotification implements Serializable {
 
   @Override
   public String toString() {
-    return "ChangeProfileNotification{" +
-        "profileFilterDto=" + profileFilterDto +
-        ", changeNotificationDto=" + changeNotificationDto +
-        '}';
+    return "ChangeProfileNotification{"
+           + "profileFilterDto=" + profileFilterDto
+           + ", changeNotificationDto=" + changeNotificationDto
+           + '}';
   }
 }

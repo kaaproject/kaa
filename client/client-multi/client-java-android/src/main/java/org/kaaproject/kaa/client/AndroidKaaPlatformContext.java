@@ -46,7 +46,15 @@ public class AndroidKaaPlatformContext implements KaaClientPlatformContext {
     this(context, properties, new SimpleExecutorContext());
   }
 
-  public AndroidKaaPlatformContext(Context context, KaaClientProperties properties, ExecutorContext executorContext) {
+  /**
+   * Instantiates a new AndroidKaaPlatformContext.
+   *
+   * @param context           the context
+   * @param properties        the Kaa client properties
+   * @param executorContext   the executor context
+   */
+  public AndroidKaaPlatformContext(Context context, KaaClientProperties properties,
+                                   ExecutorContext executorContext) {
     super();
     this.context = context;
     this.properties = properties;
@@ -54,7 +62,8 @@ public class AndroidKaaPlatformContext implements KaaClientPlatformContext {
   }
 
   @Override
-  public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
+  public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey,
+                                             PublicKey publicKey, PublicKey remotePublicKey) {
     return new AndroidHttpClient(url, privateKey, publicKey, remotePublicKey);
   }
 

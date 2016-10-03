@@ -39,29 +39,35 @@ public class TrustfulCredentialsService implements CredentialsService {
   private static final Logger LOG = LoggerFactory.getLogger(TrustfulCredentialsService.class);
 
   @Override
-  public CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials) throws CredentialsServiceException {
+  public CredentialsDto provideCredentials(String applicationId, CredentialsDto credentials)
+          throws CredentialsServiceException {
     LOG.debug("Returning credentials provided [{}]", credentials);
     return credentials;
   }
 
   @Override
-  public Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId) throws CredentialsServiceException {
-    CredentialsDto credentials = new CredentialsDto(credentialsId, null, CredentialsStatus.AVAILABLE);
+  public Optional<CredentialsDto> lookupCredentials(String applicationId, String credentialsId)
+          throws CredentialsServiceException {
+    CredentialsDto credentials = new CredentialsDto(credentialsId, null,
+            CredentialsStatus.AVAILABLE);
     LOG.debug("Returning dummy credentials [{}]", credentials);
     return Optional.of(credentials);
   }
 
   @Override
-  public void markCredentialsInUse(String applicationId, String credentialsId) throws CredentialsServiceException {
+  public void markCredentialsInUse(String applicationId, String credentialsId)
+          throws CredentialsServiceException {
     this.updateStatus(applicationId, credentialsId, CredentialsStatus.IN_USE);
   }
 
   @Override
-  public void markCredentialsRevoked(String applicationId, String credentialsId) throws CredentialsServiceException {
+  public void markCredentialsRevoked(String applicationId, String credentialsId)
+          throws CredentialsServiceException {
     this.updateStatus(applicationId, credentialsId, CredentialsStatus.REVOKED);
   }
 
   private void updateStatus(String applicationId, String credentialsId, CredentialsStatus status) {
-    LOG.debug("Consider credentials [{}] for application [{}] to be [{}]", credentialsId, applicationId, status);
+    LOG.debug("Consider credentials [{}] for application [{}] to be [{}]",
+            credentialsId, applicationId, status);
   }
 }

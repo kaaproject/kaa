@@ -29,7 +29,7 @@ public interface ClusterServiceListener {
   void onRouteMsg(EndpointRouteMessage msg);
 
   /**
-   * Process endpoint actor message
+   * Process endpoint actor message.
    *
    * @param msg the endpoint actor message
    */
@@ -37,7 +37,7 @@ public interface ClusterServiceListener {
 
 
   /**
-   * Reports update of cluster topology;
+   * Reports update of cluster topology.
    */
   void onClusterUpdated();
 

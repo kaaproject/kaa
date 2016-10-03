@@ -63,7 +63,7 @@ public class MigrateData {
             options.setDbName(args[i + 1]);
             break;
           case "nosql":
-            options.setNoSQL(args[i + 1]);
+            options.setNoSql(args[i + 1]);
             break;
           case "driver":
             options.setDriverClassName(args[i + 1]);
@@ -85,15 +85,15 @@ public class MigrateData {
       QueryRunner runner = new QueryRunner();
       Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
       BaseSchemaIdCounter.setInitValue(maxId);
-      UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn, options.getHost(), options.getDbName(), options.getNoSQL());
-      EndpointProfileMigration endpointProfileMigration = new EndpointProfileMigration(options.getHost(), options.getDbName(), options.getNoSQL());
-      List<AbstractCTLMigration> migrationList = new ArrayList<>();
-      migrationList.add(new CTLConfigurationMigration(conn));
-      migrationList.add(new CTLEventsMigration(conn));
-      migrationList.add(new CTLNotificationMigration(conn, options.getHost(), options.getDbName(), options.getNoSQL()));
-      migrationList.add(new CTLLogMigration(conn));
+      UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn, options.getHost(), options.getDbName(), options.getNoSql());
+      EndpointProfileMigration endpointProfileMigration = new EndpointProfileMigration(options.getHost(), options.getDbName(), options.getNoSql());
+      List<AbstractCtlMigration> migrationList = new ArrayList<>();
+      migrationList.add(new CtlConfigurationMigration(conn));
+      migrationList.add(new CtlEventsMigration(conn));
+      migrationList.add(new CtlNotificationMigration(conn, options.getHost(), options.getDbName(), options.getNoSql()));
+      migrationList.add(new CtlLogMigration(conn));
 
-      CTLAggregation aggregation = new CTLAggregation(conn);
+      CtlAggregation aggregation = new CtlAggregation(conn);
       BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
 
       // convert uuids from latin1 to base64
@@ -101,12 +101,12 @@ public class MigrateData {
       endpointProfileMigration.transform();
 
       //before phase
-      for (AbstractCTLMigration m : migrationList) {
+      for (AbstractCtlMigration m : migrationList) {
         m.beforeTransform();
       }
 
       // transform phase
-      for (AbstractCTLMigration m : migrationList) {
+      for (AbstractCtlMigration m : migrationList) {
         schemas.addAll(m.transform());
       }
 
@@ -117,13 +117,13 @@ public class MigrateData {
       recordsCreation.create(ctlToSchemas);
 
       //after phase
-      for (AbstractCTLMigration m : migrationList) {
+      for (AbstractCtlMigration m : migrationList) {
         m.afterTransform();
       }
 
       conn.commit();
-    } catch (SQLException | IOException | ConfigurationGenerationException e) {
-      LOG.error("Error: " + e.getMessage(), e);
+    } catch (SQLException | IOException | ConfigurationGenerationException ex) {
+      LOG.error("Error: " + ex.getMessage(), ex);
       DbUtils.rollbackAndCloseQuietly(conn);
     } finally {
       DbUtils.rollbackAndCloseQuietly(conn);

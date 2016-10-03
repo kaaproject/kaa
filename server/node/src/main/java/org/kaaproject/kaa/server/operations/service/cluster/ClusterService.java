@@ -52,7 +52,7 @@ public interface ClusterService {
   void setListener(ClusterServiceListener listener);
 
   /**
-   * Returns id of the current node
+   * Returns id of the current node.
    *
    * @return id of the current node
    */
@@ -60,7 +60,7 @@ public interface ClusterService {
 
   /**
    * Checks if global entity actor for specified entity is located on current
-   * node
+   * node.
    *
    * @param entityId to check
    * @return true if global entity actor is located on this node, false otherwise.
@@ -69,15 +69,15 @@ public interface ClusterService {
 
   /**
    * Checks if global entity actor for specified entity is located on current
-   * node
+   * node.
    *
-   * @param entityId to check
+   * @param entityId to check.
    * @return true if global entity actor is located on this node, false otherwise.
    */
   boolean isMainEntityNode(byte[] entityId);
 
   /**
-   * Returns id of the node that should contain global entity actor
+   * Returns id of the node that should contain global entity actor.
    *
    * @param entityId the entity id
    * @return id of the global entity actor node
@@ -85,7 +85,7 @@ public interface ClusterService {
   String getEntityNode(EndpointObjectHash entityId);
 
   /**
-   * Returns id of the node that should contain global entity actor
+   * Returns id of the node that should contain global entity actor.
    *
    * @param entityId the entity id
    * @return id of the global entity actor node
@@ -101,7 +101,7 @@ public interface ClusterService {
   String sendRouteMessage(EndpointRouteMessage msg);
 
   /**
-   * Send unicast notification message to specified node
+   * Send unicast notification message to specified node.
    *
    * @param nodeId - id of the server node
    * @param msg    the unicast notification message
@@ -109,7 +109,7 @@ public interface ClusterService {
   void sendUnicastNotificationMessage(String nodeId, ThriftUnicastNotificationMessage msg);
 
   /**
-   * Send server profile update message to specified node
+   * Send server profile update message to specified node.
    *
    * @param nodeId - id of the server node
    * @param msg    the unicast notification message
@@ -117,28 +117,28 @@ public interface ClusterService {
   void sendServerProfileUpdateMessage(String nodeId, ThriftServerProfileUpdateMessage msg);
 
   /**
-   * Process entity route messages
+   * Process entity route messages.
    *
    * @param msgs the entity route messages
    */
   void onEntityRouteMessages(List<ThriftEntityRouteMessage> msgs);
 
   /**
-   * Process unicast notification message
+   * Process unicast notification message.
    *
    * @param msg the unicast notification message
    */
   void onUnicastNotificationMessage(ThriftUnicastNotificationMessage msg);
 
   /**
-   * Process server profile update message
+   * Process server profile update message.
    *
    * @param msg the server profile update message
    */
   void onServerProfileUpdateMessage(ThriftServerProfileUpdateMessage msg);
 
   /**
-   * Process endpoint de-registration message
+   * Process endpoint de-registration message.
    *
    * @param msg the endpoint de-registration message
    */

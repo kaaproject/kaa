@@ -102,9 +102,12 @@ public class DefaultAkkaService implements AkkaService {
     LOG.info("Initializing Akka system...");
     akka = ActorSystem.create(EPS, context.getConfig());
     LOG.info("Initializing Akka EPS actor...");
-    opsActor = akka.actorOf(Props.create(new OperationsServerActor.ActorCreator(context)).withDispatcher(CORE_DISPATCHER_NAME), EPS);
+    opsActor = akka.actorOf(Props.create(
+        new OperationsServerActor.ActorCreator(context))
+        .withDispatcher(CORE_DISPATCHER_NAME), EPS);
     LOG.info("Lookup platform protocols");
-    Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
+    Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(
+        PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
     LOG.info("Initializing Akka io router...");
     ioRouter = akka.actorOf(
         new RoundRobinPool(context.getIOWorkerCount())
@@ -156,10 +159,12 @@ public class DefaultAkkaService implements AkkaService {
    */
   @Override
   public void onNotification(Notification notification) {
-    ApplicationDto applicationDto = context.getApplicationService().findAppById(notification.getAppId());
+    ApplicationDto applicationDto = context.getApplicationService()
+        .findAppById(notification.getAppId());
     if (applicationDto != null) {
       LOG.debug("Sending message {} to EPS actor", notification);
-      opsActor.tell(new ThriftNotificationMessage(applicationDto.getApplicationToken(), notification), ActorRef.noSender());
+      opsActor.tell(new ThriftNotificationMessage(
+          applicationDto.getApplicationToken(), notification), ActorRef.noSender());
     } else {
       LOG.warn("Can't find corresponding application for: {}", notification);
     }
@@ -189,7 +194,8 @@ public class DefaultAkkaService implements AkkaService {
   }
 
   @Override
-  public void setStatusListener(final AkkaStatusListener listener, final long statusUpdateFrequency) {
+  public void setStatusListener(final AkkaStatusListener listener,
+                                final long statusUpdateFrequency) {
     this.statusListenerThread = new StatusListenerThread(listener, statusUpdateFrequency);
     this.statusListenerThread.start();
   }
@@ -218,9 +224,9 @@ public class DefaultAkkaService implements AkkaService {
       while (!stopped) {
         try {
           Thread.sleep(statusUpdateFrequency);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ex) {
           if (!stopped) {
-            LOG.warn("Status update thread was interrupted", e);
+            LOG.warn("Status update thread was interrupted", ex);
           } else {
             break;
           }

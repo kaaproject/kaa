@@ -61,15 +61,15 @@ public class ChangeNotificationDto implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof ChangeNotificationDto)) {
+    if (!(obj instanceof ChangeNotificationDto)) {
       return false;
     }
 
-    ChangeNotificationDto that = (ChangeNotificationDto) o;
+    ChangeNotificationDto that = (ChangeNotificationDto) obj;
 
     if (appSeqNumber != that.appSeqNumber) {
       return false;
@@ -98,11 +98,11 @@ public class ChangeNotificationDto implements Serializable {
 
   @Override
   public String toString() {
-    return "ChangeNotificationDto{" +
-        "appId='" + appId + '\'' +
-        ", appSeqNumber=" + appSeqNumber +
-        ", groupId='" + groupId + '\'' +
-        ", groupSeqNumber=" + groupSeqNumber +
-        '}';
+    return "ChangeNotificationDto{"
+           + "appId='" + appId + '\''
+           + ", appSeqNumber=" + appSeqNumber
+           + ", groupId='" + groupId + '\''
+           + ", groupSeqNumber=" + groupSeqNumber
+           + '}';
   }
 }

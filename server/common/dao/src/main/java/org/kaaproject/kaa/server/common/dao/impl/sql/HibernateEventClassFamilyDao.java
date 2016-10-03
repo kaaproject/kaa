@@ -41,7 +41,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClassFamily> implements EventClassFamilyDao<EventClassFamily> {
+public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClassFamily>
+        implements EventClassFamilyDao<EventClassFamily> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateEventClassFamilyDao.class);
 
@@ -55,7 +56,8 @@ public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClas
     LOG.debug("Searching event class families by tenant id [{}] ", tenantId);
     List<EventClassFamily> eventClassFamilies = Collections.emptyList();
     if (isNotBlank(tenantId)) {
-      eventClassFamilies = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS, Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)));
+      eventClassFamilies = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,
+              Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)));
     }
     if (LOG.isTraceEnabled()) {
       LOG.trace("[{}] Search result: {}.", tenantId, Arrays.toString(eventClassFamilies.toArray()));
@@ -87,11 +89,12 @@ public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClas
   public EventClassFamily findByEcfvId(String ecfvId) {
     LOG.debug("Searching event class family by ecfv id [{}]", ecfvId);
 
-    Query query = getSession().createSQLQuery("select ecf.*" +
-        " from " + EVENT_CLASS_FAMILY_TABLE_NAME + " as ecf" +
-        " join " + EVENT_CLASS_FAMILY_VERSION_TABLE_NAME + " as ecfv" +
-        " on ecf.id = ecfv." + EVENT_CLASS_FAMILY_ID +
-        " where ecfv.id = :id").addEntity(getEntityClass());
+    Query query = getSession().createSQLQuery(
+            "select ecf.*"
+            + " from " + EVENT_CLASS_FAMILY_TABLE_NAME + " as ecf"
+            + " join " + EVENT_CLASS_FAMILY_VERSION_TABLE_NAME + " as ecfv"
+            + " on ecf.id = ecfv." + EVENT_CLASS_FAMILY_ID
+            + " where ecfv.id = :id").addEntity(getEntityClass());
     query.setLong("id", Long.valueOf(ecfvId));
     EventClassFamily eventClassFamily = (EventClassFamily) query.uniqueResult();
 
@@ -102,7 +105,8 @@ public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClas
   @Override
   public void removeByTenantId(String tenantId) {
     if (isNotBlank(tenantId)) {
-      List<EventClassFamily> eventClassFamilies = findListByCriterionWithAlias(TENANT_PROPERTY, TENANT_ALIAS,
+      List<EventClassFamily> eventClassFamilies = findListByCriterionWithAlias(
+              TENANT_PROPERTY, TENANT_ALIAS,
           Restrictions.eq(TENANT_REFERENCE, Long.valueOf(tenantId)));
       removeList(eventClassFamilies);
     }
@@ -128,7 +132,8 @@ public class HibernateEventClassFamilyDao extends HibernateAbstractDao<EventClas
 
   @Override
   public boolean validateClassName(String tenantId, String ecfId, String className) {
-    LOG.debug("Validating fqn, tenant id [{}], ecf id [{}], className [{}]", tenantId, ecfId, className);
+    LOG.debug("Validating fqn, tenant id [{}], ecf id [{}], className [{}]",
+            tenantId, ecfId, className);
     Criteria criteria = getCriteria();
     criteria.createAlias(TENANT_PROPERTY, TENANT_ALIAS);
     criteria.add(Restrictions.and(

@@ -58,7 +58,7 @@ public final class EndpointEvent {
     return event;
   }
 
-  public String getEventClassFQN() {
+  public String getEventClassFqn() {
     return event.getEventClassFqn();
   }
 

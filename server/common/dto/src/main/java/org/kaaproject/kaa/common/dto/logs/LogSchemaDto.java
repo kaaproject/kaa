@@ -23,15 +23,15 @@ public class LogSchemaDto extends BaseSchemaDto {
   private static final long serialVersionUID = -7023640650614573350L;
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof LogSchemaDto)) {
+    if (!(obj instanceof LogSchemaDto)) {
       return false;
     }
 
-    return super.equals(o);
+    return super.equals(obj);
   }
 
   @Override
@@ -41,7 +41,7 @@ public class LogSchemaDto extends BaseSchemaDto {
 
   @Override
   public String toString() {
-    return "LogSchemaDto{" + super.toString() +
-        '}';
+    return "LogSchemaDto{" + super.toString()
+           + '}';
   }
 }

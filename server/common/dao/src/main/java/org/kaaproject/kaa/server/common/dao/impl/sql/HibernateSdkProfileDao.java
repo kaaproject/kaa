@@ -35,7 +35,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateSdkProfileDao extends HibernateAbstractDao<SdkProfile> implements SdkProfileDao<SdkProfile> {
+public class HibernateSdkProfileDao extends HibernateAbstractDao<SdkProfile>
+        implements SdkProfileDao<SdkProfile> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateSdkProfileDao.class);
 

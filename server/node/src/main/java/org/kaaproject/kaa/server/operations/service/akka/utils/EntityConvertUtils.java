@@ -41,19 +41,25 @@ public class EntityConvertUtils {
     List<LogDeliveryStatus> statusList = new ArrayList<>();
     for (Entry<Integer, LogDeliveryMessage> response : responseMap.entrySet()) {
       LogDeliveryMessage message = response.getValue();
-      statusList.add(new LogDeliveryStatus(response.getKey(), message.isSuccess() ? SyncStatus.SUCCESS : SyncStatus.FAILURE,
-          EntityConvertUtils.toErrorCode(message.getErrorCode())));
+      statusList.add(
+          new LogDeliveryStatus(response.getKey(), message.isSuccess()
+              ? SyncStatus.SUCCESS
+              : SyncStatus.FAILURE,
+              EntityConvertUtils.toErrorCode(message.getErrorCode())));
     }
     return new LogServerSync(statusList);
   }
 
   public static UserAttachResponse convert(UserVerificationResponseMessage value) {
-    UserAttachResponse response = new UserAttachResponse(value.isSuccess() ? SyncStatus.SUCCESS : SyncStatus.FAILURE,
+    UserAttachResponse response = new UserAttachResponse(value.isSuccess()
+        ? SyncStatus.SUCCESS
+        : SyncStatus.FAILURE,
         EntityConvertUtils.toErrorCode(value.getErrorCode()), value.getFailureReason());
     return response;
   }
 
-  public static UserVerifierErrorCode toErrorCode(org.kaaproject.kaa.server.common.verifier.UserVerifierErrorCode errorCode) {
+  public static UserVerifierErrorCode toErrorCode(
+      org.kaaproject.kaa.server.common.verifier.UserVerifierErrorCode errorCode) {
     if (errorCode == null) {
       return null;
     }
@@ -75,7 +81,8 @@ public class EntityConvertUtils {
     }
   }
 
-  public static LogDeliveryErrorCode toErrorCode(org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode errorCode) {
+  public static LogDeliveryErrorCode toErrorCode(
+      org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode errorCode) {
     if (errorCode == null) {
       return null;
     }
@@ -93,7 +100,8 @@ public class EntityConvertUtils {
     }
   }
 
-  public static List<EventClassFamilyVersion> convertToECFVersions(List<EventClassFamilyVersionStateDto> ecfVersionStates) {
+  public static List<EventClassFamilyVersion> convertToEcfVersions(
+      List<EventClassFamilyVersionStateDto> ecfVersionStates) {
     List<EventClassFamilyVersion> result = new ArrayList<>(ecfVersionStates.size());
     for (EventClassFamilyVersionStateDto dto : ecfVersionStates) {
       result.add(new EventClassFamilyVersion(dto.getEcfId(), dto.getVersion()));

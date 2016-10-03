@@ -65,7 +65,8 @@ public class ServerProfileServiceImpl implements ServerProfileService {
         dto.setVersion(++version);
         dto.setCreatedTime(System.currentTimeMillis());
       } else {
-        ServerProfileSchemaDto oldServerProfileSchemaDto = getDto(serverProfileSchemaDao.findById(id));
+        ServerProfileSchemaDto oldServerProfileSchemaDto = getDto(
+                serverProfileSchemaDao.findById(id));
         if (oldServerProfileSchemaDto != null) {
           oldServerProfileSchemaDto.editFields(dto);
           dto = oldServerProfileSchemaDto;
@@ -76,7 +77,8 @@ public class ServerProfileServiceImpl implements ServerProfileService {
       }
       return getDto(serverProfileSchemaDao.save(new ServerProfileSchema(dto)));
     } else {
-      throw new IncorrectParameterException("Invalid server profile schema object. Application identifier is not specified!");
+      throw new IncorrectParameterException("Invalid server profile schema object. Application "
+                                            + "identifier is not specified!");
     }
   }
 
@@ -99,7 +101,8 @@ public class ServerProfileServiceImpl implements ServerProfileService {
   }
 
   @Override
-  public ServerProfileSchemaDto findServerProfileSchemaByAppIdAndVersion(String appId, int schemaVersion) {
+  public ServerProfileSchemaDto findServerProfileSchemaByAppIdAndVersion(String appId,
+                                                                         int schemaVersion) {
     validateSqlId(appId, "Can't find server profile schema. Invalid application id: " + appId);
     return getDto(serverProfileSchemaDao.findByAppIdAndVersion(appId, schemaVersion));
   }

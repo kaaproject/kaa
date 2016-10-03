@@ -56,7 +56,9 @@ public class HistoryDelta {
    * @param topicListChanged     the topic list changed
    * @param seqNumberChanged     the sequence number changed flag
    */
-  public HistoryDelta(List<EndpointGroupStateDto> endpointGroupStates, boolean configurationChanged, boolean topicListChanged, boolean seqNumberChanged) {
+  public HistoryDelta(List<EndpointGroupStateDto> endpointGroupStates,
+                      boolean configurationChanged,
+                      boolean topicListChanged, boolean seqNumberChanged) {
     super();
     this.endpointGroupStates = endpointGroupStates;
     this.configurationChanged = configurationChanged;

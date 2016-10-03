@@ -76,10 +76,11 @@ public class ControlNode extends WorkerNodeTracker {
   public void updateNodeData(final ControlNodeInfo currentNodeInfo) throws IOException {
     this.currentNodeInfo = currentNodeInfo;
     if (isMaster()) {
-      doZKClientAction(new ZKClientAction() {
+      doZkClientAction(new ZkClientAction() {
         @Override
         public void doWithZkClient(CuratorFramework client) throws Exception {
-          client.setData().forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
+          client.setData().forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH,
+                  controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
         }
       }, true);
     }
@@ -116,14 +117,15 @@ public class ControlNode extends WorkerNodeTracker {
   public boolean createZkNode() throws IOException {
     try {
       nodePath = zkClient.create().withMode(CreateMode.EPHEMERAL)
-          .forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH, controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
+          .forPath(ControlNodeTracker.CONTROL_SERVER_NODE_PATH,
+                  controlNodeAvroConverter.get().toByteArray(currentNodeInfo));
       LOG.info("Created node with path: " + nodePath);
-    } catch (NodeExistsException e) {
-      LOG.info("master already exists ", e);
-    } catch (Exception e) {
-      LOG.error("Unknown Error", e);
+    } catch (NodeExistsException ex) {
+      LOG.info("master already exists ", ex);
+    } catch (Exception ex) {
+      LOG.error("Unknown Error", ex);
       close();
-      throw new IOException(e);
+      throw new IOException(ex);
     }
     return true;
   }

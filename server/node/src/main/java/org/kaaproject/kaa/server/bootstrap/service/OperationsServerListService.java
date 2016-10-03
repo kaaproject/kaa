@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * Maintains list of active operation servers and allow to filter
- * this list based on @{link }
+ * this list based on @{link }.
  *
  * @author Andrey Shvayka
  */

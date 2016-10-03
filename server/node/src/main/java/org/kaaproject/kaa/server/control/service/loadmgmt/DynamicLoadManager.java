@@ -313,7 +313,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
         }
 
         @Override
-        public void doInTemplate(Client client) {
+        public void doInTemplate(Client template) {
           try { // NOSONAR
             List<ThriftOperationsServer> operationsServersList = new ArrayList<>();
             for (Integer accessPointId : opsServersMap.keySet()) {
@@ -323,7 +323,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
             }
             LOG.trace("Bootstrap {} Operations servers list size {} ready to updates",
                 dnsName, operationsServersList.size());
-            client.onOperationsServerListUpdate(operationsServersList);
+            template.onOperationsServerListUpdate(operationsServersList);
             LOG.info("Bootstrap {} Operations servers list updated.", dnsName);
           } catch (TException ex) {
             lastBootstrapServersUpdateFailed = true;
@@ -375,10 +375,10 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
         }
 
         @Override
-        public void doInTemplate(OperationsThriftService.Client client) {
+        public void doInTemplate(OperationsThriftService.Client template) {
           try { // NOSONAR
             for (RedirectionRule rule : rules) {
-              client.setRedirectionRule(rule);
+              template.setRedirectionRule(rule);
               LOG.info("Operations {} set redirection rule: {} <> {}, {}",
                   accessPointId, rule.getAccessPointId(), rule.getInitRedirectProbability(),
                   rule.getSessionRedirectProbability());

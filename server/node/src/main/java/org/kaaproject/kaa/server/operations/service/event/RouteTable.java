@@ -35,6 +35,9 @@ public class RouteTable {
   private final Set<String> remoteServersSet;
   private final Map<RouteTableAddress, Set<RouteTableKey>> localAddressMap;
 
+  /**
+   * Instantiates new route table.
+   */
   public RouteTable() {
     super();
     routes = new HashMap<RouteTableKey, Map<String, RouteTableAddress>>();

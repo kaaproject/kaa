@@ -36,7 +36,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-@Api(value = "Tenant", description = "Provides function for manage tenants", basePath = "/kaaAdmin/rest")
+@Api(value = "Tenant",
+    description = "Provides function for manage tenants",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class TenantController extends AbstractAdminController {
 
@@ -47,10 +49,13 @@ public class TenantController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get all tenants",
-      notes = "Returns all tenants existing in the system. Only users with the KAA_ADMIN role are allowed to submit this request.")
+      notes = "Returns all tenants existing in the system. Only users with "
+          + "the KAA_ADMIN role are allowed to submit this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the KAA_ADMIN role"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the KAA_ADMIN role"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "tenants", method = RequestMethod.GET)
   @ResponseBody
@@ -66,11 +71,14 @@ public class TenantController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get tenant",
-      notes = "Returns tenant by associated userId. Only users with the KAA_ADMIN role are allowed to submit this request.")
+      notes = "Returns tenant by associated userId. Only users with the "
+          + "KAA_ADMIN role are allowed to submit this request.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid userId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the KAA_ADMIN role"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the KAA_ADMIN role"),
       @ApiResponse(code = 404, message = "A tenant with the specified userId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "tenant/{userId}", method = RequestMethod.GET)
@@ -89,21 +97,26 @@ public class TenantController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/Edit tenant",
-      notes = "Creates or edits a tenant. If a tenant with the specified ID does not exist, it will be created. If a tenant with the specified ID " +
-          "exists, it will be updated. Only users with the KAA_ADMIN role are allowed to submit this request.")
+      notes = "Creates or edits a tenant. If a tenant with the specified ID does not exist, "
+          + "it will be created. If a tenant with the specified ID "
+          + "exists, it will be updated. Only users with the KAA_ADMIN "
+          + "role are allowed to submit this request.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the  KAA_ADMIN role"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the  KAA_ADMIN role"),
       @ApiResponse(code = 404, message = "A tenant with the specified user ID does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "tenant", method = RequestMethod.POST)
   @ResponseBody
-  public TenantDto editTenant(@Valid @RequestBody TenantDto tenantUser) throws KaaAdminServiceException {
+  public TenantDto editTenant(@Valid @RequestBody TenantDto tenantUser)
+      throws KaaAdminServiceException {
     try {
       TenantDto tenant = tenantService.editTenant(tenantUser);
       return tenant;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 }

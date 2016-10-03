@@ -53,13 +53,15 @@ public interface NotificationDeltaService {
   NotificationDto findUnicastNotificationById(String unicastNotificationId);
 
   /**
-   * Calculate topic list hash for given profile
+   * Calculate topic list hash for given profile.
    *
    * @param appToken   - application token
    * @param endpointId - endpoint id
    * @param profile    - endpoint profile
    * @return topic list cache entry
    */
-  TopicListCacheEntry getTopicListHash(String appToken, String endpointId, EndpointProfileDto profile);
+  TopicListCacheEntry getTopicListHash(String appToken,
+                                       String endpointId,
+                                       EndpointProfileDto profile);
 
 }

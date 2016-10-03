@@ -17,6 +17,7 @@
 /**
  *
  */
+
 package org.kaaproject.kaa.server.common.thrift.util;
 
 import org.apache.thrift.TException;
@@ -39,7 +40,7 @@ import java.lang.reflect.InvocationTargetException;
  * The Class ThriftClient.
  *
  * @param <T> the generic type
- * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
+ * @author Andrey Panasenko apanasenko@cybervisiontech.com
  */
 public class ThriftClient<T extends TServiceClient> implements Runnable {
 
@@ -62,12 +63,12 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
   /**
    * The t class.
    */
-  private Class<T> tClass;
+  private Class<T> classT;
 
   /**
    * The t constructor.
    */
-  private Constructor<T> tConstructor;
+  private Constructor<T> constructorT;
 
   /**
    * The client.
@@ -98,20 +99,21 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
    * @throws IllegalArgumentException  the illegal argument exception
    * @throws InvocationTargetException the invocation target exception
    */
-  public ThriftClient(String endpointHost, int endpointPort, KaaThriftService kaaThriftService, Class<T> clazz)
+  public ThriftClient(String endpointHost, int endpointPort, KaaThriftService kaaThriftService,
+                      Class<T> clazz)
       throws NoSuchMethodException,
       InstantiationException,
       IllegalAccessException,
       InvocationTargetException {
-    this.tClass = clazz;
+    this.classT = clazz;
     this.endpointHost = endpointHost;
     this.endpointPort = endpointPort;
-    tConstructor = tClass.getConstructor(TProtocol.class, TProtocol.class);
+    constructorT = classT.getConstructor(TProtocol.class, TProtocol.class);
     transport = new TSocket(endpointHost, endpointPort);
     LOG.debug("ThriftClient sokcet to " + endpointHost + ":" + endpointPort + " created.");
     TProtocol protocol = new TBinaryProtocol(transport);
     TMultiplexedProtocol mp = new TMultiplexedProtocol(protocol, kaaThriftService.getServiceName());
-    client = tConstructor.newInstance(mp, mp);
+    client = constructorT.newInstance(mp, mp);
     LOG.debug("ThriftClient new Client to " + endpointHost + ":" + endpointPort + " created.");
   }
 
@@ -141,14 +143,16 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
         activity.isSuccess(true);
       } else {
         LOG.error(
-            "Error - Activity not set while invoke thrift object " + endpointHost + ":" + endpointPort);
+            "Error - Activity not set while invoke thrift object "
+            + endpointHost + ":" + endpointPort);
       }
     } catch (TException
         | IllegalArgumentException
-        | SecurityException e) {
+        | SecurityException ex) {
       LOG.error(
-          "Unexpected error occurred while invoke thrift object " + endpointHost + ":" + endpointPort,
-          e);
+          "Unexpected error occurred while invoke thrift object "
+          + endpointHost + ":" + endpointPort,
+          ex);
       if (activity != null) {
         activity.isSuccess(false);
       }
@@ -170,9 +174,9 @@ public class ThriftClient<T extends TServiceClient> implements Runnable {
   /**
    * Invoke.
    *
-   * @param a the a
+   * @param activity the activity
    */
-  public void invoke(ThriftActivity<T> a) {
-    a.doInTemplate(client);
+  public void invoke(ThriftActivity<T> activity) {
+    activity.doInTemplate(client);
   }
 }

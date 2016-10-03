@@ -36,7 +36,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
-@Api(value = "Verifiers", description = "Provides function for manage verifiers", basePath = "/kaaAdmin/rest")
+@Api(value = "Verifiers",
+    description = "Provides function for manage verifiers",
+    basePath = "/kaaAdmin/rest")
 @Controller
 public class VerifierController extends AbstractAdminController {
 
@@ -48,18 +50,25 @@ public class VerifierController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get verifiers",
-      notes = "Returns all verifiers for the specified application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request " +
-          "this information.")
+      notes = "Returns all verifiers for the specified application."
+          + " Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request "
+          + "this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An application with the specified applicationId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An application with the specified applicationId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "userVerifiers/{applicationToken}", method = RequestMethod.GET)
   @ResponseBody
   public List<UserVerifierDto> getUserVerifiersByApplicationToken(
-      @ApiParam(name = "applicationToken", value = "A unique auto-generated application identifier", required = true)
+      @ApiParam(name = "applicationToken",
+          value = "A unique auto-generated application identifier",
+          required = true)
       @PathVariable String applicationToken) throws KaaAdminServiceException {
     return verifierService.getRestUserVerifiersByApplicationToken(applicationToken);
   }
@@ -72,17 +81,24 @@ public class VerifierController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get verifier",
-      notes = "Returns a verifier by it's ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information.")
+      notes = "Returns a verifier by it's ID. Only users with the TENANT_DEVELOPER or "
+          + "TENANT_USER role are allowed to request this information.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An owner verifier with the specified userVerifierId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An owner verifier with the specified userVerifierId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "userVerifier/{userVerifierId}", method = RequestMethod.GET)
   @ResponseBody
   public UserVerifierDto getUserVerifier(
-      @ApiParam(name = "userVerifierId", value = "A unique owner verifier identifier", required = true)
+      @ApiParam(name = "userVerifierId",
+          value = "A unique owner verifier identifier",
+          required = true)
       @PathVariable String userVerifierId) throws KaaAdminServiceException {
     return verifierService.getRestUserVerifier(userVerifierId);
   }
@@ -95,20 +111,28 @@ public class VerifierController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Create/edit owner verifier",
-      notes = "Creates or edits an owner verifier. If the owner verifier with the specified ID does not exist, it will be created. If the owner " +
-          "verifier with the specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to " +
-          "perform this operation.")
+      notes = "Creates or edits an owner verifier. If the owner verifier with the "
+          + "specified ID does not exist, it will be created. If the owner "
+          + "verifier with the specified ID exists, it will be updated. Only users with the "
+          + "TENANT_DEVELOPER or TENANT_USER role are allowed to "
+          + "perform this operation.")
   @ApiResponses(value = {
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An owner verifier to be edited with the specified id does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role "
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An owner verifier to be edited with the specified id does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "userVerifier", method = RequestMethod.POST)
   @ResponseBody
   public UserVerifierDto editUserVerifier(
-      @ApiParam(name = "userVerifier", value = "UserVerifierDto body. Mandatory fields: pluginClassName, pluginTypeName, applicationId, name, " +
-          "jsonConfiguration", required = true)
+      @ApiParam(name = "userVerifier",
+          value = "UserVerifierDto body. Mandatory fields: pluginClassName, "
+              + "pluginTypeName, applicationId, name, "
+              + "jsonConfiguration", required = true)
       @RequestBody UserVerifierDto userVerifier) throws KaaAdminServiceException {
     return verifierService.editRestUserVerifier(userVerifier);
   }
@@ -120,20 +144,27 @@ public class VerifierController extends AbstractAdminController {
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Delete owner verifier",
-      notes = "Deletes an owner verifier by the owner verifier ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this " +
-          "operation.")
+      notes = "Deletes an owner verifier by the owner verifier ID. Only users with the "
+          + "TENANT_DEVELOPER or TENANT_USER role are allowed to perform this "
+          + "operation.")
   @ApiResponses(value = {
       @ApiResponse(code = 400, message = "Invalid userVerifierId supplied"),
-      @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An owner verifier with the specified userVerifierId does not exist"),
+      @ApiResponse(code = 401,
+          message = "The user is not authenticated or invalid credentials were provided"),
+      @ApiResponse(code = 403,
+          message = "The authenticated user does not have the required role"
+              + " (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+          message = "An owner verifier with the specified userVerifierId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "delUserVerifier", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteUserVerifier(
-      @ApiParam(name = "userVerifierId", value = "A unique owner verifier identifier", required = true)
-      @RequestParam(value = "userVerifierId") String userVerifierId) throws KaaAdminServiceException {
+      @ApiParam(name = "userVerifierId",
+          value = "A unique owner verifier identifier", required = true)
+      @RequestParam(value = "userVerifierId") String userVerifierId)
+      throws KaaAdminServiceException {
     verifierService.deleteUserVerifier(userVerifierId);
   }
 

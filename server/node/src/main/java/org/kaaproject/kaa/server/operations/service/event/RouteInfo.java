@@ -24,16 +24,22 @@ public final class RouteInfo extends ClusterRouteInfo {
 
   private final List<EventClassFamilyVersion> ecfVersions;
 
-  public RouteInfo(String tenantId, String userId, RouteTableAddress address, List<EventClassFamilyVersion> ecfVersions) {
+  public RouteInfo(String tenantId,
+                   String userId,
+                   RouteTableAddress address,
+                   List<EventClassFamilyVersion> ecfVersions) {
     this(tenantId, userId, address, ecfVersions, RouteOperation.ADD);
   }
 
-  public RouteInfo(String tenantId, String userId, RouteTableAddress address, List<EventClassFamilyVersion> ecfVersions, RouteOperation routeOperation) {
+  public RouteInfo(String tenantId, String userId, RouteTableAddress address,
+                   List<EventClassFamilyVersion> ecfVersions, RouteOperation routeOperation) {
     super(tenantId, userId, address, routeOperation);
     this.ecfVersions = ecfVersions;
   }
 
-  public static RouteInfo deleteRouteFromAddress(String tenantId, String userId, RouteTableAddress address) {
+  public static RouteInfo deleteRouteFromAddress(String tenantId,
+                                                 String userId,
+                                                 RouteTableAddress address) {
     return new RouteInfo(tenantId, userId, address, null, RouteOperation.DELETE);
   }
 

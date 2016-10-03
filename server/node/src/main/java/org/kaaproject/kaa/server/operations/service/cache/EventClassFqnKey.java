@@ -20,9 +20,6 @@ import java.io.Serializable;
 
 public final class EventClassFqnKey implements Serializable {
 
-  /**
-   *
-   */
   private static final long serialVersionUID = 4837917862920568450L;
 
   private final String tenantId;

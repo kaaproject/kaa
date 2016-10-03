@@ -57,7 +57,9 @@ public class DefaultFilterEvaluator implements FilterEvaluator {
   }
 
   @Override
-  public void init(EndpointProfileDto profile, String profileSchemaBody, String serverProfileSchemaBody) {
+  public void init(EndpointProfileDto profile,
+                   String profileSchemaBody,
+                   String serverProfileSchemaBody) {
     GenericAvroConverter<GenericRecord> endpointProfileConverter = new GenericAvroConverter<>(
         new Schema.Parser().parse(profileSchemaBody));
     GenericAvroConverter<GenericRecord> serverProfileConverter = new GenericAvroConverter<>(
@@ -65,10 +67,12 @@ public class DefaultFilterEvaluator implements FilterEvaluator {
     this.epKey = Base64Util.encode(profile.getEndpointKeyHash());
     try {
       if (profile.getServerProfileBody() != null) {
-        serverProfileGenericRecord = serverProfileConverter.decodeJson(profile.getServerProfileBody());
+        serverProfileGenericRecord = serverProfileConverter.decodeJson(
+            profile.getServerProfileBody());
       }
       if (profile.getClientProfileBody() != null) {
-        clientProfileGenericRecord = endpointProfileConverter.decodeJson(profile.getClientProfileBody());
+        clientProfileGenericRecord = endpointProfileConverter.decodeJson(
+            profile.getClientProfileBody());
       }
     } catch (IOException ioe) {
       LOG.error("Error decoding avro object from Json string", ioe);
@@ -84,7 +88,7 @@ public class DefaultFilterEvaluator implements FilterEvaluator {
    */
   @Override
   public boolean matches(ProfileFilterDto filter) {
-    Expression expression = new SpelExpressionParser().parseExpression(filter.getBody());
+    final Expression expression = new SpelExpressionParser().parseExpression(filter.getBody());
     StandardEvaluationContext evaluationContext;
     if (filter.getEndpointProfileSchemaVersion() != null) {
       evaluationContext = new StandardEvaluationContext(clientProfileGenericRecord);

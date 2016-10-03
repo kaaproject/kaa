@@ -251,20 +251,24 @@ public class SyncContext {
    */
   public boolean requireImmediateReply() {
     ServerSync response = getResponse();
-    if (response.getProfileSync() != null && response.getProfileSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+    if (response.getProfileSync() != null
+        && response.getProfileSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
       return true;
     }
-    if (response.getConfigurationSync() != null && response.getConfigurationSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+    if (response.getConfigurationSync() != null
+        && response.getConfigurationSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
       return true;
     }
-    if (response.getNotificationSync() != null && response.getNotificationSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
+    if (response.getNotificationSync() != null
+        && response.getNotificationSync().getResponseStatus() != SyncResponseStatus.NO_DELTA) {
       return true;
     }
     if (response.getEventSync() != null) {
       if (response.getEventSync().getEventSequenceNumberResponse() != null) {
         return true;
       }
-      if (response.getEventSync().getEvents() != null && !response.getEventSync().getEvents().isEmpty()) {
+      if (response.getEventSync().getEvents() != null
+          && !response.getEventSync().getEvents().isEmpty()) {
         return true;
       }
       if (response.getEventSync().getEventListenersResponses() != null
@@ -274,10 +278,12 @@ public class SyncContext {
     }
     if (response.getUserSync() != null) {
       UserServerSync userResponse = response.getUserSync();
-      if (userResponse.getEndpointAttachResponses() != null && !userResponse.getEndpointAttachResponses().isEmpty()) {
+      if (userResponse.getEndpointAttachResponses() != null
+          && !userResponse.getEndpointAttachResponses().isEmpty()) {
         return true;
       }
-      if (userResponse.getEndpointDetachResponses() != null && !userResponse.getEndpointDetachResponses().isEmpty()) {
+      if (userResponse.getEndpointDetachResponses() != null
+          && !userResponse.getEndpointDetachResponses().isEmpty()) {
         return true;
       }
       if (userResponse.getUserAttachResponse() != null) {

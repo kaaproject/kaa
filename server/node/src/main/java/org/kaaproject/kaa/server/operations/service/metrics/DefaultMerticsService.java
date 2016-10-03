@@ -93,7 +93,8 @@ public class DefaultMerticsService implements MetricsService {
 
   private void registerSystemMonitor() {
     LOG.info("Registering load average usage metrics.");
-    metrics.register(MetricRegistry.name(SystemMonitoringInfo.class, "system-load-average"), new Gauge<Double>() {
+    metrics.register(MetricRegistry.name(
+        SystemMonitoringInfo.class, "system-load-average"), new Gauge<Double>() {
       @Override
       public Double getValue() {
         return monitor.getLoadAverage();
@@ -101,7 +102,8 @@ public class DefaultMerticsService implements MetricsService {
     });
 
     LOG.info("Registering heap memory usage metrics.");
-    metrics.register(MetricRegistry.name(SystemMonitoringInfo.class, "heap-memory-usage.mb"), new Gauge<Long>() {
+    metrics.register(MetricRegistry.name(
+        SystemMonitoringInfo.class, "heap-memory-usage.mb"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return monitor.getHeapMemoryUsage();
@@ -109,7 +111,8 @@ public class DefaultMerticsService implements MetricsService {
     });
 
     LOG.info("Registering non heap memory usage metrics.");
-    metrics.register(MetricRegistry.name(SystemMonitoringInfo.class, "non-heap-memory-usage.mb"), new Gauge<Long>() {
+    metrics.register(MetricRegistry.name(
+        SystemMonitoringInfo.class, "non-heap-memory-usage.mb"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return monitor.getNonHeapMemoryUsage();
@@ -117,7 +120,8 @@ public class DefaultMerticsService implements MetricsService {
     });
 
     LOG.info("Registering live thread count metrics.");
-    metrics.register(MetricRegistry.name(SystemMonitoringInfo.class, "thread-count"), new Gauge<Integer>() {
+    metrics.register(MetricRegistry.name(
+        SystemMonitoringInfo.class, "thread-count"), new Gauge<Integer>() {
       @Override
       public Integer getValue() {
         return monitor.getLiveThreadCount();

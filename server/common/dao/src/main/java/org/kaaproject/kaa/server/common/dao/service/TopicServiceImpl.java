@@ -73,7 +73,8 @@ public class TopicServiceImpl implements TopicService {
     if (StringUtils.isBlank(topicDto.getId())) {
       LOG.debug("Save new topic.");
       topicDto.setCreatedTime(System.currentTimeMillis());
-      Topic topic = topicDao.findTopicByAppIdAndName(topicDto.getApplicationId(), topicDto.getName());
+      Topic topic = topicDao.findTopicByAppIdAndName(topicDto.getApplicationId(),
+              topicDto.getName());
       if (topic != null) {
         throw new IllegalArgumentException("Topic with the same name already present!");
       }
@@ -109,7 +110,8 @@ public class TopicServiceImpl implements TopicService {
 
   @Override
   public List<TopicDto> findVacantTopicsByEndpointGroupId(String endpointGroupId) {
-    validateId(endpointGroupId, "Can't find vacant topics. Invalid endpoint group id " + endpointGroupId);
+    validateId(endpointGroupId, "Can't find vacant topics. Invalid endpoint group id "
+                                + endpointGroupId);
     List<TopicDto> topics = Collections.emptyList();
     EndpointGroup endpointGroup = endpointGroupDao.findById(endpointGroupId);
     String applicationId = null;
@@ -130,10 +132,12 @@ public class TopicServiceImpl implements TopicService {
     TopicDto topic = findTopicById(id);
     List<UpdateNotificationDto<EndpointGroupDto>> notificationList = new LinkedList<>();
     if (topic != null) {
-      List<EndpointGroup> groups = endpointGroupDao.findEndpointGroupsByTopicIdAndAppId(topic.getApplicationId(), id);
+      List<EndpointGroup> groups = endpointGroupDao.findEndpointGroupsByTopicIdAndAppId(
+              topic.getApplicationId(), id);
       if (groups != null && !groups.isEmpty()) {
         for (EndpointGroup eg : groups) {
-          notificationList.add(endpointService.removeTopicFromEndpointGroup(eg.getId().toString(), id));
+          notificationList.add(endpointService.removeTopicFromEndpointGroup(eg.getId().toString(),
+                  id));
         }
       }
       topicDao.removeById(id);

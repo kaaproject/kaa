@@ -61,26 +61,31 @@ public class TopicListCacheEntry implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+
+    if (getClass() != obj.getClass()) {
       return false;
+    }
+
     TopicListCacheEntry other = (TopicListCacheEntry) obj;
-    if (hash == null) {
-      if (other.hash != null)
+    if (hash == null && other.hash != null) {
         return false;
-    } else if (!hash.equals(other.hash))
+    } else if (!hash.equals(other.hash)) {
       return false;
-    if (simpleHash != other.simpleHash)
-      return false;
-    return true;
+    }
+    return simpleHash == other.simpleHash;
   }
 
   @Override
   public String toString() {
-    return "TopicListCacheEntry [simpleHash=" + simpleHash + ", hash=" + hash + ", topics=" + topics + "]";
+    return "TopicListCacheEntry [simpleHash=" + simpleHash + ", hash="
+        + hash + ", topics=" + topics + "]";
   }
 
 }

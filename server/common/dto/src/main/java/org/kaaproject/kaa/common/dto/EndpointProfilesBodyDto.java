@@ -51,7 +51,8 @@ public class EndpointProfilesBodyDto extends AbstractEndpointProfilesDto {
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((endpointProfilesBody == null) ? 0 : endpointProfilesBody.hashCode());
+    result = prime * result + ((endpointProfilesBody == null) ? 0 :
+                                       endpointProfilesBody.hashCode());
     return result;
   }
 

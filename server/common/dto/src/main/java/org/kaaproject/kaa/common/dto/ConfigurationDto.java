@@ -29,6 +29,10 @@ public class ConfigurationDto extends AbstractStructureDto {
     super();
   }
 
+  /**
+   * Instantiates a new ConfigurationDto.
+   * @param other the ConfigurationDto object
+   */
   public ConfigurationDto(ConfigurationDto other) {
     super(other);
     this.schemaId = other.schemaId;
@@ -61,23 +65,24 @@ public class ConfigurationDto extends AbstractStructureDto {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
+    if (!super.equals(obj)) {
       return false;
     }
 
-    ConfigurationDto that = (ConfigurationDto) o;
+    ConfigurationDto that = (ConfigurationDto) obj;
 
     if (schemaId != null ? !schemaId.equals(that.schemaId) : that.schemaId != null) {
       return false;
     }
-    return protocolSchema != null ? protocolSchema.equals(that.protocolSchema) : that.protocolSchema == null;
+    return protocolSchema != null ? protocolSchema.equals(that.protocolSchema) :
+            that.protocolSchema == null;
 
   }
 
@@ -91,9 +96,9 @@ public class ConfigurationDto extends AbstractStructureDto {
 
   @Override
   public String toString() {
-    return "ConfigurationDto{" +
-        "schemaId='" + schemaId + '\'' +
-        ", protocolSchema='" + protocolSchema + '\'' +
-        '}';
+    return "ConfigurationDto{"
+           + "schemaId='" + schemaId + '\''
+           + ", protocolSchema='" + protocolSchema + '\''
+           + '}';
   }
 }

@@ -25,7 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto> implements Serializable, Comparable<ConfigurationRecordDto> {
+public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
+        implements Serializable, Comparable<ConfigurationRecordDto> {
 
   private static final long serialVersionUID = 5838762122987694212L;
 
@@ -33,14 +34,17 @@ public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
     super();
   }
 
-  public ConfigurationRecordDto(ConfigurationDto activeConfiguration, ConfigurationDto inactiveConfiguration) {
+  public ConfigurationRecordDto(
+          ConfigurationDto activeConfiguration, ConfigurationDto inactiveConfiguration) {
     super(activeConfiguration, inactiveConfiguration);
   }
 
-  public static List<ConfigurationRecordDto> convertToConfigurationRecords(Collection<ConfigurationDto> configurations) {
+  public static List<ConfigurationRecordDto> convertToConfigurationRecords(
+          Collection<ConfigurationDto> configurations) {
     Map<String, ConfigurationRecordDto> configurationRecordsMap = new HashMap<>();
     for (ConfigurationDto configuration : configurations) {
-      ConfigurationRecordDto configurationRecord = configurationRecordsMap.get(configuration.getSchemaId());
+      ConfigurationRecordDto configurationRecord = configurationRecordsMap
+              .get(configuration.getSchemaId());
       if (configurationRecord == null) {
         configurationRecord = new ConfigurationRecordDto();
         configurationRecordsMap.put(configuration.getSchemaId(), configurationRecord);
@@ -56,22 +60,24 @@ public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
 
   @JsonIgnore
   public int getSchemaVersion() {
-    return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
+    return activeStructureDto != null ? activeStructureDto.getSchemaVersion() :
+            inactiveStructureDto.getSchemaVersion();
   }
 
   @JsonIgnore
   public String getSchemaId() {
-    return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
+    return activeStructureDto != null ? activeStructureDto.getSchemaId() :
+            inactiveStructureDto.getSchemaId();
   }
 
   @Override
-  public int compareTo(ConfigurationRecordDto o) {
-    return this.getSchemaVersion() - o.getSchemaVersion();
+  public int compareTo(ConfigurationRecordDto configurationRecordDto) {
+    return this.getSchemaVersion() - configurationRecordDto.getSchemaVersion();
   }
 
   @Override
-  public boolean equals(Object o) {
-    return super.equals(o);
+  public boolean equals(Object obj) {
+    return super.equals(obj);
   }
 
   @Override

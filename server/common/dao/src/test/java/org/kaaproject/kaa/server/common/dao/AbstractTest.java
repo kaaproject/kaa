@@ -325,7 +325,7 @@ public class AbstractTest {
       }
 
       ConfigurationSchemaDto schemaDto;
-      CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
+      CTLSchemaDto ctlSchemaDto = ctlService.saveCtlSchema(generateCTLSchemaDto(tenantId));
       schemas = new ArrayList<>(count);
 
       for (int i = 0; i < count; i++) {
@@ -399,7 +399,7 @@ public class AbstractTest {
         appId = generateApplicationDto(tenantId).getId();
       }
       EndpointProfileSchemaDto schemaDto;
-      CTLSchemaDto ctlSchemaDto = ctlService.saveCTLSchema(generateCTLSchemaDto(tenantId));
+      CTLSchemaDto ctlSchemaDto = ctlService.saveCtlSchema(generateCTLSchemaDto(tenantId));
       schemas = new ArrayList<>(count);
       for (int i = 0; i < count; i++) {
         schemaDto = new EndpointProfileSchemaDto();
@@ -493,7 +493,7 @@ public class AbstractTest {
         schemaDto.setApplicationId(appId);
         CTLSchemaDto ctlSchema = null;
         try {
-          ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
+          ctlSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(app.getTenantId()));
         } catch (DatabaseProcessingException e) {
           ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
 
@@ -588,7 +588,7 @@ public class AbstractTest {
     schema.setType(type != null ? type : NotificationTypeDto.USER);
     CTLSchemaDto ctlSchema = null;
     try {
-      ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(app.getTenantId()));
+      ctlSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(app.getTenantId()));
     } catch (DatabaseProcessingException e) {
       ctlSchema = ctlService.getOrCreateEmptySystemSchema(USER_NAME);
 
@@ -819,7 +819,7 @@ public class AbstractTest {
     schemaDto.setApplicationId(appId);
     schemaDto.setCreatedTime(System.currentTimeMillis());
 
-    CTLSchemaDto ctlSchema = ctlService.saveCTLSchema(generateCTLSchemaDto(ctlRandomFqn(), tenantId, appId, version));
+    CTLSchemaDto ctlSchema = ctlService.saveCtlSchema(generateCTLSchemaDto(ctlRandomFqn(), tenantId, appId, version));
     schemaDto.setCtlSchemaId(ctlSchema.getId());
     return serverProfileService.saveServerProfileSchema(schemaDto);
   }

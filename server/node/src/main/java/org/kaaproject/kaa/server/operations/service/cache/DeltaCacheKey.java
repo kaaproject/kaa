@@ -47,18 +47,28 @@ public final class DeltaCacheKey implements Serializable {
   private final EndpointObjectHash userConfHash;
 
 
-  public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash userConfHash,
+  public DeltaCacheKey(AppVersionKey appConfigVersionKey,
+                       List<EndpointGroupStateDto> endpointGroups,
+                       EndpointObjectHash userConfHash,
                        EndpointObjectHash endpointConfHash) {
     this(appConfigVersionKey, endpointGroups, userConfHash, endpointConfHash, true, false);
   }
 
-  public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash userConfHash,
-                       EndpointObjectHash endpointConfHash, boolean useConfigurationRawSchema) {
-    this(appConfigVersionKey, endpointGroups, userConfHash, endpointConfHash, useConfigurationRawSchema, false);
+  public DeltaCacheKey(AppVersionKey appConfigVersionKey,
+                       List<EndpointGroupStateDto> endpointGroups,
+                       EndpointObjectHash userConfHash,
+                       EndpointObjectHash endpointConfHash,
+                       boolean useConfigurationRawSchema) {
+    this(appConfigVersionKey, endpointGroups, userConfHash,
+        endpointConfHash, useConfigurationRawSchema, false);
   }
 
-  public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups,
-                       EndpointObjectHash userConfHash, EndpointObjectHash endpointConfHash, boolean useConfigurationRawSchema, boolean resyncOnly) {
+  public DeltaCacheKey(AppVersionKey appConfigVersionKey,
+                       List<EndpointGroupStateDto> endpointGroups,
+                       EndpointObjectHash userConfHash,
+                       EndpointObjectHash endpointConfHash,
+                       boolean useConfigurationRawSchema,
+                       boolean resyncOnly) {
     this.appConfigVersionKey = appConfigVersionKey;
     this.userConfHash = userConfHash;
     this.endpointGroups = endpointGroups;
@@ -102,21 +112,45 @@ public final class DeltaCacheKey implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
 
-    DeltaCacheKey that = (DeltaCacheKey) o;
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
 
-    if (resyncOnly != that.resyncOnly) return false;
-    if (useConfigurationRawSchema != that.useConfigurationRawSchema) return false;
-    if (appConfigVersionKey != null ? !appConfigVersionKey.equals(that.appConfigVersionKey) : that.appConfigVersionKey != null)
+    DeltaCacheKey that = (DeltaCacheKey) obj;
+
+    if (resyncOnly != that.resyncOnly) {
       return false;
-    if (endpointGroups != null ? !endpointGroups.equals(that.endpointGroups) : that.endpointGroups != null)
+    }
+
+    if (useConfigurationRawSchema != that.useConfigurationRawSchema) {
       return false;
-    if (endpointConfHash != null ? !endpointConfHash.equals(that.endpointConfHash) : that.endpointConfHash != null)
+    }
+
+    if (appConfigVersionKey != null
+        ? !appConfigVersionKey.equals(that.appConfigVersionKey)
+        : that.appConfigVersionKey != null) {
       return false;
-    return userConfHash != null ? userConfHash.equals(that.userConfHash) : that.userConfHash == null;
+    }
+
+    if (endpointGroups != null
+        ? !endpointGroups.equals(that.endpointGroups)
+        : that.endpointGroups != null) {
+      return false;
+    }
+
+    if (endpointConfHash != null
+        ? !endpointConfHash.equals(that.endpointConfHash)
+        : that.endpointConfHash != null) {
+      return false;
+    }
+    return userConfHash != null
+        ? userConfHash.equals(that.userConfHash)
+        : that.userConfHash == null;
 
   }
 

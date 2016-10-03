@@ -62,7 +62,9 @@ public final class ConfigurationIdKey implements Serializable {
    * @param applicationSeqNumber the application seq number
    * @param configSchemaVersion  the config schema version
    */
-  public ConfigurationIdKey(String applicationId, int applicationSeqNumber, int configSchemaVersion) {
+  public ConfigurationIdKey(String applicationId,
+                            int applicationSeqNumber,
+                            int configSchemaVersion) {
     this(applicationId, applicationSeqNumber, configSchemaVersion, null);
   }
 
@@ -74,7 +76,9 @@ public final class ConfigurationIdKey implements Serializable {
    * @param configSchemaVersion  the config schema version
    * @param endpointGroupId      the endpoint group id
    */
-  public ConfigurationIdKey(String applicationToken, int applicationSeqNumber, int configSchemaVersion,
+  public ConfigurationIdKey(String applicationToken,
+                            int applicationSeqNumber,
+                            int configSchemaVersion,
                             String endpointGroupId) {
     super();
     this.applicationToken = applicationToken;
@@ -116,8 +120,10 @@ public final class ConfigurationIdKey implements Serializable {
    * @param endpointGroupId the new endpoint group id
    * @return the configuration id key
    */
-  public ConfigurationIdKey copyWithNewEGId(String endpointGroupId) {
-    return new ConfigurationIdKey(this.applicationToken, this.applicationSeqNumber, this.configSchemaVersion, endpointGroupId);
+  public ConfigurationIdKey copyWithNewEgId(String endpointGroupId) {
+    return new ConfigurationIdKey(
+        this.applicationToken, this.applicationSeqNumber,
+        this.configSchemaVersion, endpointGroupId);
   }
 
   /* (non-Javadoc)

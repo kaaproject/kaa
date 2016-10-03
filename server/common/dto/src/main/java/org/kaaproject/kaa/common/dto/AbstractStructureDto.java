@@ -202,15 +202,15 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    AbstractStructureDto that = (AbstractStructureDto) o;
+    AbstractStructureDto that = (AbstractStructureDto) obj;
 
     if (lastModifyTime != that.lastModifyTime) {
       return false;
@@ -218,13 +218,15 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
     if (sequenceNumber != that.sequenceNumber) {
       return false;
     }
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
       return false;
     }
     if (body != null ? !body.equals(that.body) : that.body != null) {
       return false;
     }
-    if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) : that.endpointGroupId != null) {
+    if (endpointGroupId != null ? !endpointGroupId.equals(that.endpointGroupId) :
+            that.endpointGroupId != null) {
       return false;
     }
     if (status != that.status) {
@@ -247,15 +249,15 @@ public abstract class AbstractStructureDto implements HasId, Serializable {
 
   @Override
   public String toString() {
-    return "AbstractStructureDto{" +
-        "id='" + id + '\'' +
-        ", applicationId='" + applicationId + '\'' +
-        ", endpointGroupId='" + endpointGroupId + '\'' +
-        ", sequenceNumber=" + sequenceNumber +
-        ", lastModifyTime=" + lastModifyTime +
-        ", status=" + status +
-        ", version=" + version +
-        '}';
+    return "AbstractStructureDto{"
+           + "id='" + id + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", endpointGroupId='" + endpointGroupId + '\''
+           + ", sequenceNumber=" + sequenceNumber
+           + ", lastModifyTime=" + lastModifyTime
+           + ", status=" + status
+           + ", version=" + version
+           + '}';
   }
 
   public int incrementSeqNum() {

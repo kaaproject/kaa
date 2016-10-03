@@ -89,7 +89,7 @@ public class BootstrapInitializationService extends AbstractInitializationServic
       bootstrapTransportService.lookupAndInit();
 
       if (getNodeConfig().isZkEnabled()) {
-        startZK();
+        startZk();
         operationsServerListService.init(bootstrapNode);
         bootstrapTransportService.addListener(new TransportUpdateListener() {
 
@@ -99,8 +99,8 @@ public class BootstrapInitializationService extends AbstractInitializationServic
             info.setTransports(mdList);
             try {
               bootstrapNode.updateNodeData(info);
-            } catch (IOException e) {
-              LOG.error("Failed to update bootstrap node info", e);
+            } catch (IOException ex) {
+              LOG.error("Failed to update bootstrap node info", ex);
             }
           }
 
@@ -110,8 +110,8 @@ public class BootstrapInitializationService extends AbstractInitializationServic
       bootstrapTransportService.start();
 
       LOG.info("Bootstrap Service Started.");
-    } catch (Exception e) {
-      LOG.error("Error starting Bootstrap Service", e);
+    } catch (Exception ex) {
+      LOG.error("Error starting Bootstrap Service", ex);
     }
 
   }
@@ -127,7 +127,7 @@ public class BootstrapInitializationService extends AbstractInitializationServic
     LOG.trace("Stopping Bootstrap Service..." + propertiesToString());
 
     if (getNodeConfig().isZkEnabled()) {
-      stopZK();
+      stopZk();
     }
 
     if (bootstrapTransportService != null) {
@@ -141,15 +141,19 @@ public class BootstrapInitializationService extends AbstractInitializationServic
    *
    * @throws Exception in case of error
    */
-  private void startZK() throws Exception { // NOSONAR
+  private void startZk() throws Exception { // NOSONAR
     if (getNodeConfig().isZkEnabled()) {
-      LOG.info("Bootstrap service starting ZooKepper connection to {}", getNodeConfig().getZkHostPortList());
+      LOG.info("Bootstrap service starting ZooKepper connection to {}",
+          getNodeConfig().getZkHostPortList());
       BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
       ByteBuffer keyData = ByteBuffer.wrap(bootstrapKeyStoreService.getPublicKey().getEncoded());
-      LOG.trace("Bootstrap service: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", getNodeConfig().getThriftHost(),
+      LOG.trace("Bootstrap service: registering in ZK: thriftHost {}; "
+              + "thriftPort {}; nettyHost {}; nettyPort {}",
+          getNodeConfig().getThriftHost(),
           getNodeConfig().getThriftPort());
-      nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
-      nodeInfo.setTransports(new ArrayList<TransportMetaData>());
+      nodeInfo.setConnectionInfo(new ConnectionInfo(
+          getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
+      nodeInfo.setTransports(new ArrayList<>());
       nodeInfo.setTimeStarted(System.currentTimeMillis());
       bootstrapNode = new BootstrapNode(nodeInfo, zkClient);
       if (bootstrapNode != null) {
@@ -161,13 +165,13 @@ public class BootstrapInitializationService extends AbstractInitializationServic
   /**
    * Stop zk.
    */
-  private void stopZK() {
+  private void stopZk() {
     try {
       if (bootstrapNode != null) {
         bootstrapNode.close();
       }
-    } catch (IOException e) {
-      LOG.warn("Exception when closing ZK node", e);
+    } catch (IOException ex) {
+      LOG.warn("Exception when closing ZK node", ex);
     } finally {
       bootstrapNode = null;
     }

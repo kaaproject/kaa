@@ -61,15 +61,15 @@ public final class TopicListEntryDto implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof TopicListEntryDto)) {
+    if (!(obj instanceof TopicListEntryDto)) {
       return false;
     }
 
-    TopicListEntryDto that = (TopicListEntryDto) o;
+    TopicListEntryDto that = (TopicListEntryDto) obj;
 
     if (simpleHash != that.simpleHash) {
       return false;

@@ -49,15 +49,15 @@ public class EndpointConfigurationDto implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    EndpointConfigurationDto that = (EndpointConfigurationDto) o;
+    EndpointConfigurationDto that = (EndpointConfigurationDto) obj;
 
     if (!Arrays.equals(configuration, that.configuration)) {
       return false;
@@ -78,9 +78,9 @@ public class EndpointConfigurationDto implements Serializable {
 
   @Override
   public String toString() {
-    return "EndpointConfigurationDto{" +
-        "configurationHash=" + Arrays.toString(configurationHash) +
-        ", configuration=" + Arrays.toString(configuration) +
-        '}';
+    return "EndpointConfigurationDto{"
+           + "configurationHash=" + Arrays.toString(configurationHash)
+           + ", configuration=" + Arrays.toString(configuration)
+           + '}';
   }
 }

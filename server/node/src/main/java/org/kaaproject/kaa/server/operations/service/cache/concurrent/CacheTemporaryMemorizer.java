@@ -52,16 +52,16 @@ public class CacheTemporaryMemorizer<K, V> {
    * If the Throwable is an Error, throw it; if it is a RuntimeException
    * return it, otherwise throw IllegalStateException.
    *
-   * @param t the t
+   * @param throwable the t
    * @return the runtime exception
    */
-  public static RuntimeException launderThrowable(Throwable t) {
-    if (t instanceof RuntimeException) {
-      return (RuntimeException) t;
-    } else if (t instanceof Error) {
-      throw (Error) t;
+  public static RuntimeException launderThrowable(Throwable throwable) {
+    if (throwable instanceof RuntimeException) {
+      return (RuntimeException) throwable;
+    } else if (throwable instanceof Error) {
+      throw (Error) throwable;
     } else {
-      throw new IllegalStateException("Cache Operation Exception", t);
+      throw new IllegalStateException("Cache Operation Exception", throwable);
     }
   }
 
@@ -77,37 +77,38 @@ public class CacheTemporaryMemorizer<K, V> {
       throw new InvalidParameterException("Cache key can't be null");
     }
     while (true) {
-      Future<V> f = cache.get(key);
-      if (f == null) {
+      Future<V> future = cache.get(key);
+      if (future == null) {
         Callable<V> eval = new Callable<V>() {
           public V call() throws InterruptedException {
             return worker.compute(key);
           }
         };
         FutureTask<V> ft = new FutureTask<V>(eval);
-        f = cache.putIfAbsent(key, ft);
-        if (f == null) {
-          f = ft;
+        future = cache.putIfAbsent(key, ft);
+        if (future == null) {
+          future = ft;
           try {
             ft.run();
             //the idea is not to cache permanently but only for the time of execution.
-            //thus, technically, if time of calculation >> time of external cache put -> we will run calculation maximum 2 times.
-          } catch (Throwable e) {
-            LOG.error("Exception catched: ", e);
-            throw e;
+            //thus, technically, if time of calculation >> time of external
+            // cache put -> we will run calculation maximum 2 times.
+          } catch (Throwable ex) {
+            LOG.error("Exception catched: ", ex);
+            throw ex;
           } finally {
             cache.remove(key, ft);
           }
         }
       }
       try {
-        return f.get();
-      } catch (CancellationException e) {
-        LOG.error("Exception catched: ", e);
-        cache.remove(key, f);
-      } catch (ExecutionException | InterruptedException e) {
-        LOG.error("Exception catched: ", e);
-        throw launderThrowable(e);
+        return future.get();
+      } catch (CancellationException ex) {
+        LOG.error("Exception catched: ", ex);
+        cache.remove(key, future);
+      } catch (ExecutionException | InterruptedException ex) {
+        LOG.error("Exception catched: ", ex);
+        throw launderThrowable(ex);
       }
     }
   }

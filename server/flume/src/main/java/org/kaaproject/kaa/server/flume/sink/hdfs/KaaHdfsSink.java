@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
 import com.google.common.base.Preconditions;
@@ -68,9 +69,11 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
   private static final Logger LOG = LoggerFactory.getLogger(KaaHdfsSink.class);
   /**
    * Singleton credential manager that manages static credentials for the
-   * entire JVM
+   * entire JVM.
    */
-  private static final AtomicReference<KerberosUser> staticLogin = new AtomicReference<>(); //NOSONAR
+  private static final AtomicReference<KerberosUser> staticLogin =
+      new AtomicReference<>(); //NOSONAR
+
   private boolean started = false;
   private KaaEventFactory eventFactory;
   private Context context;
@@ -136,10 +139,10 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
     UserGroupInformation curUser = null;
     try {
       curUser = UserGroupInformation.getLoginUser();
-    } catch (IOException e) {
+    } catch (IOException ex) {
       // not a big deal but this shouldn't typically happen because it will
       // generally fall back to the UNIX user
-      LOG.debug("Unable to get login user before Kerberos auth attempt.", e);
+      LOG.debug("Unable to get login user before Kerberos auth attempt.", ex);
     }
 
     // we already have logged in successfully
@@ -150,8 +153,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       // no principal found
     } else {
 
-      LOG.info("{}: Attempting kerberos login as principal ({}) from keytab " +
-          "file ({})", new Object[]{sink, principal, keytab});
+      LOG.info("{}: Attempting kerberos login as principal ({}) from keytab file ({})",
+          new Object[]{sink, principal, keytab});
 
       // attempt static kerberos login
       UserGroupInformation.loginUserFromKeytab(principal, keytab);
@@ -170,18 +173,24 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
     statisticsInterval = context.getLong(CONFIG_STATISTICS_INTERVAL, DEFAULT_STATISTICS_INTERVAL);
 
     // writers
-    threadsPoolSize = context.getInteger(CONFIG_HDFS_THREAD_POOL_SIZE, DEFAULT_HDFS_THREAD_POOL_SIZE);
-    rollTimerPoolSize = context.getInteger(CONFIG_HDFS_ROLL_TIMER_POOL_SIZE, DEFAULT_HDFS_ROLL_TIMER_POOL_SIZE);
+    threadsPoolSize = context.getInteger(
+        CONFIG_HDFS_THREAD_POOL_SIZE, DEFAULT_HDFS_THREAD_POOL_SIZE);
+
+    rollTimerPoolSize = context.getInteger(
+        CONFIG_HDFS_ROLL_TIMER_POOL_SIZE, DEFAULT_HDFS_ROLL_TIMER_POOL_SIZE);
     maxOpenFiles = context.getInteger(CONFIG_HDFS_MAX_OPEN_FILES, DEFAULT_HDFS_MAX_OPEN_FILES);
-    cacheCleanupInterval = context.getInteger(CONFIG_HDFS_CACHE_CLEANUP_INTERVAL, DEFAULT_HDFS_CACHE_CLEANUP_INTERVAL) * 1000;
-    writerExpirationInterval = context.getInteger(CONFIG_HDFS_WRITER_EXPIRATION_INTERVAL, DEFAULT_HDFS_WRITER_EXPIRATION_INTERVAL);
+    cacheCleanupInterval = context.getInteger(
+        CONFIG_HDFS_CACHE_CLEANUP_INTERVAL, DEFAULT_HDFS_CACHE_CLEANUP_INTERVAL) * 1000;
+    writerExpirationInterval = context.getInteger(
+        CONFIG_HDFS_WRITER_EXPIRATION_INTERVAL, DEFAULT_HDFS_WRITER_EXPIRATION_INTERVAL);
     callTimeout = context.getLong(CONFIG_HDFS_CALL_TIMEOUT, DEFAULT_HDFS_CALL_TIMEOUT);
 
     rollInterval = context.getLong(CONFIG_HDFS_ROLL_INTERVAL, DEFAULT_HDFS_ROLL_INTERVAL);
     rollSize = context.getLong(CONFIG_HDFS_ROLL_SIZE, DEFAULT_HDFS_ROLL_SIZE);
     rollCount = context.getLong(CONFIG_HDFS_ROLL_COUNT, DEFAULT_HDFS_ROLL_COUNT);
     batchSize = context.getLong(CONFIG_HDFS_BATCH_SIZE, DEFAULT_HDFS_BATCH_SIZE);
-    defaultBlockSize = context.getLong(CONFIG_HDFS_DEFAULT_BLOCK_SIZE, DEFAULT_HDFS_DEFAULT_BLOCK_SIZE);
+    defaultBlockSize = context.getLong(
+        CONFIG_HDFS_DEFAULT_BLOCK_SIZE, DEFAULT_HDFS_DEFAULT_BLOCK_SIZE);
 
     filePrefix = context.getString(CONFIG_HDFS_FILE_PREFIX, DEFAULT_HDFS_FILE_PREFIX);
 
@@ -217,11 +226,11 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       } else {
         return future.get();
       }
-    } catch (TimeoutException eT) {
+    } catch (TimeoutException ex) {
       future.cancel(true);
       sinkCounter.incrementConnectionFailedCount();
       throw new IOException("Callable timed out after " + callTimeout + " ms",
-          eT);
+          ex);
     } catch (ExecutionException e1) {
       sinkCounter.incrementConnectionFailedCount();
       Throwable cause = e1.getCause();
@@ -270,7 +279,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         //  cacheCleanupStartInterval = System.currentTimeMillis();
         //}
 
-        Map<KaaSinkKey, List<KaaRecordEvent>> incomingEventsMap = eventFactory.processIncomingFlumeEvent(event);
+        Map<KaaSinkKey, List<KaaRecordEvent>> incomingEventsMap =
+            eventFactory.processIncomingFlumeEvent(event);
         if (incomingEventsMap == null || incomingEventsMap.isEmpty()) {
           if (LOG.isWarnEnabled()) {
             LOG.warn("Unable to parse incoming event: " + event);
@@ -315,9 +325,9 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         return Status.BACKOFF;
       }
       return Status.READY;
-    } catch (IOException eIO) {
+    } catch (IOException eIo) {
       transaction.rollback();
-      LOG.warn("HDFS IO error", eIO);
+      LOG.warn("HDFS IO error", eIo);
       return Status.BACKOFF;
     } catch (Throwable th) { //NOSONAR
       transaction.rollback();
@@ -343,8 +353,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         new ThreadFactoryBuilder().setNameFormat(timeoutName).build());
 
     String rollerName = "hdfs-" + getName() + "-roll-timer-%d";
-    timedRollerPool = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(rollTimerPoolSize,
-        new ThreadFactoryBuilder().setNameFormat(rollerName).build());
+    timedRollerPool = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(
+        rollTimerPoolSize, new ThreadFactoryBuilder().setNameFormat(rollerName).build());
 
     if (statisticsInterval > 0) {
       String statisticsName = "hdfs-" + getName() + "-statistics-%d";
@@ -354,11 +364,12 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       Runnable action = new Runnable() {
         @Override
         public void run() {
-          LOG.info("Statistics: Drain attempt events: " + sinkCounter.getEventDrainAttemptCount() + "; " +
-              "Drain success events: " + sinkCounter.getEventDrainSuccessCount());
+          LOG.info("Statistics: Drain attempt events: " + sinkCounter.getEventDrainAttemptCount()
+              + "; " + "Drain success events: " + sinkCounter.getEventDrainSuccessCount());
         }
       };
-      statisticsFuture = statisticsPool.scheduleWithFixedDelay(action, 0, statisticsInterval, TimeUnit.SECONDS);
+      statisticsFuture = statisticsPool.scheduleWithFixedDelay(
+          action, 0, statisticsInterval, TimeUnit.SECONDS);
     }
 
     cacheCleanupStartInterval = System.currentTimeMillis();
@@ -374,11 +385,11 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         proxyTicket,
         sinkCounter);
 
-    writerCache = CacheBuilder.newBuilder().
-        maximumSize(maxOpenFiles).
-        expireAfterWrite(writerExpirationInterval, TimeUnit.SECONDS).
-        removalListener(this).
-        build(bucketWriterLoader);
+    writerCache = CacheBuilder.newBuilder()
+        .maximumSize(maxOpenFiles)
+        .expireAfterWrite(writerExpirationInterval, TimeUnit.SECONDS)
+        .removalListener(this)
+        .build(bucketWriterLoader);
 
     writerFlushMap = new HashMap<HdfsSinkKey, BucketWriter>();
 
@@ -401,8 +412,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       try {
         close(entry.getValue());
       } catch (Exception ex) {
-        LOG.warn("Exception while closing " + entry.getKey() + ". " +
-            "Exception follows.", ex);
+        LOG.warn("Exception while closing " + entry.getKey() + ". "
+            + "Exception follows.", ex);
         if (ex instanceof InterruptedException) {
           Thread.currentThread().interrupt();
         }
@@ -420,7 +431,9 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         try {
           while (execService.isTerminated() == false) {
             execService.awaitTermination(
-                Math.max(ConfigurationConstants.DEFAULT_HDFS_CALL_TIMEOUT, callTimeout), TimeUnit.MILLISECONDS);
+                Math.max(
+                    ConfigurationConstants.DEFAULT_HDFS_CALL_TIMEOUT, callTimeout),
+                TimeUnit.MILLISECONDS);
           }
         } catch (InterruptedException ex) {
           LOG.warn("shutdown interrupted on " + execService, ex);
@@ -440,8 +453,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
 
   @Override
   public String toString() {
-    return "{ Sink type:" + getClass().getSimpleName() + ", name:" + getName() +
-        " }";
+    return "{ Sink type:" + getClass().getSimpleName() + ", name:" + getName()
+        + " }";
   }
 
   public long getEventDrainSuccessCount() {
@@ -459,10 +472,10 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       try {
         writerFlushMap.remove(key);
         writer.close();
-      } catch (IOException e) {
-        LOG.warn(entry.getKey().toString(), e);
-      } catch (InterruptedException e) {
-        LOG.warn(entry.getKey().toString(), e);
+      } catch (IOException ex) {
+        LOG.warn(entry.getKey().toString(), ex);
+      } catch (InterruptedException ex) {
+        LOG.warn(entry.getKey().toString(), ex);
         Thread.currentThread().interrupt();
       }
     }
@@ -503,9 +516,9 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         // resolves _HOST pattern using standard Hadoop search/replace
         // via DNS lookup when 2nd argument is empty
         principal = SecurityUtil.getServerPrincipal(kerbConfPrincipal, "");
-      } catch (IOException e) {
+      } catch (IOException ex) {
         LOG.error("Host lookup error resolving kerberos principal ("
-            + kerbConfPrincipal + "). Exception follows.", e);
+            + kerbConfPrincipal + "). Exception follows.", ex);
         return false;
       }
 
@@ -520,9 +533,9 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       // since we don't have to be unnecessarily protective if they switch all
       // HDFS sinks to use a different principal all at once.
       Preconditions.checkState(prevUser == null || prevUser.equals(newUser),
-          "Cannot use multiple kerberos principals in the same agent. " +
-              " Must restart agent to use new principal or keytab. " +
-              "Previous = %s, New = %s", prevUser, newUser);
+          "Cannot use multiple kerberos principals in the same agent. "
+              + " Must restart agent to use new principal or keytab. "
+              + "Previous = %s, New = %s", prevUser, newUser);
 
       // attempt to use cached credential if the user is the same
       // this is polite and should avoid flooding the KDC with auth requests
@@ -530,9 +543,9 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       if (prevUser != null && prevUser.equals(newUser)) {
         try {
           curUser = UserGroupInformation.getLoginUser();
-        } catch (IOException e) {
-          LOG.warn("User unexpectedly had no active login. Continuing with " +
-              "authentication", e);
+        } catch (IOException ex) {
+          LOG.warn("User unexpectedly had no active login. Continuing with "
+              + "authentication", ex);
         }
       }
 
@@ -540,10 +553,10 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
         try {
           // static login
           kerberosLogin(this, principal, kerbKeytab);
-        } catch (IOException e) {
+        } catch (IOException ex) {
           LOG.error("Authentication or file read error while attempting to "
               + "login as kerberos principal (" + principal + ") using "
-              + "keytab (" + kerbKeytab + "). Exception follows.", e);
+              + "keytab (" + kerbKeytab + "). Exception follows.", ex);
           return false;
         }
       } else {
@@ -560,8 +573,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
       try {
         proxyTicket = UserGroupInformation.createProxyUser(
             proxyUserName, UserGroupInformation.getLoginUser());
-      } catch (IOException e) {
-        LOG.error("Unable to login as proxy user. Exception follows.", e);
+      } catch (IOException ex) {
+        LOG.error("Unable to login as proxy user. Exception follows.", ex);
         return false;
       }
     }
@@ -572,9 +585,9 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
     } else if (useSecurity) {
       try {
         ugi = UserGroupInformation.getLoginUser();
-      } catch (IOException e) {
-        LOG.error("Unexpected error: Unable to get authenticated user after " +
-            "apparent successful login! Exception follows.", e);
+      } catch (IOException ex) {
+        LOG.error("Unexpected error: Unable to get authenticated user after "
+            + "apparent successful login! Exception follows.", ex);
         return false;
       }
     }
@@ -592,9 +605,8 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
           LOG.info(" Superuser auth: {}", superUser.getAuthenticationMethod());
           LOG.info(" Superuser name: {}", superUser.getUserName());
           LOG.info(" Superuser using keytab: {}", superUser.isFromKeytab());
-        } catch (IOException e) {
-          LOG.error("Unexpected error: unknown superuser impersonating proxy.",
-              e);
+        } catch (IOException ex) {
+          LOG.error("Unexpected error: unknown superuser impersonating proxy.", ex);
           return false;
         }
       }
@@ -608,7 +620,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
   }
 
   /**
-   * Append to bucket writer with timeout enforced
+   * Append to bucket writer with timeout enforced.
    */
   private void appendBatch(final BucketWriter bucketWriter, final List<KaaRecordEvent> events)
       throws IOException, InterruptedException {
@@ -623,7 +635,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
   }
 
   /**
-   * Flush bucket writer with timeout enforced
+   * Flush bucket writer with timeout enforced.
    */
   private void flush(final BucketWriter bucketWriter)
       throws IOException, InterruptedException {
@@ -638,7 +650,7 @@ public class KaaHdfsSink extends AbstractSink implements Configurable, Configura
   }
 
   /**
-   * Close bucket writer with timeout enforced
+   * Close bucket writer with timeout enforced.
    */
   private void close(final BucketWriter bucketWriter)
       throws IOException, InterruptedException {

@@ -65,17 +65,17 @@ public class BootstrapNode extends WorkerNodeTracker {
 
   @Override
   public boolean createZkNode() throws IOException {
-    return doZKClientAction(new ZKClientAction() {
+    return doZkClientAction(new ZkClientAction() {
       @Override
       public void doWithZkClient(CuratorFramework client) throws Exception {
         nodePath = client
-            .create()
-            .creatingParentsIfNeeded()
-            .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-            .forPath(
-                BOOTSTRAP_SERVER_NODE_PATH
-                    + BOOTSTRAP_SERVER_NODE_PATH,
-                bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
+                .create()
+                .creatingParentsIfNeeded()
+                .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
+                .forPath(
+                        BOOTSTRAP_SERVER_NODE_PATH
+                        + BOOTSTRAP_SERVER_NODE_PATH,
+                        bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
         LOG.info("Created node with path: " + nodePath);
       }
     });
@@ -90,11 +90,11 @@ public class BootstrapNode extends WorkerNodeTracker {
   public void updateNodeData(BootstrapNodeInfo currentNodeInfo)
       throws IOException {
     this.nodeInfo = currentNodeInfo;
-    doZKClientAction(new ZKClientAction() {
+    doZkClientAction(new ZkClientAction() {
       @Override
       public void doWithZkClient(CuratorFramework client) throws Exception {
         client.setData().forPath(nodePath,
-            bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
+                bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
       }
     });
   }

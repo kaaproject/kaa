@@ -88,26 +88,29 @@ public class ChangeDto implements Serializable, HasId {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof ChangeDto)) {
+    if (!(obj instanceof ChangeDto)) {
       return false;
     }
 
-    ChangeDto changeDto = (ChangeDto) o;
+    ChangeDto changeDto = (ChangeDto) obj;
 
     if (cfVersion != changeDto.cfVersion) {
       return false;
     }
-    if (configurationId != null ? !configurationId.equals(changeDto.configurationId) : changeDto.configurationId != null) {
+    if (configurationId != null ? !configurationId.equals(changeDto.configurationId) :
+            changeDto.configurationId != null) {
       return false;
     }
-    if (endpointGroupId != null ? !endpointGroupId.equals(changeDto.endpointGroupId) : changeDto.endpointGroupId != null) {
+    if (endpointGroupId != null ? !endpointGroupId.equals(changeDto.endpointGroupId) :
+            changeDto.endpointGroupId != null) {
       return false;
     }
-    if (profileFilterId != null ? !profileFilterId.equals(changeDto.profileFilterId) : changeDto.profileFilterId != null) {
+    if (profileFilterId != null ? !profileFilterId.equals(changeDto.profileFilterId) :
+            changeDto.profileFilterId != null) {
       return false;
     }
     if (topicId != null ? !topicId.equals(changeDto.topicId) : changeDto.topicId != null) {
@@ -133,14 +136,14 @@ public class ChangeDto implements Serializable, HasId {
 
   @Override
   public String toString() {
-    return "ChangeDto{" +
-        "id=" + id +
-        "type=" + type +
-        ", endpointGroupId='" + endpointGroupId + '\'' +
-        ", profileFilterId='" + profileFilterId + '\'' +
-        ", configurationId='" + configurationId + '\'' +
-        ", cfVersion=" + cfVersion +
-        ", topicId='" + topicId + '\'' +
-        '}';
+    return "ChangeDto{"
+           + "id=" + id
+           + "type=" + type
+           + ", endpointGroupId='" + endpointGroupId + '\''
+           + ", profileFilterId='" + profileFilterId + '\''
+           + ", configurationId='" + configurationId + '\''
+           + ", cfVersion=" + cfVersion
+           + ", topicId='" + topicId + '\''
+           + '}';
   }
 }

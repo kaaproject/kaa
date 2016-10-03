@@ -20,9 +20,6 @@ import java.io.Serializable;
 
 public final class AppSeqNumber implements Serializable {
 
-  /**
-   *
-   */
   private static final long serialVersionUID = -5524478984530847211L;
 
   private final String tenantId;

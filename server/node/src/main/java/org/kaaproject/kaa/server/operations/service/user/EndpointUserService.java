@@ -33,12 +33,18 @@ public interface EndpointUserService {
 
   List<UserVerifierDto> findUserVerifiers(String appId);
 
-  EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
+  EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile,
+                                          String appToken,
+                                          String userExternalId);
 
-  EndpointAttachResponse attachEndpoint(EndpointProfileDto profile, EndpointAttachRequest endpointAttachRequest);
+  EndpointAttachResponse attachEndpoint(EndpointProfileDto profile,
+                                        EndpointAttachRequest endpointAttachRequest);
 
-  EndpointDetachResponse detachEndpoint(EndpointProfileDto profile, EndpointDetachRequest endpointDetachRequest);
+  EndpointDetachResponse detachEndpoint(EndpointProfileDto profile,
+                                        EndpointDetachRequest endpointDetachRequest);
 
-  EventListenersResponse findListeners(EndpointProfileDto profile, String appToken, EventListenersRequest request);
+  EventListenersResponse findListeners(EndpointProfileDto profile,
+                                       String appToken,
+                                       EventListenersRequest request);
 
 }

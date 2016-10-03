@@ -115,104 +115,151 @@ public class ConcurrentCacheService implements CacheService {
   /**
    * The app seq number memorizer.
    */
-  private final CacheTemporaryMemorizer<String, AppSeqNumber> appSeqNumberMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, AppSeqNumber> appSeqNumberMemorizer =
+      new CacheTemporaryMemorizer<>();
   //
   /**
    * The cf id memorizer.
    */
-  private final CacheTemporaryMemorizer<ConfigurationIdKey, String> cfIdMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<ConfigurationIdKey, String> cfIdMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The history memorizer.
    */
-  private final CacheTemporaryMemorizer<HistoryKey, List<HistoryDto>> historyMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<HistoryKey, List<HistoryDto>> historyMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The filter lists memorizer.
    */
-  private final CacheTemporaryMemorizer<AppProfileVersionsKey, List<ProfileFilterDto>> filterListsMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<AppProfileVersionsKey, List<ProfileFilterDto>> filterListsMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The application event family maps memorizer.
    */
-  private final CacheTemporaryMemorizer<List<String>, List<ApplicationEventFamilyMapDto>> aefmMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<List<String>, List<ApplicationEventFamilyMapDto>> aefmMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The filters memorizer.
    */
-  private final CacheTemporaryMemorizer<String, ProfileFilterDto> filtersMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<String, ProfileFilterDto> filtersMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The cf memorizer.
    */
-  private final CacheTemporaryMemorizer<EndpointObjectHash, EndpointConfigurationDto> cfMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<EndpointObjectHash, EndpointConfigurationDto> cfMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The cf schema memorizer.
    */
-  private final CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The pf schema memorizer.
    */
-  private final CacheTemporaryMemorizer<AppVersionKey, EndpointProfileSchemaDto> pfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<AppVersionKey, EndpointProfileSchemaDto> pfSchemaMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The spf schema memorizer.
    */
-  private final CacheTemporaryMemorizer<AppVersionKey, ServerProfileSchemaDto> spfSchemaMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<AppVersionKey, ServerProfileSchemaDto> spfSchemaMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The ctl schema memorizer.
    */
-  private final CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The ctl schema body memorizer.
    */
-  private final CacheTemporaryMemorizer<String, String> ctlSchemaBodyMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, String> ctlSchemaBodyMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
-   * The SDK profile memorizer
+   * The SDK profile memorizer.
    */
-  private final CacheTemporaryMemorizer<String, SdkProfileDto> sdkProfileMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, SdkProfileDto> sdkProfileMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The endpoint key memorizer.
    */
-  private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The merged configuration memorizer.
    */
-  private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<List<EndpointGroupStateDto>,
+      Pair<BaseData, RawData>> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
   /**
    * The delta memorizer.
    */
-  private final CacheTemporaryMemorizer<DeltaCacheKey, ConfigurationCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<DeltaCacheKey, ConfigurationCacheEntry> deltaMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The endpoint key memorizer.
    */
-  private final CacheTemporaryMemorizer<EventClassFamilyIdKey, String> ecfIdKeyMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<EventClassFamilyIdKey, String> ecfIdKeyMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The endpoint key memorizer.
    */
-  private final CacheTemporaryMemorizer<String, String> tenantIdMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, String> tenantIdMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The application token memorizer.
    */
-  private final CacheTemporaryMemorizer<String, String> appTokenMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, String> appTokenMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The endpoint groups memorizer.
    */
-  private final CacheTemporaryMemorizer<String, EndpointGroupDto> groupsMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, EndpointGroupDto> groupsMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The topics memorizer.
    */
-  private final CacheTemporaryMemorizer<String, TopicDto> topicsMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, TopicDto> topicsMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The default group memorizer.
    */
-  private final CacheTemporaryMemorizer<String, EndpointGroupDto> defaultGroupMemorizer = new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, EndpointGroupDto> defaultGroupMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The topic list memorizer.
    */
-  private final CacheTemporaryMemorizer<EndpointObjectHash, TopicListCacheEntry> topicListMemorizer = new CacheTemporaryMemorizer<>();
+  private
+  final
+  CacheTemporaryMemorizer<EndpointObjectHash, TopicListCacheEntry> topicListMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The endpoint key memorizer.
    */
-  private final CacheTemporaryMemorizer<EventClassFqnKey, String> ecfIdFqnMemorizer = new CacheTemporaryMemorizer<EventClassFqnKey, String>();
+  private final CacheTemporaryMemorizer<EventClassFqnKey, String> ecfIdFqnMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The endpoint key memorizer.
    */
-  private final CacheTemporaryMemorizer<EventClassFqnVersion, Set<RouteTableKey>> routeKeysMemorizer = new CacheTemporaryMemorizer<EventClassFqnVersion, Set<RouteTableKey>>();
+  private
+  final
+  CacheTemporaryMemorizer<EventClassFqnVersion, Set<RouteTableKey>> routeKeysMemorizer =
+      new CacheTemporaryMemorizer<>();
   /**
    * The application service.
    */
@@ -292,8 +339,11 @@ public class ConcurrentCacheService implements CacheService {
       public AppSeqNumber compute(String key) {
         LOG.debug("Fetching result for getAppSeqNumber");
         ApplicationDto appDto = applicationService.findAppByApplicationToken(key);
-        AppSeqNumber appSeqNumber = new AppSeqNumber(appDto.getTenantId(), appDto.getId(), appDto.getApplicationToken(), appDto
-            .getSequenceNumber());
+        AppSeqNumber appSeqNumber = new AppSeqNumber(
+            appDto.getTenantId(),
+            appDto.getId(),
+            appDto.getApplicationToken(),
+            appDto.getSequenceNumber());
         return appSeqNumber;
       }
     });
@@ -326,7 +376,8 @@ public class ConcurrentCacheService implements CacheService {
       public String compute(ConfigurationIdKey key) {
         LOG.debug("Fetching result for getConfIdByKey");
         String confId = null;
-        List<ConfigurationDto> configurations = configurationService.findConfigurationsByEndpointGroupId(key.getEndpointGroupId());
+        List<ConfigurationDto> configurations =
+            configurationService.findConfigurationsByEndpointGroupId(key.getEndpointGroupId());
         for (ConfigurationDto confDto : configurations) {
           if (confDto.getSchemaVersion() == key.getConfigSchemaVersion()) {
             confId = confDto.getId();
@@ -369,7 +420,8 @@ public class ConcurrentCacheService implements CacheService {
         List<HistoryDto> relatedChanges = new ArrayList<HistoryDto>();
 
         ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getAppToken());
-        List<HistoryDto> fullHistoryList = historyService.findHistoriesBySeqNumberRange(appDto.getId(), key.getOldSeqNumber(),
+        List<HistoryDto> fullHistoryList = historyService.findHistoriesBySeqNumberRange(
+            appDto.getId(), key.getOldSeqNumber(),
             key.getNewSeqNumber());
         Collections.sort(fullHistoryList, ConcurrentCacheService.HISTORY_SEQ_NUMBER_COMPARATOR);
 
@@ -384,8 +436,12 @@ public class ConcurrentCacheService implements CacheService {
           } else if (changeType == ChangeType.ADD_TOPIC || changeType == ChangeType.REMOVE_TOPIC) {
             relatedChanges.add(historyDto);
           } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
-            ProfileFilterDto profileFilter = profileService.findProfileFilterById(changeDto.getProfileFilterId());
-            if (profileFilter != null && supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
+            ProfileFilterDto profileFilter = profileService.findProfileFilterById(
+                changeDto.getProfileFilterId());
+            if (profileFilter != null
+                && supports(profileFilter,
+                key.getEndpointProfileSchemaVersion(),
+                key.getServerProfileSchemaVersion())) {
               relatedChanges.add(historyDto);
             }
           } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
@@ -398,9 +454,13 @@ public class ConcurrentCacheService implements CacheService {
         return relatedChanges;
       }
 
-      private boolean supports(ProfileFilterDto profileFilter, Integer endpointProfileSchemaVersion, Integer serverProfileSchemaVersion) {
-        return (profileFilter.getEndpointProfileSchemaVersion() == null || profileFilter.getEndpointProfileSchemaVersion() == endpointProfileSchemaVersion)
-            && (profileFilter.getServerProfileSchemaVersion() == null || profileFilter.getServerProfileSchemaVersion() == serverProfileSchemaVersion);
+      private boolean supports(ProfileFilterDto profileFilter,
+                               Integer endpointProfileSchemaVersion,
+                               Integer serverProfileSchemaVersion) {
+        return (profileFilter.getEndpointProfileSchemaVersion() == null
+            || profileFilter.getEndpointProfileSchemaVersion() == endpointProfileSchemaVersion)
+            && (profileFilter.getServerProfileSchemaVersion() == null
+            || profileFilter.getServerProfileSchemaVersion() == serverProfileSchemaVersion);
       }
     });
   }
@@ -422,20 +482,23 @@ public class ConcurrentCacheService implements CacheService {
   @Override
   @Cacheable("applicationEFMs")
   public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByIds(List<String> key) {
-    return aefmMemorizer.compute(key, new Computable<List<String>, List<ApplicationEventFamilyMapDto>>() {
-      @Override
-      public List<ApplicationEventFamilyMapDto> compute(List<String> key) {
-        LOG.debug("Fetching result for getApplicationEventFamilyMapsByIds");
-        List<ApplicationEventFamilyMapDto> value = applicationEventMapService.findApplicationEventFamilyMapsByIds(key);
-        putApplicationEventFamilyMaps(key, value);
-        return value;
-      }
-    });
+    return aefmMemorizer.compute(key,
+        new Computable<List<String>, List<ApplicationEventFamilyMapDto>>() {
+          @Override
+          public List<ApplicationEventFamilyMapDto> compute(List<String> key) {
+            LOG.debug("Fetching result for getApplicationEventFamilyMapsByIds");
+            List<ApplicationEventFamilyMapDto> value =
+                applicationEventMapService.findApplicationEventFamilyMapsByIds(key);
+            putApplicationEventFamilyMaps(key, value);
+            return value;
+          }
+        });
   }
 
   @Override
   @CachePut(value = "applicationEFMs", key = "#key")
-  public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(List<String> key, List<ApplicationEventFamilyMapDto> value) {
+  public List<ApplicationEventFamilyMapDto> putApplicationEventFamilyMaps(
+      List<String> key, List<ApplicationEventFamilyMapDto> value) {
     return value;
   }
 
@@ -449,17 +512,20 @@ public class ConcurrentCacheService implements CacheService {
   @Override
   @Cacheable("filterLists")
   public List<ProfileFilterDto> getFilters(AppProfileVersionsKey key) {
-    return filterListsMemorizer.compute(key, new Computable<AppProfileVersionsKey, List<ProfileFilterDto>>() {
+    return filterListsMemorizer.compute(key,
+        new Computable<AppProfileVersionsKey, List<ProfileFilterDto>>() {
 
-      @Override
-      public List<ProfileFilterDto> compute(AppProfileVersionsKey key) {
-        LOG.debug("Fetching result for getFilters");
-        ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-        List<ProfileFilterDto> value = profileService.findProfileFiltersByAppIdAndVersionsCombination(appDto.getId(),
-            key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion());
-        return value;
-      }
-    });
+          @Override
+          public List<ProfileFilterDto> compute(AppProfileVersionsKey key) {
+            LOG.debug("Fetching result for getFilters");
+            ApplicationDto appDto = applicationService.findAppByApplicationToken(
+                key.getApplicationToken());
+            List<ProfileFilterDto> value =
+                profileService.findProfileFiltersByAppIdAndVersionsCombination(appDto.getId(),
+                    key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion());
+            return value;
+          }
+        });
   }
 
   /*
@@ -485,7 +551,8 @@ public class ConcurrentCacheService implements CacheService {
    */
   @Override
   @CachePut(value = "filterLists", key = "#key")
-  public List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key, List<ProfileFilterDto> value) {
+  public List<ProfileFilterDto> putFilterList(AppProfileVersionsKey key,
+                                              List<ProfileFilterDto> value) {
     return value;
   }
 
@@ -533,15 +600,17 @@ public class ConcurrentCacheService implements CacheService {
   @Override
   @Cacheable("configurations")
   public EndpointConfigurationDto getConfByHash(EndpointObjectHash key) {
-    return cfMemorizer.compute(key, new Computable<EndpointObjectHash, EndpointConfigurationDto>() {
+    return cfMemorizer.compute(key,
+        new Computable<EndpointObjectHash, EndpointConfigurationDto>() {
 
-      @Override
-      public EndpointConfigurationDto compute(EndpointObjectHash key) {
-        LOG.debug("Fetching result for getConfByHash {}", key);
-        EndpointConfigurationDto value = endpointService.findEndpointConfigurationByHash(key.getData());
-        return value;
-      }
-    });
+          @Override
+          public EndpointConfigurationDto compute(EndpointObjectHash key) {
+            LOG.debug("Fetching result for getConfByHash {}", key);
+            EndpointConfigurationDto value = endpointService.findEndpointConfigurationByHash(
+                key.getData());
+            return value;
+          }
+        });
   }
 
   /*
@@ -553,7 +622,8 @@ public class ConcurrentCacheService implements CacheService {
    */
   @Override
   @CachePut(value = "configurations", key = "#key")
-  public EndpointConfigurationDto putConfiguration(EndpointObjectHash key, EndpointConfigurationDto value) {
+  public EndpointConfigurationDto putConfiguration(EndpointObjectHash key,
+                                                   EndpointConfigurationDto value) {
     if (value != null) {
       LOG.debug("Fetching result for getConfByHash");
       value = endpointService.saveEndpointConfiguration(value);
@@ -571,16 +641,19 @@ public class ConcurrentCacheService implements CacheService {
   @Override
   @Cacheable("configurationSchemas")
   public ConfigurationSchemaDto getConfSchemaByAppAndVersion(AppVersionKey key) {
-    return cfSchemaMemorizer.compute(key, new Computable<AppVersionKey, ConfigurationSchemaDto>() {
+    return cfSchemaMemorizer.compute(key,
+        new Computable<AppVersionKey, ConfigurationSchemaDto>() {
 
-      @Override
-      public ConfigurationSchemaDto compute(AppVersionKey key) {
-        LOG.debug("Fetching result for getConfSchemaByAppAndVersion");
-        ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-        ConfigurationSchemaDto value = configurationService.findConfSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
-        return value;
-      }
-    });
+          @Override
+          public ConfigurationSchemaDto compute(AppVersionKey key) {
+            LOG.debug("Fetching result for getConfSchemaByAppAndVersion");
+            ApplicationDto appDto = applicationService.findAppByApplicationToken(
+                key.getApplicationToken());
+            ConfigurationSchemaDto value = configurationService.findConfSchemaByAppIdAndVersion(
+                appDto.getId(), key.getVersion());
+            return value;
+          }
+        });
   }
 
   /*
@@ -593,7 +666,8 @@ public class ConcurrentCacheService implements CacheService {
    */
   @Override
   @CachePut(value = "configurationSchemas", key = "#key")
-  public ConfigurationSchemaDto putConfigurationSchema(AppVersionKey key, ConfigurationSchemaDto value) {
+  public ConfigurationSchemaDto putConfigurationSchema(AppVersionKey key,
+                                                       ConfigurationSchemaDto value) {
     return value;
   }
 
@@ -607,32 +681,38 @@ public class ConcurrentCacheService implements CacheService {
   @Override
   @Cacheable("endpointProfileSchemas")
   public EndpointProfileSchemaDto getProfileSchemaByAppAndVersion(AppVersionKey key) {
-    return pfSchemaMemorizer.compute(key, new Computable<AppVersionKey, EndpointProfileSchemaDto>() {
+    return pfSchemaMemorizer.compute(key,
+        new Computable<AppVersionKey, EndpointProfileSchemaDto>() {
 
-      @Override
-      public EndpointProfileSchemaDto compute(AppVersionKey key) {
-        LOG.debug("Fetching result for getProfileSchemaByAppAndVersion");
-        ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-        EndpointProfileSchemaDto value = profileService.findProfileSchemaByAppIdAndVersion(appDto.getId(), key.getVersion());
-        return value;
-      }
-    });
+          @Override
+          public EndpointProfileSchemaDto compute(AppVersionKey key) {
+            LOG.debug("Fetching result for getProfileSchemaByAppAndVersion");
+            ApplicationDto appDto = applicationService.findAppByApplicationToken(
+                key.getApplicationToken());
+            EndpointProfileSchemaDto value = profileService.findProfileSchemaByAppIdAndVersion(
+                appDto.getId(), key.getVersion());
+            return value;
+          }
+        });
   }
 
   @Override
   @Cacheable("serverProfileSchemas")
   public ServerProfileSchemaDto getServerProfileSchemaByAppAndVersion(AppVersionKey key) {
-    return spfSchemaMemorizer.compute(key, new Computable<AppVersionKey, ServerProfileSchemaDto>() {
+    return spfSchemaMemorizer.compute(key,
+        new Computable<AppVersionKey, ServerProfileSchemaDto>() {
 
-      @Override
-      public ServerProfileSchemaDto compute(AppVersionKey key) {
-        LOG.debug("Fetching result for getServerProfileSchemaByAppAndVersion");
-        ApplicationDto appDto = applicationService.findAppByApplicationToken(key.getApplicationToken());
-        ServerProfileSchemaDto value = serverProfileService.findServerProfileSchemaByAppIdAndVersion(appDto.getId(),
-            key.getVersion());
-        return value;
-      }
-    });
+          @Override
+          public ServerProfileSchemaDto compute(AppVersionKey key) {
+            LOG.debug("Fetching result for getServerProfileSchemaByAppAndVersion");
+            ApplicationDto appDto = applicationService.findAppByApplicationToken(
+                key.getApplicationToken());
+            ServerProfileSchemaDto value =
+                serverProfileService.findServerProfileSchemaByAppIdAndVersion(appDto.getId(),
+                    key.getVersion());
+            return value;
+          }
+        });
   }
 
   @Override
@@ -642,7 +722,7 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public CTLSchemaDto compute(String key) {
         LOG.debug("Fetching result for ctl schemas");
-        return ctlService.findCTLSchemaById(key);
+        return ctlService.findCtlSchemaById(key);
       }
     });
   }
@@ -654,7 +734,7 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public String compute(String key) {
         LOG.debug("Fetching result for ctl schemas");
-        CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(key);
+        CTLSchemaDto ctlSchema = ctlService.findCtlSchemaById(key);
         return ctlService.flatExportAsString(ctlSchema);
       }
     });
@@ -670,7 +750,8 @@ public class ConcurrentCacheService implements CacheService {
    */
   @Override
   @CachePut(value = "endpointProfileSchemas", key = "#key")
-  public EndpointProfileSchemaDto putProfileSchema(AppVersionKey key, EndpointProfileSchemaDto value) {
+  public EndpointProfileSchemaDto putProfileSchema(AppVersionKey key,
+                                                   EndpointProfileSchemaDto value) {
     return value;
   }
 
@@ -701,14 +782,16 @@ public class ConcurrentCacheService implements CacheService {
       public PublicKey compute(EndpointObjectHash key) {
         LOG.debug("Fetching result for getEndpointKey");
         PublicKey result = null;
-        EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(key.getData());
+        EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(
+            key.getData());
         if (endpointProfile != null) {
           try {
-            X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(endpointProfile.getEndpointKey());
+            X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(
+                endpointProfile.getEndpointKey());
             KeyFactory keyFact = KeyFactory.getInstance(ALGORITHM);
             result = keyFact.generatePublic(x509KeySpec);
-          } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            LOG.error("failed to decode key", e);
+          } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            LOG.error("failed to decode key", ex);
           }
         } else {
           LOG.error("failed to find key by hash {}", key);
@@ -726,11 +809,13 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public String compute(EventClassFamilyIdKey key) {
         LOG.debug("Fetching result for getEcfvId using key {}", key);
-        EventClassFamilyDto ecf = eventClassService.findEventClassFamilyByTenantIdAndName(key.getTenantId(), key.getName());
+        EventClassFamilyDto ecf = eventClassService.findEventClassFamilyByTenantIdAndName(
+            key.getTenantId(), key.getName());
         if (ecf != null) {
           return ecf.getId();
         } else {
-          LOG.error("failed to find ecf by tenantId [{}] and name {}", key.getTenantId(), key.getName());
+          LOG.error("failed to find ecf by tenantId [{}] and name {}",
+              key.getTenantId(), key.getName());
           return null;
         }
       }
@@ -745,7 +830,8 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public String compute(EventClassFqnKey key) {
         LOG.debug("Fetching result for getEventClassFamilyIdByEventClassFqn using key {}", key);
-        List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFQN(key.getTenantId(), key.getFqn());
+        List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFQN(
+            key.getTenantId(), key.getFqn());
         if (eventClasses != null && !eventClasses.isEmpty()) {
           String ecfvId = eventClasses.get(0).getEcfvId();
           return eventClassService.findEventClassFamilyByEcfvId(ecfvId).getId();
@@ -761,40 +847,44 @@ public class ConcurrentCacheService implements CacheService {
   @Override
   @Cacheable("routeKeys")
   public Set<RouteTableKey> getRouteKeys(EventClassFqnVersion key) {
-    return routeKeysMemorizer.compute(key, new Computable<EventClassFqnVersion, Set<RouteTableKey>>() {
+    return routeKeysMemorizer.compute(key,
+        new Computable<EventClassFqnVersion, Set<RouteTableKey>>() {
 
-      @Override
-      public Set<RouteTableKey> compute(EventClassFqnVersion key) {
-        LOG.debug("Fetching result for getRouteKeys using key {}", key);
-        Set<RouteTableKey> routeKeys = new HashSet<>();
-        EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(key.getTenantId(), key.getFqn(),
-            key.getVersion());
+          @Override
+          public Set<RouteTableKey> compute(EventClassFqnVersion key) {
+            LOG.debug("Fetching result for getRouteKeys using key {}", key);
+            Set<RouteTableKey> routeKeys = new HashSet<>();
+            EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(
+                key.getTenantId(), key.getFqn(),
+                key.getVersion());
 
-        String ecfvId = eventClass.getEcfvId();
-        String ecfId = eventClassService.findEventClassFamilyByEcfvId(ecfvId).getId();
+            String ecfvId = eventClass.getEcfvId();
+            String ecfId = eventClassService.findEventClassFamilyByEcfvId(ecfvId).getId();
 
-        List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(ecfId,
-            key.getVersion());
-        for (ApplicationEventFamilyMapDto mapping : mappingList) {
-          String applicationId = mapping.getApplicationId();
-          ApplicationDto appDto = applicationService.findAppById(applicationId);
-          RouteTableKey routeTableKey = new RouteTableKey(appDto.getApplicationToken(), new EventClassFamilyVersion(
-              ecfId, key.getVersion()));
-          if (!routeKeys.contains(routeTableKey)) {
-            for (ApplicationEventMapDto eventMap : mapping.getEventMaps()) {
-              if (eventMap.getEventClassId().equals(eventClass.getId())
-                  && (ApplicationEventAction.SINK == eventMap.getAction() || ApplicationEventAction.BOTH == eventMap
-                  .getAction())) {
-                routeKeys.add(routeTableKey);
-                break;
+            List<ApplicationEventFamilyMapDto> mappingList =
+                applicationEventMapService.findByEcfIdAndVersion(ecfId,
+                    key.getVersion());
+            for (ApplicationEventFamilyMapDto mapping : mappingList) {
+              String applicationId = mapping.getApplicationId();
+              ApplicationDto appDto = applicationService.findAppById(applicationId);
+              RouteTableKey routeTableKey = new RouteTableKey(
+                  appDto.getApplicationToken(), new EventClassFamilyVersion(
+                  ecfId, key.getVersion()));
+              if (!routeKeys.contains(routeTableKey)) {
+                for (ApplicationEventMapDto eventMap : mapping.getEventMaps()) {
+                  if (eventMap.getEventClassId().equals(eventClass.getId())
+                      && (ApplicationEventAction.SINK == eventMap.getAction()
+                      || ApplicationEventAction.BOTH == eventMap.getAction())) {
+                    routeKeys.add(routeTableKey);
+                    break;
+                  }
+                }
               }
             }
-          }
-        }
 
-        return routeKeys;
-      }
-    });
+            return routeKeys;
+          }
+        });
   }
 
   @Override
@@ -870,7 +960,7 @@ public class ConcurrentCacheService implements CacheService {
   }
 
   /**
-   * Remove key from hash
+   * Remove key from hash.
    */
   @Override
   @CacheEvict(value = "endpointKeys", key = "#key")
@@ -887,16 +977,19 @@ public class ConcurrentCacheService implements CacheService {
    */
   @Override
   @Cacheable(value = "mergedConfigurations", key = "#key")
-  public Pair<BaseData, RawData> getMergedConfiguration(final List<EndpointGroupStateDto> key,
-                                                        final Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> worker) {
-    return mergedConfigurationMemorizer.compute(key, new Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>>() {
-      @Override
-      public Pair<BaseData, RawData> compute(List<EndpointGroupStateDto> key) {
-        LOG.debug("Fetching result for getMergedConfiguration");
-        Pair<BaseData, RawData> result = worker.compute(key);
-        return result;
-      }
-    });
+  public Pair<BaseData, RawData> getMergedConfiguration(
+      final List<EndpointGroupStateDto> key,
+      final Computable<List<EndpointGroupStateDto>,
+          Pair<BaseData, RawData>> worker) {
+    return mergedConfigurationMemorizer.compute(key,
+        new Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>>() {
+          @Override
+          public Pair<BaseData, RawData> compute(List<EndpointGroupStateDto> key) {
+            LOG.debug("Fetching result for getMergedConfiguration");
+            Pair<BaseData, RawData> result = worker.compute(key);
+            return result;
+          }
+        });
   }
 
   /*
@@ -907,7 +1000,8 @@ public class ConcurrentCacheService implements CacheService {
    */
   @Override
   @CachePut(value = "mergedConfigurations", key = "#key")
-  public BaseData setMergedConfiguration(List<EndpointGroupStateDto> key, BaseData mergedConfiguration) {
+  public BaseData setMergedConfiguration(List<EndpointGroupStateDto> key,
+                                         BaseData mergedConfiguration) {
     return mergedConfiguration;
   }
 
@@ -921,16 +1015,19 @@ public class ConcurrentCacheService implements CacheService {
    */
   @Override
   @Cacheable(value = "deltas", key = "#key")
-  public ConfigurationCacheEntry getDelta(final DeltaCacheKey key, final Computable<DeltaCacheKey, ConfigurationCacheEntry> worker)
+  public ConfigurationCacheEntry getDelta(final DeltaCacheKey key,
+                                          final Computable<DeltaCacheKey,
+                                              ConfigurationCacheEntry> worker)
       throws GetDeltaException {
-    ConfigurationCacheEntry deltaCacheEntry = deltaMemorizer.compute(key, new Computable<DeltaCacheKey, ConfigurationCacheEntry>() { // NOSONAR
-      @Override
-      public ConfigurationCacheEntry compute(DeltaCacheKey key) {
-        LOG.debug("Fetching result for getMergedConfiguration");
-        ConfigurationCacheEntry result = worker.compute(key);
-        return result;
-      }
-    });
+    ConfigurationCacheEntry deltaCacheEntry = deltaMemorizer.compute(key,
+        new Computable<DeltaCacheKey, ConfigurationCacheEntry>() { // NOSONAR
+          @Override
+          public ConfigurationCacheEntry compute(DeltaCacheKey key) {
+            LOG.debug("Fetching result for getMergedConfiguration");
+            ConfigurationCacheEntry result = worker.compute(key);
+            return result;
+          }
+        });
 
     return deltaCacheEntry;
   }
@@ -1008,7 +1105,8 @@ public class ConcurrentCacheService implements CacheService {
   @CachePut(value = "topicListEntries", key = "#key")
   public TopicListCacheEntry putTopicList(EndpointObjectHash key, TopicListCacheEntry entry) {
     if (entry != null) {
-      TopicListEntryDto entryDto = new TopicListEntryDto(entry.getSimpleHash(), entry.getHash().getData(), entry.getTopics());
+      TopicListEntryDto entryDto = new TopicListEntryDto(
+          entry.getSimpleHash(), entry.getHash().getData(), entry.getTopics());
       endpointService.saveTopicListEntry(entryDto);
     }
     return entry;
@@ -1017,18 +1115,22 @@ public class ConcurrentCacheService implements CacheService {
   @Override
   @Cacheable("topicListEntries")
   public TopicListCacheEntry getTopicListByHash(EndpointObjectHash hash) {
-    return topicListMemorizer.compute(hash, new Computable<EndpointObjectHash, TopicListCacheEntry>() {
-      @Override
-      public TopicListCacheEntry compute(EndpointObjectHash key) {
-        LOG.debug("Fetching result for getTopicListByHash {}", key);
-        TopicListEntryDto entryDto = endpointService.findTopicListEntryByHash(key.getData());
-        if (entryDto != null) {
-          return new TopicListCacheEntry(entryDto.getSimpleHash(), EndpointObjectHash.fromBytes(entryDto.getHash()), entryDto.getTopics());
-        } else {
-          return null;
-        }
-      }
-    });
+    return topicListMemorizer.compute(hash,
+        new Computable<EndpointObjectHash, TopicListCacheEntry>() {
+          @Override
+          public TopicListCacheEntry compute(EndpointObjectHash key) {
+            LOG.debug("Fetching result for getTopicListByHash {}", key);
+            TopicListEntryDto entryDto = endpointService.findTopicListEntryByHash(key.getData());
+            if (entryDto != null) {
+              return new TopicListCacheEntry(
+                  entryDto.getSimpleHash(),
+                  EndpointObjectHash.fromBytes(entryDto.getHash()),
+                  entryDto.getTopics());
+            } else {
+              return null;
+            }
+          }
+        });
   }
 
   /*
@@ -1094,7 +1196,8 @@ public class ConcurrentCacheService implements CacheService {
   }
 
   @Override
-  public void setApplicationEventMapService(ApplicationEventMapService applicationEventMapService) {
+  public void setApplicationEventMapService(
+      ApplicationEventMapService applicationEventMapService) {
     this.applicationEventMapService = applicationEventMapService;
   }
 

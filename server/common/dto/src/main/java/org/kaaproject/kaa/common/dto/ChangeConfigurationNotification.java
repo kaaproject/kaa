@@ -43,19 +43,21 @@ public class ChangeConfigurationNotification implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof ChangeConfigurationNotification)) {
+    if (!(obj instanceof ChangeConfigurationNotification)) {
       return false;
     }
-    ChangeConfigurationNotification that = (ChangeConfigurationNotification) o;
+    ChangeConfigurationNotification that = (ChangeConfigurationNotification) obj;
 
-    if (configurationDto != null ? !configurationDto.equals(that.configurationDto) : that.configurationDto != null) {
+    if (configurationDto != null ? !configurationDto.equals(that.configurationDto) :
+            that.configurationDto != null) {
       return false;
     }
-    if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) : that.changeNotificationDto != null) {
+    if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) :
+            that.changeNotificationDto != null) {
       return false;
     }
 
@@ -71,9 +73,9 @@ public class ChangeConfigurationNotification implements Serializable {
 
   @Override
   public String toString() {
-    return "ChangeConfigurationNotification{" +
-        "configurationDto=" + configurationDto +
-        ", changeNotificationDto=" + changeNotificationDto +
-        '}';
+    return "ChangeConfigurationNotification{"
+           + "configurationDto=" + configurationDto
+           + ", changeNotificationDto=" + changeNotificationDto
+           + '}';
   }
 }

@@ -44,13 +44,13 @@ import java.util.Date;
 import java.util.List;
 
 
-public class CTLNotificationMigration extends AbstractCTLMigration {
+public class CtlNotificationMigration extends AbstractCtlMigration {
   private MongoClient client;
   private Cluster cluster;
   private String dbName;
   private String nosql;
 
-  public CTLNotificationMigration(Connection connection, String host, String db, String nosql) {
+  public CtlNotificationMigration(Connection connection, String host, String db, String nosql) {
     super(connection);
     client = new MongoClient(host);
     cluster = Cluster.builder()

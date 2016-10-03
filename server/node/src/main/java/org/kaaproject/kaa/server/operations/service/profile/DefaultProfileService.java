@@ -76,20 +76,82 @@ public class DefaultProfileService implements ProfileService {
   }
 
   @Override
-  public EndpointProfileDto updateProfile(EndpointProfileDto profile,
-                                          BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction) {
+  public EndpointProfileDto updateProfile(
+      EndpointProfileDto profile,
+      BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction) {
     return updateProfile(profile, mergeFunction, 3);
   }
 
-  private EndpointProfileDto updateProfile(EndpointProfileDto update,
-                                           BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction, int retryCount) {
+  /*
+ * (non-Javadoc)
+ *
+ * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
+ * updateProfile
+ * (org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest)
+ */
+  @Override
+  public EndpointProfileDto updateProfile(UpdateProfileRequest request) {
+    LOG.debug("Updating Profile for {}", request.getEndpointKeyHash());
+
+    EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(
+        request.getEndpointKeyHash().getData());
+
+    AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(request.getApplicationToken());
+
+    SdkProfileDto sdkProfile = cacheService.getSdkProfileBySdkToken(request.getSdkToken());
+    String profileJson = decodeProfile(
+        request.getProfile(), appSeqNumber.getAppToken(), sdkProfile.getProfileSchemaVersion());
+
+    Function<EndpointProfileDto, EndpointProfileDto> updateFunction = profile -> {
+      if (request.getAccessToken() != null) {
+        profile.setAccessToken(request.getAccessToken());
+      }
+      profile.setClientProfileBody(profileJson);
+      profile.setProfileHash(EndpointObjectHash.fromSha1(request.getProfile()).getData());
+
+      populateVersionStates(appSeqNumber.getTenantId(), profile, sdkProfile);
+      profile.setGroupState(new ArrayList<>());
+      profile.setSequenceNumber(0);
+      return profile;
+    };
+    return updateProfile(updateFunction.apply(dto), (storedProfile, newProfile) -> {
+      return updateFunction.apply(storedProfile);
+    });
+  }
+
+  @Override
+  public EndpointProfileDto updateProfile(ClientSyncMetaData metaData,
+                                          EndpointObjectHash keyHash,
+                                          boolean useConfigurationRawSchema) {
+    LOG.debug("Updating Profile for {}", keyHash);
+    EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(keyHash.getData());
+    AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(metaData.getApplicationToken());
+    SdkProfileDto sdkProfile = cacheService.getSdkProfileBySdkToken(metaData.getSdkToken());
+
+    Function<EndpointProfileDto, EndpointProfileDto> updateFunction = profile -> {
+      populateVersionStates(appSeqNumber.getTenantId(), profile, sdkProfile);
+      profile.setGroupState(new ArrayList<>());
+      profile.setUseConfigurationRawSchema(useConfigurationRawSchema);
+      profile.setSequenceNumber(0);
+      return profile;
+    };
+    return updateProfile(updateFunction.apply(dto), (storedProfile, newProfile) -> {
+      return updateFunction.apply(storedProfile);
+    });
+  }
+
+  private EndpointProfileDto updateProfile(
+      EndpointProfileDto update,
+      BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction,
+      int retryCount) {
     LOG.debug("Updating profile {} ", update);
     try {
       return endpointService.saveEndpointProfile(update);
     } catch (KaaOptimisticLockingFailureException ex) {
       LOG.warn("Failed to update profile {} ", update, ex);
       if (retryCount > 0) {
-        EndpointProfileDto stored = endpointService.findEndpointProfileByKeyHash(update.getEndpointKeyHash());
+        EndpointProfileDto stored = endpointService.findEndpointProfileByKeyHash(
+            update.getEndpointKeyHash());
         LOG.warn("Going to merge it with stored profile {}", stored);
         EndpointProfileDto merged = mergeFunction.apply(stored, update);
         LOG.warn("Merge result: {}", merged);
@@ -119,7 +181,8 @@ public class DefaultProfileService implements ProfileService {
     SdkProfileDto sdkProfile = cacheService.getSdkProfileBySdkToken(request.getSdkToken());
     LOG.trace("Sdk properties by sdk token: {} found: {}", request.getSdkToken(), sdkProfile);
 
-    String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), sdkProfile.getProfileSchemaVersion());
+    String profileJson = decodeProfile(
+        request.getProfile(), appSeqNumber.getAppToken(), sdkProfile.getProfileSchemaVersion());
 
     EndpointObjectHash keyHash = EndpointObjectHash.fromSha1(request.getEndpointKey());
 
@@ -134,20 +197,24 @@ public class DefaultProfileService implements ProfileService {
       dto.setProfileHash(EndpointObjectHash.fromSha1(request.getProfile()).getData());
 
       try {
-        Optional<EndpointRegistrationDto> endpointRegistrationLookup = endpointRegistrationService.findEndpointRegistrationByEndpointId(endpointId);
+        Optional<EndpointRegistrationDto> endpointRegistrationLookup =
+            endpointRegistrationService.findEndpointRegistrationByEndpointId(endpointId);
         if (endpointRegistrationLookup.isPresent()) {
-          LOG.debug("Endpoint registration information found {}: {}", dto.getEndpointKey(), endpointRegistrationLookup.get());
+          LOG.debug("Endpoint registration information found {}: {}",
+              dto.getEndpointKey(), endpointRegistrationLookup.get());
           EndpointRegistrationDto endpointRegistration = endpointRegistrationLookup.get();
-          if (endpointRegistration.getServerProfileBody() != null && endpointRegistration.getServerProfileVersion() != null) {
+          if (endpointRegistration.getServerProfileBody() != null
+              && endpointRegistration.getServerProfileVersion() != null) {
             dto.setServerProfileVersion(endpointRegistration.getServerProfileVersion());
             dto.setServerProfileBody(endpointRegistration.getServerProfileBody());
           }
         } else {
           LOG.debug("Endpoint registration information not found {}", dto.getEndpointKey());
         }
-      } catch (EndpointRegistrationServiceException e) {
-        LOG.error("Failed to lookup registration information for: {}. Reason: {}", dto.getEndpointKey(), e);
-        throw new RuntimeException(e);
+      } catch (EndpointRegistrationServiceException ex) {
+        LOG.error("Failed to lookup registration information for: {}. Reason: {}",
+            dto.getEndpointKey(), ex);
+        throw new RuntimeException(ex);
       }
 
       populateVersionStates(appSeqNumber.getTenantId(), dto, sdkProfile);
@@ -160,90 +227,43 @@ public class DefaultProfileService implements ProfileService {
 
       try {
         cacheService.putEndpointKey(keyHash, KeyUtil.getPublic(dto.getEndpointKey()));
-      } catch (InvalidKeyException e) {
-        LOG.error("Can't generate public key for endpoint key: {}. Reason: {}", dto.getEndpointKey(), e);
-        throw new RuntimeException(e);
+      } catch (InvalidKeyException ex) {
+        LOG.error("Can't generate public key for endpoint key: {}. Reason: {}",
+            dto.getEndpointKey(), ex);
+        throw new RuntimeException(ex);
       }
 
       return endpointService.saveEndpointProfile(dto);
     } else {
-      return updateProfile(new UpdateProfileRequest(request.getAppToken(), keyHash, request.getAccessToken(), request.getProfile(),
+      return updateProfile(new UpdateProfileRequest(
+          request.getAppToken(), keyHash, request.getAccessToken(), request.getProfile(),
           request.getSdkToken()));
     }
   }
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see org.kaaproject.kaa.server.operations.service.profile.ProfileService#
-   * updateProfile
-   * (org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest)
-   */
-  @Override
-  public EndpointProfileDto updateProfile(UpdateProfileRequest request) {
-    LOG.debug("Updating Profile for {}", request.getEndpointKeyHash());
 
-    EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(request.getEndpointKeyHash().getData());
-
-    AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(request.getApplicationToken());
-
-    SdkProfileDto sdkProfile = cacheService.getSdkProfileBySdkToken(request.getSdkToken());
-    String profileJson = decodeProfile(request.getProfile(), appSeqNumber.getAppToken(), sdkProfile.getProfileSchemaVersion());
-
-    Function<EndpointProfileDto, EndpointProfileDto> updateFunction = profile -> {
-      if (request.getAccessToken() != null) {
-        profile.setAccessToken(request.getAccessToken());
-      }
-      profile.setClientProfileBody(profileJson);
-      profile.setProfileHash(EndpointObjectHash.fromSha1(request.getProfile()).getData());
-
-      populateVersionStates(appSeqNumber.getTenantId(), profile, sdkProfile);
-      profile.setGroupState(new ArrayList<>());
-      profile.setSequenceNumber(0);
-      return profile;
-    };
-    return updateProfile(updateFunction.apply(dto), (storedProfile, newProfile) -> {
-      return updateFunction.apply(storedProfile);
-    });
-  }
-
-  @Override
-  public EndpointProfileDto updateProfile(ClientSyncMetaData metaData, EndpointObjectHash keyHash, boolean useConfigurationRawSchema) {
-    LOG.debug("Updating Profile for {}", keyHash);
-    EndpointProfileDto dto = endpointService.findEndpointProfileByKeyHash(keyHash.getData());
-    AppSeqNumber appSeqNumber = cacheService.getAppSeqNumber(metaData.getApplicationToken());
-    SdkProfileDto sdkProfile = cacheService.getSdkProfileBySdkToken(metaData.getSdkToken());
-
-    Function<EndpointProfileDto, EndpointProfileDto> updateFunction = profile -> {
-      populateVersionStates(appSeqNumber.getTenantId(), profile, sdkProfile);
-      profile.setGroupState(new ArrayList<>());
-      profile.setUseConfigurationRawSchema(useConfigurationRawSchema);
-      profile.setSequenceNumber(0);
-      return profile;
-    };
-    return updateProfile(updateFunction.apply(dto), (storedProfile, newProfile) -> {
-      return updateFunction.apply(storedProfile);
-    });
-  }
-
-
-  protected void populateVersionStates(String tenantId, EndpointProfileDto dto, SdkProfileDto sdkProfile) {
+  protected void populateVersionStates(String tenantId,
+                                       EndpointProfileDto dto,
+                                       SdkProfileDto sdkProfile) {
     dto.setClientProfileVersion(sdkProfile.getProfileSchemaVersion());
     dto.setConfigurationVersion(sdkProfile.getConfigurationSchemaVersion());
     dto.setUserNfVersion(sdkProfile.getNotificationSchemaVersion());
     dto.setLogSchemaVersion(sdkProfile.getLogSchemaVersion());
     if (sdkProfile.getAefMapIds() != null) {
-      List<ApplicationEventFamilyMapDto> aefMaps = cacheService.getApplicationEventFamilyMapsByIds(sdkProfile.getAefMapIds());
+      List<ApplicationEventFamilyMapDto> aefMaps = cacheService.getApplicationEventFamilyMapsByIds(
+          sdkProfile.getAefMapIds());
       List<EventClassFamilyVersionStateDto> ecfVersionStates = new ArrayList<>(aefMaps.size());
       for (ApplicationEventFamilyMapDto aefMap : aefMaps) {
         EventClassFamilyVersionStateDto ecfVersionDto = new EventClassFamilyVersionStateDto();
-        String ecfId = cacheService.getEventClassFamilyIdByName(new EventClassFamilyIdKey(tenantId, aefMap.getEcfName()));
+        String ecfId = cacheService.getEventClassFamilyIdByName(new EventClassFamilyIdKey(
+            tenantId, aefMap.getEcfName()));
         if (ecfId != null) {
           ecfVersionDto.setEcfId(ecfId);
           ecfVersionDto.setVersion(aefMap.getVersion());
           ecfVersionStates.add(ecfVersionDto);
         } else {
-          LOG.warn("Failed to add ecf version state for ecf name {} and version {}", aefMap.getEcfName(), aefMap.getVersion());
+          LOG.warn("Failed to add ecf version state for ecf name {} and version {}",
+              aefMap.getEcfName(), aefMap.getVersion());
         }
       }
       dto.setEcfVersionStates(ecfVersionStates);
@@ -258,7 +278,8 @@ public class DefaultProfileService implements ProfileService {
         .getProfileSchemaByAppAndVersion(new AppVersionKey(appToken, schemaVersion));
     String profileSchema = cacheService.getFlatCtlSchemaById(profileSchemaDto.getCtlSchemaId());
 
-    LOG.trace("EndpointProfileSchema by appToken: {} and version: {} found: {}", appToken, schemaVersion, profileSchema);
+    LOG.trace("EndpointProfileSchema by appToken: {} and version: {} found: {}",
+        appToken, schemaVersion, profileSchema);
 
     String profileJson = GenericAvroConverter.toJson(profileRaw, profileSchema);
     LOG.trace("Profile json : {} ", profileJson);

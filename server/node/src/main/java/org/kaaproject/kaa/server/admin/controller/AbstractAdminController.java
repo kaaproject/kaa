@@ -67,7 +67,7 @@ public abstract class AbstractAdminController {
    * The kaa admin UI service.
    */
   @Autowired
-  AdminUiService adminUIService;
+  AdminUiService adminUiService;
 
   /**
    * The kaa application service.
@@ -184,12 +184,14 @@ public abstract class AbstractAdminController {
       LOG.debug("Uploading file with name '{}'", file.getOriginalFilename());
       try {
         return file.getBytes();
-      } catch (IOException e) {
-        throw Utils.handleException(e);
+      } catch (IOException ex) {
+        throw Utils.handleException(ex);
       }
     } else {
       LOG.error("No file found in post request!");
-      throw new KaaAdminServiceException("No file found in post request!", ServiceErrorCode.FILE_NOT_FOUND);
+      throw new KaaAdminServiceException(
+          "No file found in post request!",
+          ServiceErrorCode.FILE_NOT_FOUND);
     }
   }
 

@@ -54,7 +54,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilter> implements ProfileFilterDao<ProfileFilter> {
+public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilter>
+        implements ProfileFilterDao<ProfileFilter> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateProfileFilterDao.class);
 
@@ -77,15 +78,19 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
   }
 
   @Override
-  public List<ProfileFilter> findActualBySchemaIdAndGroupId(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
-    LOG.debug("Searching actual profile filters by endpoint schema id [{}], server schema id [{}] and group id [{}] ",
+  public List<ProfileFilter> findActualBySchemaIdAndGroupId(
+          String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
+    LOG.debug("Searching actual profile filters by endpoint schema id [{}], "
+              + "server schema id [{}] and group id [{}] ",
         endpointProfileSchemaId, serverProfileSchemaId, groupId);
     List<ProfileFilter> filters = Collections.emptyList();
     if (isNotBlank(groupId)) {
       Criteria criteria = getCriteria();
       criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
-      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
-      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
       criteria.add(Restrictions.and(
           Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
           buildEqIdCriterion(ENDPOINT_PROFILE_SCHEMA_REFERENCE, endpointProfileSchemaId),
@@ -94,47 +99,61 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
       filters = findListByCriteria(criteria);
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, Arrays.toString(filters.toArray()));
+      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId,
+              groupId, Arrays.toString(filters.toArray()));
     } else {
-      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, filters.size());
+      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId,
+              groupId, filters.size());
     }
     return filters;
   }
 
   @Override
-  public ProfileFilter findLatestDeprecated(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
-    LOG.debug("Searching latest deprecated profile filter by endpoint profile schema id [{}], server profile schema id [{}] and group id [{}] ",
+  public ProfileFilter findLatestDeprecated(String endpointProfileSchemaId,
+                                            String serverProfileSchemaId, String groupId) {
+    LOG.debug("Searching latest deprecated profile filter by endpoint profile schema id [{}], "
+              + "server profile schema id [{}] and group id [{}] ",
         endpointProfileSchemaId, serverProfileSchemaId, groupId);
     ProfileFilter filter = null;
     if (isNotBlank(groupId)) {
       Criteria criteria = getCriteria();
-      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
-      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
       criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
       Criterion crit = Restrictions.and(
           Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
           buildEqIdCriterion(ENDPOINT_PROFILE_SCHEMA_REFERENCE, endpointProfileSchemaId),
           buildEqIdCriterion(SERVER_PROFILE_SCHEMA_REFERENCE, serverProfileSchemaId),
           Restrictions.eq(STATUS_PROPERTY, UpdateStatus.DEPRECATED));
-      filter = (ProfileFilter) criteria.add(crit).addOrder(Order.desc(SEQUENCE_NUMBER_PROPERTY)).setMaxResults(FIRST).uniqueResult();
+      filter = (ProfileFilter) criteria.add(crit).addOrder(Order.desc(SEQUENCE_NUMBER_PROPERTY))
+              .setMaxResults(FIRST).uniqueResult();
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, filter);
+      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId,
+              groupId, filter);
     } else {
-      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, filter != null);
+      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId,
+              groupId, filter != null);
     }
     return filter;
   }
 
   @Override
-  public List<ProfileFilter> findByAppIdAndSchemaVersionsCombination(String appId, int endpointSchemaVersion, int serverSchemaVersion) {
+  public List<ProfileFilter> findByAppIdAndSchemaVersionsCombination(String appId,
+                                                                     int endpointSchemaVersion,
+                                                                     int serverSchemaVersion) {
     List<ProfileFilter> filters = null;
-    LOG.debug("Searching configuration by application id [{}] and schema version [{}]", appId, serverSchemaVersion);
+    LOG.debug("Searching configuration by application id [{}] and schema version [{}]",
+            appId, serverSchemaVersion);
     if (isNotBlank(appId)) {
       Criteria criteria = getCriteria();
       criteria.createAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS);
-      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
-      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
       Criterion criterion = Restrictions.and(
           Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
           Restrictions.eq(STATUS_PROPERTY, UpdateStatus.ACTIVE),
@@ -152,7 +171,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
       filters = findListByCriteria(criteria);
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{}] Search result: {}.", appId, serverSchemaVersion, Arrays.toString(filters.toArray()));
+      LOG.trace("[{},{}] Search result: {}.", appId, serverSchemaVersion,
+              Arrays.toString(filters.toArray()));
     } else {
       LOG.debug("[{},{}] Search result: {}.", appId, serverSchemaVersion, filters.size());
     }
@@ -160,14 +180,18 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
   }
 
   @Override
-  public ProfileFilter findInactiveFilter(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
+  public ProfileFilter findInactiveFilter(String endpointProfileSchemaId,
+                                          String serverProfileSchemaId, String groupId) {
     ProfileFilter filter = null;
-    LOG.debug("Searching inactive profile filter by endpoint profile schema id [{}], server profile schema id [{}] and group id [{}] ",
+    LOG.debug("Searching inactive profile filter by endpoint profile schema id [{}], "
+              + "server profile schema id [{}] and group id [{}] ",
         endpointProfileSchemaId, serverProfileSchemaId, groupId);
     if (isNotBlank(groupId)) {
       Criteria criteria = getCriteria();
-      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
-      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
       criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
       criteria.add(Restrictions.and(
           Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
@@ -177,22 +201,27 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
       filter = findOneByCriteria(criteria);
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, filter);
+      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId,
+              groupId, filter);
     } else {
-      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, groupId, serverProfileSchemaId, filter != null);
+      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, groupId,
+              serverProfileSchemaId, filter != null);
     }
     return filter;
   }
 
   @Override
-  public ProfileFilter findLatestFilter(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
+  public ProfileFilter findLatestFilter(String endpointProfileSchemaId,
+                                        String serverProfileSchemaId, String groupId) {
     LOG.debug("Searching latest active profile filter by profile schema id [{}] and group id [{}]",
         endpointProfileSchemaId, serverProfileSchemaId, groupId);
     ProfileFilter filter = null;
     if (isNotBlank(groupId)) {
       Criteria criteria = getCriteria();
-      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
-      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
       criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
       criteria.add(Restrictions.and(
           Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
@@ -202,16 +231,19 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
       filter = findOneByCriteria(criteria);
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, filter);
+      LOG.trace("[{},{},{}] Search result: {}.", endpointProfileSchemaId,
+              serverProfileSchemaId, groupId, filter);
     } else {
-      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, filter != null);
+      LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId,
+              serverProfileSchemaId, groupId, filter != null);
     }
     return filter;
   }
 
   @Override
   public ProfileFilter activate(String id, String username) {
-    LOG.debug("Activating profile filter with id [{}] by username [{}]", id, username);
+    LOG.debug("Activating profile filter with id [{}] by username [{}]",
+            id, username);
     ProfileFilter filter = findById(id);
     if (filter != null) {
       filter.setStatus(UpdateStatus.ACTIVE);
@@ -247,14 +279,19 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
   }
 
   @Override
-  public ProfileFilter deactivateOldFilter(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId, String username) {
-    LOG.debug("Deactivating old profile filter with endpoint profile schema id [{}], server profile schema id [{}], group id [{}] by username [{}]",
+  public ProfileFilter deactivateOldFilter(String endpointProfileSchemaId,
+                                           String serverProfileSchemaId, String groupId,
+                                           String username) {
+    LOG.debug("Deactivating old profile filter with endpoint profile schema id [{}], "
+              + "server profile schema id [{}], group id [{}] by username [{}]",
         endpointProfileSchemaId, serverProfileSchemaId, groupId, username);
     ProfileFilter filter = null;
     if (isNotBlank(groupId)) {
       Criteria criteria = getCriteria();
-      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
-      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
       criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
       criteria.add(Restrictions.and(
           Restrictions.eq(ENDPOINT_GROUP_REFERENCE, Long.valueOf(groupId)),
@@ -270,9 +307,11 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
       filter = save(filter);
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("[{},{},{},{}] Deactivating result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, username, filter);
+      LOG.trace("[{},{},{},{}] Deactivating result: {}.", endpointProfileSchemaId,
+              serverProfileSchemaId, groupId, username, filter);
     } else {
-      LOG.debug("[{},{},{},{}] Deactivating result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, username, filter != null);
+      LOG.debug("[{},{},{},{}] Deactivating result: {}.", endpointProfileSchemaId,
+              serverProfileSchemaId, groupId, username, filter != null);
     }
     return filter;
   }
@@ -285,14 +324,18 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
   }
 
   @Override
-  public long findActiveFilterCount(String endpointProfileSchemaId, String serverProfileSchemaId, String groupId) {
+  public long findActiveFilterCount(String endpointProfileSchemaId, String serverProfileSchemaId,
+                                    String groupId) {
     long count = 0;
-    LOG.debug("Searching active profile filters by endpoint profile schema id [{}], server profile schema id [{}] and group id [{}]",
+    LOG.debug("Searching active profile filters by endpoint profile schema id [{}], "
+              + "server profile schema id [{}] and group id [{}]",
         endpointProfileSchemaId, serverProfileSchemaId, groupId);
     if (isNotBlank(groupId)) {
       Criteria criteria = getCriteria();
-      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
-      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS, JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(ENDPOINT_PROFILE_SCHEMA_PROPERTY, ENDPOINT_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
+      criteria.createAlias(SERVER_PROFILE_SCHEMA_PROPERTY, SERVER_PROFILE_SCHEMA_ALIAS,
+              JoinType.LEFT_OUTER_JOIN);
       criteria.createAlias(ENDPOINT_GROUP_PROPERTY, ENDPOINT_GROUP_ALIAS);
 
       criteria.add(Restrictions.and(
@@ -302,7 +345,8 @@ public class HibernateProfileFilterDao extends HibernateAbstractDao<ProfileFilte
           Restrictions.eq(STATUS_PROPERTY, UpdateStatus.ACTIVE)));
       count = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
     }
-    LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId, groupId, count);
+    LOG.debug("[{},{},{}] Search result: {}.", endpointProfileSchemaId, serverProfileSchemaId,
+            groupId, count);
     return count;
   }
 

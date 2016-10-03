@@ -26,7 +26,7 @@ import org.apache.avro.generic.GenericRecord;
 public interface GenericDeltaReceiver {
 
   /**
-   * Called on each deserialized delta
+   * Called on each deserialized delta.
    *
    * @param index      Index of the current delta in the union list
    * @param data       Avro generic object with deserialized delta

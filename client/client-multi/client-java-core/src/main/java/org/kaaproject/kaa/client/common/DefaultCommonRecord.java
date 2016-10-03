@@ -66,7 +66,8 @@ public final class DefaultCommonRecord implements CommonRecord {
             newArray.add(item);
           }
         }
-        this.record.put(key, new DefaultCommonValue(new DefaultCommonArray(value.getArray().getSchema(), newArray)));
+        this.record.put(key, new DefaultCommonValue(new DefaultCommonArray(
+                value.getArray().getSchema(), newArray)));
       } else {
         this.record.put(key, value);
       }

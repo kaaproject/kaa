@@ -29,6 +29,11 @@ public class VersionDto implements HasId, Serializable, Comparable<VersionDto> {
     super();
   }
 
+  /**
+   * Instantiates a new VersionDto.
+   * @param id        the id
+   * @param version   the version
+   */
   public VersionDto(String id, int version) {
     super();
     this.id = id;
@@ -97,9 +102,9 @@ public class VersionDto implements HasId, Serializable, Comparable<VersionDto> {
   }
 
   @Override
-  public int compareTo(VersionDto o) {
-    if (o != null) {
-      return version - o.getVersion();
+  public int compareTo(VersionDto versionDto) {
+    if (versionDto != null) {
+      return version - versionDto.getVersion();
     } else {
       return 1;
     }

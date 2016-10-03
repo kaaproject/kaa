@@ -198,7 +198,8 @@ public class BaseCliThriftClient {
             try {
               port = Integer.valueOf(strPort);
             } catch (Exception ex) {
-              LOG.error("Unexpected exception while parsing port. Can not parse String: {} to Integer, exception catched {}", strPort, ex);
+              LOG.error("Unexpected exception while parsing port. Can not parse String: "
+                        + "{} to Integer, exception catched {}", strPort, ex);
             }
             if (port > 0) {
               parsed = true;
@@ -259,7 +260,8 @@ public class BaseCliThriftClient {
    * @return the int execution result code
    */
   public int processLine(String line) {
-    int lastRet = 0, ret = 0;
+    int lastRet = 0;
+    int ret = 0;
 
     String command = "";
     for (String oneCmd : line.split(";")) {

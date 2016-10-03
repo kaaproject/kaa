@@ -29,7 +29,7 @@ import java.nio.ByteBuffer;
 public interface TopicListEntryDao<T extends TopicListEntry> extends Dao<T, ByteBuffer> {
 
   /**
-   * Save topic list entry
+   * Save topic list entry.
    *
    * @param dto topic list entry
    * @return save topic list entry
@@ -37,7 +37,7 @@ public interface TopicListEntryDao<T extends TopicListEntry> extends Dao<T, Byte
   T save(TopicListEntryDto dto);
 
   /**
-   * Find topic list entry by hash
+   * Find topic list entry by hash.
    *
    * @param hash the hash of a topic list
    * @return found topic list entry
@@ -45,7 +45,7 @@ public interface TopicListEntryDao<T extends TopicListEntry> extends Dao<T, Byte
   T findByHash(byte[] hash);
 
   /**
-   * Remove topic list entry by hash
+   * Remove topic list entry by hash.
    *
    * @param hash the hash of a topic list
    */

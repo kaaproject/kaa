@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client.common;
 import org.apache.avro.Schema;
 
 /**
- * Default {@link CommonEnum} implementation
+ * Default {@link CommonEnum} implementation.
  *
  * @author Yaroslav Zeygerman
  */

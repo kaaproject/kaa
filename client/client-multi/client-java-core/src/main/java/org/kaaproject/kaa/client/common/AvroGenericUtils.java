@@ -132,7 +132,8 @@ public class AvroGenericUtils {
   }
 
   /**
-   * Checks if the given value is Unchanged (value's schema is "org.kaaproject.configuration.unchangedT").
+   * Checks if the given value is Unchanged (value's schema is
+   * "org.kaaproject.configuration.unchangedT").
    *
    * @param field object which going to be verified.
    * @return true if the value is Unchanged, false otherwise.

@@ -53,7 +53,7 @@ import java.nio.ByteBuffer;
 public interface ConfigurationStorage {
 
   /**
-   * Saves configuration data
+   * Saves configuration data.
    *
    * @param buffer buffer with configuration data
    * @throws IOException the io exception
@@ -61,7 +61,7 @@ public interface ConfigurationStorage {
   void saveConfiguration(ByteBuffer buffer) throws IOException;
 
   /**
-   * Loads configuration data
+   * Loads configuration data.
    *
    * @return buffer with loaded configuration data, or null if configuration is empty
    * @throws IOException the io exception
@@ -69,7 +69,7 @@ public interface ConfigurationStorage {
   ByteBuffer loadConfiguration() throws IOException;
 
   /**
-   * Clear configuration data (file)
+   * Clear configuration data (file).
    *
    * @throws IOException the io exception
    */

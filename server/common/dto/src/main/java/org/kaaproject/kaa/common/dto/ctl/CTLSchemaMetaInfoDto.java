@@ -117,28 +117,37 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     CTLSchemaMetaInfoDto other = (CTLSchemaMetaInfoDto) obj;
     if (applicationId == null) {
-      if (other.applicationId != null)
+      if (other.applicationId != null) {
         return false;
-    } else if (!applicationId.equals(other.applicationId))
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
       return false;
+    }
     if (fqn == null) {
-      if (other.fqn != null)
+      if (other.fqn != null) {
         return false;
-    } else if (!fqn.equals(other.fqn))
+      }
+    } else if (!fqn.equals(other.fqn)) {
       return false;
+    }
     if (tenantId == null) {
-      if (other.tenantId != null)
+      if (other.tenantId != null) {
         return false;
-    } else if (!tenantId.equals(other.tenantId))
+      }
+    } else if (!tenantId.equals(other.tenantId)) {
       return false;
+    }
     return true;
   }
 

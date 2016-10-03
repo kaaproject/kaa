@@ -23,7 +23,7 @@ import java.util.zip.CRC32;
 
 /**
  * An util class that provides convenient methods to get server name and hash of {@link
- * ConnectionInfo}
+ * ConnectionInfo}.
  *
  * @author Andrey Shvayka
  */

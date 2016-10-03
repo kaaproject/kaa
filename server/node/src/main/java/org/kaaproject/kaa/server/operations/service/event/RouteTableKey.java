@@ -21,9 +21,6 @@ import java.io.Serializable;
 
 public final class RouteTableKey implements Serializable {
 
-  /**
-   *
-   */
   private static final long serialVersionUID = 3363397161525196106L;
 
 

@@ -39,16 +39,19 @@ public class BootstrapThriftServiceImpl implements
   private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
 
   /**
-   * Thrift method to receive new list of Operations servers
+   * Thrift method to receive new list of Operations servers.
    *
    * @param operationsServersList the list of type ThriftOperationsServer
    */
     /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Iface#onOperationsServerListUpdate(java.util.List)
+     * @see org.kaaproject.kaa.server.common.thrift.gen.bootstrap
+     * .BootstrapThriftService.Iface#onOperationsServerListUpdate(java.util.List)
      */
   @Override
-  public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList) throws TException {
-    LOG.info("Operations server list update recived: now {} servers online:", operationsServersList.size());
+  public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList)
+      throws TException {
+    LOG.info("Operations server list update recived: now {} servers online:",
+        operationsServersList.size());
     //TODO: add usage of ops list priority in future releases.
   }
 

@@ -92,7 +92,7 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
   ApplicationService applicationService;
 
   /**
-   * The event service
+   * The event service.
    */
   @Autowired
   EventService eventService;
@@ -127,7 +127,8 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
    */
   @Override
   public void setRedirectionRule(RedirectionRule redirectionRule) throws TException {
-    LOG.debug("Received setRedirectionRule from control Dynamic Load Mgmt service {}", redirectionRule);
+    LOG.debug("Received setRedirectionRule from control Dynamic Load Mgmt service {}",
+        redirectionRule);
     LOG.debug("Notify akka service..");
     akkaService.onRedirectionRule(redirectionRule);
   }
@@ -144,11 +145,11 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
   }
 
   @Override
-  public void sendUserConfigurationUpdates(List<UserConfigurationUpdate> updates) throws TException {
+  public void sendUserConfigurationUpdates(List<UserConfigurationUpdate> updates)
+      throws TException {
     for (UserConfigurationUpdate update : updates) {
-      akkaService
-          .onUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service.akka.messages.core.user.UserConfigurationUpdate
-              .fromThrift(update));
+      akkaService.onUserConfigurationUpdate(org.kaaproject.kaa.server.operations.service
+          .akka.messages.core.user.UserConfigurationUpdate.fromThrift(update));
     }
   }
 
@@ -169,18 +170,24 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
       if (notification.getProfileFilterId() != null) {
         ProfileFilterDto filterDto = cacheService.getFilter(notification.getProfileFilterId());
         LOG.debug("Processing filter  {}", filterDto);
-        if (filterDto.getEndpointProfileSchemaId() != null && filterDto.getServerProfileSchemaId() != null) {
-          cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), filterDto
+        if (filterDto.getEndpointProfileSchemaId() != null
+            && filterDto.getServerProfileSchemaId() != null) {
+          cacheService.resetFilters(new AppProfileVersionsKey(
+              appDto.getApplicationToken(), filterDto
               .getEndpointProfileSchemaVersion(), filterDto.getServerProfileSchemaVersion()));
         } else if (filterDto.getServerProfileSchemaVersion() == null) {
-          for (VersionDto version : profileService.findProfileSchemaVersionsByAppId(appDto.getId())) {
+          for (VersionDto version
+              : profileService.findProfileSchemaVersionsByAppId(appDto.getId())) {
             LOG.debug("Processing version {}", version);
-            cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), version.getVersion(), null));
+            cacheService.resetFilters(new AppProfileVersionsKey(
+                appDto.getApplicationToken(), version.getVersion(), null));
           }
         } else {
-          for (ServerProfileSchemaDto version : serverProfileService.findServerProfileSchemasByAppId(appDto.getId())) {
+          for (ServerProfileSchemaDto version
+              : serverProfileService.findServerProfileSchemasByAppId(appDto.getId())) {
             LOG.debug("Processing version {}", version);
-            cacheService.resetFilters(new AppProfileVersionsKey(appDto.getApplicationToken(), null, version.getVersion()));
+            cacheService.resetFilters(new AppProfileVersionsKey(
+                appDto.getApplicationToken(), null, version.getVersion()));
           }
         }
       }
@@ -188,17 +195,23 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         cacheService.resetGroup(notification.getGroupId());
       }
       if (notification.getAppSeqNumber() != 0) {
-        LOG.debug("Going to update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(),
+        LOG.debug("Going to update application {} with seqNumber {} in thread {}",
+            appDto.getApplicationToken(),
             notification.getAppSeqNumber(), Thread.currentThread().getId());
         synchronized (cacheService) {
-          int currentSeqNumber = cacheService.getAppSeqNumber(appDto.getApplicationToken()).getSeqNumber();
+          int currentSeqNumber = cacheService.getAppSeqNumber(
+              appDto.getApplicationToken()).getSeqNumber();
           if (currentSeqNumber < notification.getAppSeqNumber()) {
-            cacheService.putAppSeqNumber(appDto.getApplicationToken(), new AppSeqNumber(appDto.getTenantId(), appDto.getId(),
-                appDto.getApplicationToken(), notification.getAppSeqNumber()));
-            LOG.debug("Update application {} with seqNumber {} in thread {}", appDto.getApplicationToken(),
+            cacheService.putAppSeqNumber(
+                appDto.getApplicationToken(),
+                new AppSeqNumber(appDto.getTenantId(), appDto.getId(),
+                    appDto.getApplicationToken(), notification.getAppSeqNumber()));
+            LOG.debug("Update application {} with seqNumber {} in thread {}",
+                appDto.getApplicationToken(),
                 notification.getAppSeqNumber(), Thread.currentThread().getId());
           } else {
-            LOG.debug("Update ignored. application {} already has seqNumber {}", appDto.getApplicationToken(),
+            LOG.debug("Update ignored. application {} already has seqNumber {}",
+                appDto.getApplicationToken(),
                 notification.getAppSeqNumber());
           }
 
@@ -225,7 +238,8 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
   }
 
   @Override
-  public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message) throws TException {
+  public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message)
+      throws TException {
     LOG.debug("Received Event about endpoint deregistration {}", message);
     byte[] address = message.getAddress().getEntityId();
     EndpointObjectHash hash = EndpointObjectHash.fromBytes(address);

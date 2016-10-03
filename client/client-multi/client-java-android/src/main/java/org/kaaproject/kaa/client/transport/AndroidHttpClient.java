@@ -46,6 +46,9 @@ public class AndroidHttpClient extends AbstractHttpClient {
   private DefaultHttpClient httpClient;
   private volatile HttpPost method;
 
+  /**
+   * Instantiates a new AndroidHttpClient.
+   */
   public AndroidHttpClient(String url, PrivateKey privateKey,
                            PublicKey publicKey, PublicKey remotePublicKey) {
     super(url, privateKey, publicKey, remotePublicKey);
@@ -64,16 +67,16 @@ public class AndroidHttpClient extends AbstractHttpClient {
     if (entity.getContentLength() > Integer.MAX_VALUE) {
       throw new IllegalArgumentException("HTTP entity too large to be buffered in memory");
     }
-    int i = (int) entity.getContentLength();
-    if (i < 0) {
-      i = 4096;
+    int count = (int) entity.getContentLength();
+    if (count < 0) {
+      count = 4096;
     }
-    ByteArrayBuffer buffer = new ByteArrayBuffer(i);
+    ByteArrayBuffer buffer = new ByteArrayBuffer(count);
     try {
       byte[] tmp = new byte[4096];
-      int l;
-      while ((l = instream.read(tmp)) != -1) {
-        buffer.append(tmp, 0, l);
+      int len;
+      while ((len = instream.read(tmp)) != -1) {
+        buffer.append(tmp, 0, len);
       }
     } finally {
       instream.close();
@@ -94,8 +97,8 @@ public class AndroidHttpClient extends AbstractHttpClient {
   }
 
   @Override
-  public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity
-      , boolean verifyResponse) throws Exception { //NOSONAR
+  public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity,
+                                   boolean verifyResponse) throws Exception { //NOSONAR
 
     byte[] responseDataRaw = null;
     method = new HttpPost(url + uri);
@@ -151,7 +154,8 @@ public class AndroidHttpClient extends AbstractHttpClient {
 
         // LOG.debug("Remote Public Key: {}" +
         // messageEncDec.getRemotePublicKey().getEncoded().length);
-        // LOG.debug(MessageEncoderDecoder.bytesToHex(messageEncDec.getRemotePublicKey().getEncoded()));
+        // LOG.debug(MessageEncoderDecoder.bytesToHex(messageEncDec.getRemotePublicKey()
+        // .getEncoded()));
         // LOG.debug("Signature size: {}" + signature.length);
         // LOG.debug(MessageEncoderDecoder.bytesToHex(signature));
         // LOG.debug("Body size: {}" + body.length);

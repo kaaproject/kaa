@@ -82,22 +82,22 @@ public class OperationsFileKeyStoreService implements KeyStoreService {
     String publicKeyFullPath = Environment.getServerHomeDir() + "/" + this.publicKeyLocation;
     LOG.debug("Lookup private key: {}", privateKeyFullPath);
     LOG.debug("Lookup public key: {}", publicKeyFullPath);
-    File f = new File(privateKeyFullPath);
-    if (f.exists()) {
+    File file = new File(privateKeyFullPath);
+    if (file.exists()) {
       try {
-        privateKey = KeyUtil.getPrivate(f);
-      } catch (Exception e) {
-        LOG.debug("Error loading Private Key", e);
-        throw new RuntimeException(e); //NOSONAR
+        privateKey = KeyUtil.getPrivate(file);
+      } catch (Exception ex) {
+        LOG.debug("Error loading Private Key", ex);
+        throw new RuntimeException(ex); //NOSONAR
       }
     }
-    f = new File(publicKeyFullPath);
-    if (f.exists()) {
+    file = new File(publicKeyFullPath);
+    if (file.exists()) {
       try {
-        publicKey = KeyUtil.getPublic(f);
-      } catch (Exception e) {
-        LOG.debug("Error loading Public Key", e);
-        throw new RuntimeException(e); //NOSONAR
+        publicKey = KeyUtil.getPublic(file);
+      } catch (Exception ex) {
+        LOG.debug("Error loading Public Key", ex);
+        throw new RuntimeException(ex); //NOSONAR
       }
     }
     if (privateKey == null || publicKey == null) {

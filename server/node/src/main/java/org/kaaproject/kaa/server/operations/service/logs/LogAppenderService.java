@@ -41,7 +41,8 @@ public interface LogAppenderService {
    * @param schemaVersion the log schema version
    * @return List of all Appenders available for Application and log schema version
    */
-  List<LogAppender> getApplicationAppendersByLogSchemaVersion(String applicationId, int schemaVersion);
+  List<LogAppender> getApplicationAppendersByLogSchemaVersion(String applicationId,
+                                                              int schemaVersion);
 
   /**
    * Gets the log schema.

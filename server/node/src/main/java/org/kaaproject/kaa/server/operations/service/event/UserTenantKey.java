@@ -24,6 +24,8 @@ public final class UserTenantKey {
   private final String tenantId;
 
   /**
+   * All-args constructor.
+   *
    * @param userId   the user id
    * @param tenantId the user id
    */
@@ -33,6 +35,8 @@ public final class UserTenantKey {
   }
 
   /**
+   * Returns a user identifier.
+   *
    * @return the userId
    */
   public String getUserId() {
@@ -40,6 +44,8 @@ public final class UserTenantKey {
   }
 
   /**
+   * Returns a tenant identifier.
+   *
    * @return the tenantId
    */
   public String getTenantId() {

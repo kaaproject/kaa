@@ -46,6 +46,13 @@ public class EventStorage {
     return getEvents(key, null);
   }
 
+  /**
+   * Returns endpoint events.
+   *
+   * @param key           route table key
+   * @param targetAddress route table address
+   * @return              endpoint events
+   */
   public List<EndpointEvent> getEvents(RouteTableKey key, RouteTableAddress targetAddress) {
     String target = null;
     if (targetAddress != null) {
@@ -57,7 +64,8 @@ public class EventStorage {
       if (targetAddress != null && targetAddress.getEndpointKey().equals(event.getSender())) {
         continue;
       }
-      if (entry.getValue().contains(key) && (event.getTarget() == null || target == null || event.getTarget().equals(target))) {
+      if (entry.getValue().contains(key)
+          && (event.getTarget() == null || target == null || event.getTarget().equals(target))) {
         result.add(entry.getKey());
       }
     }

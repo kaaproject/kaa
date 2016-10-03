@@ -33,7 +33,8 @@ public interface ApplicationEventMapService {
    * @param applicationId the application id
    * @return the list of found application event family maps
    */
-  List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByApplicationId(String applicationId);
+  List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByApplicationId(
+          String applicationId);
 
   /**
    * Find Application Event Family Maps by ids.
@@ -52,12 +53,13 @@ public interface ApplicationEventMapService {
   ApplicationEventFamilyMapDto findApplicationEventFamilyMapById(String id);
 
   /**
-   * Save Application Event Family Map
+   * Save Application Event Family Map.
    *
    * @param applicationEventFamilyMap the application event family map dto
    * @return the application event family map dto
    */
-  ApplicationEventFamilyMapDto saveApplicationEventFamilyMap(ApplicationEventFamilyMapDto applicationEventFamilyMap);
+  ApplicationEventFamilyMapDto saveApplicationEventFamilyMap(
+          ApplicationEventFamilyMapDto applicationEventFamilyMap);
 
   /**
    * Find Vacant Event Class Families by application id.

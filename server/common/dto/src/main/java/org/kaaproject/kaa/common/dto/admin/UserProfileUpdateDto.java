@@ -66,14 +66,26 @@ public class UserProfileUpdateDto implements Serializable {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+  public boolean equals(Object obj) {
+    if (this
+        == obj) {
+      return true;
+    }
+    if (obj
+        == null
+        || getClass()
+           != obj.getClass()) {
+      return false;
+    }
 
-    UserProfileUpdateDto that = (UserProfileUpdateDto) o;
+    UserProfileUpdateDto that = (UserProfileUpdateDto) obj;
 
-    if (!firstName.equals(that.firstName)) return false;
-    if (!lastName.equals(that.lastName)) return false;
+    if (!firstName.equals(that.firstName)) {
+      return false;
+    }
+    if (!lastName.equals(that.lastName)) {
+      return false;
+    }
     return mail.equals(that.mail);
 
   }
@@ -88,10 +100,10 @@ public class UserProfileUpdateDto implements Serializable {
 
   @Override
   public String toString() {
-    return "UserProfileUpdateDto{" +
-        "firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", mail='" + mail + '\'' +
-        '}';
+    return "UserProfileUpdateDto{"
+           + "firstName='" + firstName + '\''
+           + ", lastName='" + lastName + '\''
+           + ", mail='" + mail + '\''
+           + '}';
   }
 }

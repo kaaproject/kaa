@@ -56,8 +56,8 @@ public class DesktopHttpClient extends AbstractHttpClient {
   }
 
   @Override
-  public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity
-      , boolean verifyResponse) throws Exception { //NOSONAR
+  public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity,
+                                   boolean verifyResponse) throws Exception { //NOSONAR
     byte[] responseDataRaw = null;
     method = new HttpPost(url + uri);
     MultipartEntityBuilder builder = MultipartEntityBuilder.create();

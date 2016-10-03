@@ -27,7 +27,8 @@ import java.util.List;
 public class EndpointProfileDto implements HasId, HasVersion, Serializable {
 
 
-  private static final List<EndpointGroupStateDto> EMPTY_GROUP_STATE = Collections.unmodifiableList(new ArrayList<EndpointGroupStateDto>());
+  private static final List<EndpointGroupStateDto> EMPTY_GROUP_STATE =
+          Collections.unmodifiableList(new ArrayList<EndpointGroupStateDto>());
 
   private static final long serialVersionUID = -7122736699758720540L;
 
@@ -290,19 +291,20 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
   }
 
   public void setUseConfigurationRawSchema(Boolean useConfigurationRawSchema) {
-    this.useConfigurationRawSchema = useConfigurationRawSchema != null ? useConfigurationRawSchema : false;
+    this.useConfigurationRawSchema = useConfigurationRawSchema
+                                     != null ? useConfigurationRawSchema : false;
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof EndpointProfileDto)) {
+    if (!(obj instanceof EndpointProfileDto)) {
       return false;
     }
 
-    EndpointProfileDto that = (EndpointProfileDto) o;
+    EndpointProfileDto that = (EndpointProfileDto) obj;
 
     if (configurationVersion != that.configurationVersion) {
       return false;
@@ -322,7 +324,8 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
     if (userNfVersion != that.userNfVersion) {
       return false;
     }
-    if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
       return false;
     }
     if (!Arrays.equals(configurationHash, that.configurationHash)) {
@@ -346,13 +349,15 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
     if (!Arrays.equals(topicHash, that.topicHash)) {
       return false;
     }
-    if (clientProfileBody != null ? !clientProfileBody.equals(that.clientProfileBody) : that.clientProfileBody != null) {
+    if (clientProfileBody != null ? !clientProfileBody.equals(that.clientProfileBody) :
+            that.clientProfileBody != null) {
       return false;
     }
     if (!Arrays.equals(profileHash, that.profileHash)) {
       return false;
     }
-    if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) {
+    if (subscriptions != null ? !subscriptions.equals(that.subscriptions) :
+            that.subscriptions != null) {
       return false;
     }
     if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) {
@@ -378,7 +383,8 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
     result = 31 * result + (clientProfileBody != null ? clientProfileBody.hashCode() : 0);
     result = 31 * result + (profileHash != null ? Arrays.hashCode(profileHash) : 0);
     result = 31 * result + (configurationHash != null ? Arrays.hashCode(configurationHash) : 0);
-    result = 31 * result + (userConfigurationHash != null ? Arrays.hashCode(userConfigurationHash) : 0);
+    result = 31 * result + (userConfigurationHash
+                            != null ? Arrays.hashCode(userConfigurationHash) : 0);
     result = 31 * result + clientProfileVersion;
     result = 31 * result + configurationVersion;
     result = 31 * result + notificationVersion;

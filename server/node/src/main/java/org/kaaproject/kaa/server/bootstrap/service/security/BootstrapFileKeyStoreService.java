@@ -59,23 +59,24 @@ public class BootstrapFileKeyStoreService implements KeyStoreService {
   public void loadKeys() {
     privateKeyLocation = Environment.getServerHomeDir() + File.separator + privateKeyLocation;
     publicKeyLocation = Environment.getServerHomeDir() + File.separator + publicKeyLocation;
-    LOG.debug("Loading private key from {}; public key from {}", privateKeyLocation, publicKeyLocation);
-    File f = new File(privateKeyLocation);
-    if (f.exists()) {
+    LOG.debug("Loading private key from {}; public key from {}",
+        privateKeyLocation, publicKeyLocation);
+    File file = new File(privateKeyLocation);
+    if (file.exists()) {
       try {
-        privateKey = KeyUtil.getPrivate(f);
-      } catch (Exception e) {
-        LOG.debug("Error loading private key", e);
-        throw new RuntimeException(e); //NOSONAR
+        privateKey = KeyUtil.getPrivate(file);
+      } catch (Exception ex) {
+        LOG.debug("Error loading private key", ex);
+        throw new RuntimeException(ex); //NOSONAR
       }
     }
-    f = new File(publicKeyLocation);
-    if (f.exists()) {
+    file = new File(publicKeyLocation);
+    if (file.exists()) {
       try {
-        publicKey = KeyUtil.getPublic(f);
-      } catch (Exception e) {
-        LOG.debug("Error loading public key", e);
-        throw new RuntimeException(e); //NOSONAR
+        publicKey = KeyUtil.getPublic(file);
+      } catch (Exception ex) {
+        LOG.debug("Error loading public key", ex);
+        throw new RuntimeException(ex); //NOSONAR
       }
     }
     if (privateKey == null || publicKey == null) {
@@ -109,7 +110,8 @@ public class BootstrapFileKeyStoreService implements KeyStoreService {
    * @return the key pair
    */
   private KeyPair generateKeyPair(String privateKeyLocation, String publicKeyLocation) {
-    LOG.debug("Generating key pair (private at {}; public at {})", privateKeyLocation, publicKeyLocation);
+    LOG.debug("Generating key pair (private at {}; public at {})",
+        privateKeyLocation, publicKeyLocation);
     return KeyUtil.generateKeyPair(privateKeyLocation, publicKeyLocation);
   }
 

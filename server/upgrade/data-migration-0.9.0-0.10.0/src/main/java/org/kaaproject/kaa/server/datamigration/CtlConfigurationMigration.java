@@ -22,10 +22,10 @@ import static org.kaaproject.kaa.server.datamigration.utils.datadefinition.Refer
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class CTLConfigurationMigration extends AbstractCTLMigration {
+public class CtlConfigurationMigration extends AbstractCtlMigration {
 
 
-  public CTLConfigurationMigration(Connection connection) {
+  public CtlConfigurationMigration(Connection connection) {
     super(connection);
   }
 
@@ -34,7 +34,7 @@ public class CTLConfigurationMigration extends AbstractCTLMigration {
     super.beforeTransform();
 
     // change FK constraint between table that contains data and appropriate <feature>_schems table
-    dd.dropUnnamedFK("configuration", "configuration_schems");
+    dd.dropUnnamedFk("configuration", "configuration_schems");
     dd.alterTable(getPrefixTableName())
         .add(constraint("FK_configuration_schems_id")
             .foreignKey("configuration_schems_id")

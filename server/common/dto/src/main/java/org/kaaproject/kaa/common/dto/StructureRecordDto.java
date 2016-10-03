@@ -58,7 +58,8 @@ public abstract class StructureRecordDto<T extends AbstractStructureDto> impleme
 
   @JsonIgnore
   public String getDescription() {
-    return activeStructureDto != null ? activeStructureDto.getDescription() : inactiveStructureDto.getDescription();
+    return activeStructureDto != null ? activeStructureDto.getDescription() :
+            inactiveStructureDto.getDescription();
   }
 
   @JsonIgnore
@@ -83,7 +84,8 @@ public abstract class StructureRecordDto<T extends AbstractStructureDto> impleme
 
   @JsonIgnore
   public String getEndpointGroupId() {
-    return activeStructureDto != null ? activeStructureDto.getEndpointGroupId() : inactiveStructureDto.getEndpointGroupId();
+    return activeStructureDto != null ? activeStructureDto.getEndpointGroupId() :
+            inactiveStructureDto.getEndpointGroupId();
   }
 
   @Override
@@ -120,7 +122,8 @@ public abstract class StructureRecordDto<T extends AbstractStructureDto> impleme
     final int prime = 31;
     int result = 1;
     result = prime * result + ((activeStructureDto == null) ? 0 : activeStructureDto.hashCode());
-    result = prime * result + ((inactiveStructureDto == null) ? 0 : inactiveStructureDto.hashCode());
+    result = prime * result + ((inactiveStructureDto == null) ? 0 :
+                                       inactiveStructureDto.hashCode());
     return result;
   }
 }
