@@ -91,8 +91,8 @@ public class CtlEventsMigration extends AbstractCtlMigration {
         "SELECT id, schems, created_time, created_username FROM "
             + EVENT_SCHEMA_VERSION_TABLE_NAME,
         new BeanListHandler<EventSchemaVersion>(EventSchemaVersion.class));
-    List<EventClass> oldECs = runner.query(
-        connection, "SELECT id, schems, version FROM " + EVENT_CLASS_TABLE_NAME
+    final List<EventClass> oldECs = runner.query(connection,
+        "SELECT id, schems, version FROM " + EVENT_CLASS_TABLE_NAME
         + " WHERE schems not like '{\"type\":\"enum\"%'",
         new BeanListHandler<>(EventClass.class));
 

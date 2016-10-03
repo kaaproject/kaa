@@ -22,6 +22,12 @@ import javax.sql.DataSource;
 
 public final class DataSources {
 
+  /**
+   * Create data source based on passed options.
+   *
+   * @param opt options that used to build data source
+   * @return the data source
+   */
   public static DataSource getDataSource(Options opt) {
     BasicDataSource bds = new BasicDataSource();
     bds.setDriverClassName(opt.getDriverClassName());

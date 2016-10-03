@@ -28,6 +28,13 @@ public final class Utils {
   private static final String UUID_VALUE = "org.kaaproject.configuration.uuidT";
 
 
+  /**
+   * Change encoding of uuids  from <b>latin1 (ISO-8859-1)</b> to <b>base64</b>.
+   *
+   * @param json the json that should be processed
+   * @return the json with changed uuids
+   * @throws IOException the io exception
+   */
   public static JsonNode encodeUuids(JsonNode json) throws IOException {
     if (json.has(UUID_FIELD)) {
       JsonNode jsonNode = json.get(UUID_FIELD);

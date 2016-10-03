@@ -25,7 +25,12 @@ public class BaseSchemaIdCounter {
 
   }
 
-  // can be called only once
+
+  /**
+   * Sets init value for counter, can be called only once.
+   *
+   * @param value the initial value
+   */
   public static void setInitValue(Long value) {
     getInstance();
     if (isInitMethodCalled) {
@@ -35,6 +40,10 @@ public class BaseSchemaIdCounter {
     instance.value = value;
   }
 
+
+  /**
+   * Gets uniq instance.
+   */
   public static BaseSchemaIdCounter getInstance() {
     if (instance == null) {
       instance = new BaseSchemaIdCounter();
@@ -42,6 +51,11 @@ public class BaseSchemaIdCounter {
     return instance;
   }
 
+  /**
+   * Return old value and add to one shift.
+   *
+   * @param shift the shift
+   */
   public Long getAndShift(Long shift) {
     Long oldValue = value;
     value += shift;

@@ -22,6 +22,10 @@ public class Ctl {
   private final String defaultRecord;
   private boolean existInDb;
 
+  /**
+   * Instantiates a new Ctl.
+   *
+   */
   public Ctl(Long id, CtlMetaInfo metaInfo, String defaultRecord) {
     this.id = id;
     this.metaInfo = metaInfo;

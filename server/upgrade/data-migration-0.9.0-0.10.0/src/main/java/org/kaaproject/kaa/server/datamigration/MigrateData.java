@@ -39,6 +39,11 @@ public class MigrateData {
   private static final Logger LOG = LoggerFactory.getLogger(MigrateData.class);
   private static Connection conn;
 
+  /**
+   * The entry point of migrate data application.
+   *
+   * @param args the input options
+   */
   public static void main(String[] args) {
     Options options = new Options();
 
@@ -83,18 +88,24 @@ public class MigrateData {
       List<Schema> schemas = new ArrayList<>();
       conn = DataSources.getDataSource(options).getConnection();
       QueryRunner runner = new QueryRunner();
-      Long maxId = runner.query(conn, "select max(id) as max_id from base_schems", rs -> rs.next() ? rs.getLong("max_id") : null);
+      Long maxId = runner.query(conn, "select max(id) as max_id from base_schems",
+          rs -> rs.next() ? rs.getLong("max_id") : null);
+
       BaseSchemaIdCounter.setInitValue(maxId);
-      UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn, options.getHost(), options.getDbName(), options.getNoSql());
-      EndpointProfileMigration endpointProfileMigration = new EndpointProfileMigration(options.getHost(), options.getDbName(), options.getNoSql());
+
+      final UpdateUuidsMigration updateUuidsMigration = new UpdateUuidsMigration(conn, options);
+
+      final EndpointProfileMigration endpointProfileMigration =
+          new EndpointProfileMigration(options);
+
       List<AbstractCtlMigration> migrationList = new ArrayList<>();
       migrationList.add(new CtlConfigurationMigration(conn));
       migrationList.add(new CtlEventsMigration(conn));
-      migrationList.add(new CtlNotificationMigration(conn, options.getHost(), options.getDbName(), options.getNoSql()));
+      migrationList.add(new CtlNotificationMigration(conn, options));
       migrationList.add(new CtlLogMigration(conn));
 
-      CtlAggregation aggregation = new CtlAggregation(conn);
-      BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
+      final CtlAggregation aggregation = new CtlAggregation(conn);
+      final BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
 
       // convert uuids from latin1 to base64
       updateUuidsMigration.transform();

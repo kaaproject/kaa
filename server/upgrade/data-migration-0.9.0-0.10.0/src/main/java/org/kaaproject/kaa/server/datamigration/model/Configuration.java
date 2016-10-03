@@ -16,8 +16,13 @@
 
 package org.kaaproject.kaa.server.datamigration.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class Configuration implements Serializable {
 
   private static final long serialVersionUID = -1176562073;
@@ -30,13 +35,19 @@ public class Configuration implements Serializable {
   public Configuration() {
   }
 
-  public Configuration(Configuration value) {
-    this.configurationBody = value.configurationBody;
-    this.configurationSchemasVersion = value.configurationSchemasVersion;
-    this.id = value.id;
-    this.configurationSchemasId = value.configurationSchemasId;
+  /**
+   * Copy constructor.
+   */
+  public Configuration(Configuration configuration) {
+    this.configurationBody = configuration.configurationBody;
+    this.configurationSchemasVersion = configuration.configurationSchemasVersion;
+    this.id = configuration.id;
+    this.configurationSchemasId = configuration.configurationSchemasId;
   }
 
+  /**
+   * Instantiates a new Configuration.
+   */
   public Configuration(
       byte[] configurationBody,
       Integer configurationSchemsVersion,
@@ -49,37 +60,6 @@ public class Configuration implements Serializable {
     this.configurationSchemasId = configurationSchemsId;
   }
 
-  public byte[] getConfigurationBody() {
-    return this.configurationBody;
-  }
-
-  public void setConfigurationBody(byte[] configurationBody) {
-    this.configurationBody = configurationBody;
-  }
-
-  public Integer getConfigurationSchemasVersion() {
-    return this.configurationSchemasVersion;
-  }
-
-  public void setConfigurationSchemasVersion(Integer configurationSchemasVersion) {
-    this.configurationSchemasVersion = configurationSchemasVersion;
-  }
-
-  public Long getId() {
-    return this.id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getConfigurationSchemasId() {
-    return this.configurationSchemasId;
-  }
-
-  public void setConfigurationSchemasId(Long configurationSchemasId) {
-    this.configurationSchemasId = configurationSchemasId;
-  }
 
   @Override
   public String toString() {
