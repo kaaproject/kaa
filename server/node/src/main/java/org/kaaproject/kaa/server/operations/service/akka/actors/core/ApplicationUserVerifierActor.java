@@ -25,14 +25,9 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.veri
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The Class ApplicationLogActor
- */
+
 public class ApplicationUserVerifierActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(ApplicationUserVerifierActor.class);
 
   private final String applicationId;
@@ -46,8 +41,12 @@ public class ApplicationUserVerifierActor extends UntypedActor {
    * @param applicationToken the application token
    */
   private ApplicationUserVerifierActor(AkkaContext context, String applicationToken) {
-    this.applicationId = context.getApplicationService().findAppByApplicationToken(applicationToken).getId();
-    this.messageProcessor = new ApplicationUserVerifierActorMessageProcessor(context.getEndpointUserService(), applicationId);
+    this.applicationId = context.getApplicationService()
+        .findAppByApplicationToken(applicationToken)
+        .getId();
+    this.messageProcessor = new ApplicationUserVerifierActorMessageProcessor(
+        context.getEndpointUserService(), applicationId
+    );
   }
 
   /*
@@ -88,19 +87,11 @@ public class ApplicationUserVerifierActor extends UntypedActor {
     LOG.info("[{}] Stoped ", applicationId);
   }
 
-  /**
-   * The Class ActorCreator.
-   */
   public static class ActorCreator implements Creator<ApplicationUserVerifierActor> {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The Akka service context
-     */
+
     private final AkkaContext context;
 
     private final String applicationToken;

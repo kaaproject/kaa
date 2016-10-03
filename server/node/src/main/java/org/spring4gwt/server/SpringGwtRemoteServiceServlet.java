@@ -33,13 +33,10 @@ import javax.servlet.http.HttpServletRequest;
 @SuppressWarnings("serial")
 public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(SpringGwtRemoteServiceServlet.class);
 
-  static ThreadLocal<HttpServletRequest> perThreadRequest =
-      new ThreadLocal<HttpServletRequest>();
+  static ThreadLocal<HttpServletRequest> perThreadRequest = new ThreadLocal<>();
 
   public static HttpServletRequest getRequest() {
     return perThreadRequest.get();
@@ -64,10 +61,16 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
       RPCRequest rpcRequest = RPC.decodeRequest(payload, handler.getClass(), this);
       onAfterRequestDeserialized(rpcRequest);
       if (LOG.isDebugEnabled()) {
-        LOG.debug("Invoking " + handler.getClass().getName() + "." + rpcRequest.getMethod().getName());
+        LOG.debug("Invoking " + handler.getClass().getName()
+            + "." + rpcRequest.getMethod().getName());
       }
-      return RpcHelper.invokeAndEncodeResponse(handler, rpcRequest.getMethod(), rpcRequest.getParameters(), rpcRequest
-          .getSerializationPolicy());
+      return RpcHelper
+          .invokeAndEncodeResponse(
+              handler,
+              rpcRequest.getMethod(),
+              rpcRequest.getParameters(),
+              rpcRequest.getSerializationPolicy()
+          );
     } catch (IncompatibleRemoteServiceException ex) {
       log("An IncompatibleRemoteServiceException was thrown while processing this call.", ex);
       return RPC.encodeResponseForFailure(null, ex);
@@ -91,7 +94,8 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
     String service = getService(request);
     Object bean = getBean(service);
     if (!(bean instanceof RemoteService)) {
-      throw new IllegalArgumentException("Spring bean is not a GWT RemoteService: " + service + " (" + bean + ")");
+      throw new IllegalArgumentException("Spring bean is not a GWT RemoteService: "
+          + service + " (" + bean + ")");
     }
     if (LOG.isDebugEnabled()) {
       LOG.debug("Bean for service " + service + " is " + bean);
@@ -99,20 +103,6 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
     return bean;
   }
 
-  /**
-   * Parse the service name from the request URL.
-   *
-   * @param request the request
-   * @return bean name
-   */
-  protected String getService(HttpServletRequest request) {
-    String url = request.getRequestURI();
-    String service = url.substring(url.lastIndexOf("/") + 1);
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Service for URL {} is {}", url, service);
-    }
-    return service;
-  }
 
   /**
    * Look up a spring bean with the specified name in the current web
@@ -134,4 +124,21 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
     }
     return applicationContext.getBean(name);
   }
+
+  /**
+   * Parse the service name from the request URL.
+   *
+   * @param request the request
+   * @return bean name
+   */
+  protected String getService(HttpServletRequest request) {
+    String url = request.getRequestURI();
+    String service = url.substring(url.lastIndexOf("/") + 1);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Service for URL {} is {}", url, service);
+    }
+    return service;
+  }
+
+
 }

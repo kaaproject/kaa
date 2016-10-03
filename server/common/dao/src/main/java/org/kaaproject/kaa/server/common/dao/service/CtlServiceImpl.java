@@ -45,13 +45,14 @@ import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecord
 import org.kaaproject.kaa.server.common.core.configuration.RawData;
 import org.kaaproject.kaa.server.common.core.configuration.RawDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.RawSchema;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
-import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,13 +74,13 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 @Transactional
-public class CtlService implements CtlService {
+public class CtlServiceImpl implements CtlService {
 
   private static final String JSON = "application/json";
   private static final String ZIP = "application/zip";
   private static final String VERSION = "version";
   private static final String FQN = "fqn";
-  private static final Logger LOG = LoggerFactory.getLogger(CtlService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CtlServiceImpl.class);
   private static final String DEPENDENCIES = "dependencies";
   private static final String DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE = "/default_system_empty_schema"
                                                                  + ".avsc";
@@ -118,7 +119,7 @@ public class CtlService implements CtlService {
       ctlSchema.setVersion(DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION);
       ctlSchema.setCreatedUsername(createdUsername);
       ctlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
-      String body = getStringFromFile(DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE, CtlService.class);
+      String body = getStringFromFile(DEFAULT_SYSTEM_EMPTY_SCHEMA_FILE, CtlServiceImpl.class);
       if (!body.isEmpty()) {
         ctlSchema.setBody(body);
       } else {

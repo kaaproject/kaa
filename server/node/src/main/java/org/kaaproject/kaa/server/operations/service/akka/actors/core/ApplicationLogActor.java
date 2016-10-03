@@ -26,14 +26,10 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.notificat
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The Class ApplicationLogActor
- */
+
 public class ApplicationLogActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(ApplicationLogActor.class);
 
   private final String applicationToken;
@@ -89,19 +85,12 @@ public class ApplicationLogActor extends UntypedActor {
     LOG.info("[{}] Stoped ", applicationToken);
   }
 
-  /**
-   * The Class ActorCreator.
-   */
+
   public static class ActorCreator implements Creator<ApplicationLogActor> {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The Akka service context
-     */
+
     private final AkkaContext context;
 
     private final String applicationToken;

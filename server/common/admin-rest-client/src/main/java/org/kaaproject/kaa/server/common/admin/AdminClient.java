@@ -918,6 +918,16 @@ public class AdminClient {
     LOG.info("Downloaded sdk to file '{}'", extractor.getDestFile());
   }
 
+
+  public FileData downloadSdk(SdkProfileDto key) throws Exception {
+    FileDataResponseExtractor extractor = new FileDataResponseExtractor();
+    RequestCallback request = new DataRequestCallback<>(key);
+    FileData data = restTemplate.execute(restTemplate.getUrl() + "sdk",
+        HttpMethod.POST, request, extractor);
+    return data;
+  }
+
+
   public FileData downloadLogRecordLibrary(RecordKey key) throws Exception {
     FileDataResponseExtractor extractor = new FileDataResponseExtractor();
     RequestCallback request = new DataRequestCallback<>(key);
@@ -934,17 +944,9 @@ public class AdminClient {
     return data;
   }
 
-  public FileData downloadSdk(SdkProfileDto key) throws Exception {
-    FileDataResponseExtractor extractor = new FileDataResponseExtractor();
-    RequestCallback request = new DataRequestCallback<>(key);
-    FileData data = restTemplate.execute(restTemplate.getUrl() + "sdk",
-        HttpMethod.POST, request, extractor);
-    return data;
-  }
-
   public FileData downloadCtlSchemaByAppToken(CTLSchemaDto ctlSchemaDto,
                                               CTLSchemaExportMethod method, String appToken) {
-    FileDataResponseExtractor extractor = new FileDataResponseExtractor();
+    final FileDataResponseExtractor extractor = new FileDataResponseExtractor();
     MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
     parameters.add("fqn", ctlSchemaDto.getMetaInfo().getFqn());
     parameters.add("version", Integer.toString(ctlSchemaDto.getVersion()));

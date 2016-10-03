@@ -39,14 +39,8 @@ import org.kaaproject.kaa.server.transport.message.SessionPingMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The Class EndpointActor.
- */
 public class LocalEndpointActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActor.class);
 
   private final String actorKey;
@@ -61,8 +55,10 @@ public class LocalEndpointActor extends UntypedActor {
    * @param appToken         the app token
    * @param key              the key
    */
-  LocalEndpointActor(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
-    this.messageProcessor = new LocalEndpointActorMessageProcessor(context, appToken, key, endpointActorKey);
+  LocalEndpointActor(AkkaContext context, String endpointActorKey,
+                     String appToken, EndpointObjectHash key) {
+    this.messageProcessor = new LocalEndpointActorMessageProcessor(context,
+        appToken, key, endpointActorKey);
     this.actorKey = endpointActorKey;
   }
 
@@ -118,7 +114,8 @@ public class LocalEndpointActor extends UntypedActor {
     messageProcessor.processEndpointActorMsg(context(), msg);
   }
 
-  private void processUserConfigurationUpdateMessage(EndpointUserConfigurationUpdateMessage message) {
+  private void processUserConfigurationUpdateMessage(
+      EndpointUserConfigurationUpdateMessage message) {
     messageProcessor.processUserConfigurationUpdate(context(), message);
   }
 

@@ -59,29 +59,20 @@ import java.util.UUID;
 
 public class TenantActor extends UntypedActor {
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(TenantActor.class);
 
   /**
-   * The Akka service context
+   * The Akka service context.
    */
   private final AkkaContext context;
 
-  /**
-   * The applications.
-   */
+
   private final Map<String, ActorRef> applications;
 
-  /**
-   * The local users.
-   */
   private final Map<String, ActorRef> localUsers;
 
-  /**
-   * The global users.
-   */
+
   private final Map<String, ActorRef> globalUsers;
 
   private final String tenantId;
@@ -95,7 +86,7 @@ public class TenantActor extends UntypedActor {
     this.applications = new HashMap<>();
     this.localUsers = new HashMap<>();
     this.globalUsers = new HashMap<>();
-    this.statusRequestStatesMap = new HashMap<UUID, StatusRequestState>();
+    this.statusRequestStatesMap = new HashMap<>();
   }
 
   @Override
@@ -163,7 +154,8 @@ public class TenantActor extends UntypedActor {
 
   private void processStatusRequest(StatusRequestMessage message) {
     LOG.debug("[{}] Processing status request", message.getId());
-    statusRequestStatesMap.put(message.getId(), new StatusRequestState(message, applications.size()));
+    statusRequestStatesMap.put(message.getId(),
+        new StatusRequestState(message, applications.size()));
     for (ActorRef tenant : applications.values()) {
       tenant.tell(new StatusRequestMessage(message.getId()), this.getSelf());
     }
@@ -174,7 +166,9 @@ public class TenantActor extends UntypedActor {
     if (state != null) {
       if (state.processResponse(message)) {
         int endpointCount = state.getEndpontCount();
-        context().parent().tell(new TenantActorStatusResponse(message.getRequestId(), endpointCount), ActorRef.noSender());
+        context().parent().tell(
+            new TenantActorStatusResponse(message.getRequestId(), endpointCount),
+            ActorRef.noSender());
       }
     } else {
       LOG.warn("[{}] State for status request is not found", message.getRequestId());
@@ -182,7 +176,8 @@ public class TenantActor extends UntypedActor {
   }
 
   private void processSessionControlMessage(SessionControlMessage message) {
-    ActorRef applicationActor = getOrCreateApplicationActor(message.getSessionInfo().getApplicationToken());
+    ActorRef applicationActor = getOrCreateApplicationActor(
+        message.getSessionInfo().getApplicationToken());
     applicationActor.tell(message, self());
   }
 
@@ -239,7 +234,8 @@ public class TenantActor extends UntypedActor {
     if (userActor != null) {
       userActor.tell(message, self());
     } else {
-      LOG.debug("[{}] user aware message ignored due to no such user actor: [{}]", tenantId, message.getUserId());
+      LOG.debug("[{}] user aware message ignored due to no such user actor: [{}]",
+          tenantId, message.getUserId());
     }
   }
 
@@ -252,7 +248,8 @@ public class TenantActor extends UntypedActor {
     ActorRef userActor = localUsers.get(localUserId);
     if (userActor == null && userId != null) {
       userActor = context().actorOf(
-          Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME),
+          Props.create(new LocalUserActor.ActorCreator(context, userId, tenantId))
+              .withDispatcher(USER_DISPATCHER_NAME),
           localUserId);
       LOG.debug("Create local user actor with id {}", userId);
       localUsers.put(localUserId, userActor);
@@ -266,7 +263,8 @@ public class TenantActor extends UntypedActor {
     ActorRef userActor = globalUsers.get(globalUserId);
     if (userActor == null && userId != null) {
       userActor = context().actorOf(
-          Props.create(new GlobalUserActor.ActorCreator(context, userId, tenantId)).withDispatcher(USER_DISPATCHER_NAME),
+          Props.create(new GlobalUserActor.ActorCreator(context, userId, tenantId))
+              .withDispatcher(USER_DISPATCHER_NAME),
           globalUserId);
       LOG.debug("Create global user actor with id {}", userId);
       globalUsers.put(globalUserId, userActor);
@@ -285,7 +283,9 @@ public class TenantActor extends UntypedActor {
     ActorRef applicationActor = applications.get(appToken);
     if (applicationActor == null) {
       applicationActor = context().actorOf(
-          Props.create(new ApplicationActor.ActorCreator(context, tenantId, appToken)).withDispatcher(CORE_DISPATCHER_NAME), appToken);
+          Props.create(new ApplicationActor.ActorCreator(context, tenantId, appToken))
+              .withDispatcher(CORE_DISPATCHER_NAME),
+          appToken);
       applications.put(appToken, applicationActor);
     }
     return applicationActor;
@@ -341,19 +341,12 @@ public class TenantActor extends UntypedActor {
     LOG.info("[{}] Stoped", tenantId);
   }
 
-  /**
-   * The Class ActorCreator.
-   */
+
   public static class ActorCreator implements Creator<TenantActor> {
 
-    /**
-     * The Constant serialVersionUID.
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The Akka service context
-     */
+
     private final AkkaContext context;
 
     private final String tenantId;
