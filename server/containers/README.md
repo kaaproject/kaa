@@ -83,6 +83,8 @@ All available options:
 $ docker exec -it usingcompose_KAA_SERVICE_NAME_1 /bin/bash -c "export TERM=xterm; exec bash"
 ```
 
+Wait a few seconds until the service kaa-node starts.
+
 In this example usingcompose - it's name of folder where located docker-compose.yml files.
 
 ## Logs

@@ -51,24 +51,24 @@ kaaNodeNames = [];
 NGINX_TEMPLATE = '        server {{PROXY_HOST_KAA}}:{{PROXY_PORT}};'
 
 
-def getInternalHostLinuxMacOs() :
+def getExternalHostLinuxMacOs() :
     try:
         return commands.getstatusoutput("ip route get 8.8.8.8 | awk '{print $NF; exit}'")[1];
     except:
         return "N/A"
 
 
-def getInternalHostWindows() :
+def getExternalHostWindows() :
     try:
         return commands.getstatusoutput("for /f \"skip=4 usebackq tokens=2\" %a in (`nslookup myip.opendns.com resolver1.opendns.com`) do echo %a")[1];
     except:
 
         return "N/A";
 
-def getInternalHostKaa(kaaServiceName) :
-    internalHostKaaCommand = "docker inspect --format='{{(index (index .NetworkSettings.Networks ) \"usingcompose_front-tier\").IPAddress}}' usingcompose_"+kaaServiceName+"_1";
+def getExternalHostKaa(kaaServiceName) :
+    externalHostKaaCommand = "docker inspect --format='{{(index (index .NetworkSettings.Networks ) \"usingcompose_front-tier\").IPAddress}}' usingcompose_"+kaaServiceName+"_1";
     try:
-        return commands.getstatusoutput(internalHostKaaCommand)[1];
+        return commands.getstatusoutput(externalHostKaaCommand)[1];
     except:
         return "N/A";
 
@@ -174,9 +174,9 @@ def setTransportPublicInterface() :
     for i in range(0, len(data)):
         if 'TRANSPORT_PUBLIC_INTERFACE' in data[i]:
             if platform.system() == 'Windows':
-                data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getInternalHostWindows())+'\n'
+                data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getExternalHostWindows())+'\n'
             else:
-                data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getInternalHostLinuxMacOs())+'\n'
+                data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getExternalHostLinuxMacOs())+'\n'
     with open('kaa-example.env', 'w') as fout:
         fout.write(''.join(data));
 
@@ -194,9 +194,9 @@ def createDefaultConfFileNginx(templateFileName, newFile):
 def configureDefaultConfFileNginx(strConf) :
     strConf=string.replace(strConf, '{{NGINX_PORT}}', str(DEFAULT_INTERNAL_ADMIN_PORT));
     if platform.system() == 'Windows':
-        nginxHost = str(getInternalHostWindows())
+        nginxHost = str(getExternalHostWindows())
     else:
-        nginxHost = str(getInternalHostLinuxMacOs())
+        nginxHost = str(getExternalHostLinuxMacOs())
     strConf=string.replace(strConf, '{{NGINX_HOST}}', nginxHost);
     return strConf;
 
@@ -234,7 +234,7 @@ def removeAvailableContainers() :
 stopRunningContainers();
 configureThirdPartyComponents('third-party-docker-compose.yml');
 setTransportPublicInterface();
-print 'TRANSPORT_PUBLIC_INTERFACE=' + str(getInternalHostLinuxMacOs());
+print 'TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs());
 
 subprocess.call("docker-compose -f third-party-docker-compose.yml up -d", shell=True);
 
@@ -245,7 +245,7 @@ createDefaultConfFileNginx('kaa-nginx-config/default.conf.template', 'kaa-nginx-
 if len(sys.argv) == 2:
     configurKaaNode('kaa-docker-compose.yml.template', 'kaa-docker-compose.yml');
     subprocess.call((kaaNodesStartCommand+' '.join(kaaNodeNames)), shell=True);
-    proxyHost=getInternalHostKaa(kaaNodeNames[0]);
+    proxyHost=getExternalHostKaa(kaaNodeNames[0]);
     proxyPort=kaaAdminUiPorts[0];
     createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', proxyHost, proxyPort);
     subprocess.call("docker-compose -f kaa-docker-compose.yml up -d kaa_lb", shell=True);
@@ -257,9 +257,9 @@ elif len(sys.argv) == 3:
         sys.exit();
     configureClusterModeKaa('kaa-docker-compose.yml.template', 'kaa-docker-compose.yml');
     subprocess.call((kaaNodesStartCommand+' '.join(kaaNodeNames)), shell=True);
-    createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', getInternalHostKaa(kaaNodeNames[0]),  kaaAdminUiPorts[0]);
+    createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', getExternalHostKaa(kaaNodeNames[0]),  kaaAdminUiPorts[0]);
     for i in range(1, nodeCount):
-        proxyHost=getInternalHostKaa(kaaNodeNames[i]);
+        proxyHost=getExternalHostKaa(kaaNodeNames[i]);
         proxyPort=kaaAdminUiPorts[i];
         config = configureConfFileNginx(NGINX_TEMPLATE, proxyHost, proxyPort) + '\n';
         insertInFile('kaa-nginx-config/kaa-nginx.conf', 46, config);
