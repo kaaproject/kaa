@@ -219,9 +219,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    list(APPEND KAA_COMPILE_OPTIONS 
-                    -Wall
-                    -std=gnu++11) 
+    list(APPEND KAA_COMPILE_OPTIONS -Wall)
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
+        list(APPEND KAA_COMPILE_OPTIONS -std=gnu++11)
+    else()
+        list(APPEND KAA_COMPILE_OPTIONS -std=c++11)
+    endif() 
 endif()
 
 #
@@ -430,6 +434,9 @@ set(KAA_THIRDPARTY_LIBRARIES
         ${BOTAN_LIBRARY} 
         ${AVRO_LIBRARIES} 
         ${Boost_LIBRARIES}
+        # The CMAKE_THREAD_LIBS_INIT variable is the replacement of a platform-dependent thread library. 
+        # It is initialized on calling find_package(Boost).
+        ${CMAKE_THREAD_LIBS_INIT}
 )
 
 if(KAA_WITH_SQLITE_LOG_STORAGE)

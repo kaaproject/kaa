@@ -72,12 +72,13 @@
                         <exclude>gcovr.log</exclude>
                         <exclude>gcovr-report.xml</exclude>
                         <exclude>test/resources/test_kaa_status.file</exclude>
-                        <exclude>build/**</exclude>
+                        <exclude>**/build/**</exclude>
                         <exclude>gcovr</exclude>
                         <exclude>test/resources/*.json</exclude>
                         <exclude>Modules/FindSqlite3.cmake</exclude>
                         <exclude>tools/avro-cpp-disable-tests.patch</exclude>
                         <exclude>toolchains/*.cmake</exclude>
+                        <exclude>tools/qnx/include/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>

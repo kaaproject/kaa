@@ -1,15 +1,15 @@
 //@ ===========================================================================
 //! @file
 //! @brief Complement libstdc++
-//! @author [mcharest] Copyright, 2014 Comact Optimisation droits réservés.
+//! @author [mcharest] Copyright, 2014 Comact Optimisation droits reserves.
 //! @date Dec 18, 2014
-//! 
-//! For some reason QNX gcc 4.8.3 is missing some C++ standard string fonctions.
+//!
+//! For some reason QNX gcc 4.8.3 is missing some C++ standard string functions.
 //! Well they are there but are between ifdef that takes them out.
 //! Has to do with C99 compatibility but it looks more like an oversight.
-//! This header contains some of those fonctions which have been copied
+//! This header contains some of those functions which have been copied
 //! from the system header files.
-//! This might cause compatibility issue in the futur  when these fonctions becomes
+//! This might cause compatibility issue in the future  when these functions becomes
 //! present, just have to add some smart #ifdef to makes it compatible.
 //! That's is why these won't go in std_c as they are "temporary"
 //@ ===========================================================================
