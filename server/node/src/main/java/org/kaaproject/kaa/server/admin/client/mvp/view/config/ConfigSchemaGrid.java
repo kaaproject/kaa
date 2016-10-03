@@ -64,24 +64,25 @@ public class ConfigSchemaGrid extends BaseCtlSchemasGrid<ConfigurationSchemaDto>
   }
 
   private Column<ConfigurationSchemaDto, ConfigurationSchemaDto>
-  constructDownloadBaseSchemaColumnColumn(String text) {
+      constructDownloadBaseSchemaColumnColumn(String text) {
     ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(
-        Utils.resources.download_grey(), text, embedded,
-        new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
-          @Override
-          public void onItemAction(ConfigurationSchemaDto value) {
-            Integer schemaVersion = value.getVersion();
-            RowActionEvent<String> rowDownloadBaseSchemaEvent = new RowActionEvent<>(
+            Utils.resources.download_grey(), text, embedded,
+            new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
+        @Override
+        public void onItemAction(ConfigurationSchemaDto value) {
+          Integer schemaVersion = value.getVersion();
+          RowActionEvent<String> rowDownloadBaseSchemaEvent = new RowActionEvent<>(
                 String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_BASE_SCHEMA);
-            fireEvent(rowDownloadBaseSchemaEvent);
-          }
+          fireEvent(rowDownloadBaseSchemaEvent);
+        }
         }, new ActionButtonCell.ActionValidator<ConfigurationSchemaDto>() {
-      @Override
-      public boolean canPerformAction(ConfigurationSchemaDto value) {
-        return !embedded;
-      }
-    });
-    Column<ConfigurationSchemaDto, ConfigurationSchemaDto> column = new Column<ConfigurationSchemaDto, ConfigurationSchemaDto>(cell) {
+          @Override
+          public boolean canPerformAction(ConfigurationSchemaDto value) {
+            return !embedded;
+          }
+        });
+    Column<ConfigurationSchemaDto, ConfigurationSchemaDto> column =
+            new Column<ConfigurationSchemaDto, ConfigurationSchemaDto>(cell) {
       @Override
       public ConfigurationSchemaDto getValue(ConfigurationSchemaDto item) {
         return item;
@@ -90,26 +91,26 @@ public class ConfigSchemaGrid extends BaseCtlSchemasGrid<ConfigurationSchemaDto>
     return column;
   }
 
-
   private Column<ConfigurationSchemaDto, ConfigurationSchemaDto>
-  constructDownloadOverrideSchemaColumnColumn(String text) {
+      constructDownloadOverrideSchemaColumnColumn(String text) {
     ActionButtonCell<ConfigurationSchemaDto> cell = new ActionButtonCell<>(
-        Utils.resources.download_grey(), text, embedded,
-        new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
-          @Override
-          public void onItemAction(ConfigurationSchemaDto value) {
-            Integer schemaVersion = value.getVersion();
-            RowActionEvent<String> rowDownloadOverrideSchemaEvent = new RowActionEvent<>(
+            Utils.resources.download_grey(), text, embedded,
+            new ActionButtonCell.ActionListener<ConfigurationSchemaDto>() {
+        @Override
+        public void onItemAction(ConfigurationSchemaDto value) {
+          Integer schemaVersion = value.getVersion();
+          RowActionEvent<String> rowDownloadOverrideSchemaEvent = new RowActionEvent<>(
                 String.valueOf(schemaVersion), KaaRowAction.DOWNLOAD_OVERRIDE_SCHEMA);
-            fireEvent(rowDownloadOverrideSchemaEvent);
-          }
-        }, new ActionButtonCell.ActionValidator<ConfigurationSchemaDto>() {
-      @Override
-      public boolean canPerformAction(ConfigurationSchemaDto value) {
-        return !embedded;
-      }
-    });
-    Column<ConfigurationSchemaDto, ConfigurationSchemaDto> column = new Column<ConfigurationSchemaDto, ConfigurationSchemaDto>(cell) {
+          fireEvent(rowDownloadOverrideSchemaEvent);
+        }
+      }, new ActionButtonCell.ActionValidator<ConfigurationSchemaDto>() {
+        @Override
+        public boolean canPerformAction(ConfigurationSchemaDto value) {
+          return !embedded;
+        }
+      });
+    Column<ConfigurationSchemaDto, ConfigurationSchemaDto> column =
+            new Column<ConfigurationSchemaDto, ConfigurationSchemaDto>(cell) {
       @Override
       public ConfigurationSchemaDto getValue(ConfigurationSchemaDto item) {
         return item;

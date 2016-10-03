@@ -56,7 +56,8 @@ public class SchemaLibraryGenerator {
   public static FileData generateSchemaLibrary(Schema schema, String fileName) throws Exception {
 
     Map<String, Schema> uniqueSchemas = SchemaUtil.getUniqueSchemasMap(Arrays.asList(schema));
-    List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(schema, uniqueSchemas);
+    List<JavaDynamicBean> javaSources = JavaSdkGenerator.generateSchemaSources(
+            schema, uniqueSchemas);
 
     ByteArrayOutputStream libraryOutput = new ByteArrayOutputStream();
     ZipOutputStream libraryFile = new ZipOutputStream(libraryOutput);

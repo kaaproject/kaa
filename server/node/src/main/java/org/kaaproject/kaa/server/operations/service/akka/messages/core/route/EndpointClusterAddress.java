@@ -26,7 +26,8 @@ public class EndpointClusterAddress extends EntityClusterAddress {
     this(parent.getNodeId(), parent.getTenantId(), parent.getAppToken(), endpointKey);
   }
 
-  public EndpointClusterAddress(String nodeId, String tenantId, String appToken, EndpointObjectHash endpointKey) {
+  public EndpointClusterAddress(String nodeId, String tenantId, String appToken,
+                                EndpointObjectHash endpointKey) {
     super(nodeId, tenantId, appToken);
     this.endpointKey = endpointKey;
   }
@@ -54,25 +55,35 @@ public class EndpointClusterAddress extends EntityClusterAddress {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (!super.equals(obj))
+    }
+    if (!super.equals(obj)) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     EndpointClusterAddress other = (EndpointClusterAddress) obj;
     if (endpointKey == null) {
-      if (other.endpointKey != null)
+      if (other.endpointKey != null) {
         return false;
-    } else if (!endpointKey.equals(other.endpointKey))
-      return false;
+      }
+    } else {
+      if (!endpointKey.equals(other.endpointKey)) {
+        return false;
+      }
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "EndpointClusterAddress [endpointKey=" + endpointKey + ", getNodeId()=" + getNodeId() + ", getTenantId()="
-        + getTenantId() + ", getAppToken()=" + getAppToken() + "]";
+    return "EndpointClusterAddress [endpointKey=" + endpointKey
+           + ", getNodeId()=" + getNodeId()
+           + ", getTenantId()=" + getTenantId()
+           + ", getAppToken()=" + getAppToken()
+           + "]";
   }
 
 }

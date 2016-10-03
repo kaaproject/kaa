@@ -131,58 +131,42 @@ public class ConcurrentCacheService implements CacheService {
   /**
    * The filter lists memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<AppProfileVersionsKey, List<ProfileFilterDto>> filterListsMemorizer =
-      new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<AppProfileVersionsKey, List<ProfileFilterDto>>
+          filterListsMemorizer = new CacheTemporaryMemorizer<>();
   /**
    * The application event family maps memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<List<String>, List<ApplicationEventFamilyMapDto>> aefmMemorizer =
-      new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<List<String>, List<ApplicationEventFamilyMapDto>>
+          aefmMemorizer = new CacheTemporaryMemorizer<>();
   /**
    * The filters memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<String, ProfileFilterDto> filtersMemorizer =
-      new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<String, ProfileFilterDto> filtersMemorizer =
+          new CacheTemporaryMemorizer<>();
   /**
    * The cf memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<EndpointObjectHash, EndpointConfigurationDto> cfMemorizer =
+  private final CacheTemporaryMemorizer<EndpointObjectHash, EndpointConfigurationDto> cfMemorizer =
       new CacheTemporaryMemorizer<>();
   /**
    * The cf schema memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer =
+  private final CacheTemporaryMemorizer<AppVersionKey, ConfigurationSchemaDto> cfSchemaMemorizer =
       new CacheTemporaryMemorizer<>();
   /**
    * The pf schema memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<AppVersionKey, EndpointProfileSchemaDto> pfSchemaMemorizer =
+  private final CacheTemporaryMemorizer<AppVersionKey, EndpointProfileSchemaDto> pfSchemaMemorizer =
       new CacheTemporaryMemorizer<>();
   /**
    * The spf schema memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<AppVersionKey, ServerProfileSchemaDto> spfSchemaMemorizer =
+  private final CacheTemporaryMemorizer<AppVersionKey, ServerProfileSchemaDto> spfSchemaMemorizer =
       new CacheTemporaryMemorizer<>();
   /**
    * The ctl schema memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer =
+  private final CacheTemporaryMemorizer<String, CTLSchemaDto> ctlSchemaMemorizer =
       new CacheTemporaryMemorizer<>();
   /**
    * The ctl schema body memorizer.
@@ -202,9 +186,7 @@ public class ConcurrentCacheService implements CacheService {
   /**
    * The merged configuration memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<List<EndpointGroupStateDto>,
+  private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>,
       Pair<BaseData, RawData>> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
   /**
    * The delta memorizer.
@@ -244,10 +226,8 @@ public class ConcurrentCacheService implements CacheService {
   /**
    * The topic list memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<EndpointObjectHash, TopicListCacheEntry> topicListMemorizer =
-      new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<EndpointObjectHash, TopicListCacheEntry>
+          topicListMemorizer = new CacheTemporaryMemorizer<>();
   /**
    * The endpoint key memorizer.
    */
@@ -256,10 +236,8 @@ public class ConcurrentCacheService implements CacheService {
   /**
    * The endpoint key memorizer.
    */
-  private
-  final
-  CacheTemporaryMemorizer<EventClassFqnVersion, Set<RouteTableKey>> routeKeysMemorizer =
-      new CacheTemporaryMemorizer<>();
+  private final CacheTemporaryMemorizer<EventClassFqnVersion, Set<RouteTableKey>>
+          routeKeysMemorizer = new CacheTemporaryMemorizer<>();
   /**
    * The application service.
    */

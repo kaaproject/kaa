@@ -40,7 +40,8 @@ public class TopicUnsubscriptionMessage extends EndpointAwareMessage {
    * @param key        the key
    * @param originator the originator
    */
-  public TopicUnsubscriptionMessage(String topicId, String appToken, EndpointObjectHash key, ActorRef originator) {
+  public TopicUnsubscriptionMessage(String topicId, String appToken, EndpointObjectHash key,
+                                    ActorRef originator) {
     super(appToken, key, originator);
     this.topicId = topicId;
   }

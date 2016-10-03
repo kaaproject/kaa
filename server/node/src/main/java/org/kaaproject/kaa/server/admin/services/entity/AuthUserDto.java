@@ -44,7 +44,8 @@ public class AuthUserDto extends UserDto implements UserDetails {
     setLastName(user.getLastName());
     setMail(user.getMail());
     this.password = user.getPassword();
-    this.setAuthority(KaaAuthorityDto.valueOf(user.getAuthorities().iterator().next().getAuthority()));
+    this.setAuthority(KaaAuthorityDto.valueOf(
+            user.getAuthorities().iterator().next().getAuthority()));
     this.tempPassword = user.isTempPassword();
     this.enabled = user.isEnabled();
   }

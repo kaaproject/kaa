@@ -28,12 +28,15 @@ public class TrustfulUserVerifier extends AbstractKaaUserVerifier<TrustfulAvroCo
 
   @Override
   public void init(UserVerifierContext context, TrustfulAvroConfig configuration) {
-    LOG.info("Initializing user verifier with context {} and configuration {}", context, configuration);
+    LOG.info("Initializing user verifier with context {} and configuration {}",
+            context, configuration);
   }
 
   @Override
-  public void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback) {
-    LOG.trace("Received user verification request for user {} and access token {}", userExternalId, accessToken);
+  public void checkAccessToken(String userExternalId, String accessToken,
+                               UserVerifierCallback callback) {
+    LOG.trace("Received user verification request for user {} and access token {}",
+            userExternalId, accessToken);
     callback.onSuccess();
   }
 

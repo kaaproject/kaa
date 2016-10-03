@@ -62,7 +62,9 @@ public class ConfigurationCacheEntry implements Serializable {
    * @param hash                  the hash
    * @param userConfigurationHash the user configuration hash
    */
-  public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash, EndpointObjectHash userConfigurationHash) {
+  public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta,
+                                 EndpointObjectHash hash,
+                                 EndpointObjectHash userConfigurationHash) {
     super();
     this.configuration = configuration;
     this.delta = delta;

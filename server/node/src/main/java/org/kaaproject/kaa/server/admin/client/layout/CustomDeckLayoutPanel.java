@@ -327,11 +327,11 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
     double horizDirection = isAnimationVertical ? 0.0
         : LocaleInfo.getCurrentLocale().isRTL() ? -direction : direction;
 
-      /*
-       * Position the old widget in the center of the panel, and the new widget
-       * off to one side. If the old widget is the same as the new widget, then
-       * skip this step.
-       */
+    /*
+     * Position the old widget in the center of the panel, and the new widget
+     * off to one side. If the old widget is the same as the new widget, then
+     * skip this step.
+     */
     hidingWidget = null;
     if (visibleWidget != lastVisibleWidget) {
       // Position the layers in their start positions.
@@ -362,12 +362,12 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
       // The new layer ends centered in the panel.
       newLayer.setTopHeight(0.0, Unit.PCT, 100.0, Unit.PCT);
       newLayer.setLeftWidth(0.0, Unit.PCT, 100.0, Unit.PCT);
-        /*
-         * The call to layout() above could have canceled an existing layout
-         * animation, which could cause this widget to be hidden if the user
-         * toggles between two visible widgets. We set it visible again to ensure
-         * that it ends up visible.
-         */
+      /*
+       * The call to layout() above could have canceled an existing layout
+       * animation, which could cause this widget to be hidden if the user
+       * toggles between two visible widgets. We set it visible again to ensure
+       * that it ends up visible.
+       */
       setWidgetVisible(visibleWidget, newLayer, true);
     }
 
@@ -377,10 +377,10 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
   private void setWidgetVisible(Widget widget, Layer layer, boolean visible) {
     layer.setVisible(visible);
 
-      /*
-       * Set the visibility of the widget. This is used by lazy panel to
-       * initialize the widget.
-       */
+    /*
+     * Set the visibility of the widget. This is used by lazy panel to
+     * initialize the widget.
+     */
     widget.setVisible(visible);
   }
 

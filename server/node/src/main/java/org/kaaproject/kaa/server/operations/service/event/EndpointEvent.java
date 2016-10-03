@@ -37,7 +37,8 @@ public final class EndpointEvent {
     this(sender, event, uuid, createTime, 0);
   }
 
-  public EndpointEvent(EndpointObjectHash sender, Event event, UUID uuid, long createTime, int version) {
+  public EndpointEvent(EndpointObjectHash sender, Event event, UUID uuid, long createTime,
+                       int version) {
     super();
     this.sender = sender;
     this.event = event;

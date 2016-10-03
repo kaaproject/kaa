@@ -175,7 +175,8 @@ public class TopicGrid extends AbstractKaaGrid<TopicDto, String> {
   }
 
   private void sendNotification(TopicDto value) {
-    RowActionEvent<String> rowSendNotificationEvent = new RowActionEvent<>(value.getId(), KaaRowAction.SEND_NOTIFICATION);
+    RowActionEvent<String> rowSendNotificationEvent = new RowActionEvent<>(
+            value.getId(), KaaRowAction.SEND_NOTIFICATION);
     fireEvent(rowSendNotificationEvent);
   }
 

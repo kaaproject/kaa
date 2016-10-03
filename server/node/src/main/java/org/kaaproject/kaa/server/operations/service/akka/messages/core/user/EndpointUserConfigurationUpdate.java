@@ -28,7 +28,8 @@ public class EndpointUserConfigurationUpdate {
   private final EndpointObjectHash key;
   private final byte[] hash;
 
-  public EndpointUserConfigurationUpdate(String tenantId, String userId, String applicationToken, EndpointObjectHash key, byte[] hash) {
+  public EndpointUserConfigurationUpdate(String tenantId, String userId, String applicationToken,
+                                         EndpointObjectHash key, byte[] hash) {
     super();
     this.tenantId = tenantId;
     this.userId = userId;
@@ -40,7 +41,8 @@ public class EndpointUserConfigurationUpdate {
   public static EndpointUserConfigurationUpdate fromThrift(
       org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointStateUpdate notification) {
     return new EndpointUserConfigurationUpdate(notification.getTenantId(), notification.getUserId(),
-        notification.getApplicationToken(), EndpointObjectHash.fromBytes(notification.getEndpointKey()), notification.getUcfHash());
+            notification.getApplicationToken(),
+            EndpointObjectHash.fromBytes(notification.getEndpointKey()), notification.getUcfHash());
   }
 
   public String getTenantId() {

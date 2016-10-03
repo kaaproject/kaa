@@ -77,10 +77,13 @@ public class CtlSchemaReferenceDto implements Serializable {
 
     CtlSchemaReferenceDto other = (CtlSchemaReferenceDto) obj;
     if (metaInfo == null && other.metaInfo != null) {
-        return false;
-    } else if (!metaInfo.equals(other.metaInfo)) {
       return false;
-    } if (version != other.version) {
+    } else {
+      if (!metaInfo.equals(other.metaInfo)) {
+        return false;
+      }
+    }
+    if (version != other.version) {
       return false;
     }
     return true;

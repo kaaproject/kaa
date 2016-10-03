@@ -269,7 +269,7 @@ public class DefaultControlService implements ControlService {
    * The control zk service.
    */
   @Autowired
-  private ControlZkService controlZKService;
+  private ControlZkService controlZkService;
 
   /**
    * The log schema service.
@@ -520,7 +520,7 @@ public class DefaultControlService implements ControlService {
       thriftNotification.setAppId(appDto.getId());
       thriftNotification.setAppSeqNumber(appDto.getSequenceNumber());
       thriftNotification.setOp(Operation.APP_UPDATE);
-      controlZKService.sendEndpointNotification(thriftNotification);
+      controlZkService.sendEndpointNotification(thriftNotification);
     }
     return appDto;
   }
@@ -573,9 +573,9 @@ public class DefaultControlService implements ControlService {
     ConfigurationSchemaDto confSchema = null;
     try {
       confSchema = configurationService.saveConfSchema(configurationSchema);
-    } catch (IncorrectParameterException e) {
+    } catch (IncorrectParameterException ex) {
       LOG.error("Can't generate protocol schema. Can't save configuration schema.");
-      throw new ControlServiceException(e);
+      throw new ControlServiceException(ex);
     }
     return confSchema;
   }
@@ -967,7 +967,7 @@ public class DefaultControlService implements ControlService {
 
               neighborConnectionsSize);
 
-          ControlNode zkNode = controlZKService.getControlZkNode();
+          ControlNode zkNode = controlZkService.getControlZkNode();
           neighbors.setZkNode(
               KaaThriftService.KAA_NODE_SERVICE,
               zkNode.getControlServerInfo().getConnectionInfo(),
@@ -987,7 +987,7 @@ public class DefaultControlService implements ControlService {
     if (resolver == null) {
       synchronized (zkLock) {
         if (resolver == null) {
-          ControlNode zkNode = controlZKService.getControlZkNode();
+          ControlNode zkNode = controlZkService.getControlZkNode();
           resolver = new ConsistentHashResolver(zkNode.getCurrentOperationServerNodes(),
               userHashPartitions);
           zkNode.addListener(new OperationsNodeListener() {
@@ -1204,9 +1204,9 @@ public class DefaultControlService implements ControlService {
     JsonNode json;
     try {
       json = new ObjectMapper().readTree(defaultConfiguration.getBody());
-    } catch (IOException e) {
-      LOG.error("Unable to convert default configuration data to json", e);
-      throw new ControlServiceException(e);
+    } catch (IOException ex) {
+      LOG.error("Unable to convert default configuration data to json", ex);
+      throw new ControlServiceException(ex);
     }
     AvroUtils.removeUuids(json);
 
@@ -1258,7 +1258,7 @@ public class DefaultControlService implements ControlService {
     FileData sdkFile = null;
     try {
       sdkFile = generator.generateSdk(
-          Version.PROJECT_VERSION, controlZKService.getCurrentBootstrapNodes(), sdkProfile,
+          Version.PROJECT_VERSION, controlZkService.getCurrentBootstrapNodes(), sdkProfile,
           profileSchemaBody, notificationDataSchema.getRawSchema(), protocolSchema.getRawSchema(),
           confSchemaBody, defaultConfigurationData, eventFamilies, logDataSchema.getRawSchema());
     } catch (Exception ex) {
@@ -1891,7 +1891,7 @@ public class DefaultControlService implements ControlService {
       thriftNotification.setConfigurationId(configuration.getId());
       thriftNotification.setConfigurationSeqNumber(configuration.getSequenceNumber());
     }
-    controlZKService.sendEndpointNotification(thriftNotification);
+    controlZkService.sendEndpointNotification(thriftNotification);
   }
 
   /**
@@ -1900,7 +1900,7 @@ public class DefaultControlService implements ControlService {
    * @param notification the notification
    */
   private <T> void notifyEndpoints(UpdateNotificationDto<T> notification) {
-    controlZKService.sendEndpointNotification(toNotification(notification));
+    controlZkService.sendEndpointNotification(toNotification(notification));
   }
 
   private <T> Notification toNotification(UpdateNotificationDto<T> notification) {
@@ -2041,7 +2041,7 @@ public class DefaultControlService implements ControlService {
           thriftNotification.setOp(Operation.UPDATE_LOG_APPENDER);
           LOG.info("Send notification to operation servers about update appender configuration.");
         }
-        controlZKService.sendEndpointNotification(thriftNotification);
+        controlZkService.sendEndpointNotification(thriftNotification);
       }
     }
     return saved;
@@ -2063,7 +2063,7 @@ public class DefaultControlService implements ControlService {
     thriftNotification.setAppenderId(logAppenderDto.getId());
     thriftNotification.setOp(Operation.REMOVE_LOG_APPENDER);
     LOG.info("Send notification to operation servers about removing appender.");
-    controlZKService.sendEndpointNotification(thriftNotification);
+    controlZkService.sendEndpointNotification(thriftNotification);
   }
 
   /*
@@ -2118,7 +2118,7 @@ public class DefaultControlService implements ControlService {
           LOG.info("Send notification to operation servers about update "
               + "user verifier configuration.");
         }
-        controlZKService.sendEndpointNotification(thriftNotification);
+        controlZkService.sendEndpointNotification(thriftNotification);
       }
     }
     return saved;
@@ -2140,7 +2140,7 @@ public class DefaultControlService implements ControlService {
     thriftNotification.setUserVerifierToken(userVerifierDto.getVerifierToken());
     thriftNotification.setOp(Operation.REMOVE_USER_VERIFIER);
     LOG.info("Send notification to operation servers about removing user verifier.");
-    controlZKService.sendEndpointNotification(thriftNotification);
+    controlZkService.sendEndpointNotification(thriftNotification);
   }
 
   /*
@@ -2475,9 +2475,9 @@ public class DefaultControlService implements ControlService {
       String fileName = MessageFormat.format(CTL_LIBRARY_EXPORT_TEMPLATE,
           schema.getMetaInfo().getFqn(), schema.getVersion());
       return SchemaLibraryGenerator.generateSchemaLibrary(avroSchema, fileName);
-    } catch (Exception e) {
-      LOG.error("Unable to export flat CTL schema as library", e);
-      throw new ControlServiceException(e);
+    } catch (Exception ex) {
+      LOG.error("Unable to export flat CTL schema as library", ex);
+      throw new ControlServiceException(ex);
     }
   }
 
@@ -2586,7 +2586,8 @@ public class DefaultControlService implements ControlService {
       onCredentailsRevoked(applicationId, credentialsId);
     } catch (CredentialsServiceException cause) {
       String message = MessageFormat
-          .format("An unexpected exception occured while revoking credentials by ID [{0}]", credentialsId);
+          .format("An unexpected exception occured while revoking credentials by ID [{0}]",
+                  credentialsId);
       LOG.error(message, cause);
       throw new ControlServiceException(cause);
     }
@@ -2666,7 +2667,8 @@ public class DefaultControlService implements ControlService {
       String appToken,
       Integer schemaVersion,
       String tenantId) {
-    return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId, appToken, schemaVersion, tenantId);
+    return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+            externalUId, appToken, schemaVersion, tenantId);
   }
 
   @Override

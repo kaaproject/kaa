@@ -34,7 +34,7 @@ public abstract class EntityAddress {
     return appToken;
   }
 
-  abstract public byte[] getEntityId();
+  public abstract byte[] getEntityId();
 
   @Override
   public int hashCode() {
@@ -47,23 +47,34 @@ public abstract class EntityAddress {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     EntityAddress other = (EntityAddress) obj;
     if (appToken == null) {
-      if (other.appToken != null)
+      if (other.appToken != null) {
         return false;
-    } else if (!appToken.equals(other.appToken))
-      return false;
+      }
+    } else {
+      if (!appToken.equals(other.appToken)) {
+        return false;
+      }
+    }
     if (tenantId == null) {
-      if (other.tenantId != null)
+      if (other.tenantId != null) {
         return false;
-    } else if (!tenantId.equals(other.tenantId))
-      return false;
+      }
+    } else {
+      if (!tenantId.equals(other.tenantId)) {
+        return false;
+      }
+    }
     return true;
   }
 

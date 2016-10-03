@@ -75,9 +75,11 @@ public class TopicListCacheEntry implements Serializable {
 
     TopicListCacheEntry other = (TopicListCacheEntry) obj;
     if (hash == null && other.hash != null) {
-        return false;
-    } else if (!hash.equals(other.hash)) {
       return false;
+    } else {
+      if (!hash.equals(other.hash)) {
+        return false;
+      }
     }
     return simpleHash == other.simpleHash;
   }

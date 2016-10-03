@@ -30,7 +30,8 @@ import org.springframework.stereotype.Service;
  * Implementation of Kaa Node Thrift Interface.
  */
 @Service
-public class KaaNodeThriftServiceImpl extends BaseCliThriftService implements KaaNodeThriftService.Iface {
+public class KaaNodeThriftServiceImpl extends BaseCliThriftService
+        implements KaaNodeThriftService.Iface {
 
   /**
    * The Constant LOG.

@@ -613,15 +613,15 @@ public class JavaSdkGenerator extends SdkGenerator {
     Enumeration<? extends ZipEntry> entries = templateArhive.entries();
 
     while (entries.hasMoreElements()) {
-      ZipEntry e = entries.nextElement();
-      if (replacementData.containsKey(e.getName())) {
-        ZipEntryData replacementEntry = replacementData.remove(e.getName());
+      ZipEntry entry = entries.nextElement();
+      if (replacementData.containsKey(entry.getName())) {
+        ZipEntryData replacementEntry = replacementData.remove(entry.getName());
         sdkFile.putNextEntry(replacementEntry.getEntry());
         sdkFile.write(replacementEntry.getData());
       } else {
-        sdkFile.putNextEntry(e);
-        if (!e.isDirectory()) {
-          IOUtils.copy(templateArhive.getInputStream(e), sdkFile);
+        sdkFile.putNextEntry(entry);
+        if (!entry.isDirectory()) {
+          IOUtils.copy(templateArhive.getInputStream(entry), sdkFile);
         }
       }
       sdkFile.closeEntry();

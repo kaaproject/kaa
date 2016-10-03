@@ -54,7 +54,8 @@ public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, L
   }
 
   @Override
-  protected AbstractDataProvider<LogAppenderDto, String> getDataProvider(AbstractGrid<LogAppenderDto, String> dataGrid) {
+  protected AbstractDataProvider<LogAppenderDto, String> getDataProvider(
+          AbstractGrid<LogAppenderDto, String> dataGrid) {
     return new AppendersDataProvider(dataGrid, listView, applicationId);
   }
 

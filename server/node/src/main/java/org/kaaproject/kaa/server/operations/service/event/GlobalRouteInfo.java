@@ -55,8 +55,7 @@ public final class GlobalRouteInfo extends ClusterRouteInfo {
     RouteOperation operation = message.getUpdateType() == EventRouteUpdateType.ADD
         ? RouteOperation.ADD
         : RouteOperation.DELETE;
-    return new GlobalRouteInfo
-        (message.getTenantId(), message.getUserId(), address,
+    return new GlobalRouteInfo(message.getTenantId(), message.getUserId(), address,
             message.getCfSchemaVersion(), message.getUcfHash(), operation);
   }
 

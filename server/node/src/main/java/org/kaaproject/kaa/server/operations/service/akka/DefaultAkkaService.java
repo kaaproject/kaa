@@ -110,8 +110,8 @@ public class DefaultAkkaService implements AkkaService {
         PlatformLookup.DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME);
     LOG.info("Initializing Akka io router...");
     ioRouter = akka.actorOf(
-        new RoundRobinPool(context.getIOWorkerCount())
-            .withSupervisorStrategy(SupervisionStrategyFactory.createIORouterStrategy(context))
+        new RoundRobinPool(context.getIoWorkerCount())
+            .withSupervisorStrategy(SupervisionStrategyFactory.createIoRouterStrategy(context))
             .props(Props.create(new EncDecActor.ActorCreator(opsActor, context, platformProtocols))
                 .withDispatcher(IO_DISPATCHER_NAME)), IO_ROUTER_ACTOR_NAME);
     LOG.info("Initializing Akka event service listener...");

@@ -20,7 +20,8 @@ import akka.actor.ActorRef;
 
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 
-public class EndpointUserConfigurationUpdateMessage extends EndpointAwareMessage implements TenantAwareMessage {
+public class EndpointUserConfigurationUpdateMessage extends EndpointAwareMessage
+        implements TenantAwareMessage {
 
   private final EndpointUserConfigurationUpdate update;
 

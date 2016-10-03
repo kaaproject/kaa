@@ -47,7 +47,8 @@ public interface OperationsService extends PublicKeyAware {
 
   SyncContext processEventListenerRequests(SyncContext context, EventClientSync request);
 
-  SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException;
+  SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request)
+          throws GetDeltaException;
 
   SyncContext syncNotification(SyncContext context, NotificationClientSync request);
 
@@ -61,7 +62,8 @@ public interface OperationsService extends PublicKeyAware {
    * @param userExternalId the user external id
    * @return the updated endpoint profile
    */
-  EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
+  EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken,
+                                          String userExternalId);
 
   /**
    * Update sync response.
@@ -71,7 +73,8 @@ public interface OperationsService extends PublicKeyAware {
    * @param unicastNotificationId the unicast notification id
    * @return the sync response
    */
-  ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId);
+  ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications,
+                                String unicastNotificationId);
 
   /**
    * Lookup user configuration and return it's hash
@@ -83,8 +86,7 @@ public interface OperationsService extends PublicKeyAware {
   byte[] fetchUcfHash(String appToken, EndpointProfileDto profile);
 
   /**
-   * Fetch server endpoint profile and CTL schema id based on endpoint key
-   * hash
+   * Fetch server endpoint profile and CTL schema id based on endpoint key hash.
    *
    * @param hash - endpoint key hash
    * @return endpoint profile
@@ -92,7 +94,7 @@ public interface OperationsService extends PublicKeyAware {
   public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
 
   /**
-   * Update profile state based on new user configuration hash
+   * Update profile state based on new user configuration hash.
    *
    * @param context - sync context that contains profile and other metadata
    * @param ucfHash - user configuration hash

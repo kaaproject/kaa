@@ -270,8 +270,8 @@ public interface ControlService {
    * @return the profile schema
    * @throws ControlServiceException the control service exception
    */
-  EndpointProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(String applicationId,
-                                                                     int version) throws ControlServiceException;
+  EndpointProfileSchemaDto getProfileSchemaByApplicationIdAndVersion(
+          String applicationId, int version) throws ControlServiceException;
 
   /**
    * Edits the profile schema.
@@ -1285,7 +1285,7 @@ public interface ControlService {
    *
    * @param tenantId A tenant identifier
    * @return Meta information about CTL schemas that are available for use by a tenant with the
-   * given identifier
+   *         given identifier
    * @throws ControlServiceException - if an exception occures.
    */
   List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForTenant(String tenantId)

@@ -22,15 +22,17 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 
 /**
- * Represents intent of endpoint to disconnect from local user actor
+ * Represents intent of endpoint to disconnect from local user actor.
  *
  * @author Andrew Shvayka
  */
-public class EndpointUserDisconnectMessage extends EndpointAwareMessage implements UserAwareMessage {
+public class EndpointUserDisconnectMessage extends EndpointAwareMessage
+        implements UserAwareMessage {
 
   private final String userId;
 
-  public EndpointUserDisconnectMessage(String userId, EndpointObjectHash endpointKey, String applicationToken, ActorRef originator) {
+  public EndpointUserDisconnectMessage(String userId, EndpointObjectHash endpointKey,
+                                       String applicationToken, ActorRef originator) {
     super(applicationToken, endpointKey, originator);
     this.userId = userId;
   }

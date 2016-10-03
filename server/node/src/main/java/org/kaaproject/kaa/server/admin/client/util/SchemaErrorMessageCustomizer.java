@@ -34,7 +34,8 @@ public class SchemaErrorMessageCustomizer implements ErrorMessageCustomizer {
     if (rightSquareBracketIndex != -1) {
       StringBuilder builder = new StringBuilder();
       builder.append("Incorrect json schema: Please check your schema at");
-      String[] array = origMessage.substring(leftSquareBracketIndex, rightSquareBracketIndex).split(SEMICOLON);
+      String[] array = origMessage.substring(leftSquareBracketIndex, rightSquareBracketIndex)
+              .split(SEMICOLON);
       if (array != null && array.length == 2) {
         builder.append(array[1]);
         errorMessage = builder.toString();

@@ -28,7 +28,8 @@ public class UserVerificationResponseMessage {
   private final UserVerifierErrorCode errorCode;
   private final String failureReason;
 
-  private UserVerificationResponseMessage(UUID requestId, String userId, boolean success, UserVerifierErrorCode errorCode, String failureReason) {
+  private UserVerificationResponseMessage(UUID requestId, String userId, boolean success,
+                                          UserVerifierErrorCode errorCode, String failureReason) {
     super();
     this.requestId = requestId;
     this.userId = userId;
@@ -41,11 +42,14 @@ public class UserVerificationResponseMessage {
     return new UserVerificationResponseMessage(requestId, userId, true, null, null);
   }
 
-  public static UserVerificationResponseMessage failure(UUID requestId, String userId, UserVerifierErrorCode errorCode) {
+  public static UserVerificationResponseMessage failure(UUID requestId, String userId,
+                                                        UserVerifierErrorCode errorCode) {
     return failure(requestId, userId, errorCode, null);
   }
 
-  public static UserVerificationResponseMessage failure(UUID requestId, String userId, UserVerifierErrorCode errorCode, String failureReason) {
+  public static UserVerificationResponseMessage failure(UUID requestId, String userId,
+                                                        UserVerifierErrorCode errorCode,
+                                                        String failureReason) {
     return new UserVerificationResponseMessage(requestId, userId, false, errorCode, failureReason);
   }
 

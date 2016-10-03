@@ -55,7 +55,8 @@ public class ApplicationServiceImpl extends AbstractAdminService implements Appl
       if (isEmpty(applicationToken)) {
         throw new KaaAdminServiceException(ServiceErrorCode.INVALID_ARGUMENTS);
       }
-      ApplicationDto application = controlService.getApplicationByApplicationToken(applicationToken);
+      ApplicationDto application = controlService.getApplicationByApplicationToken(
+              applicationToken);
       checkApplication(application);
       return application;
     } catch (Exception ex) {

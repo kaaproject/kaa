@@ -427,7 +427,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
           return controlService.exportCtlSchemaDeep(schemaFound);
         default:
           throw new IllegalArgumentException(
-              "The export method " + method.name()+ " is not currently supported!");
+              "The export method " + method.name() + " is not currently supported!");
       }
     } catch (Exception cause) {
       throw Utils.handleException(cause);
@@ -753,7 +753,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
    *
    * @param types A collection of CTL schemas
    * @return A string that contains fully qualified names and version numbers of the given CTL
-   * schemas
+   *         schemas
    */
   private String asText(Collection<CTLSchemaDto> types) {
     StringBuilder message = new StringBuilder();

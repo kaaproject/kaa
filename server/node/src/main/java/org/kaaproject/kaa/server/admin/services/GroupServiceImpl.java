@@ -303,7 +303,6 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
       throw Utils.handleException(ex);
     }
     try {
-      Expression expression = new SpelExpressionParser().parseExpression(filterBody);
       StandardEvaluationContext evaluationContext;
       if (endpointProfileRecord != null) {
         evaluationContext = new StandardEvaluationContext(endpointProfileRecord);
@@ -318,6 +317,7 @@ public class GroupServiceImpl extends AbstractAdminService implements GroupServi
         evaluationContext.setVariable(
             DefaultFilterEvaluator.SERVER_PROFILE_VARIABLE_NAME, serverProfileRecord);
       }
+      Expression expression = new SpelExpressionParser().parseExpression(filterBody);
       expression.getValue(evaluationContext, Boolean.class);
     } catch (Exception ex) {
       throw new KaaAdminServiceException(

@@ -89,7 +89,7 @@ public class DefaultEventService implements EventService {
       new ThreadLocal<AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>>() {
         @Override
         protected AvroByteArrayConverter<org.kaaproject.kaa.common.endpoint.gen.Event>
-        initialValue() {
+            initialValue() {
           return new AvroByteArrayConverter<>(
               org.kaaproject.kaa.common.endpoint.gen.Event.class);
         }
@@ -154,15 +154,15 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Transform List<EventClassFamilyVersion> into Thrift
-   * List<EventClassFamilyVersion>
+   * Transform List(EventClassFamilyVersion) into Thrift
+   * List(org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion).
    *
-   * @param ecfVersions List<EventClassFamilyVersion>
-   * @return thrift List<EventClassFamilyVersion>
+   * @param ecfVersions List(EventClassFamilyVersion)
+   * @return thrift List(EventClassFamilyVersion)
    */
   private
-  static List<org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion>
-  transformEcfv(List<EventClassFamilyVersion> ecfVersions) {
+      static List<org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion>
+      transformEcfv(List<EventClassFamilyVersion> ecfVersions) {
     List<org.kaaproject.kaa.server.common.thrift.gen.operations.EventClassFamilyVersion> ecfvThL =
         new ArrayList<>();
     if (ecfVersions != null) {
@@ -431,8 +431,8 @@ public class DefaultEventService implements EventService {
   /**
    * Repack list of EventRoute messages to list of EventMessage.
    *
-   * @param routes List<EventRoute>
-   * @return List<EventMessage>
+   * @param routes List(EventRoute)
+   * @return List(EventMessage)
    */
   private List<Message> packMessage(List<EventRoute> routes) {
     EventMessageType type = EventMessageType.ROUTE_UPDATE;
@@ -447,7 +447,7 @@ public class DefaultEventService implements EventService {
    * Pack UserRouteInfo into list of EventMessage.
    *
    * @param userRoute UserRouteInfo
-   * @return List<EventMessage>
+   * @return List(EventMessage)
    */
   private List<Message> packMessage(UserRouteInfo userRoute) {
     return Collections.singletonList(new Message(
@@ -458,11 +458,53 @@ public class DefaultEventService implements EventService {
    * Pack Event into list of EventMessage.
    *
    * @param event Event
-   * @return List<EventMessage>
+   * @return List(EventMessage)
    */
   private List<Message> packMessage(Event event) {
     return Collections.singletonList(new Message(
         EventMessageType.EVENT, getEventId(), event, null, null, null, null));
+  }
+
+  private List<Message> packMessage(GlobalRouteInfo routeInfo) {
+    final EventMessageType type = EventMessageType.ENDPOINT_ROUTE_UPDATE;
+    final List<Message> messages = new LinkedList<>();
+
+    EndpointRouteUpdate route = new EndpointRouteUpdate();
+    route.setTenantId(routeInfo.getTenantId());
+    route.setUserId(routeInfo.getUserId());
+    route.setUpdateType(transformUpdateType(routeInfo.getRouteOperation()));
+    route.setCfSchemaVersion(routeInfo.getCfVersion());
+    route.setUcfHash(routeInfo.getUcfHash());
+
+    String opsServerId = routeInfo.getAddress().getServerId();
+    if (opsServerId == null) {
+      opsServerId = id;
+    }
+
+    RouteAddress routeAddress = new RouteAddress(
+            ByteBuffer.wrap(routeInfo.getAddress().getEndpointKey().getData()), routeInfo
+            .getAddress().getApplicationToken(), opsServerId);
+    route.setRouteAddress(routeAddress);
+
+    messages.add(new Message(type, getEventId(), null, null, null, route, null));
+
+    return messages;
+  }
+
+  private List<Message> packMessage(EndpointUserConfigurationUpdate update) {
+    final EventMessageType type = EventMessageType.ENDPOINT_STATE_UPDATE;
+    final List<Message> messages = new LinkedList<>();
+
+    EndpointStateUpdate msg = new EndpointStateUpdate();
+    msg.setTenantId(update.getTenantId());
+    msg.setUserId(update.getUserId());
+    msg.setApplicationToken(update.getApplicationToken());
+    msg.setEndpointKey(update.getKey().getData());
+    msg.setUcfHash(update.getHash());
+
+    messages.add(new Message(type, getEventId(), null, null, null, null, msg));
+
+    return messages;
   }
 
   /**
@@ -477,10 +519,10 @@ public class DefaultEventService implements EventService {
   }
 
   /**
-   * Transform Collection<RouteInfo> into List<EventRoute>.
+   * Transform Collection(RouteInfo) into List(EventRoute).
    *
-   * @param routeInfos Collection<RouteInfo>
-   * @return List<EventRoute>
+   * @param routeInfos Collection(RouteInfo)
+   * @return List(EventRoute)
    */
   private List<EventRoute> transformEventRouteFromRouteInfoCollection(
       Collection<RouteInfo> routeInfos) {
@@ -663,48 +705,6 @@ public class DefaultEventService implements EventService {
     for (OperationsNodeInfo info : operationsNode.getCurrentOperationServerNodes()) {
       resolver.onNodeUpdated(info);
     }
-  }
-
-  private List<Message> packMessage(GlobalRouteInfo routeInfo) {
-    final EventMessageType type = EventMessageType.ENDPOINT_ROUTE_UPDATE;
-    final List<Message> messages = new LinkedList<>();
-
-    EndpointRouteUpdate route = new EndpointRouteUpdate();
-    route.setTenantId(routeInfo.getTenantId());
-    route.setUserId(routeInfo.getUserId());
-    route.setUpdateType(transformUpdateType(routeInfo.getRouteOperation()));
-    route.setCfSchemaVersion(routeInfo.getCfVersion());
-    route.setUcfHash(routeInfo.getUcfHash());
-
-    String opsServerId = routeInfo.getAddress().getServerId();
-    if (opsServerId == null) {
-      opsServerId = id;
-    }
-
-    RouteAddress routeAddress = new RouteAddress(
-        ByteBuffer.wrap(routeInfo.getAddress().getEndpointKey().getData()), routeInfo
-        .getAddress().getApplicationToken(), opsServerId);
-    route.setRouteAddress(routeAddress);
-
-    messages.add(new Message(type, getEventId(), null, null, null, route, null));
-
-    return messages;
-  }
-
-  private List<Message> packMessage(EndpointUserConfigurationUpdate update) {
-    final EventMessageType type = EventMessageType.ENDPOINT_STATE_UPDATE;
-    final List<Message> messages = new LinkedList<>();
-
-    EndpointStateUpdate msg = new EndpointStateUpdate();
-    msg.setTenantId(update.getTenantId());
-    msg.setUserId(update.getUserId());
-    msg.setApplicationToken(update.getApplicationToken());
-    msg.setEndpointKey(update.getKey().getData());
-    msg.setUcfHash(update.getHash());
-
-    messages.add(new Message(type, getEventId(), null, null, null, null, msg));
-
-    return messages;
   }
 
   private static class MessageTemplate implements NeighborTemplate<Message> {

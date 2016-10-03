@@ -279,9 +279,8 @@ public class ProfileServiceImpl extends AbstractAdminService implements ProfileS
         String message = "The endpoint user external ID provided is empty!";
         throw new IllegalArgumentException(message);
       }
-      return this.controlService.getEndpointProfilesByUserExternalIdAndTenantId
-          (endpointUserExternalId, getCurrentUser().getTenantId());
-
+      return this.controlService.getEndpointProfilesByUserExternalIdAndTenantId(
+              endpointUserExternalId, getCurrentUser().getTenantId());
     } catch (Exception cause) {
       throw Utils.handleException(cause);
     }

@@ -34,7 +34,8 @@ import java.util.Properties;
  * @author Andrew Shvayka
  */
 @Service
-public class OperationsTransportService extends AbstractTransportService implements TransportService {
+public class OperationsTransportService extends AbstractTransportService
+        implements TransportService {
 
   private static final String TRANSPORT_CONFIG_PREFIX = "operations";
 

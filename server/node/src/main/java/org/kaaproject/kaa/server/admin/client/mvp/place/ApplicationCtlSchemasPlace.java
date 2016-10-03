@@ -54,7 +54,7 @@ public class ApplicationCtlSchemasPlace extends TreePlace {
 
     ApplicationCtlSchemasPlace other = (ApplicationCtlSchemasPlace) obj;
     if (applicationId == null && other.applicationId != null) {
-        return false;
+      return false;
     } else if (!applicationId.equals(other.applicationId)) {
       return false;
     }

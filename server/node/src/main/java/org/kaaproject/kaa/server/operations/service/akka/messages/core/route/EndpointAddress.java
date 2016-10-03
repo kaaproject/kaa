@@ -42,25 +42,34 @@ public class EndpointAddress extends EntityAddress {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (!super.equals(obj))
+    }
+    if (!super.equals(obj)) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     EndpointAddress other = (EndpointAddress) obj;
     if (endpointKey == null) {
-      if (other.endpointKey != null)
+      if (other.endpointKey != null) {
         return false;
-    } else if (!endpointKey.equals(other.endpointKey))
-      return false;
+      }
+    } else {
+      if (!endpointKey.equals(other.endpointKey)) {
+        return false;
+      }
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "EndpointAddress [endpointKey=" + endpointKey + ", getTenantId()=" + getTenantId() + ", getAppToken()=" + getAppToken()
-        + "]";
+    return "EndpointAddress [endpointKey=" + endpointKey
+           + ", getTenantId()=" + getTenantId()
+           + ", getAppToken()=" + getAppToken()
+           + "]";
   }
 
 }

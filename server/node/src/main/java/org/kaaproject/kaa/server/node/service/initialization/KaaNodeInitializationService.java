@@ -206,18 +206,18 @@ public class KaaNodeInitializationService extends AbstractInitializationService 
           TMultiplexedProcessor processor = new TMultiplexedProcessor();
 
           KaaNodeThriftService.Processor<KaaNodeThriftService.Iface> kaaNodeProcessor =
-              new KaaNodeThriftService.Processor<KaaNodeThriftService.Iface>(kaaNodeThriftService);
+              new KaaNodeThriftService.Processor<>(kaaNodeThriftService);
           processor.registerProcessor(KAA_NODE_SERVICE.getServiceName(), kaaNodeProcessor);
 
           if (getNodeConfig().isBootstrapServiceEnabled()) {
             BootstrapThriftService.Processor<BootstrapThriftService.Iface> bootstrapProcessor =
-                new BootstrapThriftService.Processor<BootstrapThriftService.Iface>(bootstrapThriftService);
+                new BootstrapThriftService.Processor<>(bootstrapThriftService);
             processor.registerProcessor(BOOTSTRAP_SERVICE.getServiceName(), bootstrapProcessor);
           }
 
           if (getNodeConfig().isOperationsServiceEnabled()) {
             OperationsThriftService.Processor<OperationsThriftService.Iface> operationsProcessor =
-                new OperationsThriftService.Processor<OperationsThriftService.Iface>(operationsThriftService);
+                new OperationsThriftService.Processor<>(operationsThriftService);
             processor.registerProcessor(OPERATIONS_SERVICE.getServiceName(), operationsProcessor);
           }
 

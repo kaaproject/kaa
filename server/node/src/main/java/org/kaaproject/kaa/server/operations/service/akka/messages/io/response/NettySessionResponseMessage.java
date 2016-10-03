@@ -36,12 +36,14 @@ public class NettySessionResponseMessage implements SessionResponse {
   private final ErrorBuilder errorBuilder;
   private final Exception error;
 
-  public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder messageBuilder,
+  public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse,
+                                     MessageBuilder messageBuilder,
                                      ErrorBuilder errorBuilder) {
     this(sessionInfo, syncResponse, null, messageBuilder, errorBuilder);
   }
 
-  public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, Exception error, MessageBuilder messageBuilder,
+  public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse,
+                                     Exception error, MessageBuilder messageBuilder,
                                      ErrorBuilder errorBuilder) {
     this.sessionInfo = sessionInfo;
     this.syncResponse = syncResponse;

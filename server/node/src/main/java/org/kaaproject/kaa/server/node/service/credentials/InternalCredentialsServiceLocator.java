@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.node.service.credentials;
 
 public class InternalCredentialsServiceLocator implements CredentialsServiceLocator {
 
   private final org.kaaproject.kaa.server.common.dao.CredentialsService service;
 
-  public InternalCredentialsServiceLocator(org.kaaproject.kaa.server.common.dao.CredentialsService service) {
+  public InternalCredentialsServiceLocator(
+          org.kaaproject.kaa.server.common.dao.CredentialsService service) {
     super();
     this.service = service;
   }

@@ -50,14 +50,16 @@ public interface CredentialsService {
    * @return The credentials with the given ID
    * @throws CredentialsServiceException - if an unexpected exception occures.
    */
-  Optional<CredentialsDto> lookupCredentials(String credentialsId) throws CredentialsServiceException;
+  Optional<CredentialsDto> lookupCredentials(String credentialsId)
+          throws CredentialsServiceException;
 
   /**
    * Sets the status of the given credentials to
    * {@link CredentialsStatus#IN_USE}.
    *
    * @param credentialsId The credentials ID
-   * @throws CredentialsServiceException - if the credentials are not {@link CredentialsStatus#AVAILABLE}.
+   * @throws CredentialsServiceException - if the credentials are not
+   * {@link CredentialsStatus#AVAILABLE}.
    */
   void markCredentialsInUse(String credentialsId) throws CredentialsServiceException;
 

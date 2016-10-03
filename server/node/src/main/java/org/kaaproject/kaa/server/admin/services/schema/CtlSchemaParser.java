@@ -113,14 +113,13 @@ public class CtlSchemaParser {
 
   public CTLSchemaDto parse(String body, String applicationId)
       throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
-    CTLSchemaDto schema = new CTLSchemaDto();
     CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
     String fqn = null;
 
     ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
 
-    if (!object.has(TYPE) || !object.get(TYPE).isTextual() ||
-        !object.get(TYPE).getTextValue().equals("record")) {
+    if (!object.has(TYPE) || !object.get(TYPE).isTextual()
+        || !object.get(TYPE).getTextValue().equals("record")) {
       throw new IllegalArgumentException("The data provided is not a record!");
     }
 
@@ -132,6 +131,7 @@ public class CtlSchemaParser {
       fqn = object.get(NAMESPACE).getTextValue() + "." + object.get(NAME).getTextValue();
     }
     metaInfo = new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId);
+    CTLSchemaDto schema = new CTLSchemaDto();
     schema.setMetaInfo(metaInfo);
 
     if (!object.has(VERSION) || !object.get(VERSION).isInt()) {
@@ -207,10 +207,10 @@ public class CtlSchemaParser {
     }
 
     try {
-            /*
-             * Parsed schemas are automatically added to the set of types known
-             * to the parser.
-             */
+      /*
+       * Parsed schemas are automatically added to the set of types known
+       * to the parser.
+       */
       return parser.parse(schema.getBody());
     } catch (Exception cause) {
       LOG.error("Unable to parse CTL schema \""

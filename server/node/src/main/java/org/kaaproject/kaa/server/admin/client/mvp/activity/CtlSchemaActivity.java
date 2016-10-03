@@ -61,8 +61,9 @@ import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 import java.util.Collections;
 import java.util.List;
 
-public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto, CtlSchemaView, CtlSchemaPlace>
-    implements ErrorMessageCustomizer, FormDataLoader {
+public class CtlSchemaActivity extends
+        AbstractDetailsActivity<CtlSchemaFormDto, CtlSchemaView, CtlSchemaPlace>
+        implements ErrorMessageCustomizer, FormDataLoader {
 
   protected static final ErrorMessageCustomizer schemaErrorMessageCustomizer
       = new SchemaErrorMessageCustomizer();

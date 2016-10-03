@@ -137,7 +137,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     LOG.trace("[{}] Merging original request {} with new request {}",
         channelUuid, request, other);
     request.setRequestId(other.getRequestId());
-      request.getClientSyncMetaData()
+    request.getClientSyncMetaData()
         .setProfileHash(other.getClientSyncMetaData().getProfileHash());
     LOG.debug("[{}] Updated request id and profile hash", channelUuid);
     ClientSync diff = new ClientSync();

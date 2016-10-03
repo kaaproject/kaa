@@ -29,7 +29,7 @@ import java.util.UUID;
  */
 public class EndpointAwareMessage {
 
-  private final static ThreadLocal<Random> state = new ThreadLocal<Random>() { //NOSONAR
+  private static final ThreadLocal<Random> state = new ThreadLocal<Random>() { //NOSONAR
     protected Random initialValue() {
       return new Random();
     }
@@ -67,7 +67,8 @@ public class EndpointAwareMessage {
    * @param key        the key
    * @param originator the originator
    */
-  protected EndpointAwareMessage(UUID uuid, String appToken, EndpointObjectHash key, ActorRef originator) {
+  protected EndpointAwareMessage(UUID uuid, String appToken, EndpointObjectHash key,
+                                 ActorRef originator) {
     super();
     this.uuid = uuid;
     this.appToken = appToken;

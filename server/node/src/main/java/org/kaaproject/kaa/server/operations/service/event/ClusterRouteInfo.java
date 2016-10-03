@@ -24,7 +24,8 @@ public class ClusterRouteInfo {
   protected final RouteTableAddress address;
   protected final RouteOperation routeOperation;
 
-  public ClusterRouteInfo(String tenantId, String userId, RouteTableAddress address, RouteOperation routeOperation) {
+  public ClusterRouteInfo(String tenantId, String userId, RouteTableAddress address,
+                          RouteOperation routeOperation) {
     super();
     this.tenantId = tenantId;
     this.userId = userId;

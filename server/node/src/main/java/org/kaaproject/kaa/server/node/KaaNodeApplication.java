@@ -27,7 +27,8 @@ import org.springframework.context.ApplicationContext;
  */
 public class KaaNodeApplication extends AbstractServerApplication {
 
-  private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS = new String[]{"kaaNodeContext.xml"};
+  private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS =
+          new String[]{"kaaNodeContext.xml"};
 
   private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[]{
       "kaa-node.properties", "sql-dao.properties", "nosql-dao.properties"};
@@ -56,7 +57,8 @@ public class KaaNodeApplication extends AbstractServerApplication {
 
   @Override
   protected void init(ApplicationContext ctx) {
-    final InitializationService kaaNodeInitializationService = ctx.getBean("kaaNodeInitializationService", InitializationService.class);
+    final InitializationService kaaNodeInitializationService =
+            ctx.getBean("kaaNodeInitializationService", InitializationService.class);
     kaaNodeInitializationService.start();
   }
 }

@@ -172,7 +172,8 @@ public interface CacheService {
    * @param mergedConfiguration the merged configuration
    * @return the string
    */
-  BaseData setMergedConfiguration(List<EndpointGroupStateDto> egsList, BaseData mergedConfiguration);
+  BaseData setMergedConfiguration(List<EndpointGroupStateDto> egsList,
+                                  BaseData mergedConfiguration);
 
   /**
    * Gets the delta.

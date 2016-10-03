@@ -20,9 +20,6 @@ import java.io.Serializable;
 
 public final class EventClassFamilyIdKey implements Serializable {
 
-  /**
-   *
-   */
   private static final long serialVersionUID = -1478813575025459972L;
 
   private final String tenantId;

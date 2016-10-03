@@ -69,8 +69,8 @@ public class UpdateUserConfigViewImpl
 
     getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
 
-    configurationData = new RecordPanel(new AvroWidgetsConfig.Builder().
-        recordPanelWidth(900)
+    configurationData = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(900)
         .gridHeight(250)
         .tableHeight(230)
         .createConfig(),

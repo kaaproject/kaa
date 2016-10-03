@@ -304,7 +304,7 @@ public class DataSource {
   }
 
   /**
-   * Edits general properties
+   * Edits general properties.
    *
    * @param generalProperties new general properties
    * @param callback          callback which should be called with a result
@@ -929,7 +929,7 @@ public class DataSource {
   }
 
   /**
-   * Adds an event class family version
+   * Adds an event class family version.
    *
    * @param eventClassFamilyId event class family identifier
    * @param eventClassViewDto  event class family view
@@ -1087,7 +1087,7 @@ public class DataSource {
   }
 
   /**
-   * Returns a server profile schema info list
+   * Returns a server profile schema info list.
    *
    * @param applicationId application identifier
    * @param callback      callback which should be called with a result
@@ -1546,7 +1546,7 @@ public class DataSource {
   }
 
   /**
-   * Returns the latest CTL schema form
+   * Returns the latest CTL schema form.
    *
    * @param metaInfoId meta information identifier
    * @param callback   callback which should be called with a result
@@ -1562,7 +1562,7 @@ public class DataSource {
   }
 
   /**
-   * Returns the CTL schema form
+   * Returns the CTL schema form.
    *
    * @param metaInfoId meta information identifier
    * @param version    CTL schema version
@@ -1652,7 +1652,7 @@ public class DataSource {
   }
 
   /**
-   * Promotes a scope
+   * Promotes a scope.
    *
    * @param applicationId application identifier
    * @param fqn           fully qualified name
@@ -1865,14 +1865,14 @@ public class DataSource {
   /**
    * Returns en endpoint profile.
    *
-   * @param groupID  endpoint group identifier
+   * @param groupId  endpoint group identifier
    * @param limit    limit
    * @param offset   offset
    * @param callback callback which should be called with a result
    */
-  public void getEndpointProfileByGroupId(String groupID, String limit, String offset,
+  public void getEndpointProfileByGroupId(String groupId, String limit, String offset,
                                           AsyncCallback<EndpointProfilesPageDto> callback) {
-    groupRpcService.getEndpointProfileByEndpointGroupId(groupID, limit, offset, callback);
+    groupRpcService.getEndpointProfileByEndpointGroupId(groupId, limit, offset, callback);
   }
 
   /**
@@ -2710,7 +2710,7 @@ public class DataSource {
   }
 
   /**
-   * Returns the SDK profile
+   * Returns the SDK profile.
    *
    * @param sdkProfileId SDK profile identifier
    * @param callback     callback which should be called with a result

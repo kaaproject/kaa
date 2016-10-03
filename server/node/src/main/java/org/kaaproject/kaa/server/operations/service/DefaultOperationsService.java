@@ -268,8 +268,8 @@ public class DefaultOperationsService implements OperationsService {
       } else {
         LOG.debug("[{}][{}] update of endpoint profile started.",
             context.getEndpointKey(), context.getRequestHash());
-        profile = updateEndpoint
-            (context.getEndpointKey(), context.getRequestHash(), metaData, profileSyncRequest);
+        profile = updateEndpoint(context.getEndpointKey(), context.getRequestHash(), metaData,
+                profileSyncRequest);
       }
       profileSyncResponse = new ProfileServerSync(SyncResponseStatus.DELTA);
       metaData.setProfileHash(ByteBuffer.wrap(profile.getProfileHash()));

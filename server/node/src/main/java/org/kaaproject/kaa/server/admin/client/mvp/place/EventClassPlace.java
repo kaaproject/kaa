@@ -96,7 +96,8 @@ public class EventClassPlace extends AbstractSchemaPlaceEvent {
   public static class Tokenizer extends AbstractSchemaPlaceEvent.Tokenizer<EventClassPlace> {
 
     @Override
-    protected EventClassPlace getPlaceImpl(String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
+    protected EventClassPlace getPlaceImpl(
+            String ecfId, String ecfVersionId, int ecfVersion, String schemaId) {
       return new EventClassPlace(ecfId, ecfVersionId, ecfVersion, schemaId);
     }
 

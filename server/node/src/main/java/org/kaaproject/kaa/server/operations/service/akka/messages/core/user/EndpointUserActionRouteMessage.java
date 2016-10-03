@@ -22,7 +22,8 @@ public class EndpointUserActionRouteMessage {
   private final EndpointUserActionMessage message;
   private final String originalApplication;
 
-  public EndpointUserActionRouteMessage(EndpointUserActionMessage message, String originalApplication) {
+  public EndpointUserActionRouteMessage(EndpointUserActionMessage message,
+                                        String originalApplication) {
     super();
     this.message = message;
     this.originalApplication = originalApplication;

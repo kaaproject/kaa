@@ -100,7 +100,7 @@ public class AkkaContext {
     return config;
   }
 
-  public int getIOWorkerCount() {
+  public int getIoWorkerCount() {
     return config.getInt(IO_WORKER_COUNT_PROP_NAME);
   }
 

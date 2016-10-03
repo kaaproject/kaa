@@ -191,8 +191,10 @@ public class JavaEventClassesGenerator {
         .replaceAll(EVENT_FAMILY_FACTORY_METHODS_VAR, eventFamilyFactoryMethods);
 
 
-    LOG.trace("Going to compile {} using source {}", EVENT_FAMILY_FACTORY, eventFamilyFactorySource);
-    JavaDynamicBean eventFamilyFactory = new JavaDynamicBean(EVENT_FAMILY_FACTORY, eventFamilyFactorySource);
+    LOG.trace("Going to compile {} using source {}",
+            EVENT_FAMILY_FACTORY, eventFamilyFactorySource);
+    JavaDynamicBean eventFamilyFactory = new JavaDynamicBean(
+            EVENT_FAMILY_FACTORY, eventFamilyFactorySource);
     javaSources.add(eventFamilyFactory);
 
     return javaSources;

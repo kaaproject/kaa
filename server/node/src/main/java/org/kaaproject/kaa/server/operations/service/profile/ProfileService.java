@@ -47,7 +47,14 @@ public interface ProfileService {
    * @param mergeFunction the merge function
    * @return the updated endpoint profile dto
    */
-  EndpointProfileDto updateProfile(EndpointProfileDto profile, BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction);
+  EndpointProfileDto updateProfile(EndpointProfileDto profile, BiFunction<EndpointProfileDto,
+          EndpointProfileDto, EndpointProfileDto> mergeFunction);
+
+  EndpointProfileDto updateProfile(UpdateProfileRequest request);
+
+
+  EndpointProfileDto updateProfile(ClientSyncMetaData metaData, EndpointObjectHash keyHash,
+                                   boolean useConfigurationRawSchema);
 
   /**
    * Register profile.
@@ -56,11 +63,4 @@ public interface ProfileService {
    * @return the endpoint profile dto
    */
   EndpointProfileDto registerProfile(RegisterProfileRequest request);
-
-
-  EndpointProfileDto updateProfile(UpdateProfileRequest request);
-
-
-  EndpointProfileDto updateProfile(ClientSyncMetaData metaData, EndpointObjectHash keyHash, boolean useConfigurationRawSchema);
-
 }

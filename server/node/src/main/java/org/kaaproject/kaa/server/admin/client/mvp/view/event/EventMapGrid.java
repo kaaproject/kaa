@@ -94,7 +94,8 @@ public class EventMapGrid extends AbstractKaaGrid<ApplicationEventMapDto, String
       actionColumn.setFieldUpdater(
           new FieldUpdater<ApplicationEventMapDto, ApplicationEventAction>() {
             @Override
-            public void update(int index, ApplicationEventMapDto object, ApplicationEventAction value) {
+            public void update(int index, ApplicationEventMapDto object,
+                               ApplicationEventAction value) {
               object.setAction(value);
             }
           });

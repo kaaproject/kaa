@@ -30,6 +30,7 @@ import java.util.List;
 
 public class UserVerifiersDataProvider extends AbstractDataProvider<UserVerifierDto, String> {
   private String applicationId;
+
   /**
    * All-args constructor.
    */

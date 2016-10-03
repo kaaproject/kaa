@@ -78,11 +78,11 @@ public class LogSchemaGrid extends BaseCtlSchemasGrid<LogSchemaDto> {
             fireEvent(rowDownloadLibraryEvent);
           }
         }, new ActionValidator<LogSchemaDto>() {
-      @Override
-      public boolean canPerformAction(LogSchemaDto value) {
-        return !embedded;
-      }
-    });
+          @Override
+          public boolean canPerformAction(LogSchemaDto value) {
+            return !embedded;
+          }
+        });
     Column<LogSchemaDto, LogSchemaDto> column = new Column<LogSchemaDto, LogSchemaDto>(cell) {
       @Override
       public LogSchemaDto getValue(LogSchemaDto item) {

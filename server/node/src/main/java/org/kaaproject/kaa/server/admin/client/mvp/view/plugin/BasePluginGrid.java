@@ -89,11 +89,11 @@ public class BasePluginGrid<T extends PluginDto> extends AbstractKaaGrid<T, Stri
             fireEvent(rowDownloadSchemaEvent);
           }
         }, new ActionButtonCell.ActionValidator<T>() {
-      @Override
-      public boolean canPerformAction(T value) {
-        return !embedded;
-      }
-    });
+            @Override
+            public boolean canPerformAction(T value) {
+                return !embedded;
+            }
+            });
     Column<T, T> column = new Column<T, T>(cell) {
       @Override
       public T getValue(T item) {

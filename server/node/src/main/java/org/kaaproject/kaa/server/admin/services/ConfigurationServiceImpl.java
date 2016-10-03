@@ -469,8 +469,7 @@ public class ConfigurationServiceImpl
 
 
   @Override
-  public
-  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+  public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
       String externalUserId, String appToken, Integer schemaVersion)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
@@ -502,8 +501,8 @@ public class ConfigurationServiceImpl
             new KaaAdminServiceException("could not find user configuration", ITEM_NOT_FOUND));
       }
       return userConfigurationDto;
-    } catch (Exception e) {
-      throw Utils.handleException(e);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
   }
 

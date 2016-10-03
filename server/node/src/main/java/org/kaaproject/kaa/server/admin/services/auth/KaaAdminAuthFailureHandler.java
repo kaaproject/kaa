@@ -49,7 +49,9 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
 
   /**
    * Performs the redirect or forward to the {@code defaultFailureUrl} if set, otherwise returns a
-   * 401 error code. <p> If redirecting or forwarding, {@code saveException}
+   * 401 error code.
+   *
+   * <p>If redirecting or forwarding, {@code saveException}
    * will be called to cache the exception for use in the target view.
    */
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -84,7 +86,9 @@ public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler 
   }
 
   /**
-   * Caches the {@code AuthenticationException} for use in view rendering. <p> If {@code
+   * Caches the {@code AuthenticationException} for use in view rendering.
+   *
+   * <p>If {@code
    * forwardToDestination} is set to true, request scope will be used, otherwise it will attempt to
    * store the exception in the session. If there is no session and {@code allowSessionCreation} is
    * {@code true} a session will be created. Otherwise the exception will not be stored.

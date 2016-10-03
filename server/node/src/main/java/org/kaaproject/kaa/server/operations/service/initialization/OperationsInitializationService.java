@@ -99,7 +99,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
   private OperationsServerConfig operationsServerConfig;
 
   /**
-   * The event service
+   * The event service.
    */
   @Autowired
   private EventService eventService;
@@ -114,7 +114,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
   private CuratorFramework zkClient;
 
   /**
-   * OperationsServerConfig getter
+   * OperationsServerConfig getter.
    *
    * @return OperationsServerConfig
    */
@@ -135,7 +135,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
     operationsTransportService.lookupAndInit();
 
     if (getNodeConfig().isZkEnabled()) {
-      startZK();
+      startZk();
       operationsTransportService.addListener(new TransportUpdateListener() {
 
         @Override
@@ -145,8 +145,8 @@ public class OperationsInitializationService extends AbstractInitializationServi
             info.setTransports(mdList);
             try {
               operationsNode.updateNodeData(info);
-            } catch (IOException e) {
-              LOG.error("Failed to update bootstrap node info", e);
+            } catch (IOException ex) {
+              LOG.error("Failed to update bootstrap node info", ex);
             }
           }
         }
@@ -185,7 +185,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
     }
 
     if (getNodeConfig().isZkEnabled()) {
-      stopZK();
+      stopZk();
     }
 
     LOG.info("Operations Service Stopped.");
@@ -194,38 +194,41 @@ public class OperationsInitializationService extends AbstractInitializationServi
   /**
    * Stop zk node.
    */
-  private void stopZK() {
+  private void stopZk() {
     try {
       operationsNode.close();
-    } catch (IOException e) {
-      LOG.warn("Error closing ZK node", e);
+    } catch (IOException ex) {
+      LOG.warn("Error closing ZK node", ex);
     }
   }
 
   /**
    * Start zk node.
    */
-  private void startZK() {
+  private void startZk() {
     OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
     ByteBuffer keyData = ByteBuffer.wrap(operationsKeyStoreService.getPublicKey().getEncoded());
-    nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
+    nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(),
+            getNodeConfig().getThriftPort(), keyData));
     nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX, 1.0));
     nodeInfo.setTransports(new ArrayList<TransportMetaData>());
     operationsNode = new OperationsNode(nodeInfo, zkClient);
     try {
       operationsNode.start();
       eventService.setZkNode(operationsNode);
-      eventService.setResolver(new ConsistentHashResolver(operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
+      eventService.setResolver(new ConsistentHashResolver(
+              operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
           .getUserHashPartitions()));
       clusterService.setZkNode(operationsNode);
-      clusterService.setResolver(new ConsistentHashResolver(operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
+      clusterService.setResolver(new ConsistentHashResolver(
+              operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
           .getUserHashPartitions()));
-    } catch (Exception e) {
+    } catch (Exception ex) {
       if (getNodeConfig().isZkIgnoreErrors()) {
-        LOG.info("Failed to register operations in ZooKeeper", e);
+        LOG.info("Failed to register operations in ZooKeeper", ex);
       } else {
-        LOG.error("Failed to register operations in ZooKeeper", e);
-        throw new RuntimeException(e); // NOSONAR
+        LOG.error("Failed to register operations in ZooKeeper", ex);
+        throw new RuntimeException(ex); // NOSONAR
       }
     }
   }

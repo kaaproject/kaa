@@ -143,7 +143,7 @@ public class CtlSchemaPlace extends TreePlace {
     }
 
     if (metaInfoId == null && other.metaInfoId != null) {
-        return false;
+      return false;
     } else if (!metaInfoId.equals(other.metaInfoId)) {
       return false;
     }
@@ -157,7 +157,7 @@ public class CtlSchemaPlace extends TreePlace {
     }
 
     if (version == null && other.version != null) {
-        return false;
+      return false;
     } else if (!version.equals(other.version)) {
       return false;
     }

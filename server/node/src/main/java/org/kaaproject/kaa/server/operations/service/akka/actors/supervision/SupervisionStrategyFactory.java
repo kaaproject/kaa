@@ -20,11 +20,14 @@ import akka.actor.OneForOneStrategy;
 import akka.actor.SupervisorStrategy;
 import akka.actor.SupervisorStrategy.Directive;
 import akka.japi.Function;
-import scala.concurrent.duration.Duration;
-
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import scala.concurrent.duration.Duration;
+
+
 
 public final class SupervisionStrategyFactory {
 
@@ -33,7 +36,7 @@ public final class SupervisionStrategyFactory {
   private SupervisionStrategyFactory() {
   }
 
-  public static SupervisorStrategy createIORouterStrategy(AkkaContext context) {
+  public static SupervisorStrategy createIoRouterStrategy(AkkaContext context) {
     return buildResumeOrEscalateStrategy();
   }
 
@@ -50,51 +53,54 @@ public final class SupervisionStrategyFactory {
   }
 
   private static SupervisorStrategy buildResumeOrEscalateStrategy() {
-    return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
-      @Override
-      public Directive apply(Throwable t) throws Exception {
-        logException(t);
-        if (t instanceof Error) {
-          return OneForOneStrategy.escalate();
-        } else {
-          return OneForOneStrategy.resume();
+    return new OneForOneStrategy(-1, Duration.Inf(),
+            new Function<Throwable, SupervisorStrategy.Directive>() {
+        @Override
+        public Directive apply(Throwable throwable) throws Exception {
+          logException(throwable);
+          if (throwable instanceof Error) {
+            return OneForOneStrategy.escalate();
+          } else {
+            return OneForOneStrategy.resume();
+          }
         }
-      }
-    });
+      });
   }
 
   private static SupervisorStrategy buildRestartOrEscalateStrategy() {
-    return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
-      @Override
-      public Directive apply(Throwable t) throws Exception {
-        logException(t);
-        if (t instanceof Error) {
-          return OneForOneStrategy.escalate();
-        } else {
-          return OneForOneStrategy.restart();
+    return new OneForOneStrategy(-1, Duration.Inf(),
+            new Function<Throwable, SupervisorStrategy.Directive>() {
+        @Override
+        public Directive apply(Throwable throwable) throws Exception {
+          logException(throwable);
+          if (throwable instanceof Error) {
+            return OneForOneStrategy.escalate();
+          } else {
+            return OneForOneStrategy.restart();
+          }
         }
-      }
-    });
+      });
   }
 
   private static SupervisorStrategy buildResumeOnRuntimeErrorStrategy() {
-    return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
-      @Override
-      public Directive apply(Throwable t) throws Exception {
-        logException(t);
-        if (t instanceof Error) {
-          return OneForOneStrategy.escalate();
-        } else if (t instanceof RuntimeException) {
-          return OneForOneStrategy.resume();
-        } else {
-          return OneForOneStrategy.restart();
+    return new OneForOneStrategy(-1, Duration.Inf(),
+            new Function<Throwable, SupervisorStrategy.Directive>() {
+        @Override
+        public Directive apply(Throwable throwable) throws Exception {
+          logException(throwable);
+          if (throwable instanceof Error) {
+            return OneForOneStrategy.escalate();
+          } else if (throwable instanceof RuntimeException) {
+            return OneForOneStrategy.resume();
+          } else {
+            return OneForOneStrategy.restart();
+          }
         }
-      }
-    });
+      });
   }
 
-  private static void logException(Throwable t) {
-    LOG.error("Supervisor strategy got exception: {}", t.getMessage(), t);
+  private static void logException(Throwable throwable) {
+    LOG.error("Supervisor strategy got exception: {}", throwable.getMessage(), throwable);
   }
 
 }

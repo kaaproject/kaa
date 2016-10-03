@@ -27,8 +27,8 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public abstract class AbstractUserActivity<T extends UserDto, V extends UserView, P extends UserPlace> extends
-    AbstractDetailsActivity<T, V, P> {
+public abstract class AbstractUserActivity<T extends UserDto, V extends UserView, P extends
+        UserPlace> extends AbstractDetailsActivity<T, V, P> {
 
 
   public AbstractUserActivity(P place, ClientFactory clientFactory) {
@@ -59,7 +59,8 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
     detailsView.clearError();
 
     if (create) {
-      KaaAdmin.getAuthService().checkUserNameOccupied(entity.getUsername(), null, new BusyAsyncCallback<ResultCode>() {
+      KaaAdmin.getAuthService().checkUserNameOccupied(
+              entity.getUsername(), null, new BusyAsyncCallback<ResultCode>() {
         @Override
         public void onFailureImpl(Throwable caught) {
           Utils.handleException(caught, detailsView);
@@ -81,7 +82,8 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
 
   private void checkEmail() {
     final Long userId = !create ? Long.valueOf(entity.getExternalUid()) : null;
-    KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId, new BusyAsyncCallback<ResultCode>() {
+    KaaAdmin.getAuthService().checkEmailOccupied(
+            entity.getMail(), userId, new BusyAsyncCallback<ResultCode>() {
       @Override
       public void onFailureImpl(Throwable caught) {
         Utils.handleException(caught, detailsView);

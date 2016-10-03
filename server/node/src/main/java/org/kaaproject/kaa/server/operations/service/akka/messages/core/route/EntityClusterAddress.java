@@ -39,24 +39,34 @@ public abstract class EntityClusterAddress extends EntityAddress {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (!super.equals(obj))
+    }
+    if (!super.equals(obj)) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     EntityClusterAddress other = (EntityClusterAddress) obj;
     if (nodeId == null) {
-      if (other.nodeId != null)
+      if (other.nodeId != null) {
         return false;
-    } else if (!nodeId.equals(other.nodeId))
-      return false;
+      }
+    } else {
+      if (!nodeId.equals(other.nodeId)) {
+        return false;
+      }
+    }
     return true;
   }
 
   @Override
   public String toString() {
-    return "EntityClusterAddress [nodeId=" + nodeId + ", tenantId=" + getTenantId() + ", appToken=" + getAppToken() + "]";
+    return "EntityClusterAddress [nodeId=" + nodeId
+           + ", tenantId=" + getTenantId()
+           + ", appToken=" + getAppToken()
+           + "]";
   }
 
 }

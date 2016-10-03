@@ -176,8 +176,8 @@ public class DefaultOperationsServerListService
     private final ConcurrentMap<A, Future<V>> cache = new ConcurrentHashMap<>();
     private final Computable<A, V> computable;
 
-    public Memorizer(Computable<A, V> c) {
-      this.computable = c;
+    public Memorizer(Computable<A, V> computable) {
+      this.computable = computable;
     }
 
     public V compute(final A arg) throws InterruptedException {

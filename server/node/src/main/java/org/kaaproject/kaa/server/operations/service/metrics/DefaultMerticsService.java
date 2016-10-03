@@ -94,38 +94,38 @@ public class DefaultMerticsService implements MetricsService {
   private void registerSystemMonitor() {
     LOG.info("Registering load average usage metrics.");
     metrics.register(MetricRegistry.name(
-        SystemMonitoringInfo.class, "system-load-average"), new Gauge<Double>() {
-      @Override
-      public Double getValue() {
-        return monitor.getLoadAverage();
-      }
-    });
+            SystemMonitoringInfo.class, "system-load-average"), new Gauge<Double>() {
+              @Override
+              public Double getValue() {
+                return monitor.getLoadAverage();
+              }
+            });
 
     LOG.info("Registering heap memory usage metrics.");
     metrics.register(MetricRegistry.name(
-        SystemMonitoringInfo.class, "heap-memory-usage.mb"), new Gauge<Long>() {
-      @Override
-      public Long getValue() {
-        return monitor.getHeapMemoryUsage();
-      }
-    });
+            SystemMonitoringInfo.class, "heap-memory-usage.mb"), new Gauge<Long>() {
+              @Override
+              public Long getValue() {
+                return monitor.getHeapMemoryUsage();
+              }
+            });
 
     LOG.info("Registering non heap memory usage metrics.");
     metrics.register(MetricRegistry.name(
-        SystemMonitoringInfo.class, "non-heap-memory-usage.mb"), new Gauge<Long>() {
-      @Override
-      public Long getValue() {
-        return monitor.getNonHeapMemoryUsage();
-      }
-    });
+            SystemMonitoringInfo.class, "non-heap-memory-usage.mb"), new Gauge<Long>() {
+              @Override
+              public Long getValue() {
+                return monitor.getNonHeapMemoryUsage();
+              }
+            });
 
     LOG.info("Registering live thread count metrics.");
     metrics.register(MetricRegistry.name(
-        SystemMonitoringInfo.class, "thread-count"), new Gauge<Integer>() {
-      @Override
-      public Integer getValue() {
-        return monitor.getLiveThreadCount();
-      }
-    });
+            SystemMonitoringInfo.class, "thread-count"), new Gauge<Integer>() {
+              @Override
+              public Integer getValue() {
+                return monitor.getLiveThreadCount();
+              }
+            });
   }
 }

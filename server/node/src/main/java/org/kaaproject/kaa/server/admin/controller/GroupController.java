@@ -125,8 +125,8 @@ public class GroupController extends AbstractAdminController {
           + "user does not have the required role "
           + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
           + "of the application does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 404, message = "An endpoint group with" +
-          "the specified endpointGroupId does not exist"),
+      @ApiResponse(code = 404, message = "An endpoint group with"
+                                         + "the specified endpointGroupId does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "endpointGroup/{endpointGroupId}", method = RequestMethod.GET)
   @ResponseBody
@@ -344,8 +344,8 @@ public class GroupController extends AbstractAdminController {
       @ApiResponse(code = 401, message = "The user is not authenticated "
           + "or invalid credentials were provided"),
       @ApiResponse(code = 403, message = "The authenticated user does not have the required role "
-          + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+          + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+          + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId "
           + "does not exist or existing profile filter with the "
           + "specified profileFilterId not found"),
@@ -453,8 +453,8 @@ public class GroupController extends AbstractAdminController {
       @ApiResponse(code = 401, message = "The user is not authenticated or "
           + "invalid credentials were provided"),
       @ApiResponse(code = 403, message = "The authenticated user does not have the "
-          + "required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+          + "required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+          + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "An endpoint group with the specified endpointGroupId "
           + "does not exist or the endpoint group does not have "
           + "the specified profile filter record"),

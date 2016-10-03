@@ -26,7 +26,8 @@ public class UserConfigurationUpdate {
   private final int schemaVersion;
   private final byte[] hash;
 
-  public UserConfigurationUpdate(String tenantId, String userId, String applicationToken, int schemaVersion, byte[] hash) {
+  public UserConfigurationUpdate(String tenantId, String userId, String applicationToken,
+                                 int schemaVersion, byte[] hash) {
     super();
     this.tenantId = tenantId;
     this.userId = userId;
@@ -37,8 +38,9 @@ public class UserConfigurationUpdate {
 
   public static UserConfigurationUpdate fromThrift(
       org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate notification) {
-    return new UserConfigurationUpdate(notification.getTenantId(), notification.getUserId(), notification.getApplicationToken(),
-        notification.getCfSchemaVersion(), notification.getUcfHash());
+    return new UserConfigurationUpdate(notification.getTenantId(), notification.getUserId(),
+            notification.getApplicationToken(), notification.getCfSchemaVersion(),
+            notification.getUcfHash());
   }
 
   public String getTenantId() {

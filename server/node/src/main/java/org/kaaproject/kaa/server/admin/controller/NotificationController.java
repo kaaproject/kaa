@@ -478,8 +478,8 @@ public class NotificationController extends AbstractAdminController {
           message = "The user is not authenticated or invalid credentials were provided"),
       @ApiResponse(code = 403,
           message = "The authenticated user does not have the required role "
-              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
-          "of the application does not match the Tenant ID of the authenticated user"),
+              + "(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID "
+              + "of the application does not match the Tenant ID of the authenticated user"),
       @ApiResponse(code = 404, message = "A file with the notification body "
           + "was not found in the form data or an application with the specified ID "
           + "does not exist or a topic with the specified ID does not exist"),

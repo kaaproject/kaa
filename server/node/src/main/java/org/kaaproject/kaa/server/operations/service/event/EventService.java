@@ -136,7 +136,7 @@ public interface EventService {
   boolean isMainUserNode(String userId);
 
   /**
-   * Returns id of the node that should contain global user actor
+   * Returns id of the node that should contain global user actor.
    *
    * @param userId the user id
    * @return id of the global user actor node

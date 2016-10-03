@@ -90,6 +90,7 @@ public class NotificationMessage {
 
   @Override
   public String toString() {
-    return "NotificationMessage [notifications=" + notifications + ", unicastNotificationId=" + unicastNotificationId + "]";
+    return "NotificationMessage [notifications=" + notifications + ", unicastNotificationId="
+           + unicastNotificationId + "]";
   }
 }

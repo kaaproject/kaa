@@ -161,7 +161,8 @@ public class EcfSchemaFormAvroConverter extends SimpleSchemaFormAvroConverter {
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeUiForm(org.kaaproject.avro.ui.shared.RecordField)
+   * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeUiForm(
+   * org.kaaproject.avro.ui.shared.RecordField)
    */
   @Override
   protected RecordField customizeUiForm(RecordField field) {

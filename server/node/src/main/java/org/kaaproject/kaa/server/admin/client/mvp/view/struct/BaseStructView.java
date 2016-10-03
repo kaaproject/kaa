@@ -194,7 +194,8 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V>
     buttonsPanel.setSpacing(5);
 
     detailsTable.setWidget(2, 0, buttonsPanel);
-    detailsTable.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    detailsTable.getCellFormatter().setHorizontalAlignment(
+            2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
     detailsTable.getFlexCellFormatter().setColSpan(2, 0, 2);
 
     saveButton = new Button(Utils.constants.save());

@@ -278,30 +278,29 @@ public class BootstrapTransportService
         }
 
         private byte[] encodePlatformLevelData(Map<Integer, PlatformEncDec> platformEncDecMap,
-                                               int platformID,
+                                               int platformId,
                                                ServerSync sync)
             throws PlatformEncDecException {
-          PlatformEncDec encDec = platformEncDecMap.get(platformID);
+          PlatformEncDec encDec = platformEncDecMap.get(platformId);
           if (encDec != null) {
-            return platformEncDecMap.get(platformID).encode(sync);
+            return platformEncDecMap.get(platformId).encode(sync);
           } else {
             throw new PlatformEncDecException(
                 MessageFormat.format("Encoder for platform protocol [{0}] is not defined",
-                platformID));
+                platformId));
           }
         }
 
         private ClientSync decodePlatformLevelData(Map<Integer, PlatformEncDec> platformEncDecMap,
-                                                   Integer platformID,
+                                                   Integer platformId,
                                                    byte[] requestRaw)
             throws PlatformEncDecException {
-          PlatformEncDec encDec = platformEncDecMap.get(platformID);
+          PlatformEncDec encDec = platformEncDecMap.get(platformId);
           if (encDec != null) {
-            return platformEncDecMap.get(platformID).decode(requestRaw);
+            return platformEncDecMap.get(platformId).decode(requestRaw);
           } else {
-            throw new PlatformEncDecException
-                (MessageFormat.format("Decoder for platform protocol [{0}] is not defined",
-                platformID));
+            throw new PlatformEncDecException(MessageFormat.format(
+                    "Decoder for platform protocol [{0}] is not defined", platformId));
           }
         }
 

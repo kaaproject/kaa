@@ -28,7 +28,8 @@ public class UserVerificationRequestMessage {
   private final String userId;
   private final String accessToken;
 
-  public UserVerificationRequestMessage(ActorRef originator, String verifierId, String userId, String accessToken) {
+  public UserVerificationRequestMessage(ActorRef originator, String verifierId, String userId,
+                                        String accessToken) {
     super();
     this.id = UUID.randomUUID();
     this.originator = originator;

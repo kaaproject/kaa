@@ -31,7 +31,10 @@ public class ThriftEndpointActorMsg<T> extends AbstractEndpointActorMsg {
 
   @Override
   public String toString() {
-    return "ThriftEndpointActorMsg [msg=" + msg + ", address=" + getAddress() + ", classifier=" + getClassifier() + "]";
+    return "ThriftEndpointActorMsg [msg=" + msg
+           + ", address=" + getAddress()
+           + ", classifier=" + getClassifier()
+           + "]";
   }
 
 }

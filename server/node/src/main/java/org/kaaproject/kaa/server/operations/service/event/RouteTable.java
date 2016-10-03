@@ -165,19 +165,6 @@ public class RouteTable {
     }
   }
 
-  private void clearReportedAddressMap(String serverId) {
-    Set<Entry<RouteTableAddress, Set<String>>> entrySet = reportedAddressMap.entrySet();
-    Iterator<Entry<RouteTableAddress, Set<String>>> iterator = entrySet.iterator();
-    while (iterator.hasNext()) {
-      Entry<RouteTableAddress, Set<String>> entry = iterator.next();
-      Set<String> servers = entry.getValue();
-      servers.remove(serverId);
-      if (servers.isEmpty()) {
-        iterator.remove();
-      }
-    }
-  }
-
   private void clearRoutes(EndpointObjectHash endpoint) {
     Set<Entry<RouteTableKey, Map<String, RouteTableAddress>>> entrySet = routes.entrySet();
     Iterator<Entry<RouteTableKey, Map<String, RouteTableAddress>>> iterator = entrySet.iterator();
@@ -193,6 +180,19 @@ public class RouteTable {
         }
       }
       if (addressMap.isEmpty()) {
+        iterator.remove();
+      }
+    }
+  }
+
+  private void clearReportedAddressMap(String serverId) {
+    Set<Entry<RouteTableAddress, Set<String>>> entrySet = reportedAddressMap.entrySet();
+    Iterator<Entry<RouteTableAddress, Set<String>>> iterator = entrySet.iterator();
+    while (iterator.hasNext()) {
+      Entry<RouteTableAddress, Set<String>> entry = iterator.next();
+      Set<String> servers = entry.getValue();
+      servers.remove(serverId);
+      if (servers.isEmpty()) {
         iterator.remove();
       }
     }

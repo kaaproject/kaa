@@ -149,7 +149,9 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     }
     if (!firstTimeLogin) {
       User currentUser = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
-      if (!currentUser.equals(userEntity)) return ResultCode.PERMISSION_DENIED;
+      if (!currentUser.equals(userEntity)) {
+        return ResultCode.PERMISSION_DENIED;
+      }
     }
     if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
       return ResultCode.OLD_PASSWORD_MISMATCH;

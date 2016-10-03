@@ -25,7 +25,7 @@ import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersio
 import java.util.List;
 
 /**
- * Represents intent of endpoint to connect to local user actor
+ * Represents intent of endpoint to connect to local user actor.
  *
  * @author Andrew Shvayka
  */
@@ -36,8 +36,10 @@ public class EndpointUserConnectMessage extends EndpointAwareMessage implements 
   private final int cfVersion;
   private final byte[] ucfHash;
 
-  public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey, List<EventClassFamilyVersion> ecfVersions,
-                                    int cfVersion, byte[] ucfHash, String applicationToken, ActorRef originator) {
+  public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey,
+                                    List<EventClassFamilyVersion> ecfVersions,
+                                    int cfVersion, byte[] ucfHash, String applicationToken,
+                                    ActorRef originator) {
     super(applicationToken, endpointKey, originator);
     this.userId = userId;
     this.ecfVersions = ecfVersions;

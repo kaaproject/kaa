@@ -33,7 +33,8 @@ public class EndpointEventReceiveMessage extends EndpointAwareMessage implements
   private final List<EndpointEvent> events;
   private final RouteTableAddress address;
 
-  public EndpointEventReceiveMessage(String userId, List<EndpointEvent> events, RouteTableAddress address, ActorRef originator) {
+  public EndpointEventReceiveMessage(String userId, List<EndpointEvent> events,
+                                     RouteTableAddress address, ActorRef originator) {
     super(address.getApplicationToken(), address.getEndpointKey(), originator);
     this.userId = userId;
     this.address = address;
