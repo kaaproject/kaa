@@ -21,81 +21,106 @@ Make sure that the following components are installed on your machine:
 
 ## Installation
 
-The main method for installing Kaa SDK into a project as a third-party framework is using [CocoaPods](https://cocoapods.org/) dependency manager.
+To install a Kaa SDK in your project as a third-party framework, use the [CocoaPods](https://cocoapods.org/) dependency manager.
 
-First of all, before start to develop your application, you need to [generate Endpoint SDK](%s:https://balldir.github.io/kaa/docs/current/:{{root_url}}:g) for the target platform - Objective-C. 
-After pressing on _download_ button, you'll get an archived file wrapped with __.tar.gz__ extension.
-After downloading, please, move this archive into your project directory and extract.
+To generate your Objective-C SDK:
 
-After that, open a console, move into your project directory by _cd_ command. 
-When you're getting into required directory, write ``pod init`` into console in working directory or create a `Podfile` manually, using your preferable text editor.
+<ol>
+<li markdown="1">
+Click the **Source** button.
+A project source download window will open.
+Click **Ok** and download the .tar.gz file.
+</li>
+<li markdown="1">
+Unpack the downloaded archive into your project directory and run the following command from that directory.
 
-If you create __Podfile__, using a command above, add a line to include Kaa SDK as pod:
-``` ruby
+```	
+pod init
+```	
+
+This will create a file named **Podfile**.
+You can also create it manually using a text editor.
+
+If you create the **Podfile** file using the `pod init` command, add the following line to include your Kaa SDK as a pod.
+
+```ruby
 pod 'Kaa', :path => './libs/kaa-ep-sdk'
 ```
 
-If you created a __Podfile__ by hand, first of all, you must fill it with as below:
-``` ruby 
+If you create the **Podfile** file using a text editor, make sure to include the following content.
+
+```ruby
 use_frameworks!
 
 target '<PROJECT_NAME>' do
     pod 'Kaa', :path => './libs/kaa-ep-sdk'
 end
 ```
-where __PROJECT_NAME__ - name of your project's target.
 
-You must add ``use_frameworks!`` command as first line into your __Podfile__ if you will use Kaa into swift project. 
-This step is mandatory if you don't want to bridge headers apart into your project.
+In the example above, **PROJECT_NAME** is the name of your project target.
 
-When you complete all steps before, complete next command chain:
+>**TIP:** If you want to deploy your Kaa instance in a Swift project, add the `use_frameworks!` command as the first line in your **Podfile** file.
+>This step is required if you don't want to import the bridging headers into your project.
+{:.tip}
+</li>
+<li markdown="1">
+Run the following commands.
+
 ``` bash
-pod update 
+pod update
 pod install
 ```
 
-After that, you'll see a log message within extra frameworks success installation used in Kaa.
-If you don't get any errors, you can open your project with Xcode, running __xworkspace__ file.
-In your project tree you can find Kaa into __Development Pods__ group, located  Pods target.
+A log message will be created upon successful installation.
+</li>
+<li markdown="1">
+Open the .xworkspace file in Xcode.
+Your Kaa SDK is listed in the **Development Pods** group of the project tree.
+</li>
+</ol>
 
-## Using endpoint SDK 
+## Using endpoint SDK
 
-So, let's begin to use Kaa SDK. 
-Development will be carried out in one of auto-created files, e.g. __ViewController__.
+To build your project using the Kaa Objective-C SDK:
 
-Open `ViewController.h` and create a new property, named `kaaClient` as below:
+<ol>
+<li markdown="1">
+Open the auto-generated ViewController.h file and create a property named `kaaClient`.
+
 ```objc
 @property (nonatomic, strong) id<KaaClient> kaaClient;
 ```
-Of course, you might not to declare kaaClient variable and make it accessible only to the controller, but as desirable, it should be visible and available outside of ViewController implementation.
-
-After declaration you, obviously, get an error about undeclared type. To get it correct, make a forward declaration of KaaClient protocol. 
+You can skip the declaration of a `kaaClient` variable and make it accessible to the controller only, but it should be visible and available outside the `ViewController` implementation.
+</li>
+<li markdown="1">
+After the declaration, you will receive the 'undeclared type' error.
+To avoid this, make a forward declaration of the `KaaClient` protocol.
 
 ``` objc
 @protocol KaaClient;
 ```
+</li>
+<li markdown="1">
+Open the ViewController.m file and add the `#import <Kaa/Kaa.h>` header before the controller implementation.
+Make sure that your controller conforms to the **KaaClientStateDelegate** and **ProfileContainer** protocols, and that all required methods are implemented.
+</li>
+</ol>
 
-OK, let's move forward to __ViewController.m__ file.
+After this, Kaa SDK provides you with the **Kaa** class factory used to create a new instance of the [Kaa client]({{root_url}}Glossary/#kaa-client).
 
-The next step is to add  Kaa header to the top of the file, before controller implementation. 
-It should look as  ``#import <Kaa/Kaa.h>``.
-After that, conform your controller to the __KaaClientStateDelegate__ and __ProfileContainer__ protocols and implement all required methods.
-
-After all steps, SDK provides you with class factory Kaa which is responsible for creating new instance of the client.
-So, here's an example, showing how it should be:
 ``` objc
 self.kaaClient = [KaaClientFactory clientWithContext:[[DefaultKaaPlatformContext alloc] init] stateDelegate:self];
 ```
 
-Making all these steps, build your project. 
-If all made correct, the project will build without errors. 
-Congratulations, you have embedded Kaa into your project.
+Kaa Objective-C SDK is now successfully embedded into your project.
 
----
+## Logging
 
-Under the hood Objective-C endpoint SDK uses [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) framework for logging. 
-By default SDK logs only warnings and errors. 
-In order to change current SDK logging level open `Kaa/KaaLogging.m` file and assign to `ddLogLevel` variable one of the following constants:
+Kaa Objective-C endpoint SDK uses [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) framework for logging.
+By default, the SDK logs warnings and errors only.
+
+To change current SDK logging level, open the Kaa/KaaLogging.m file and assign one of the following constants to the `ddLogLevel` variable:
+
 * `DDLogLevelVerbose`
 * `DDLogLevelDebug`
 * `DDLogLevelInfo`
@@ -103,9 +128,3 @@ In order to change current SDK logging level open `Kaa/KaaLogging.m` file and as
 * `DDLogLevelError`
 * `DDLogLevelAll`
 * `DDLogLevelOff`
-
-## Demo application
-
-To better familiarize yourself with Kaa Objective-C SDK, you may look at our demo applications.
-
-Find the demo source code in our [sample-apps](https://github.com/kaaproject/sample-apps) repository on GitHub.
