@@ -46,7 +46,13 @@ public interface EndpointProfileView extends BaseDetailsView {
     HasClickHandlers getDownloadServerProfileJsonButton();
     HasClickHandlers getEditServerProfileButton();
 
+    RecordPanel getEndpointConfiguration();
+    HasClickHandlers getDownloadEndpointConfigurationButton();
+    Anchor getEndpointConfigSchemaName();
+
     Anchor getSdkAnchor();
     AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
     TopicGrid getTopicsGrid();
+
+
 }

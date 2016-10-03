@@ -41,7 +41,30 @@ int init_aes_key(unsigned char *key, size_t bytes)
 kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_size,
         uint8_t *output, const uint8_t *key)
 {
-    if ((input_size % 16) != 0 || !input || !input_size) {
+    if ((input_size % 16) != 0 || input == NULL || input_size == 0) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    while (input_size >= KAA_SESSION_KEY_LENGTH) {
+
+        if (aes_encrypt_decrypt_block(mode, input, output, key)) {
+            return KAA_ERR_BADPARAM;
+        }
+
+        input_size -= KAA_SESSION_KEY_LENGTH;
+
+        input += KAA_SESSION_KEY_LENGTH;
+        output += KAA_SESSION_KEY_LENGTH;
+    }
+
+    return KAA_ERR_NONE;
+
+}
+
+kaa_error_t aes_encrypt_decrypt_block(int mode, const uint8_t *input,
+        uint8_t *output, const uint8_t *key)
+{
+    if (input == NULL) {
         return KAA_ERR_BADPARAM;
     }
 
@@ -57,15 +80,13 @@ kaa_error_t aes_encrypt_decrypt(int mode, const uint8_t *input, size_t input_siz
         initialized = true;
     }
 
+    /* KAA_SESSION_KEY_LENGTH * 8 - size in bits */
     if (mode == MBEDTLS_AES_ENCRYPT) {
-        /* KAA_SESSION_KEY_LENGTH * 8 - size in bits */
         mbedtls_aes_setkey_enc(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
-        mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_ENCRYPT, input, output);
     } else {
-        /* KAA_SESSION_KEY_LENGTH * 8 - size in bits */
         mbedtls_aes_setkey_dec(&aes_ctx, key, KAA_SESSION_KEY_LENGTH * 8);
-        mbedtls_aes_crypt_ecb(&aes_ctx, MBEDTLS_AES_DECRYPT, input, output);
     }
+    mbedtls_aes_crypt_ecb(&aes_ctx, mode, input, output);
 
     return KAA_ERR_NONE;
 }
@@ -105,4 +126,44 @@ exit:
     mbedtls_entropy_free(&entropy);
 
     return ret ? KAA_ERR_BADDATA : KAA_ERR_NONE;
+}
+
+kaa_error_t rsa_encrypt(const uint8_t *key, size_t key_size, const uint8_t *input,
+        size_t input_len, uint8_t *output)
+{
+    if (key == NULL || key_size == 0) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    mbedtls_pk_context pk;
+    mbedtls_entropy_context entropy;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    const uint8_t pers[] = "key_gen";
+
+    mbedtls_pk_init(&pk);
+
+    if (mbedtls_pk_parse_public_key(&pk, key, key_size) != 0) {
+        return KAA_ERR_INVALID_PUB_KEY;
+    }
+
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+
+    int ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
+            pers, sizeof(pers) - 1);
+
+    if (!ret) {
+        ret = mbedtls_rsa_rsaes_pkcs1_v15_encrypt(mbedtls_pk_rsa(pk), mbedtls_ctr_drbg_random, &ctr_drbg,
+                MBEDTLS_RSA_PUBLIC, input_len, input, output);
+    }
+
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    mbedtls_pk_free(&pk);
+
+    if (ret) {
+        return KAA_ERR_GENERIC;
+    }
+
+    return KAA_ERR_NONE;
 }

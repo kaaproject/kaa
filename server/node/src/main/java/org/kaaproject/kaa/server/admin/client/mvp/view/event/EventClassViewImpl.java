@@ -79,4 +79,13 @@ public class EventClassViewImpl extends BaseCtlSchemaViewImpl implements EventCl
         result &= eventClassTypeName.getValue().length() > 0;
         return result;
     }
+
+    @Override
+    protected void updateSaveButton(boolean enabled, boolean invalid) {
+        if(create == true) {
+            super.updateSaveButton(enabled, invalid);
+        } else {
+            getSaveButtonWidget().setEnabled(false);
+        }
+    }
 }

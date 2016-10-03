@@ -37,7 +37,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CEventSourcesGenerator {
-    /** The Constant logger. */
+    /**
+     * The Constant logger.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(CppEventSourcesGenerator.class);
 
     /**
@@ -55,16 +57,17 @@ public class CEventSourcesGenerator {
     private static final String EVENT_FAMILIES_C_FILE = "kaa_{name}.c";
     private static final String EVENT_FQN_H_FILE = "kaa_event_fqn_definitions.h";
     private static final String EVENT_FQN_PATTERN = "sdk/c/event/kaa_event_fqn_definitions.hvm";
-    
+
     private static final VelocityEngine velocityEngine; //NOSONAR
+
     static {
         velocityEngine = new VelocityEngine();
 
         velocityEngine.addProperty("resource.loader", "class, file");
         velocityEngine.addProperty("class.resource.loader.class",
-                                   "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         velocityEngine.addProperty("file.resource.loader.class",
-                                   "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+                "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
         velocityEngine.addProperty("file.resource.loader.path", "/, .");
         velocityEngine.setProperty("runtime.references.strict", true);
         velocityEngine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
@@ -87,13 +90,17 @@ public class CEventSourcesGenerator {
             context.put("event_family_name", name);
             context.put("EVENT_FAMILY_NAME", NAME);
             context.put("namespacePrefix", NAME_PREFIX_TEMPLATE.replace("{name}", name));
-            List<EventClassDto> records = eventFamily.getRecords();
+
+            List<Schema> records = new ArrayList<>();
+            eventFamily.getRawCtlsSchemas().forEach(rawCtl -> records.add(new Schema.Parser().parse(rawCtl)));
             List<String> emptyRecords = new ArrayList<>();
-            if (records != null) {
-                for (EventClassDto record : records) {
-                        emptyRecords.add(record.getFqn());
+
+            for (Schema record : records) {
+                if (record.getType() == Schema.Type.RECORD && record.getFields() != null && record.getFields().size() == 0) {
+                    emptyRecords.add(record.getFullName());
                 }
             }
+
             context.put("emptyRecords", emptyRecords);
 
             List<String> incomingEventFqns = new ArrayList<>();
@@ -150,20 +157,19 @@ public class CEventSourcesGenerator {
 
 
             try (
-                OutputStream hdrStream = new ByteArrayOutputStream();
-                OutputStream srcStream = new ByteArrayOutputStream();) {
+                    OutputStream hdrStream = new ByteArrayOutputStream();
+                    OutputStream srcStream = new ByteArrayOutputStream()
+            ) {
                 String fileName = EVENT_FAMILY_DEFINITION_PATTERN.replace("{name}", name);
 
                 List<Schema> eventCtlSchemas = new ArrayList<>();
-                eventFamily.getRawCtlsSchemas().forEach(rawCtl -> new Schema.Parser().parse(rawCtl));
-                for (Schema ctlSchema : eventCtlSchemas) {
-                    Compiler compiler = new CCompiler(ctlSchema, fileName, hdrStream, srcStream);
-                    compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", name));
-                    compiler.generate();
-                }
+                eventFamily.getRawCtlsSchemas().forEach(rawCtl -> eventCtlSchemas.add(new Schema.Parser().parse(rawCtl)));
+
+                Compiler compiler = new CCompiler(eventCtlSchemas, fileName, hdrStream, srcStream);
+                compiler.setNamespacePrefix(NAME_PREFIX_TEMPLATE.replace("{name}", name));
+                compiler.generate();
 
                 String eventData = hdrStream.toString();
-
                 entry = new TarArchiveEntry(EVENT_SOURCE_OUTPUT + fileName + ".h");
                 entry.setSize(eventData.length());
                 tarEntry = new TarEntryData(entry, eventData.getBytes());

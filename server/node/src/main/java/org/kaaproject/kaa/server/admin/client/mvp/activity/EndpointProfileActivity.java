@@ -16,18 +16,25 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.server.rpc.core.java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
+import org.kaaproject.avro.ui.shared.FixedField;
+import org.kaaproject.avro.ui.shared.FormField;
+import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.data.DataSource;
+import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointProfilePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
@@ -103,6 +110,7 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
     @Override
     protected void onEntityRetrieved() {
         detailsView.getKeyHash().setValue(BaseEncoding.base64().encode(entity.getEndpointKeyHash()));
+        detailsView.getEndpointConfiguration().setValue(entity.getEndpointConfig());
 
         if (entity.getUserId() != null) {
             detailsView.getUserID().setValue(entity.getUserId());
@@ -144,7 +152,20 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
             detailsView.getTopicsGrid().getDataGrid().setRowData(new ArrayList<TopicDto>());
         }
 
+        detailsView.getEndpointConfigSchemaName().setText(Utils.constants.configuration());
+        registrations.add(detailsView.getEndpointConfigSchemaName().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                ConfigurationSchemaPlace configurationSchemaPlace =
+                        new ConfigurationSchemaPlace(
+                                place.getApplicationId(),Integer.toString(entity.getSchemaId()));
+                configurationSchemaPlace.setPreviousPlace(place);
+                goTo(configurationSchemaPlace);
+            }
+        }));
+
         detailsView.getEndpointProfSchemaName().setText(entity.getProfileSchemaName());
+
         registrations.add(detailsView.getEndpointProfSchemaName().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -174,6 +195,23 @@ public class EndpointProfileActivity extends AbstractDetailsActivity<EndpointPro
                         .getServerProfileSchemaVersion().getId());
                 serverProfSchemaPlace.setPreviousPlace(place);
                 goTo(serverProfSchemaPlace);
+            }
+        }));
+
+        registrations.add(detailsView.getDownloadEndpointConfigurationButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                KaaAdmin.getDataSource().findEndpointConfigurationByEndpointKeyHash(BaseEncoding.base64().encode(entity.getEndpointKeyHash()), new BusyAsyncCallback<String>() {
+                    @Override
+                    public void onFailureImpl(Throwable throwable) {
+                        Utils.handleException(throwable,detailsView);
+                    }
+
+                    @Override
+                    public void onSuccessImpl(String s) {
+                        ServletHelper.downloadEndpointConfiguration(BaseEncoding.base64().encode(entity.getEndpointKeyHash()));
+                    }
+                });
             }
         }));
         

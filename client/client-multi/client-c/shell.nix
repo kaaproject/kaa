@@ -23,6 +23,7 @@ args@
 , testSupport ? null
 , withWerror ? null
 , withTooling ? null
+, withValgrind ? null
 }:
 
 let pkgs = import ../../../nix { };

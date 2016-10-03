@@ -130,10 +130,21 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                 String appToken,
                 Integer schemaVersion,
                 String tenantId) {
-        return getDto(endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
-                        endpointUserDao.findByExternalIdAndTenantId(externalUid, tenantId).getId(),
+        if(isNotBlank(externalUid)) {
+            EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(externalUid, tenantId);
+            if (endpointUser!=null){
+                return getDto(endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
+                         endpointUser.getId(),
                         appToken,
                         schemaVersion));
+            } else {
+                LOG.warn("Could not find endpoint user by externalUid:", externalUid);
+                throw new IncorrectParameterException("Could not find endpoint user by externalUid");
+            }
+        } else {
+            LOG.warn("external user id could not be null!");
+            throw new IncorrectParameterException("externalUid could not be null!");
+        }
     }
 
 

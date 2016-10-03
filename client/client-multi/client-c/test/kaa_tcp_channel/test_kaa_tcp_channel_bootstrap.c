@@ -38,6 +38,7 @@
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
 #include "platform/ext_key_utils.h"
+#include "platform/ext_encryption_utils.h"
 
 #include <kaa_bootstrap_manager.h>
 

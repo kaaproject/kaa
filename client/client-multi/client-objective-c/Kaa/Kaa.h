@@ -136,7 +136,6 @@ FOUNDATION_EXPORT const unsigned char KaaVersionString[];
 #import <Kaa/SyncTask.h>
 #import <Kaa/KaaClientFactory.h>
 #import <Kaa/KaaDefaults.h>
-#import <Kaa/NSData+CommonCrypto.h>
 #import <Kaa/NSMutableArray+Shuffling.h>
 #import <Kaa/NSString+Commons.h>
 #import <Kaa/PersistentLogStorageConstants.h>

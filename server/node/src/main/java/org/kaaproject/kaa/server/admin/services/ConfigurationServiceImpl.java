@@ -18,10 +18,6 @@ package org.kaaproject.kaa.server.admin.services;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.ObjectNode;
 import org.hibernate.StaleObjectStateException;
 import org.kaaproject.avro.ui.converter.FormAvroConverter;
 import org.kaaproject.avro.ui.shared.RecordField;
@@ -49,6 +45,7 @@ import org.kaaproject.kaa.server.admin.shared.services.CtlService;
 import org.kaaproject.kaa.server.admin.shared.services.GroupService;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
+import static org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode.ITEM_NOT_FOUND;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 @Service("configurationService")
@@ -340,16 +338,12 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     public RecordField getConfigurationRecordDataFromFile(String schema, String fileItemName) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
+            Schema avroSchema = new Schema.Parser().parse(schema);
             byte[] body = getFileContent(fileItemName);
-
-            JsonNode json = new ObjectMapper().readTree(body);
-            json = injectUuids(json);
-            body = json.toString().getBytes();
-
+            body = AvroUtils.injectUuids(body, avroSchema).getBytes();
             GenericAvroConverter<GenericRecord> converter = new GenericAvroConverter<>(schema);
             GenericRecord record = converter.decodeJson(body);
-            RecordField recordData = FormAvroConverter.createRecordFieldFromGenericRecord(record);
-            return recordData;
+            return FormAvroConverter.createRecordFieldFromGenericRecord(record);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -423,10 +417,43 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     }
 
     @Override
+    public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) throws KaaAdminServiceException {
+              checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+               return controlService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash);
+            }
+
+
+    @Override
     public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(String externalUserId, String appToken, Integer schemaVersion) throws KaaAdminServiceException {
        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
-        return controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
+        try {
+            EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUserId,appToken,schemaVersion,getTenantId());
+            if (userConfigurationDto == null) {
+                throw Utils.handleException(new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND));
+            }
+            return userConfigurationDto;
+        } catch (Exception e){
+            throw Utils.handleException(e);
+        }
     }
+
+    @Override
+    public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+        try {
+            String appToken = controlService.getApplication(appId).getApplicationToken();
+            EndpointUserConfigurationDto userConfigurationDto = controlService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(externalUId,appToken,schemaVersion,getTenantId());
+            if (userConfigurationDto == null) {
+                throw Utils.handleException(new KaaAdminServiceException("could not find user configuration",ITEM_NOT_FOUND));
+            }
+            return userConfigurationDto;
+        } catch (Exception e){
+            throw Utils.handleException(e);
+        }
+    }
+
+
+
 
     private void checkSchemaId(String schemaId) throws IllegalArgumentException {
         if (isEmpty(schemaId)) {
@@ -520,22 +547,4 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
         }
         return schemaInfos;
     }
-
-    private JsonNode injectUuids(JsonNode json) {
-        boolean containerWithoutId = json.isContainerNode() && !json.has("__uuid");
-        boolean notArray = !(json instanceof ArrayNode);
-        boolean childIsNotArray = !(json.size() == 1 && json.getElements().next() instanceof ArrayNode);
-
-        if (containerWithoutId && notArray && childIsNotArray) {
-            ((ObjectNode) json).put("__uuid", (Integer) null);
-        }
-
-        for (JsonNode node : json) {
-            if (node.isContainerNode())
-                injectUuids(node);
-        }
-
-        return json;
-    }
-
 }

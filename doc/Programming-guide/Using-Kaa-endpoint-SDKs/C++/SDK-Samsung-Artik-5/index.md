@@ -12,13 +12,20 @@ sort_idx: 50
 
 The guide explains how to cross-compile Kaa applications for Samsung Artik 5 based on the Kaa C++ endpoint SDK.
 
-# Configuring Artik 5 board
+## Configuring Artik 5 board
 
 If this is the first time you use the Artik board, you have to start with configuring your board.
 For this purpose, refer to [the official Artik getting started guide](https://developer.artik.io/documentation/getting-started-beta/).
 After finishing with the guide, you will be able to access your board through both a serial terminal and an ssh client.
 
-# Installing prerequisites
+## Installing prerequisites
+
+**All steps described in this guide were tested on:**
+
+ - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
+ - **Device:** [Samsung Artik 5](https://www.artik.io/modules/overview/artik-5/)
+
+ **The further instructions must be executed on the host machine.**
 
 1. Install [CMake](https://cmake.org/):
 
@@ -30,7 +37,7 @@ After finishing with the guide, you will be able to access your board through bo
         sudo apt-get update
         sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0 libstdc++6:i386
 
-# Installing third-party components
+## Installing third-party components
 
 The following third-party components must be installed before building the C++ SDK.
 
@@ -114,7 +121,7 @@ Install the third-party components as follows.
         scp "${INSTALLDIR}"/lib/libbotan*.so* root@<put Artik ip address here>:/usr/lib
         scp "${INSTALLDIR}"/lib/libavrocpp*.so* root@<put Artik ip address here>:/usr/lib
 
-# Compiling applications
+## Compiling applications
 
 Now, dependencies are built and it is time to create Kaa application.
 Artik board is running regular Linux, so you can refer to [the Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#code) for detailed process of application creation.

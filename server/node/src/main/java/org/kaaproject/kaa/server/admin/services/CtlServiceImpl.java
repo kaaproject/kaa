@@ -310,7 +310,7 @@ public class CtlServiceImpl extends AbstractAdminService implements CtlService {
             Set<String> fqnListOfCurrentECF = controlService.getFqnSetForECF(ecfId);
             if (eventClassViewDtoList != null) {
                 for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
-                    String fqn = eventClassViewDto.getExistingMetaInfo().getMetaInfo().getFqn();
+                    String fqn = eventClassViewDto.getCtlSchemaForm().getMetaInfo().getFqn();
                     fqnListOfCurrentECF.add(fqn);
                 }
             }

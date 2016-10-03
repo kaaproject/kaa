@@ -25,7 +25,7 @@
 #include "utilities/kaa_mem.h"
 #include "kaa_common.h"
 
-static const char test_ep_key[20] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
+static const uint8_t test_ep_key[] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13, 0x14};
 
 void ext_status_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
@@ -40,15 +40,10 @@ void ext_status_store(const char *buffer, size_t buffer_size)
     (void)buffer_size;
 }
 
-void ext_get_endpoint_public_key(uint8_t **buffer, size_t *buffer_size)
+void ext_get_endpoint_public_key(const uint8_t **buffer, size_t *buffer_size)
 {
-    *buffer = KAA_MALLOC(SHA_1_DIGEST_LENGTH * sizeof(uint8_t));
-    if (*buffer != NULL) {
-        memcpy(*buffer, test_ep_key, SHA_1_DIGEST_LENGTH);
-        *buffer_size = SHA_1_DIGEST_LENGTH;
-    } else {
-        *buffer_size = 0;
-    }
+    *buffer = test_ep_key;
+    *buffer_size = sizeof(test_ep_key);
 }
 
 void ext_configuration_read(char **buffer, size_t *buffer_size, bool *needs_deallocation)

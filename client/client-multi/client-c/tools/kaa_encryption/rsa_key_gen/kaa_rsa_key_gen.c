@@ -44,6 +44,7 @@ static int fwrite_check(int n, int count)
 
 static size_t snprintf_check(int buffer_size, int written)
 {
+    (void)buffer_size;
     assert(buffer_size >= written);
     return written;
 }

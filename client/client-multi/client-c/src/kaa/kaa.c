@@ -30,6 +30,10 @@
 #include "kaa_defaults.h"
 #include "platform/ext_key_utils.h"
 
+#ifdef KAA_ENCRYPTION
+#include "platform/ext_encryption_utils.h"
+#endif
+
 #include <kaa_extension.h>
 
 #ifndef KAA_DISABLE_FEATURE_PROFILE
@@ -109,6 +113,26 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
     kaa_platform_protocol_destroy(context->platform_protocol);
     KAA_FREE(context);
     return KAA_ERR_NONE;
+}
+
+static kaa_error_t kaa_init_keys(void)
+{
+    kaa_error_t error = kaa_init_rsa_keypair();
+    if (error) {
+        return error;
+    }
+#ifdef KAA_ENCRYPTION
+    error = kaa_init_session_key();
+    if (error) {
+        return error;
+    }
+#endif
+    return error;
+}
+
+static void kaa_deinit_keys(void)
+{
+    kaa_deinit_rsa_keypair();
 }
 
 kaa_error_t kaa_init(kaa_context_t **kaa_context_p)

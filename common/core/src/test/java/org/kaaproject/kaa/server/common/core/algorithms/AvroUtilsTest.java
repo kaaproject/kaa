@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.common.core.algorithms;
 
 
+import org.apache.avro.Schema;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
@@ -28,17 +29,18 @@ import java.io.IOException;
 public class AvroUtilsTest {
     private JsonNode data;
     private JsonNode dataWithUUIDs;
+    private Schema avroSchema;
 
     @Before
     public void setUp() throws IOException {
         data = new ObjectMapper().readTree(AvroUtilsTest.class.getClassLoader().getResourceAsStream("uuids/data.json"));
         dataWithUUIDs = new ObjectMapper().readTree(AvroUtilsTest.class.getClassLoader().getResourceAsStream("uuids/data_with_uuids.json"));
+        avroSchema = new Schema.Parser().parse(AvroUtilsTest.class.getClassLoader().getResourceAsStream("uuids/schema.json"));
     }
 
     @Test
     public void testInjectUuids() throws IOException {
-        AvroUtils.injectUuids(data);
-        String jsonWithUUIds = data.toString();
+        String jsonWithUUIds = AvroUtils.injectUuids(data, avroSchema);
         Assert.assertTrue("Generated json is not equal json with UUIDs", jsonWithUUIds.equals(dataWithUUIDs.toString()));
     }
 

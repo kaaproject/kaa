@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -56,9 +57,11 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
+import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordViewDto;
@@ -176,6 +179,18 @@ public class DataSource {
             });
     }
 
+    public void findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(String externalUserId, String appId, Integer schemaVersion,  final AsyncCallback<EndpointUserConfigurationDto> callback) {
+
+        configurationRpcService.findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(externalUserId, appId, schemaVersion, new DataCallback<EndpointUserConfigurationDto>(callback) {
+            @Override
+            protected void onResult(EndpointUserConfigurationDto result) {
+                eventBus.fireEvent(new DataEvent(EndpointUserConfigurationDto.class, true));
+            }
+        });
+
+
+    }
+
     public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto,
             final AsyncCallback<Void> callback) {
         userRpcService.editUserProfile(userProfileUpdateDto,
@@ -185,6 +200,16 @@ public class DataSource {
                     }
                 });
     }
+
+    public void findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash,final AsyncCallback<String> callback){
+        configurationRpcService.findEndpointConfigurationByEndpointKeyHash(endpointKeyHash, new DataCallback<String>(callback) {
+            @Override
+            protected void onResult(String result) {
+
+            }
+        });
+    }
+
 
     public void getMailProperties(
             final AsyncCallback<PropertiesDto> callback) {
@@ -413,7 +438,9 @@ public class DataSource {
         userRpcService.editUser(user, new DataCallback<UserDto>(callback) {
             @Override
             protected void onResult(UserDto result) {
-                refreshUsers();
+                if (KaaAdmin.getAuthInfo().getAuthority() == KaaAuthorityDto.TENANT_ADMIN) {
+                    refreshUsers();
+                }
             }
         });
     }

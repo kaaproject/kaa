@@ -29,11 +29,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.kaaproject.kaa.server.admin.services.util.Utils.checkEmailUniquieness;
-import static org.kaaproject.kaa.server.admin.services.util.Utils.checkNotNull;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.checkFieldUniquieness;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
@@ -106,8 +104,8 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
             throws KaaAdminServiceException {
         try {
-            User stored = userFacade.findByUserName(user.getUsername());
-            boolean createNewUser = (stored == null);
+
+            boolean createNewUser = (user.getId() == null);
 
             String tempPassword = null;
             if (createNewUser)  {
@@ -120,20 +118,24 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
                     }
                 }
 
-                checkEmailUniquieness(
+                checkFieldUniquieness(
                         user.getMail(),
-                        userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet())
+                        userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet()),
+                        "email"
                 );
-                
+
+                checkFieldUniquieness(
+                        user.getUsername(),
+                        userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet()),
+                        "userName"
+                );
+
                 CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
                 user.setExternalUid(result.getUserId().toString());
                 tempPassword = result.getPassword();
             } else {
-                if (isEmpty(user.getId())) {
-                    controlService.getUsers().stream()
-                            .filter(u -> u.getUsername().equals(user.getUsername())).findFirst()
-                            .ifPresent(u -> user.setId(u.getId()));
-                }
+                User stored = userFacade.findByUserName(user.getUsername());
+
                 user.setExternalUid(String.valueOf(stored.getId()));
                 checkUserId(user.getId());
 
@@ -200,17 +202,6 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             throw Utils.handleException(e);
         }
         return tenantAdminList;
-    }
-
-
-    private void checkUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
-        if (isEmpty(userProfileUpdateDto.getFirstName())) {
-            throw new IllegalArgumentException("First name is not valid.");
-        } else if (isEmpty(userProfileUpdateDto.getLastName())) {
-            throw new IllegalArgumentException("Last name is not valid.");
-        } else if (isEmpty(userProfileUpdateDto.getMail())) {
-            throw new IllegalArgumentException("Mail is not valid.");
-        }
     }
 
 }

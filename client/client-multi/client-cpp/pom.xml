@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.10.0-SNAPSHOT</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-cpp</artifactId>
@@ -79,7 +79,12 @@
                         <exclude>tools/avro-cpp-disable-tests.patch</exclude>
                         <exclude>toolchains/*.cmake</exclude>
                         <exclude>tools/qnx/include/**</exclude>
-                    </excludes>
+                        <exclude>avro/configuration.avsc</exclude>
+                        <exclude>avro/endpoint.avsc</exclude>
+                        <exclude>avro/log.avsc</exclude>
+                        <exclude>avro/notification.avsc</exclude>
+                        <exclude>avro/profile.avsc</exclude>
+					</excludes>
                 </configuration>
             </plugin>
         </plugins>

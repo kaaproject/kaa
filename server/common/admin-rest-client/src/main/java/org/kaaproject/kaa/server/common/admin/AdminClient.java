@@ -1077,10 +1077,8 @@ public class AdminClient {
     }
 
     public CredentialsStatus getCredentialsStatus(String applicationToken, String credentialsId) {
-        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
-        parameters.add("applicationToken", applicationToken);
-        parameters.add("credentialsId", credentialsId);
-        return this.restTemplate.getForObject(restTemplate.getUrl() + "credentialsStatus", CredentialsStatus.class, parameters);
+        return this.restTemplate.getForObject(restTemplate.getUrl() + "credentialsStatus?applicationToken={applicationToken}&credentialsId={credentialsId}",
+                CredentialsStatus.class, applicationToken, credentialsId);
     }
 
     public void revokeCredentials(String applicationToken, String credentialsId) {
@@ -1100,5 +1098,10 @@ public class AdminClient {
     public EndpointUserConfigurationDto findUserConfigurationByUserId(String externalUId, String appToken, Integer schemaVersion){
         return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{externalUId}/{appToken}/{schemaVersion}",
                 EndpointUserConfigurationDto.class, externalUId, appToken, schemaVersion);
+    }
+
+    public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash){
+        return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{endpointKeyHash}/",
+                String.class, endpointKeyHash);
     }
 }

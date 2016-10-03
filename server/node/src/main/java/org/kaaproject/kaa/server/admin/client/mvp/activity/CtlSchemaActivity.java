@@ -69,6 +69,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
 
     public CtlSchemaActivity(CtlSchemaPlace place, ClientFactory clientFactory) {
         super(place, clientFactory);
+        version = place.getVersion();
     }
 
     @Override
@@ -248,7 +249,7 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(), place.getApplicationId(), true, true);
                     } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
                         newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(),
-                                place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, false);
+                                place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, true);
                     }
                     newPlace.setPreviousPlace(place);
                     goTo(newPlace);
@@ -269,15 +270,14 @@ public class CtlSchemaActivity extends AbstractDetailsActivity<CtlSchemaFormDto,
                         @Override
                         public void onSuccessImpl(CTLSchemaMetaInfoDto result) {
                             CtlSchemaPlace place = null;
-                            if (place.getScope() == CTLSchemaScopeDto.APPLICATION) {
+                            if (CtlSchemaActivity.this.place.getScope() == CTLSchemaScopeDto.APPLICATION) {
                                 place = new CtlSchemaPlace(result.getId(), version, result.getScope(),
                                         CtlSchemaActivity.this.place.getApplicationId(), result.getScope() == CTLSchemaScopeDto.APPLICATION, false);
-                            } else if (place.getScope() == CTLSchemaScopeDto.TENANT) {
+                            } else if (CtlSchemaActivity.this.place.getScope() == CTLSchemaScopeDto.TENANT) {
                                 place = new CtlSchemaPlace(result.getId(), version, result.getScope(),
                                         CtlSchemaActivity.this.place.getEcfId(), CtlSchemaActivity.this.place.getEcfVersionId(), CtlSchemaActivity.this.place.getEcfVersion(),
                                         result.getScope() == CTLSchemaScopeDto.TENANT, false);
                             }
-
                             goTo(place);
                         }
                     });

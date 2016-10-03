@@ -9,23 +9,25 @@ sort_idx: 20
 * TOC
 {:toc}
 
-The *Common Type Library (CTL)* is a repository of reusable data type schemas that can be referenced and reused as the user creates specific schema definitions for Kaa modules.
-The *Common Type (CT)* is a unit of CTL which represents set of *data type schema versions (CT schemas)*.
-This capability unifies management of all schemas in a Kaa server instance.
+The [Common type library (CTL)]({{root_url}}Glossary/#common-type-library-ctl) is a repository of data type schemas used for all Kaa modules.
+As more schema types and versions are created, they are recorded in the CTL for future use.
 
-# CT types definitions and FQNs
+[Common type (CT)]({{root_url}}Glossary/#common-type-ct) is a CTL unit representing a set of data type schema versions.
+Using CTL allows for consistent schema management within a [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment).
 
-CT is identified by FQN (Fully Qualified Name).
-FQN is combination of namespace and name attributes defined in root avro record of CT schema according to [Names in Avro  Schema Declaration](http://avro.apache.org/docs/current/spec.html#names).
-Each CT contains set of CT schemas with the same FQN and different versions.
-CT schema is identified by FQN and version which is unique across the CT.
-CT schema becomes unmodifiable after creation and only can be deleted.
+## CT definitions and FQNs
 
-# CT schema versioning and dependencies
+Schemas used in Kaa are based on the [Apache Avro](http://avro.apache.org) format.
+Every CT is identified by **Fully qualified name (FQN)**.
+FQN is a combination of namespace and name attributes defined in the root Avro record of a CT schema.
+Each CT contains a set of CT schemas with the same FQN and different versions.
+A CT schema ID is the combination of the schema FQN and version.
+Any CT schema ID is unique across the CT.
+After a CT schema is created, it becomes unmodifiable and can only be deleted.
 
-The version must be explicitly defined in the CT schema as shown below. 
-An attempt to load a CT schema with no version will result in an error. 
-Similarly, an attempt to load CT schema with the already used version will result in an error. 
+## CT schema versioning and dependencies
+
+A CT schema version must be explicitly defined in the CT schema as shown below.
 
 ```json
 {
@@ -45,21 +47,25 @@ Similarly, an attempt to load CT schema with the already used version will resul
 }
 ```
 
-The CTL user interface automatically suggests the next available version (max loaded + 1) for a given FQN when creating a new CT schema.
-CT schema can have dependencies on other CT schemas.
-CT schema dependencies defined as an array of FQN-version combinations (identifiers of referenced CT schemas, see org.kaaproject.sample.ReferencedCT in the example above).
-Deleting CT schema is only permitted if its FQN-version combination is not referenced in any other CT schemas.
+Attempting to load a CT schema with no version or with a used version will result in an error.
+A CT schema can have dependencies on other CT schemas.
+CT schema dependencies are defined as an array of the CT schema IDs (for example, see org.kaaproject.sample.ReferencedCT schema in the code snippet above).
+Deleting a CT schema is only permitted if its ID is not referenced in any other CT schema.
 Cyclic dependencies are not permitted.
-(Thus, CT schemas are nodes in a directed acyclic graph of dependencies.)
+Thus, CT schemas are nodes in a directed acyclic graph of dependencies.
 
-# CT scopes and visibility
+## CT scopes and visibility
 
-CTs can be defined within *scopes*: SYSTEM, TENANT, and APPLICATION.
-Scopes impact the visibility of CTs: for example, a CT defined with the application scope in App A is not visible for App B.
-FQNs cannot conflict in any given scope.
-An attempt to create a new CT with a conflicting FQN will result in an error.
-Creating different CTs with matching FQNs within different applications of the same tenant is permitted, even though not advised.
-Prior to creating such a CT, a warning message will be displayed to the user in the Administration UI.
+CTs can be defined within these scopes: **system**, **tenant**, and **application**.
+Scopes impact the visibility of CTs.
+For example, a CT defined for [application]({{root_url}}Glossary/#kaa-application) A is not visible for application B.
+Any FQN is unique within its CT scope.
+Attempting to create a CT with an FQN that already exists in the same scope will result in an error.
+
+>**IMPORTANT:** You can create a CT with an FQN that already exists in other scope, but this is not recommended.
+>Attempting to do so will result in a warning message.
+{:.important}
+
 The expected outcomes of an attempt to create a CT with a non-unique FQN are summarized in the following table.
 
 
@@ -71,80 +77,117 @@ Matching FQN in a different Tenant | N/A | OK | OK
 Matching FQN at Application level | error | error | error unless the version is unique
 Matching FQN in a different Application of the same Tenant | N/A | N/A | warning in web UI; OK at services level
 
-# CT management
+## CT management
 
-CTs can be managed via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Common_Type_Library) or via Administration UI.
+You can manage CTs using the [Server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Common_Type_Library) or the [Administration UI]({{root_url}}Glossary/#administration-ui).
 
-## Get CTs list
+### Get the list of CTs
 
-* As Kaa admin you can get list of available System CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getSystemLevelCTLSchemas) call or by opening **System CTL** window from Administration UI.
-An example of **System CTL** window is shown below.
+As [Kaa administrator]({{root_url}}Glossary/#kaa-administrator), you can get the list of available system CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getSystemLevelCTLSchemas) call or by clicking **System CTL** on the **Administration UI** page.
+
 ![System CTL](attach/system_ctl.png)
-* As Tenant admin you can get list of available Tenant CTs and System CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getTenantLevelCTLSchemas) call or by opening **Tenant CTL** window from Administration UI.
-The **Tenant CTL** window is similar to the System CTL window except it has ability to display/hide System CTs by checking/unchecking **Display higher scopes** checkbox.
-* As Tenant developer you can get list of available Tenant CTs and System CTs in the same way as Tenant admin.
-In addition Tenant developer can get list of available Application CTs via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getApplicationLevelCTLSchemasByAppToken) call or by opening **Application CTL** window from Administration UI. 
-The **Application CTL** window is similar to the Tenant CTL window except it has ability to display/hide System and Tenant CTs by checking/unchecking **Display higher scopes** checkbox.
 
-## Create new CT
+As [Tenant administrator]({{root_url}}Glossary/#tenant-administrator), you can get the list of available Tenant CTs and System CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getTenantLevelCTLSchemas) call or by clicking **Tenant CTL** on the **Administration UI** page.
+Use the **Display higher scopes** checkbox to toggle visibility of the System CTs.
 
-New CT can be created via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call or by clicking **Add new type** in corresponding CTL window from Administration UI.
+As [Tenant developer]({{root_url}}Glossary/#tenant-developer), you can get the list of available Tenant CTs and System CTs in the same way as Tenant administrator.
+In addition, Tenant developer can get the list of available application CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getApplicationLevelCTLSchemasByAppToken) call or by clicking **Application CTL** on the **Administration UI** page.
+Use the **Display higher scopes** checkbox to toggle visibility of the system and tenant CTs.
 
-> **NOTE:** The Kaa admin can add new System CTs.
-The Tenant admin can add new Tenant CTs.
-The Tenant developer can add new Application CTs. 
+### View CT details
 
-In **Add new type** window fill in all the required fields and click **Add** to apply the changes.
-Below is shown an example of **Add new type** window for Tenant CT.
-![Create Tenant CTL](attach/create_tenant_ctl.png)
-There is also ability to create a new version of CT by clicking **Create new version** at the top of **CT details** window which is described in the next chapter.
+To view the CT details:
 
-## Get or view CT details
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getCTLSchemaById) call.
 
-CT details can be obtained via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getCTLSchemaById) call or can be viewed in **CT details** window of Administration UI.
-To open CT details click the row of the CTs list in corresponding CTL window.
-Below is shown an example of **CT details** window for Application CT.
+OR
+
+- Open the **Administration UI** page, select the corresponding CTL and click on the CT in the list.
+The **Common type details** page will open.
+
 ![View Application CTL](attach/view_application_ctl.png)
-To view another version of the CT, click on the version drop-down and select the appropriate version.
 
-## Delete CT schema
+To view another version of the CT, select it form the **Version** drop-down list.
+To create a new version of the CT, click **Create new version**.
 
-CT schema can be deleted via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken) call or from **CT details** window of Administration UI.
-To delete CT schema open **CT details** and click **Delete** button located in the top of the window.
+### Create a new CT
 
-> **NOTE:** The Kaa admin can delete System CT schema.
-The Tenant admin can delete Tenant CT schema.
-The Tenant developer can delete Application CT schema. 
+To create a new CT:
 
-## CT promotion
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call.
 
-Users are able to promote the CT's scope from APPLICATION to TENANT, provided that there is no other CT with the identical FQN within the given tenant, and that they have a permission to do so.
-Otherwise an appropriate error will be returned.
-Promotion procedure updates scope of CT including all its versions.
-Promotion of CT can be performed in two ways: via [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/promoteScopeToTenant) call or by clicking **Promote** in the **Application CTL** window of Administration UI as shown below.
-![Promote CTL](attach/application_ctl_promote.png)
+OR
 
-## CT schema import and export
+- Open the **Administration UI** page, select the corresponding CTL and click the **Add new type** button.
 
-The import of CT schema can be done in two ways: 
+If you want to import a schema file, click **Browse**, select a .json file containing your schema, click **Upload**, then click **Add**
 
-* Perform [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call. 
-* Add new CT in Administration UI and upload schema json file as shown below.
 ![CTL Import](attach/ctl_import.png)
 
-There are four ways of CT schema export:
+>**NOTE:** Kaa administrator creates new system CTs.
+>Tenant administrator creates new tenant CTs.
+>Tenant developer creates new application CTs.
+{:.note}
 
-* "**shallow**" export simply retrieves the given schema as a file.
-* "**deep**" export retrieves the given schema as one file, and all of the referenced CTs as a separate file, recursively.
-* "**flat**" export will retrieve the given schema as one file with all referenced CTs inline.
-* "**library**" export will retrieve the given schema and all referenced CTs as compiled java classes compressed to a java archive file (jar).
-This java library provides all necessary java structures according to CT schema including nested types. 
-For instance these java structures can be used in external application to serialize binary log records which was produced as a result of data collection.   
-   
-To export CT schema either use [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/exportCTLSchemaByAppToken) call by providing appropriate export method or use export functionality provided by Administration UI.
-In **CT details** window click **Export** drop down and select desired export method as shown below.
+In the **Add new type** window, fill in all the required fields and click **Add**.
+
+![Create Tenant CTL](attach/create_tenant_ctl.png)
+
+### Delete CT schemas
+
+To delete a schema:
+
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken) call.
+
+OR
+
+- Open the **Common type details** page and click **Delete**.
+
+>**NOTE:** Kaa administrator can delete system CT schemas.
+>Tenant administrator can delete tenant CT schemas.
+>Tenant developer can delete application CT schemas.
+{:.note}
+
+### Promote CTs
+
+If you want some of your **Application** scope CTs to be available in the **Tenant** scope, you neeed to promote them.
+To do this, you can use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/promoteScopeToTenant) call or use the **Promotion** feature:
+
+1. Open the **Administration UI** page, unfold the **Applications** list.
+
+2. In the sub-list of a chosen application, click **Application CTL**.
+
+3. Click the CT to open the **Common type details** page and click **Promote**.
+
+![Promote CTL](attach/application_ctl_promote.png)
+
+The CT (including all its versions) is now available in the **Tenant** scope.
+
+>**NOTE:** You cannot promote a CT from the **Application** scope if there is a CT in the **Tenant** scope with the same FQN, or if the CT in question has dependencies on other CTs in the **Application** scope.
+{:.note}
+
+### CT schema export
+
+To export a CT schema:
+
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/exportCTLSchemaByAppToken) call.
+
+OR
+
+- On the **Common type details** page of the CT, click **Export** and select the exporting option.
 
 ![CTL export](attach/ctl_export.png)
 
-# Further reading
+There are four options for CT schema export:
+
+* **shallow**: exports the CT schema file.
+* **deep**: exports the CT schema file and a file with all referenced CTs recursively.
+* **flat**: exports the CT schema file and a file with all referenced CTs inline.
+* **library**: exports .jar archive containing the CT schema and all referenced CTs as compiled java classes.
+
+The java library provides all necessary java structures, including the nested types, in compliance with the CT schema.
+You can use these java classes in external applications.
+For example, you can serialize binary log records generated by data collection process.
+
+## Further reading
 * [Apache Avro](http://avro.apache.org)

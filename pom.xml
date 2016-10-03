@@ -20,7 +20,7 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -74,7 +74,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <commons-lang3.version>3.1</commons-lang3.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <jackson.version>2.4.1</jackson.version>
+        <jackson.version>2.7.5</jackson.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
@@ -869,6 +869,12 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>com.typesafe.akka</groupId>
                 <artifactId>akka-slf4j_2.11</artifactId>
                 <version>${akka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-testkit_2.11</artifactId>
+                <version>${akka.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>

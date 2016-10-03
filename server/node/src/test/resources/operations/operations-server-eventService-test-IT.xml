@@ -34,6 +34,20 @@
     <context:component-scan base-package="org.kaaproject.kaa.server.operations.service.event" />
     <util:properties id="properties" location="classpath:/operations/operations-server-zk-test.properties" />
 
+    <!--Zookeeper client configuration-->
+
+    <bean id="zkRetryPolicy" class="org.apache.curator.retry.RetryUntilElapsed">
+        <constructor-arg name="maxElapsedTimeMs" value="#{properties[zk_max_retry_time]}"/>
+        <constructor-arg name="sleepMsBetweenRetries" value="#{properties[zk_sleep_time]}"/>
+    </bean>
+
+    <bean id="zkClient" class="org.apache.curator.framework.CuratorFrameworkFactory" factory-method="newClient">
+        <constructor-arg name="connectString" value="#{properties[zk_host_port_list]}"/>
+        <constructor-arg name="sessionTimeoutMs" value="60000"/>
+        <constructor-arg name="connectionTimeoutMs" value="3000"/>
+        <constructor-arg name="retryPolicy" ref="zkRetryPolicy"/>
+    </bean>
+
     <bean id="operationsInitializationService" class="org.kaaproject.kaa.server.operations.service.event.ESTestOperationsInitializationService" />
     <bean id="cacheService" class="org.kaaproject.kaa.server.operations.service.event.ESTestCacheService" />
     <bean id="akkaService" class="org.kaaproject.kaa.server.operations.service.event.ESTestAkkaService" />

@@ -71,6 +71,7 @@ public class SendNotificationActivity extends AbstractDetailsActivity<Notificati
 
     @Override
     protected void onEntityRetrieved() {
+        detailsView.getEndpointKeyHash().setValue("");
         KaaAdmin.getDataSource().getUserNotificationSchemaInfosByApplicationId(applicationId, 
                 new BusyAsyncCallback<List<SchemaInfoDto>>() {
             @Override
