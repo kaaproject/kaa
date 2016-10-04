@@ -191,26 +191,22 @@ public void init() {
 
 ```c++
 #include <memory>
- 
 #include <kaa/Kaa.hpp>
-#include <kaa\profile\DefaultProfileContainer.hpp>
- 
-using namespace kaa;
+#include <kaa/profile/DefaultProfileContainer.hpp>
  
 ...
  
-// Create an endpoint instance
-auto kaaClient = Kaa::newClient();
-// Create profile for the endpoint
-Profile profile;
+
+auto kaaClient = kaa::Kaa::newClient();
+// Create an endpoint's profile
+kaa_profile::Profile profile;
 profile.id = "deviceId";
 profile.os_version = "3.17";
-profile.os = OS::Linux;
+profile.os = kaa_profile::OS::Linux;
 profile.build = "0.0.1-SNAPSHOT";
- 
+
 // Set a profile container to pass a profile to an endpoint
-kaaClient->setProfileContainer(std::make_shared<DefaultProfileContainer>(profile));
- 
+kaaClient->setProfileContainer(std::make_shared<kaa::DefaultProfileContainer>(profile)); 
 // Call each time when a profile is updated
 kaaClient->updateProfile();
  
@@ -378,9 +374,18 @@ Below is the list of system part properties.
 
 | Property                |Description                                                                        |
 |-------------------------------------------------------------------------------------------------------------|
-|Server-side profile hash | Server-side profile hash used to validate integrity of endpoint profile state.    |
-|Server key hash          | Server hash used during the last endpoint request.                                |
-|SDK token                | Endpoint SDK identifier.                                                          |
-|Endpoint public key      | Public key used for security purposes to validate endpoint requests.              |
-|Endpoint group state     | List of endpoint groups that contain current endpoint.                            |
-|Client-side profile hash | Client-side profile hash used to validate integrity of endpoint profile state.    |
+
+|Server-side Profile Hash | The server-side profile hash used to validate integrity of endpoint profile state |
+|Server Key Hash          | The hash of the server that was used during the last endpoint request             |
+|SDK token                | The endpoint SDK identifier                                                       |
+|Endpoint Public Key      | The public key used for security purposes to validate endpoint requests           |
+|Endpoint group state     | The list of endpoint groups that contain current endpoint.                        |
+|Client-side Profile Hash | The client-side profile hash used to validate integrity of endpoint profile state |
+
+## Further reading
+
+* [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups)
+* [Configuration]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/)
+* [Notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/)
+* [Data-collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection)
+* [Common Type Library (CTL)]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library)
