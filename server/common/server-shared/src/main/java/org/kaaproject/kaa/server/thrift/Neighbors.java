@@ -95,11 +95,17 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
     sendMessages(info, Collections.singleton(msg));
   }
 
-  public void sendMessages(ConnectionInfo info, Collection<V> msg) {
+  /**
+   * Create connection and send messages.
+   *
+   * @param info is information about connection
+   * @param msgs <code>Collection</code> of messages
+   */
+  public void sendMessages(ConnectionInfo info, Collection<V> msgs) {
     NeighborConnection<T, V> neighbor = neigbors.get(getServerId(info));
     if (neighbor != null) {
       try {
-        neighbor.sendMessages(msg);
+        neighbor.sendMessages(msgs);
       } catch (InterruptedException ex) {
         LOG.error("Failed to send message to {}", neighbor.getId());
         throw new RuntimeException(ex);
@@ -113,6 +119,12 @@ public class Neighbors<T extends NeighborTemplate<V>, V> {
     brodcastMessages(Collections.singleton(msg));
   }
 
+
+  /**
+   * Get connections from field <code>neigbors</code> and send messages.
+   *
+   * @param msgs <code>Collection</code> of messages
+   */
   public void brodcastMessages(Collection<V> msgs) {
     if (LOG.isTraceEnabled()) {
       LOG.trace("Broadcasting {} msgs to {} neighbors", msgs.size(), neigbors.values().size());

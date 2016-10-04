@@ -137,15 +137,15 @@ public final class Notification {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
 
-    Notification that = (Notification) o;
+    Notification that = (Notification) obj;
 
     if (body != null ? !body.equals(that.body) : that.body != null) {
       return false;

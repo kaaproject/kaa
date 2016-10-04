@@ -113,6 +113,14 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
 
   private boolean started;
 
+  /**
+   * Create new instance of <code>NeighborConnection</code>.
+   *
+   * @param connectionInfo is connection info
+   * @param maxNumberConnection os max number connection
+   * @param socketTimeout is socket timeout
+   * @param template is template
+   */
   public NeighborConnection(ConnectionInfo connectionInfo, int maxNumberConnection,
                             long socketTimeout, T template) {
     this.connectionInfo = connectionInfo;
@@ -150,6 +158,9 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
         .create();
   }
 
+  /**
+   * Start neighbor connection if it not started yet.
+   */
   public synchronized void start() {
     if (!started) {
       executor = Executors.newFixedThreadPool(maxNumberConnection);

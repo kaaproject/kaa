@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 
@@ -112,7 +112,7 @@ public class CtlServiceImplTest extends AbstractTest {
     app2Schema = ctlService.saveCtlSchema(unsaved);
 
     gamma = new CTLSchemaDto();
-    CTLSchemaMetaInfoDto gammaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Gamma", tenant.getId());
+    CtlSchemaMetaInfoDto gammaMetaInfo = new CtlSchemaMetaInfoDto("org.kaaproject.kaa.Gamma", tenant.getId());
     gamma.setMetaInfo(gammaMetaInfo);
     gamma.setVersion(1);
     gamma.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_GAMMA));
@@ -121,7 +121,7 @@ public class CtlServiceImplTest extends AbstractTest {
     gamma = ctlService.findCtlSchemaById(gamma.getId());
 
     beta = new CTLSchemaDto();
-    CTLSchemaMetaInfoDto betaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Beta", tenant.getId());
+    CtlSchemaMetaInfoDto betaMetaInfo = new CtlSchemaMetaInfoDto("org.kaaproject.kaa.Beta", tenant.getId());
     beta.setMetaInfo(betaMetaInfo);
     beta.setVersion(1);
     Set<CTLSchemaDto> betaDependencies = new HashSet<>();
@@ -133,7 +133,7 @@ public class CtlServiceImplTest extends AbstractTest {
     beta = ctlService.findCtlSchemaById(beta.getId());
 
     alpha = new CTLSchemaDto();
-    CTLSchemaMetaInfoDto alphaMetaInfo = new CTLSchemaMetaInfoDto("org.kaaproject.kaa.Alpha", tenant.getId());
+    CtlSchemaMetaInfoDto alphaMetaInfo = new CtlSchemaMetaInfoDto("org.kaaproject.kaa.Alpha", tenant.getId());
     alpha.setMetaInfo(alphaMetaInfo);
     alpha.setVersion(1);
     Set<CTLSchemaDto> alphaDependencies = new HashSet<>();
@@ -164,7 +164,7 @@ public class CtlServiceImplTest extends AbstractTest {
 
   @Test
   public void testFindCTLSchemaByFqnAndVerAndTenantIdAndApplicationId() {
-    CTLSchemaMetaInfoDto metaInfo = firstSchema.getMetaInfo();
+    CtlSchemaMetaInfoDto metaInfo = firstSchema.getMetaInfo();
     CTLSchemaDto found = ctlService.findCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(metaInfo.getFqn(),
         firstSchema.getVersion(), metaInfo.getTenantId(), metaInfo.getApplicationId());
     Assert.assertEquals(firstSchema, found);
@@ -184,7 +184,7 @@ public class CtlServiceImplTest extends AbstractTest {
 
   @Test
   public void testFindSystemCTLSchemasMetaInfo() {
-    List<CTLSchemaMetaInfoDto> appSchemas = ctlService.findSystemCtlSchemasMetaInfo();
+    List<CtlSchemaMetaInfoDto> appSchemas = ctlService.findSystemCtlSchemasMetaInfo();
     Comparator<HasId> comparator = new Comparator<HasId>() {
       @Override
       public int compare(HasId o1, HasId o2) {
@@ -192,7 +192,7 @@ public class CtlServiceImplTest extends AbstractTest {
       }
     };
     Collections.sort(appSchemas, comparator);
-    List<CTLSchemaMetaInfoDto> expectedSchemas = Arrays.asList(defaultSystemSchema.getMetaInfo(), systemSchema.getMetaInfo());
+    List<CtlSchemaMetaInfoDto> expectedSchemas = Arrays.asList(defaultSystemSchema.getMetaInfo(), systemSchema.getMetaInfo());
     Collections.sort(expectedSchemas, comparator);
     Assert.assertEquals(expectedSchemas, appSchemas);
   }
@@ -207,7 +207,7 @@ public class CtlServiceImplTest extends AbstractTest {
 
   @Test
   public void testScopeUpdate() {
-    CTLSchemaMetaInfoDto metaInfo = appSchema3.getMetaInfo();
+    CtlSchemaMetaInfoDto metaInfo = appSchema3.getMetaInfo();
     metaInfo.setApplicationId(null);
     ctlService.updateCtlSchemaMetaInfoScope(metaInfo);
     CTLSchemaDto found = ctlService.findCtlSchemaByFqnAndVerAndTenantIdAndApplicationId(metaInfo.getFqn(), appSchema3.getVersion(), metaInfo.getTenantId(), null);
@@ -216,14 +216,14 @@ public class CtlServiceImplTest extends AbstractTest {
 
   @Test(expected = DatabaseProcessingException.class)
   public void testScopeUpdateForbidden() {
-    CTLSchemaMetaInfoDto metaInfo = appSchema.getMetaInfo();
+    CtlSchemaMetaInfoDto metaInfo = appSchema.getMetaInfo();
     metaInfo.setApplicationId(null);
     ctlService.updateCtlSchemaMetaInfoScope(metaInfo);
   }
 
   @Test
   public void testFindSiblingsFqns() {
-    List<CTLSchemaMetaInfoDto> siblingSchemas =
+    List<CtlSchemaMetaInfoDto> siblingSchemas =
         ctlService.findSiblingsByFqnTenantIdAndApplicationId(appSchema.getMetaInfo().getFqn(), appSchema.getMetaInfo().getTenantId(), appSchema.getMetaInfo().getApplicationId());
 
     Assert.assertNotNull(siblingSchemas);

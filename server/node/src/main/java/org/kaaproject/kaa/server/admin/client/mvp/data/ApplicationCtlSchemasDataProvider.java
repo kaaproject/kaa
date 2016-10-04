@@ -21,7 +21,7 @@ import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
@@ -29,14 +29,14 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import java.util.List;
 
 public class ApplicationCtlSchemasDataProvider
-    extends AbstractDataProvider<CTLSchemaMetaInfoDto, String> {
+    extends AbstractDataProvider<CtlSchemaMetaInfoDto, String> {
 
   private String applicationId;
 
   /**
    * All-args constructor.
    */
-  public ApplicationCtlSchemasDataProvider(AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid,
+  public ApplicationCtlSchemasDataProvider(AbstractGrid<CtlSchemaMetaInfoDto, String> dataGrid,
                                            HasErrorMessage hasErrorMessage,
                                            String applicationId) {
     super(dataGrid, hasErrorMessage, false);
@@ -48,7 +48,7 @@ public class ApplicationCtlSchemasDataProvider
   protected void loadData(final LoadCallback callback) {
     if (!isEmpty(applicationId)) {
       KaaAdmin.getDataSource().getApplicationLevelCtlSchemas(applicationId,
-          new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
+          new AsyncCallback<List<CtlSchemaMetaInfoDto>>() {
             @Override
             public void onFailure(Throwable caught) {
               callback.onFailure(caught);
@@ -56,7 +56,7 @@ public class ApplicationCtlSchemasDataProvider
             }
 
             @Override
-            public void onSuccess(List<CTLSchemaMetaInfoDto> result) {
+            public void onSuccess(List<CtlSchemaMetaInfoDto> result) {
               callback.onSuccess(result);
             }
           });

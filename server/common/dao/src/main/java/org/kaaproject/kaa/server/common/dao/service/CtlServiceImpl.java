@@ -36,7 +36,7 @@ import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.ConfigurationGenerationException;
@@ -114,7 +114,7 @@ public class CtlServiceImpl implements CtlService {
             DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN, DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION, null, null);
     if (ctlSchema == null) {
       ctlSchema = new CTLSchemaDto();
-      CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN);
+      CtlSchemaMetaInfoDto metaInfo = new CtlSchemaMetaInfoDto(DEFAULT_SYSTEM_EMPTY_SCHEMA_FQN);
       ctlSchema.setMetaInfo(metaInfo);
       ctlSchema.setVersion(DEFAULT_SYSTEM_EMPTY_SCHEMA_VERSION);
       ctlSchema.setCreatedUsername(createdUsername);
@@ -139,7 +139,7 @@ public class CtlServiceImpl implements CtlService {
       validateDefaultRecord(unSavedSchema);
     }
     if (isBlank(unSavedSchema.getId())) {
-      CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
+      CtlSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
       CTLSchemaDto dto;
       synchronized (this) {
         List<CtlSchemaMetaInfo> existingFqns = ctlSchemaMetaInfoDao.findExistingFqns(metaInfo
@@ -233,7 +233,7 @@ public class CtlServiceImpl implements CtlService {
   }
 
   @Override
-  public CTLSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
+  public CtlSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CtlSchemaMetaInfoDto ctlSchemaMetaInfo) {
     validateObject(ctlSchemaMetaInfo, "Incorrect ctl schema meta info object");
     LOG.debug("Update ctl schema meta info scope with id [{}]", ctlSchemaMetaInfo.getId());
     CtlSchemaMetaInfo schemaMetaInfo = ctlSchemaMetaInfoDao.findById(ctlSchemaMetaInfo.getId());
@@ -260,7 +260,7 @@ public class CtlServiceImpl implements CtlService {
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String
+  public List<CtlSchemaMetaInfoDto> findSiblingsByFqnTenantIdAndApplicationId(String fqn, String
           tenantId, String applicationId) {
     if (isBlank(fqn)) {
       throw new IncorrectParameterException("Incorrect parameters for ctl schema request.");
@@ -271,7 +271,7 @@ public class CtlServiceImpl implements CtlService {
             tenantId, applicationId));
   }
 
-  private boolean checkScopeUpdate(CTLSchemaMetaInfoDto newSchemaMetaInfo, CTLSchemaMetaInfoDto
+  private boolean checkScopeUpdate(CtlSchemaMetaInfoDto newSchemaMetaInfo, CtlSchemaMetaInfoDto
           prevSchemaMetaInfo) {
     if (!newSchemaMetaInfo.equals(prevSchemaMetaInfo)) {
       if (isBlank(newSchemaMetaInfo.getFqn())) {
@@ -393,19 +393,19 @@ public class CtlServiceImpl implements CtlService {
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> findSystemCtlSchemasMetaInfo() {
+  public List<CtlSchemaMetaInfoDto> findSystemCtlSchemasMetaInfo() {
     LOG.debug("Find system ctl schemas");
     return getMetaInfoFromCtlSchema(ctlSchemaDao.findSystemSchemas());
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForTenant(String tenantId) {
+  public List<CtlSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForTenant(String tenantId) {
     LOG.debug("Find system and tenant scopes ctl schemas by tenant id {}", tenantId);
     return getMetaInfoFromCtlSchema(ctlSchemaDao.findAvailableSchemasForTenant(tenantId));
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForApplication(
+  public List<CtlSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForApplication(
           String tenantId, String applicationId) {
     LOG.debug("Find system, tenant and application scopes ctl schemas by application id {}",
             applicationId);
@@ -479,9 +479,9 @@ public class CtlServiceImpl implements CtlService {
 
   private void validateCtlSchemaObject(CTLSchemaDto ctlSchema) {
     validateObject(ctlSchema, "Incorrect ctl schema object");
-    CTLSchemaMetaInfoDto metaInfo = ctlSchema.getMetaInfo();
+    CtlSchemaMetaInfoDto metaInfo = ctlSchema.getMetaInfo();
     if (metaInfo == null) {
-      throw new RuntimeException("Incorrect ctl schema object. CTLSchemaMetaInfoDto is mandatory "
+      throw new RuntimeException("Incorrect ctl schema object. CtlSchemaMetaInfoDto is mandatory "
                                  + "information.");
     } else {
       if (isBlank(metaInfo.getFqn()) || ctlSchema.getVersion() == null) {
@@ -490,12 +490,12 @@ public class CtlServiceImpl implements CtlService {
     }
   }
 
-  private List<CTLSchemaMetaInfoDto> getMetaInfoFromCtlSchema(List<CtlSchema> schemas) {
-    Map<String, CTLSchemaMetaInfoDto> metaInfoMap = new HashMap<>();
+  private List<CtlSchemaMetaInfoDto> getMetaInfoFromCtlSchema(List<CtlSchema> schemas) {
+    Map<String, CtlSchemaMetaInfoDto> metaInfoMap = new HashMap<>();
     if (!schemas.isEmpty()) {
       for (CtlSchema schema : schemas) {
         String metaInfoId = schema.getMetaInfo().getStringId();
-        CTLSchemaMetaInfoDto metaInfoDto = metaInfoMap.get(metaInfoId);
+        CtlSchemaMetaInfoDto metaInfoDto = metaInfoMap.get(metaInfoId);
         if (metaInfoDto == null) {
           metaInfoDto = getDto(schema.getMetaInfo());
           metaInfoMap.put(metaInfoId, metaInfoDto);
@@ -508,7 +508,7 @@ public class CtlServiceImpl implements CtlService {
         versions.add(schema.getVersion());
       }
     }
-    List<CTLSchemaMetaInfoDto> result = new ArrayList<>(metaInfoMap.values());
+    List<CtlSchemaMetaInfoDto> result = new ArrayList<>(metaInfoMap.values());
     return result;
   }
 

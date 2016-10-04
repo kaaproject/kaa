@@ -58,6 +58,14 @@ public class CassandraCredentials implements Credentials, Serializable {
   public CassandraCredentials() {
   }
 
+
+  /**
+   * Create new instance of <code>CassandraCredentials</code>.
+   *
+   * @param applicationId is application id
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraCredentials(String applicationId, CredentialsDto dto) {
     this.applicationId = applicationId;
     this.id = dto.getId();

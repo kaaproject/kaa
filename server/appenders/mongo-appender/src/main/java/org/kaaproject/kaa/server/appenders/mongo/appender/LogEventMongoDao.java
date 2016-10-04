@@ -47,6 +47,13 @@ public class LogEventMongoDao implements LogEventDao {
   private MongoClient mongoClient;
   private MongoTemplate mongoTemplate;
 
+  /**
+   * Create new instance of <code>LogEventMongoDao</code> using configuration instance of
+   * <code>MongoDbConfig</code>.
+   *
+   * @param configuration the configuration of log event mongo dao, it contain server size,
+   *                      credentials, max wait time, etc.
+   */
   @SuppressWarnings("deprecation")
   public LogEventMongoDao(MongoDbConfig configuration) throws Exception {
 

@@ -68,9 +68,11 @@ public class EndpointUserConfigurationCassandraDao
   }
 
   @Override
-  public CassandraEndpointUserConfiguration findByUserIdAndAppTokenAndSchemaVersion(String userId,
-                                                                                    String appToken,
-                                                                                    Integer schemaVersion) {
+  public CassandraEndpointUserConfiguration findByUserIdAndAppTokenAndSchemaVersion(
+          String userId,
+          String appToken,
+          Integer schemaVersion
+  ) {
     LOG.debug("Searching for user specific configuration by user id {}, "
             + "application token {} and schema version {}",
         userId, appToken, schemaVersion);

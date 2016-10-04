@@ -34,8 +34,11 @@ public class NettyHttpSyncMessage extends AbstractMessage implements SessionInit
 
   private final AbstractHttpSyncCommand command;
 
-  public NettyHttpSyncMessage(UUID uuid, Integer platformId, ChannelContext channelContext, ChannelType channelType, AbstractHttpSyncCommand command,
-                              MessageBuilder responseConverter, ErrorBuilder errorConverter) {
+  public NettyHttpSyncMessage(
+          UUID uuid, Integer platformId, ChannelContext channelContext,
+          ChannelType channelType, AbstractHttpSyncCommand command,
+          MessageBuilder responseConverter, ErrorBuilder errorConverter
+  ) {
     super(uuid, platformId, channelContext, channelType, responseConverter, errorConverter);
     this.command = command;
   }
@@ -75,7 +78,8 @@ public class NettyHttpSyncMessage extends AbstractMessage implements SessionInit
   }
 
   /* (non-Javadoc)
-   * @see org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request#isEncrypted()
+   * @see
+   * org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request#isEncrypted()
    */
   @Override
   public boolean isEncrypted() {

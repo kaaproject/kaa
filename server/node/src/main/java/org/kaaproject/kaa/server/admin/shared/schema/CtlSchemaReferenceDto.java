@@ -16,31 +16,31 @@
 
 package org.kaaproject.kaa.server.admin.shared.schema;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 
 import java.io.Serializable;
 
 public class CtlSchemaReferenceDto implements Serializable {
   private static final long serialVersionUID = -6668598697779214725L;
 
-  private CTLSchemaMetaInfoDto metaInfo;
+  private CtlSchemaMetaInfoDto metaInfo;
   private int version;
 
   public CtlSchemaReferenceDto() {
     super();
   }
 
-  public CtlSchemaReferenceDto(CTLSchemaMetaInfoDto metaInfo, int version) {
+  public CtlSchemaReferenceDto(CtlSchemaMetaInfoDto metaInfo, int version) {
     super();
     this.metaInfo = metaInfo;
     this.version = version;
   }
 
-  public CTLSchemaMetaInfoDto getMetaInfo() {
+  public CtlSchemaMetaInfoDto getMetaInfo() {
     return metaInfo;
   }
 
-  public void setMetaInfo(CTLSchemaMetaInfoDto metaInfo) {
+  public void setMetaInfo(CtlSchemaMetaInfoDto metaInfo) {
     this.metaInfo = metaInfo;
   }
 

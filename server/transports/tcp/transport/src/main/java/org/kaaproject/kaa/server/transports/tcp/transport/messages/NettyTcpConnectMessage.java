@@ -33,9 +33,27 @@ public class NettyTcpConnectMessage extends AbstractMessage implements SessionIn
   private final Connect command;
   private final SessionCreateListener sessionAware;
 
+  /**
+   * Create new instance of <code>NettyTcpConnectMessage</code>.
+   *
+   * @param uuid              immutable universally unique identifier
+   * @param channelContext    transport channel context, it has methods to write data to the
+   *                          channel
+   * @param command           is instance of <code>Connect</code>
+   * @param channelType       is enum that represent channel type
+   * @param sessionAware      represents a listener for the session creation event
+   * @param responseConverter converts the message data into objects specific to the corresponding
+   *                          transport channel
+   * @param errorConverter    converts an exception into objects specific to the corresponding
+   *                          transport channel
+   */
   public NettyTcpConnectMessage(UUID uuid, ChannelContext channelContext, Connect command,
-                                ChannelType channelType, SessionCreateListener sessionAware, MessageBuilder responseConverter, ErrorBuilder errorConverter) {
-    super(uuid, command.getNextProtocolId(), channelContext, channelType, responseConverter, errorConverter);
+                                ChannelType channelType, SessionCreateListener sessionAware,
+                                MessageBuilder responseConverter, ErrorBuilder errorConverter
+  ) {
+    super(uuid, command.getNextProtocolId(), channelContext,
+            channelType, responseConverter, errorConverter
+    );
     this.command = command;
     this.sessionAware = sessionAware;
   }

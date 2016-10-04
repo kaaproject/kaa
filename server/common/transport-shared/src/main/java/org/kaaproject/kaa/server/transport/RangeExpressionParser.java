@@ -33,6 +33,13 @@ public final class RangeExpressionParser {
   private static final int RANGE_START = 0;
   private static final int RANGE_END = 1;
 
+  /**
+   * Parse string, that represents range of values (like "1-3") and get all integers value
+   * corresponding this range.
+   *
+   * @param expression is expression for parsing
+   * @return list of integers values in range
+   */
   public List<Integer> getNumbersFromRanges(String expression) {
     if (expression == null) {
       throw new IllegalArgumentException("Expression can not be null");

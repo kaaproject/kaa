@@ -25,7 +25,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 
 import java.io.Serializable;
 
@@ -46,7 +46,7 @@ import javax.persistence.UniqueConstraint;
       name = CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT
     )
 )
-public class CtlSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implements Serializable {
+public class CtlSchemaMetaInfo extends GenericModel<CtlSchemaMetaInfoDto> implements Serializable {
 
   private static final long serialVersionUID = 3185049875063895954L;
 
@@ -74,7 +74,7 @@ public class CtlSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
    *            it hold id, full qualified name, tenant id and application id
    *            of new instance
    */
-  public CtlSchemaMetaInfo(CTLSchemaMetaInfoDto dto) {
+  public CtlSchemaMetaInfo(CtlSchemaMetaInfoDto dto) {
     this.id = ModelUtils.getLongId(dto.getId());
     this.fqn = dto.getFqn();
     Long tenantId = getLongId(dto.getTenantId());
@@ -163,18 +163,18 @@ public class CtlSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
   }
 
   @Override
-  protected CTLSchemaMetaInfoDto createDto() {
-    return new CTLSchemaMetaInfoDto();
+  protected CtlSchemaMetaInfoDto createDto() {
+    return new CtlSchemaMetaInfoDto();
   }
 
   @Override
-  protected GenericModel<CTLSchemaMetaInfoDto> newInstance(Long id) {
+  protected GenericModel<CtlSchemaMetaInfoDto> newInstance(Long id) {
     return new CtlSchemaMetaInfo(id);
   }
 
   @Override
-  public CTLSchemaMetaInfoDto toDto() {
-    CTLSchemaMetaInfoDto ctlSchemaMetaInfoDto = createDto();
+  public CtlSchemaMetaInfoDto toDto() {
+    CtlSchemaMetaInfoDto ctlSchemaMetaInfoDto = createDto();
     ctlSchemaMetaInfoDto.setId(getStringId());
     ctlSchemaMetaInfoDto.setFqn(fqn);
     ctlSchemaMetaInfoDto.setApplicationId(application != null ? application.getStringId() : null);

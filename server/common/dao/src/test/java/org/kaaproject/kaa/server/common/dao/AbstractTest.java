@@ -45,7 +45,7 @@ import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -788,7 +788,7 @@ public class AbstractTest {
 
   protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
     CTLSchemaDto ctlSchema = new CTLSchemaDto();
-    ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId));
+    ctlSchema.setMetaInfo(new CtlSchemaMetaInfoDto(fqn, tenantId, applicationId));
     ctlSchema.setVersion(version);
     String name = fqn.substring(fqn.lastIndexOf(".") + 1);
     String namespace = fqn.substring(0, fqn.lastIndexOf("."));

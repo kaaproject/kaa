@@ -41,14 +41,16 @@ import java.util.Map;
  */
 public class AvroSerializationWrapper<T extends SpecificRecordBase> implements Externalizable {
 
-  private static final ThreadLocal<Map<String, AvroReader<? extends SpecificRecordBase>>> recordReaderMap = //NOSONAR
+  private static final ThreadLocal<Map<String, AvroReader<? extends SpecificRecordBase>>>
+          recordReaderMap = //NOSONAR
       new ThreadLocal<Map<String, AvroReader<? extends SpecificRecordBase>>>() {
         protected Map<String, AvroReader<? extends SpecificRecordBase>> initialValue() {
           return new HashMap<String, AvroReader<? extends SpecificRecordBase>>();
         }
       };
 
-  private static final ThreadLocal<Map<String, AvroWriter<? extends SpecificRecordBase>>> recordWriterMap = //NOSONAR
+  private static final ThreadLocal<Map<String, AvroWriter<? extends SpecificRecordBase>>>
+          recordWriterMap = //NOSONAR
       new ThreadLocal<Map<String, AvroWriter<? extends SpecificRecordBase>>>() {
         protected Map<String, AvroWriter<? extends SpecificRecordBase>> initialValue() {
           return new HashMap<String, AvroWriter<? extends SpecificRecordBase>>();
@@ -63,6 +65,12 @@ public class AvroSerializationWrapper<T extends SpecificRecordBase> implements E
     this(clazz, null);
   }
 
+  /**
+   * Create new instance of <code>AvroSerializationWrapper</code>.
+   *
+   * @param clazz      the appender
+   * @param avroObject the avro object
+   */
   public AvroSerializationWrapper(Class<T> clazz, T avroObject) {
     this.clazz = clazz;
     this.className = clazz.getName();
@@ -75,7 +83,10 @@ public class AvroSerializationWrapper<T extends SpecificRecordBase> implements E
     AvroWriter<T> writer = (AvroWriter<T>) recordWriterMap.get().get(className);
     if (writer == null) {
       ByteArrayOutputStream os = new ByteArrayOutputStream();
-      writer = new AvroWriter<T>(new SpecificDatumWriter<T>(clazz), EncoderFactory.get().binaryEncoder(os, null));
+      writer = new AvroWriter<T>(
+              new SpecificDatumWriter<T>(clazz),
+              EncoderFactory.get().binaryEncoder(os, null)
+      );
       recordWriterMap.get().put(className, writer);
     }
     ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -94,7 +105,10 @@ public class AvroSerializationWrapper<T extends SpecificRecordBase> implements E
     @SuppressWarnings("unchecked")
     AvroReader<T> reader = (AvroReader<T>) recordReaderMap.get().get(className);
     if (reader == null) {
-      reader = new AvroReader<T>(new SpecificDatumReader<T>(clazz), DecoderFactory.get().binaryDecoder(data, null));
+      reader = new AvroReader<T>(
+              new SpecificDatumReader<T>(clazz),
+              DecoderFactory.get().binaryDecoder(data, null)
+      );
       recordReaderMap.get().put(className, reader);
     }
     BinaryDecoder recordDataDecoder = DecoderFactory.get().binaryDecoder(data, reader.getDecoder());

@@ -53,6 +53,12 @@ public final class CassandraTopicListEntry implements TopicListEntry, Serializab
   public CassandraTopicListEntry() {
   }
 
+  /**
+   * Create new instance of <code>CassandraTopicListEntry</code>.
+   *
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraTopicListEntry(TopicListEntryDto dto) {
     this.hash = getByteBuffer(dto.getHash());
     this.simpleHash = dto.getSimpleHash();

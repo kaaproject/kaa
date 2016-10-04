@@ -31,6 +31,11 @@ public class TransportProperties extends Properties {
 
   private static final String FILTER_PREFIX = "transport_";
 
+  /**
+   * Create new instance of <code>TransportProperties</code>.
+   *
+   * @param source is <code>Properties</code> instance, add all it's values to current instance
+   */
   public TransportProperties(Properties source) {
     super();
     for (Entry<Object, Object> entry : source.entrySet()) {

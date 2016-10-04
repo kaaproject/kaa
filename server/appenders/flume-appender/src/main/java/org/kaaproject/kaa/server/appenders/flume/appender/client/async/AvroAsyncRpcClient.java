@@ -41,6 +41,12 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
   ArrayBlockingQueue<RpcClient> clientQueue;
   ListeningExecutorService executorService;
 
+  /**
+   * Create new instance of <code>AvroAsyncRpcClient</code>.
+   *
+   * @param starterProp the properties of starter
+   * @param numberOfClientThreads is number of client's threads
+   */
   public AvroAsyncRpcClient(Properties starterProp, int numberOfClientThreads) {
     clientQueue = new ArrayBlockingQueue<RpcClient>(numberOfClientThreads);
 
@@ -54,6 +60,13 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
         .listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
   }
 
+  /**
+   * Create new instance of <code>AvroAsyncRpcClient</code>.
+   *
+   * @param hostname        the RPC hostname, use it to create RPC client
+   * @param port            the RPC port, use it to create RPC client
+   * @param numberOfThreads is number of client's threads
+   */
   public AvroAsyncRpcClient(String hostname, Integer port, int numberOfThreads) {
     int numberOfClientThreads = numberOfThreads;
 
@@ -69,6 +82,12 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
         .listeningDecorator(Executors.newFixedThreadPool(numberOfClientThreads));
   }
 
+  /**
+   * Async append event to RPC client, return listenable future.
+   *
+   * @param event to adding by RPC
+   * @return listenable future
+   */
   public ListenableFuture<AppendAsyncResultPojo> appendAsync(final Event event)
       throws EventDeliveryException {
     ListenableFuture<AppendAsyncResultPojo> future = executorService.submit(
@@ -83,6 +102,12 @@ public class AvroAsyncRpcClient implements AsyncRpcClient {
     return future;
   }
 
+  /**
+   * Async append some events to RPC client, return listenable future.
+   *
+   * @param events to adding by RPC
+   * @return listenable future
+   */
   public ListenableFuture<AppendBatchAsyncResultPojo> appendBatchAsync(final List<Event> events)
       throws EventDeliveryException {
     ListenableFuture<AppendBatchAsyncResultPojo> future = executorService

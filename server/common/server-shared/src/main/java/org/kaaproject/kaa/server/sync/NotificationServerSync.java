@@ -24,9 +24,7 @@ public final class NotificationServerSync {
   private List<Topic> availableTopics;
 
   /**
-   * Default constructor. Note that this does not initialize fields to their
-   * default values from the schema. If that is desired then one should use
-   * {@link \#newBuilder()}.
+   * Default constructor.
    */
   public NotificationServerSync() {
   }

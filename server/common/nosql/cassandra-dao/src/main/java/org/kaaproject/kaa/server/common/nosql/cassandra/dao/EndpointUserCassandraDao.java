@@ -127,7 +127,11 @@ public class EndpointUserCassandraDao
   public CassandraEndpointUser findById(String id) {
     LOG.debug("Try to find endpoint user by id {}", id);
     CassandraEndpointUser endpointUser = new CassandraEndpointUser(id);
-    endpointUser = findByExternalIdAndTenantId(endpointUser.getExternalId(), endpointUser.getTenantId());
+    endpointUser =
+            findByExternalIdAndTenantId(
+                    endpointUser.getExternalId(),
+                    endpointUser.getTenantId()
+            );
     LOG.trace("Found endpoint user {} by id {}", endpointUser, id);
     return endpointUser;
   }

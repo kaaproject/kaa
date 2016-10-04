@@ -38,9 +38,9 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 @Repository
-public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEpByAppId, String> {
+public class CassandraEpByAppIdDao extends AbstractCassandraDao<CassandraEpByAppId, String> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(CassandraEpbyAppIdDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CassandraEpByAppIdDao.class);
 
   @Override
   protected Class<CassandraEpByAppId> getColumnFamilyClass() {

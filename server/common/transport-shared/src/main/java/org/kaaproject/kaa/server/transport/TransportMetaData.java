@@ -40,6 +40,13 @@ public class TransportMetaData implements Serializable {
   private final List<byte[]> defaultConnectionInfoList;
   private final Map<Integer, List<byte[]>> versionSpecificConnectionInfoList;
 
+  /**
+   * Create new instance of <code>TransportMetaData</code>.
+   *
+   * @param minSupportedVersion is minimal supported version
+   * @param maxSupportedVersion is maximum  supported version
+   * @param defaultConnectionInfoList is default connection info list
+   */
   public TransportMetaData(int minSupportedVersion,
                            int maxSupportedVersion,
                            List<byte[]> defaultConnectionInfoList) {

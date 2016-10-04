@@ -27,7 +27,14 @@ public class ProfileClientSync {
   public ProfileClientSync() {
   }
 
-
+  /**
+   * Create new instance of <code>ProfileClientSync</code>.
+   *
+   * @param endpointPublicKey is byte buffer that contains endpoint key hash
+   * @param profileBody is byte buffer that contains profile body
+   * @param sdkToken is sdk token
+   * @param endpointAccessToken is endpoint access token
+   */
   public ProfileClientSync(ByteBuffer endpointPublicKey, ByteBuffer profileBody, String sdkToken,
                            String endpointAccessToken) {
     this.endpointPublicKey = endpointPublicKey;

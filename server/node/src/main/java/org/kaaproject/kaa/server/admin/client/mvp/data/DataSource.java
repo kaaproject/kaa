@@ -50,7 +50,7 @@ import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -1488,11 +1488,11 @@ public class DataSource {
    * @param callback callback which should be called with a result
    */
   public void getSystemLevelCtlSchemas(
-      final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
+      final AsyncCallback<List<CtlSchemaMetaInfoDto>> callback) {
     ctlRpcService.getSystemLevelCtlSchemas(
-        new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
+        new DataCallback<List<CtlSchemaMetaInfoDto>>(callback) {
           @Override
-          protected void onResult(List<CTLSchemaMetaInfoDto> result) {
+          protected void onResult(List<CtlSchemaMetaInfoDto> result) {
           }
         });
   }
@@ -1503,11 +1503,11 @@ public class DataSource {
    * @param callback callback which should be called with a result
    */
   public void getTenantLevelCtlSchemas(
-      final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
+      final AsyncCallback<List<CtlSchemaMetaInfoDto>> callback) {
     ctlRpcService.getTenantLevelCtlSchemas(
-        new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
+        new DataCallback<List<CtlSchemaMetaInfoDto>>(callback) {
           @Override
-          protected void onResult(List<CTLSchemaMetaInfoDto> result) {
+          protected void onResult(List<CtlSchemaMetaInfoDto> result) {
           }
         });
   }
@@ -1536,11 +1536,11 @@ public class DataSource {
    */
   public void getApplicationLevelCtlSchemas(
       String applicationId,
-      final AsyncCallback<List<CTLSchemaMetaInfoDto>> callback) {
+      final AsyncCallback<List<CtlSchemaMetaInfoDto>> callback) {
     ctlRpcService.getApplicationLevelCtlSchemas(applicationId,
-        new DataCallback<List<CTLSchemaMetaInfoDto>>(callback) {
+        new DataCallback<List<CtlSchemaMetaInfoDto>>(callback) {
           @Override
-          protected void onResult(List<CTLSchemaMetaInfoDto> result) {
+          protected void onResult(List<CtlSchemaMetaInfoDto> result) {
           }
         });
   }
@@ -1630,7 +1630,7 @@ public class DataSource {
         new DataCallback<CtlSchemaFormDto>(callback) {
           @Override
           protected void onResult(CtlSchemaFormDto result) {
-            eventBus.fireEvent(new DataEvent(CTLSchemaMetaInfoDto.class));
+            eventBus.fireEvent(new DataEvent(CtlSchemaMetaInfoDto.class));
           }
         });
   }
@@ -1659,12 +1659,12 @@ public class DataSource {
    * @param callback      callback which should be called with a result
    */
   public void promoteScopeToTenant(String applicationId, String fqn,
-                                   final AsyncCallback<CTLSchemaMetaInfoDto> callback) {
+                                   final AsyncCallback<CtlSchemaMetaInfoDto> callback) {
     ctlRpcService.promoteScopeToTenant(applicationId, fqn,
-        new DataCallback<CTLSchemaMetaInfoDto>(callback) {
+        new DataCallback<CtlSchemaMetaInfoDto>(callback) {
           @Override
-          protected void onResult(CTLSchemaMetaInfoDto result) {
-            eventBus.fireEvent(new DataEvent(CTLSchemaMetaInfoDto.class));
+          protected void onResult(CtlSchemaMetaInfoDto result) {
+            eventBus.fireEvent(new DataEvent(CtlSchemaMetaInfoDto.class));
           }
         });
   }
@@ -1686,7 +1686,7 @@ public class DataSource {
         new DataCallback<Void>(callback) {
           @Override
           protected void onResult(Void result) {
-            eventBus.fireEvent(new DataEvent(CTLSchemaMetaInfoDto.class));
+            eventBus.fireEvent(new DataEvent(CtlSchemaMetaInfoDto.class));
           }
         });
   }

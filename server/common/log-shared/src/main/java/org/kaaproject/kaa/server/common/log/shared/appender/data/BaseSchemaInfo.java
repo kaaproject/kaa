@@ -20,6 +20,12 @@ public class BaseSchemaInfo {
   private final String schemaId;
   private final String schema;
 
+  /**
+   * Create new instance of <code>BaseSchemaInfo</code>.
+   *
+   * @param schemaId is schema unique id
+   * @param schema is schema (string)
+   */
   public BaseSchemaInfo(String schemaId, String schema) {
     super();
     this.schemaId = schemaId;

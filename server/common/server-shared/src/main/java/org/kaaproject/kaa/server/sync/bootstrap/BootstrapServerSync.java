@@ -23,6 +23,12 @@ public final class BootstrapServerSync {
   private final int requestId;
   private final Set<ProtocolConnectionData> protocolList;
 
+  /**
+   * Create new instance of <code>BootstrapServerSync</code>.
+   *
+   * @param requestId is request id
+   * @param protocolList is <code>Set</code> of <code>ProtocolConnectionData</code>
+   */
   public BootstrapServerSync(int requestId, Set<ProtocolConnectionData> protocolList) {
     super();
     this.requestId = requestId;

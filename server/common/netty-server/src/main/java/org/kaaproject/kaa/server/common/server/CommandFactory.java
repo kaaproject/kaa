@@ -34,6 +34,12 @@ public class CommandFactory<U, V> {
 
   private final Map<String, KaaCommandProcessorFactory<U, V>> factories;
 
+  /**
+   * Create new instance of <code>CommandFactory</code>.
+   *
+   * @param factories is <code>List</code> of factories that adding to field <code>factories</code>
+   *                  of new instance
+   */
   public CommandFactory(List<KaaCommandProcessorFactory<U, V>> factories) {
     this.factories = new HashMap<>();
     for (KaaCommandProcessorFactory<U, V> factory : factories) {

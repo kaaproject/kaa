@@ -26,6 +26,13 @@ public final class EventClientSync {
   public EventClientSync() {
   }
 
+  /**
+   * Create new instance of <code>EventClientSync</code>.
+   *
+   * @param seqNumberRequest is true if it is seqNumberRequest
+   * @param eventListenersRequests is <code>List</code> of event listeners requests
+   * @param events is <code>List</code> of <code>Event</code> instance
+   */
   public EventClientSync(boolean seqNumberRequest,
                          List<EventListenersRequest> eventListenersRequests,
                          List<Event> events) {

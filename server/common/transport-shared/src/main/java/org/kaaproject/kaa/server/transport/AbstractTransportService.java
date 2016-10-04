@@ -62,6 +62,9 @@ public abstract class AbstractTransportService implements TransportService {
   private final Map<Integer, Transport> transports;
   private final Set<TransportUpdateListener> listeners;
 
+  /**
+   * Create new instance of <code>AbstractTransportService</code>.
+   */
   public AbstractTransportService() {
     super();
     this.configs = new HashMap<Integer, TransportConfig>();
@@ -185,8 +188,6 @@ public abstract class AbstractTransportService implements TransportService {
   protected abstract MessageHandler getMessageHandler();
 
   protected abstract PublicKey getPublicKey();
-
-  ;
 
   private void notifyListeners() {
     List<org.kaaproject.kaa.server.common.zk.gen.TransportMetaData> mdList = toTransportMdList(

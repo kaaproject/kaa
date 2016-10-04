@@ -69,6 +69,12 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
   public CassandraEndpointUser() {
   }
 
+  /**
+   * Create new instance of <code>CassandraTopicListEntry</code>.
+   *
+   * @param id string that consist of external id and tenant id, parse this string, get ids values
+   *           and assign these values on fields <code>externalId</code> and <code>tenantId</code>
+   */
   public CassandraEndpointUser(String id) {
     String[] columns = parseId(id);
     if (columns.length == 2) {
@@ -77,6 +83,13 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
     }
   }
 
+
+  /**
+   * Create new instance of <code>CassandraEndpointUser</code>.
+   *
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraEndpointUser(EndpointUserDto dto) {
     this.id = dto.getId();
     this.username = dto.getUsername();
@@ -203,6 +216,12 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
     return dto;
   }
 
+  /**
+   * Generate new id and assign value on field <code>id</code>, generate id with concatenation
+   * <code>externalId</code> and <code>tenantId</code>.
+   *
+   * @return generated id and assign it's value on field <code>id</code>
+   */
   public String generateId() {
     if (isBlank(id)) {
       id = externalId + KEY_DELIMITER + tenantId;

@@ -37,7 +37,8 @@ public class KaaTcpEncoder extends ChannelOutboundHandlerAdapter {
   private static final Logger LOG = LoggerFactory.getLogger(KaaTcpEncoder.class);
 
   @Override
-  public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+  public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise)
+          throws Exception {
     if (!(msg instanceof MqttFrame)) {
       LOG.warn("Message is not a {}", MqttFrame.class.getSimpleName());
       super.write(ctx, msg, promise);
@@ -48,12 +49,14 @@ public class KaaTcpEncoder extends ChannelOutboundHandlerAdapter {
         LOG.trace("Sending {} data for frame {}", Arrays.toString(data), frame);
       }
       if (LOG.isTraceEnabled()) {
-        LOG.trace("Channel promise before writeAndFlush isSuccess [{}] isDone [{}] isCancelled [{}] for frame {}", promise.isSuccess(),
+        LOG.trace("Channel promise before writeAndFlush isSuccess [{}] isDone [{}]"
+                + " isCancelled [{}] for frame {}", promise.isSuccess(),
             promise.isDone(), promise.isCancelled(), frame);
       }
       ChannelFuture future = ctx.writeAndFlush(data, promise);
       if (LOG.isTraceEnabled()) {
-        LOG.trace("Returned future [{}] isSuccess [{}] isDone [{}] isCancelled [{}] cause [{}] for frame {}", future, future.isSuccess(),
+        LOG.trace("Returned future [{}] isSuccess [{}] isDone [{}] isCancelled [{}] cause [{}]"
+                + " for frame {}", future, future.isSuccess(),
             future.isDone(), future.isCancelled(), future.cause(), frame);
         if (future.cause() != null) {
           LOG.trace("Write operation failed due to:", future.cause());

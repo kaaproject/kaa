@@ -120,6 +120,12 @@ public class TcpHandler extends SimpleChannelInboundHandler<AbstractKaaTcpComman
   private volatile boolean sessionDisconnected;
   private MessageBuilder connectResponseConverter;
 
+  /**
+   * Create new instance of <code>TcpHandler</code>.
+   *
+   * @param uuid immutable universally unique identifier
+   * @param akkaService handler of messages with the transport layer connection info
+   */
   public TcpHandler(UUID uuid, MessageHandler akkaService) {
     this.uuid = uuid;
     this.handler = akkaService;

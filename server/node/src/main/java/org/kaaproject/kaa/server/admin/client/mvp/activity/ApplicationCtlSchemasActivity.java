@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import com.google.gwt.place.shared.Place;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
@@ -34,7 +34,7 @@ public class ApplicationCtlSchemasActivity extends CtlSchemasActivity<Applicatio
 
   public ApplicationCtlSchemasActivity(ApplicationCtlSchemasPlace place,
                                        ClientFactory clientFactory) {
-    super(place, CTLSchemaMetaInfoDto.class, clientFactory);
+    super(place, CtlSchemaMetaInfoDto.class, clientFactory);
   }
 
   @Override
@@ -43,8 +43,8 @@ public class ApplicationCtlSchemasActivity extends CtlSchemasActivity<Applicatio
   }
 
   @Override
-  protected AbstractDataProvider<CTLSchemaMetaInfoDto, String> getDataProvider(
-      AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid) {
+  protected AbstractDataProvider<CtlSchemaMetaInfoDto, String> getDataProvider(
+      AbstractGrid<CtlSchemaMetaInfoDto, String> dataGrid) {
     return new ApplicationCtlSchemasDataProvider(dataGrid, listView, place.getApplicationId());
   }
 
@@ -55,7 +55,7 @@ public class ApplicationCtlSchemasActivity extends CtlSchemasActivity<Applicatio
 
   @Override
   protected Place existingEntityPlace(String id) {
-    CTLSchemaMetaInfoDto schema = dataProvider.getRowData(id);
+    CtlSchemaMetaInfoDto schema = dataProvider.getRowData(id);
     return new CtlSchemaPlace(id, Collections.max(schema.getVersions()), schema.getScope(),
         place.getApplicationId(), schema.getScope() == getCurrentScope(), false);
   }

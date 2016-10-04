@@ -562,6 +562,13 @@ public class BinaryEncDec implements PlatformEncDec {
     buf.putInt(redirectSync.getAccessPointId());
   }
 
+  /**
+   * Put key and value, where key is <code>GrowingByteBuffer</code> instance and value is bytes
+   * array.
+   *
+   * @param buf is <code>GrowingByteBuffer</code> instance
+   * @param str is string which put in map as value
+   */
   public void putUtf(GrowingByteBuffer buf, String str) {
     if (str != null) {
       put(buf, str.getBytes(UTF8));

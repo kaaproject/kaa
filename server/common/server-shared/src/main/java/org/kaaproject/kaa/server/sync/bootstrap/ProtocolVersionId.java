@@ -26,6 +26,12 @@ public final class ProtocolVersionId {
   private final int protocolId;
   private final int version;
 
+  /**
+   * Create new instance of <code>ProtocolVersionId</code>.
+   *
+   * @param protocolId is protocol id
+   * @param version is version id
+   */
   public ProtocolVersionId(int protocolId, int version) {
     super();
     this.protocolId = protocolId;

@@ -62,7 +62,8 @@ public class RequestDecoder extends SimpleChannelInboundHandler<HttpObject> {
 
     if (httpObject instanceof HttpRequest) {
       HttpRequest httpRequest = (HttpRequest) httpObject;
-      LOG.trace("Session: {} got valid HTTP request:\n{}", sessionUuidAttr.get().toString(), httpRequest.headers().toString());
+      LOG.trace("Session: {} got valid HTTP request:\n{}",
+              sessionUuidAttr.get().toString(), httpRequest.headers().toString());
       if (httpRequest.getMethod().equals(HttpMethod.POST)) {
         String uri = httpRequest.getUri();
         AbstractCommand cp = (AbstractCommand) commandFactory.getCommandProcessor(uri);
@@ -72,10 +73,13 @@ public class RequestDecoder extends SimpleChannelInboundHandler<HttpObject> {
         ctx.fireChannelRead(cp);
       } else {
         LOG.error("Got invalid HTTP method: expecting only POST");
-        throw new BadRequestException("Incorrect method " + httpRequest.getMethod().toString() + ", expected POST");
+        throw new BadRequestException(
+                "Incorrect method " + httpRequest.getMethod().toString() + ", expected POST"
+        );
       }
     } else {
-      LOG.warn("Session: {} got invalid HTTP object:\n{}", sessionUuidAttr.get().toString(), httpObject);
+      LOG.warn("Session: {} got invalid HTTP object:\n{}",
+              sessionUuidAttr.get().toString(), httpObject);
     }
   }
 }

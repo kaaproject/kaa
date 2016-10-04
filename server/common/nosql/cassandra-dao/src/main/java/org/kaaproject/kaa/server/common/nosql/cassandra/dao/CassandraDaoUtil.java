@@ -108,7 +108,8 @@ public class CassandraDaoUtil {
 
   /**
    * This method convert string id to substring fields divided by {@link
-   * org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants#KEY_DELIMITER
+   * org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants#
+   * KEY_DELIMITER
    * }
    *
    * @return the string array or null
@@ -135,6 +136,12 @@ public class CassandraDaoUtil {
     return id;
   }
 
+  /**
+   * Convert key hash to string.
+   *
+   * @param endpointKeyHash is key hash to convert
+   * @return string
+   */
   public static String convertKeyHashToString(byte[] endpointKeyHash) {
     String id = null;
     if (endpointKeyHash != null) {

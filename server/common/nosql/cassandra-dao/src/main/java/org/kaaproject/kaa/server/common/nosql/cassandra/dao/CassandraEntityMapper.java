@@ -47,7 +47,7 @@ import java.util.Set;
 
 public class CassandraEntityMapper<T> {
 
-  private final static Map<Class<?>, CassandraEntityMapper<?>> mappers = new HashMap<>();
+  private static final Map<Class<?>, CassandraEntityMapper<?>> mappers = new HashMap<>();
   private final List<String> nonKeyColumns = new ArrayList<>();
   private final List<String> keyColumns = new ArrayList<>();
   private final Map<String, PropertyDescriptor> fieldDescMap = new HashMap<>();
@@ -55,6 +55,12 @@ public class CassandraEntityMapper<T> {
 
   private String name;
 
+  /**
+   * Create new instance of <code>CassandraEntityMapper</code>.
+   *
+   * @param entityClass is entity class
+   * @param cassandraClient os cassandra client
+   */
   public CassandraEntityMapper(Class<T> entityClass, CassandraClient cassandraClient) {
 
     Table tableAnnotation = entityClass.getAnnotation(Table.class);
@@ -112,7 +118,7 @@ public class CassandraEntityMapper<T> {
               "Cannot find matching getter and setter for field '" + fieldName + "'");
         }
 
-        Set<Class<?>> udts = findUDTs(field.getGenericType());
+        Set<Class<?>> udts = findUdts(field.getGenericType());
         if (!udts.isEmpty()) {
           Map<Class<?>, CassandraEntityMapper<?>> udtMap = new HashMap<>();
           for (Class<?> udtClass : udts) {
@@ -127,9 +133,19 @@ public class CassandraEntityMapper<T> {
     }
   }
 
+  /**
+   * Factory method: found instance of <code>CassandraEntityMapper</code> from <code>mappers</code>
+   * by <code>clazz</code> or create instance if not found and return it.
+   *
+   * @param clazz           using for searching instance of <code>CassandraEntityMapper</code> in
+   *                        <code>mappers</code>
+   * @param cassandraClient using when creating new instance of CassandraEntityMapper
+   */
   @SuppressWarnings("unchecked")
-  public static <E> CassandraEntityMapper<E> getEntityMapperForClass(Class<E> clazz,
-                                                                     CassandraClient cassandraClient) {
+  public static <E> CassandraEntityMapper<E> getEntityMapperForClass(
+          Class<E> clazz,
+          CassandraClient cassandraClient
+  ) {
     CassandraEntityMapper<?> mapper = mappers.get(clazz);
     if (mapper == null) {
       if (clazz.isAnnotationPresent(Table.class)) {
@@ -157,18 +173,18 @@ public class CassandraEntityMapper<T> {
     return Map.class.isAssignableFrom(klass);
   }
 
-  static boolean isMappedUDT(Class<?> klass) {
+  static boolean isMappedUdt(Class<?> klass) {
     return klass.isAnnotationPresent(UDT.class);
   }
 
-  static Set<Class<?>> findUDTs(Type type) {
-    Set<Class<?>> udts = findUDTs(type, null);
+  static Set<Class<?>> findUdts(Type type) {
+    Set<Class<?>> udts = findUdts(type, null);
     return (udts == null)
         ? Collections.<Class<?>>emptySet()
         : udts;
   }
 
-  private static Set<Class<?>> findUDTs(Type type, Set<Class<?>> udts) {
+  private static Set<Class<?>> findUdts(Type type, Set<Class<?>> udts) {
     if (type instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) type;
       Type raw = pt.getRawType();
@@ -176,16 +192,16 @@ public class CassandraEntityMapper<T> {
         Class<?> klass = (Class<?>) raw;
         if (mapsToCollection(klass)) {
           Type[] childTypes = pt.getActualTypeArguments();
-          udts = findUDTs(childTypes[0], udts);
+          udts = findUdts(childTypes[0], udts);
 
           if (mapsToMap(klass)) {
-            udts = findUDTs(childTypes[1], udts);
+            udts = findUdts(childTypes[1], udts);
           }
         }
       }
     } else if (type instanceof Class) {
       Class<?> klass = (Class<?>) type;
-      if (isMappedUDT(klass)) {
+      if (isMappedUdt(klass)) {
         if (udts == null) {
           udts = Sets.newHashSet();
         }
@@ -207,6 +223,14 @@ public class CassandraEntityMapper<T> {
     return keyColumns;
   }
 
+  /**
+   * Get column value for name, search value in field <code>fieldDescMap</code> or create new.
+   *
+   * @param name is name for which search column value
+   * @param entity using for create column value
+   * @param cassandraClient using for create column value
+   * @return column value
+   */
   public Object getColumnValueForName(String name,
                                       Object entity,
                                       CassandraClient cassandraClient) {

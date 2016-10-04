@@ -47,6 +47,12 @@ public final class CassandraEndpointGroupState
   public CassandraEndpointGroupState() {
   }
 
+  /**
+   * Create new instance of <code>CassandraEndpointGroupState</code>.
+   *
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraEndpointGroupState(EndpointGroupStateDto dto) {
     this.endpointGroupId = dto.getEndpointGroupId();
     this.profileFilterId = dto.getProfileFilterId();

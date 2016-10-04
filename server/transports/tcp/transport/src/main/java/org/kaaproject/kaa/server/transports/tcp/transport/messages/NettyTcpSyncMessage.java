@@ -28,9 +28,20 @@ public class NettyTcpSyncMessage extends AbstractMessage implements SessionAware
   private final SyncRequest command;
   private final SessionInfo sessionInfo;
 
+  /**
+   * Create new instance of <code>NettyTcpSyncMessage</code>.
+   *
+   * @param command is instance of <code>SyncRequest</code>
+   * @param sessionInfo is information about session
+   * @param responseConverter convert response
+   * @param errorConverter convert error
+   */
   public NettyTcpSyncMessage(SyncRequest command, SessionInfo sessionInfo,
-                             MessageBuilder responseConverter, ErrorBuilder errorConverter) {
-    super(sessionInfo.getUuid(), sessionInfo.getPlatformId(), sessionInfo.getCtx(), sessionInfo.getChannelType(), responseConverter, errorConverter);
+                             MessageBuilder responseConverter, ErrorBuilder errorConverter
+  ) {
+    super(sessionInfo.getUuid(), sessionInfo.getPlatformId(), sessionInfo.getCtx(),
+            sessionInfo.getChannelType(), responseConverter, errorConverter
+    );
     this.command = command;
     this.sessionInfo = sessionInfo;
   }

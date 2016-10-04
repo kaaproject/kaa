@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.dao;
 
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 
 import java.util.List;
@@ -52,9 +52,9 @@ public interface CtlService {
    * Update existing CTL schema meta info scope by the given CTL schema meta info object.
    *
    * @param ctlSchemaMetaInfo the CTL schema meta info object.
-   * @return CTLSchemaMetaInfoDto the updated CTL schema meta info object.
+   * @return CtlSchemaMetaInfoDto the updated CTL schema meta info object.
    */
-  CTLSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo);
+  CtlSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CtlSchemaMetaInfoDto ctlSchemaMetaInfo);
 
   /**
    * Find CTL schema meta infos which are the application level siblings to the CTL
@@ -65,7 +65,7 @@ public interface CtlService {
    * @param applicationId the application identifier.
    * @return the CTL schema meta information objects which are the siblings to the given CTL.
    */
-  List<CTLSchemaMetaInfoDto> findSiblingsByFqnTenantIdAndApplicationId(
+  List<CtlSchemaMetaInfoDto> findSiblingsByFqnTenantIdAndApplicationId(
           String fqn, String tenantId, String applicationId);
 
   /**
@@ -143,7 +143,7 @@ public interface CtlService {
    *
    * @return the list of available system CTL schemas meta info in the database.
    */
-  List<CTLSchemaMetaInfoDto> findSystemCtlSchemasMetaInfo();
+  List<CtlSchemaMetaInfoDto> findSystemCtlSchemasMetaInfo();
 
   /**
    * Find available CTL schemas meta info for tenant(include
@@ -152,7 +152,7 @@ public interface CtlService {
    * @param tenantId the tenant identifier.
    * @return the list of available CTL schemas meta info for tenant with given identifier.
    */
-  List<CTLSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForTenant(String tenantId);
+  List<CtlSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForTenant(String tenantId);
 
   /**
    * Find available CTL schemas meta info for application(include
@@ -162,7 +162,7 @@ public interface CtlService {
    * @param applicationId the application identifier.
    * @return the list of available CTL schemas meta info for application with given identifier.
    */
-  List<CTLSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForApplication(
+  List<CtlSchemaMetaInfoDto> findAvailableCtlSchemasMetaInfoForApplication(
           String tenantId, String applicationId);
 
   /**

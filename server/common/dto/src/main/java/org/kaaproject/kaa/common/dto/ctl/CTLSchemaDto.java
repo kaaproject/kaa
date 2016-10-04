@@ -31,7 +31,7 @@ public class CTLSchemaDto implements HasId, Serializable {
   private static final long serialVersionUID = -7601241323233814152L;
 
   private String id;
-  private CTLSchemaMetaInfoDto metaInfo;
+  private CtlSchemaMetaInfoDto metaInfo;
   private Integer version;
   private String body;
   private String defaultRecord;
@@ -52,11 +52,11 @@ public class CTLSchemaDto implements HasId, Serializable {
     this.id = id;
   }
 
-  public CTLSchemaMetaInfoDto getMetaInfo() {
+  public CtlSchemaMetaInfoDto getMetaInfo() {
     return metaInfo;
   }
 
-  public void setMetaInfo(CTLSchemaMetaInfoDto metaInfo) {
+  public void setMetaInfo(CtlSchemaMetaInfoDto metaInfo) {
     this.metaInfo = metaInfo;
   }
 

@@ -21,6 +21,12 @@ public class BaseProfileInfo implements ProfileInfo {
   private final BaseSchemaInfo schemaInfo;
   private final String body;
 
+  /**
+   * Create new instance of <code>BaseProfileInfo</code>.
+   *
+   * @param schemaInfo is schema of profile info
+   * @param body is body of profile info
+   */
   public BaseProfileInfo(BaseSchemaInfo schemaInfo, String body) {
     super();
     this.schemaInfo = schemaInfo;

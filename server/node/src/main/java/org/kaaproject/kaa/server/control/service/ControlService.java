@@ -48,7 +48,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -1257,7 +1257,7 @@ public interface ControlService {
    * @param applicationId the application identifier.
    * @return the CTL schema meta information objects which are the siblings to the given CTL.
    */
-  List<CTLSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn,
+  List<CtlSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn,
                                                                       String tenantId,
                                                                       String applicationId);
 
@@ -1265,9 +1265,9 @@ public interface ControlService {
    * Update existing CTL schema meta info scope by the given CTL schema meta info object.
    *
    * @param ctlSchemaMetaInfo the CTL schema meta info object.
-   * @return CTLSchemaMetaInfoDto the updated CTL schema meta info object.
+   * @return CtlSchemaMetaInfoDto the updated CTL schema meta info object.
    */
-  CTLSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo);
+  CtlSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CtlSchemaMetaInfoDto ctlSchemaMetaInfo);
 
   /**
    * Returns meta information about system CTL schemas.
@@ -1275,7 +1275,7 @@ public interface ControlService {
    * @return Meta information about system CTL schemas
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaMetaInfoDto> getSystemCtlSchemasMetaInfo() throws ControlServiceException;
+  List<CtlSchemaMetaInfoDto> getSystemCtlSchemasMetaInfo() throws ControlServiceException;
 
   Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForSystem() throws ControlServiceException;
 
@@ -1288,7 +1288,7 @@ public interface ControlService {
    *         given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForTenant(String tenantId)
+  List<CtlSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForTenant(String tenantId)
       throws ControlServiceException;
 
   Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForTenant(String tenantId)
@@ -1304,7 +1304,7 @@ public interface ControlService {
    *         given identifier
    * @throws ControlServiceException - if an exception occures.
    */
-  List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForApplication(
+  List<CtlSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForApplication(
       String tenantId, String appId) throws ControlServiceException;
 
   Map<Fqn, List<Integer>> getAvailableCtlSchemaVersionsForApplication(

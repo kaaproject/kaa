@@ -65,7 +65,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAccessTokenDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByEndpointGroupIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpBySdkTokenDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpbyAppIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAppIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByAccessToken;
@@ -95,7 +95,7 @@ public class EndpointProfileCassandraDao
   private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDao.class);
 
   @Autowired
-  private CassandraEpbyAppIdDao cassandraEpByAppIdDao;
+  private CassandraEpByAppIdDao cassandraEpByAppIdDao;
   @Autowired
   private CassandraEpByAccessTokenDao cassandraEpByAccessTokenDao;
   @Autowired
@@ -412,7 +412,6 @@ public class EndpointProfileCassandraDao
   public EndpointProfilesBodyDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
     LOG.debug("Try to find endpoint profile body by endpoint group id [{}]",
         pageLink.getEndpointGroupId());
-    EndpointProfilesBodyDto endpointProfilesBodyDto;
     List<EndpointProfileBodyDto> profilesBodyDto;
     ByteBuffer[] keyHashList;
     if (pageLink.getApplicationId() != null) {
@@ -425,7 +424,7 @@ public class EndpointProfileCassandraDao
     if (profilesBodyDto == null) {
       profilesBodyDto = Collections.emptyList();
     }
-    endpointProfilesBodyDto = createNextBodyPage(
+    EndpointProfilesBodyDto endpointProfilesBodyDto = createNextBodyPage(
         profilesBodyDto, pageLink.getEndpointGroupId(), pageLink.getLimit());
     return endpointProfilesBodyDto;
   }
@@ -518,9 +517,11 @@ public class EndpointProfileCassandraDao
     return keyHashArray;
   }
 
-  private EndpointProfilesPageDto createNextPage(List<EndpointProfileDto> cassandraEndpointProfileList,
-                                                 String endpointGroupId,
-                                                 String limit) {
+  private EndpointProfilesPageDto createNextPage(
+          List<EndpointProfileDto> cassandraEndpointProfileList,
+          String endpointGroupId,
+          String limit
+  ) {
     EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
     PageLinkDto pageLinkDto = new PageLinkDto();
     String next;

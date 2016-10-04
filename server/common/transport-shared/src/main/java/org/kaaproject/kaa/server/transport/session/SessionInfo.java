@@ -41,6 +41,20 @@ public final class SessionInfo implements PlatformAware {
   private final int keepAlive;
   private final boolean isEncrypted;
 
+  /**
+   * Create new instance of <code>SessionInfo</code>.
+   *
+   * @param uuid immutable universally unique identifier
+   * @param platformId is platform id
+   * @param ctx is chanel context
+   * @param channelType is chanel type
+   * @param cipherPair is cipher pair
+   * @param key is endpoint key hash
+   * @param applicationToken is application token
+   * @param sdkToken is sdk token
+   * @param keepAlive is keep alive
+   * @param isEncrypted is boolean value represents encrypted session or not
+   */
   public SessionInfo(UUID uuid, int platformId, ChannelContext ctx, ChannelType channelType,
                      CipherPair cipherPair, EndpointObjectHash key,
                      String applicationToken, String sdkToken,

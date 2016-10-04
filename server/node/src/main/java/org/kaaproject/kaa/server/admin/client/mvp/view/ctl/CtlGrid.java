@@ -19,14 +19,14 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.ctl;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import java.util.Collections;
 import java.util.Comparator;
 
-public class CtlGrid extends AbstractKaaGrid<CTLSchemaMetaInfoDto, String> {
+public class CtlGrid extends AbstractKaaGrid<CtlSchemaMetaInfoDto, String> {
 
   private static final int DEFAULT_PAGE_SIZE = 12;
 
@@ -35,20 +35,20 @@ public class CtlGrid extends AbstractKaaGrid<CTLSchemaMetaInfoDto, String> {
   }
 
   @Override
-  protected float constructColumnsImpl(DataGrid<CTLSchemaMetaInfoDto> table) {
+  protected float constructColumnsImpl(DataGrid<CtlSchemaMetaInfoDto> table) {
     float prefWidth = 0;
 
     prefWidth += constructStringColumn(table,
         Utils.constants.fqn(),
-        new StringValueProvider<CTLSchemaMetaInfoDto>() {
+        new StringValueProvider<CtlSchemaMetaInfoDto>() {
           @Override
-          public String getValue(CTLSchemaMetaInfoDto item) {
+          public String getValue(CtlSchemaMetaInfoDto item) {
             return item.getFqn();
           }
         },
-        new Comparator<CTLSchemaMetaInfoDto>() {
+        new Comparator<CtlSchemaMetaInfoDto>() {
           @Override
-          public int compare(CTLSchemaMetaInfoDto o1, CTLSchemaMetaInfoDto o2) {
+          public int compare(CtlSchemaMetaInfoDto o1, CtlSchemaMetaInfoDto o2) {
             return o1.getFqn().compareTo(o2.getFqn());
           }
         },
@@ -58,15 +58,15 @@ public class CtlGrid extends AbstractKaaGrid<CTLSchemaMetaInfoDto, String> {
 
     prefWidth += constructStringColumn(table,
         Utils.constants.scope(),
-        new StringValueProvider<CTLSchemaMetaInfoDto>() {
+        new StringValueProvider<CtlSchemaMetaInfoDto>() {
           @Override
-          public String getValue(CTLSchemaMetaInfoDto item) {
+          public String getValue(CtlSchemaMetaInfoDto item) {
             return Utils.getCtlScopeString(item.getScope());
           }
         },
-        new Comparator<CTLSchemaMetaInfoDto>() {
+        new Comparator<CtlSchemaMetaInfoDto>() {
           @Override
-          public int compare(CTLSchemaMetaInfoDto o1, CTLSchemaMetaInfoDto o2) {
+          public int compare(CtlSchemaMetaInfoDto o1, CtlSchemaMetaInfoDto o2) {
             return Utils.getCtlScopeString(o1.getScope()).compareTo(
                 Utils.getCtlScopeString(o2.getScope()));
           }
@@ -77,15 +77,15 @@ public class CtlGrid extends AbstractKaaGrid<CTLSchemaMetaInfoDto, String> {
 
     prefWidth += constructStringColumn(table,
         Utils.constants.versionsCount(),
-        new StringValueProvider<CTLSchemaMetaInfoDto>() {
+        new StringValueProvider<CtlSchemaMetaInfoDto>() {
           @Override
-          public String getValue(CTLSchemaMetaInfoDto item) {
+          public String getValue(CtlSchemaMetaInfoDto item) {
             return item.getVersions().size() + "";
           }
         },
-        new Comparator<CTLSchemaMetaInfoDto>() {
+        new Comparator<CtlSchemaMetaInfoDto>() {
           @Override
-          public int compare(CTLSchemaMetaInfoDto o1, CTLSchemaMetaInfoDto o2) {
+          public int compare(CtlSchemaMetaInfoDto o1, CtlSchemaMetaInfoDto o2) {
             return o1.getVersions().size() - o2.getVersions().size();
           }
         },
@@ -95,15 +95,15 @@ public class CtlGrid extends AbstractKaaGrid<CTLSchemaMetaInfoDto, String> {
 
     prefWidth += constructStringColumn(table,
         Utils.constants.maxVersion(),
-        new StringValueProvider<CTLSchemaMetaInfoDto>() {
+        new StringValueProvider<CtlSchemaMetaInfoDto>() {
           @Override
-          public String getValue(CTLSchemaMetaInfoDto item) {
+          public String getValue(CtlSchemaMetaInfoDto item) {
             return Collections.max(item.getVersions()) + "";
           }
         },
-        new Comparator<CTLSchemaMetaInfoDto>() {
+        new Comparator<CtlSchemaMetaInfoDto>() {
           @Override
-          public int compare(CTLSchemaMetaInfoDto o1, CTLSchemaMetaInfoDto o2) {
+          public int compare(CtlSchemaMetaInfoDto o1, CtlSchemaMetaInfoDto o2) {
             return Collections.max(o1.getVersions()) - Collections.max(o2.getVersions());
           }
         },

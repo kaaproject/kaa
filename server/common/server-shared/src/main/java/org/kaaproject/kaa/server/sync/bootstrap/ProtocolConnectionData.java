@@ -23,6 +23,13 @@ public final class ProtocolConnectionData {
   private final ProtocolVersionId protocolVersionId;
   private final byte[] connectionData;
 
+  /**
+   * Create new instance of <code>ProtocolConnectionData</code>.
+   *
+   * @param accessPointId is access point id
+   * @param protocolVersionId is protocol version id
+   * @param connectionData is connection data
+   */
   public ProtocolConnectionData(int accessPointId,
                                 ProtocolVersionId protocolVersionId,
                                 byte[] connectionData) {

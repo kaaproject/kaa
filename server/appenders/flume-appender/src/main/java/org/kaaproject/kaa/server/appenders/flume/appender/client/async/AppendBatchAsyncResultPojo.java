@@ -24,6 +24,12 @@ public class AppendBatchAsyncResultPojo {
   public boolean isSuccessful;
   public List<Event> events;
 
+  /**
+   * Create new instance of <code>AppendBatchAsyncResultPojo</code>.
+   *
+   * @param isSuccessful is represent successful or not the result
+   * @param events       is <code>List</code> of events
+   */
   public AppendBatchAsyncResultPojo(boolean isSuccessful, List<Event> events) {
     super();
     this.isSuccessful = isSuccessful;
