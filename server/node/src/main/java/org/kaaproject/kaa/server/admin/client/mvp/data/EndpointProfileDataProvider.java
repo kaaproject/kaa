@@ -19,8 +19,10 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import static org.kaaproject.kaa.server.admin.client.util.Utils.isNotBlank;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import java.util.Set;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
@@ -37,8 +39,7 @@ import com.google.gwt.view.client.Range;
 public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointProfileDto, String> {
 
     public static final String DEFAULT_OFFSET = "0";
-    private String limit = "20";
-    private String pageSize;
+    private String limit = "11";
     private String offset = DEFAULT_OFFSET;
     private String applicationId;
     private String groupID;
@@ -54,7 +55,6 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
         this.applicationId = applicationId;
         this.groupID = "";
         endpointProfilesList = new ArrayList<>();
-        pageSize = limit = (dataGrid.getPageSize() + 1) + "";
     }
     
     @Override
@@ -62,7 +62,7 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
         if ((endpointKeyHash != null && !endpointKeyHash.isEmpty()) || 
                 (groupID != null && !groupID.isEmpty())) {
             int start = display.getVisibleRange().getStart();
-            if (previousStart < start) {
+            if (previousStart < start ) {
                 previousStart = start;
                 setLoaded(false);
             }
@@ -112,10 +112,16 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     
                         @Override
                         public void onSuccess(EndpointProfilesPageDto result) {
+//                            endpointProfilesList.clear();
+
+                            Set<EndpointProfileDto> hs = new HashSet<>();
+                            hs.addAll(result.getEndpointProfiles());
+                            hs.addAll(endpointProfilesList);
                             endpointProfilesList.clear();
-                            endpointProfilesList.addAll(result.getEndpointProfiles());
-                            offset = result.getPageLinkDto().getOffset();
+                            endpointProfilesList.addAll(hs);
+
                             callback.onSuccess(endpointProfilesList);
+                            offset = result.getPageLinkDto().getOffset();
                         }
                     });
         }
@@ -133,13 +139,12 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     public void update() {
         reset();
         dataGrid.getDataGrid().setVisibleRangeAndClearData(
-                new Range(0, dataGrid.getPageSize()), true);        
+                new Range(0, dataGrid.getPageSize()), true);
     }
 
     private void reset() {
         endpointProfilesList.clear();
         previousStart = -1;
-        limit = pageSize;
         offset = DEFAULT_OFFSET;
     }
 }
