@@ -73,6 +73,11 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>EventClassFamily</code>.
+   *
+   * @param dto data transfer object contain data that assign on fields of new instance
+   */
   public EventClassFamily(EventClassFamilyDto dto) {
     this.id = getLongId(dto.getId());
     Long tenantId = getLongId(dto.getTenantId());
@@ -156,16 +161,16 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
     final int prime = 31;
     int result = 1;
     result = prime * result
-        + ((className == null) ? 0 : className.hashCode());
+            + ((className == null) ? 0 : className.hashCode());
     result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
     result = prime * result
-        + ((createdUsername == null) ? 0 : createdUsername.hashCode());
+            + ((createdUsername == null) ? 0 : createdUsername.hashCode());
     result = prime * result
-        + ((description == null) ? 0 : description.hashCode());
+            + ((description == null) ? 0 : description.hashCode());
     result = prime * result + ((id == null) ? 0 : id.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result
-        + ((namespace == null) ? 0 : namespace.hashCode());
+            + ((namespace == null) ? 0 : namespace.hashCode());
     result = prime * result + ((tenant == null) ? 0 : tenant.hashCode());
     result = prime * result + ((schemas == null) ? 0 : schemas.hashCode());
     return result;
@@ -273,8 +278,13 @@ public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
 
   @Override
   public String toString() {
-    return "EventClassFamily [name=" + name + ", namespace=" + namespace + ", className=" + className + ", description=" + description
-        + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", id=" + id + "]";
+    return "EventClassFamily [name=" + name
+            + ", namespace=" + namespace
+            + ", className=" + className
+            + ", description=" + description
+            + ", createdUsername=" + createdUsername
+            + ", createdTime=" + createdTime
+            + ", id=" + id + "]";
   }
 
 }

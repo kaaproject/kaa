@@ -63,6 +63,12 @@ public class CassandraEpByEndpointGroupIdDao
     return endpointKeyHash;
   }
 
+  /**
+   * Get endpoints ids.
+   *
+   * @param pageLink contains searching parameters (offset, etc.)
+   * @return endpoints ids
+   */
   public ByteBuffer[] findEpByEndpointGroupId(PageLinkDto pageLink) {
     String endpointGroupId = pageLink.getEndpointGroupId();
     String limit = pageLink.getLimit();

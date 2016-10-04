@@ -40,24 +40,41 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = CTL_SCHEMA_META_INFO_TABLE_NAME, uniqueConstraints =
-@UniqueConstraint(columnNames = {CTL_SCHEMA_META_INFO_FQN, CTL_SCHEMA_META_INFO_TENANT_ID, CTL_SCHEMA_META_INFO_APPLICATION_ID}, name = CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT))
-public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implements Serializable {
+    @UniqueConstraint(
+      columnNames = {CTL_SCHEMA_META_INFO_FQN,
+          CTL_SCHEMA_META_INFO_TENANT_ID, CTL_SCHEMA_META_INFO_APPLICATION_ID},
+      name = CTL_SCHEMA_META_INFO_UNIQUE_CONSTRAINT
+    )
+)
+public class CtlSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implements Serializable {
 
   private static final long serialVersionUID = 3185049875063895954L;
 
   @Column(name = CTL_SCHEMA_META_INFO_FQN)
   private String fqn;
   @ManyToOne(optional = true, fetch = FetchType.LAZY)
-  @JoinColumn(nullable = true, name = CTL_SCHEMA_META_INFO_TENANT_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_TENANT_FK))
+  @JoinColumn(nullable = true, name = CTL_SCHEMA_META_INFO_TENANT_ID,
+      foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_TENANT_FK))
   private Tenant tenant;
   @ManyToOne(optional = true, fetch = FetchType.LAZY)
-  @JoinColumn(nullable = true, name = CTL_SCHEMA_META_INFO_APPLICATION_ID, foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_APPLICATION_FK))
+  @JoinColumn(nullable = true, name = CTL_SCHEMA_META_INFO_APPLICATION_ID,
+      foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_APPLICATION_FK))
   private Application application;
 
-  public CTLSchemaMetaInfo() {
+  /**
+   * Create new instance of CTL schema meta info.
+   */
+  public CtlSchemaMetaInfo() {
   }
 
-  public CTLSchemaMetaInfo(CTLSchemaMetaInfoDto dto) {
+  /**
+   * Create new instance of CTL schema meta info.
+   *
+   * @param dto data transfer object that used for creating new instance,
+   *            it hold id, full qualified name, tenant id and application id
+   *            of new instance
+   */
+  public CtlSchemaMetaInfo(CTLSchemaMetaInfoDto dto) {
     this.id = ModelUtils.getLongId(dto.getId());
     this.fqn = dto.getFqn();
     Long tenantId = getLongId(dto.getTenantId());
@@ -66,11 +83,25 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     this.application = appId != null ? new Application(appId) : null;
   }
 
-  public CTLSchemaMetaInfo(String fqn) {
+  /**
+   * Create new instance of CTL schema meta info.
+   * @param fqn is full qualified name
+   */
+  public CtlSchemaMetaInfo(String fqn) {
     this.fqn = fqn;
   }
 
-  public CTLSchemaMetaInfo(String fqn, String tenantId, String applicationId) {
+  /**
+   * Create new instance of CTL schema meta info.
+   * @param fqn is full qualified name
+   * @param tenantId is tenant id, it used for creating
+   *                 <code>Tenant</code> with corresponding id and
+   *                 set it on field <code>tenant</code>
+   * @param applicationId is application id, it used for creating
+   *                 <code>Application</code> with corresponding id and
+   *                 set it on field <code>application</code>
+   */
+  public CtlSchemaMetaInfo(String fqn, String tenantId, String applicationId) {
     this.fqn = fqn;
     Long tenId = getLongId(tenantId);
     this.tenant = tenId != null ? new Tenant(tenId) : null;
@@ -78,21 +109,27 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     this.application = appId != null ? new Application(appId) : null;
   }
 
-  public CTLSchemaMetaInfo(String fqn, Tenant tenant, Application application) {
+  /**
+   * Create new instance of CTL schema meta info.
+   * @param fqn is full qualified name
+   * @param tenant is <code>Tenant</code> instance
+   * @param application is <code>Application</code> instance
+   */
+  public CtlSchemaMetaInfo(String fqn, Tenant tenant, Application application) {
     this.fqn = fqn;
     this.tenant = tenant;
     this.application = application;
   }
 
-  public CTLSchemaMetaInfo(Long id) {
+  public CtlSchemaMetaInfo(Long id) {
     this.id = id;
   }
 
   /**
-   * Updates scope.
-   *
-   * @param tenantId      tenant identifier
-   * @param applicationId application identifier
+   * Update fields <code>tenant</code> and <code>application</code>,
+   * create new instances by using ids in parameters.
+   * @param tenantId is tenant id
+   * @param applicationId is application id
    */
   public void updateScope(String tenantId, String applicationId) {
     Long tenId = getLongId(tenantId);
@@ -132,7 +169,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
 
   @Override
   protected GenericModel<CTLSchemaMetaInfoDto> newInstance(Long id) {
-    return new CTLSchemaMetaInfo(id);
+    return new CtlSchemaMetaInfo(id);
   }
 
   @Override
@@ -167,7 +204,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
     if (getClass() != obj.getClass()) {
       return false;
     }
-    CTLSchemaMetaInfo other = (CTLSchemaMetaInfo) obj;
+    CtlSchemaMetaInfo other = (CtlSchemaMetaInfo) obj;
     if (application == null) {
       if (other.application != null) {
         return false;
@@ -195,7 +232,7 @@ public class CTLSchemaMetaInfo extends GenericModel<CTLSchemaMetaInfoDto> implem
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("CTLSchemaMetaInfo [fqn=");
+    builder.append("CtlSchemaMetaInfo [fqn=");
     builder.append(fqn);
     builder.append(", tenant=");
     builder.append(tenant);

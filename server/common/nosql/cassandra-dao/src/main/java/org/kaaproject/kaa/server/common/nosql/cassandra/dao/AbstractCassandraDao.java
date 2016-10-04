@@ -110,6 +110,12 @@ public abstract class AbstractCassandraDao<T, K> {
     return mapper.saveQuery(dto);
   }
 
+  /**
+   * Save entity in cassandra database.
+   *
+   * @param object is entity for saving
+   * @return saved entity
+   */
   public T save(T object) {
     LOG.debug("Save entity {}", object);
     Statement saveStatement = getSaveQuery(object);
@@ -148,6 +154,10 @@ public abstract class AbstractCassandraDao<T, K> {
     return execute(statement, statement.getConsistencyLevel());
   }
 
+  /**
+   * Get all entities from cassandra database.
+   * @return <code>List</code> of entities
+   */
   public List<T> find() {
     LOG.debug("Get all entities from column family {}", getColumnFamilyName());
     return findListByStatement(
@@ -161,6 +171,9 @@ public abstract class AbstractCassandraDao<T, K> {
     return (T) getMapper().get(key);
   }
 
+  /**
+   * Remove all entities from cassandra database.
+   */
   public void removeAll() {
     Statement truncate = QueryBuilder.truncate(getColumnFamilyName())
         .setConsistencyLevel(getWriteConsistencyLevel());

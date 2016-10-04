@@ -44,6 +44,11 @@ public final class MongoEndpointNotification implements EndpointNotification, Se
   public MongoEndpointNotification() {
   }
 
+  /**
+   * Create new instance of <code>MongoEndpointNotification</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoEndpointNotification(EndpointNotificationDto dto) {
     this.id = dto.getId();
     this.endpointKeyHash = getArrayCopy(dto.getEndpointKeyHash());

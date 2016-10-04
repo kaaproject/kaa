@@ -55,7 +55,8 @@ import javax.persistence.Version;
 @Entity
 @Table(name = ABSTRACT_STRUCTURE_TABLE_NAME)
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class AbstractStructure<T extends AbstractStructureDto> extends GenericModel<T> implements Serializable {
+public abstract class AbstractStructure<T extends AbstractStructureDto>
+        extends GenericModel<T> implements Serializable {
 
   private static final long serialVersionUID = 5871567091169424733L;
 
@@ -117,6 +118,11 @@ public abstract class AbstractStructure<T extends AbstractStructureDto> extends 
     this.id = id;
   }
 
+  /**
+   * Create new instace of <code>AbstractStructure</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public AbstractStructure(AbstractStructureDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);

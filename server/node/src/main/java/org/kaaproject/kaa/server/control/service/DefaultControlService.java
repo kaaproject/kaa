@@ -1789,7 +1789,7 @@ public class DefaultControlService implements ControlService {
 
   @Override
   public Set<String> getFqnSetForEcf(String ecfId) {
-    return eventClassService.getFqnSetForECF(ecfId);
+    return eventClassService.getFqnSetForEcf(ecfId);
   }
 
   /*
@@ -1801,7 +1801,7 @@ public class DefaultControlService implements ControlService {
   @Override
   public void validateEcfListInSdkProfile(List<AefMapInfoDto> ecfList)
       throws ControlServiceException {
-    if (!eventClassService.isValidECFListInSdkProfile(ecfList)) {
+    if (!eventClassService.isValidEcfListInSdkProfile(ecfList)) {
       throw new ControlServiceException("You have chosen event class families,"
           + " where event classes have the same FQNs.");
     }

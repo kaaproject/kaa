@@ -27,7 +27,7 @@ import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,7 +98,7 @@ public class HibernateCtlSchemaDaoTest extends HibernateAbstractTest {
     if (tenant == null) {
       tenant = generateTenant();
     }
-    ctlSchema.setMetaInfo(new CTLSchemaMetaInfo(fqn, tenant, null));
+    ctlSchema.setMetaInfo(new CtlSchemaMetaInfo(fqn, tenant, null));
     ctlSchema.setVersion(version);
     if (isBlank(body)) {
       body = UUID.randomUUID().toString();

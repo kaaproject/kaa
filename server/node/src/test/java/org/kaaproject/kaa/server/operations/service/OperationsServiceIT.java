@@ -49,7 +49,7 @@ import org.kaaproject.kaa.server.common.dao.impl.TenantDao;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
@@ -240,7 +240,7 @@ public class OperationsServiceIT extends AbstractTest {
     EndpointGroup groupAll = endpointGroupDao.findByAppIdAndWeight(application.getStringId(), 0);
 
 
-    CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo(BasicEndpointProfile.SCHEMA$.getFullName(),
+    CtlSchemaMetaInfo metaInfo = new CtlSchemaMetaInfo(BasicEndpointProfile.SCHEMA$.getFullName(),
         customer, application);
 
     metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);

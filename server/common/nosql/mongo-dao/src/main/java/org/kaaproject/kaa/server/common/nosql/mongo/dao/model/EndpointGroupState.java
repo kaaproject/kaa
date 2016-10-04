@@ -40,6 +40,11 @@ public final class EndpointGroupState implements ToDto<EndpointGroupStateDto>, S
   public EndpointGroupState() {
   }
 
+  /**
+   * Create new instance of <code>EndpointGroupState</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public EndpointGroupState(EndpointGroupStateDto dto) {
     this.endpointGroupId = dto.getEndpointGroupId();
     this.profileFilterId = dto.getProfileFilterId();

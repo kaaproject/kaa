@@ -64,6 +64,11 @@ public final class MongoEndpointRegistration implements EndpointRegistration, Se
   public MongoEndpointRegistration() {
   }
 
+  /**
+   * Create new instance of <code>MongoEndpointRegistration</code>.
+   * @param endpointRegistration is data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoEndpointRegistration(EndpointRegistrationDto endpointRegistration) {
     this.id = endpointRegistration.getId();
     this.applicationId = endpointRegistration.getApplicationId();

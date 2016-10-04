@@ -228,7 +228,7 @@ public class EventClassServiceImpl implements EventClassService {
 
   @Override
   public boolean validateEventClassFamilyFqns(String eventClassFamilyId, List<String> fqns) {
-    Set<String> storedFqns = getFqnSetForECF(eventClassFamilyId);
+    Set<String> storedFqns = getFqnSetForEcf(eventClassFamilyId);
     for (String fqn : fqns) {
       if (storedFqns.contains(fqn)) {
         return false;
@@ -264,7 +264,7 @@ public class EventClassServiceImpl implements EventClassService {
   }
 
   @Override
-  public List<EventClassDto> findEventClassByTenantIdAndFQN(String tenantId, String fqn) {
+  public List<EventClassDto> findEventClassByTenantIdAndFqn(String tenantId, String fqn) {
     if (isValidSqlId(tenantId)) {
       LOG.debug("Find event class family by tenant id [{}] and fqn {}", tenantId, fqn);
       return convertDtoList(eventClassDao.findByTenantIdAndFqn(tenantId, fqn));
@@ -274,7 +274,7 @@ public class EventClassServiceImpl implements EventClassService {
   }
 
   @Override
-  public EventClassDto findEventClassByTenantIdAndFQNAndVersion(String tenantId, String fqn,
+  public EventClassDto findEventClassByTenantIdAndFqnAndVersion(String tenantId, String fqn,
                                                                 int version) {
     if (isValidSqlId(tenantId)) {
       LOG.debug("Find event class family by tenant id [{}] and fqn {}", tenantId, fqn);
@@ -296,7 +296,7 @@ public class EventClassServiceImpl implements EventClassService {
   }
 
   @Override
-  public boolean isValidECFListInSdkProfile(List<AefMapInfoDto> aefList) {
+  public boolean isValidEcfListInSdkProfile(List<AefMapInfoDto> aefList) {
     Set<EventClass> ecList = new HashSet<>();
     for (AefMapInfoDto aef : aefList) {
       EventClassFamily ecf = eventClassFamilyDao.findById(aef.getEcfId());
@@ -316,7 +316,7 @@ public class EventClassServiceImpl implements EventClassService {
   }
 
   @Override
-  public Set<String> getFqnSetForECF(String ecfId) {
+  public Set<String> getFqnSetForEcf(String ecfId) {
     if (isValidSqlId(ecfId)) {
       LOG.debug("Get fqn list for event class family by id [{}] ", ecfId);
       Set<String> storedFqns = new HashSet<>();

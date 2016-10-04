@@ -24,6 +24,6 @@ import org.junit.Test;
 public class CtlSchemaMetaInfoTest {
   @Test
   public void hashCodeEqualsTest() {
-    EqualsVerifier.forClass(CTLSchemaMetaInfo.class).usingGetClass().verify();
+    EqualsVerifier.forClass(CtlSchemaMetaInfo.class).usingGetClass().verify();
   }
 }

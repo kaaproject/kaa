@@ -59,6 +59,13 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
     super(id);
   }
 
+  /**
+   * Create new instance of <code>ProfileFilter</code>.
+   * @param dto data transfer object contain body,
+   *            endpoint profile schema id, server profile
+   *            schema id. Assign these values on corresponding
+   *            fields of new instance
+   */
   public ProfileFilter(ProfileFilterDto dto) {
     super(dto);
     this.body = dto.getBody();
@@ -112,6 +119,10 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
     return endpointGroup.getStringId();
   }
 
+  /**
+   * Get version of endpoint profile schema.
+   * @return version
+   */
   public Integer getEndpointProfileSchemaVersion() {
     Integer version = null;
     if (endpointProfileSchema != null) {
@@ -120,6 +131,10 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
     return version;
   }
 
+  /**
+   * Get version of server profile schema.
+   * @return version
+   */
   public Integer getServerProfileSchemaVersion() {
     Integer version = null;
     if (serverProfileSchema != null) {
@@ -128,6 +143,10 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
     return version;
   }
 
+  /**
+   * Get id of endpoint profile schema.
+   * @return id
+   */
   public String getEndpointProfileSchemaId() {
     String id = null;
     if (endpointProfileSchema != null) {
@@ -136,6 +155,10 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
     return id;
   }
 
+  /**
+   * Get id of server profile schema.
+   * @return id
+   */
   public String getServerProfileSchemaId() {
     String id = null;
     if (serverProfileSchema != null) {
@@ -160,26 +183,30 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
+    if (!super.equals(obj)) {
       return false;
     }
 
-    ProfileFilter that = (ProfileFilter) o;
+    ProfileFilter that = (ProfileFilter) obj;
 
     if (body != null ? !body.equals(that.body) : that.body != null) {
       return false;
     }
-    if (endpointProfileSchema != null ? !endpointProfileSchema.equals(that.endpointProfileSchema) : that.endpointProfileSchema != null) {
+    if (endpointProfileSchema != null
+            ? !endpointProfileSchema.equals(that.endpointProfileSchema)
+            : that.endpointProfileSchema != null) {
       return false;
     }
-    return serverProfileSchema != null ? serverProfileSchema.equals(that.serverProfileSchema) : that.serverProfileSchema == null;
+    return serverProfileSchema != null
+            ? serverProfileSchema.equals(that.serverProfileSchema)
+            : that.serverProfileSchema == null;
 
   }
 
@@ -194,10 +221,10 @@ public class ProfileFilter extends AbstractStructure<ProfileFilterDto> implement
 
   @Override
   public String toString() {
-    return "ProfileFilter{" +
-        "body='" + body + '\'' +
-        ", endpointProfileSchema=" + endpointProfileSchema +
-        ", serverProfileSchema=" + serverProfileSchema +
-        "} " + super.toString();
+    return "ProfileFilter{"
+            + "body='" + body + '\''
+            + ", endpointProfileSchema=" + endpointProfileSchema
+            + ", serverProfileSchema=" + serverProfileSchema
+            + "} " + super.toString();
   }
 }

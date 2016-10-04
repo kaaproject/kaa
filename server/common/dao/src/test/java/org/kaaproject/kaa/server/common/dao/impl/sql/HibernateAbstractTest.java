@@ -29,7 +29,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventMap;
 import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Change;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
@@ -248,7 +248,7 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         scope = CTLSchemaScopeDto.TENANT;
       }
     }
-    CTLSchemaMetaInfo metaInfo = new CTLSchemaMetaInfo();
+    CtlSchemaMetaInfo metaInfo = new CtlSchemaMetaInfo();
     metaInfo.setFqn(fqn);
     metaInfo.setTenant(tenant);
     metaInfo = ctlSchemaMetaInfoDao.save(metaInfo);

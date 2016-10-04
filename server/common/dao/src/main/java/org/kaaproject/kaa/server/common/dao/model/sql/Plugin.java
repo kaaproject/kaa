@@ -78,6 +78,11 @@ public abstract class Plugin<T extends PluginDto> extends GenericModel<T> implem
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>Plugin</code>.
+   *
+   * @param dto data transfer object contain data that assign on fields of new instance
+   */
   public Plugin(PluginDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);
@@ -179,17 +184,17 @@ public abstract class Plugin<T extends PluginDto> extends GenericModel<T> implem
     final int prime = 31;
     int result = 1;
     result = prime * result
-        + ((application == null) ? 0 : application.hashCode());
+            + ((application == null) ? 0 : application.hashCode());
     result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
     result = prime * result
-        + ((createdUsername == null) ? 0 : createdUsername.hashCode());
+            + ((createdUsername == null) ? 0 : createdUsername.hashCode());
     result = prime * result
-        + ((description == null) ? 0 : description.hashCode());
+            + ((description == null) ? 0 : description.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result
-        + ((pluginClassName == null) ? 0 : pluginClassName.hashCode());
+            + ((pluginClassName == null) ? 0 : pluginClassName.hashCode());
     result = prime * result
-        + ((pluginTypeName == null) ? 0 : pluginTypeName.hashCode());
+            + ((pluginTypeName == null) ? 0 : pluginTypeName.hashCode());
     result = prime * result + Arrays.hashCode(rawConfiguration);
     return result;
   }

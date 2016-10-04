@@ -50,6 +50,11 @@ public final class MongoTopicListEntry implements TopicListEntry, Serializable {
   public MongoTopicListEntry() {
   }
 
+  /**
+   * Create new instance of <code>MongoTopicListEntry</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoTopicListEntry(TopicListEntryDto dto) {
     this.hash = dto.getHash();
     this.simpleHash = dto.getSimpleHash();

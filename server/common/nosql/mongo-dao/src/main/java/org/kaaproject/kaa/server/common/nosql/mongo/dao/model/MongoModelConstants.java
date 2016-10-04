@@ -129,6 +129,7 @@ public class MongoModelConstants {
   public static final String CREDENTIALS_ID = ID;
   public static final String CREDENTIALS_BODY = "credentials_body";
   public static final String CREDENTIAL_STATUS = "credentials_status";
+
   private MongoModelConstants() {
   }
 }

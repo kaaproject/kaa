@@ -65,6 +65,11 @@ public class History extends GenericModel<HistoryDto> implements Serializable {
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>History</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public History(HistoryDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);
@@ -189,7 +194,10 @@ public class History extends GenericModel<HistoryDto> implements Serializable {
 
   @Override
   public String toString() {
-    return "History [sequenceNumber=" + sequenceNumber + ", lastModifyTime=" + lastModifyTime + ", change=" + change + ", id=" + id + "]";
+    return "History [sequenceNumber=" + sequenceNumber
+            + ", lastModifyTime=" + lastModifyTime
+            + ", change=" + change
+            + ", id=" + id + "]";
   }
 
 }

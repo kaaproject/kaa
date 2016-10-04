@@ -41,6 +41,12 @@ public class CassandraEpByAccessTokenDao
     return CassandraModelConstants.EP_BY_ACCESS_TOKEN_COLUMN_FAMILY_NAME;
   }
 
+  /**
+   * Get endpoints ids by access token.
+   *
+   * @param accessToken is endpoint key hash
+   * @return endpoint key hash
+   */
   public ByteBuffer findEpIdByAccessToken(String accessToken) {
     LOG.debug("Try to find endpoint key hash by access token {}", accessToken);
     ByteBuffer endpointKeyHash = null;

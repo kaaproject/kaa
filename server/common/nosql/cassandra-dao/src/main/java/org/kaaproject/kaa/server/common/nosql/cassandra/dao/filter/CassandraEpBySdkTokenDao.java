@@ -52,7 +52,7 @@ public class CassandraEpBySdkTokenDao extends AbstractCassandraDao<CassandraEpBy
   }
 
   /**
-   * @deprecated This method needs additional testing and thus is not recommended to use as of
+   * @deprecated This method needs additional testing and thus isn't recommended to use as of
    * October, 2015.
    */
   public ByteBuffer[] getEpIdsBySdkToken(String sdkToken) {

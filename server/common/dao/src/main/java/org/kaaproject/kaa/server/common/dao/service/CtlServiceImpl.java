@@ -51,7 +51,7 @@ import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterExceptio
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +106,7 @@ public class CtlServiceImpl implements CtlService {
   private CtlSchemaDao<CtlSchema> ctlSchemaDao;
 
   @Autowired
-  private CtlSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
+  private CtlSchemaMetaInfoDao<CtlSchemaMetaInfo> ctlSchemaMetaInfoDao;
 
   @Override
   public CTLSchemaDto getOrCreateEmptySystemSchema(String createdUsername) {
@@ -142,14 +142,14 @@ public class CtlServiceImpl implements CtlService {
       CTLSchemaMetaInfoDto metaInfo = unSavedSchema.getMetaInfo();
       CTLSchemaDto dto;
       synchronized (this) {
-        List<CTLSchemaMetaInfo> existingFqns = ctlSchemaMetaInfoDao.findExistingFqns(metaInfo
+        List<CtlSchemaMetaInfo> existingFqns = ctlSchemaMetaInfoDao.findExistingFqns(metaInfo
                 .getFqn(), metaInfo.getTenantId(), metaInfo.getApplicationId());
         if (existingFqns != null && !existingFqns.isEmpty()) {
           throw new DatabaseProcessingException("Can't save common type due to an FQN conflict.");
         }
         metaInfo.setId(null);
-        CTLSchemaMetaInfo uniqueMetaInfo = ctlSchemaMetaInfoDao.save(
-                new CTLSchemaMetaInfo(metaInfo));
+        CtlSchemaMetaInfo uniqueMetaInfo = ctlSchemaMetaInfoDao.save(
+                new CtlSchemaMetaInfo(metaInfo));
         ctlSchemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(uniqueMetaInfo);
         CtlSchema ctlSchema = new CtlSchema(unSavedSchema);
         ctlSchema.setMetaInfo(uniqueMetaInfo);
@@ -218,7 +218,7 @@ public class CtlServiceImpl implements CtlService {
           throw new DatabaseProcessingException("Can't change version of existing common type "
                                                 + "version.");
         }
-        CTLSchemaMetaInfo metaInfo = schema.getMetaInfo();
+        CtlSchemaMetaInfo metaInfo = schema.getMetaInfo();
         if (!ctlSchema.getMetaInfo().equals(metaInfo.toDto())) {
           throw new DatabaseProcessingException("Can't update scope of existing common type "
                                                 + "version within update procedure.");
@@ -236,13 +236,13 @@ public class CtlServiceImpl implements CtlService {
   public CTLSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
     validateObject(ctlSchemaMetaInfo, "Incorrect ctl schema meta info object");
     LOG.debug("Update ctl schema meta info scope with id [{}]", ctlSchemaMetaInfo.getId());
-    CTLSchemaMetaInfo schemaMetaInfo = ctlSchemaMetaInfoDao.findById(ctlSchemaMetaInfo.getId());
+    CtlSchemaMetaInfo schemaMetaInfo = ctlSchemaMetaInfoDao.findById(ctlSchemaMetaInfo.getId());
     if (schemaMetaInfo
         != null) {
       synchronized (this) {
         ctlSchemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(schemaMetaInfo);
         if (checkScopeUpdate(ctlSchemaMetaInfo, schemaMetaInfo.toDto())) {
-          List<CTLSchemaMetaInfo> others = ctlSchemaMetaInfoDao.findOthersByFqnAndTenantId(
+          List<CtlSchemaMetaInfo> others = ctlSchemaMetaInfoDao.findOthersByFqnAndTenantId(
                   ctlSchemaMetaInfo.getFqn(), ctlSchemaMetaInfo.getTenantId(), ctlSchemaMetaInfo
                           .getId());
           if (others != null && !others.isEmpty()) {
@@ -250,7 +250,7 @@ public class CtlServiceImpl implements CtlService {
                                                   + "an FQN conflict.");
           }
           schemaMetaInfo = ctlSchemaMetaInfoDao.updateScope(
-                  new CTLSchemaMetaInfo(ctlSchemaMetaInfo));
+                  new CtlSchemaMetaInfo(ctlSchemaMetaInfo));
         }
         return DaoUtil.getDto(schemaMetaInfo);
       }
@@ -323,7 +323,7 @@ public class CtlServiceImpl implements CtlService {
       List<CtlSchema> dependsList = ctlSchemaDao.findDependentSchemas(ctlSchema.getStringId());
       if (dependsList.isEmpty()) {
         synchronized (this) {
-          CTLSchemaMetaInfo metaInfo = ctlSchema.getMetaInfo();
+          CtlSchemaMetaInfo metaInfo = ctlSchema.getMetaInfo();
           ctlSchemaMetaInfoDao.lockRequest(lockOptions).setScope(true).lock(metaInfo);
           try {
             ctlSchemaDao.removeById(ctlSchema.getStringId());

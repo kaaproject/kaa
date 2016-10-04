@@ -135,6 +135,11 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
     this(dto, null);
   }
 
+  /**
+   * Create new instance of <code>MongoEndpointProfile</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoEndpointProfile(EndpointProfileDto dto, Long version) {
     this.id = dto.getId();
     this.applicationId = dto.getApplicationId();
@@ -385,15 +390,15 @@ public final class MongoEndpointProfile implements EndpointProfile, Serializable
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof MongoEndpointProfile)) {
+    if (!(obj instanceof MongoEndpointProfile)) {
       return false;
     }
 
-    MongoEndpointProfile that = (MongoEndpointProfile) o;
+    MongoEndpointProfile that = (MongoEndpointProfile) obj;
 
     if (configurationVersion != that.configurationVersion) {
       return false;

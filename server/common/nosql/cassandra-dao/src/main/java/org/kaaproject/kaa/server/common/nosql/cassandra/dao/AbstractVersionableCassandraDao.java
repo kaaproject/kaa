@@ -43,6 +43,12 @@ public abstract class AbstractVersionableCassandraDao<T extends HasVersion, K>
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractVersionableCassandraDao.class);
 
+  /**
+   * Save entuty in cassandra database.
+   *
+   * @param entity to save in Cassandra database
+   * @return saved entity
+   */
   public T save(T entity) {
     if (entity.getVersion() == null) {
       entity.setVersion(0L);

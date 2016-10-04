@@ -51,7 +51,7 @@ public class EndpointRegistrationCassandraDao
       LoggerFactory.getLogger(EndpointRegistrationCassandraDao.class);
 
   @Autowired
-  private CassandraEpRegistrationByEndpointIdDao byEndpointID;
+  private CassandraEpRegistrationByEndpointIdDao byEndpointId;
 
   @Override
   protected Class<CassandraEndpointRegistration> getColumnFamilyClass() {
@@ -79,7 +79,7 @@ public class EndpointRegistrationCassandraDao
     statements.add(this.getSaveQuery(object));
     if (object.getEndpointId() != null) {
       statements.add(
-          this.byEndpointID.getSaveQuery(
+          this.byEndpointId.getSaveQuery(
               CassandraEpRegistrationByEndpointId.fromEndpointRegistration(object)));
     }
     this.executeBatch(statements.toArray(new Statement[statements.size()]));
@@ -89,7 +89,7 @@ public class EndpointRegistrationCassandraDao
   @Override
   public Optional<CassandraEndpointRegistration> findByEndpointId(String endpointId) {
     LOG.debug("Searching for endpoint registration by endpoint ID [{}]", endpointId);
-    Optional<String> credentialsId = this.byEndpointID.getCredentialsIdByEndpointId(
+    Optional<String> credentialsId = this.byEndpointId.getCredentialsIdByEndpointId(
         endpointId);
     if (credentialsId.isPresent()) {
       LOG.debug("[{}] Endpoint credentials ID by endpoint ID: {}",
@@ -119,14 +119,14 @@ public class EndpointRegistrationCassandraDao
   @Override
   public void removeByEndpointId(String endpointId) {
     LOG.debug("Removing endpoint registration by endpoint ID", endpointId);
-    Optional<String> credentialsId = this.byEndpointID.getCredentialsIdByEndpointId(
+    Optional<String> credentialsId = this.byEndpointId.getCredentialsIdByEndpointId(
         endpointId);
     if (credentialsId.isPresent()) {
       Clause clause = QueryBuilder.eq(
           CassandraModelConstants.EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY,
           endpointId);
       Statement statement = QueryBuilder.delete()
-          .from(this.byEndpointID.getColumnFamilyName())
+          .from(this.byEndpointId.getColumnFamilyName())
           .where(clause);
       this.execute(statement);
       clause = QueryBuilder.eq(

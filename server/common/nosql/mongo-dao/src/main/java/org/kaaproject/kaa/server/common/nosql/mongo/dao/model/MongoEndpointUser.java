@@ -58,6 +58,11 @@ public final class MongoEndpointUser implements EndpointUser, Serializable {
   public MongoEndpointUser() {
   }
 
+  /**
+   * Create new instance of <code>MongoEndpointUser</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoEndpointUser(EndpointUserDto dto) {
     this.id = dto.getId();
     this.username = dto.getUsername();
