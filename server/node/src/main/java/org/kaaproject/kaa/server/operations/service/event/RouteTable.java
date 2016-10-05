@@ -113,6 +113,12 @@ public class RouteTable {
     return Collections.unmodifiableSet(localAddressMap.keySet());
   }
 
+  /**
+   * Returns local route table keys.
+   *
+   * @param localAddress local address
+   * @return             local route table keys
+   */
   public Set<RouteTableKey> getLocalRouteTableKeys(RouteTableAddress localAddress) {
     Set<RouteTableKey> keys = localAddressMap.get(localAddress);
     if (keys != null) {
@@ -163,8 +169,8 @@ public class RouteTable {
    * Returns whether delivery is required.
    *
    * @param serverId server identifier
-   * @param address  true if delivery is required otherwise false
-   * @return
+   * @param address  address
+   * @return         true if delivery is required otherwise false
    */
   public boolean isDeliveryRequired(String serverId, RouteTableAddress address) {
     Set<String> servers = reportedAddressMap.get(address);
