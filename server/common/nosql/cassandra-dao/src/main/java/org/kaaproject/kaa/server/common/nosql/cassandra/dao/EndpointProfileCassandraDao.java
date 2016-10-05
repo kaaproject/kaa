@@ -63,9 +63,9 @@ import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingExceptio
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAccessTokenDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAppIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByEndpointGroupIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpBySdkTokenDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAppIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByAccessToken;

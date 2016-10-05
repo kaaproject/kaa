@@ -289,7 +289,7 @@ public class ProfileController extends AbstractAdminController {
   }
 
   /**
-   * Gets the endpoint profile by endpoint key.
+   * Gets the endpoint profile by endpoint key hash.
    *
    * @param endpointProfileKey the endpoint profile key
    * @return the endpoint profile dto

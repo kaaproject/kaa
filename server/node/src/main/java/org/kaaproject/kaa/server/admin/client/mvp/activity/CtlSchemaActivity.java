@@ -31,8 +31,8 @@ import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton.ActionMenuItemList
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ConfigurationSchemasPlace;

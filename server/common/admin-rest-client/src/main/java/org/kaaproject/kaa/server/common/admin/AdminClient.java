@@ -155,7 +155,11 @@ public class AdminClient {
   }
 
 
-
+  /**
+   * Gets the endpoint profile by endpoint group id.
+   *
+   * @param pageLink contains information about groupId, offset and limit
+   */
   public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink)
       throws Exception {
     String endpointGroupId = pageLink.getEndpointGroupId();
@@ -171,6 +175,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets the endpoint profile body by endpoint group id.
+   *
+   * @param pageLink contains information about groupId, offset and limit
+   */
   public EndpointProfilesBodyDto getEndpointProfileBodyByEndpointGroupId(PageLinkDto pageLink)
       throws Exception {
     String endpointGroupId = pageLink.getEndpointGroupId();
@@ -192,6 +202,11 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets the endpoint profile by endpoint key hash.
+   *
+   */
   public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash)
       throws Exception {
     ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(restTemplate.getUrl()
@@ -898,6 +913,11 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Returns a list of SDK profiles for the given application.
+   *
+   * @param applicationToken the application token
+   */
   public List<SdkProfileDto> getSdkProfilesByApplicationToken(String applicationToken)
       throws Exception {
     ResponseEntity<List<SdkProfileDto>> entity = restTemplate.exchange(
@@ -906,6 +926,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Generates an SDK for the specified target platform from an SDK profile .
+   *
+   * @param sdkProfileId   the sdk profile id
+   * @param targetPlatform the target platform
+   */
   public void downloadSdk(String sdkProfileId, SdkPlatform targetPlatform, String destination) {
     FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
     MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
@@ -972,6 +998,12 @@ public class AdminClient {
         HttpMethod.POST, request, extractor);
   }
 
+
+
+  /**
+   * Flushes all cached Sdks within tenant.
+   *
+   */
   public void flushSdkCache() throws Exception {
     restTemplate.postForLocation(restTemplate.getUrl() + "flushSdkCache", null);
   }
@@ -1038,6 +1070,14 @@ public class AdminClient {
         CTLSchemaDto.class, id);
   }
 
+  /**
+   * Checks if CTL schema with same fqn is already exists in the sibling applications.
+   *
+   * @param fqn              the full qualified name
+   * @param tenantId         id of the tenant
+   * @param applicationToken the application token
+   * @return true if CTL schema with same fqn is already exists in other scope
+   */
   public boolean checkFqnExistsWithAppToken(String fqn, String tenantId,
                                             String applicationToken) {
     if (tenantId != null && applicationToken != null) {
@@ -1055,6 +1095,13 @@ public class AdminClient {
     }
   }
 
+  /**
+   * Promote existing CTL schema meta info from application to tenant scope
+   *
+   * @param applicationId the id of application where schema was created
+   * @param fqn           the fqn of promoting CTL schema
+   * @return CtlSchemaMetaInfoDto the promoted CTL schema meta info object.
+   */
   public CtlSchemaMetaInfoDto promoteScopeToTenant(String applicationId, String fqn) {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("applicationId", applicationId);
@@ -1091,15 +1138,33 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets the user profile of current user.
+   *
+   * @return the user dto
+   */
   public UserDto getUserProfile() throws Exception {
     return restTemplate.getForObject(restTemplate.getUrl() + "userProfile", UserDto.class);
   }
 
+  /**
+   * Edits user profile to all user profiles.
+   *
+   * @param userProfileUpdateDto the user profile dto
+   */
   public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto) {
     restTemplate.postForObject(restTemplate.getUrl() + "userProfile",
         userProfileUpdateDto, Void.class);
   }
 
+  /**
+   * Returns a list of endpoint profiles attached to the endpoint user with
+   * the given external id.
+   *
+   * @param endpointUserExternalId the endpoint user external id
+   * @return a list of endpoint profiles for the user with the given external id
+   */
   public List<EndpointProfileDto> getEndpointProfilesByUserExternalId(
       String endpointUserExternalId) {
     String address = restTemplate.getUrl() + "endpointProfiles?userExternalId="
@@ -1110,6 +1175,7 @@ public class AdminClient {
         new ParameterizedTypeReference<List<EndpointProfileDto>>() {});
     return response.getBody();
   }
+
   /**
    * Provides security credentials, allowing an endpoint that uses them to
    * interact with the specified application.
@@ -1190,6 +1256,13 @@ public class AdminClient {
     this.restTemplate.postForLocation(restTemplate.getUrl() + "notifyRevoked", parameters);
   }
 
+  /**
+   * Get user configuration of by externalUID, schema version and application token.
+   *
+   * @param appToken      the application token
+   * @param schemaVersion the schema version
+   * @param externalUId   the external user id
+   */
   public EndpointUserConfigurationDto findUserConfigurationByUserId(String externalUId,
                                                                     String appToken,
                                                                     Integer schemaVersion) {
@@ -1198,6 +1271,11 @@ public class AdminClient {
         EndpointUserConfigurationDto.class, externalUId, appToken, schemaVersion);
   }
 
+  /**
+   * Get configuration of specific endpoint by endpointKeyHash.
+   *
+   * @param endpointKeyHash the endpoint key hash
+   */
   public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash) {
     return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{endpointKeyHash}/",
         String.class, endpointKeyHash);

@@ -484,7 +484,7 @@ public class ConfigurationController extends AbstractAdminController {
   }
 
   /**
-   * Get configuration of specific endpoint user bu externalUId.
+   * Get user configuration of by externalUID, schema version and application token.
    *
    * @param appToken      the application token
    * @param schemaVersion the schema version

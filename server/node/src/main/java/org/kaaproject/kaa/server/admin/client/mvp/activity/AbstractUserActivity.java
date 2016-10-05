@@ -60,21 +60,21 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
 
     if (create) {
       KaaAdmin.getAuthService().checkUserNameOccupied(
-              entity.getUsername(), null, new BusyAsyncCallback<ResultCode>() {
-        @Override
-        public void onFailureImpl(Throwable caught) {
-          Utils.handleException(caught, detailsView);
-        }
+          entity.getUsername(), null, new BusyAsyncCallback<ResultCode>() {
+            @Override
+            public void onFailureImpl(Throwable caught) {
+              Utils.handleException(caught, detailsView);
+            }
 
-        @Override
-        public void onSuccessImpl(ResultCode result) {
-          if (result != ResultCode.OK) {
-            detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-          } else {
-            checkEmail();
-          }
-        }
-      });
+            @Override
+            public void onSuccessImpl(ResultCode result) {
+              if (result != ResultCode.OK) {
+                detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
+              } else {
+                checkEmail();
+              }
+            }
+          });
     } else {
       checkEmail();
     }
@@ -83,21 +83,21 @@ public abstract class AbstractUserActivity<T extends UserDto, V extends UserView
   private void checkEmail() {
     final Long userId = !create ? Long.valueOf(entity.getExternalUid()) : null;
     KaaAdmin.getAuthService().checkEmailOccupied(
-            entity.getMail(), userId, new BusyAsyncCallback<ResultCode>() {
-      @Override
-      public void onFailureImpl(Throwable caught) {
-        Utils.handleException(caught, detailsView);
-      }
+        entity.getMail(), userId, new BusyAsyncCallback<ResultCode>() {
+          @Override
+          public void onFailureImpl(Throwable caught) {
+            Utils.handleException(caught, detailsView);
+          }
 
-      @Override
-      public void onSuccessImpl(ResultCode result) {
-        if (result != ResultCode.OK) {
-          detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-        } else {
-          performSave();
-        }
-      }
-    });
+          @Override
+          public void onSuccessImpl(ResultCode result) {
+            if (result != ResultCode.OK) {
+              detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
+            } else {
+              performSave();
+            }
+          }
+        });
   }
 
   private void performSave() {

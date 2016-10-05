@@ -20,7 +20,6 @@ import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.LocalActorRef;
 import akka.actor.Terminated;
-import scala.concurrent.duration.Duration;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
@@ -55,6 +54,8 @@ import org.kaaproject.kaa.server.operations.service.event.UserRouteInfo;
 import org.kaaproject.kaa.server.sync.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.concurrent.duration.Duration;
+
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -21,8 +21,8 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.DataFilter;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;

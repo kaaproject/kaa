@@ -54,26 +54,14 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class GroupController extends AbstractAdminController {
 
-  /**
-   * The Constant HTTPS_PORT.
-   */
   public static final int HTTPS_PORT = 443;
-  /**
-   * The Constant HTTP_PORT.
-   */
+
   public static final int HTTP_PORT = 80;
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(GroupController.class);
-  /**
-   * The Constant DEFAULT_LIMIT.
-   */
+
   private static final String DEFAULT_LIMIT = "20";
 
-  /**
-   * The Constant DEFAULT_OFFSET.
-   */
   private static final String DEFAULT_OFFSET = "0";
 
   /**
@@ -478,6 +466,7 @@ public class GroupController extends AbstractAdminController {
         endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
   }
 
+  //TODO move to ProfileController
   /**
    * Gets the endpoint profile by endpoint group id.
    *
@@ -532,6 +521,8 @@ public class GroupController extends AbstractAdminController {
     return endpointProfilesPageDto;
   }
 
+
+  //TODO move to ProfileController
   /**
    * Gets the endpoint profile body by endpoint group id.
    *

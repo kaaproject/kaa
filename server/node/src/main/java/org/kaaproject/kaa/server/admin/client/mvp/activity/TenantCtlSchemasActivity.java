@@ -19,8 +19,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 import com.google.gwt.place.shared.Place;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.TenantCtlSchemasDataProvider;

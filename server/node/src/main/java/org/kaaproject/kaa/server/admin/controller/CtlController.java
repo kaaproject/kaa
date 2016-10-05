@@ -49,9 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class CtlController extends AbstractAdminController {
 
-  /**
-   * The Constant BUFFER.
-   */
+
   private static final int BUFFER = 1024 * 100;
 
   /**
@@ -199,9 +197,9 @@ public class CtlController extends AbstractAdminController {
   }
 
   /**
-   * Checks if CTL schema with same fqn is already exists in the sibling application.
+   * Checks if CTL schema with same fqn is already exists in the sibling applications.
    *
-   * @param fqn              the fqn
+   * @param fqn              the full qualified name
    * @param tenantId         id of the tenant
    * @param applicationToken the application token
    * @return true if CTL schema with same fqn is already exists in other scope

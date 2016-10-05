@@ -50,9 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class SdkController extends AbstractAdminController {
 
-  /**
-   * The Constant BUFFER.
-   */
+
   private static final int BUFFER = 1024 * 100;
 
   /**
