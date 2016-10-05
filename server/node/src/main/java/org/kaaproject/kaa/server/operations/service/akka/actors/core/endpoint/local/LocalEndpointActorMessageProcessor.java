@@ -101,15 +101,13 @@ import java.util.concurrent.TimeUnit;
 public class LocalEndpointActorMessageProcessor
     extends AbstractEndpointActorMessageProcessor<LocalEndpointActorState> {
 
-  /**
-   * The Constant LOG.
-   */
   private static final Logger LOG = LoggerFactory.getLogger(
       LocalEndpointActorMessageProcessor.class);
 
   private final Map<Integer, LogDeliveryMessage> logUploadResponseMap;
 
   private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
+
 
   public LocalEndpointActorMessageProcessor(AkkaContext context,
                                             String appToken,
@@ -323,7 +321,7 @@ public class LocalEndpointActorMessageProcessor
       return SyncContext.failure(request.getRequestId());
     }
     SyncContext context = new SyncContext(new ServerSync());
-    context.setEndpointProfile(state.getProfile());
+    context.setNotificationVersion(state.getProfile());
     context.setRequestId(request.getRequestId());
     context.setStatus(SyncStatus.SUCCESS);
     context.setEndpointKey(endpointKey);

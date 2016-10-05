@@ -641,7 +641,7 @@ public class OperationsServiceIT extends AbstractTest {
     profileDto.setEndpointUserId(userDto.getId());
 
     SyncContext context = createContext(request);
-    context.setEndpointProfile(profileDto);
+    context.setNotificationVersion(profileDto);
 
     operationsService.syncClientProfile(context, request.getProfileSync());
     operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
@@ -719,7 +719,7 @@ public class OperationsServiceIT extends AbstractTest {
     request.setUserSync(userRequest);
 
     SyncContext context = createContext(request);
-    context.setEndpointProfile(profileDto);
+    context.setNotificationVersion(profileDto);
 
     operationsService.syncClientProfile(context, request.getProfileSync());
     operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
@@ -759,7 +759,7 @@ public class OperationsServiceIT extends AbstractTest {
 
     profileDto.setEndpointUserId(userDto.getId());
     SyncContext context = createContext(request);
-    context.setEndpointProfile(profileDto);
+    context.setNotificationVersion(profileDto);
 
     operationsService.syncClientProfile(context, request.getProfileSync());
     operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());

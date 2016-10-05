@@ -120,7 +120,7 @@ public class DeviceManagementController extends AbstractAdminController {
   }
 
   /**
-   * Binds credentials to the server-side endpoint profile specified.
+   * Binds credentials to the specified server-side endpoint profile.
    *
    * @param applicationToken     The application Token
    * @param credentialsId        The ID of the credentials to bind

@@ -311,7 +311,7 @@ public class DefaultAkkaServiceTest {
     epDto.setSystemNfVersion(42);
     epDto.setUserNfVersion(43);
     epDto.setLogSchemaVersion(44);
-    noDeltaResponseWithTopicState.setEndpointProfile(epDto);
+    noDeltaResponseWithTopicState.setNotificationVersion(epDto);
 
     response = new ServerSync();
     response.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
@@ -327,7 +327,7 @@ public class DefaultAkkaServiceTest {
     response.setConfigurationSync(confSyncResponse);
     deltaResponseWithProfile = new SyncContext(response);
     mockProfile = mock(EndpointProfileDto.class);
-    deltaResponseWithProfile.setEndpointProfile(mockProfile);
+    deltaResponseWithProfile.setNotificationVersion(mockProfile);
 
     response = new ServerSync();
     response.setRequestId(REQUEST_ID);
@@ -1052,7 +1052,7 @@ public class DefaultAkkaServiceTest {
     ServerSync sourceResponse = new ServerSync();
     sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+    sourceResponseHolder.setNotificationVersion(sourceProfileMock);
 
     SyncRequest targetRequest = new SyncRequest();
     targetRequest.setRequestId(REQUEST_ID);
@@ -1069,7 +1069,7 @@ public class DefaultAkkaServiceTest {
     targetResponse.setRequestId(REQUEST_ID);
     targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    targetResponseHolder.setEndpointProfile(targetProfileMock);
+    targetResponseHolder.setNotificationVersion(targetProfileMock);
 
     whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
     whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
@@ -1174,7 +1174,7 @@ public class DefaultAkkaServiceTest {
     sourceResponse.setRequestId(REQUEST_ID);
     sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+    sourceResponseHolder.setNotificationVersion(sourceProfileMock);
 
     whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
 
@@ -1236,7 +1236,7 @@ public class DefaultAkkaServiceTest {
 
     targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    targetResponseHolder.setEndpointProfile(targetProfileMock);
+    targetResponseHolder.setNotificationVersion(targetProfileMock);
 
     whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
 
@@ -1308,7 +1308,7 @@ public class DefaultAkkaServiceTest {
     ServerSync sourceResponse = new ServerSync();
     sourceResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+    sourceResponseHolder.setNotificationVersion(sourceProfileMock);
 
     whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
 
@@ -1436,7 +1436,7 @@ public class DefaultAkkaServiceTest {
     ServerSync targetResponse = new ServerSync();
     targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    targetResponseHolder.setEndpointProfile(targetProfileMock);
+    targetResponseHolder.setNotificationVersion(targetProfileMock);
 
     whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
 
@@ -1487,7 +1487,7 @@ public class DefaultAkkaServiceTest {
     targetResponse = new ServerSync();
     targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     targetResponseHolder = new SyncContext(targetResponse);
-    targetResponseHolder.setEndpointProfile(targetProfileMock);
+    targetResponseHolder.setNotificationVersion(targetProfileMock);
 
     when(targetProfileMock.getEndpointUserId()).thenReturn(USER_ID + "2");
 
@@ -1524,7 +1524,7 @@ public class DefaultAkkaServiceTest {
     targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     targetResponse.setUserSync(new UserServerSync());
     SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    targetResponseHolder.setEndpointProfile(targetProfileMock);
+    targetResponseHolder.setNotificationVersion(targetProfileMock);
 
     whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
 
@@ -1574,7 +1574,7 @@ public class DefaultAkkaServiceTest {
     sourceResponse.setUserSync(userSyncResponse);
 
     SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+    sourceResponseHolder.setNotificationVersion(sourceProfileMock);
 
     whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
 
@@ -1629,7 +1629,7 @@ public class DefaultAkkaServiceTest {
     targetResponse.setStatus(org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS);
     targetResponse.setUserSync(new UserServerSync());
     SyncContext targetResponseHolder = new SyncContext(targetResponse);
-    targetResponseHolder.setEndpointProfile(targetProfileMock);
+    targetResponseHolder.setNotificationVersion(targetProfileMock);
 
     whenSync(AvroEncDec.convert(targetRequest), targetResponseHolder);
 
@@ -1676,7 +1676,7 @@ public class DefaultAkkaServiceTest {
         new org.kaaproject.kaa.server.sync.EndpointDetachResponse(REQUEST_ID, org.kaaproject.kaa.server.sync.SyncStatus.SUCCESS)));
     sourceResponse.setUserSync(userSyncResponse);
     SyncContext sourceResponseHolder = new SyncContext(sourceResponse);
-    sourceResponseHolder.setEndpointProfile(sourceProfileMock);
+    sourceResponseHolder.setNotificationVersion(sourceProfileMock);
 
     whenSync(AvroEncDec.convert(sourceRequest), sourceResponseHolder);
 

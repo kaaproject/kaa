@@ -44,6 +44,16 @@ public class RpcHelper {
         AbstractSerializationStream.DEFAULT_FLAGS);
   }
 
+  /**
+   * Invoke the method on targeted object and encode received response.
+   *
+   * @param target              the target object
+   * @param serviceMethod       the service method
+   * @param args                the args of method
+   * @param serializationPolicy the serialization policy
+   * @param flags               the flags
+   * @throws SerializationException the serialization exception
+   */
   public static String invokeAndEncodeResponse(Object target, Method serviceMethod, Object[] args,
                                                SerializationPolicy serializationPolicy,
                                                int flags) throws SerializationException {

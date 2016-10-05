@@ -181,6 +181,12 @@ public class KaaRestTemplate extends RestTemplate {
     }
   }
 
+  /**
+   * Login to Kaa server.
+   *
+   * @param username user name
+   * @param password password
+   */
   public void login(String username, String password) {
     this.username = username;
     this.password = password;

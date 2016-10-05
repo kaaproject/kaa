@@ -27,6 +27,9 @@ public class KaaRecordEvent implements Event {
   private Map<String, String> headers;
   private byte[] body;
 
+  /**
+   * Create a new instance of KaaRecordEvent.
+   */
   public KaaRecordEvent(RecordHeader recordHeader, Map<String, String> headers, byte[] body) {
     this.recordHeader = recordHeader;
     this.headers = headers;

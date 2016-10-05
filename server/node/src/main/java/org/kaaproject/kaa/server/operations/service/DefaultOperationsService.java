@@ -299,7 +299,7 @@ public class DefaultOperationsService implements OperationsService {
     profile = syncProfileState(
         metaData.getApplicationToken(), context.getEndpointKey(), profile, false);
 
-    context.setEndpointProfile(profile);
+    context.setNotificationVersion(profile);
 
     return context;
   }
@@ -450,7 +450,7 @@ public class DefaultOperationsService implements OperationsService {
       profile = profileService.updateProfile(metaData, endpointKeyHash, useConfigurationRawSchema);
       profile = syncProfileState(
           metaData.getApplicationToken(), context.getEndpointKey(), profile, false);
-      context.setEndpointProfile(profile);
+      context.setNotificationVersion(profile);
     }
     return context;
   }
@@ -471,7 +471,7 @@ public class DefaultOperationsService implements OperationsService {
           profile.setSubscriptions(new ArrayList<>(notificationResponse.getSubscriptionSet()));
           return profile;
         };
-        context.setEndpointProfile(profileService.updateProfile(
+        context.setNotificationVersion(profileService.updateProfile(
             updateFunction.apply(profileDto), (storedProfile, newProfile) -> {
               return updateFunction.apply(storedProfile);
             }));
@@ -491,7 +491,7 @@ public class DefaultOperationsService implements OperationsService {
           context.getEndpointKey(), profile.getServerHash(),
           operationServerHash);
       profile.setServerHash(operationServerHash);
-      context.setEndpointProfile(profileService.updateProfile(profile,
+      context.setNotificationVersion(profileService.updateProfile(profile,
           (storedProfile, newProfile) -> storedProfile));
     }
     return context;

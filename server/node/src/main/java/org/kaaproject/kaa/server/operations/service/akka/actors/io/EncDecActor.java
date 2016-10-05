@@ -57,7 +57,7 @@ public class EncDecActor extends UntypedActor {
    * Instantiates a new enc dec actor.
    *
    * @param epsActor          the eps actor
-   * @param context           the context
+   * @param context           the akka context
    * @param platformProtocols the platform protocols
    */
   public EncDecActor(ActorRef epsActor, AkkaContext context, Set<String> platformProtocols) {

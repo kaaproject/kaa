@@ -30,14 +30,9 @@ import org.kaaproject.kaa.server.sync.UserServerSync;
 
 import java.util.Map;
 
-/**
- * The Class SyncContext.
- */
+
 public class SyncContext {
 
-  /**
-   * The response.
-   */
   private final ServerSync response;
 
   private String endpointKey;
@@ -50,19 +45,12 @@ public class SyncContext {
 
   private AppSeqNumber appSeqNumber;
 
-  /**
-   * The subscription states.
-   */
+
   private Map<String, Integer> subscriptionStates;
 
-  /**
-   * The system nf version.
-   */
+
   private int systemNfVersion;
 
-  /**
-   * The user nf version.
-   */
   private int userNfVersion;
 
   /**
@@ -75,6 +63,12 @@ public class SyncContext {
     this.response = response;
   }
 
+  /**
+   * Factory method that create instance where the response status set to FAILURE.
+   *
+   * @param requestId the request id
+   * @return the sync context
+   */
   public static SyncContext failure(Integer requestId) {
     ServerSync response = new ServerSync();
     response.setRequestId(requestId);
@@ -105,7 +99,7 @@ public class SyncContext {
   }
 
   /**
-   * Gets the system nf version.
+   * Gets the system notification version.
    *
    * @return the system nf version
    */
@@ -114,7 +108,7 @@ public class SyncContext {
   }
 
   /**
-   * Gets the user nf version.
+   * Gets the user notification version.
    *
    * @return the user nf version
    */
@@ -126,7 +120,12 @@ public class SyncContext {
     return endpointProfile;
   }
 
-  public void setEndpointProfile(EndpointProfileDto profile) {
+  /**
+   * Sets system and user notification versions.
+   *
+   * @param profile the profile
+   */
+  public void setNotificationVersion(EndpointProfileDto profile) {
     this.endpointProfile = profile;
     if (profile != null) {
       this.systemNfVersion = profile.getSystemNfVersion();

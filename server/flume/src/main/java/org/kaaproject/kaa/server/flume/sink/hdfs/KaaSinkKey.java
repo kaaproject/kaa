@@ -25,6 +25,12 @@ public class KaaSinkKey implements EventConstants {
   private final String applicationToken;
   private final int schemaVersion;
 
+  /**
+   * Create a new instance of KaaSinkKey.
+   *
+   * @param applicationToken the application token
+   * @param schemaVersion    the schema version
+   */
   public KaaSinkKey(String applicationToken, int schemaVersion) {
     super();
     this.applicationToken = applicationToken;

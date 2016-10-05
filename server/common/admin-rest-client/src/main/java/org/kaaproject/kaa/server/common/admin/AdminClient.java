@@ -120,6 +120,12 @@ public class AdminClient {
     return Base64.encodeBase64URLSafeString(Base64.decodeBase64(endpointProfileKeyHash));
   }
 
+  /**
+   * Read file from disk and return it binary format represented as ByteArrayResource.
+   *
+   * @param resource the name of file resource
+   * @throws IOException the io exception
+   */
   public static ByteArrayResource getFileResource(final String resource) throws IOException {
     byte[] data = FileUtils.readResourceBytes(resource);
     ByteArrayResource bar = new ByteArrayResource(data) {
@@ -131,6 +137,12 @@ public class AdminClient {
     return bar;
   }
 
+
+  /**
+   * Represented string resource as ByteArrayResource. The resource body encoded in UTF-8.
+   *
+   * @throws IOException the io exception
+   */
   public static ByteArrayResource getStringResource(final String resourceName,
                                                     final String resourceBody) throws IOException {
     byte[] data = resourceBody.getBytes("UTF-8");
@@ -142,6 +154,8 @@ public class AdminClient {
     };
     return bar;
   }
+
+
 
   public EndpointProfilesPageDto getEndpointProfileByEndpointGroupId(PageLinkDto pageLink)
       throws Exception {
@@ -1097,7 +1111,13 @@ public class AdminClient {
         new ParameterizedTypeReference<List<EndpointProfileDto>>() {});
     return response.getBody();
   }
-
+  /**
+   * Provides security credentials, allowing an endpoint that uses them to
+   * interact with the specified application.
+   *
+   * @param applicationToken the application token to allow interaction with
+   * @param credentialsBody  the security credentials to save
+   */
   public CredentialsDto provisionCredentials(String applicationToken, byte[] credentialsBody) {
     MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
     parameters.add("applicationToken", applicationToken);
@@ -1106,6 +1126,14 @@ public class AdminClient {
         parameters, CredentialsDto.class);
   }
 
+  /**
+   * Binds credentials to the specified server-side endpoint profile.
+   *
+   * @param applicationToken     the application token
+   * @param credentialsId        the id of the credentials to bind
+   * @param serverProfileVersion the server-side endpoint profile version
+   * @param serverProfileBody    the server-side endpoint profile body
+   */
   public void provisionRegistration(String applicationToken, String credentialsId,
                                     Integer serverProfileVersion, String serverProfileBody) {
     MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
@@ -1116,6 +1144,13 @@ public class AdminClient {
     this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistration", parameters);
   }
 
+  /**
+   * Provides the status for given credentials.
+   *
+   * @param applicationToken the application token
+   * @param credentialsId    the id of the credentials
+   * @return credentials status
+   */
   public CredentialsStatus getCredentialsStatus(String applicationToken, String credentialsId) {
     return this.restTemplate.getForObject(
         restTemplate.getUrl() + "credentialsStatus?applicationToken={applicationToken}"
@@ -1123,6 +1158,14 @@ public class AdminClient {
         CredentialsStatus.class, applicationToken, credentialsId);
   }
 
+  /**
+   * Revokes security credentials from the corresponding credentials storage.
+   * Also launches an asynchronous process to terminate all active sessions of
+   * the endpoint that uses these credentials.
+   *
+   * @param applicationToken the application token
+   * @param credentialsId     the id of the credentials
+   */
   public void revokeCredentials(String applicationToken, String credentialsId) {
     MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
     parameters.add("applicationToken", applicationToken);
@@ -1130,6 +1173,17 @@ public class AdminClient {
     this.restTemplate.postForLocation(restTemplate.getUrl() + "revokeCredentials", parameters);
   }
 
+  /**
+   * Used if credentials stored in external storage and Kaa server can't directly revoke them but
+   * can be notified about security credentials revocation by external system.
+   *
+   * <p>If an endpoint is already registered with the specified credentials, this API
+   * call launches an asynchronous process to terminate all active sessions of
+   * the corresponding endpoint.</p>
+   *
+   * @param applicationToken the application token
+   * @param credentialsId     the id of the credentials
+   */
   public void onCredentialsRevoked(String applicationToken, String credentialsId) {
     MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
     parameters.add("applicationToken", applicationToken);

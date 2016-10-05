@@ -148,6 +148,11 @@ public class EncDecActorMessageProcessor {
     }
   }
 
+
+  /**
+   * Forward message to OperationsServerActor.
+   *
+   */
   public void forward(ActorContext context, SessionAware message) {
     if (isSdkTokenValid(message.getSessionInfo().getSdkToken())) {
       LOG.debug("Forwarding session aware message: {}", message);

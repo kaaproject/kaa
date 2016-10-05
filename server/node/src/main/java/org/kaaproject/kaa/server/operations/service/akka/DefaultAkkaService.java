@@ -45,9 +45,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-/**
- * The Class DefaultAkkaService.
- */
+
 @Service
 public class DefaultAkkaService implements AkkaService {
 
@@ -58,18 +56,12 @@ public class DefaultAkkaService implements AkkaService {
   public static final String LOG_DISPATCHER_NAME = "log-dispatcher";
   public static final String VERIFIER_DISPATCHER_NAME = "verifier-dispatcher";
   public static final String TOPIC_DISPATCHER_NAME = "topic-dispatcher";
-  /**
-   * The Constant EPS.
-   */
+
   public static final String EPS = "EPS";
   private static final String IO_ROUTER_ACTOR_NAME = "ioRouter";
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(DefaultAkkaService.class);
-  /**
-   * The akka.
-   */
+
   private ActorSystem akka;
 
   /**
@@ -170,6 +162,10 @@ public class DefaultAkkaService implements AkkaService {
     }
   }
 
+
+  /**
+   * Remove all event listeners, stop ioRouter and opsActor actors and terminate actor system.
+   */
   @PreDestroy
   public void preDestroy() {
     context.getEventService().removeListener(eventListener);
@@ -213,6 +209,12 @@ public class DefaultAkkaService implements AkkaService {
 
     private volatile boolean stopped = false;
 
+    /**
+     * Create a new instance of StatusListenerThread.
+     *
+     * @param listener              the akka status listener
+     * @param statusUpdateFrequency the status of update frequency
+     */
     public StatusListenerThread(AkkaStatusListener listener, long statusUpdateFrequency) {
       super();
       this.listener = listener;
