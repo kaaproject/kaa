@@ -39,6 +39,9 @@ public class EndpointEventSendMessage extends EndpointAwareMessage implements Us
   private final String userId;
   private final List<Event> events;
 
+  /**
+   * All-args constructor.
+   */
   public EndpointEventSendMessage(String userId, List<Event> events,
                                   EndpointObjectHash endpointKey, String applicationToken,
                                   ActorRef originator) {

@@ -28,6 +28,9 @@ public class EndpointUserConfigurationUpdate {
   private final EndpointObjectHash key;
   private final byte[] hash;
 
+  /**
+   * All-args constructor.
+   */
   public EndpointUserConfigurationUpdate(String tenantId, String userId, String applicationToken,
                                          EndpointObjectHash key, byte[] hash) {
     super();

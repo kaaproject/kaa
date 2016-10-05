@@ -24,6 +24,9 @@ public class ClusterRouteInfo {
   protected final RouteTableAddress address;
   protected final RouteOperation routeOperation;
 
+  /**
+   * All-args constructor.
+   */
   public ClusterRouteInfo(String tenantId, String userId, RouteTableAddress address,
                           RouteOperation routeOperation) {
     super();

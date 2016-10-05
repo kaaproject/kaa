@@ -102,16 +102,32 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Clear remote server data.
+   *
+   * @param serverId server identifier
+   */
   public void clearRemoteServerData(String serverId) {
     remoteServersSet.remove(serverId);
     clearReportedAddressMap(serverId);
     clearRoutes(serverId);
   }
 
+  /**
+   * Returns a remote server list.
+   *
+   * @return remote server list
+   */
   public Set<String> getRemoteServers() {
     return Collections.unmodifiableSet(remoteServersSet);
   }
 
+  /**
+   * Register a route info report.
+   *
+   * @param localAddresses local address
+   * @param serverId       server identifier
+   */
   public void registerRouteInfoReport(Set<RouteTableAddress> localAddresses, String serverId) {
     for (RouteTableAddress address : localAddresses) {
       Set<String> serverIds = reportedAddressMap.get(address);
@@ -123,6 +139,13 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Returns whether delivery is required.
+   *
+   * @param serverId server identifier
+   * @param address  true if delivery is required otherwise false
+   * @return
+   */
   public boolean isDeliveryRequired(String serverId, RouteTableAddress address) {
     Set<String> servers = reportedAddressMap.get(address);
     return servers == null || !servers.contains(serverId);
@@ -165,6 +188,11 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Clear routes for a specified endpoint.
+   *
+   * @param endpoint endpoint object hash
+   */
   private void clearRoutes(EndpointObjectHash endpoint) {
     Set<Entry<RouteTableKey, Map<String, RouteTableAddress>>> entrySet = routes.entrySet();
     Iterator<Entry<RouteTableKey, Map<String, RouteTableAddress>>> iterator = entrySet.iterator();

@@ -26,6 +26,9 @@ public class UserConfigurationUpdate {
   private final int schemaVersion;
   private final byte[] hash;
 
+  /**
+   * All-args constructor.
+   */
   public UserConfigurationUpdate(String tenantId, String userId, String applicationToken,
                                  int schemaVersion, byte[] hash) {
     super();

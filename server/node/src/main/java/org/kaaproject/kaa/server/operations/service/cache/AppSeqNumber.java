@@ -27,6 +27,9 @@ public final class AppSeqNumber implements Serializable {
   private final String appToken;
   private final int seqNumber;
 
+  /**
+   * All-args constructor.
+   */
   public AppSeqNumber(String tenantId, String appId, String appToken, int seqNumber) {
     super();
     this.tenantId = tenantId;

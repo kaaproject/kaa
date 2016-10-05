@@ -108,7 +108,10 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     return command;
   }
 
-  public void updateRequest(ServerSync response) {
+  /**
+   * Updates a request.
+   */
+  public void updateRequest() {
     UUID channelUuid = getChannelUuid();
     LOG.debug("[{}] Cleanup profile request", channelUuid);
     request.setProfileSync(null);
@@ -131,6 +134,12 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     }
   }
 
+  /**
+   * Merge original sync request with new one.
+   *
+   * @param syncRequest sync request to be merged
+   * @return            client sync
+   */
   public ClientSync merge(SyncRequestMessage syncRequest) {
     UUID channelUuid = getChannelUuid();
     ClientSync other = syncRequest.getRequest();
@@ -216,6 +225,13 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     }
   }
 
+  /**
+   * Calculate different between requests.
+   *
+   * @param oldRequest old request
+   * @param newRequest new request
+   * @return           difference
+   */
   private NotificationClientSync diff(NotificationClientSync oldRequest,
                                       NotificationClientSync newRequest) {
     if (oldRequest == null) {

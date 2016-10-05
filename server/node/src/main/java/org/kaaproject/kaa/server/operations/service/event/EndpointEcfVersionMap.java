@@ -31,6 +31,12 @@ public class EndpointEcfVersionMap {
     map = new HashMap<EndpointObjectHash, Map<String, Integer>>();
   }
 
+  /**
+   * Puts new endpoint with specified versions to a map.
+   *
+   * @param endpoint endpoint
+   * @param versions event class family version list
+   */
   public void put(EndpointObjectHash endpoint, List<EventClassFamilyVersion> versions) {
     Map<String, Integer> innerMap = new HashMap<>();
     for (EventClassFamilyVersion ecfVersion : versions) {
@@ -39,6 +45,13 @@ public class EndpointEcfVersionMap {
     map.put(endpoint, innerMap);
   }
 
+  /**
+   * Returns version of specified event class family for a particular endpoint.
+   *
+   * @param endpoint endpoint
+   * @param ecfId    event class family identifier
+   * @return         version
+   */
   public Integer get(EndpointObjectHash endpoint, String ecfId) {
     Map<String, Integer> ecfVersions = map.get(endpoint);
     if (ecfVersions != null) {

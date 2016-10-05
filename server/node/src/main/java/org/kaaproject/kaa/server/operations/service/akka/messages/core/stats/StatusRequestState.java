@@ -22,12 +22,21 @@ public class StatusRequestState {
   private int pendingResponses;
   private int endpontCount;
 
+  /**
+   * All-args constructor.
+   */
   public StatusRequestState(StatusRequestMessage originator, int pendingResponses) {
     super();
     this.originator = originator;
     this.pendingResponses = pendingResponses;
   }
 
+  /**
+   * Process an actor status response.
+   *
+   * @param response actor status response to be processed
+   * @return         true if all pending responses are processed otherwise false
+   */
   public boolean processResponse(ActorStatusResponse response) {
     endpontCount += response.getEndpointCount();
     pendingResponses--;

@@ -23,6 +23,9 @@ public class RouteMessage<T extends EntityClusterAddress> implements TenantAware
   private final T address;
   private final RouteOperation operation;
 
+  /**
+   * All-args constructor.
+   */
   public RouteMessage(T address, RouteOperation operation) {
     super();
     this.address = address;
