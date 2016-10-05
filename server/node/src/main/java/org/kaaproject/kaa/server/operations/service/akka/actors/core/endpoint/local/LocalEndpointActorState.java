@@ -204,6 +204,12 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
     this.ucfHash = ucfHash;
   }
 
+  /**
+   * Returns notifications that belongs to subscribed topics.
+   *
+   * @param notifications notifications
+   * @return              notifications that belongs to subscribed topics
+   */
   public List<NotificationDto> filter(List<NotificationDto> notifications) {
     List<NotificationDto> list = new ArrayList<>(notifications.size());
     for (NotificationDto nf : notifications) {

@@ -928,7 +928,6 @@ public class LocalEndpointActorMessageProcessor
   }
 
   /**
-   *
    * Process a timeout message.
    *
    * @param context actor context
