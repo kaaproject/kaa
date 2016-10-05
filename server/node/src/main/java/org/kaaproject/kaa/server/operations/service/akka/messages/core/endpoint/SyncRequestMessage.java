@@ -111,7 +111,7 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
   /**
    * Updates a request.
    */
-  public void updateRequest() {
+  public void updateRequest(ServerSync response) {
     UUID channelUuid = getChannelUuid();
     LOG.debug("[{}] Cleanup profile request", channelUuid);
     request.setProfileSync(null);

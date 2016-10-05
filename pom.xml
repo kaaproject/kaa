@@ -95,10 +95,10 @@ Copyright 2014-2016 CyberVision, Inc.
         <metrics.version>3.1.0</metrics.version>
 
         <findbugs.version>2.5.2</findbugs.version>
-        <checkstyle.version>2.17</checkstyle.version>
+        <checkstyle.version>2.12</checkstyle.version>
         <checkstyle.tools.version>7.0</checkstyle.tools.version>
-        <checkstyle.exclusions>**/gen/**, **/target/**, **/org/kaaproject/kaa/schema/**,
-            **/org/kaaproject/kaa/common/dto/ctl/**</checkstyle.exclusions>
+        <checkstyle.exclusions>**/gen/**, ^target/generated-sources, **/org/kaaproject/kaa/schema/**,
+            **/org/kaaproject/kaa/common/dto/ctl/**, **/org/kaaproject/kaa/server/common/Version.java</checkstyle.exclusions>
         <rat.version>0.10</rat.version>
         <javassist.version>3.18.1-GA</javassist.version>
         <signpost-core.version>1.2.1.2</signpost-core.version>
