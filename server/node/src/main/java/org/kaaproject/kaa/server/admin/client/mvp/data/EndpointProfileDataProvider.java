@@ -55,6 +55,7 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
         this.applicationId = applicationId;
         this.groupID = "";
         endpointProfilesList = new ArrayList<>();
+        limit = String.valueOf(dataGrid.getPageSize() + 1);
     }
     
     @Override
@@ -112,14 +113,11 @@ public class EndpointProfileDataProvider extends AbstractDataProvider<EndpointPr
     
                         @Override
                         public void onSuccess(EndpointProfilesPageDto result) {
-//                            endpointProfilesList.clear();
-
                             Set<EndpointProfileDto> hs = new HashSet<>();
                             hs.addAll(result.getEndpointProfiles());
                             hs.addAll(endpointProfilesList);
                             endpointProfilesList.clear();
                             endpointProfilesList.addAll(hs);
-
                             callback.onSuccess(endpointProfilesList);
                             offset = result.getPageLinkDto().getOffset();
                         }
