@@ -47,6 +47,12 @@ public final class GlobalRouteInfo extends ClusterRouteInfo {
     return new GlobalRouteInfo(tenantId, userId, address, 0, null, RouteOperation.DELETE);
   }
 
+  /**
+   * Create and return new instance of <code>GlobalRouteInfo</code>.
+   *
+   * @param message the EndpointRouteUpdate instance
+   * @return instance of <code>GlobalRouteInfo</code>
+   */
   public static GlobalRouteInfo fromThrift(EndpointRouteUpdate message) {
     RouteTableAddress address = new RouteTableAddress(
         EndpointObjectHash.fromBytes(message.getRouteAddress().getEndpointKey()),

@@ -64,6 +64,13 @@ public class UserFacade {
     return user.getId();
   }
 
+  /**
+   * Save user.
+   *
+   * @param userDto the user's data
+   * @param passwordEncoder the user's password
+   * @return user creation result
+   */
   public CreateUserResult saveUserDto(UserDto userDto,
                                       PasswordEncoder passwordEncoder) throws Exception {
 
@@ -122,6 +129,12 @@ public class UserFacade {
     return getCriteria().list();
   }
 
+  /**
+   * Check if authority exists.
+   *
+   * @param authority the authority
+   * @return true if authority exists
+   */
   public boolean isAuthorityExists(String authority) {
     Criteria criteria = getSession().createCriteria(Authority.class);
     criteria.add(Restrictions.eq(AUTHORITY_PROPERTY, authority));
@@ -129,6 +142,12 @@ public class UserFacade {
     return !resultList.isEmpty();
   }
 
+  /**
+   * Find user by username.
+   *
+   * @param userName the username of user
+   * @return user
+   */
   public User findByUserName(String userName) {
     Criteria criteria = getCriteria();
     criteria.add(Restrictions.eq(USERNAME_PROPERTY, userName));
@@ -139,6 +158,13 @@ public class UserFacade {
     return findById(id, false);
   }
 
+  /**
+   * Find user ny id.
+   *
+   * @param id the user's id
+   * @param lazy is define lazy or not load user from database
+   * @return user
+   */
   public User findById(Long id, boolean lazy) {
     if (lazy) {
       return (User) getSession().load(User.class, id);
@@ -147,6 +173,12 @@ public class UserFacade {
     }
   }
 
+  /**
+   * Find user by username or email.
+   *
+   * @param usernameOrMail the username or email of user
+   * @return user
+   */
   public User findByUsernameOrMail(String usernameOrMail) {
     Criteria criteria = getCriteria();
     Criterion usernameCriterion = Restrictions.eq(USERNAME_PROPERTY, usernameOrMail);
@@ -155,12 +187,23 @@ public class UserFacade {
     return (User) criteria.uniqueResult();
   }
 
+  /**
+   * Find user by password reset hash.
+   *
+   * @param passwordResetHash the password reset hash
+   * @return user
+   */
   public User findByPasswordResetHash(String passwordResetHash) {
     Criteria criteria = getCriteria();
     criteria.add(Restrictions.eq(PASSWORD_RESET_HASH_PROPERTY, passwordResetHash));
     return (User) criteria.uniqueResult();
   }
 
+  /**
+   * Delete user.
+   *
+   * @param id the user id
+   */
   public void deleteUser(Long id) {
     User user = findById(id, true);
     if (user != null) {
@@ -168,6 +211,14 @@ public class UserFacade {
     }
   }
 
+  /**
+   * Check if username already occupied. Return user with the same username or null if username not
+   * occupied.
+   *
+   * @param userName is sername
+   * @param userId   is user's id
+   * @return user with the same username or null if email not occupied
+   */
   public User checkUserNameOccupied(String userName, Long userId) {
     Criteria criteria = getCriteria();
     Criterion usernameCriterion = Restrictions.eq(USERNAME_PROPERTY, userName);
@@ -181,6 +232,13 @@ public class UserFacade {
     return (User) criteria.uniqueResult();
   }
 
+  /**
+   * Check if email already occupied. Return user with the same email or null if email not occupied.
+   *
+   * @param mail is user's mail
+   * @param userId is user's id
+   * @return user with the same email or null if email not occupied
+   */
   public User checkEmailOccupied(String mail, Long userId) {
     Criteria criteria = getCriteria();
     Criterion mailCriterion = Restrictions.eq(MAIL_PROPERTY, mail);

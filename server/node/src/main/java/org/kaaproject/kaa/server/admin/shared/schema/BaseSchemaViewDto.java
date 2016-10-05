@@ -38,6 +38,12 @@ public abstract class BaseSchemaViewDto<T extends BaseSchemaDto> implements Seri
     this(schema, null);
   }
 
+  /**
+   * Create new instance of <code>BaseSchemaViewDto</code>.
+   *
+   * @param schema the schema
+   * @param ctlSchemaForm the CTL schema form
+   */
   public BaseSchemaViewDto(T schema, CtlSchemaFormDto ctlSchemaForm) {
     super();
     this.schema = schema != null ? schema : createEmptySchema();

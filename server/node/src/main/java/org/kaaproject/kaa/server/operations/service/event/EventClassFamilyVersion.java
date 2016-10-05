@@ -26,6 +26,12 @@ public final class EventClassFamilyVersion implements Serializable {
   private final String ecfId;
   private final int version;
 
+  /**
+   * Create new instance of <code>EventClassFamilyVersion</code>.
+   *
+   * @param ecfId the event class family id
+   * @param version the version number of event class family
+   */
   public EventClassFamilyVersion(String ecfId, int version) {
     super();
     this.ecfId = ecfId;

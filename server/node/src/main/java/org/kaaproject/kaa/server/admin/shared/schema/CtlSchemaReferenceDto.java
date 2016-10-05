@@ -30,6 +30,12 @@ public class CtlSchemaReferenceDto implements Serializable {
     super();
   }
 
+  /**
+   * Create new instance of <code>CtlSchemaReferenceDto</code>.
+   *
+   * @param metaInfo the CTL schema meta info dto
+   * @param version the CTL version
+   */
   public CtlSchemaReferenceDto(CtlSchemaMetaInfoDto metaInfo, int version) {
     super();
     this.metaInfo = metaInfo;

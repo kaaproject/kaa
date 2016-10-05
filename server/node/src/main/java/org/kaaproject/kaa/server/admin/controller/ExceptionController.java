@@ -35,6 +35,12 @@ public class ExceptionController {
    */
   private static final Logger LOG = LoggerFactory.getLogger(ExceptionController.class);
 
+  /**
+   * Handle kaa admin service exception.
+   *
+   * @param ex the exception to handling
+   * @param response the http response
+   */
   @ExceptionHandler(KaaAdminServiceException.class)
   public void handleKaaAdminServiceException(KaaAdminServiceException ex,
                                              HttpServletResponse response) {

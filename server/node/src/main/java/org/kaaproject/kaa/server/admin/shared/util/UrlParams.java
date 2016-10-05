@@ -29,6 +29,12 @@ public class UrlParams {
   private UrlParams() {
   }
 
+  /**
+   * Transform params map of request to URL link.
+   *
+   * @param paramsMap the params map
+   * @return URL string
+   */
   public static String generateParamsUrl(Map<String, String> paramsMap) {
     String paramsUrl = "";
     for (String key : paramsMap.keySet()) {
@@ -41,6 +47,11 @@ public class UrlParams {
     return paramsUrl;
   }
 
+  /**
+   * Get request params from URL string and put them in map.
+   *
+   * @param paramsMap the params map
+   */
   public static void updateParamsFromUrl(Map<String, String> paramsMap,
                                          String paramsUrl) {
     if (paramsUrl != null && paramsUrl.trim().length() > 0) {

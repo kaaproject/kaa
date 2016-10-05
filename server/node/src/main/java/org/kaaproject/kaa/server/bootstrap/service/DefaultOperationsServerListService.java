@@ -75,6 +75,11 @@ public class DefaultOperationsServerListService
         });
   }
 
+  /**
+   * Bean init-method.
+   *
+   * @param zkNode the bootstrap node
+   */
   public void init(BootstrapNode zkNode) {
     LOG.info("Initializing with {}", zkNode);
     opsMap.clear();
@@ -180,6 +185,12 @@ public class DefaultOperationsServerListService
       this.computable = computable;
     }
 
+    /**
+     * Compute argument by field <code>compute</code>.
+     *
+     * @param arg the argument
+     * @return computing result
+     */
     public V compute(final A arg) throws InterruptedException {
       while (true) {
         Future<V> future = cache.get(arg);

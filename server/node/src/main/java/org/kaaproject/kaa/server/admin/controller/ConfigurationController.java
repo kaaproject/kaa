@@ -265,6 +265,13 @@ public class ConfigurationController extends AbstractAdminController {
   }
 
 
+  /**
+   * Get configuration record body.
+   *
+   * @param schemaId the schema id
+   * @param endpointGroupId the endpoint group id
+   * @return string of configuration record body
+   */
   @ApiOperation(value = "Get configuration record body",
       notes = "Returns the configuration record string body for the specified endpoint group "
           + "and configuration schema. Only users with the "

@@ -37,6 +37,11 @@ public class AuthUserDto extends UserDto implements UserDetails {
   public AuthUserDto() {
   }
 
+  /**
+   * Create new instance of <code>AuthUserDto</code>.
+   *
+   * @param user is entity that contains user data
+   */
   public AuthUserDto(User user) {
     setExternalUid(user.getId().toString());
     setUsername(user.getUsername());

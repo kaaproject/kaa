@@ -30,6 +30,14 @@ public final class UserRouteInfo {
     this(tenantId, userId, null, RouteOperation.ADD);
   }
 
+  /**
+   * Create new instance of <code>UserRouteInfo</code>.
+   *
+   * @param tenantId       the tenant id
+   * @param userId         the user id
+   * @param serverId       the server id
+   * @param routeOperation the route operation
+   */
   public UserRouteInfo(String tenantId,
                        String userId,
                        String serverId,

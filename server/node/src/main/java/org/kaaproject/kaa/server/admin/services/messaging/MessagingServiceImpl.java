@@ -84,6 +84,9 @@ public class MessagingServiceImpl implements MessagingService {
     this.sendTimeout = sendTimeout;
   }
 
+  /**
+   * Initialize messaging service. Call after bean creation (bean init-method).
+   */
   public void init() {
     String sendName = "send-message-call-runner-%d";
     sendPool = Executors.newFixedThreadPool(
@@ -91,6 +94,9 @@ public class MessagingServiceImpl implements MessagingService {
     configureMailSender();
   }
 
+  /**
+   * Bean destroy-method. Call before bean destroying.
+   */
   public void destroy() {
     if (sendPool != null) {
       sendPool.shutdown();

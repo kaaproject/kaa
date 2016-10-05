@@ -32,6 +32,13 @@ public class PluginInfoDto implements Serializable {
     super();
   }
 
+  /**
+   * Create new instance of <code>PluginInfoDto</code>.
+   *
+   * @param pluginTypeName     the plugin type name
+   * @param fieldConfiguration the  field configuration
+   * @param pluginClassName    the plugin class name
+   */
   public PluginInfoDto(String pluginTypeName,
                        RecordField fieldConfiguration, String pluginClassName) {
     super();

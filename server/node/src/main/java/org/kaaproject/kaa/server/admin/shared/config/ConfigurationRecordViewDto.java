@@ -35,12 +35,22 @@ public class ConfigurationRecordViewDto
     super(activeConfiguration, inactiveConfiguration);
   }
 
+  /**
+   * Get schema version.
+   *
+   * @return number of schema version
+   */
   public int getSchemaVersion() {
     return activeStructureDto != null
         ? activeStructureDto.getSchemaVersion()
         : inactiveStructureDto.getSchemaVersion();
   }
 
+  /**
+   * Get schema id.
+   *
+   * @return schema id
+   */
   public String getSchemaId() {
     return activeStructureDto != null
         ? activeStructureDto.getSchemaId()

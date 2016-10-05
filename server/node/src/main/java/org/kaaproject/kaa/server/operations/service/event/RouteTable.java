@@ -46,6 +46,12 @@ public class RouteTable {
     localAddressMap = new HashMap<>();
   }
 
+  /**
+   * Add route to table.
+   *
+   * @param key the key of RouteTable associative array
+   * @param address the value of RouteTable associative array
+   */
   public void add(RouteTableKey key, RouteTableAddress address) {
     Map<String, RouteTableAddress> directionRoutes = routes.get(key);
     if (directionRoutes == null) {
@@ -66,6 +72,13 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Get route from table.
+   *
+   * @param key the key of RouteTable associative array
+   * @param target the specific target
+   * @return collection of addresses
+   */
   public Collection<RouteTableAddress> getRoutes(RouteTableKey key, String target) {
     Map<String, RouteTableAddress> directionRoutes = routes.get(key);
     if (directionRoutes != null) {
@@ -81,6 +94,13 @@ public class RouteTable {
     return Collections.emptyList();
   }
 
+  /**
+   * Get routes from table by key set.
+   *
+   * @param keys the keys
+   * @param target the specific target
+   * @return set of addresses
+   */
   public Set<RouteTableAddress> getRoutes(Set<RouteTableKey> keys, String target) {
     Set<RouteTableAddress> result = new HashSet<>();
     for (RouteTableKey key : keys) {

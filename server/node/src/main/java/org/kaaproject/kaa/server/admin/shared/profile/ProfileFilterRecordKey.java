@@ -29,6 +29,13 @@ public class ProfileFilterRecordKey implements Serializable {
   public ProfileFilterRecordKey() {
   }
 
+  /**
+   * Create new instance of <code>ProfileFilterRecordKey</code>.
+   *
+   * @param endpointProfileSchemaId the endpoint profile schema id
+   * @param serverProfileSchemaId server profile schema id
+   * @param endpointGroupId the endpoint group id
+   */
   public ProfileFilterRecordKey(String endpointProfileSchemaId,
                                 String serverProfileSchemaId,
                                 String endpointGroupId) {
