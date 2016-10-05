@@ -83,6 +83,11 @@ public class ProfileFilterRecordDto extends StructureRecordDto<ProfileFilterDto>
             inactiveStructureDto.getEndpointProfileSchemaId();
   }
 
+  /**
+   * Return server profile schema id.
+   *
+   * @return server profile schema id
+   */
   @JsonIgnore
   public String getServerProfileSchemaId() {
     return activeStructureDto != null

@@ -66,6 +66,11 @@ public class EventClass extends BaseSchema<EventClassDto> {
     this.id = id;
   }
 
+  /**
+   * Create new instance of EventClass.
+   *
+   * @param dto data transfer object, contain data for new instance
+   */
   public EventClass(EventClassDto dto) {
     super(dto);
     this.id = getLongId(dto.getId());
@@ -226,7 +231,8 @@ public class EventClass extends BaseSchema<EventClassDto> {
 
   @Override
   public String toString() {
-    return "EventClass [ecfv=" + ecfv + ", fqn=" + fqn + ", type=" + type + ", ctlSchema=" + getCtlSchema() + ", id=" + id + "]";
+    return "EventClass [ecfv=" + ecfv + ", fqn=" + fqn + ", type=" + type + ", ctlSchema="
+            + getCtlSchema() + ", id=" + id + "]";
   }
 
 

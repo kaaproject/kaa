@@ -42,8 +42,8 @@ public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
   /**
    * Converts a configuration into a configuration record.
    *
-   * @param configurations
-   * @return
+   * @param configurations the configurations for converting
+   * @return converted configurations
    */
   public static List<ConfigurationRecordDto> convertToConfigurationRecords(
           Collection<ConfigurationDto> configurations) {

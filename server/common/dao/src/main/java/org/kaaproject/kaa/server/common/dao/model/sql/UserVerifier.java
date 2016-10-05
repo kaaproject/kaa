@@ -47,6 +47,11 @@ public class UserVerifier extends Plugin<UserVerifierDto> implements Serializabl
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>UserVerifier</code>.
+   *
+   * @param dto data transfer object
+   */
   public UserVerifier(UserVerifierDto dto) {
     super(dto);
     if (dto != null) {

@@ -50,6 +50,12 @@ public class ModelUtils {
     return longId != null ? longId.toString() : null;
   }
 
+  /**
+   * Get string id.
+   *
+   * @param hasId the object that has id
+   * @return id
+   */
   public static String getStringId(GenericModel<?> hasId) {
     String stringId = null;
     if (hasId != null) {
@@ -59,6 +65,12 @@ public class ModelUtils {
     return stringId;
   }
 
+  /**
+   * Get Long id from object with id.
+   *
+   * @param hasId the object with id
+   * @return id
+   */
   public static Long getLongId(HasId hasId) {
     Long longId = null;
     if (hasId != null) {
@@ -68,6 +80,12 @@ public class ModelUtils {
     return longId;
   }
 
+  /**
+   * Get Long id from string.
+   *
+   * @param id the id string
+   * @return Long id
+   */
   public static Long getLongId(String id) {
     Long longId = null;
     if (isNotBlank(id)) {
@@ -80,6 +98,12 @@ public class ModelUtils {
     return longId;
   }
 
+  /**
+   * Get topics by ids.
+   *
+   * @param topicIds the List of ids
+   * @return set of topics
+   */
   public static Set<Topic> getTopic(List<String> topicIds) {
     Set<Topic> topics = Collections.emptySet();
     if (topicIds != null && !topicIds.isEmpty()) {
@@ -94,6 +118,14 @@ public class ModelUtils {
     return topics;
   }
 
+  /**
+   * Get generic model ids.
+   *
+   * @param idSet the ids set
+   * @param model the GenericModel instance
+   * @param <V> the Set generic
+   * @return set of generic model ids
+   */
   public static <V> Set<V> getGenericModelIds(Set<String> idSet, GenericModel model) {
     Set<V> dataSet = new HashSet<>();
     for (String id : idSet) {
@@ -102,6 +134,12 @@ public class ModelUtils {
     return dataSet;
   }
 
+  /**
+   * Get model ids.
+   *
+   * @param set the objects with id
+   * @return the List of ids
+   */
   public static Set<String> getGenericModelIds(Set<? extends GenericModel<?>> set) {
     Set<String> ids;
     if (set == null || set.isEmpty()) {
@@ -115,6 +153,12 @@ public class ModelUtils {
     return ids;
   }
 
+  /**
+   * Get data transfer object ids.
+   *
+   * @param set the objects with id
+   * @return the List of ids
+   */
   public static List<String> getDtoIds(Set<HasId> set) {
     List<String> ids;
     if (set == null || set.isEmpty()) {
@@ -128,7 +172,12 @@ public class ModelUtils {
     return ids;
   }
 
-
+  /**
+   * Get set of model versions.
+   *
+   * @param set the set
+   * @return versions set
+   */
   public static Set<Integer> getGenericModelVersions(Set<? extends HasVersion> set) {
     Set<Integer> ids;
     if (set == null || set.isEmpty()) {
@@ -142,6 +191,12 @@ public class ModelUtils {
     return ids;
   }
 
+  /**
+   * Get topic ids.
+   *
+   * @param topics the topic set
+   * @return ids <code>List</code>
+   */
   public static List<String> getTopicIds(Set<Topic> topics) {
     List<String> ids = Collections.emptyList();
     if (topics != null && !topics.isEmpty()) {
@@ -156,6 +211,12 @@ public class ModelUtils {
     return ids;
   }
 
+  /**
+   * Get all topic data transfer objects.
+   *
+   * @param topicIds the ids of topics
+   * @return <code>List</code> of topics
+   */
   public static List<TopicDto> getTopicDtos(List<String> topicIds) {
     List<TopicDto> topics = Collections.emptyList();
     if (topicIds != null && !topicIds.isEmpty()) {
@@ -171,6 +232,12 @@ public class ModelUtils {
     return topics;
   }
 
+  /**
+   * Convert byte array to string.
+   *
+   * @param data array for converting
+   * @return string
+   */
   public static String binaryToString(byte[] data) {
     String body = null;
     if (data != null) {
@@ -183,6 +250,12 @@ public class ModelUtils {
     return body;
   }
 
+  /**
+   * Convert string to byte array.
+   *
+   * @param body string for converting
+   * @return byte array
+   */
   public static byte[] stringToBinary(String body) {
     byte[] data = null;
     if (body != null) {

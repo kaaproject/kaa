@@ -57,7 +57,7 @@ public final class CassandraEpRegistrationByEndpointId implements Serializable {
   }
 
   /**
-   * Create new instance of <code>CassandraEpRegistrationByEndpointId</code>
+   * Create new instance of <code>CassandraEpRegistrationByEndpointId</code>.
    *
    * @param endpointRegistration contains endpoint id and credentials id, we use them to create
    *                             instance of  <code>CassandraEpRegistrationByEndpointId</code>

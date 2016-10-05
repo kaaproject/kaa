@@ -68,6 +68,11 @@ public class Change extends GenericModel<ChangeDto> implements Serializable {
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>Change</code>.
+   *
+   * @param dto data transfer object
+   */
   public Change(ChangeDto dto) {
     if (dto != null) {
       this.id = getLongId(dto.getId());
@@ -223,8 +228,9 @@ public class Change extends GenericModel<ChangeDto> implements Serializable {
 
   @Override
   public String toString() {
-    return "Change [configurationVersion=" + configurationVersion + ", type=" + type + ", groupId=" + groupId
-        + ", topicId=" + topicId + ", configurationId=" + configurationId + ", profileFilterId=" + profileFilterId + "]";
+    return "Change [configurationVersion=" + configurationVersion + ", type=" + type + ", groupId="
+            + groupId + ", topicId=" + topicId + ", configurationId=" + configurationId
+            + ", profileFilterId=" + profileFilterId + "]";
   }
 
 }
