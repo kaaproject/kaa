@@ -59,6 +59,9 @@ public class AppLayout extends Composite {
   HTMLPanel footerPanel;
   private int clickCount = 1;
 
+  /**
+   * Instantiates a new AppLayout.
+   */
   public AppLayout() {
     kaaAdminStyle = Utils.kaaAdminStyle;
     avroUiStyle = Utils.avroUiStyle;

@@ -34,12 +34,18 @@ public class SchemasPlaceEvent extends TreePlace {
   protected int ecfVersion;
   private SchemasPlaceDataProvider dataProvider;
 
+  /**
+   * Instantiates a new SchemasPlaceEvent.
+   */
   public SchemasPlaceEvent(String ecfId, String ecfVersionId, int ecfVersion) {
     this.ecfId = ecfId;
     this.ecfVersionId = ecfVersionId;
     this.ecfVersion = ecfVersion;
   }
 
+  /**
+   * Instantiates a new SchemasPlaceEvent.
+   */
   public SchemasPlaceEvent(String ecfId, String ecfVersionId,
                            int ecfVersion, List<EventClassViewDto> eventClassDtoList) {
     this.ecfId = ecfId;
@@ -56,6 +62,11 @@ public class SchemasPlaceEvent extends TreePlace {
     this.eventClassDtoList = eventClassDtoList;
   }
 
+  /**
+   * Add event class view DTO.
+   *
+   * @param eventClassViewDto the eventClassViewDto
+   */
   public void addEventClassViewDto(EventClassViewDto eventClassViewDto) {
     if (eventClassDtoList == null) {
       this.eventClassDtoList = new ArrayList<>();

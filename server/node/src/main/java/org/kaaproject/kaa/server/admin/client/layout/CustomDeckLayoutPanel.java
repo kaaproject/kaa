@@ -266,6 +266,9 @@ public class CustomDeckLayoutPanel extends ComplexPanel implements AnimatedLayou
     animate((widget == null) ? 0 : animationDuration);
   }
 
+  /**
+   * Show widget.
+   */
   public void showWidget(Widget widget, AnimationCallback callback) {
     if (widget == visibleWidget) {
       return;

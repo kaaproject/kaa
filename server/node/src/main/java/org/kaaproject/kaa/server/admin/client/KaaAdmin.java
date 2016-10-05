@@ -76,6 +76,12 @@ public class KaaAdmin implements EntryPoint {
     return authService;
   }
 
+  /**
+   * Check authorities.
+   *
+   * @param authorities the authorities
+   * @return boolean 'true' if input authority equals to the current authority
+   */
   public static boolean checkAuthorities(KaaAuthorityDto... authorities) {
     for (KaaAuthorityDto authority : authorities) {
       if (authInfo.getAuthority() == authority) {
@@ -90,6 +96,9 @@ public class KaaAdmin implements EntryPoint {
         KaaAuthorityDto.TENANT_USER);
   }
 
+  /**
+   * Sign out.
+   */
   public static void signOut() {
     RequestBuilder builder = new RequestBuilder(
         RequestBuilder.POST, GWT.getModuleBaseURL() + "j_spring_security_logout");
@@ -111,6 +120,11 @@ public class KaaAdmin implements EntryPoint {
     }
   }
 
+  /**
+   * Redirect to module.
+   *
+   * @param module the module name.
+   */
   public static void redirectToModule(String module) {
     String path = Window.Location.getPath();
     if (!path.endsWith("/")) {

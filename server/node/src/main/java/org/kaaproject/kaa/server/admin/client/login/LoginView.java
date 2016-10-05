@@ -57,6 +57,9 @@ public class LoginView extends Composite implements HasErrorMessage {
   private Button loginButton;
   private Label forgotPasswordLabel;
 
+  /**
+   * Instantiates a new LoginView.
+   */
   public LoginView() {
 
     errorPanel = new AlertPanel(Type.ERROR);
@@ -135,6 +138,9 @@ public class LoginView extends Composite implements HasErrorMessage {
     errorPanel.setVisible(true);
   }
 
+  /**
+   * Clear messages.
+   */
   public void clearMessages() {
     errorPanel.setMessage("");
     errorPanel.setVisible(false);

@@ -37,6 +37,9 @@ public class CtlSchemaPlace extends TreePlace {
   private int ecfVersion;
   private String ecfVersionId;
 
+  /**
+   * Instantiates a new CtlSchemaPlace.
+   */
   public CtlSchemaPlace(String metaInfoId,
                         Integer version,
                         CTLSchemaScopeDto scope,
@@ -51,6 +54,9 @@ public class CtlSchemaPlace extends TreePlace {
     this.create = create;
   }
 
+  /**
+   * Instantiates a new CtlSchemaPlace.
+   */
   public CtlSchemaPlace(String metaInfoId,
                         Integer version,
                         CTLSchemaScopeDto scope,

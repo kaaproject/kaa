@@ -25,6 +25,9 @@ public class ProfileFilterPlace extends AbstractRecordPlace {
   private String endpointProfileSchemaId;
   private String serverProfileSchemaId;
 
+  /**
+   * Instantiates a new ProfileFilterPlace.
+   */
   public ProfileFilterPlace(String applicationId,
                             String endpointProfileSchemaId,
                             String serverProfileSchemaId,

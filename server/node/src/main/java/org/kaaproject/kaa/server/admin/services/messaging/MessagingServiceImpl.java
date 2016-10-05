@@ -202,6 +202,13 @@ public class MessagingServiceImpl implements MessagingService {
     }
   }
 
+  /**
+   * Send password after reset.
+   *
+   * @param username  the username
+   * @param password  the password
+   * @param email     the email
+   */
   @Override
   public void sendPasswordAfterReset(final String username,
                                      final String password,

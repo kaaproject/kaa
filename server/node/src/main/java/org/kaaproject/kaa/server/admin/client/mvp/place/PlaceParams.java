@@ -27,6 +27,11 @@ public class PlaceParams {
 
   private static Map<String, String> paramsMap = new HashMap<String, String>();
 
+  /**
+   * Generate token.
+   *
+   * @return the token
+   */
   public static String generateToken() {
     StringBuilder paramsUrl = new StringBuilder();
     for (String key : paramsMap.keySet()) {
@@ -39,6 +44,11 @@ public class PlaceParams {
     return paramsUrl.toString();
   }
 
+  /**
+   * Params from token.
+   *
+   * @param token the token
+   */
   public static void paramsFromToken(String token) {
     paramsMap.clear();
     if (token != null && token.trim().length() > 0) {
@@ -66,6 +76,12 @@ public class PlaceParams {
     return isEmptyVal(val) ? false : Boolean.valueOf(val);
   }
 
+  /**
+   * Get int param.
+   *
+   * @param key the key
+   * @return int value
+   */
   public static int getIntParam(String key) {
     String val = paramsMap.get(key);
     try {
@@ -79,6 +95,12 @@ public class PlaceParams {
     return paramsMap.containsKey(key);
   }
 
+  /**
+   * Get double param.
+   *
+   * @param key the key
+   * @return double value
+   */
   public static double getDoubleParam(String key) {
     String val = paramsMap.get(key);
     try {

@@ -27,6 +27,9 @@ public class EndpointGroupPlace extends EndpointGroupsPlace {
   private boolean includeDeprecatedProfileFilters;
   private boolean includeDeprecatedConfigurations;
 
+  /**
+   * Instantiates a new EndpointGroupPlace.
+   */
   public EndpointGroupPlace(String applicationId,
                             String endpointGroupId,
                             boolean includeDeprecatedProfileFilters,

@@ -110,6 +110,13 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     return result;
   }
 
+  /**
+   * Create Kaa admin.
+   *
+   * @param username the Kaa admin username
+   * @param password the Kaa admin password
+   * @throws KaaAdminServiceException if bad password strength detected
+   */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public void createKaaAdmin(String username, String password)
       throws KaaAdminServiceException {
@@ -138,6 +145,15 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     userFacade.save(userEntity);
   }
 
+  /**
+   * Change password.
+   *
+   * @param username    the username
+   * @param oldPassword the oldPassword
+   * @param newPassword the newPassword
+   * @return            the result code
+   * @throws Exception  the exception
+   */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public ResultCode changePassword(String username, String oldPassword,
                                    String newPassword) throws Exception {
@@ -169,6 +185,14 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     return password.length() >= 6;
   }
 
+  /**
+   * Check user name occupied.
+   *
+   * @param username  the username
+   * @param userId    the user ID.
+   * @return          the result code
+   * @throws Exception the exception
+   */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public ResultCode checkUserNameOccupied(String username, Long userId) throws Exception {
     User userEntity = userFacade.checkUserNameOccupied(username, userId);
@@ -179,6 +203,14 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     }
   }
 
+  /**
+   * Check email occupied.
+   *
+   * @param email   the email.
+   * @param userId  the user ID
+   * @return        the result code
+   * @throws Exception the exception
+   */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public ResultCode checkEmailOccupied(String email, Long userId) throws Exception {
     User userEntity = userFacade.checkEmailOccupied(email, userId);
@@ -195,6 +227,13 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     return checkUserAndEmailExists(userFacade.findByUsernameOrMail(usernameOrEmail));
   }
 
+  /**
+   * Send password reset link by email.
+   *
+   * @param usernameOrEmail the username or email
+   * @return the result code
+   * @throws Exception the exception
+   */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public ResultCode sendPasswordResetLinkByEmail(String usernameOrEmail)
       throws Exception {
@@ -221,6 +260,12 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     }
   }
 
+  /**
+   * Reset password by reset hash.
+   *
+   * @param passwordResetHash the reset hash
+   * @return the result code
+   */
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
   public ResultCode resetPasswordByResetHash(String passwordResetHash)
       throws Exception {

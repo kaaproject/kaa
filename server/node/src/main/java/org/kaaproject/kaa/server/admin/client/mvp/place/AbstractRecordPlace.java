@@ -26,6 +26,9 @@ public abstract class AbstractRecordPlace extends TreePlace {
   private boolean showActive;
   private double random;
 
+  /**
+   * Instantiates a new AbstractRecordPlace.
+   */
   public AbstractRecordPlace(String applicationId,
                              String endpointGroupId,
                              boolean create,
