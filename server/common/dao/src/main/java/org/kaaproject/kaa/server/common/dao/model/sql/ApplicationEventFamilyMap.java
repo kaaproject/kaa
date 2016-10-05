@@ -71,6 +71,11 @@ public class ApplicationEventFamilyMap extends GenericModel<ApplicationEventFami
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>ApplicationEventFamilyMap</code>.
+   *
+   * @param dto data transfer object
+   */
   public ApplicationEventFamilyMap(ApplicationEventFamilyMapDto dto) {
     this.id = getLongId(dto.getId());
     Long applicationId = getLongId(dto.getApplicationId());
@@ -236,8 +241,9 @@ public class ApplicationEventFamilyMap extends GenericModel<ApplicationEventFami
 
   @Override
   public String toString() {
-    return "ApplicationEventFamilyMap [ecf=" + ecf + ", version=" + version + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
-        + ", id=" + id + "]";
+    return "ApplicationEventFamilyMap [ecf=" + ecf + ", version=" + version + ", createdUsername="
+            + createdUsername + ", createdTime=" + createdTime
+            + ", id=" + id + "]";
   }
 
 }

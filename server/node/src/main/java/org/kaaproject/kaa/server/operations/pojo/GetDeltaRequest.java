@@ -97,6 +97,11 @@ public class GetDeltaRequest {
     return resyncOnly;
   }
 
+  /**
+   * Return true if the <code>GetDeltaRequest</code> object is the first request.
+   *
+   * @return true if request is first
+   */
   public boolean isFirstRequest() {
     return getConfigurationHash() == null
         || getConfigurationHash().getData() == null

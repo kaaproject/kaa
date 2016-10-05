@@ -119,6 +119,13 @@ public class AvroUtils {
     return injectUuids(json.getBytes(), schema);
   }
 
+  /**
+   * Inject UUID.
+   *
+   * @param content the uuid
+   * @param schema the schema
+   * @return json content tree
+   */
   public static String injectUuids(byte[] content, Schema schema) throws IOException {
     ObjectMapper objectMapper = new ObjectMapper();
     JsonNode root = objectMapper.readTree(content);

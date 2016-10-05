@@ -65,6 +65,11 @@ public class ConfigurationSchema
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>ConfigurationSchema</code>.
+   *
+   * @param dto data transfer object
+   */
   public ConfigurationSchema(ConfigurationSchemaDto dto) {
     super(dto);
     if (dto != null) {
