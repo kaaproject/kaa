@@ -37,6 +37,12 @@ public class EntityConvertUtils {
   private EntityConvertUtils() {
   }
 
+  /**
+   * Convert response map to log server sync <code>LogServerSync</code>.
+   *
+   * @param responseMap the map for converting
+   * @return the <code>LogServerSync</code> instance
+   */
   public static LogServerSync convert(Map<Integer, LogDeliveryMessage> responseMap) {
     List<LogDeliveryStatus> statusList = new ArrayList<>();
     for (Entry<Integer, LogDeliveryMessage> response : responseMap.entrySet()) {
@@ -50,6 +56,12 @@ public class EntityConvertUtils {
     return new LogServerSync(statusList);
   }
 
+  /**
+   * Convert user verification response message to user attach response.
+   *
+   * @param value the user verification response message
+   * @return the user attach response
+   */
   public static UserAttachResponse convert(UserVerificationResponseMessage value) {
     UserAttachResponse response = new UserAttachResponse(value.isSuccess()
         ? SyncStatus.SUCCESS
@@ -58,6 +70,13 @@ public class EntityConvertUtils {
     return response;
   }
 
+  /**
+   * Convert the user verifier org.kaaproject.kaa.server.common.verifier.errorCode to
+   * org.kaaproject.kaa.server.sync.UserVerifierErrorCode.
+   *
+   * @param errorCode the error code for converting
+   * @return converted error code
+   */
   public static UserVerifierErrorCode toErrorCode(
       org.kaaproject.kaa.server.common.verifier.UserVerifierErrorCode errorCode) {
     if (errorCode == null) {
@@ -81,6 +100,13 @@ public class EntityConvertUtils {
     }
   }
 
+  /**
+   * Convert org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode to
+   * org.kaaproject.kaa.server.sync.LogDeliveryErrorCode.
+   *
+   * @param errorCode the error code for converting
+   * @return error code
+   */
   public static LogDeliveryErrorCode toErrorCode(
       org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode errorCode) {
     if (errorCode == null) {
@@ -100,6 +126,12 @@ public class EntityConvertUtils {
     }
   }
 
+  /**
+   * Convert event class family version state to event class family version.
+   *
+   * @param ecfVersionStates the event class family version state for converting
+   * @return event class family version
+   */
   public static List<EventClassFamilyVersion> convertToEcfVersions(
       List<EventClassFamilyVersionStateDto> ecfVersionStates) {
     List<EventClassFamilyVersion> result = new ArrayList<>(ecfVersionStates.size());

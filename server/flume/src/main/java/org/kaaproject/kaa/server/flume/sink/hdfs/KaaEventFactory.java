@@ -41,6 +41,11 @@ public class KaaEventFactory {
     avroReader = new SpecificDatumReader<>(RecordData.class);
   }
 
+  /**
+   * Process incoming flume event.
+   *
+   * @param event the event for processing
+   */
   public Map<KaaSinkKey, List<KaaRecordEvent>> processIncomingFlumeEvent(Event event)
       throws IOException {
     final Map<KaaSinkKey, List<KaaRecordEvent>> eventsMap = new LinkedHashMap<>();

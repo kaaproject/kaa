@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
 import akka.actor.ActorContext;
-
+import scala.concurrent.duration.Duration;
 
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
@@ -108,7 +108,14 @@ public class LocalEndpointActorMessageProcessor
 
   private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
 
-
+  /**
+   * Create new instance of <code>LocalEndpointActorMessageProcessor</code>.
+   *
+   * @param context the akka context
+   * @param appToken the app token
+   * @param key the endpoint object key hash
+   * @param actorKey the actor key
+   */
   public LocalEndpointActorMessageProcessor(AkkaContext context,
                                             String appToken,
                                             EndpointObjectHash key,
@@ -127,6 +134,12 @@ public class LocalEndpointActorMessageProcessor
     sync(context, message);
   }
 
+  /**
+   * Process endpoint event "receive message".
+   *
+   * @param context the actor context
+   * @param message the event "receive message"
+   */
   public void processEndpointEventReceiveMessage(ActorContext context,
                                                  EndpointEventReceiveMessage message) {
     EndpointEventDeliveryMessage response;
@@ -153,6 +166,11 @@ public class LocalEndpointActorMessageProcessor
     tellParent(context, response);
   }
 
+  /**
+   * Process thrift notification.
+   *
+   * @param context the actor context
+   */
   public void processThriftNotification(ActorContext context) {
     Set<ChannelMetaData> channels = state.getChannelsByTypes(
         TransportType.CONFIGURATION, TransportType.NOTIFICATION);
@@ -161,6 +179,12 @@ public class LocalEndpointActorMessageProcessor
     syncChannels(context, channels, true, true);
   }
 
+  /**
+   * Process user configuration update.
+   *
+   * @param context the actor context
+   * @param message the endpoint user configuration update message
+   */
   public void processUserConfigurationUpdate(ActorContext context,
                                              EndpointUserConfigurationUpdateMessage message) {
     if (message.getUserConfigurationUpdate() != null) {
@@ -210,6 +234,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process notification.
+   *
+   * @param context the actor context
+   * @param message the notification message
+   */
   public void processNotification(ActorContext context, NotificationMessage message) {
     LOG.debug("[{}][{}] Processing notification message {}", endpointKey, actorKey, message);
 
@@ -242,6 +272,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process request timeout message.
+   *
+   * @param context the actor context
+   * @param message the request timeout message
+   */
   public void processRequestTimeoutMessage(ActorContext context, RequestTimeoutMessage message) {
     ChannelMetaData channel = state.getChannelByRequestId(message.getRequestId());
     if (channel != null) {
@@ -779,6 +815,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process endpoint user action message.
+   *
+   * @param context the actor context
+   * @param message the endpoint user action message
+   */
   public void processEndpointUserActionMessage(ActorContext context,
                                                EndpointUserActionMessage message) {
     Set<ChannelMetaData> eventChannels = state.getChannelsByTypes(
@@ -836,6 +878,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process disconnect message.
+   *
+   * @param context the actor context
+   * @param message the channel aware message
+   */
   public boolean processDisconnectMessage(ActorContext context, ChannelAware message) {
     LOG.debug("[{}][{}] Received disconnect message for channel [{}]",
         endpointKey, actorKey, message.getChannelUuid());
@@ -851,6 +899,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process ping message.
+   *
+   * @param context the actor context
+   * @param message the channel aware message
+   */
   public boolean processPingMessage(ActorContext context, ChannelAware message) {
     LOG.debug("[{}][{}] Received ping message for channel [{}]",
         endpointKey, actorKey, message.getChannelUuid());
@@ -870,6 +924,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process channel timeout message.
+   *
+   * @param context the actor context
+   * @param message the channel timeout message
+   */
   public boolean processChannelTimeoutMessage(ActorContext context,
                                               ChannelTimeoutMessage message) {
     LOG.debug("[{}][{}] Received channel timeout message for channel [{}]",
@@ -900,6 +960,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process log delivery message.
+   *
+   * @param context the actor context
+   * @param message the log delivery message
+   */
   public void processLogDeliveryMessage(ActorContext context, LogDeliveryMessage message) {
     LOG.debug("[{}][{}] Received log delivery message for request [{}] with status {}",
         endpointKey, actorKey, message.getRequestId(),
@@ -921,6 +987,12 @@ public class LocalEndpointActorMessageProcessor
     logUploadResponseMap.clear();
   }
 
+  /**
+   * Process user verification message.
+   *
+   * @param context the actor context
+   * @param message the user verification response message
+   */
   public void processUserVerificationMessage(ActorContext context,
                                              UserVerificationResponseMessage message) {
     LOG.debug("[{}][{}] Received user verification message for request [{}] with status {}",

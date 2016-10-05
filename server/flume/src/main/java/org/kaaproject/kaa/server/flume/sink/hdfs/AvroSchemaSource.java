@@ -110,6 +110,12 @@ public class AvroSchemaSource implements Configurable, ConfigurationConstants {
 
   }
 
+  /**
+   * Load avro schema by Kaa sink key.
+   *
+   * @param key the Kaa sink key
+   * @return schema
+   */
   public Schema loadByKey(KaaSinkKey key) throws Exception {
     Schema schema = null;
     String schemaString = null;
