@@ -14,12 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 import subprocess
 import sys
 import platform
-import commands
-import string
+from subprocess import check_output, CalledProcessError
 
 variationsOfdatabases = ['mariadb-mongodb', 'mariadb-cassandra', 'postgresql-mongodb', 'postgresql-cassandra'];
 
@@ -53,25 +51,34 @@ NGINX_TEMPLATE = '        server {{PROXY_HOST_KAA}}:{{PROXY_PORT}};'
 
 def getExternalHostLinuxMacOs() :
     try:
-        return commands.getstatusoutput("ip route get 8.8.8.8 | awk '{print $NF; exit}'")[1];
+        return getstatusoutput("ip route get 8.8.8.8 | awk '{print $NF; exit}'")[1];
     except:
         return "N/A"
 
 
 def getExternalHostWindows() :
     try:
-        return commands.getstatusoutput("for /f \"skip=4 usebackq tokens=2\" %a in (`nslookup myip.opendns.com resolver1.opendns.com`) do echo %a")[1];
+        return getstatusoutput("netsh interface ip show address \"Ethernet\" | findstr \"IP Address\"")[1].rsplit(' ', 1)[1];
     except:
-
         return "N/A";
 
 def getExternalHostKaa(kaaServiceName) :
     externalHostKaaCommand = "docker inspect --format='{{(index (index .NetworkSettings.Networks ) \"usingcompose_front-tier\").IPAddress}}' usingcompose_"+kaaServiceName+"_1";
     try:
-        return commands.getstatusoutput(externalHostKaaCommand)[1];
+        return getstatusoutput(externalHostKaaCommand)[1];
     except:
         return "N/A";
 
+def getstatusoutput(cmd):
+    try:
+        data = check_output(cmd, shell=True, universal_newlines=True)
+        status = 0
+    except CalledProcessError as ex:
+        data = ex.output
+        status = ex.returncode
+    if data[-1:] == '\n':
+        data = data[:-1]
+    return status, data
 
 def getInputedVariationsDataBases() :
     isValid = False;
@@ -83,7 +90,7 @@ def getInputedVariationsDataBases() :
         if isValid == False:
             sys.exit();
     except:
-        print "Please choose correct variation of SQL and NoSQL databases \n" + str(variationsOfdatabases);
+        print ("Please choose correct variation of SQL and NoSQL databases \n"+str(variationsOfdatabases));
         sys.exit();
 
 
@@ -120,14 +127,14 @@ def configurKaaNode(templateFileName, newFile) :
 
 
 def configurePorts( strConf, sql_nosqlList, nodeNumber ) :
-    strConf=string.replace(strConf, '{{KAA_SERVICE_NAME}}', DEFAULT_KAA_SERVICE_NAME+str(nodeNumber));
-    strConf=string.replace(strConf, '{{SQL_PROVIDER_NAME}}', sql_nosqlList[0]);
-    strConf=string.replace(strConf, '{{NOSQL_PROVIDER_NAME}}', sql_nosqlList[1]);
-    strConf=string.replace(strConf, '{{ADMIN_PORT}}', str(KaaConfigPorts['ADMIN_PORT']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
-    strConf=string.replace(strConf, '{{BOOTSTRAP_TCP}}', str(KaaConfigPorts['BOOTSTRAP_TCP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
-    strConf=string.replace(strConf, '{{BOOTSTRAP_HTTP}}', str(KaaConfigPorts['BOOTSTRAP_HTTP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
-    strConf=string.replace(strConf, '{{OPERATIONS_TCP}}', str(KaaConfigPorts['OPERATIONS_TCP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
-    strConf=string.replace(strConf, '{{OPERATIONS_HTTP}}', str(KaaConfigPorts['OPERATIONS_HTTP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
+    strConf=str.replace(strConf, '{{KAA_SERVICE_NAME}}', DEFAULT_KAA_SERVICE_NAME+str(nodeNumber));
+    strConf=str.replace(strConf, '{{SQL_PROVIDER_NAME}}', sql_nosqlList[0]);
+    strConf=str.replace(strConf, '{{NOSQL_PROVIDER_NAME}}', sql_nosqlList[1]);
+    strConf=str.replace(strConf, '{{ADMIN_PORT}}', str(KaaConfigPorts['ADMIN_PORT']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
+    strConf=str.replace(strConf, '{{BOOTSTRAP_TCP}}', str(KaaConfigPorts['BOOTSTRAP_TCP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
+    strConf=str.replace(strConf, '{{BOOTSTRAP_HTTP}}', str(KaaConfigPorts['BOOTSTRAP_HTTP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
+    strConf=str.replace(strConf, '{{OPERATIONS_TCP}}', str(KaaConfigPorts['OPERATIONS_TCP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
+    strConf=str.replace(strConf, '{{OPERATIONS_HTTP}}', str(KaaConfigPorts['OPERATIONS_HTTP']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber));
     return strConf;
 
 
@@ -192,12 +199,12 @@ def createDefaultConfFileNginx(templateFileName, newFile):
 
 
 def configureDefaultConfFileNginx(strConf) :
-    strConf=string.replace(strConf, '{{NGINX_PORT}}', str(DEFAULT_INTERNAL_ADMIN_PORT));
+    strConf=str.replace(strConf, '{{NGINX_PORT}}', str(DEFAULT_INTERNAL_ADMIN_PORT));
     if platform.system() == 'Windows':
         nginxHost = str(getExternalHostWindows())
     else:
         nginxHost = str(getExternalHostLinuxMacOs())
-    strConf=string.replace(strConf, '{{NGINX_HOST}}', nginxHost);
+    strConf=str.replace(strConf, '{{NGINX_HOST}}', nginxHost);
     return strConf;
 
 
@@ -212,20 +219,20 @@ def createConfFileNginx(templateFileName, newFile, proxyHost, proxyPort):
 
 
 def configureConfFileNginx(strConf, proxyHost, proxyPort) :
-    strConf=string.replace(strConf, '{{PROXY_HOST_KAA}}', str(proxyHost));
-    strConf=string.replace(strConf, '{{PROXY_PORT}}', str(proxyPort));
+    strConf=str.replace(strConf, '{{PROXY_HOST_KAA}}', str(proxyHost));
+    strConf=str.replace(strConf, '{{PROXY_PORT}}', str(proxyPort));
     return strConf;
 
 
 def stopRunningContainers() :
-    runningContainers = commands.getstatusoutput('docker ps -q')[1];
+    runningContainers = getstatusoutput('docker ps -q')[1];
     if runningContainers != '':
         subprocess.call('docker stop $(docker ps -q)', shell=True);
     return;
 
 
 def removeAvailableContainers() :
-    availableContainers = commands.getstatusoutput('docker ps -a -q')[1];
+    availableContainers = getstatusoutput('docker ps -a -q')[1];
     if availableContainers != '':
         subprocess.call('docker rm $(docker ps -a -q)', shell=True);
     return;
@@ -234,7 +241,7 @@ def removeAvailableContainers() :
 stopRunningContainers();
 configureThirdPartyComponents('third-party-docker-compose.yml');
 setTransportPublicInterface();
-print 'TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs());
+print ('TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs()));
 
 subprocess.call("docker-compose -f third-party-docker-compose.yml up -d", shell=True);
 
@@ -253,7 +260,7 @@ elif len(sys.argv) == 3:
     try:
         nodeCount = int(sys.argv[2]);
     except:
-        print 'This parameter must be Integer';
+        print ('This parameter must be Integer');
         sys.exit();
     configureClusterModeKaa('kaa-docker-compose.yml.template', 'kaa-docker-compose.yml');
     subprocess.call((kaaNodesStartCommand+' '.join(kaaNodeNames)), shell=True);
