@@ -63,6 +63,9 @@ public class Utils {
 
   private static UnauthorizedSessionDialog unauthorizedSessionDialog;
 
+  /**
+   * Inject Kaa styles.
+   */
   public static void injectKaaStyles() {
     kaaTheme.ensureInjected();
     kaaAdminStyle.ensureInjected();
@@ -74,6 +77,13 @@ public class Utils {
     handleException(caught, hasErrorMessage, null);
   }
 
+  /**
+   * Exception handler.
+   *
+   * @param caught                  the Throwable
+   * @param hasErrorMessage         the has error message
+   * @param errorMessageCustomizer  the error message customizer
+   */
   public static void handleException(Throwable caught,
                                      HasErrorMessage hasErrorMessage,
                                      ErrorMessageCustomizer errorMessageCustomizer) {
@@ -157,6 +167,12 @@ public class Utils {
     return simpleDateTimeFormat.format(new Date(millis));
   }
 
+  /**
+   * Validate email.
+   *
+   * @param mail the email address
+   * @return boolean 'true' if email address is valid
+   */
   public static boolean validateEmail(String mail) {
     boolean result = false;
     if (mail != null && mail.length() != 0) {
@@ -168,6 +184,12 @@ public class Utils {
     return result;
   }
 
+  /**
+   * Get maximum schema versions.
+   *
+   * @param schemas the list of schemas
+   * @return maximum schema versions
+   */
   public static <T extends VersionDto> T getMaxSchemaVersions(List<T> schemas) {
     if (schemas != null && !schemas.isEmpty()) {
       return Collections.max(schemas);
@@ -184,6 +206,12 @@ public class Utils {
     return string == null || string.length() == 0;
   }
 
+  /**
+   * Get CTL scope.
+   *
+   * @param scope the CTL schema scope DTO
+   * @return the CTL schema scope.
+   */
   public static String getCtlScopeString(CTLSchemaScopeDto scope) {
     switch (scope) {
       case APPLICATION:
@@ -197,6 +225,12 @@ public class Utils {
     }
   }
 
+  /**
+   * Get CTL schema scope title.
+   *
+   * @param scope the CTL schema scope DTO
+   * @return the CTL schema scope title.
+   */
   public static String getCtlScopeTitleString(CTLSchemaScopeDto scope) {
     switch (scope) {
       case APPLICATION:

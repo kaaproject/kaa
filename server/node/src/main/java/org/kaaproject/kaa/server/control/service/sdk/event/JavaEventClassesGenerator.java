@@ -121,6 +121,12 @@ public class JavaEventClassesGenerator {
   private JavaEventClassesGenerator() {
   }
 
+  /**
+   * Generate event classes for event family metadata.
+   *
+   * @param eventFamilies the event family metadata
+   * @return the list of event classes
+   */
   public static List<JavaDynamicBean> generateEventClasses(
       List<EventFamilyMetadata> eventFamilies) {
 

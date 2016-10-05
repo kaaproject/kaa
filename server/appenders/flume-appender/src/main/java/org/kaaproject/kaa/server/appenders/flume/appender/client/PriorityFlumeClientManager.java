@@ -179,7 +179,15 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
     return sendEventToFlumeAsync(event, 1);
   }
 
-
+  /**
+   * Send Flume event to the Flume agent.
+   *
+   * @param event       the event to send
+   * @param retryCount  the count to retry send Flume event in the case of event delivery exception
+   * @return            the {@link AppendAsyncResultPojo}
+   * @throws EventDeliveryException an event delivery exception is raised whenever an {@link Event}
+   *         fails to reach at least one of its intended (next-hop) destinations
+   */
   public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event, int retryCount)
       throws EventDeliveryException {
     try {
@@ -205,6 +213,15 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
     return sendEventsToFlumeAsync(events, 1);
   }
 
+  /**
+   * Send Flume events to the Flume agent.
+   *
+   * @param events      the events to send
+   * @param retryCount  the count to retry send Flume events in the case of event delivery exception
+   * @return            the {@link AppendAsyncResultPojo}
+   * @throws EventDeliveryException an event delivery exception is raised whenever an {@link Event}
+   *         fails to reach at least one of its intended (next-hop) destinations
+   */
   public ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(
       List<Event> events, int retryCount) throws EventDeliveryException {
     try {
@@ -223,8 +240,5 @@ public class PriorityFlumeClientManager extends FlumeClientManager<PrioritizedFl
       }
     }
   }
-
-
-
 
 }

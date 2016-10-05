@@ -2513,7 +2513,9 @@ public class DefaultControlService implements ControlService {
         .findEndpointProfilesByExternalIdAndTenantId(endpointUserExternalId, tenantId);
   }
 
-
+  /**
+   * Shutdown of control service neighbors.
+   */
   @PreDestroy
   public void onStop() {
     if (neighbors != null) {

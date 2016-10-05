@@ -33,12 +33,25 @@ public class CommonSdkUtil {
   private CommonSdkUtil() {
   }
 
+  /**
+   * Create new zip entry data for the input source.
+   *
+   * @param source  the input source
+   * @param name the entry name
+   * @return the new zip entry data
+   */
   public static TarEntryData tarEntryForSources(String source, String name) {
     TarArchiveEntry tarEntry = new TarArchiveEntry(name);
     tarEntry.setSize(source.getBytes().length);
     return new TarEntryData(tarEntry, source.getBytes());
   }
 
+  /**
+   * Convert list of {@link BootstrapNodeInfo} to the string format.
+   *
+   * @param bootstrapNodes the list of Bootstrap nodes info
+   * @return Bootstrap nodes information in the string format
+   */
   public static String bootstrapNodesToString(List<BootstrapNodeInfo> bootstrapNodes) {
     String bootstrapServers = "";
     if (bootstrapNodes != null && !bootstrapNodes.isEmpty()) {

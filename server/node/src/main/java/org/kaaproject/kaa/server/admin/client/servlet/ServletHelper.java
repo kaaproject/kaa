@@ -28,7 +28,13 @@ import java.util.Map.Entry;
 
 public class ServletHelper implements ServletParams {
 
-
+  /**
+   * Download user configuration.
+   *
+   * @param externalUId   the external user identifier
+   * @param schemaVersion the configuration schema version
+   * @param appId         the application identifier
+   */
   public static void downloadUserConfiguration(String externalUId, String schemaVersion,
                                                String appId) {
     String getUrl = composeUrl(KAA_USER_CONFIGURATION_SERVLET_PATH,
@@ -39,7 +45,11 @@ public class ServletHelper implements ServletParams {
     Window.open(url, "_self", "enabled");
   }
 
-
+  /**
+   * Download the SDK.
+   *
+   * @param key the SDK key
+   */
   public static void downloadSdk(String key) {
     String getUrl = composeUrl(KAA_SDK_SERVLET_PATH,
         SDK_KEY_PARAMETER + "=" + URL.encodeQueryString(key));
@@ -47,7 +57,11 @@ public class ServletHelper implements ServletParams {
     Window.open(url, "_self", "enabled");
   }
 
-
+  /**
+   * Download record library.
+   *
+   * @param key the record library key
+   */
   public static void downloadRecordLibrary(String key) {
     String getUrl = composeUrl(KAA_RECORD_LIBRARY_SERVLET_PATH, RECORD_KEY_PARAMETER
         + "=" + URL.encodeQueryString(key));
@@ -55,6 +69,11 @@ public class ServletHelper implements ServletParams {
     Window.open(url, "_self", "enabled");
   }
 
+  /**
+   * Export CTL schema.
+   *
+   * @param key the CTL export key
+   */
   public static void exportCtlSchema(String key) {
     String getUrl = composeUrl(KAA_CTL_EXPORT_SERVLET_PATH, CTL_EXPORT_KEY_PARAMETER
         + "=" + URL.encodeQueryString(key));
@@ -62,7 +81,12 @@ public class ServletHelper implements ServletParams {
     Window.open(url, "_self", "enabled");
   }
 
-
+  /**
+   * Download endpoint profile.
+   *
+   * @param endpointKey the endpoint key
+   * @param type        the type of an endpoint
+   */
   public static void downloadEndpointProfile(String endpointKey, ProfileType type) {
     String getUrl = composeUrl(KAA_PROFILE_DOWNLOAD_SERVLET_PATH,
         ENDPOINT_KEY_PARAMETER + "=" + URL.encodeQueryString(endpointKey),
@@ -71,7 +95,11 @@ public class ServletHelper implements ServletParams {
     Window.open(url, "_self", "enabled");
   }
 
-
+  /**
+   * Download endpoint configuration.
+   *
+   * @param endpointKeyHash the endpoint key hash
+   */
   public static void downloadEndpointConfiguration(String endpointKeyHash) {
     String getUrl = composeUrl(EP_CONF_SERVLET_PATH,
         ENDPOINT_KEY_PARAMETER + "=" + URL.encodeQueryString(endpointKeyHash));

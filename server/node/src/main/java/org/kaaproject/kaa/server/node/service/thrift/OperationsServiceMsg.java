@@ -71,9 +71,16 @@ public class OperationsServiceMsg {
     return new OperationsServiceMsg(null, null, null, null, endpointDeregistrationMsg);
   }
 
+  /**
+   * Dispatch the messages.
+   *
+   * @param client      the client
+   * @param messages    the Operations service messages
+   * @throws TException the Thrift exception
+   */
   public static void dispatch(Iface client, List<OperationsServiceMsg> messages) throws TException {
-    List<UserConfigurationUpdate> updates = new ArrayList<UserConfigurationUpdate>();
-    List<ThriftEntityRouteMessage> routes = new ArrayList<ThriftEntityRouteMessage>();
+    List<UserConfigurationUpdate> updates = new ArrayList<>();
+    List<ThriftEntityRouteMessage> routes = new ArrayList<>();
     for (OperationsServiceMsg msg : messages) {
       if (msg.getUnicastNotificationMsg() != null) {
         client.onUnicastNotification(msg.getUnicastNotificationMsg());

@@ -103,6 +103,9 @@ public class Login implements EntryPoint {
     });
   }
 
+  /**
+   * Show the login.
+   */
   public void showLogin() {
     Utils.injectKaaStyles();
     checkPasswordReset(new AsyncCallback<Void>() {
@@ -145,6 +148,9 @@ public class Login implements EntryPoint {
     UrlParams.updateParamsFromUrl(historyParams, historyToken);
   }
 
+  /**
+   * Reset the current history.
+   */
   public void resetCurrentHistory() {
     historyParams.clear();
     String historyToken = UrlParams.generateParamsUrl(historyParams);

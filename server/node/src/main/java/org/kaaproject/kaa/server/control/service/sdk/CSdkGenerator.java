@@ -100,6 +100,9 @@ public class CSdkGenerator extends SdkGenerator {
 
   private final VelocityEngine velocityEngine;
 
+  /**
+   * Instantiates a new CSdkGenerator.
+   */
   public CSdkGenerator() {
     velocityEngine = new VelocityEngine();
 
