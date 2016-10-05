@@ -37,7 +37,10 @@ public class AdminInitializationService extends AbstractInitializationService {
     
     @Value("#{properties[admin_port]}")
     private int adminPort;
-    
+
+    @Value("#{properties[web_xml_file] ?: 'web.xml'}")
+    private String webXmlFile;
+
     private Server server;
     private WebAppContext webAppContext;
     
@@ -49,7 +52,7 @@ public class AdminInitializationService extends AbstractInitializationService {
         webAppContext = new WebAppContext();
         webAppContext.setEventListeners(new EventListener[]{adminContextLoaderListener});
         webAppContext.setContextPath("/");
-        String webXmlLocation = AdminInitializationService.class.getResource("/admin-web/WEB-INF/web.xml").toString();
+        String webXmlLocation = AdminInitializationService.class.getResource("/admin-web/WEB-INF/" + webXmlFile).toString();
         webAppContext.setDescriptor(webXmlLocation);
         String resLocation = AdminInitializationService.class.getResource("/admin-web").toString();
         webAppContext.setResourceBase(resLocation);

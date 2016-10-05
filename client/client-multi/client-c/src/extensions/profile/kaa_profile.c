@@ -251,7 +251,7 @@ kaa_error_t kaa_profile_request_get_size(kaa_profile_manager_t *self, size_t *ex
 
     if (!self->status->is_registered) {
         if (!self->extension_data->public_key.buffer) {
-            ext_get_endpoint_public_key((uint8_t **)&self->extension_data->public_key.buffer,
+            ext_get_endpoint_public_key((const uint8_t **)&self->extension_data->public_key.buffer,
                                         (size_t *)&self->extension_data->public_key.size);
         }
 

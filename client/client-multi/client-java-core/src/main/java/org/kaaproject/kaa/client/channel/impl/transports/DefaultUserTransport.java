@@ -43,7 +43,7 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUserTransport.class);
 
     private EndpointRegistrationProcessor processor;
-    private final Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
+    private Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints = new HashMap<EndpointAccessToken, EndpointKeyHash>();
 
     @Override
     public UserSyncRequest createUserRequest() {
@@ -74,16 +74,23 @@ public class DefaultUserTransport extends AbstractKaaTransport implements
     public void onUserResponse(UserSyncResponse response) throws IOException {
         if (processor != null) {
             boolean hasChanges = false;
+            if (clientState != null) {
+                attachedEndpoints = clientState.getAttachedEndpointsList();
+            }
             Map<Integer, EndpointAccessToken> attachEndpointRequests = processor.getAttachEndpointRequests();
             if (response.getEndpointAttachResponses() != null && !response.getEndpointAttachResponses().isEmpty()) {
                 for (EndpointAttachResponse attached : response.getEndpointAttachResponses()) {
                     EndpointAccessToken attachedToken = attachEndpointRequests.remove(attached.getRequestId());
                     if (attached.getResult() == SyncResponseResultType.SUCCESS) {
-                        LOG.info("Token {}", attachedToken);
-                        attachedEndpoints.put(attachedToken, new EndpointKeyHash(attached.getEndpointKeyHash()));
-                        hasChanges = true;
+                        if (attachedToken != null) {
+                            LOG.info("Token {}", attachedToken);
+                            attachedEndpoints.put(attachedToken, new EndpointKeyHash(attached.getEndpointKeyHash()));
+                            hasChanges = true;
+                        } else {
+                            LOG.warn("Endpoint {} is already attached!", attached.getEndpointKeyHash());
+                        }
                     } else {
-                        LOG.error("Failed to attach endpoint. Attach endpoint request id: {}", attached.getRequestId());
+                        LOG.error("Failed to attach endpoint {}. Attach endpoint request id: {}", attached.getEndpointKeyHash(), attached.getRequestId());
                     }
                 }
             }

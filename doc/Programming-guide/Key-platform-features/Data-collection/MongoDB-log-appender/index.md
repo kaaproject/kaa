@@ -167,60 +167,34 @@ We have next log schema:
 ```json
 {
     "type":"record",
-    "name":"LogData",
-    "namespace":"org.kaaproject.kaa.schema.sample.logging",
+    "name":"Data",
+    "namespace":"org.kaaproject.kaa.scheme.sample",
     "fields":[
         {
-            "name":"level",
-            "type":{
-                "type":"enum",
-                "name":"Level",
-                "symbols":[
-                    "KAA_DEBUG",
-                    "KAA_ERROR",
-                    "KAA_FATAL",
-                    "KAA_INFO",
-                    "KAA_TRACE",
-                    "KAA_WARN"
-                ]
-            }
-        },
-        {
-            "name":"tag",
-            "type":"string"
-        },
-        {
-            "name":"message",
-            "type":"string"
+            "name":"temperature",
+            "type":"int"
         },
         {
             "name":"timeStamp",
             "type":"long"
         }
-    ]
+    ],
+    "displayName":"Logging scheme"
 }
-```
-
-Display string
-
-```json
-"schema": "{\n  \"type\":\"record\",\n  \"name\":\"LogData\",\n  \"namespace\":\"org.kaaproject.kaa.schema.sample.logging\",\n  \"fields\":[\n Field (4 rows) \n]\n}"
 ```
 
 The following JSON example matches the previous schema.
 
 ```json
 {
-    "level":"KAA_INFO",
-    "tag":"TEST_TAG",
-    "message":"My simple message",
-    "timeStamp":"1466075369795"
+    "temperature":"28",
+    "timeStamp":"1474366798"
 }
 
 ```
 
 1. Go to Data collection demos in Sandbox.
-![Data collection demo in Sandbox](attach/mongodb-log-appender1.png)
+![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
 2. In the Admin UI follow to **Data collection demo** application.
 ![Data collection Demo Admin UI](attach/mongodb-log-appender2.png)
 ![Add log appender](attach/mongodb-log-appender3.png)
@@ -238,24 +212,18 @@ The following JSON example matches the previous schema.
 ![Add button](attach/mongodb-log-appender8.png)
 10. Verify that newly created appender has appeared in list.
 ![Verify newly created log appender](attach/mongodb-log-appender9.png)
-11. Now use instructions from Sandbox to run Data collection demo application and verify that logs have been successfully sent to Kaa.
+11. Now use instructions from Sandbox to run Data collection demo application.
 12. After this you should see something like below:
 
-    ```
-    2016-06-21 12:38:12,260 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
-    2016-06-21 12:38:13,337 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
-    2016-06-21 12:38:13,339 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,340 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466501893337} sent
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,627 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [290 ms].
-    2016-06-21 12:38:13,628 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
-    2016-06-21 12:38:13,629 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
+    ```bash
+    Data collection demo started
+    Received new sample period: 1
+    Sampled temperature 28 1474622330
+    Sampled temperature 31 1474622331
+    Sampled temperature 32 1474622332
+    Sampled temperature 30 1474622333
+    Sampled temperature 28 1474622334
+    ...
     ```
 
 13. Let's verify that our logs have been persisted in MongoDB. Go to Sandbox VM and run next command to connect MongoDB:
@@ -268,11 +236,12 @@ The following JSON example matches the previous schema.
 14. You should observe similar output:
 
     ```bash
-    { "_id" : ObjectId("57690b05d55fb20804a7f40e"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_0", "timeStamp" : NumberLong("1466501893337") } }
-    { "_id" : ObjectId("57690b05d55fb20804a7f40f"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_1", "timeStamp" : NumberLong("1466501893337") } }
-    { "_id" : ObjectId("57690b05d55fb20804a7f410"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_2", "timeStamp" : NumberLong("1466501893337") } }
-    { "_id" : ObjectId("57690b05d55fb20804a7f411"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_3", "timeStamp" : NumberLong("1466501893337") } }
-    { "_id" : ObjectId("57690b05d55fb20804a7f412"), "header" : { "endpointKeyHash" : { "string" : "UtzjR4tTem5XDJRZRX9ftZfR7ng=" }, "applicationToken" : { "string" : "82635305199158071549" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1466501893596") }, "logSchemaVersion" : null }, "event" : { "level" : "KAA_INFO", "tag" : "TAG", "message" : "MESSAGE_4", "timeStamp" : NumberLong("1466501893337") } }
+    { "_id" : ObjectId("57d916e8d55fb2073ae3cfbd"), "header" : { "endpointKeyHash" : { "string" : "H0Oclp3Wn/QS25dZCQSbV5ZkjRo=" }, "applicationToken" : { "string" : "65691512829156876532" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1473844968489") }, "logSchemaVersion" : null }, "event" : { "temperature" : 28, "timeStamp" : 1474622330 } }
+    { "_id" : ObjectId("57d916e8d55fb2073ae3cfbe"), "header" : { "endpointKeyHash" : { "string" : "H0Oclp3Wn/QS25dZCQSbV5ZkjRo=" }, "applicationToken" : { "string" : "65691512829156876532" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1473844968489") }, "logSchemaVersion" : null }, "event" : { "temperature" : 31, "timeStamp" : 1474622331 } }
+    { "_id" : ObjectId("57d916e8d55fb2073ae3cfbf"), "header" : { "endpointKeyHash" : { "string" : "H0Oclp3Wn/QS25dZCQSbV5ZkjRo=" }, "applicationToken" : { "string" : "65691512829156876532" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1473844968489") }, "logSchemaVersion" : null }, "event" : { "temperature" : 32, "timeStamp" : 1474622332 } }
+    { "_id" : ObjectId("57d916e8d55fb2073ae3cfc0"), "header" : { "endpointKeyHash" : { "string" : "H0Oclp3Wn/QS25dZCQSbV5ZkjRo=" }, "applicationToken" : { "string" : "65691512829156876532" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1473844968489") }, "logSchemaVersion" : null }, "event" : { "temperature" : 30, "timeStamp" : 1474622333 } }
+    { "_id" : ObjectId("57d916e8d55fb2073ae3cfc1"), "header" : { "endpointKeyHash" : { "string" : "H0Oclp3Wn/QS25dZCQSbV5ZkjRo=" }, "applicationToken" : { "string" : "65691512829156876532" }, "headerVersion" : { "int" : 1 }, "timestamp" : { "long" : NumberLong("1473844968489") }, "logSchemaVersion" : null }, "event" : { "temperature" : 28, "timeStamp" : 1474622334 } }
+    ...
     ```
 
 If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

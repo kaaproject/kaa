@@ -97,14 +97,6 @@ If you need to install and configure Kaa components on a single Linux node refer
 
 To learn how to create kaa-node cluster refer to [Node cluster setup](Cluster-setup) documentation page.
 
-### AWS deployment.
-
-You can either install Kaa server as described on this page or run it on [Amazon EC2](Planning-your-deployment/#aws-deployment-preparation).
-
-### Planning your deployment
-
-For more information about environment setup please refer to [Planning your deployment](Planning-your-deployment/) documentation page.
-
 ## Troubleshooting
 
 Common issues covered in this [guide](../Troubleshooting).

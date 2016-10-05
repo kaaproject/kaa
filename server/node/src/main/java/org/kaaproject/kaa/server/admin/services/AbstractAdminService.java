@@ -49,6 +49,7 @@ import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 import org.kaaproject.kaa.server.control.service.ControlService;
+import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.kaaproject.kaa.server.control.service.sdk.SchemaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static org.kaaproject.kaa.server.admin.services.util.Utils.checkFieldUniquieness;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.schema.ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
@@ -301,10 +304,10 @@ public abstract class AbstractAdminService implements InitializingBean {
         }
     }
 
-    Long saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user) throws Exception {
+    CreateUserResult saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user, boolean doSendTempPassword) throws Exception {
         CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
         try {
-            if (!isEmpty(result.getPassword())) {
+            if (!isEmpty(result.getPassword()) && doSendTempPassword) {
                 messagingService.sendTempPassword(user.getUsername(),
                         result.getPassword(),
                         user.getMail());
@@ -320,7 +323,69 @@ public abstract class AbstractAdminService implements InitializingBean {
             }
             throw new KaaAdminServiceException(String.valueOf(errorMessage.append("See server logs for details.")), ServiceErrorCode.GENERAL_ERROR);
         }
-        return result.getUserId();
+        return result;
+    }
+
+    String createNewUser(org.kaaproject.kaa.common.dto.admin.UserDto user, boolean doSendTempPassword) throws Exception {
+        checkFieldUniquieness(
+                user.getUsername(),
+                userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet()),
+                "userName"
+        );
+
+        checkFieldUniquieness(
+                user.getMail(),
+                userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet()),
+                "email"
+        );
+
+        CreateUserResult result = saveUser(user, doSendTempPassword);
+        user.setExternalUid(result.getUserId().toString());
+        return result.getPassword();
+    }
+
+    void editUserFacadeUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
+            throws KaaAdminServiceException, ControlServiceException {
+        User storedUserOld = userFacade.findByUserName(user.getUsername());
+
+        user.setExternalUid(String.valueOf(storedUserOld.getId()));
+        UserDto storedUserNew = controlService.getUser(user.getId());
+        Utils.checkNotNull(storedUserNew);
+        if(!getCurrentUser().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)) {
+            checkTenantId(storedUserNew.getTenantId());
+        }
+
+        storedUserOld.setMail(user.getMail());
+        storedUserOld.setFirstName(user.getFirstName());
+        storedUserOld.setLastName(user.getLastName());
+        userFacade.save(storedUserOld);
+    }
+
+    org.kaaproject.kaa.common.dto.admin.UserDto editControlServiceUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
+            throws KaaAdminServiceException, ControlServiceException {
+        if (!isEmpty(getTenantId())) {
+            user.setTenantId(getTenantId());
+        } else {
+            user.setTenantId(user.getTenantId());
+        }
+        org.kaaproject.kaa.common.dto.UserDto savedUser = controlService.editUser(user);
+
+        return toUser(savedUser);
+    }
+
+    void checkCreateUserPermission(UserDto user) throws KaaAdminServiceException {
+        if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+            checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+        } else {
+            checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+            if (!isEmpty(user.getTenantId())) {
+                checkTenantId(user.getTenantId());
+            }
+        }
+    }
+
+    void checkEditUserPermission(UserDto user) throws KaaAdminServiceException, ControlServiceException {
+        checkUserId(user.getId());
     }
 
     void setPluginJsonConfigurationFromRaw(PluginDto plugin, PluginType type) {

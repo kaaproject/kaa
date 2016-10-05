@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2014-2016 CyberVision, Inc.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+              http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee">
+
+        <context-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:/admin-web/WEB-INF/adminContext-test.xml</param-value>
+        </context-param>
+
+        <servlet>
+            <servlet-name>springGwtRemoteServiceServlet</servlet-name>
+            <servlet-class>org.spring4gwt.server.SpringGwtRemoteServiceServlet</servlet-class>
+        </servlet>
+
+
+        <servlet>
+            <servlet-name>kaaUserConfServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.UserConfServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaSdkServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.SdkServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaEpConfServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.EndpointConfigurationServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaRecordLibraryServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.RecordServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaCtlExportServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.CtlExportServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaProfileDownloadServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.ProfileDownloadServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaFileUploadServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.FileUpload</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaConfigurationDownloadServlet</servlet-name>
+            <servlet-class>org.kaaproject.kaa.server.admin.servlet.ConfigurationDownloadServlet</servlet-class>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <servlet>
+            <servlet-name>kaaRestServlet</servlet-name>
+            <servlet-class>
+                org.springframework.web.servlet.DispatcherServlet
+            </servlet-class>
+            <init-param>
+                <param-name>contextConfigLocation</param-name>
+                <param-value>classpath:/admin-web/WEB-INF/adminRestContext.xml</param-value>
+            </init-param>
+            <load-on-startup>1</load-on-startup>
+        </servlet>
+
+        <filter>
+            <filter-name>springSecurityFilterChain</filter-name>
+            <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        </filter>
+
+        <filter-mapping>
+            <filter-name>springSecurityFilterChain</filter-name>
+            <url-pattern>/*</url-pattern>
+        </filter-mapping>
+
+        <servlet-mapping>
+            <servlet-name>springGwtRemoteServiceServlet</servlet-name>
+            <url-pattern>/kaaAdmin/springGwtServices/*</url-pattern>
+            <url-pattern>/login/springGwtServices/*</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaUserConfServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaUserConfServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaSdkServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaSdkServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaEpConfServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaEpConfServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaRecordLibraryServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaRecordLibraryServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaCtlExportServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaCtlExportServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaProfileDownloadServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaProfileDownloadServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaFileUploadServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaFileUploadServlet</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaRestServlet</servlet-name>
+            <url-pattern>/kaaAdmin/rest/*</url-pattern>
+        </servlet-mapping>
+
+        <servlet-mapping>
+            <servlet-name>kaaConfigurationDownloadServlet</servlet-name>
+            <url-pattern>/kaaAdmin/servlet/kaaConfigurationDownloadServlet</url-pattern>
+        </servlet-mapping>
+
+         <!-- Default page to serve -->
+        <welcome-file-list>
+            <welcome-file>KaaAdmin.html</welcome-file>
+        </welcome-file-list>
+
+
+</web-app>

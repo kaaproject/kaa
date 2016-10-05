@@ -33,7 +33,7 @@
 #include "platform/ext_system_logger.h"
 #include <platform/time.h>
 #include "kaa_platform_common.h"
-#include "platform/ext_key_utils.h"
+#include "platform/ext_encryption_utils.h"
 #include "kaa_tcp_channel.h"
 #include "kaa_context.h"
 #include "kaa_channel_manager.h"

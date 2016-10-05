@@ -130,49 +130,45 @@ Example result:
 
 1. Go to Data collection demos in Sandbox. And download binary.
 ![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
-2. In the Admin UI follow to **Data collection demo** application.
-3. Go to application's **Log appenders** configuration and add a new one.
+2. Follow **Installation** instructions.
+3. In the Admin UI follow to **Data collection demo** application.
+4. Go to application's **Log appenders** configuration and add a new one.
 ![Add log appender](attach/data-collection-demo-application.png)
-4. Enter name of the new appender (we use “Sample FileSystem log appender”).
-5. Add Log metadata fields.
-6.  Select _File_ appender type.
+5. Enter name of the new appender (we use “Sample File system log appender”).
+6. Add Log metadata fields.
+7. Select **File** appender type.
 
     See [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui) section for details.
 
-7. Verify that newly created appender has appeared in list.
+8. Verify that newly created appender has appeared in list.
 ![Verify newly created log appender](attach/verify-created-appender.png)
-8. Use instructions from Sandbox to run Data collection demo application and verify that logs have been successfully sent to Kaa.
-9.  After this you should see something like below:
+9. Use instructions from Sandbox to run Data collection demo application.
+10. After this you should see something like below:
 
     ```bash
-    2016-06-17 11:59:24,004 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo started
-    2016-06-17 11:59:25,457 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client started
-    2016-06-17 11:59:25,459 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_0", "timeStamp": 1466153965458} sent
-    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_1", "timeStamp": 1466153965458} sent
-    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_2", "timeStamp": 1466153965458} sent
-    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_3", "timeStamp": 1466153965458} sent
-    2016-06-17 11:59:25,460 [main] INFO  o.k.k.d.d.DataCollectionDemo - Log record {"level": "KAA_INFO", "tag": "TAG", "message": "MESSAGE_4", "timeStamp": 1466153965458} sent
-    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-    2016-06-17 11:59:27,102 [main] INFO  o.k.k.d.d.DataCollectionDemo - Received log record delivery info. Bucket Id [0]. Record delivery time [1644 ms].
-    2016-06-17 11:59:27,103 [pool-2-thread-1] INFO  o.k.k.d.d.DataCollectionDemo - Kaa client stopped
-    2016-06-17 11:59:27,104 [main] INFO  o.k.k.d.d.DataCollectionDemo - Data collection demo stopped
+    Data collection demo started
+    Received new sample period: 1
+    Sampled temperature 28 1474622330
+    Sampled temperature 31 1474622331
+    Sampled temperature 32 1474622332
+    Sampled temperature 30 1474622333
+    Sampled temperature 28 1474622334
+    ...
     ```
 
-10. Let's verify that our logs have been persisted in the local file system. Go to Sandbox VM and open the file
-    ```/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log```.
-    In this example path to file ```application.log``` is ```kaa_log_uploads/tenant_1/application_82635305199158071549/```.
+11. Let's verify that our logs have been persisted in the local file system. Go to Sandbox VM and open the file
+        ```/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log```.
+        In this example path to file ```application.log``` is ```/kaa_log_uploads/tenant_1/application_24212667430286144698/```.
 
-    Your ```application.log``` should contain similar content:
+     Your ```application.log``` should contain similar content:
 
-    ```
-    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_0","timeStamp":1466153965458}}
-    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_1","timeStamp":1466153965458}}
-    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_2","timeStamp":1466153965458}}
-    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_3","timeStamp":1466153965458}}
-    261761 [EPS-log-dispatcher-10] INFO  1.82635305199158071549 - {"Log Header": "{"endpointKeyHash":{"string":"UtzjR4tTem5XDJRZRX9ftZfR7ng="},"applicationToken":{"string":"82635305199158071549"},"headerVersion":{"int":1},"timestamp":{"long":1466153967055},"logSchemaVersion":{"int":2}}", "Event": {"level":"KAA_INFO","tag":"TAG","message":"MESSAGE_4","timeStamp":1466153965458}}
+    ```bash
+    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":28,"timeStamp":1474622330}}
+    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":31,"timeStamp":1474622331}}
+    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":32,"timeStamp":1474622332}}
+    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":30,"timeStamp":1474622333}}
+    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":28,"timeStamp":1474622334}}
+    ...
     ```
 
 If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).

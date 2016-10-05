@@ -82,6 +82,7 @@ option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
 option(WITH_EXTENSION_NOTIFICATION "Enable notification extension" ON)
 option(WITH_EXTENSION_USER "Enable user extension" ON)
 option(WITH_ENCRYPTION "Enable encryption" ON)
+option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" OFF)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -178,7 +179,14 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
-  )
+)
+
+if(WITH_ENCRYPTION)
+    set(KAA_SOURCE_FILES
+        ${KAA_SOURCE_FILES}
+        ${KAA_SRC_FOLDER}/utilities/kaa_aes_rsa.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/encryption_utils.c)
+endif(WITH_ENCRYPTION)
 
 
 # Includes auto-generated Cmake's scripts.
@@ -186,14 +194,20 @@ include(${CMAKE_CURRENT_LIST_DIR}/listfiles/CMakeGen.cmake)
 
 # Kaa include directories
 set(KAA_INCLUDE_DIRS
-        ${KAA_INCLUDE_PATHS}         # Provided by platform cmake
+        ${KAA_INCLUDE_PATHS}
         ${CMAKE_CURRENT_LIST_DIR}/src
         ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls
+        ${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption/rsa_key_gen/include
         ${KAA_SRC_FOLDER}
         ${KAA_THIRDPARTY_INCLUDE_DIR})
 
 # Build unit tests.
 include(${CMAKE_CURRENT_LIST_DIR}/listfiles/UnitTest.cmake)
+
+include_directories(SYSTEM ${KAA_INCLUDE_PATHS})
+
+# This already includes mbedtls
+add_subdirectory(tools/kaa_encryption/rsa_key_gen)
 
 # Build Kaa libraries.
 add_library(kaac ${KAA_SOURCE_FILES})
@@ -276,12 +290,13 @@ add_subdirectory(Modules/cppcheck)
 
 #Set key pair generation parameter for posix platform
 #Use application for another platform
-if(${KAA_PLATFORM} STREQUAL "posix")
-    option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
-    if(${KAA_RUNTIME_KEY_GENERATION})
+if(KAA_RUNTIME_KEY_GENERATION)
+    if(KAA_PLATFORM STREQUAL "posix")
         add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+        target_link_libraries(kaac PUBLIC rsa_keygen)
+    else()
+        message(FATAL_ERROR "The runtime key generation option may be enabled only for POSIX platform")
     endif()
-    add_subdirectory(tools/kaa_encryption/rsa_key_gen)
     target_link_libraries(kaac PUBLIC rsa_keygen)
 else()
     add_dependencies(kaac kaa_rsa_keygen)

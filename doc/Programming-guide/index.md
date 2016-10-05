@@ -25,7 +25,6 @@ See also [Cluster setup]({{root_url}}Administration-guide/System-installation/Cl
 | **[Key platform features]({{root_url}}Programming-guide/Key-platform-features/)** | Learn about Kaa key features, such as [endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [logging]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), and others. |
 | **[Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/)** | Advance your skills to create an industrial level IoT project using different programming languages and platforms. |
 | **[Server REST APIs]({{root_url}}Programming-guide/Server-REST-APIs/)** | A detailed list of Kaa REST API operations. |
-| **[Debugging and troubleshooting]({{root_url}}Programming-guide/Debugging-and-troubleshooting/)** | Refer to this section if you have any problems following the guide. |
 
 ---
 
