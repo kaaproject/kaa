@@ -45,6 +45,9 @@ public class EndpointProfilesViewImpl
   private RadioButton endpointGroupButton;
   private RadioButton endpointKeyHashButton;
 
+  /**
+   * Instantiates a new EndpointProfilesViewImpl.
+   */
   public EndpointProfilesViewImpl() {
     super(false);
 

@@ -31,6 +31,9 @@ public class ImageTextButton extends Button {
     this(imageResource, text, null);
   }
 
+  /**
+   * Instantiates a new ImageTextButton.
+   */
   public ImageTextButton(ImageResource imageResource, String text, ClickHandler clickHandler) {
     super();
     if (clickHandler != null) {

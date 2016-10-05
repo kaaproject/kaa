@@ -30,6 +30,9 @@ public class MultiAefMapListBox extends MultiValueListBox<AefMapInfoDto> {
     super(new AefMapInfoDtoRenderer());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<AefMapInfoDto> emptyList = Collections.emptyList();
     setValue(null);

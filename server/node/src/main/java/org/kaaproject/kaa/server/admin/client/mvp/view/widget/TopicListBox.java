@@ -30,6 +30,9 @@ public class TopicListBox extends MultiValueListBox<TopicDto> {
     super(new TopicDtoRenderer());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<TopicDto> emptyList = Collections.emptyList();
     setValue(null);

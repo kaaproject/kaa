@@ -33,6 +33,9 @@ public class CtlSchemasViewImpl
 
   private CheckBox showHigherScopeCheckBox;
 
+  /**
+   * Instantiates a new CtlSchemasViewImpl.
+   */
   public CtlSchemasViewImpl() {
     super(true);
     if (displayShowHigherLevelScopeCheckBox()) {

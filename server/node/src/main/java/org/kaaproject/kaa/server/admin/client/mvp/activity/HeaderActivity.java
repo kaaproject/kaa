@@ -46,6 +46,9 @@ public class HeaderActivity extends AbstractActivity
 
   protected List<HandlerRegistration> registrations = new ArrayList<>();
 
+  /**
+   * Instantiates a new HeaderActivity.
+   */
   public HeaderActivity(ClientFactory clientFactory) {
     this.clientFactory = clientFactory;
     this.headerView = clientFactory.getHeaderView();

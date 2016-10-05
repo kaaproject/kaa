@@ -30,6 +30,9 @@ public abstract class BaseRecordViewImpl<T extends AbstractStructureDto, V>
 
   protected AbstractRecordPanel<T, V> recordPanel;
 
+  /**
+   * Instantiates a new BaseRecordViewImpl.
+   */
   public BaseRecordViewImpl(boolean create) {
     super(create);
     getSaveButtonWidget().setVisible(false);

@@ -53,6 +53,9 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
   private EndpointGroupDto groupAll;
   private List<HandlerRegistration> registrations = new ArrayList<>();
 
+  /**
+   * Instantiates a new EndpointProfilesActivity.
+   */
   public EndpointProfilesActivity(EndpointProfilesPlace place, ClientFactory clientFactory) {
     this.place = place;
     this.clientFactory = clientFactory;

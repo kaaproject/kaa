@@ -32,6 +32,9 @@ public class EcfVersionViewImpl extends BaseListViewImpl<EventClassDto> implemen
   @UiField
   public final ImageTextButton addEcButton;
 
+  /**
+   * Instantiates a new EcfVersionViewImpl.
+   */
   public EcfVersionViewImpl(boolean editable) {
     super(true);
     this.addEcButton = new ImageTextButton(Utils.resources.plus(), addButtonEventClassString());

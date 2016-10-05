@@ -28,7 +28,9 @@ import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 
 public class ExtendedPasswordTextBox extends PasswordTextBox implements HasInputEventHandlers {
-
+  /**
+   * Instantiates a new ExtendedPasswordTextBox.
+   */
   public ExtendedPasswordTextBox() {
     addValueChangeHandler(new ValueChangeHandler<String>() {
       @Override

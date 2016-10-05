@@ -50,6 +50,9 @@ public class CtlSchemaReferenceBox
   private Map<Fqn, List<Integer>> fqnVersionsMap = new HashMap<>();
   private Map<FqnVersion, CtlSchemaReferenceDto> fqnVersionToReferenceMap = new HashMap<>();
 
+  /**
+   * Instantiates a new CtlSchemaReferenceBox.
+   */
   public CtlSchemaReferenceBox() {
     fqnReferenceBox = new FqnReferenceBox(Utils.constants.schemaReferencePrompt());
     fqnReferenceBox.setWidth("100%");
@@ -149,6 +152,9 @@ public class CtlSchemaReferenceBox
     updateBox();
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     value = null;
     fqnVersionsMap.clear();

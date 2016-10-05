@@ -51,6 +51,9 @@ public class EditSchemaRecordDialog
   private Button saveButton;
   private Listener listener;
 
+  /**
+   * Instantiates a new EditSchemaRecordDialog.
+   */
   public EditSchemaRecordDialog(Listener listener,
                                 String title, List<SchemaInfoDto> schemas,
                                 int schemaVersion) {
@@ -135,6 +138,9 @@ public class EditSchemaRecordDialog
     saveButton.setEnabled(false);
   }
 
+  /**
+   * Show edit schema record dialog.
+   */
   public static void showEditSchemaRecordDialog(Listener listener,
                                                 String title, List<SchemaInfoDto> schemas,
                                                 int schemaVersion) {

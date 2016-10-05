@@ -27,6 +27,9 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class UnauthorizedSessionDialog extends AvroUiDialog {
 
+  /**
+   * Instantiates a new UnauthorizedSessionDialog.
+   */
   public UnauthorizedSessionDialog(final Listener listener) {
     super(false, true);
 

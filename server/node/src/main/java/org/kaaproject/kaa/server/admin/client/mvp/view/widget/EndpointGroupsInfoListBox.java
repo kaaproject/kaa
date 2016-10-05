@@ -31,6 +31,9 @@ public class EndpointGroupsInfoListBox extends ValueListBox<EndpointGroupDto> {
     super(new EndpointGroupInfoRender());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<EndpointGroupDto> emptyList = Collections.emptyList();
     setValue(null);

@@ -41,6 +41,9 @@ public class MessageDialog extends AvroUiDialog {
     this(listener, AlertPanel.Type.INFO, title, message);
   }
 
+  /**
+   * Instantiates a new MessageDialog.
+   */
   public MessageDialog(Listener listener, AlertPanel.Type type, String title, String message) {
     super(false, true);
     setTitle(title);
@@ -87,6 +90,9 @@ public class MessageDialog extends AvroUiDialog {
     return showMessageDialog(null, type, title, message);
   }
 
+  /**
+   * Show message dialog.
+   */
   public static MessageDialog showMessageDialog(Listener listener,
                                                 AlertPanel.Type type,
                                                 String title,

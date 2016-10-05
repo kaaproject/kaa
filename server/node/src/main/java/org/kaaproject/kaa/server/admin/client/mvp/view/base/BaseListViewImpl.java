@@ -70,6 +70,9 @@ public abstract class BaseListViewImpl<T extends HasId>
   protected Presenter presenter;
   protected boolean editable;
 
+  /**
+   * Instantiates a new BaseListViewImpl.
+   */
   public BaseListViewImpl(boolean editable) {
     this.editable = editable;
     initAddButton();

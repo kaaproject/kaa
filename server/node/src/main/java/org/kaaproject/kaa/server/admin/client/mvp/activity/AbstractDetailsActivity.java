@@ -52,6 +52,9 @@ public abstract class AbstractDetailsActivity<T, V extends BaseDetailsView, P ex
 
   protected boolean canceled = false;
 
+  /**
+   * Instantiates a new AbstractDetailsActivity.
+   */
   public AbstractDetailsActivity(P place, ClientFactory clientFactory) {
     this.place = place;
     this.entityId = getEntityId(place);

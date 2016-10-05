@@ -43,6 +43,9 @@ public class NavigationTreeViewModel implements TreeViewModel {
 
   private EventBus eventBus;
 
+  /**
+   * Instantiates a new NavigationTreeViewModel.
+   */
   public NavigationTreeViewModel() {
     KaaAuthorityDto autority = KaaAdmin.getAuthInfo().getAuthority();
     switch (autority) {

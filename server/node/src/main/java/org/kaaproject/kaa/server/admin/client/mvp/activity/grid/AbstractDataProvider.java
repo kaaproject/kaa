@@ -53,6 +53,9 @@ public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T>
     this(dataGrid, hasErrorMessage, true);
   }
 
+  /**
+   * The constructor.
+   */
   public AbstractDataProvider(AbstractGrid<T, K> dataGrid, HasErrorMessage hasErrorMessage,
                               boolean addDisplay) {
     this.dataGrid = dataGrid;
@@ -77,6 +80,11 @@ public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T>
     this.dataFilter = dataFilter;
   }
 
+  /**
+   * Add the row.
+   *
+   * @param row the row
+   */
   public void addRow(T row) {
     data.add(row);
     dataMap.put(getObjectId(row), row);
@@ -127,6 +135,9 @@ public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T>
     updateData();
   }
 
+  /**
+   * Update data.
+   */
   public void updateData() {
     List<T> filteredData = dataGrid.filter(data);
     if (dataFilter != null) {
@@ -163,6 +174,11 @@ public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T>
       Utils.handleException(caught, hasErrorMessage);
     }
 
+    /**
+     * On success result.
+     *
+     * @param result the result list
+     */
     public void onSuccess(List<T> result) {
       dataGrid.getSelectionModel().clear();
       data = result;

@@ -66,6 +66,9 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
 
   private TabPanel profileRecordsPanel;
 
+  /**
+   * Instantiates a new TestProfileFilterDialog.
+   */
   public TestProfileFilterDialog(TestProfileFilterDialogListener listener,
                                  String endpointProfileSchemaId,
                                  String serverProfileSchemaId,
@@ -197,6 +200,9 @@ public class TestProfileFilterDialog extends FormPopup implements HasErrorMessag
     load();
   }
 
+  /**
+   * Show test profile filter dialog.
+   */
   public static void showTestProfileFilterDialog(TestProfileFilterDialogListener listener,
                                                  String endpointProfileSchemaId,
                                                  String serverProfileSchemaId,

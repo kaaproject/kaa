@@ -41,6 +41,9 @@ public class NavigationActivity extends AbstractActivity implements NavigationVi
   protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
   private TreePlace pendingPlace;
 
+  /**
+   * Instantiates a new NavigationActivity.
+   */
   public NavigationActivity(ClientFactory clientFactory, EventBus eventBus) {
     this.clientFactory = clientFactory;
     this.navigationView = clientFactory.getNavigationView();
@@ -48,6 +51,11 @@ public class NavigationActivity extends AbstractActivity implements NavigationVi
     this.navigationView.setEventBus(eventBus);
   }
 
+  /**
+   * On place changed.
+   *
+   * @param place the place.
+   */
   public void onPlaceChanged(TreePlace place) {
     TreePlace selected = navigationView.getSelectionModel().getSelectedObject();
     if (!place.equals(selected)) {

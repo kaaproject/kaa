@@ -51,6 +51,9 @@ public class ProfileFilterActivity extends AbstractRecordActivity<ProfileFilterD
 
   private List<ProfileVersionPairDto> profileVersionPairs;
 
+  /**
+   * Instantiates a new ProfileFilterActivity.
+   */
   public ProfileFilterActivity(ProfileFilterPlace place,
                                ClientFactory clientFactory) {
     super(place, clientFactory);
