@@ -356,7 +356,7 @@ public class NotificationController extends AbstractAdminController {
   }
 
   /**
-   * Delete topic by his id.
+   * Delete topic by its id.
    *
    * @param topicId the topic id
    * @throws KaaAdminServiceException the kaa admin service exception

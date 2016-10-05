@@ -194,6 +194,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets the endpoint profile by endpoint key hash.
+   *
+   * @param endpointProfileKeyHash the endpoint profile key hash
+   */
   public EndpointProfileDto getEndpointProfileByKeyHash(String endpointProfileKeyHash)
       throws Exception {
     ResponseEntity<EndpointProfileDto> entity = restTemplate.exchange(restTemplate.getUrl()
@@ -202,11 +208,13 @@ public class AdminClient {
     return entity.getBody();
   }
 
-
   /**
-   * Gets the endpoint profile by endpoint key hash.
+   * Gets the endpoint profile body by endpoint key hash.
    *
+   * @param endpointProfileKeyHash the endpoint profile key hash
+   * @return the endpoint profile body dto
    */
+
   public EndpointProfileBodyDto getEndpointProfileBodyByKeyHash(String endpointProfileKeyHash)
       throws Exception {
     ResponseEntity<EndpointProfileBodyDto> entity = restTemplate.exchange(restTemplate.getUrl()
@@ -215,6 +223,14 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Update server profile of endpoint.
+   *
+   * @param endpointProfileKey the endpoint profile key
+   * @param version            the version
+   * @param serverProfileBody  the server profile body
+   */
   public EndpointProfileDto updateServerProfile(String endpointProfileKey, int version,
                                                 String serverProfileBody) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
@@ -229,6 +245,12 @@ public class AdminClient {
     return restTemplate.getForObject(restTemplate.getUrl() + "auth/checkAuth", AuthResultDto.class);
   }
 
+  /**
+   * Creates the kaa admin with specific name and password.
+   *
+   * @param username admin's name
+   * @param password admin's password
+   */
   public void createKaaAdmin(String username, String password) throws Exception {
     MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
     params.add("username", username);
@@ -240,12 +262,24 @@ public class AdminClient {
     restTemplate.login(username, password);
   }
 
+  /**
+   * Clear credentials of current user.
+   */
   public void clearCredentials() {
     HttpComponentsRequestFactoryBasicAuth requestFactory =
         (HttpComponentsRequestFactoryBasicAuth) restTemplate.getRequestFactory();
     requestFactory.getCredentialsProvider().clear();
   }
 
+  /**
+   * Change password of user.
+   *
+   * @param username    the user name
+   * @param oldPassword the old password
+   * @param newPassword the new password
+   * @return the result code
+   * @throws Exception the exception
+   */
   public ResultCode changePassword(String username, String oldPassword, String newPassword)
       throws Exception {
     MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
@@ -260,6 +294,11 @@ public class AdminClient {
     return restTemplate.postForObject(restTemplate.getUrl() + "tenant", tenant, TenantDto.class);
   }
 
+  /**
+   * Gets all tenants.
+   *
+   * @return the list of tenants
+   */
   public List<TenantDto> getTenants() throws Exception {
     ResponseEntity<List<TenantDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "tenants",
@@ -267,7 +306,13 @@ public class AdminClient {
     return entity.getBody();
   }
 
-  public List<UserDto> getAllTenantAdminsBytenantId(String tenantId) {
+  /**
+   * Gets all tenant admins that belongs to one tenant.
+   *
+   * @param tenantId the tenant id
+   * @return the all tenant admins by tenant id
+   */
+  public List<UserDto> getAllTenantAdminsByTenantId(String tenantId) {
     ResponseEntity<List<UserDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "admins/" + tenantId,
         HttpMethod.GET, null, new ParameterizedTypeReference<List<UserDto>>() {});
@@ -283,6 +328,11 @@ public class AdminClient {
         application, ApplicationDto.class);
   }
 
+  /**
+   * Gets all applications.
+   *
+   * @return the list of applications
+   */
   public List<ApplicationDto> getApplications() throws Exception {
 
     ResponseEntity<List<ApplicationDto>> entity = restTemplate.exchange(
@@ -336,6 +386,11 @@ public class AdminClient {
         logSchema, LogSchemaDto.class);
   }
 
+  /**
+   * Get existing flat schema.
+   *
+   * @param id the id of the CTL schema
+   */
   public String getFlatSchemaByCtlSchemaId(String id) throws Exception {
     return restTemplate.getForObject(
         restTemplate.getUrl() + "CTL/getFlatSchemaByCtlSchemaId?id={id}",
@@ -350,6 +405,12 @@ public class AdminClient {
     return restTemplate.getForObject(restTemplate.getUrl() + "topic/" + topicId, TopicDto.class);
   }
 
+
+  /**
+   * Gets all topics by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<TopicDto> getTopicsByApplicationToken(String applicationToken) throws Exception {
 
     ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(
@@ -358,6 +419,11 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Gets all topics by endpoint group id.
+   *
+   * @param endpointGroupId the endpoint group id
+   */
   public List<TopicDto> getTopicsByEndpointGroupId(String endpointGroupId) throws Exception {
     ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "topics?endpointGroupId={endpointGroupId}", HttpMethod.GET,
@@ -365,6 +431,11 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Gets all vacant topics by endpoint group id.
+   *
+   * @param endpointGroupId the endpoint group id
+   */
   public List<TopicDto> getVacantTopicsByEndpointGroupId(String endpointGroupId) throws Exception {
     ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "vacantTopics/" + endpointGroupId,
@@ -377,6 +448,12 @@ public class AdminClient {
     addTopicToEndpointGroup(endpointGroup.getId(), topic.getId());
   }
 
+  /**
+   * Adds the topic with specific id to endpoint group with specific id.
+   *
+   * @param endpointGroupId the endpoint group id
+   * @param topicId         the topic id
+   */
   public void addTopicToEndpointGroup(String endpointGroupId, String topicId) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("endpointGroupId", endpointGroupId);
@@ -384,6 +461,13 @@ public class AdminClient {
     restTemplate.postForObject(restTemplate.getUrl() + "addTopicToEpGroup", params, Void.class);
   }
 
+
+  /**
+   * Removes the topic with specific id to endpoint group with specific id.
+   *
+   * @param endpointGroupId the endpoint group id
+   * @param topicId         the topic id
+   */
   public void removeTopicFromEndpointGroup(String endpointGroupId, String topicId)
       throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
@@ -393,6 +477,11 @@ public class AdminClient {
         params, Void.class);
   }
 
+  /**
+   * Remove the endpoint with specific profile key.
+   *
+   * @param endpointProfileKeyHash the endpoint profile key hash
+   */
   public void removeEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("endpointProfileKeyHash", endpointProfileKeyHash);
@@ -451,6 +540,15 @@ public class AdminClient {
         params, EndpointNotificationDto.class);
   }
 
+
+  /**
+   * Send unicast notification to the client identified by endpointKeyHash.
+   *
+   * @param notification  the notification
+   * @param clientKeyHash the client key hash
+   * @param notificationMessage   the body of notification
+   * @return the endpoint notification dto
+   */
   public EndpointNotificationDto sendUnicastNotificationSimplified(NotificationDto notification,
                                                                    String clientKeyHash,
                                                                    String notificationMessage)
@@ -497,6 +595,11 @@ public class AdminClient {
         + applicationToken, SchemaVersions.class);
   }
 
+  /**
+   * Gets the configuration schemas by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<ConfigurationSchemaDto> getConfigurationSchemasByAppToken(String applicationToken)
       throws Exception {
 
@@ -506,6 +609,11 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Gets the client profile schemas by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<EndpointProfileSchemaDto> getProfileSchemas(String applicationToken)
       throws Exception {
     ResponseEntity<List<EndpointProfileSchemaDto>> entity = restTemplate.exchange(
@@ -514,6 +622,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets the server profile schemas by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<ServerProfileSchemaDto> getServerProfileSchemasByAppToken(String applicationToken)
       throws Exception {
     ResponseEntity<List<ServerProfileSchemaDto>> entity = restTemplate.exchange(
@@ -522,6 +636,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets the notification schemas by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<NotificationSchemaDto> getNotificationSchemasByAppToken(String applicationToken)
       throws Exception {
     ResponseEntity<List<NotificationSchemaDto>> entity = restTemplate.exchange(
@@ -530,6 +650,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets the user notification schemas by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<VersionDto> getUserNotificationSchemasByAppToken(String applicationToken)
       throws Exception {
     ResponseEntity<List<VersionDto>> entity = restTemplate.exchange(
@@ -538,6 +664,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Gets all log schemas by application token.
+   *
+   * @param applicationToken the application Token
+   * @return the list of log schema dto
+   */
   public List<LogSchemaDto> getLogSchemasByAppToken(String applicationToken) throws Exception {
     ResponseEntity<List<LogSchemaDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "logSchemas/" + applicationToken,
@@ -545,6 +677,13 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+
+  /**
+   * Gets all topics by application token.
+   *
+   * @param applicationId the application token
+   */
   public List<TopicDto> getTopics(String applicationId) throws Exception {
     ResponseEntity<List<TopicDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "topics/" + applicationId,
@@ -560,6 +699,12 @@ public class AdminClient {
     deleteTopic(topic.getId());
   }
 
+
+  /**
+   * Delete topic by its id.
+   *
+   * @param topicId the topic id
+   */
   public void deleteTopic(String topicId) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("topicId", topicId);
@@ -576,12 +721,23 @@ public class AdminClient {
         EndpointGroupDto.class);
   }
 
+  /**
+   * Delete endpoint group by its id.
+   *
+   * @param endpointGroupId the endpoint group id
+   */
   public void deleteEndpointGroup(String endpointGroupId) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("endpointGroupId", endpointGroupId);
     restTemplate.postForLocation(restTemplate.getUrl() + "delEndpointGroup", params);
   }
 
+
+  /**
+   * Gets all endpoint groups by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<EndpointGroupDto> getEndpointGroupsByAppToken(String applicationToken)
       throws Exception {
     ResponseEntity<List<EndpointGroupDto>> entity = restTemplate.exchange(
@@ -590,6 +746,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Gets the vacant configuration schemas by endpoint group id.
+   *
+   * @param endpointGroupId the endpoint group id
+   * @return the list schema dto
+   */
   public List<VersionDto> getVacantConfigurationSchemasByEndpointGroupId(String endpointGroupId)
       throws Exception {
     ResponseEntity<List<VersionDto>> entity = restTemplate.exchange(
@@ -598,6 +760,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Delete configuration record by schema id and endpoint group id.
+   *
+   * @param schemaId        the schema id
+   * @param endpointGroupId the endpoint group id
+   */
   public void deleteConfigurationRecord(String schemaId, String endpointGroupId) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("schemaId", schemaId);
@@ -606,6 +774,12 @@ public class AdminClient {
         params, Void.class);
   }
 
+  /**
+   * Gets the configuration records by endpoint group id.
+   *
+   * @param endpointGroupId   the endpoint group id
+   * @param includeDeprecated specify if result will contain deprecated records
+   */
   public List<ConfigurationRecordDto> getConfigurationRecords(String endpointGroupId,
                                                               boolean includeDeprecated)
       throws Exception {
@@ -624,6 +798,14 @@ public class AdminClient {
         configuration, ConfigurationDto.class);
   }
 
+
+
+  /**
+   * Gets the configuration record by schema id and endpoint group id.
+   *
+   * @param schemaId        the schema id
+   * @param endpointGroupId the endpoint group id
+   */
   public ConfigurationRecordDto getConfigurationRecord(String schemaId, String endpointGroupId)
       throws Exception {
     return restTemplate.getForObject(restTemplate.getUrl()
@@ -631,6 +813,13 @@ public class AdminClient {
         ConfigurationRecordDto.class, schemaId, endpointGroupId);
   }
 
+
+  /**
+   * Get configuration record body.
+   *
+   * @param schemaId the schema id
+   * @param endpointGroupId the endpoint group id
+   */
   public String getConfigurationRecordBody(String schemaId, String endpointGroupId)
       throws Exception {
     return restTemplate.getForObject(restTemplate.getUrl()
@@ -659,6 +848,13 @@ public class AdminClient {
         profileFilter, ProfileFilterDto.class);
   }
 
+  /**
+   * Gets the profile filter record by EP server and client profile schema id and endpoint group id.
+   *
+   * @param endpointProfileSchemaId the endpoint profile schema id
+   * @param serverProfileSchemaId   the server profile schema id
+   * @param endpointGroupId         the endpoint group id
+   */
   public ProfileFilterRecordDto getProfileFilterRecord(String endpointProfileSchemaId,
                                                        String serverProfileSchemaId,
                                                        String endpointGroupId) throws Exception {
@@ -679,6 +875,11 @@ public class AdminClient {
         urlVariables.toArray());
   }
 
+  /**
+   * Gets the vacant profile schemas by endpoint group id.
+   *
+   * @param endpointGroupId the endpoint group id
+   */
   public List<ProfileVersionPairDto> getVacantProfileSchemasByEndpointGroupId(
       String endpointGroupId) throws Exception {
     ResponseEntity<List<ProfileVersionPairDto>> entity = restTemplate.exchange(
@@ -687,6 +888,14 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Delete profile filter record by schema ids and endpoin group id.
+   *
+   * @param endpointProfileSchemaId the endpoint profile schema id
+   * @param serverProfileSchemaId   the server profile schema id
+   * @param endpointGroupId         the endpoint group id
+   */
   public void deleteProfileFilterRecord(String endpointProfileSchemaId,
                                         String serverProfileSchemaId,
                                         String endpointGroupId) throws Exception {
@@ -698,6 +907,14 @@ public class AdminClient {
         Void.class);
   }
 
+
+
+  /**
+   * Gets the profile filter records by endpoint group id.
+   *
+   * @param endpointGroupId   the endpoint group id
+   * @param includeDeprecated the include deprecated
+   */
   public List<ProfileFilterRecordDto> getProfileFilterRecords(String endpointGroupId,
                                                               boolean includeDeprecated)
       throws Exception {
@@ -728,18 +945,34 @@ public class AdminClient {
     return restTemplate.getForObject(restTemplate.getUrl() + "user/" + userId, UserDto.class);
   }
 
+
+  /**
+   * Delete user by user id.
+   *
+   * @param userId the user id
+   */
   public void deleteUser(String userId) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("userId", userId);
     restTemplate.postForLocation(restTemplate.getUrl() + "delUser", params);
   }
 
+  /**
+   * Gets all users.
+   *
+   */
   public List<UserDto> getUsers() throws Exception {
     ResponseEntity<List<UserDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "users",
         HttpMethod.GET, null, new ParameterizedTypeReference<List<UserDto>>() {});
     return entity.getBody();
   }
 
+  /**
+   * Gets the log schema by application token and schema version.
+   *
+   * @param applicationToken the application token
+   * @param schemaVersion    the schema version
+   */
   public LogSchemaDto getLogSchemaByApplicationTokenAndSchemaVersion(String applicationToken,
                                                                      int schemaVersion)
       throws Exception {
@@ -761,6 +994,12 @@ public class AdminClient {
         EventClassFamilyDto.class);
   }
 
+  /**
+   * Gets the event class family versions by its id.
+   *
+   * @param ecfId the event class family id
+   * @return the list of event class family version dto
+   */
   public List<EventClassFamilyVersionDto> getEventClassFamilyVersionsById(String ecfId) {
     ResponseEntity<List<EventClassFamilyVersionDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "eventClassFamilyVersions/" + ecfId,
@@ -769,6 +1008,10 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets all event class family by family name.
+   */
   public EventClassFamilyDto getEventClassFamily(String familyName) {
     ResponseEntity<List<EventClassFamilyDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "eventClassFamilies",
@@ -782,6 +1025,11 @@ public class AdminClient {
     throw new RuntimeException("Family with name " + familyName + " not found!");
   }
 
+  /**
+   * Gets all event class families.
+   *
+   * @return the list event class family dto
+   */
   public List<EventClassFamilyDto> getEventClassFamilies() {
     ResponseEntity<List<EventClassFamilyDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "eventClassFamilies",
@@ -789,6 +1037,14 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Adds the event class family version to existing event class family with
+   * specific id. Current user will be marked as creator of schema.
+   *
+   * @param eventClassFamilyId      the event class family id
+   * @param eventClassFamilyVersion the version of event class family
+   */
   public void addEventClassFamilyVersion(String eventClassFamilyId,
                                          EventClassFamilyVersionDto eventClassFamilyVersion)
       throws Exception {
@@ -798,6 +1054,13 @@ public class AdminClient {
     restTemplate.postForLocation(restTemplate.getUrl() + "addEventClassFamilyVersion", params);
   }
 
+  /**
+   * Gets the event classes by family its id, version and type.
+   *
+   * @param eventClassFamilyId the event class family id
+   * @param version            the version
+   * @param type               the type
+   */
   public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId,
                                                                      int version,
                                                                      EventClassType type)
@@ -824,6 +1087,12 @@ public class AdminClient {
         ApplicationEventFamilyMapDto.class);
   }
 
+  /**
+   * Gets all application event family maps by application token.
+   *
+   * @param applicationToken the application token
+   * @return list the application event family map dto
+   */
   public List<ApplicationEventFamilyMapDto> getApplicationEventFamilyMapsByApplicationToken(
       String applicationToken) throws Exception {
     ResponseEntity<List<ApplicationEventFamilyMapDto>> entity = restTemplate.exchange(
@@ -833,6 +1102,13 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Gets all vacant event class families by application token.
+   *
+   * @param applicationToken the application token
+   * @return the list ecf info dto
+   */
   public List<EcfInfoDto> getVacantEventClassFamiliesByApplicationToken(String applicationToken)
       throws Exception {
     ResponseEntity<List<EcfInfoDto>> entity = restTemplate.exchange(
@@ -841,6 +1117,11 @@ public class AdminClient {
     return entity.getBody();
   }
 
+  /**
+   * Gets all event class families by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<AefMapInfoDto> getEventClassFamiliesByApplicationToken(String applicationToken)
       throws Exception {
     ResponseEntity<List<AefMapInfoDto>> entity = restTemplate.exchange(
@@ -859,6 +1140,11 @@ public class AdminClient {
         LogAppenderDto.class);
   }
 
+  /**
+   * Gets all log appenders by application token.
+   *
+   * @param applicationToken the application token
+   */
   public List<LogAppenderDto> getLogAppendersByAppToken(String applicationToken) throws Exception {
     ResponseEntity<List<LogAppenderDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "logAppenders/" + applicationToken,
@@ -866,6 +1152,12 @@ public class AdminClient {
     return entity.getBody();
   }
 
+
+  /**
+   * Delete log appender by its id.
+   *
+   * @param logAppenderId the log appender id
+   */
   public void deleteLogAppender(String logAppenderId) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("logAppenderId", logAppenderId);
@@ -877,6 +1169,12 @@ public class AdminClient {
         UserVerifierDto.class);
   }
 
+  /**
+   * Gets all user verifiers by application token.
+   *
+   * @param applicationToken the application token
+   * @return the list user verifier dto
+   */
   public List<UserVerifierDto> getUserVerifiersByApplicationToken(String applicationToken) {
     ResponseEntity<List<UserVerifierDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "userVerifiers/" + applicationToken,
@@ -889,6 +1187,11 @@ public class AdminClient {
         userVerifierDto, UserVerifierDto.class);
   }
 
+  /**
+   * Delete user verifier by its id.
+   *
+   * @param userVerifierId the user verifier id
+   */
   public void deleteUserVerifier(String userVerifierId) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("userVerifierId", userVerifierId);
@@ -900,12 +1203,23 @@ public class AdminClient {
         sdkProfile, SdkProfileDto.class);
   }
 
+  /**
+   * Deletes an SDK profile by its identifier.
+   *
+   * @param sdkProfile the sdk profile
+   */
   public void deleteSdkProfile(SdkProfileDto sdkProfile) throws Exception {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("topicId", sdkProfile.getId());
     restTemplate.postForLocation(restTemplate.getUrl() + "deleteSdkProfile", params);
   }
 
+
+  /**
+   * Returns an SDK profile by its identifier.
+   *
+   * @param sdkProfileId the sdk profile id
+   */
   public SdkProfileDto getSdkProfile(String sdkProfileId) throws Exception {
     ResponseEntity<SdkProfileDto> entity = restTemplate.exchange(
         restTemplate.getUrl() + "sdkProfile/" + sdkProfileId,
@@ -927,7 +1241,7 @@ public class AdminClient {
   }
 
   /**
-   * Generates an SDK for the specified target platform from an SDK profile .
+   * Generates an SDK for the specified target platform from the SDK profile .
    *
    * @param sdkProfileId   the sdk profile id
    * @param targetPlatform the target platform
@@ -941,6 +1255,12 @@ public class AdminClient {
     restTemplate.execute(restTemplate.getUrl() + "sdk", HttpMethod.POST, request, extractor);
   }
 
+  /**
+   * Generates an SDK for the specified target platform from specified SDK profile .
+   *
+   * @param sdkProfileId   the sdk profile id
+   * @param targetPlatform the target platform
+   */
   public FileData downloadSdk(String sdkProfileId, SdkPlatform targetPlatform) {
     FileDataResponseExtractor extractor = new FileDataResponseExtractor();
     MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
@@ -950,6 +1270,9 @@ public class AdminClient {
     return restTemplate.execute(restTemplate.getUrl() + "sdk", HttpMethod.POST, request, extractor);
   }
 
+  /**
+   * Generates a new SDK from specified SDK profile .
+   */
   public void downloadSdk(SdkProfileDto key, String destination) throws Exception {
     FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
     RequestCallback request = new DataRequestCallback<>(key);
@@ -958,6 +1281,10 @@ public class AdminClient {
   }
 
 
+
+  /**
+   * Generates a new SDK from specified SDK profile.
+   */
   public FileData downloadSdk(SdkProfileDto key) throws Exception {
     FileDataResponseExtractor extractor = new FileDataResponseExtractor();
     RequestCallback request = new DataRequestCallback<>(key);
@@ -967,6 +1294,12 @@ public class AdminClient {
   }
 
 
+
+  /**
+   * Generate log library by record key.
+   *
+   * @param key  the record key
+   */
   public FileData downloadLogRecordLibrary(RecordKey key) throws Exception {
     FileDataResponseExtractor extractor = new FileDataResponseExtractor();
     RequestCallback request = new DataRequestCallback<>(key);
@@ -975,6 +1308,11 @@ public class AdminClient {
     return data;
   }
 
+  /**
+   * Get log record schema with header and log schema inside by record key.
+   *
+   * @param key the record key
+   */
   public FileData downloadLogRecordSchema(RecordKey key) throws Exception {
     FileDataResponseExtractor extractor = new FileDataResponseExtractor();
     RequestCallback request = new DataRequestCallback<>(key);
@@ -983,6 +1321,9 @@ public class AdminClient {
     return data;
   }
 
+  /**
+   * Exports a CTL schema and all of its dependencies depending on the export method specified.
+   */
   public FileData downloadCtlSchemaByAppToken(CTLSchemaDto ctlSchemaDto,
                                               CTLSchemaExportMethod method, String appToken) {
     final FileDataResponseExtractor extractor = new FileDataResponseExtractor();

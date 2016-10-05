@@ -466,7 +466,7 @@ public class GroupController extends AbstractAdminController {
         endpointProfileSchemaId, serverProfileSchemaId, endpointGroupId);
   }
 
-  //TODO move to ProfileController
+  //TODO move to ProfileController?
   /**
    * Gets the endpoint profile by endpoint group id.
    *
@@ -522,7 +522,7 @@ public class GroupController extends AbstractAdminController {
   }
 
 
-  //TODO move to ProfileController
+  //TODO move to ProfileController?
   /**
    * Gets the endpoint profile body by endpoint group id.
    *

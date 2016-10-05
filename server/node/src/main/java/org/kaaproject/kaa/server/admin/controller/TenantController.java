@@ -45,7 +45,7 @@ public class TenantController extends AbstractAdminController {
   /**
    * Gets all tenants.
    *
-   * @return the list of tenant user dto
+   * @return the list of tenant dto
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Get all tenants",

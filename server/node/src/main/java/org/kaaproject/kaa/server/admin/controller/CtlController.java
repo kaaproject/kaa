@@ -400,7 +400,7 @@ public class CtlController extends AbstractAdminController {
   /**
    * Get existing flat schema.
    *
-   * @param id of the CTL schema
+   * @param id  the id of the CTL schema
    * @return the flat schema string
    * @throws KaaAdminServiceException the kaa admin service exception
    */

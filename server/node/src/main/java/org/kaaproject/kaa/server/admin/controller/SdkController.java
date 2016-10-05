@@ -143,7 +143,7 @@ public class SdkController extends AbstractAdminController {
   }
 
   /**
-   * Returns an SDK profile by its identifier.
+   * Returns a SDK profile by its identifier.
    *
    * @param sdkProfileId the sdk profile id
    * @return the sdk profile dto
