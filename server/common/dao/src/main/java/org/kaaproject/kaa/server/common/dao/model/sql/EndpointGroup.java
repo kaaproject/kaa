@@ -90,6 +90,11 @@ public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Ser
     this.id = id;
   }
 
+  /**
+   * Create instance of <code>EndpointGroup</code>.
+   *
+   * @param dto data transfer object
+   */
   public EndpointGroup(EndpointGroupDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);
@@ -183,8 +188,10 @@ public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Ser
 
   @Override
   public String toString() {
-    return "EndpointGroup [name=" + name + ", sequenceNumber=" + sequenceNumber + ", weight=" + weight + ", endpointCount=" + endpointCount
-        + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", id=" + id + "]";
+    return "EndpointGroup [name=" + name + ", sequenceNumber=" + sequenceNumber + ", weight="
+            + weight + ", endpointCount=" + endpointCount + ", description=" + description
+            + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", id="
+            + id + "]";
   }
 
   protected EndpointGroupDto createDto() {

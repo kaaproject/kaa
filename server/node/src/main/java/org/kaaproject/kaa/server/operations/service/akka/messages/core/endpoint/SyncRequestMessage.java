@@ -249,6 +249,11 @@ public class SyncRequestMessage extends EndpointAwareMessage implements ChannelA
     }
   }
 
+  /**
+   * Returns whether a transport a type is valid.
+   * @param type transport type
+   * @return     true if type is valid otherwise false
+   */
   public boolean isValid(TransportType type) {
     switch (type) {
       case EVENT:

@@ -78,6 +78,12 @@ public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEn
     return inactivityTimeout;
   }
 
+  /**
+   * Process an actor timeout message.
+   *
+   * @param context actor context
+   * @param message actor timeout message
+   */
   public void processActorTimeoutMessage(ActorContext context, ActorTimeoutMessage message) {
     if (state.getLastActivityTime() <= message.getLastActivityTime()) {
       LOG.debug("[{}][{}] Request stop of endpoint actor due to inactivity timeout",
@@ -94,6 +100,12 @@ public abstract class AbstractEndpointActorMessageProcessor<T extends AbstractEn
     target.tell(message, context.self());
   }
 
+  /**
+   * Process an endpoint actor message.
+   *
+   * @param context actor context
+   * @param msg     endpoint actor message
+   */
   public void processEndpointActorMsg(ActorContext context, EndpointActorMsg msg) {
     if (msg instanceof ThriftEndpointActorMsg) {
       processThriftMsg(context, (ThriftEndpointActorMsg<?>) msg);

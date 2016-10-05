@@ -47,6 +47,13 @@ public class GlobalUserActorMessageProcessor {
   private final GlobalRouteTable<ConfigurationKey> map;
   private final Map<ConfigurationKey, byte[]> ucfHashes;
 
+  /**
+   * Create new instance of <code>GlobalUserActorMessageProcessor</code>.
+   *
+   * @param context the context
+   * @param userId the user is
+   * @param tenantId the tenant id
+   */
   public GlobalUserActorMessageProcessor(AkkaContext context, String userId, String tenantId) {
     this.eventService = context.getEventService();
     this.userId = userId;
@@ -55,6 +62,12 @@ public class GlobalUserActorMessageProcessor {
     this.ucfHashes = new HashMap<>();
   }
 
+  /**
+   * Process message.
+   *
+   * @param context the actor context
+   * @param route the global route info
+   */
   public void process(ActorContext context, GlobalRouteInfo route) {
     if (route.getRouteOperation() == RouteOperation.ADD) {
       LOG.debug("[{}][{}] Adding route {} for cf version {}",
@@ -72,6 +85,12 @@ public class GlobalUserActorMessageProcessor {
     }
   }
 
+  /**
+   * Process message.
+   *
+   * @param context the actor context
+   * @param update the user configuration update
+   */
   public void process(ActorContext context, UserConfigurationUpdate update) {
     LOG.debug("Processing notification {}", update);
     ConfigurationKey key = ConfigurationKey.fromUpdateMessage(update);
@@ -135,6 +154,11 @@ public class GlobalUserActorMessageProcessor {
         route.getAddress().getEndpointKey(), newHash);
   }
 
+  /**
+   * Process cluster update.
+   *
+   * @param context the actor context
+   */
   public void processClusterUpdate(ActorContext context) {
     if (!eventService.isMainUserNode(userId)) {
       LOG.trace("No longer a global user node for user {}", userId);

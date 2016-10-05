@@ -39,6 +39,9 @@ public class UserConfigurationUpdate {
     this.hash = hash;
   }
 
+  /**
+   * All-args constructor.
+   */
   public static UserConfigurationUpdate fromThrift(
       org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate notification) {
     return new UserConfigurationUpdate(notification.getTenantId(), notification.getUserId(),

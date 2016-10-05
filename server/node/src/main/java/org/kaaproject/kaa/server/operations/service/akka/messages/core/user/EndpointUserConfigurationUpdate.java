@@ -41,6 +41,9 @@ public class EndpointUserConfigurationUpdate {
     this.hash = hash;
   }
 
+  /**
+   * All-args constructor.
+   */
   public static EndpointUserConfigurationUpdate fromThrift(
       org.kaaproject.kaa.server.common.thrift.gen.operations.EndpointStateUpdate notification) {
     return new EndpointUserConfigurationUpdate(notification.getTenantId(), notification.getUserId(),

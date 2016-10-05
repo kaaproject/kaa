@@ -70,6 +70,10 @@ public class UpdateUuidsMigration {
     this.nosql = options.getNoSql();
   }
 
+  /**
+   * Change encoding of uuids from Latin1 to Base64 in relational and NoSQL databases.
+   *
+   */
   public void transform() throws IOException, SQLException {
     QueryRunner run = new QueryRunner();
     ResultSetHandler<List<Configuration>> rsHandler = new BeanListHandler<>(Configuration.class);

@@ -92,6 +92,11 @@ public class CtlSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     this.id = id;
   }
 
+  /**
+   * Create instance of <code>CtlSchema</code>.
+   *
+   * @param dto data transfer object
+   */
   public CtlSchema(CTLSchemaDto dto) {
     this.id = getLongId(dto.getId());
     this.metaInfo = new CtlSchemaMetaInfo(dto.getMetaInfo());
@@ -101,6 +106,11 @@ public class CtlSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     update(dto);
   }
 
+  /**
+   * Update <code>CtlSchema</code> instance, get data from dto.
+   *
+   * @param dto data transfer object
+   */
   public void update(CTLSchemaDto dto) {
     this.body = dto.getBody();
     this.defaultRecord = dto.getDefaultRecord();

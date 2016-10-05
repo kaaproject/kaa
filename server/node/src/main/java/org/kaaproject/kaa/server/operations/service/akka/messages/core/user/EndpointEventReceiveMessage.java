@@ -62,7 +62,9 @@ public class EndpointEventReceiveMessage extends EndpointAwareMessage implements
     return events;
   }
 
+  //CHECKSTYLE:OFF
   public List<Event> getEvents() {
+    //CHECKSTYLE:ON
     List<Event> result = new ArrayList<>(events.size());
     for (EndpointEvent event : events) {
       result.add(event.getEvent());

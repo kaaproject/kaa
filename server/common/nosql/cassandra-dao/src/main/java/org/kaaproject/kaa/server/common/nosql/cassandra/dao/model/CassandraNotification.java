@@ -330,7 +330,7 @@ public final class CassandraNotification implements Notification, Serializable {
 
   /**
    * Generate id using <code>topicId</code>, <code>type</code>, <code>nfVersion</code> and
-   * <code>seqNum</code> and assign result on field <code>id</code>
+   * <code>seqNum</code> and assign result on field <code>id</code>.
    */
   public void generateId() {
     StringBuilder builder = new StringBuilder();
