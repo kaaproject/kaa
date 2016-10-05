@@ -31,6 +31,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface KaaPluginConfig {
 
+  /**
+   * Type of plugin.
+   *
+   * @return type of plugin
+   */
   PluginType pluginType();
 
 }

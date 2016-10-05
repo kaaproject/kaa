@@ -25,6 +25,9 @@ public final class EventClassFqnKey implements Serializable {
   private final String tenantId;
   private final String fqn;
 
+  /**
+   * All-args constructor.
+   */
   public EventClassFqnKey(String tenantId, String fqn) {
     super();
     this.tenantId = tenantId;

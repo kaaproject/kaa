@@ -71,6 +71,11 @@ public final class MongoNotification implements Notification, Serializable {
   public MongoNotification() {
   }
 
+  /**
+   * Create new instance of <code>MongoNotification</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoNotification(NotificationDto dto) {
     this.id = dto.getId();
     this.applicationId = dto.getApplicationId();

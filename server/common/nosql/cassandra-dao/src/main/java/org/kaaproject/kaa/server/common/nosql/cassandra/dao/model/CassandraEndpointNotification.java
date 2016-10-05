@@ -76,6 +76,11 @@ public final class CassandraEndpointNotification implements EndpointNotification
     parseStringId(id);
   }
 
+  /**
+   * Create new instance of <code>CassandraTopicListEntry</code>.
+   *
+   * @param dto data transfer object contain data that assign on fields of new instance
+   */
   public CassandraEndpointNotification(EndpointNotificationDto dto) {
     this.endpointKeyHash = ByteBuffer.wrap(dto.getEndpointKeyHash());
     NotificationDto notificationDto = dto.getNotificationDto();
@@ -103,6 +108,11 @@ public final class CassandraEndpointNotification implements EndpointNotification
     this.endpointKeyHash = endpointKeyHash;
   }
 
+  /**
+   * Generate new id using <code>endpointKeyHash</code> and <code>lastModifyTime</code>.
+   *
+   * @return id
+   */
   public String generateId() {
     String id = null;
     if (endpointKeyHash != null) {
@@ -113,6 +123,12 @@ public final class CassandraEndpointNotification implements EndpointNotification
     return id;
   }
 
+  /**
+   * Id consist of endpoint key hash and last modify time, we get these data and assign values on
+   * fields <code>endpointKeyHash</code> and <code>lastModifyTime</code>.
+   *
+   * @param id is id to parsing
+   */
   public void parseStringId(String id) {
     String[] ids = parseId(id);
     if (ids != null && ids.length == 2) {

@@ -808,7 +808,7 @@ public class ConcurrentCacheService implements CacheService {
       @Override
       public String compute(EventClassFqnKey key) {
         LOG.debug("Fetching result for getEventClassFamilyIdByEventClassFqn using key {}", key);
-        List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFQN(
+        List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFqn(
             key.getTenantId(), key.getFqn());
         if (eventClasses != null && !eventClasses.isEmpty()) {
           String ecfvId = eventClasses.get(0).getEcfvId();
@@ -832,7 +832,7 @@ public class ConcurrentCacheService implements CacheService {
           public Set<RouteTableKey> compute(EventClassFqnVersion key) {
             LOG.debug("Fetching result for getRouteKeys using key {}", key);
             Set<RouteTableKey> routeKeys = new HashSet<>();
-            EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(
+            EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFqnAndVersion(
                 key.getTenantId(), key.getFqn(),
                 key.getVersion());
 

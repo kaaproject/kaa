@@ -51,6 +51,9 @@ public class AddTopicDialog
 
   private Button addButton;
 
+  /**
+   * Instantiates a new AddTopicDialog.
+   */
   public AddTopicDialog(String endpointGroupId, List<TopicDto> topics) {
     super(false, true);
 
@@ -103,6 +106,9 @@ public class AddTopicDialog
     addButton.setEnabled(false);
   }
 
+  /**
+   * Show add topic dialog.
+   */
   public static void showAddTopicDialog(final String endpointGroupId,
                                         final AsyncCallback<AddTopicDialog> callback) {
     KaaAdmin.getDataSource()

@@ -22,7 +22,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
@@ -75,20 +75,20 @@ public interface CtlService extends RemoteService {
   boolean checkFqnExistsWithAppToken(String fqn, String tenantId, String applicationToken)
       throws KaaAdminServiceException;
 
-  CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationToken, String fqn)
+  CtlSchemaMetaInfoDto promoteScopeToTenant(String applicationToken, String fqn)
       throws KaaAdminServiceException;
 
-  List<CTLSchemaMetaInfoDto> getApplicationLevelCtlSchemas(String applicationId)
+  List<CtlSchemaMetaInfoDto> getApplicationLevelCtlSchemas(String applicationId)
       throws KaaAdminServiceException;
 
-  List<CTLSchemaMetaInfoDto> getSystemLevelCtlSchemas() throws KaaAdminServiceException;
+  List<CtlSchemaMetaInfoDto> getSystemLevelCtlSchemas() throws KaaAdminServiceException;
 
-  List<CTLSchemaMetaInfoDto> getTenantLevelCtlSchemas() throws KaaAdminServiceException;
+  List<CtlSchemaMetaInfoDto> getTenantLevelCtlSchemas() throws KaaAdminServiceException;
 
   List<CtlSchemaReferenceDto> getTenantLevelCtlSchemaReferenceForEcf(
       String ecfId, List<EventClassViewDto> eventClassViewDtoList) throws KaaAdminServiceException;
 
-  List<CTLSchemaMetaInfoDto> getApplicationLevelCtlSchemasByAppToken(String applicationToken)
+  List<CtlSchemaMetaInfoDto> getApplicationLevelCtlSchemasByAppToken(String applicationToken)
       throws KaaAdminServiceException;
 
   FileData exportCtlSchemaByAppToken(String fqn,

@@ -58,7 +58,7 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -97,7 +97,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1056,39 +1055,39 @@ public class AdminClient {
     }
   }
 
-  public CTLSchemaMetaInfoDto promoteScopeToTenant(String applicationId, String fqn) {
+  public CtlSchemaMetaInfoDto promoteScopeToTenant(String applicationId, String fqn) {
     MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
     params.add("applicationId", applicationId);
     params.add("fqn", fqn);
     return restTemplate.postForObject(restTemplate.getUrl() + "CTL/promoteScopeToTenant",
-        params, CTLSchemaMetaInfoDto.class);
+        params, CtlSchemaMetaInfoDto.class);
   }
 
   //CHECKSTYLE:OFF
-  public List<CTLSchemaMetaInfoDto> getSystemLevelCTLSchemas() {
+  public List<CtlSchemaMetaInfoDto> getSystemLevelCTLSchemas() {
     //CHECKSTYLE:ON
-    ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(
+    ResponseEntity<List<CtlSchemaMetaInfoDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "CTL/getSystemSchemas",
-        HttpMethod.GET, null, new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {});
+        HttpMethod.GET, null, new ParameterizedTypeReference<List<CtlSchemaMetaInfoDto>>() {});
     return entity.getBody();
   }
 
   //CHECKSTYLE:OFF
-  public List<CTLSchemaMetaInfoDto> getTenantLevelCTLSchemas() {
+  public List<CtlSchemaMetaInfoDto> getTenantLevelCTLSchemas() {
     //CHECKSTYLE:ON
-    ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(
+    ResponseEntity<List<CtlSchemaMetaInfoDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "CTL/getTenantSchemas",
-        HttpMethod.GET, null,  new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {});
+        HttpMethod.GET, null,  new ParameterizedTypeReference<List<CtlSchemaMetaInfoDto>>() {});
     return entity.getBody();
   }
 
   //CHECKSTYLE:OFF
-  public List<CTLSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(
+  public List<CtlSchemaMetaInfoDto> getApplicationLevelCTLSchemasByAppToken(
       String applicationToken) {
     //CHECKSTYLE:ON
-    ResponseEntity<List<CTLSchemaMetaInfoDto>> entity = restTemplate.exchange(
+    ResponseEntity<List<CtlSchemaMetaInfoDto>> entity = restTemplate.exchange(
         restTemplate.getUrl() + "CTL/getApplicationSchemas/" + applicationToken,
-        HttpMethod.GET, null,  new ParameterizedTypeReference<List<CTLSchemaMetaInfoDto>>() {});
+        HttpMethod.GET, null,  new ParameterizedTypeReference<List<CtlSchemaMetaInfoDto>>() {});
     return entity.getBody();
   }
 

@@ -30,6 +30,9 @@ public class FileUploadForm extends FormPanel {
 
   private FileUpload fu = new FileUpload();
 
+  /**
+   * Instantiates a new FileUploadForm.
+   */
   public FileUploadForm() {
     this.setEncoding(FormPanel.ENCODING_MULTIPART);
     this.setMethod(FormPanel.METHOD_POST);

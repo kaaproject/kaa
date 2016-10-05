@@ -66,7 +66,7 @@ import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.credentials.EndpointRegistrationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
@@ -1789,7 +1789,7 @@ public class DefaultControlService implements ControlService {
 
   @Override
   public Set<String> getFqnSetForEcf(String ecfId) {
-    return eventClassService.getFqnSetForECF(ecfId);
+    return eventClassService.getFqnSetForEcf(ecfId);
   }
 
   /*
@@ -1801,7 +1801,7 @@ public class DefaultControlService implements ControlService {
   @Override
   public void validateEcfListInSdkProfile(List<AefMapInfoDto> ecfList)
       throws ControlServiceException {
-    if (!eventClassService.isValidECFListInSdkProfile(ecfList)) {
+    if (!eventClassService.isValidEcfListInSdkProfile(ecfList)) {
       throw new ControlServiceException("You have chosen event class families,"
           + " where event classes have the same FQNs.");
     }
@@ -2362,19 +2362,19 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn,
+  public List<CtlSchemaMetaInfoDto> getSiblingsByFqnTenantIdAndApplicationId(String fqn,
                                                                              String tenantId,
                                                                              String applicationId) {
     return ctlService.findSiblingsByFqnTenantIdAndApplicationId(fqn, tenantId, applicationId);
   }
 
   @Override
-  public CTLSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CTLSchemaMetaInfoDto ctlSchemaMetaInfo) {
+  public CtlSchemaMetaInfoDto updateCtlSchemaMetaInfoScope(CtlSchemaMetaInfoDto ctlSchemaMetaInfo) {
     return ctlService.updateCtlSchemaMetaInfoScope(ctlSchemaMetaInfo);
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> getSystemCtlSchemasMetaInfo() throws ControlServiceException {
+  public List<CtlSchemaMetaInfoDto> getSystemCtlSchemasMetaInfo() throws ControlServiceException {
     return ctlService.findSystemCtlSchemasMetaInfo();
   }
 
@@ -2385,7 +2385,7 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForTenant(String tenantId)
+  public List<CtlSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForTenant(String tenantId)
       throws ControlServiceException {
     return ctlService.findAvailableCtlSchemasMetaInfoForTenant(tenantId);
   }
@@ -2399,7 +2399,7 @@ public class DefaultControlService implements ControlService {
   }
 
   @Override
-  public List<CTLSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForApplication(String tenantId,
+  public List<CtlSchemaMetaInfoDto> getAvailableCtlSchemasMetaInfoForApplication(String tenantId,
                                                                                  String appId)
       throws ControlServiceException {
     return ctlService.findAvailableCtlSchemasMetaInfoForApplication(tenantId, appId);
@@ -2415,9 +2415,9 @@ public class DefaultControlService implements ControlService {
   }
 
   private Map<Fqn, List<Integer>> extractCtlSchemaVersionsInfo(
-      List<CTLSchemaMetaInfoDto> ctlSchemaInfos) {
+      List<CtlSchemaMetaInfoDto> ctlSchemaInfos) {
     Map<Fqn, List<Integer>> ctlSchemaVersions = new HashMap<>();
-    for (CTLSchemaMetaInfoDto ctlSchemaInfo : ctlSchemaInfos) {
+    for (CtlSchemaMetaInfoDto ctlSchemaInfo : ctlSchemaInfos) {
       ctlSchemaVersions.put(new Fqn(ctlSchemaInfo.getFqn()), ctlSchemaInfo.getVersions());
     }
     return ctlSchemaVersions;
@@ -2513,7 +2513,9 @@ public class DefaultControlService implements ControlService {
         .findEndpointProfilesByExternalIdAndTenantId(endpointUserExternalId, tenantId);
   }
 
-
+  /**
+   * Shutdown of control service neighbors.
+   */
   @PreDestroy
   public void onStop() {
     if (neighbors != null) {

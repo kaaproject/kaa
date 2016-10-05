@@ -27,6 +27,9 @@ public class RouteTable<T extends EntityClusterAddress> {
   private final Set<T> localRoutes;
   private final Set<T> remoteRoutes;
 
+  /**
+   * All-args constructor.
+   */
   public RouteTable(String nodeId) {
     super();
     this.nodeId = nodeId;
@@ -34,6 +37,12 @@ public class RouteTable<T extends EntityClusterAddress> {
     this.remoteRoutes = new HashSet<>();
   }
 
+  /**
+   * Add new address.
+   *
+   * @param address new address
+   * @return        true if element was added otherwise false
+   */
   public boolean add(T address) {
     if (nodeId.equals(address.getNodeId())) {
       return localRoutes.add(address);
@@ -42,6 +51,12 @@ public class RouteTable<T extends EntityClusterAddress> {
     }
   }
 
+  /**
+   * Remove an address.
+   *
+   * @param address address to be removed
+   * @return        true if address was removed otherwise false
+   */
   public boolean remove(T address) {
     if (nodeId.equals(address.getNodeId())) {
       return localRoutes.remove(address);

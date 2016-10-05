@@ -39,7 +39,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = APPLICATION_TABLE_NAME, uniqueConstraints = {
-    @UniqueConstraint(columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME})})
+        @UniqueConstraint(columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME})})
 public class Application extends GenericModel<ApplicationDto> implements Serializable {
 
   private static final long serialVersionUID = 3402917989585810543L;
@@ -68,6 +68,11 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>Application</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public Application(ApplicationDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);
@@ -128,8 +133,12 @@ public class Application extends GenericModel<ApplicationDto> implements Seriali
 
   @Override
   public String toString() {
-    return "Application [id=" + id + ", applicationToken=" + applicationToken + ", name=" + name + ", sequenceNumber=" + sequenceNumber
-        + ", tenant=" + tenant + ", credentialsServiceName=" + credentialsServiceName + "]";
+    return "Application [id=" + id
+            + ", applicationToken=" + applicationToken
+            + ", name=" + name
+            + ", sequenceNumber=" + sequenceNumber
+            + ", tenant=" + tenant
+            + ", credentialsServiceName=" + credentialsServiceName + "]";
   }
 
   @Override

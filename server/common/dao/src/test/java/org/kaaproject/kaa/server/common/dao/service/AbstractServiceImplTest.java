@@ -26,7 +26,7 @@ import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
@@ -116,7 +116,7 @@ public abstract class AbstractServiceImplTest {
 
   protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, int version) {
     CTLSchemaDto ctlSchema = new CTLSchemaDto();
-    CTLSchemaMetaInfoDto metaInfoDto = new CTLSchemaMetaInfoDto(fqn, tenantId);
+    CtlSchemaMetaInfoDto metaInfoDto = new CtlSchemaMetaInfoDto(fqn, tenantId);
     ctlSchema.setMetaInfo(metaInfoDto);
     ctlSchema.setVersion(version);
     ctlSchema.setBody(UUID.randomUUID().toString());

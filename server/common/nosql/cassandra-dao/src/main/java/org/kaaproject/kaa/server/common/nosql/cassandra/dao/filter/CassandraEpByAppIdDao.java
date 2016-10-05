@@ -38,9 +38,9 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 @Repository
-public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEpByAppId, String> {
+public class CassandraEpByAppIdDao extends AbstractCassandraDao<CassandraEpByAppId, String> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(CassandraEpbyAppIdDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CassandraEpByAppIdDao.class);
 
   @Override
   protected Class<CassandraEpByAppId> getColumnFamilyClass() {
@@ -52,6 +52,11 @@ public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEpByApp
     return CassandraModelConstants.EP_BY_APP_ID_COLUMN_FAMILY_NAME;
   }
 
+  /**
+   * Get endpoints ids from specific application.
+   * @param appId is application's id
+   * @return endpoints ids
+   */
   public ByteBuffer[] getEpIdsListByAppId(String appId) {
     LOG.debug("Try to find endpoint key hash list by application id {}", appId);
     List<CassandraEpByAppId> filter = findListByStatement(select()
@@ -74,6 +79,13 @@ public class CassandraEpbyAppIdDao extends AbstractCassandraDao<CassandraEpByApp
     return endpointKeyHash;
   }
 
+  /**
+   * Get endpoints ids from specific application.
+   *
+   * @param pageLink contains searching parameters (offset, etc.)
+   * @param appId    is application's id
+   * @return endpoints ids
+   */
   public ByteBuffer[] findEpByAppId(PageLinkDto pageLink, String appId) {
     String limit = pageLink.getLimit();
     ByteBuffer endpointKey = getByteBuffer(Base64.decodeBase64(pageLink.getOffset()));

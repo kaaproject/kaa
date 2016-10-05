@@ -61,6 +61,9 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
   private FlumeEventBuilder flumeEventBuilder;
   private FlumeClientManager<?> flumeClientManager;
 
+  /**
+   * Instantiates a new FlumeLogAppender.
+   */
   public FlumeLogAppender() {
     super(FlumeConfig.class);
     scheduler.scheduleWithFixedDelay(new Runnable() {
@@ -149,6 +152,9 @@ public class FlumeLogAppender extends AbstractLogAppender<FlumeConfig> {
     }
   }
 
+  /**
+   * Reinitializing Flume log appender if configuration is initialized.
+   */
   public void reinit() {
     if (configuration == null) {
       LOG.warn("Flume configuration wasn't initialized. "

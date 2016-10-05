@@ -20,6 +20,9 @@ public abstract class EntityAddress {
   private final String tenantId;
   private final String appToken;
 
+  /**
+   * All-args constructor.
+   */
   public EntityAddress(String tenantId, String appToken) {
     super();
     this.tenantId = tenantId;

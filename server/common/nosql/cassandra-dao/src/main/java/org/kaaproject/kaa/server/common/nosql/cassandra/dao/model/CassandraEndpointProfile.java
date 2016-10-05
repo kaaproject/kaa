@@ -138,6 +138,11 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
   public CassandraEndpointProfile() {
   }
 
+  /**
+   * Create new instance of <code>CassandraEndpointProfile</code>.
+   * @param dto is data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraEndpointProfile(EndpointProfileDto dto) {
     this.id = dto.getId();
     this.applicationId = dto.getApplicationId();
@@ -641,7 +646,9 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     dto.setSystemNfVersion(systemNfVersion);
     dto.setUserNfVersion(userNfVersion);
     dto.setLogSchemaVersion(logSchemaVersion);
-    dto.setEcfVersionStates(DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates));
+    dto.setEcfVersionStates(
+            DaoUtil.<EventClassFamilyVersionStateDto>convertDtoList(ecfVersionStates)
+    );
     dto.setServerHash(serverHash);
     dto.setSdkToken(sdkToken);
     dto.setServerProfileBody(serverProfile);

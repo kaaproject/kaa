@@ -56,6 +56,9 @@ public class ChangePasswordDialog extends AvroUiDialog {
 
   private Button changePasswordButton;
 
+  /**
+   * Instantiates a new ChangePasswordDialog.
+   */
   public ChangePasswordDialog(final Listener listener, String username, String message) {
     super(false, true);
 
@@ -131,6 +134,9 @@ public class ChangePasswordDialog extends AvroUiDialog {
     changePasswordButton.setEnabled(false);
   }
 
+  /**
+   * Show change password dialog.
+   */
   public static ChangePasswordDialog showChangePasswordDialog(Listener listener,
                                                               String username,
                                                               String message) {

@@ -55,6 +55,9 @@ public class MultiValueListBox<T> extends Composite implements
     this(renderer, new SimpleKeyProvider<T>());
   }
 
+  /**
+   * Instantiates a new MultiValueListBox.
+   */
   public MultiValueListBox(Renderer<T> renderer, ProvidesKey<T> keyProvider) {
     this.keyProvider = keyProvider;
     this.renderer = renderer;
@@ -118,6 +121,9 @@ public class MultiValueListBox<T> extends Composite implements
     setValue(value, false);
   }
 
+  /**
+   * Set value.
+   */
   public void setValue(List<T> value, boolean fireEvents) {
     if (value == this.value || (this.value != null && this.value.equals(value))) {
       return;
@@ -142,6 +148,11 @@ public class MultiValueListBox<T> extends Composite implements
     getListBox().setEnabled(enabled);
   }
 
+  /**
+   * Set acceptable values.
+   *
+   * @param newValues the new values
+   */
   public void setAcceptableValues(Collection<T> newValues) {
     values.clear();
     valueKeyToIndex.clear();

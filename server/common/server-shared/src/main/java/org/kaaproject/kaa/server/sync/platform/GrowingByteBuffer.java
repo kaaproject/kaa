@@ -39,24 +39,49 @@ public class GrowingByteBuffer {
     data = ByteBuffer.wrap(new byte[size]);
   }
 
+  /**
+   * Put byte to byte buffer.
+   *
+   * @param bt is byte for putting
+   * @return current instance of <code>GrowingByteBuffer</code>
+   */
   public GrowingByteBuffer put(byte bt) {
     resizeIfNeeded(SIZE_OF_BYTE);
     data.put(bt);
     return this;
   }
 
+  /**
+   * Put array of bytes in buffer.
+   *
+   * @param bytes is array of bytes
+   * @return current instance of <code>GrowingByteBuffer</code>
+   */
   public GrowingByteBuffer put(byte[] bytes) {
     resizeIfNeeded(bytes.length);
     data.put(bytes);
     return this;
   }
 
+  /**
+   * Put short number to byte buffer.
+   *
+   * @param shrt is short for putting
+   * @return current instance of <code>GrowingByteBuffer</code>
+   */
   public GrowingByteBuffer putShort(short shrt) {
     resizeIfNeeded(SIZE_OF_SHORT);
     data.putShort(shrt);
     return this;
   }
 
+  /**
+   * Put short number to byte buffer in given position.
+   *
+   * @param shrt is short for putting
+   * @param position is position where put number
+   * @return current instance of <code>GrowingByteBuffer</code>
+   */
   public GrowingByteBuffer putShort(int position, short shrt) {
     checkPosition(position + SIZE_OF_SHORT);
     int tmp = data.position();
@@ -66,12 +91,25 @@ public class GrowingByteBuffer {
     return this;
   }
 
+  /**
+   * Put integer number to byte buffer.
+   *
+   * @param integer is integer number for putting
+   * @return current instance of <code>GrowingByteBuffer</code>
+   */
   public GrowingByteBuffer putInt(int integer) {
     resizeIfNeeded(SIZE_OF_INT);
     data.putInt(integer);
     return this;
   }
 
+  /**
+   * Put integer number to byte buffer.
+   *
+   * @param integer is integer for putting
+   * @param position is position where put number
+   * @return current instance of <code>GrowingByteBuffer</code>
+   */
   public GrowingByteBuffer putInt(int position, int integer) {
     checkPosition(position + SIZE_OF_INT);
     int tmp = data.position();
@@ -81,6 +119,12 @@ public class GrowingByteBuffer {
     return this;
   }
 
+  /**
+   * Put long number to byte buffer.
+   *
+   * @param value is long number for putting
+   * @return current instance of <code>GrowingByteBuffer</code>
+   */
   public GrowingByteBuffer putLong(long value) {
     resizeIfNeeded(SIZE_OF_LONG);
     data.putLong(value);

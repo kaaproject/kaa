@@ -25,7 +25,8 @@ public interface LogEventDao {
 
   void createCollection(String collectionName);
 
-  List<LogEvent> save(List<LogEventDto> logEventDtos, ProfileInfo clientProfile, ProfileInfo serverProfile, String collectionName);
+  List<LogEvent> save(List<LogEventDto> logEventDtos, ProfileInfo clientProfile,
+                      ProfileInfo serverProfile, String collectionName);
 
   void removeAll(String collectionName);
 

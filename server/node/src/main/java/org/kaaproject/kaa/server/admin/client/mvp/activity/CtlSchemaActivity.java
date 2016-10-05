@@ -31,7 +31,7 @@ import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton.ActionMenuItemList
 import org.kaaproject.avro.ui.gwt.client.widget.dialog.ConfirmDialog;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -287,18 +287,18 @@ public class CtlSchemaActivity extends
           new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-              CTLSchemaMetaInfoDto metaInfo = entity.getMetaInfo();
+              CtlSchemaMetaInfoDto metaInfo = entity.getMetaInfo();
 
               KaaAdmin.getDataSource().promoteScopeToTenant(metaInfo.getApplicationId(),
                   metaInfo.getFqn(),
-                  new BusyAsyncCallback<CTLSchemaMetaInfoDto>() {
+                  new BusyAsyncCallback<CtlSchemaMetaInfoDto>() {
                     @Override
                     public void onFailureImpl(Throwable caught) {
                       Utils.handleException(caught, detailsView);
                     }
 
                     @Override
-                    public void onSuccessImpl(CTLSchemaMetaInfoDto result) {
+                    public void onSuccessImpl(CtlSchemaMetaInfoDto result) {
                       CtlSchemaPlace place = null;
                       if (CtlSchemaActivity.this.place.getScope() == APPLICATION) {
                         place = new CtlSchemaPlace(result.getId(), version, result.getScope(),

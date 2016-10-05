@@ -106,7 +106,6 @@ public class EndpointProfileMongoDao
   public EndpointProfilesBodyDto findBodyByEndpointGroupId(PageLinkDto pageLink) {
     LOG.debug("Find endpoint profiles body by endpoint group id [{}] ",
         pageLink.getEndpointGroupId());
-    EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
     List<EndpointProfileBodyDto> profilesBody = new ArrayList<>();
     int lim = Integer.valueOf(pageLink.getLimit());
     int offs = Integer.valueOf(pageLink.getOffset());
@@ -147,6 +146,7 @@ public class EndpointProfileMongoDao
       endpointProfileBodyDto.setEndpointKeyHash(ep.getEndpointKeyHash());
       profilesBody.add(endpointProfileBodyDto);
     }
+    EndpointProfilesBodyDto endpointProfilesBodyDto = new EndpointProfilesBodyDto();
     endpointProfilesBodyDto.setPageLinkDto(pageLink);
     endpointProfilesBodyDto.setEndpointProfilesBody(profilesBody);
     return endpointProfilesBodyDto;
@@ -204,8 +204,8 @@ public class EndpointProfileMongoDao
     }
 
     LOG.debug("[{}] Found client-side endpoint profile body {} with client-side endpoint "
-            + "profile version {} and server-side endpoint profile body {} " +
-            "with server-side endpoint profile version {} and application id {}",
+            + "profile version {} and server-side endpoint profile body {} "
+            + "with server-side endpoint profile version {} and application id {}",
         endpointKeyHash, pf.getClientProfileBody(), pf.getServerProfileBody(),
         pf.getClientProfileVersion(), pf.getServerProfileVersion(), pf.getApplicationId());
     return endpointProfileBodyDto;

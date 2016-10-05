@@ -50,6 +50,9 @@ public class ResetPasswordDialog extends AvroUiDialog implements HasErrorMessage
   private Button sendResetPasswordLinkButton;
   private Listener listener;
 
+  /**
+   * Instantiates a new ResetPasswordDialog.
+   */
   public ResetPasswordDialog(Listener listener) {
     super(false, true);
 
@@ -113,6 +116,9 @@ public class ResetPasswordDialog extends AvroUiDialog implements HasErrorMessage
     sendResetPasswordLinkButton.setEnabled(false);
   }
 
+  /**
+   * Show reset password dialog.
+   */
   public static ResetPasswordDialog showResetPasswordDialog(Listener listener) {
     ResetPasswordDialog dialog = new ResetPasswordDialog(listener);
     dialog.center();

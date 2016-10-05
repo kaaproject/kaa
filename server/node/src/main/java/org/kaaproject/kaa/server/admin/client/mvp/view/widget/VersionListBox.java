@@ -31,6 +31,9 @@ public class VersionListBox extends ValueListBox<VersionDto> {
     super(new VersionDtoRenderer());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<VersionDto> emptyList = Collections.emptyList();
     setValue(null);

@@ -42,6 +42,9 @@ public class NettySessionResponseMessage implements SessionResponse {
     this(sessionInfo, syncResponse, null, messageBuilder, errorBuilder);
   }
 
+  /**
+   * Instantiates the NettySessionResponseMessage.
+   */
   public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse,
                                      Exception error, MessageBuilder messageBuilder,
                                      ErrorBuilder errorBuilder) {

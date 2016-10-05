@@ -31,7 +31,18 @@ public class TransportContext {
   private final PublicKey serverKey;
   private final MessageHandler handler;
 
-  public TransportContext(TransportProperties commonProperties, PublicKey serverKey, MessageHandler handler) {
+  /**
+   * Create new instance of <code>TransportContext</code>.
+   *
+   * @param commonProperties contain properties
+   * @param serverKey is server key
+   * @param handler is handler
+   */
+  public TransportContext(
+          TransportProperties commonProperties,
+          PublicKey serverKey,
+          MessageHandler handler
+  ) {
     super();
     this.commonProperties = commonProperties;
     this.serverKey = serverKey;
@@ -57,7 +68,7 @@ public class TransportContext {
   }
 
   /**
-   * Returns {@link MessageHandler} for this {@link Transport}
+   * Returns {@link MessageHandler} for this {@link Transport}.
    *
    * @return the message handler
    */

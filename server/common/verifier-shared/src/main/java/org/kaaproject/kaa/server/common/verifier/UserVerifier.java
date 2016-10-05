@@ -38,7 +38,6 @@ public interface UserVerifier {
    *
    * @param userExternalId the user external id
    * @param accessToken    the access token
-   * @return true, if verified
    */
   void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback);
 

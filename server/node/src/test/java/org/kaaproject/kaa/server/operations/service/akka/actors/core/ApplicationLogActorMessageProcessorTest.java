@@ -27,7 +27,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CtlService;
@@ -180,7 +180,7 @@ public class ApplicationLogActorMessageProcessorTest {
 
   protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
     CTLSchemaDto ctlSchema = new CTLSchemaDto();
-    ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId));
+    ctlSchema.setMetaInfo(new CtlSchemaMetaInfoDto(fqn, tenantId, applicationId));
     ctlSchema.setVersion(version);
     String name = fqn.substring(fqn.lastIndexOf(".") + 1);
     String namespace = fqn.substring(0, fqn.lastIndexOf("."));

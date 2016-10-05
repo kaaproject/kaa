@@ -85,7 +85,11 @@ public abstract class AbstractLogAppender<T extends SpecificRecordBase> implemen
    */
   protected abstract void initFromConfiguration(LogAppenderDto appender, T configuration);
 
-
+  /**
+   * Change parameters of log appender.
+   *
+   * @param appender      the appender
+   */
   public void initLogAppender(LogAppenderDto appender) {
     this.minSchemaVersion = appender.getMinLogSchemaVersion();
     this.maxSchemaVersion = appender.getMaxLogSchemaVersion();

@@ -67,7 +67,10 @@ public abstract class AbstractServerApplication {
    * @param defaultContextFiles       the default context files to use
    * @param defaultConfigurationFiles the default configuration files to use
    */
-  public AbstractServerApplication(String[] defaultContextFiles, String[] defaultConfigurationFiles) {
+  public AbstractServerApplication(
+          String[] defaultContextFiles,
+          String[] defaultConfigurationFiles
+  ) {
     super();
     this.defaultContextFiles = defaultContextFiles;
     this.defaultConfigurationFiles = defaultConfigurationFiles;
@@ -110,16 +113,20 @@ public abstract class AbstractServerApplication {
         try {
           sources.addLast(new ResourcePropertySource(propertyFile, AbstractServerApplication.class
               .getClassLoader()));
-        } catch (IOException e) {
-          LOG.error("Can't load properties file {} from classpath, exception catched {}", propertyFile, e);
+        } catch (IOException ioException) {
+          LOG.error(
+                  "Can't load properties file {} from classpath, exception catched {}",
+                  propertyFile,
+                  ioException
+          );
           return;
         }
       }
       ctx.refresh();
       init(ctx);
-    } catch (Exception e) {
-      LOG.info("Error during initialization of context", e);
-      throw e;
+    } catch (Exception initializationException) {
+      LOG.info("Error during initialization of context", initializationException);
+      throw initializationException;
     } finally {
       ctx.close();
     }

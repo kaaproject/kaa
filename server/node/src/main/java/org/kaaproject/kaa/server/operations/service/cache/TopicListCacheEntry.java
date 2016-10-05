@@ -32,6 +32,9 @@ public class TopicListCacheEntry implements Serializable {
 
   private final List<TopicDto> topics;
 
+  /**
+   * All-args constructor.
+   */
   public TopicListCacheEntry(int simpleHash, EndpointObjectHash hash, List<TopicDto> topics) {
     this.simpleHash = simpleHash;
     this.hash = hash;

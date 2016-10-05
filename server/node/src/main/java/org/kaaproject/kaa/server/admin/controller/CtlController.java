@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiResponses;
 
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.servlet.ServletUtils;
@@ -239,7 +239,7 @@ public class CtlController extends AbstractAdminController {
    *
    * @param applicationId the id of application where schema was created
    * @param fqn           the fqn of promoting CTL schema
-   * @return CTLSchemaMetaInfoDto the promoted CTL schema meta info object.
+   * @return CtlSchemaMetaInfoDto the promoted CTL schema meta info object.
    * @throws KaaAdminServiceException the kaa admin service exception
    */
   @ApiOperation(value = "Promote CTL schema from application scope to Tenant",
@@ -254,7 +254,7 @@ public class CtlController extends AbstractAdminController {
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "CTL/promoteScopeToTenant", method = RequestMethod.POST)
   @ResponseBody
-  public CTLSchemaMetaInfoDto promoteScopeToTenant(
+  public CtlSchemaMetaInfoDto promoteScopeToTenant(
       @ApiParam(name = "applicationId", value = "A unique application identifier", required = true)
       @RequestParam String applicationId,
       @ApiParam(name = "fqn",
@@ -281,7 +281,7 @@ public class CtlController extends AbstractAdminController {
           message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "CTL/getSystemSchemas", method = RequestMethod.GET)
   @ResponseBody
-  public List<CTLSchemaMetaInfoDto> getSystemLevelCtlSchemas() throws KaaAdminServiceException {
+  public List<CtlSchemaMetaInfoDto> getSystemLevelCtlSchemas() throws KaaAdminServiceException {
     return ctlService.getSystemLevelCtlSchemas();
   }
 
@@ -301,7 +301,7 @@ public class CtlController extends AbstractAdminController {
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "CTL/getTenantSchemas", method = RequestMethod.GET)
   @ResponseBody
-  public List<CTLSchemaMetaInfoDto> getTenantLevelCtlSchemas() throws KaaAdminServiceException {
+  public List<CtlSchemaMetaInfoDto> getTenantLevelCtlSchemas() throws KaaAdminServiceException {
     return ctlService.getTenantLevelCtlSchemas();
   }
 
@@ -328,7 +328,7 @@ public class CtlController extends AbstractAdminController {
   @RequestMapping(value = "CTL/getApplicationSchemas/{applicationToken}",
       method = RequestMethod.GET)
   @ResponseBody
-  public List<CTLSchemaMetaInfoDto> getApplicationLevelCtlSchemasByAppToken(
+  public List<CtlSchemaMetaInfoDto> getApplicationLevelCtlSchemasByAppToken(
       @ApiParam(name = "applicationToken",
           value = "A unique auto-generated application identifier",
           required = true)

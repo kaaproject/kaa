@@ -43,7 +43,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorException;
@@ -156,7 +156,7 @@ public class DeltaServiceIT extends AbstractTest {
     EndpointGroupDto groupAll = endpointService.findEndpointGroupsByAppId(application.getId()).get(0);
 
     CTLSchemaDto profileCtlSchema = new CTLSchemaDto();
-    CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto(BasicEndpointProfile.SCHEMA$.getFullName(),
+    CtlSchemaMetaInfoDto metaInfo = new CtlSchemaMetaInfoDto(BasicEndpointProfile.SCHEMA$.getFullName(),
         application.getTenantId(),
         application.getId());
     profileCtlSchema.setMetaInfo(metaInfo);
@@ -168,7 +168,7 @@ public class DeltaServiceIT extends AbstractTest {
 
     Schema schema = new Schema.Parser().parse(dataSchema);
     CTLSchemaDto confCtlSchema = new CTLSchemaDto();
-    CTLSchemaMetaInfoDto confMetaInfo = new CTLSchemaMetaInfoDto(schema.getFullName(),
+    CtlSchemaMetaInfoDto confMetaInfo = new CtlSchemaMetaInfoDto(schema.getFullName(),
         application.getTenantId(),
         application.getId());
     confCtlSchema.setMetaInfo(confMetaInfo);

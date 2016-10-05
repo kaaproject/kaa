@@ -22,17 +22,20 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasValue;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class CtlSchemasViewImpl
-    extends BaseListViewImpl<CTLSchemaMetaInfoDto>
+    extends BaseListViewImpl<CtlSchemaMetaInfoDto>
     implements CtlSchemasView {
 
   private CheckBox showHigherScopeCheckBox;
 
+  /**
+   * Instantiates a new CtlSchemasViewImpl.
+   */
   public CtlSchemasViewImpl() {
     super(true);
     if (displayShowHigherLevelScopeCheckBox()) {
@@ -46,7 +49,7 @@ public class CtlSchemasViewImpl
   }
 
   @Override
-  protected AbstractGrid<CTLSchemaMetaInfoDto, String> createGrid() {
+  protected AbstractGrid<CtlSchemaMetaInfoDto, String> createGrid() {
     return new CtlGrid(Unit.PX);
   }
 

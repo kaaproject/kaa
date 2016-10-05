@@ -54,6 +54,11 @@ public class MongoEndpointUserConfiguration implements EndpointUserConfiguration
   public MongoEndpointUserConfiguration() {
   }
 
+  /**
+   * Create new instance of <code>MongoEndpointUserConfiguration</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoEndpointUserConfiguration(EndpointUserConfigurationDto dto) {
     this.userId = dto.getUserId();
     this.appToken = dto.getAppToken();

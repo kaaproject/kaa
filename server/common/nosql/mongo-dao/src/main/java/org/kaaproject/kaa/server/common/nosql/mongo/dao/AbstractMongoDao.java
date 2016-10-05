@@ -74,6 +74,13 @@ public abstract class AbstractMongoDao<T, K> {
     return object;
   }
 
+  /**
+   * Save dto to mongo database.
+   * @param dto data transfer object,
+   * @param clazz dto class, use it for logging
+   * @param <V> type of dto data transfer object
+   * @return dto (saved instance)
+   */
   public <V> V save(V dto, Class<?> clazz) {
     LOG.debug("Save entity of {} class", clazz.getName());
     mongoTemplate.save(dto);
@@ -99,6 +106,10 @@ public abstract class AbstractMongoDao<T, K> {
     mongoTemplate.dropCollection(getDocumentClass());
   }
 
+  /**
+   * Remove item by id.
+   * @param key is unique key
+   */
   public void removeById(K key) {
     LOG.debug("Remove document of collection [{}] by id [{}]", getCollectionName(), key);
     T object = findById(key);

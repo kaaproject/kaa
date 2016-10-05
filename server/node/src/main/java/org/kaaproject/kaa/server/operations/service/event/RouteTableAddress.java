@@ -27,6 +27,9 @@ public final class RouteTableAddress {
     this(endpointKey, applicationToken, null);
   }
 
+  /**
+   * All-args constructor.
+   */
   public RouteTableAddress(EndpointObjectHash endpointKey,
                            String applicationToken,
                            String serverId) {

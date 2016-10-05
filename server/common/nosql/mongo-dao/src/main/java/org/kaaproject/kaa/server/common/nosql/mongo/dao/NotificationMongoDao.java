@@ -71,10 +71,13 @@ public class NotificationMongoDao extends AbstractMongoDao<MongoNotification, St
   }
 
   @Override
-  public List<MongoNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId,
-                                                                                    int seqNumber,
-                                                                                    int sysNfVersion,
-                                                                                    int userNfVersion) {
+  public List<MongoNotification>
+      findNotificationsByTopicIdAndVersionAndStartSecNum(
+          String topicId,
+          int seqNumber,
+          int sysNfVersion,
+          int userNfVersion
+  ) {
     LOG.debug("Find notifications by topic id [{}], sequence number start [{}], "
             + "system schema version [{}], user schema version [{}]",
         topicId, seqNumber, sysNfVersion, userNfVersion);

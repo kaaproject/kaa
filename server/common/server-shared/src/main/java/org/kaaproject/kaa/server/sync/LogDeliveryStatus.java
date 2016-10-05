@@ -22,6 +22,13 @@ public final class LogDeliveryStatus {
   private SyncStatus result;
   private LogDeliveryErrorCode errorCode;
 
+  /**
+   * Create new instance of <code>LogDeliveryStatus</code>.
+   *
+   * @param requestId is request id
+   * @param result is sync status of result
+   * @param errorCode is error code
+   */
   public LogDeliveryStatus(int requestId, SyncStatus result, LogDeliveryErrorCode errorCode) {
     super();
     this.requestId = requestId;

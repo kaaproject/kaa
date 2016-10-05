@@ -28,6 +28,9 @@ public class ProfileFilterStructView extends TextAreaStructView<ProfileFilterDto
 
   private Button testFilterButton;
 
+  /**
+   * Instantiates a new ProfileFilterStructView.
+   */
   public ProfileFilterStructView(HasErrorMessage hasErrorMessage) {
     super(hasErrorMessage);
     testFilterButton = new Button(Utils.constants.testFilter());

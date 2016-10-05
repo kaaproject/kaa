@@ -46,6 +46,11 @@ public class CassandraEpRegistrationByEndpointIdDao
     return CassandraModelConstants.EP_REGISTRATIONS_BY_ENDPOINT_ID_COLUMN_FAMILY_NAME;
   }
 
+  /**
+   * Found credential's id by endpoint id.
+   * @param endpointId is endpoint id
+   * @return string id or empty <code>Optional</code> if not found
+   */
   public Optional<String> getCredentialsIdByEndpointId(String endpointId) {
     Clause clause = QueryBuilder.eq(
         CassandraModelConstants.EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY,

@@ -39,6 +39,13 @@ public class SchemaUtil {
   private SchemaUtil() {
   }
 
+  /**
+   * Check if schemas are equals to each other.
+   *
+   * @param s1 the schema one
+   * @param s2 the schema two
+   * @return boolean 'true' if the input schemas are equals
+   */
   public static boolean isEqualSchemas(Schema s1, Schema s2) {
 
     if (!(s1.getType().equals(s2.getType()) && s1.getFullName().equals(s2.getFullName()))) {
@@ -122,6 +129,13 @@ public class SchemaUtil {
     return true;
   }
 
+  /**
+   * Get unique schemas.
+   *
+   * @param schemas the collection of schemas
+   * @return the unique schemas.
+   * @throws Exception if schemas full names are identical and schemas are not equals to each other
+   */
   public static Map<String, Schema> getUniqueSchemasMap(Collection<Schema> schemas)
       throws Exception {
     Map<String, Schema> map = new HashMap<>();
@@ -139,9 +153,9 @@ public class SchemaUtil {
         map.put(key, schema);
       } else {
         if (!SchemaUtil.isEqualSchemas(schema, map.get(key))) {
-          LOG.debug("classes {} are not the same: \n{}\n\n{}",
+          LOG.debug("Classes {} are not the same: \n{}\n\n{}",
               key, schema.toString(), map.get(key).toString());
-          throw new IllegalArgumentException("multiple occurrences of "
+          throw new IllegalArgumentException("Multiple occurrences of "
               + key + " with different fields");
         }
       }
@@ -150,6 +164,12 @@ public class SchemaUtil {
     return map;
   }
 
+  /**
+   * Get child schemas.
+   *
+   * @param parent the input schema
+   * @return the list of child schemas
+   */
   public static List<Schema> getChildSchemas(Schema parent) {
     Map<String, Schema> namedSchemaMap = new HashMap<>();
     parseChildSchemas(parent, namedSchemaMap);
@@ -186,6 +206,12 @@ public class SchemaUtil {
     }
   }
 
+  /**
+   * Compile avro schema.
+   *
+   * @param avroSchema the avro schema
+   * @return the collection of java dynamic beans
+   */
   public static Collection<JavaDynamicBean> compileAvroSchema(Schema avroSchema) {
     try {
       LOG.debug("Compiling {}", avroSchema);
@@ -205,4 +231,3 @@ public class SchemaUtil {
     }
   }
 }
-

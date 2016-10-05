@@ -54,6 +54,12 @@ public class CassandraEndpointUserConfiguration implements EndpointUserConfigura
   public CassandraEndpointUserConfiguration() {
   }
 
+  /**
+   * Create new instance of <code>CassandraEndpointUserConfiguration</code>.
+   *
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraEndpointUserConfiguration(EndpointUserConfigurationDto dto) {
     this.userId = dto.getUserId();
     this.appToken = dto.getAppToken();

@@ -40,6 +40,9 @@ public class SendNotificationActivity
   private String applicationId;
   private String topicId;
 
+  /**
+   * Instantiates a new SendNotificationActivity.
+   */
   public SendNotificationActivity(SendNotificationPlace place, ClientFactory clientFactory) {
     super(place, clientFactory);
     this.applicationId = place.getApplicationId();

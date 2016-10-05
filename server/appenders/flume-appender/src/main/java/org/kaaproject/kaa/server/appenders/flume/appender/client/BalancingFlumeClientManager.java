@@ -88,7 +88,8 @@ public class BalancingFlumeClientManager extends FlumeClientManager<FlumeNodes> 
   }
 
   @Override
-  public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event) throws EventDeliveryException {
+  public ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event)
+          throws EventDeliveryException {
     return currentClient.appendAsync(event);
   }
 

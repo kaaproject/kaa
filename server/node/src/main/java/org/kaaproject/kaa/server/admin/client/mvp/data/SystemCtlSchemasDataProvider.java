@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
@@ -27,9 +27,9 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import java.util.List;
 
 public class SystemCtlSchemasDataProvider
-    extends AbstractDataProvider<CTLSchemaMetaInfoDto, String> {
+    extends AbstractDataProvider<CtlSchemaMetaInfoDto, String> {
 
-  public SystemCtlSchemasDataProvider(AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid,
+  public SystemCtlSchemasDataProvider(AbstractGrid<CtlSchemaMetaInfoDto, String> dataGrid,
                                       HasErrorMessage hasErrorMessage) {
     super(dataGrid, hasErrorMessage);
   }
@@ -37,7 +37,7 @@ public class SystemCtlSchemasDataProvider
   @Override
   protected void loadData(final LoadCallback callback) {
     KaaAdmin.getDataSource().getSystemLevelCtlSchemas(
-        new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
+        new AsyncCallback<List<CtlSchemaMetaInfoDto>>() {
           @Override
           public void onFailure(Throwable caught) {
             callback.onFailure(caught);
@@ -45,7 +45,7 @@ public class SystemCtlSchemasDataProvider
           }
 
           @Override
-          public void onSuccess(List<CTLSchemaMetaInfoDto> result) {
+          public void onSuccess(List<CtlSchemaMetaInfoDto> result) {
             callback.onSuccess(result);
           }
         });

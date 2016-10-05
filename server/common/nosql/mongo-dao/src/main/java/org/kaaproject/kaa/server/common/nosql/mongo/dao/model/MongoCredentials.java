@@ -48,6 +48,11 @@ public class MongoCredentials implements Credentials, Serializable {
   public MongoCredentials() {
   }
 
+  /**
+   * Create new instance of <code>MongoCredentials</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public MongoCredentials(String applicationId, CredentialsDto dto) {
     this.id = dto.getId();
     this.applicationId = applicationId;

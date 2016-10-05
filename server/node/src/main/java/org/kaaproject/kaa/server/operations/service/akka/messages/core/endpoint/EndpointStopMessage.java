@@ -26,6 +26,9 @@ public class EndpointStopMessage {
   private final String actorKey;
   private final ActorRef originator;
 
+  /**
+   * All-args constructor.
+   */
   public EndpointStopMessage(EndpointObjectHash endpointKey, String actorKey, ActorRef originator) {
     super();
     this.endpointKey = endpointKey;

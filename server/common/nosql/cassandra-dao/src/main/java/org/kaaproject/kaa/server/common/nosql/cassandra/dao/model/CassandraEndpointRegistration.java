@@ -67,6 +67,12 @@ public final class CassandraEndpointRegistration implements EndpointRegistration
   public CassandraEndpointRegistration() {
   }
 
+  /**
+   * Create new instance of <code>CassandraTopicListEntry</code>.
+   *
+   * @param endpointRegistrationInfo is data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraEndpointRegistration(EndpointRegistrationDto endpointRegistrationInfo) {
     this.id = endpointRegistrationInfo.getId();
     this.applicationId = endpointRegistrationInfo.getApplicationId();
@@ -158,6 +164,11 @@ public final class CassandraEndpointRegistration implements EndpointRegistration
     return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
+  /**
+   * Generate id using field <code>credentialsId</code> and assign result on field <code>id</code>.
+   *
+   * @return id
+   */
   public String generateId() {
     if (isBlank(id)) {
       id = credentialsId;

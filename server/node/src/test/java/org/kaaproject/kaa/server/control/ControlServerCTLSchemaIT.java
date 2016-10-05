@@ -27,7 +27,7 @@ import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.springframework.http.HttpStatus;
@@ -354,8 +354,8 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
 
     CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(),
         application.getApplicationToken(), null, null);
-    CTLSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
-    CTLSchemaMetaInfoDto updatedMetaInfo = client.promoteScopeToTenant(metaInfo.getApplicationId(), metaInfo.getFqn());
+    CtlSchemaMetaInfoDto metaInfo = saved.getMetaInfo();
+    CtlSchemaMetaInfoDto updatedMetaInfo = client.promoteScopeToTenant(metaInfo.getApplicationId(), metaInfo.getFqn());
 
     Assert.assertNull(updatedMetaInfo.getApplicationId());
     Assert.assertNotNull(updatedMetaInfo.getTenantId());
@@ -369,7 +369,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     ApplicationDto application = createApplication(tenantAdminDto);
     this.loginTenantDeveloper(tenantDeveloperUser);
     CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
-    final CTLSchemaMetaInfoDto metaInfo2 = saved.getMetaInfo();
+    final CtlSchemaMetaInfoDto metaInfo2 = saved.getMetaInfo();
 
     Assert.assertNull(metaInfo2.getApplicationId());
     metaInfo2.setApplicationId(application.getId());
@@ -389,7 +389,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     this.loginTenantAdmin(tenantAdminUser);
 
     CTLSchemaDto saved = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantAdminDto.getTenantId(), null, null, null);
-    final CTLSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
+    final CtlSchemaMetaInfoDto metaInfo3 = saved.getMetaInfo();
 
     Assert.assertNull(metaInfo3.getApplicationId());
     metaInfo3.setApplicationId(application.getId());
@@ -417,7 +417,7 @@ public class ControlServerCTLSchemaIT extends AbstractTestControlServer {
     CTLSchemaDto schema = createCTLSchema(ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(),
         application.getApplicationToken(), deps, fields);
 
-    final CTLSchemaMetaInfoDto metaInfo = schema.getMetaInfo();
+    final CtlSchemaMetaInfoDto metaInfo = schema.getMetaInfo();
 
     checkRestErrorStatusCode(new TestRestCall() {
       @Override

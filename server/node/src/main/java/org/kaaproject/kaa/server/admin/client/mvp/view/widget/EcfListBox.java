@@ -31,6 +31,9 @@ public class EcfListBox extends ValueListBox<EcfInfoDto> {
     super(new EcfInfoDtoRenderer());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<EcfInfoDto> emptyList = Collections.emptyList();
     setValue(null);

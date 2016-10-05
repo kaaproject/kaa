@@ -43,6 +43,11 @@ public abstract class TreePlace extends Place implements PlaceConstants {
     return null;
   }
 
+  /**
+   * Get previous place.
+   *
+   * @return the TreePlace
+   */
   public TreePlace getPreviousPlace() {
     if (previousPlace == null) {
       previousPlace = createDefaultPreviousPlace();
@@ -90,6 +95,9 @@ public abstract class TreePlace extends Place implements PlaceConstants {
       super.addDataDisplay(display);
     }
 
+    /**
+     * Refresh.
+     */
     public void refresh() {
       if (display != null) {
         loadData(callback, display);

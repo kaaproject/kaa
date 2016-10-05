@@ -27,7 +27,8 @@ public class RecordWrapperSchemaGenerator {
   /**
    * The Constant RECORD_WRAPPER_SCHEMA_TEMPLATE.
    */
-  private static final String RECORD_WRAPPER_SCHEMA_TEMPLATE = "avro/record_wrapper_schema.avsc.template";
+  private static final String
+          RECORD_WRAPPER_SCHEMA_TEMPLATE = "avro/record_wrapper_schema.avsc.template";
   /**
    * The Constant RECORD_HEADER_SCHEMA_VAR.
    */
@@ -43,13 +44,22 @@ public class RecordWrapperSchemaGenerator {
   private RecordWrapperSchemaGenerator() {
   }
 
+  /**
+   * Generate record wrapper schema.
+   *
+   * @param userRecordSchema is user record schema which we wrapped by record wrapper schema
+   * @return record wrapper schema
+   * @throws IOException Signals that an I/O exception has occurred
+   */
   public static Schema generateRecordWrapperSchema(String userRecordSchema) throws IOException {
     if (recordWrapperSchemaTemplate == null) {
       recordWrapperSchemaTemplate = FileUtils.readResource(RECORD_WRAPPER_SCHEMA_TEMPLATE);
       String recordHeaderSchema = RecordHeader.getClassSchema().toString();
-      recordWrapperSchemaTemplate = recordWrapperSchemaTemplate.replaceAll(RECORD_HEADER_SCHEMA_VAR, recordHeaderSchema);
+      recordWrapperSchemaTemplate =
+              recordWrapperSchemaTemplate.replaceAll(RECORD_HEADER_SCHEMA_VAR, recordHeaderSchema);
     }
-    String recordWrapperSchemaString = recordWrapperSchemaTemplate.replaceAll(RECORD_DATA_SCHEMA_VAR, userRecordSchema);
+    String recordWrapperSchemaString =
+            recordWrapperSchemaTemplate.replaceAll(RECORD_DATA_SCHEMA_VAR, userRecordSchema);
     Schema.Parser parser = new Schema.Parser();
     Schema recordWrapperSchema = parser.parse(recordWrapperSchemaString);
     return recordWrapperSchema;

@@ -25,7 +25,8 @@ import org.apache.flume.api.RpcClient;
 import java.util.List;
 
 public interface AsyncRpcClient extends RpcClient {
-  public ListenableFuture<AppendAsyncResultPojo> appendAsync(Event event) throws EventDeliveryException;
+  public ListenableFuture<AppendAsyncResultPojo> appendAsync(Event event)
+          throws EventDeliveryException;
 
   public ListenableFuture<AppendBatchAsyncResultPojo> appendBatchAsync(List<Event> events)
       throws EventDeliveryException;

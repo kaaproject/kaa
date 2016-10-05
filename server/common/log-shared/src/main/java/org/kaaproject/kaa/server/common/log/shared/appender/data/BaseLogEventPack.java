@@ -41,7 +41,20 @@ public class BaseLogEventPack implements LogEventPack {
 
   private ProfileInfo serverProfile;
 
-  public BaseLogEventPack(EndpointProfileDataDto profileDto, long dateCreated, int logSchemaVersion, List<LogEvent> events) {
+  /**
+   * Create new instance of <code>BaseLogEventPack</code>.
+   *
+   * @param profileDto is endpoint profile data dto
+   * @param dateCreated is date created
+   * @param logSchemaVersion is log schema version
+   * @param events is <code>List</code> of events
+   */
+  public BaseLogEventPack(
+          EndpointProfileDataDto profileDto,
+          long dateCreated,
+          int logSchemaVersion,
+          List<LogEvent> events
+  ) {
     this.profileDto = profileDto;
     this.dateCreated = dateCreated;
     this.logSchemaVersion = logSchemaVersion;

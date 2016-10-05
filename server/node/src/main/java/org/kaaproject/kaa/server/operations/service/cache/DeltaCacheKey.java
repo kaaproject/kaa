@@ -63,6 +63,9 @@ public final class DeltaCacheKey implements Serializable {
         endpointConfHash, useConfigurationRawSchema, false);
   }
 
+  /**
+   * Instantiates the DeltaCacheKey.
+   */
   public DeltaCacheKey(AppVersionKey appConfigVersionKey,
                        List<EndpointGroupStateDto> endpointGroups,
                        EndpointObjectHash userConfHash,

@@ -58,6 +58,16 @@ public class User {
   public User() {
   }
 
+  /**
+   * Create new instance of <code>User</code>.
+   *
+   * @param username is username
+   * @param password is password
+   * @param enabled is enabled user or not
+   * @param firstName is user's firstName
+   * @param lastName is user's lastName
+   * @param mail is user's mail
+   */
   public User(String username, String password, boolean enabled,
               String firstName, String lastName, String mail) {
     super();

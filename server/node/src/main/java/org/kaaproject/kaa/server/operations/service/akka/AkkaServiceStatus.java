@@ -21,6 +21,9 @@ public class AkkaServiceStatus {
   private final long ts;
   private final int endpointCount;
 
+  /**
+   * All-args constructor.
+   */
   public AkkaServiceStatus(long ts, int endpointCount) {
     super();
     this.ts = ts;

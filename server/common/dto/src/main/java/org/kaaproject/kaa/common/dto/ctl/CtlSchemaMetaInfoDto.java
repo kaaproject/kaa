@@ -23,7 +23,7 @@ import org.kaaproject.kaa.common.dto.HasId;
 import java.io.Serializable;
 import java.util.List;
 
-public class CTLSchemaMetaInfoDto implements HasId, Serializable {
+public class CtlSchemaMetaInfoDto implements HasId, Serializable {
 
   private static final long serialVersionUID = 365372783241958657L;
 
@@ -33,19 +33,26 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
   private String applicationId;
   private List<Integer> versions;
 
-  public CTLSchemaMetaInfoDto() {
+  public CtlSchemaMetaInfoDto() {
   }
 
-  public CTLSchemaMetaInfoDto(String fqn) {
+  public CtlSchemaMetaInfoDto(String fqn) {
     this.fqn = fqn;
   }
 
-  public CTLSchemaMetaInfoDto(String fqn, String tenantId) {
+  public CtlSchemaMetaInfoDto(String fqn, String tenantId) {
     this.fqn = fqn;
     this.tenantId = tenantId;
   }
 
-  public CTLSchemaMetaInfoDto(String fqn, String tenantId, String applicationId) {
+  /**
+   * Create new instance of <code>CtlSchemaMetaInfoDto</code>.
+   *
+   * @param fqn is full qualified name of type
+   * @param tenantId is tenant id
+   * @param applicationId is application id
+   */
+  public CtlSchemaMetaInfoDto(String fqn, String tenantId, String applicationId) {
     this.fqn = fqn;
     this.tenantId = tenantId;
     this.applicationId = applicationId;
@@ -85,6 +92,12 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
     this.applicationId = applicationId;
   }
 
+  /**
+   * Return instance of enum <code>CTLSchemaScopeDto</code> that represents scope of CTL schema,
+   * it can be <code>APPLICATION</code>,  <code>TENANT</code> or <code>SYSTEM</code>.
+   *
+   * @return instance of enum <code>CTLSchemaScopeDto</code>
+   */
   @JsonIgnore
   public CTLSchemaScopeDto getScope() {
     if (tenantId != null && !tenantId.isEmpty()) {
@@ -126,7 +139,7 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    CTLSchemaMetaInfoDto other = (CTLSchemaMetaInfoDto) obj;
+    CtlSchemaMetaInfoDto other = (CtlSchemaMetaInfoDto) obj;
     if (applicationId == null) {
       if (other.applicationId != null) {
         return false;
@@ -154,7 +167,7 @@ public class CTLSchemaMetaInfoDto implements HasId, Serializable {
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
-    builder.append("CTLSchemaMetaInfoDto [id=");
+    builder.append("CtlSchemaMetaInfoDto [id=");
     builder.append(id);
     builder.append(", fqn=");
     builder.append(fqn);

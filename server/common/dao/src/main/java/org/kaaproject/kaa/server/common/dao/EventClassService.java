@@ -77,7 +77,11 @@ public interface EventClassService {
    * @param eventClassFamilyVersion the event class family version
    * @param createdUsername         the created username
    */
-  void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion, String createdUsername);
+  void addEventClassFamilyVersion(
+          String eventClassFamilyId,
+          EventClassFamilyVersionDto eventClassFamilyVersion,
+          String createdUsername
+  );
 
   /**
    * Find event classes by event class family Id and version.
@@ -87,7 +91,11 @@ public interface EventClassService {
    * @param type    the type
    * @return the list of found event classes
    */
-  List<EventClassDto> findEventClassesByFamilyIdVersionAndType(String ecfId, int version, EventClassType type);
+  List<EventClassDto> findEventClassesByFamilyIdVersionAndType(
+          String ecfId,
+          int version,
+          EventClassType type
+  );
 
   /**
    * Check passed FQNs if they are present in event class family.
@@ -97,7 +105,10 @@ public interface EventClassService {
    * @param fqns  list of fqns to check against family fqns
    * @return true is fqns are unique
    */
-  boolean validateEventClassFamilyFqns(String ecfId, List<String> fqns);
+  boolean validateEventClassFamilyFqns(
+          String ecfId,
+          List<String> fqns
+  );
 
   /**
    * Find event class family by tenant id and name.
@@ -106,7 +117,10 @@ public interface EventClassService {
    * @param name     the event class family name
    * @return the event class family
    */
-  EventClassFamilyDto findEventClassFamilyByTenantIdAndName(String tenantId, String name);
+  EventClassFamilyDto findEventClassFamilyByTenantIdAndName(
+          String tenantId,
+          String name
+  );
 
   /**
    * Find event class by tenant id and fqn.
@@ -115,7 +129,7 @@ public interface EventClassService {
    * @param fqn      the event class fqn
    * @return the event class
    */
-  List<EventClassDto> findEventClassByTenantIdAndFQN(String tenantId, String fqn);
+  List<EventClassDto> findEventClassByTenantIdAndFqn(String tenantId, String fqn);
 
 
   /**
@@ -126,7 +140,7 @@ public interface EventClassService {
    * @param version  the schema version
    * @return the event class dto
    */
-  EventClassDto findEventClassByTenantIdAndFQNAndVersion(String tenantId, String fqn, int version);
+  EventClassDto findEventClassByTenantIdAndFqnAndVersion(String tenantId, String fqn, int version);
 
   /**
    * Find event class by id.
@@ -143,7 +157,7 @@ public interface EventClassService {
    * @param ecfList the list of AefMapInfoDto
    * @return the event class dto
    */
-  boolean isValidECFListInSdkProfile(List<AefMapInfoDto> ecfList);
+  boolean isValidEcfListInSdkProfile(List<AefMapInfoDto> ecfList);
 
   /**
    * Get list of all events class FQNs in event class family.
@@ -151,5 +165,5 @@ public interface EventClassService {
    * @param ecfId string of the event class family id
    * @return list of all FQNs
    */
-  Set<String> getFqnSetForECF(String ecfId);
+  Set<String> getFqnSetForEcf(String ecfId);
 }

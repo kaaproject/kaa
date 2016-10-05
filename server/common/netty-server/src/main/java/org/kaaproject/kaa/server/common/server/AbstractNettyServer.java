@@ -34,11 +34,11 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * NettyHttpServer Class. Used to start Netty server. Config is used to handle
+ * <p>NettyHttpServer Class. Used to start Netty server. Config is used to handle
  * netty server configuration. Usage: netty = new NettyHttpServer(conf);
- * netty.init(); netty.start();
+ * netty.init(); netty.start();</p>
  *
- * To stop Netty: netty.shutdown();
+ * <p>To stop Netty: netty.shutdown();</p>
  *
  * @author Yaroslav Zeygerman
  */

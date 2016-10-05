@@ -385,7 +385,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     final List<EventClassDto> eventClassDtos = new ArrayList<>();
     eventClassDtos.add(ecDto);
 
-    when(eventClassService.findEventClassByTenantIdAndFQN(TENANT_ID, EC_FQN)).then(new Answer<List<EventClassDto>>() {
+    when(eventClassService.findEventClassByTenantIdAndFqn(TENANT_ID, EC_FQN)).then(new Answer<List<EventClassDto>>() {
       @Override
       public List<EventClassDto> answer(InvocationOnMock invocation) throws Throwable {
         sleepABit();
@@ -398,7 +398,7 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     evcDto.setEcfvId(EVENT_CLASS_FAMILY_VERSION_ID);
     evcDto.setVersion(EVENT_CLASS_FAMILY_VERSION);
 
-    when(eventClassService.findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)).then(
+    when(eventClassService.findEventClassByTenantIdAndFqnAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION)).then(
         new Answer<EventClassDto>() {
           @Override
           public EventClassDto answer(InvocationOnMock invocation) throws Throwable {
@@ -744,11 +744,11 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
   @Test
   public void testGetEcfIdByFqn() throws GetDeltaException {
     assertEquals(EVENT_CLASS_FAMILY_ID, cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, EC_FQN)));
-    verify(eventClassService, times(1)).findEventClassByTenantIdAndFQN(TENANT_ID, EC_FQN);
+    verify(eventClassService, times(1)).findEventClassByTenantIdAndFqn(TENANT_ID, EC_FQN);
     reset(eventClassService);
 
     assertEquals(EVENT_CLASS_FAMILY_ID, cacheService.getEventClassFamilyIdByEventClassFqn(new EventClassFqnKey(TENANT_ID, EC_FQN)));
-    verify(eventClassService, times(0)).findEventClassByTenantIdAndFQN(TENANT_ID, EC_FQN);
+    verify(eventClassService, times(0)).findEventClassByTenantIdAndFqn(TENANT_ID, EC_FQN);
     reset(eventClassService);
   }
 
@@ -757,13 +757,13 @@ public class ConcurrentCacheServiceTest extends AbstractTest {
     assertEquals(Collections.singleton(new RouteTableKey(TEST_APP_TOKEN, new EventClassFamilyVersion(EVENT_CLASS_FAMILY_ID,
         EVENT_CLASS_FAMILY_VERSION))), cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, EC_FQN,
         EVENT_CLASS_FAMILY_VERSION)));
-    verify(eventClassService, times(1)).findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION);
+    verify(eventClassService, times(1)).findEventClassByTenantIdAndFqnAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION);
     reset(eventClassService);
 
     assertEquals(Collections.singleton(new RouteTableKey(TEST_APP_TOKEN, new EventClassFamilyVersion(EVENT_CLASS_FAMILY_ID,
         EVENT_CLASS_FAMILY_VERSION))), cacheService.getRouteKeys(new EventClassFqnVersion(TENANT_ID, EC_FQN,
         EVENT_CLASS_FAMILY_VERSION)));
-    verify(eventClassService, times(0)).findEventClassByTenantIdAndFQNAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION);
+    verify(eventClassService, times(0)).findEventClassByTenantIdAndFqnAndVersion(TENANT_ID, EC_FQN, EVENT_CLASS_FAMILY_VERSION);
     reset(eventClassService);
   }
 

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The Class ServerSync represents sync information sent from server to client.
+ *
  * @author Andrew Shvayka
  */
 public final class ServerSync {
@@ -59,6 +61,12 @@ public final class ServerSync {
     this.logSync = logSync;
   }
 
+  /**
+   * make deep copy of <code>ServerSync</code> instance.
+   *
+   * @param source is source for copping
+   * @return deep copy of <code>ServerSync</code> instance
+   */
   public static ServerSync deepCopy(ServerSync source) {
     if (source == null) {
       return null;
@@ -177,6 +185,11 @@ public final class ServerSync {
     return copy;
   }
 
+  /**
+   * Clean <code>ServerSync</code>, which mean that all fields are null.
+   *
+   * @param syncResponse is instance for cleaning
+   */
   public static void cleanup(ServerSync syncResponse) {
     if (syncResponse == null) {
       return;

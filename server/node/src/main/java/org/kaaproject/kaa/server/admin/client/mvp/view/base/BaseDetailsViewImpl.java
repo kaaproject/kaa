@@ -90,6 +90,9 @@ public abstract class BaseDetailsViewImpl
     this(create, true);
   }
 
+  /**
+   * Instantiates a new BaseDetailsViewImpl.
+   */
   public BaseDetailsViewImpl(boolean create, boolean editable) {
     this.create = create;
     this.editable = editable;

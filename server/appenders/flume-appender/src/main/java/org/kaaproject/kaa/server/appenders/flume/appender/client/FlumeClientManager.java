@@ -42,6 +42,13 @@ public abstract class FlumeClientManager<T> {
   private static final Logger LOG = LoggerFactory.getLogger(FlumeClientManager.class);
   protected AsyncRpcClient currentClient = null;
 
+  /**
+   * Create new instance of <code>FlumeClientManager</code>.
+   *
+   * @param configuration is configuration of new instance <code>FlumeClientManager</code>
+   * @param <T> type of <code>FlumeClientManager</code> parameters
+   * @return new instance of <code>FlumeClientManager</code>
+   */
   @SuppressWarnings("unchecked")
   public static <T> FlumeClientManager<T> getInstance(FlumeConfig configuration) {
     FlumeClientManager<?> clientManager = null;
@@ -75,9 +82,15 @@ public abstract class FlumeClientManager<T> {
   public abstract ListenableFuture<AppendAsyncResultPojo> sendEventToFlumeAsync(Event event)
       throws EventDeliveryException;
 
-  public abstract ListenableFuture<AppendBatchAsyncResultPojo> sendEventsToFlumeAsync(List<Event> events)
+  public abstract ListenableFuture<AppendBatchAsyncResultPojo>
+      sendEventsToFlumeAsync(List<Event> events)
       throws EventDeliveryException;
 
+  /**
+   * Initialized current client using parameters.
+   *
+   * @param parameters is parameters of client
+   */
   public void init(T parameters) {
     if (parameters != null) {
       currentClient = initManager(parameters);
@@ -90,6 +103,12 @@ public abstract class FlumeClientManager<T> {
     }
   }
 
+  /**
+   * Initialized current client using parameters.
+   *
+   * @param parameters is parameters of client
+   * @param clientThreadPoolSize is amount of client thread pool
+   */
   public void init(T parameters, int clientThreadPoolSize) {
     if (parameters != null) {
       currentClient = initManager(parameters, clientThreadPoolSize);
@@ -102,6 +121,9 @@ public abstract class FlumeClientManager<T> {
     }
   }
 
+  /**
+   * Immediately closes the client and field <code>currentClient</code> assign on null.
+   */
   public void cleanUp() {
     LOG.debug("Close flume rpc client.");
     if (currentClient != null) {

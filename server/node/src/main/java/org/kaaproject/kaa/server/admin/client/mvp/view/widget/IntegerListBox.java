@@ -31,6 +31,9 @@ public class IntegerListBox extends ValueListBox<Integer> {
     super(new IntegerRenderer());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<Integer> emptyList = Collections.emptyList();
     setValue(null);

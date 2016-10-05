@@ -44,6 +44,12 @@ public class Tenant extends GenericModel<TenantDto> implements Serializable {
     this.id = id;
   }
 
+  /**
+   * Create new instance of tenant.
+   *
+   * @param dto data transfer object that used for creating new instance,
+   *            it hold id and name of new instance
+   */
   public Tenant(TenantDto dto) {
     if (dto != null) {
       this.id = getLongId(dto);

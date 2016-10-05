@@ -71,7 +71,10 @@ public class CassandraClient implements Closeable {
   private Session session;
   private MappingManager mappingManager;
 
-
+  /**
+   * Get cassandra client session.
+   * @return session
+   */
   public Session getSession() {
     if (session == null) {
       session = cluster.connect(keyspaceName);
@@ -94,6 +97,9 @@ public class CassandraClient implements Closeable {
     return mappingManager;
   }
 
+  /**
+   * Create new cassandra cluster using builder.
+   */
   @PostConstruct
   public void init() {
     Cluster.Builder builder = Cluster.builder()

@@ -30,7 +30,7 @@ import com.datastax.driver.core.querybuilder.Select;
 
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpbyAppIdDao;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAppIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class EndpointNotificationCassandraDao
       LoggerFactory.getLogger(EndpointNotificationCassandraDao.class);
 
   @Autowired
-  private CassandraEpbyAppIdDao cassandraEPByAppIdDao;
+  private CassandraEpByAppIdDao cassandraEpByAppIdDao;
 
   @Override
   protected Class<CassandraEndpointNotification> getColumnFamilyClass() {
@@ -85,13 +85,13 @@ public class EndpointNotificationCassandraDao
   @Override
   public void removeNotificationsByAppId(String appId) {
     LOG.debug("Remove endpoint notifications by app id {}", appId);
-    Statement deleteEPNfs = delete().from(getColumnFamilyName())
+    Statement deleteEpNfs = delete().from(getColumnFamilyName())
         .where(
             QueryBuilder.in(
                 ET_NF_ENDPOINT_KEY_HASH_PROPERTY,
-                cassandraEPByAppIdDao.getEpIdsListByAppId(appId)));
-    LOG.trace("Execute query {}", deleteEPNfs);
-    execute(deleteEPNfs);
+                cassandraEpByAppIdDao.getEpIdsListByAppId(appId)));
+    LOG.trace("Execute query {}", deleteEpNfs);
+    execute(deleteEpNfs);
   }
 
   @Override

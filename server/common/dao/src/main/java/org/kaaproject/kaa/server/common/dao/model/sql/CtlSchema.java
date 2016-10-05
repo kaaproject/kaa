@@ -63,7 +63,7 @@ public class CtlSchema extends GenericModel<CTLSchemaDto> implements Serializabl
   @ManyToOne(optional = true, fetch = FetchType.EAGER)
   @JoinColumn(nullable = false, name = CTL_SCHEMA_META_INFO_ID,
       foreignKey = @ForeignKey(name = CTL_SCHEMA_META_INFO_FK))
-  private CTLSchemaMetaInfo metaInfo;
+  private CtlSchemaMetaInfo metaInfo;
   @Column(name = CTL_SCHEMA_VERSION)
   private Integer version;
   @Lob
@@ -94,7 +94,7 @@ public class CtlSchema extends GenericModel<CTLSchemaDto> implements Serializabl
 
   public CtlSchema(CTLSchemaDto dto) {
     this.id = getLongId(dto.getId());
-    this.metaInfo = new CTLSchemaMetaInfo(dto.getMetaInfo());
+    this.metaInfo = new CtlSchemaMetaInfo(dto.getMetaInfo());
     this.version = dto.getVersion();
     this.createdUsername = dto.getCreatedUsername();
     this.createdTime = dto.getCreatedTime();
@@ -112,11 +112,11 @@ public class CtlSchema extends GenericModel<CTLSchemaDto> implements Serializabl
     }
   }
 
-  public CTLSchemaMetaInfo getMetaInfo() {
+  public CtlSchemaMetaInfo getMetaInfo() {
     return metaInfo;
   }
 
-  public void setMetaInfo(CTLSchemaMetaInfo metaInfo) {
+  public void setMetaInfo(CtlSchemaMetaInfo metaInfo) {
     this.metaInfo = metaInfo;
   }
 

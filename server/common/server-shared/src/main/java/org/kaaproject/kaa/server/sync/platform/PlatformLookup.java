@@ -42,6 +42,13 @@ public class PlatformLookup {
   private PlatformLookup() {
   }
 
+  /**
+   * Lookup for platform protocols, return <code>Set</code> of string. These strings are name of
+   * classes that annotated by <code>@KaaPlatformProtocol</code>
+   *
+   * @param packageNames is packages for scan
+   * @return <code>Set</code> of string
+   */
   public static Set<String> lookupPlatformProtocols(String... packageNames) {
     ClassPathScanningCandidateComponentProvider scanner =
         new ClassPathScanningCandidateComponentProvider(false);
@@ -57,6 +64,13 @@ public class PlatformLookup {
     return protocols;
   }
 
+  /**
+   * Method takes <code>Set</code> of protocols class name and return <code>Map</code> where key is
+   * id of protocol and value is the protocol.
+   *
+   * @param platformProtocols is <code>Set</code> of platform protocols (strings)
+   * @return map where key is id of protocol and value is the protocol
+   */
   public static Map<Integer, PlatformEncDec> initPlatformProtocolMap(
       Set<String> platformProtocols) {
     Map<Integer, PlatformEncDec> platformEncDecMap = new HashMap<>();

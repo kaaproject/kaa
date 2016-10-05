@@ -23,6 +23,9 @@ public class ChannelTimeoutMessage implements TimeoutMessage {
   private final UUID channelUuid;
   private final long lastActivityTime;
 
+  /**
+   * All-args constructor.
+   */
   public ChannelTimeoutMessage(UUID uuid, long lastActivityTime) {
     super();
     this.channelUuid = uuid;

@@ -31,6 +31,13 @@ public class ServletUtils {
   private ServletUtils() {
   }
 
+  /**
+   * Prepare disposition.
+   *
+   * @param request   the http servlet request
+   * @param response  the http servlet response
+   * @param fileName  the name of the file
+   */
   public static void prepareDisposition(HttpServletRequest request, HttpServletResponse response,
                                         String fileName) {
     String userAgent = request.getHeader("user-agent");

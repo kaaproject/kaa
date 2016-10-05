@@ -102,6 +102,12 @@ public class NotificationServiceImpl extends AbstractAdminService implements Not
     }
   }
 
+  /**
+   * Get notification schema.
+   *
+   * @param notificationSchemaId the id of notification schema
+   * @return notification schema
+   */
   public NotificationSchemaDto getNotificationSchema(String notificationSchemaId)
       throws KaaAdminServiceException {
     checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);

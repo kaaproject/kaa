@@ -25,6 +25,9 @@ public final class EventClassFamilyIdKey implements Serializable {
   private final String tenantId;
   private final String name;
 
+  /**
+   * All-args constructor.
+   */
   public EventClassFamilyIdKey(String tenantId, String name) {
     super();
     this.tenantId = tenantId;

@@ -70,6 +70,9 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     this(config, true, title, hasErrorMessage, optional, readOnly);
   }
 
+  /**
+   * Instantiates a new RecordPanel.
+   */
   public RecordPanel(AvroWidgetsConfig config, boolean showCaption, String title,
                      HasErrorMessage hasErrorMessage, boolean optional, boolean readOnly) {
     this.showCaption = showCaption;
@@ -132,6 +135,9 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     return recordFieldWidget;
   }
 
+  /**
+   * Set readOnly.
+   */
   public void setReadOnly(boolean readOnly) {
     if (this.readOnly != readOnly) {
       this.readOnly = readOnly;
@@ -140,6 +146,10 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     }
   }
 
+  /**
+   * Set title.
+   * @param title the title
+   */
   public void setTitle(String title) {
     if (showCaption) {
       if (optional) {
@@ -179,6 +189,9 @@ public class RecordPanel extends SimplePanel implements HasValue<RecordField>, C
     recordFieldWidget.setValue(value, fireEvents);
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     recordFieldWidget.setValue(null);
     if (!readOnly) {

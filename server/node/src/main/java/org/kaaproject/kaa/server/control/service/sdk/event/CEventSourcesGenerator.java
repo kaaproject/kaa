@@ -77,6 +77,12 @@ public class CEventSourcesGenerator {
         "org.apache.velocity.runtime.log.NullLogSystem");
   }
 
+  /**
+   * Create new zip entry data for the event family metadata.
+   *
+   * @param eventFamilies the event family metadata
+   * @return a new zip entry data
+   */
   public static List<TarEntryData> generateEventSources(List<EventFamilyMetadata> eventFamilies) {
     List<TarEntryData> eventSources = new ArrayList<>();
 

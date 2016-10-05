@@ -61,8 +61,8 @@ public abstract class AbstractKaaTcpServerInitializer extends ChannelInitializer
 
     final UUID uuid = UUID.randomUUID();
 
-    LOG.debug("KaaTcpServerInitializer Initializing Channel {} connection from {}:{}"
-        , uuid, ch.remoteAddress().getAddress().toString(), ch.remoteAddress().getPort());
+    LOG.debug("KaaTcpServerInitializer Initializing Channel {} connection from {}:{}",
+            uuid, ch.remoteAddress().getAddress().toString(), ch.remoteAddress().getPort());
 
     Attribute<UUID> uuidAttr = ch.attr(AbstractNettyServer.UUID_KEY);
     uuidAttr.set(uuid);
@@ -77,5 +77,6 @@ public abstract class AbstractKaaTcpServerInitializer extends ChannelInitializer
 
   protected abstract KaaTcpDecoder getDecoder();
 
-  protected abstract SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> getMainHandler(UUID uuid);
+  protected abstract SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor>
+      getMainHandler(UUID uuid);
 }

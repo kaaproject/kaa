@@ -26,6 +26,9 @@ public final class EventClassFqnVersion implements Serializable {
   private final String fqn;
   private final int version;
 
+  /**
+   * All-args constructor.
+   */
   public EventClassFqnVersion(String tenantId, String fqn, int version) {
     super();
     this.tenantId = tenantId;

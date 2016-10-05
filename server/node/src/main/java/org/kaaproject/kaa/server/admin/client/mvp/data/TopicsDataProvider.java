@@ -33,6 +33,9 @@ public class TopicsDataProvider extends AbstractDataProvider<TopicDto, String> {
   private String applicationId;
   private String endpointGroupId;
 
+  /**
+   * Instantiates a new TopicsDataProvider.
+   */
   public TopicsDataProvider(AbstractGrid<TopicDto, String> dataGrid,
                             HasErrorMessage hasErrorMessage,
                             String applicationId, String endpointGroupId) {

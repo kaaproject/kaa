@@ -41,6 +41,9 @@ public class GenerateSdkDialog extends AvroUiDialog {
   private ValueListBox<SdkPlatform> targetPlatform;
   private Listener listener;
 
+  /**
+   * Instantiates a new GenerateSdkDialog.
+   */
   public GenerateSdkDialog(Listener listener) {
     super(false, true);
 
@@ -116,6 +119,12 @@ public class GenerateSdkDialog extends AvroUiDialog {
     this.addButton(cancel);
   }
 
+  /**
+   * Show generate SDK dialog.
+   *
+   * @param listener the listener
+   * @return the GenerateSdkDialog
+   */
   public static GenerateSdkDialog show(Listener listener) {
     GenerateSdkDialog instance = new GenerateSdkDialog(listener);
 

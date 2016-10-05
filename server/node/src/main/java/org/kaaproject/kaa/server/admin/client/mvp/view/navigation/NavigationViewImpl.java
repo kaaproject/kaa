@@ -39,6 +39,9 @@ public class NavigationViewImpl extends Composite implements NavigationView {
   final KaaAdminStyle kaaAdminStyle;
   private NavigationTreeViewModel treeModel;
 
+  /**
+   * Instantiates a new NavigationViewImpl.
+   */
   public NavigationViewImpl() {
     treeModel = new NavigationTreeViewModel();
     menuTree = new CellTree(treeModel, null);

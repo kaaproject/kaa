@@ -54,6 +54,9 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
   protected BaseListView<T> listView;
   protected P place;
 
+  /**
+   * The constructor.
+   */
   public AbstractListActivity(P place, Class<T> dataClass, ClientFactory clientFactory) {
     this.place = place;
     this.clientFactory = clientFactory;
@@ -95,6 +98,11 @@ public abstract class AbstractListActivity<T extends HasId, P extends TreePlace>
     clientFactory.getPlaceController().goTo(place);
   }
 
+  /**
+   * Bind method.
+   *
+   * @param eventBus the event bus
+   */
   public void bind(final EventBus eventBus) {
 
     listView.clearError();

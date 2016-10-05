@@ -48,6 +48,9 @@ public class EcfVersionActivity
   private int ecfVersion;
   private EcfVersionView listView;
 
+  /**
+   * Instantiates a new EcfVersionActivity.
+   */
   public EcfVersionActivity(EcfVersionPlace place, ClientFactory clientFactory) {
     super(place, EventClassDto.class, clientFactory);
     this.ecfId = place.getEcfId();

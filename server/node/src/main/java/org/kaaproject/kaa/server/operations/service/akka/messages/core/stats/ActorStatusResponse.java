@@ -23,6 +23,9 @@ public class ActorStatusResponse {
   private final UUID requestId;
   private final int endpointCount;
 
+  /**
+   * All-args constructor.
+   */
   public ActorStatusResponse(UUID requestId, int endpointCount) {
     super();
     this.requestId = requestId;

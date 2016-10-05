@@ -186,7 +186,8 @@ public class CassandraModelConstants {
   public static final String TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY = "tl_entry_simple_hash";
   public static final String TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY = "tl_entry_topic_ids";
   /**
-   * {@link org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointRegistration}
+   * {@link
+   * org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointRegistration}
    */
   public static final String EP_REGISTRATION_COLUMN_FAMILY_NAME = "ep_registration";
   public static final String EP_REGISTRATION_ID_PROPERTY = "id";
@@ -198,7 +199,7 @@ public class CassandraModelConstants {
   public static final String EP_REGISTRATION_SERVER_PROFILE_BODY_PROPERTY =
       EP_SERVER_PROFILE_PROPERTY;
   /**
-   * {@link CassandraEpRegistrationByEndpointId}
+   * {@link CassandraEpRegistrationByEndpointId}.
    */
   public static final String EP_REGISTRATIONS_BY_ENDPOINT_ID_COLUMN_FAMILY_NAME =
       "creds_id_ep_registration";
@@ -214,6 +215,7 @@ public class CassandraModelConstants {
   public static final String CREDENTIALS_ID_PROPERTY = "creds_id";
   public static final String CREDENTIALS_BODY_PROPERTY = "creds_body";
   public static final String CREDENTIALS_STATUS_PROPERTY = "creds_status";
+
   private CassandraModelConstants() {
   }
 }

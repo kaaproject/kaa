@@ -45,7 +45,7 @@ import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.common.dto.UpdateNotificationDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -59,10 +59,10 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationEventFamilyMapDao;
-import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaDao;
+import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassDao;
 import org.kaaproject.kaa.server.common.dao.impl.EventClassFamilyDao;
@@ -85,10 +85,10 @@ import org.kaaproject.kaa.server.common.dao.impl.sql.PostgreDBTestRunner;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
-import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.Configuration;
 import org.kaaproject.kaa.server.common.dao.model.sql.ConfigurationSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchema;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchemaMetaInfo;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
@@ -218,7 +218,7 @@ public class AbstractTest {
   @Autowired
   protected CtlSchemaDao<CtlSchema> ctlSchemaDao;
   @Autowired
-  protected CtlSchemaMetaInfoDao<CTLSchemaMetaInfo> ctlSchemaMetaInfoDao;
+  protected CtlSchemaMetaInfoDao<CtlSchemaMetaInfo> ctlSchemaMetaInfoDao;
   @Autowired
   protected ServerProfileSchemaDao<ServerProfileSchema> serverProfileSchemaDao;
 
@@ -788,7 +788,7 @@ public class AbstractTest {
 
   protected CTLSchemaDto generateCTLSchemaDto(String fqn, String tenantId, String applicationId, int version) {
     CTLSchemaDto ctlSchema = new CTLSchemaDto();
-    ctlSchema.setMetaInfo(new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId));
+    ctlSchema.setMetaInfo(new CtlSchemaMetaInfoDto(fqn, tenantId, applicationId));
     ctlSchema.setVersion(version);
     String name = fqn.substring(fqn.lastIndexOf(".") + 1);
     String namespace = fqn.substring(0, fqn.lastIndexOf("."));

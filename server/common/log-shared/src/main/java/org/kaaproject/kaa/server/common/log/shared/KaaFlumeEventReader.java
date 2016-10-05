@@ -55,6 +55,12 @@ public class KaaFlumeEventReader<T extends SpecificRecordBase> {
     return data;
   }
 
+  /**
+   * Decode records from <code>ByteBuffer</code> and return <code>Iterable</code>.
+   *
+   * @param bb the <code>ByteBuffer</code> which decode
+   * @return decoded <code>Iterable</code>
+   */
   public Iterable<T> decodeRecords(ByteBuffer bb) throws IOException {
     byte[] recordDataBody = toByteArray(bb);
     BinaryDecoder recordDataDecoder = DecoderFactory.get().binaryDecoder(recordDataBody, null);

@@ -24,7 +24,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-public abstract class AbstractKaaUserVerifier<T extends SpecificRecordBase> implements UserVerifier {
+public abstract class AbstractKaaUserVerifier<T extends SpecificRecordBase>
+        implements UserVerifier {
   private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaUserVerifier.class);
 
   @Override
@@ -35,13 +36,19 @@ public abstract class AbstractKaaUserVerifier<T extends SpecificRecordBase> impl
       T configuration = converter.fromByteArray(context.getVerifierDto().getRawConfiguration());
       LOG.info("Initializing user verifier {} with {}", getClassName(), configuration);
       init(context, configuration);
-    } catch (IOException e) {
-      LOG.error(MessageFormat.format("Failed to initialize user verifier {0}", getClassName()), e);
-      throw new UserVerifierLifecycleException(e);
+    } catch (IOException initializationUserVerifierException) {
+      LOG.error(MessageFormat.format(
+              "Failed to initialize user verifier {0}",
+              getClassName()), initializationUserVerifierException
+      );
+      throw new UserVerifierLifecycleException(initializationUserVerifierException);
     }
   }
 
-  public abstract void init(UserVerifierContext context, T configuration) throws UserVerifierLifecycleException;
+  public abstract void init(
+          UserVerifierContext context,
+          T configuration
+  ) throws UserVerifierLifecycleException;
 
   /**
    * Gets the configuration class.

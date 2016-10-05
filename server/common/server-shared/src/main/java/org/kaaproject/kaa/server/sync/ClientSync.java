@@ -53,7 +53,18 @@ public final class ClientSync {
 
   }
 
-
+  /**
+   * Create new instance of ClientSync.
+   *
+   * @param requestId          is request id
+   * @param clientSyncMetaData is client sSync meta data
+   * @param profileSync        is  profile sync
+   * @param configurationSync  is  configuration sync
+   * @param notificationSync   is  notification sync
+   * @param userSync           is  user sync
+   * @param eventSync          is  event sync
+   * @param logSync            is  log sync
+   */
   public ClientSync(int requestId,
                     ClientSyncMetaData clientSyncMetaData,
                     ProfileClientSync profileSync,
@@ -153,7 +164,11 @@ public final class ClientSync {
     this.bootstrapSync = bootstrapSync;
   }
 
-
+  /**
+   * Return true if client sync information is valid or false if not.
+   *
+   * @return true if valid, false if not
+   */
   public boolean isValid() {
     ClientSyncMetaData md = this.getClientSyncMetaData();
     // TODO: validate if public key hash matches hash of public key during

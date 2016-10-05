@@ -31,6 +31,9 @@ public class SchemaInfoListBox extends ValueListBox<SchemaInfoDto> {
     super(new SchemaInfoDtoRenderer());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<SchemaInfoDto> emptyList = Collections.emptyList();
     setValue(null);

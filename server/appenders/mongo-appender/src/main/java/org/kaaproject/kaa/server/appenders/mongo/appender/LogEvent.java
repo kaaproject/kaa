@@ -17,15 +17,12 @@
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
 import static com.mongodb.util.JSON.parse;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil.decodeReservedCharacteres;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil.encodeReservedCharacteres;
 
 import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
-import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -47,6 +44,14 @@ public final class LogEvent implements Serializable {
 
   }
 
+  /**
+   * Create new instance of <code>LogEvent</code>.
+   *
+   * @param dto           data transfer object, that contain id, header and event. use these data to
+   *                      assign on appropriate field
+   * @param clientProfile the client profile info
+   * @param serverProfile the server profile info
+   */
   public LogEvent(LogEventDto dto, ProfileInfo clientProfile, ProfileInfo serverProfile) {
     this.id = dto.getId();
     this.header = encodeReservedCharacteres((DBObject) parse(dto.getHeader()));

@@ -22,6 +22,12 @@ public class AppendAsyncResultPojo {
   public boolean isSuccessful;
   public Event event;
 
+  /**
+   * Create new instance of <code>AppendBatchAsyncResultPojo</code>.
+   *
+   * @param isSuccessful is represent successful or not the result
+   * @param event        the event
+   */
   public AppendAsyncResultPojo(boolean isSuccessful, Event event) {
     super();
     this.isSuccessful = isSuccessful;

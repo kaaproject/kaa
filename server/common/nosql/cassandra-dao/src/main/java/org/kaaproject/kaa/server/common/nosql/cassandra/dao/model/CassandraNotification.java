@@ -89,6 +89,13 @@ public final class CassandraNotification implements Notification, Serializable {
   public CassandraNotification() {
   }
 
+  /**
+   * Create new instance of <code>CassandraNotification</code>.
+   *
+   * @param id string that consist of topic id, type, nf version and seqNum, parse this string, get
+   *           ids values and assign these values on fields <code>topicId</code>, <code>type</code>,
+   *           <code>nfVersion</code> and <code>seqNum</code>
+   */
   public CassandraNotification(String id) {
     String[] columns = parseId(id);
     if (columns != null && columns.length == COMPOSITE_ID_SIZE) {
@@ -99,6 +106,12 @@ public final class CassandraNotification implements Notification, Serializable {
     }
   }
 
+  /**
+   * Create new instance of <code>CassandraNotification</code>.
+   *
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
   public CassandraNotification(NotificationDto dto) {
     this.applicationId = dto.getApplicationId();
     this.schemaId = dto.getSchemaId();
@@ -257,18 +270,18 @@ public final class CassandraNotification implements Notification, Serializable {
 
   @Override
   public String toString() {
-    return "CassandraNotification{" +
-        "topicId='" + topicId + '\''
-        + ", type=" + type
-        + ", id='" + id + '\''
-        + ", applicationId='" + applicationId + '\''
-        + ", schemaId='" + schemaId + '\''
-        + ", nfVersion=" + nfVersion
-        + ", seqNum=" + seqNum
-        + ", lastModifyTime=" + lastModifyTime
-        + ", body=" + body
-        + ", expiredAt=" + expiredAt
-        + '}';
+    return "CassandraNotification{"
+            + "topicId='" + topicId + '\''
+            + ", type=" + type
+            + ", id='" + id + '\''
+            + ", applicationId='" + applicationId + '\''
+            + ", schemaId='" + schemaId + '\''
+            + ", nfVersion=" + nfVersion
+            + ", seqNum=" + seqNum
+            + ", lastModifyTime=" + lastModifyTime
+            + ", body=" + body
+            + ", expiredAt=" + expiredAt
+            + '}';
   }
 
   @Override
@@ -302,6 +315,12 @@ public final class CassandraNotification implements Notification, Serializable {
     return dto;
   }
 
+  /**
+   * Get value of field <code>id</code>, if it is blank than generate this field by method
+   * <code>generateId()</code> and return.
+   *
+   * @return id
+   */
   public String getStringId() {
     if (isBlank(id)) {
       generateId();
@@ -309,6 +328,10 @@ public final class CassandraNotification implements Notification, Serializable {
     return id;
   }
 
+  /**
+   * Generate id using <code>topicId</code>, <code>type</code>, <code>nfVersion</code> and
+   * <code>seqNum</code> and assign result on field <code>id</code>
+   */
   public void generateId() {
     StringBuilder builder = new StringBuilder();
     builder.append(topicId)

@@ -56,6 +56,12 @@ public final class CassandraEpRegistrationByEndpointId implements Serializable {
     this.credentialsId = credentialsId;
   }
 
+  /**
+   * Create new instance of <code>CassandraEpRegistrationByEndpointId</code>
+   *
+   * @param endpointRegistration contains endpoint id and credentials id, we use them to create
+   *                             instance of  <code>CassandraEpRegistrationByEndpointId</code>
+   */
   public static CassandraEpRegistrationByEndpointId fromEndpointRegistration(
       EndpointRegistration endpointRegistration) {
     String endpointId = endpointRegistration.getEndpointId();

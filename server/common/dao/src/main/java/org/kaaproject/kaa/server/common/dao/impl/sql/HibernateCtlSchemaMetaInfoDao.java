@@ -25,7 +25,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.ID_PROPERTY;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.CtlSchemaMetaInfoDao;
-import org.kaaproject.kaa.server.common.dao.model.sql.CTLSchemaMetaInfo;
+import org.kaaproject.kaa.server.common.dao.model.sql.CtlSchemaMetaInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -38,8 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchemaMetaInfo>
-        implements CtlSchemaMetaInfoDao<CTLSchemaMetaInfo> {
+public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CtlSchemaMetaInfo>
+        implements CtlSchemaMetaInfoDao<CtlSchemaMetaInfo> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HibernateCtlSchemaMetaInfoDao.class);
 
@@ -47,20 +47,20 @@ public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
   }
 
   @Override
-  protected Class<CTLSchemaMetaInfo> getEntityClass() {
-    return CTLSchemaMetaInfo.class;
+  protected Class<CtlSchemaMetaInfo> getEntityClass() {
+    return CtlSchemaMetaInfo.class;
   }
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-  public CTLSchemaMetaInfo save(CTLSchemaMetaInfo object) {
+  public CtlSchemaMetaInfo save(CtlSchemaMetaInfo object) {
     String tenantId = object.getTenant() != null ? object.getTenant().getStringId() : null;
     String applicationId = object.getApplication()
                            != null ? object.getApplication().getStringId() : null;
     LOG.debug("Try to save or find meta info with fqn [{}], tenantId [{}] and applicationId [{}]",
             object.getFqn(),
         tenantId, applicationId);
-    CTLSchemaMetaInfo uniqueMetaInfo = findByFqnTenantIdAndApplicationId(
+    CtlSchemaMetaInfo uniqueMetaInfo = findByFqnTenantIdAndApplicationId(
             object.getFqn(), tenantId, applicationId);
     if (uniqueMetaInfo == null) {
       uniqueMetaInfo = super.save(object, true);
@@ -91,11 +91,11 @@ public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
-  public CTLSchemaMetaInfo findByFqnTenantIdAndApplicationId(String fqn, String tenantId,
+  public CtlSchemaMetaInfo findByFqnTenantIdAndApplicationId(String fqn, String tenantId,
                                                              String applicationId) {
     LOG.debug("Searching ctl metadata by fqn [{}], tenantId [{}] and applicationId [{}]",
             fqn, tenantId, applicationId);
-    CTLSchemaMetaInfo ctlSchemaMetaInfo = findOneByCriterion(buildSearchCriterion(
+    CtlSchemaMetaInfo ctlSchemaMetaInfo = findOneByCriterion(buildSearchCriterion(
             fqn, tenantId, applicationId));
     if (LOG.isTraceEnabled()) {
       LOG.trace("[{},{},{}] Search result: {}.", fqn, tenantId, applicationId, ctlSchemaMetaInfo);
@@ -107,11 +107,11 @@ public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
   }
 
   @Override
-  public List<CTLSchemaMetaInfo> findSiblingsByFqnTenantIdAndApplicationId(
+  public List<CtlSchemaMetaInfo> findSiblingsByFqnTenantIdAndApplicationId(
           String fqn, String tenantId, String applicationId) {
     LOG.debug("Searching siblings of ctl by fqn [{}], tenantId [{}] and applicationId [{}]",
             fqn, tenantId, applicationId);
-    List<CTLSchemaMetaInfo> ctlSchemaMetaInfos;
+    List<CtlSchemaMetaInfo> ctlSchemaMetaInfos;
     if (isNotBlank(fqn) && isNotBlank(tenantId) && isNotBlank(applicationId)) {
       ctlSchemaMetaInfos = findListByCriterion(
           Restrictions.and(
@@ -156,12 +156,12 @@ public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
   }
 
   @Override
-  public List<CTLSchemaMetaInfo> findExistingFqns(
+  public List<CtlSchemaMetaInfo> findExistingFqns(
           String fqn, String excludingTenantId, String excludingApplicationId) {
     LOG.debug("Searching ctl metadata by fqn [{}], excludingTenantId [{}] "
               + "and excludingApplicationId [{}]",
             fqn, excludingTenantId, excludingApplicationId);
-    List<CTLSchemaMetaInfo> ctlSchemasMetaInfos = findListByCriterion(buildExludingSearchCriterion(
+    List<CtlSchemaMetaInfo> ctlSchemasMetaInfos = findListByCriterion(buildExludingSearchCriterion(
             fqn, excludingTenantId, excludingApplicationId));
     if (LOG.isTraceEnabled()) {
       LOG.trace("[{},{},{}] Search result: {}.", fqn, excludingTenantId, excludingApplicationId,
@@ -174,11 +174,11 @@ public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
   }
 
   @Override
-  public List<CTLSchemaMetaInfo> findOthersByFqnAndTenantId(
+  public List<CtlSchemaMetaInfo> findOthersByFqnAndTenantId(
           String fqn, String tenantId, String excludingId) {
     LOG.debug("Searching other ctl schema meta infos by fqn [{}], "
               + "tenant id [{}] and excluding id [{}]", fqn, tenantId, excludingId);
-    List<CTLSchemaMetaInfo> availableSchemas = findListByCriterion(
+    List<CtlSchemaMetaInfo> availableSchemas = findListByCriterion(
         Restrictions.and(Restrictions.ne(ID_PROPERTY, Long.valueOf(excludingId)),
             Restrictions.eq(CTL_SCHEMA_META_INFO_FQN, fqn),
             Restrictions.or(
@@ -195,9 +195,9 @@ public class HibernateCtlSchemaMetaInfoDao extends HibernateAbstractDao<CTLSchem
   }
 
   @Override
-  public CTLSchemaMetaInfo updateScope(CTLSchemaMetaInfo ctlSchemaMetaInfo) {
+  public CtlSchemaMetaInfo updateScope(CtlSchemaMetaInfo ctlSchemaMetaInfo) {
     LOG.debug("Updating ctl meta info scope {}", ctlSchemaMetaInfo);
-    CTLSchemaMetaInfo metaInfo = findById(ctlSchemaMetaInfo.getStringId());
+    CtlSchemaMetaInfo metaInfo = findById(ctlSchemaMetaInfo.getStringId());
     if (metaInfo != null) {
       metaInfo.setTenant(ctlSchemaMetaInfo.getTenant());
       metaInfo.setApplication(ctlSchemaMetaInfo.getApplication());

@@ -48,6 +48,9 @@ public class ActionsLabel extends Label {
 
   private MenuBar menu = new MenuBar(true);
 
+  /**
+   * UI constructor.
+   */
   @UiConstructor
   public ActionsLabel(String text) {
     super();
@@ -108,6 +111,13 @@ public class ActionsLabel extends Label {
     addMenuItem(null, text, listener);
   }
 
+  /**
+   * Add menu item.
+   *
+   * @param image     the image
+   * @param text      the text
+   * @param listener  the listener
+   */
   public void addMenuItem(ImageResource image, String text,
                           final ActionMenuItemListener listener) {
 

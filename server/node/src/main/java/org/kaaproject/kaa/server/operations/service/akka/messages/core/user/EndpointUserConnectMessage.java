@@ -36,6 +36,9 @@ public class EndpointUserConnectMessage extends EndpointAwareMessage implements 
   private final int cfVersion;
   private final byte[] ucfHash;
 
+  /**
+   * All-args constructor.
+   */
   public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey,
                                     List<EventClassFamilyVersion> ecfVersions,
                                     int cfVersion, byte[] ucfHash, String applicationToken,

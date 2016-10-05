@@ -46,6 +46,12 @@ public class RouteTable {
     localAddressMap = new HashMap<>();
   }
 
+  /**
+   * Add route to table.
+   *
+   * @param key the key of RouteTable associative array
+   * @param address the value of RouteTable associative array
+   */
   public void add(RouteTableKey key, RouteTableAddress address) {
     Map<String, RouteTableAddress> directionRoutes = routes.get(key);
     if (directionRoutes == null) {
@@ -66,6 +72,13 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Get route from table.
+   *
+   * @param key the key of RouteTable associative array
+   * @param target the specific target
+   * @return collection of addresses
+   */
   public Collection<RouteTableAddress> getRoutes(RouteTableKey key, String target) {
     Map<String, RouteTableAddress> directionRoutes = routes.get(key);
     if (directionRoutes != null) {
@@ -81,6 +94,13 @@ public class RouteTable {
     return Collections.emptyList();
   }
 
+  /**
+   * Get routes from table by key set.
+   *
+   * @param keys the keys
+   * @param target the specific target
+   * @return set of addresses
+   */
   public Set<RouteTableAddress> getRoutes(Set<RouteTableKey> keys, String target) {
     Set<RouteTableAddress> result = new HashSet<>();
     for (RouteTableKey key : keys) {
@@ -93,6 +113,12 @@ public class RouteTable {
     return Collections.unmodifiableSet(localAddressMap.keySet());
   }
 
+  /**
+   * Returns local route table keys.
+   *
+   * @param localAddress local address
+   * @return             local route table keys
+   */
   public Set<RouteTableKey> getLocalRouteTableKeys(RouteTableAddress localAddress) {
     Set<RouteTableKey> keys = localAddressMap.get(localAddress);
     if (keys != null) {
@@ -102,16 +128,32 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Clear remote server data.
+   *
+   * @param serverId server identifier
+   */
   public void clearRemoteServerData(String serverId) {
     remoteServersSet.remove(serverId);
     clearReportedAddressMap(serverId);
     clearRoutes(serverId);
   }
 
+  /**
+   * Returns a remote server list.
+   *
+   * @return remote server list
+   */
   public Set<String> getRemoteServers() {
     return Collections.unmodifiableSet(remoteServersSet);
   }
 
+  /**
+   * Register a route info report.
+   *
+   * @param localAddresses local address
+   * @param serverId       server identifier
+   */
   public void registerRouteInfoReport(Set<RouteTableAddress> localAddresses, String serverId) {
     for (RouteTableAddress address : localAddresses) {
       Set<String> serverIds = reportedAddressMap.get(address);
@@ -123,6 +165,13 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Returns whether delivery is required.
+   *
+   * @param serverId server identifier
+   * @param address  address
+   * @return         true if delivery is required otherwise false
+   */
   public boolean isDeliveryRequired(String serverId, RouteTableAddress address) {
     Set<String> servers = reportedAddressMap.get(address);
     return servers == null || !servers.contains(serverId);
@@ -165,6 +214,11 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Clear routes for a specified endpoint.
+   *
+   * @param endpoint endpoint object hash
+   */
   private void clearRoutes(EndpointObjectHash endpoint) {
     Set<Entry<RouteTableKey, Map<String, RouteTableAddress>>> entrySet = routes.entrySet();
     Iterator<Entry<RouteTableKey, Map<String, RouteTableAddress>>> iterator = entrySet.iterator();

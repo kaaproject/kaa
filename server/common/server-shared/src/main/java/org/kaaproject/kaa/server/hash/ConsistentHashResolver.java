@@ -56,6 +56,12 @@ public class ConsistentHashResolver implements OperationsServerResolver {
   private final int replicas;
   private final SortedMap<byte[], OperationsNodeInfo> circle;
 
+  /**
+   * Create new instance of <code>ConsistentHashResolver</code>.
+   *
+   * @param nodes is list of nodes
+   * @param replicas is replicas
+   */
   public ConsistentHashResolver(List<OperationsNodeInfo> nodes, int replicas) {
     this.replicas = replicas;
     this.circle = new ConcurrentSkipListMap<byte[], OperationsNodeInfo>(new ByteArrayComparator());

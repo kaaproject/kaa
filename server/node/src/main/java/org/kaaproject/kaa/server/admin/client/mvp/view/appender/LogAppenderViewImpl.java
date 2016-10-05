@@ -173,6 +173,11 @@ public class LogAppenderViewImpl
     }
   }
 
+  /**
+   * Set metadata list box.
+   *
+   * @param header the log header structure
+   */
   public void setMetadataListBox(List<LogHeaderStructureDto> header) {
     if (header != null) {
       for (LogHeaderStructureDto field : header) {
@@ -181,6 +186,11 @@ public class LogAppenderViewImpl
     }
   }
 
+  /**
+   * Get header.
+   *
+   * @return the log header structure
+   */
   public List<LogHeaderStructureDto> getHeader() {
     List<LogHeaderStructureDto> header = Collections.emptyList();
     if (metadatalistBox != null) {

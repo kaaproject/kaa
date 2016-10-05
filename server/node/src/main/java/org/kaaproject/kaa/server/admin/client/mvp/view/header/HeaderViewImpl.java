@@ -45,6 +45,9 @@ public class HeaderViewImpl extends Composite implements HeaderView {
   Label title;
   private Presenter presenter;
 
+  /**
+   * Instantiates a new HeaderViewImpl.
+   */
   public HeaderViewImpl() {
     settingsLabel = new ActionsLabel(Utils.constants.settings());
     kaaAdminStyle = Utils.kaaAdminStyle;

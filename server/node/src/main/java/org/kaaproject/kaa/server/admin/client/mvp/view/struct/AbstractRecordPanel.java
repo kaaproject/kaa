@@ -34,6 +34,9 @@ public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V>
   protected BaseStructView<T, V> activePanel;
   protected BaseStructView<T, V> inactivePanel;
 
+  /**
+   * The constructor AbstractRecordPanel.
+   */
   public AbstractRecordPanel(HasErrorMessage hasErrorMessage) {
     activePanel = createStructView(hasErrorMessage);
     inactivePanel = createStructView(hasErrorMessage);
@@ -51,6 +54,11 @@ public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V>
     inactivePanel.reset();
   }
 
+  /**
+   * Set data method.
+   * 
+   * @param record the structure record
+   */
   public void setData(StructureRecordDto<T> record) {
     if (record.hasActive()) {
       activePanel.setData(record.getActiveStructureDto());

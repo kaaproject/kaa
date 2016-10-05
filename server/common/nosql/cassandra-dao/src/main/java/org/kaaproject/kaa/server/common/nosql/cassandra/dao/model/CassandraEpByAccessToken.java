@@ -93,9 +93,9 @@ public class CassandraEpByAccessToken implements Serializable {
 
   @Override
   public String toString() {
-    return "CassandraEpByAccessToken{" +
-        "accessToken='" + accessToken + '\'' +
-        ", endpointKeyHash=" + endpointKeyHash +
-        '}';
+    return "CassandraEpByAccessToken{"
+            + "accessToken='" + accessToken + '\''
+            + ", endpointKeyHash=" + endpointKeyHash
+            + '}';
   }
 }

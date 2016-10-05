@@ -33,6 +33,9 @@ public final class StatusRequestMessage {
     this(UUID.randomUUID(), listener);
   }
 
+  /**
+   * Instantiates the StatusRequestMessage.
+   */
   public StatusRequestMessage(UUID id, AkkaStatusListener listener) {
     super();
     this.id = id;

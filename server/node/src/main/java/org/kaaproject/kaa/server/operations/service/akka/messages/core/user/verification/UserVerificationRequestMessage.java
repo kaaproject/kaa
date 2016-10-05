@@ -28,6 +28,9 @@ public class UserVerificationRequestMessage {
   private final String userId;
   private final String accessToken;
 
+  /**
+   * All-args constructor.
+   */
   public UserVerificationRequestMessage(ActorRef originator, String verifierId, String userId,
                                         String accessToken) {
     super();

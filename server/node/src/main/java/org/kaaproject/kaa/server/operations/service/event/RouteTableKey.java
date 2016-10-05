@@ -27,6 +27,12 @@ public final class RouteTableKey implements Serializable {
   private final String appToken;
   private final EventClassFamilyVersion ecfVersion;
 
+  /**
+   * Create new instance of <code>RouteTableKey</code>.
+   *
+   * @param appToken the app token
+   * @param ecfVersion the ecf version
+   */
   public RouteTableKey(String appToken, EventClassFamilyVersion ecfVersion) {
     super();
     this.appToken = appToken;

@@ -63,6 +63,9 @@ public abstract class AbstractRecordActivity
 
   protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
 
+  /**
+   * The constructor.
+   */
   public AbstractRecordActivity(P place, ClientFactory clientFactory) {
     this.place = place;
     this.applicationId = place.getApplicationId();

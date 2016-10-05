@@ -83,6 +83,11 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
     this.id = id;
   }
 
+  /**
+   * Create new instance of <code>Schema</code>.
+   *
+   * @param dto data transfer object contain data that assign on fields of new instance
+   */
   public Schema(T dto) {
     if (dto != null) {
       this.id = getLongId(dto);
@@ -162,6 +167,11 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
     this.application = application;
   }
 
+  /**
+   * Get id of application.
+   *
+   * @return id, return null if application hasn't id
+   */
   public String getApplicationId() {
     Long id = null;
     if (application != null) {
@@ -255,8 +265,13 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
 
   @Override
   public String toString() {
-    return "Schema [id=" + id + ", version=" + version + ", schema=" + schema + ", name=" + name
-        + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", endpointCount=" + endpointCount + "]";
+    return "Schema [id=" + id
+            + ", version=" + version
+            + ", schema=" + schema + ", name=" + name
+            + ", description=" + description
+            + ", createdUsername=" + createdUsername
+            + ", createdTime=" + createdTime
+            + ", endpointCount=" + endpointCount + "]";
   }
 
   @Override
@@ -276,6 +291,11 @@ public abstract class Schema<T extends AbstractSchemaDto> extends GenericModel<T
     return dto;
   }
 
+  /**
+   * Return <code>VersionDto</code> instance that contain id and version of schema.
+   *
+   * @return dto
+   */
   public VersionDto toVersionDto() {
     VersionDto dto = new VersionDto();
     dto.setId(getStringId());

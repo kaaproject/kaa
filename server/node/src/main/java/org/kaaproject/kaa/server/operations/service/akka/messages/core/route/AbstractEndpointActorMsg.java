@@ -21,6 +21,9 @@ public class AbstractEndpointActorMsg implements EndpointActorMsg {
   private final EndpointAddress address;
   private final ActorClassifier classifier;
 
+  /**
+   * All-args constructor.
+   */
   public AbstractEndpointActorMsg(EndpointAddress address, ActorClassifier classifier) {
     super();
     this.address = address;

@@ -64,6 +64,13 @@ public class PropertiesFacade {
     return getSession().createCriteria(Properties.class);
   }
 
+  /**
+   * Build and return properties by specific properties class.
+   *
+   * @param propertiesClass the class of properties
+   * @param <S>             the class of properties
+   * @return property instance
+   */
   public <S extends SpecificRecordBase> S getSpecificProperties(Class<S> propertiesClass) {
     Properties entity = findOrCreateByClass(propertiesClass);
     S specificProperties = null;
@@ -89,6 +96,14 @@ public class PropertiesFacade {
     return toDto(entity, propertiesClass);
   }
 
+  /**
+   * Found property from database or create new if not found, update it and save to database.
+   *
+   * @param propertiesDto   the property to update
+   * @param propertiesClass the property class
+   * @param <S>             the property class
+   * @return property dto
+   */
   public <S extends SpecificRecordBase> PropertiesDto editPropertiesDto(
       PropertiesDto propertiesDto,Class<S> propertiesClass) throws Exception {
     Properties entity = findOrCreateByClass(propertiesClass);

@@ -53,6 +53,11 @@ public class HttpComponentsRequestFactoryBasicAuth extends HttpComponentsClientH
   private HttpHost host;
   private CredentialsProvider credsProvider;
 
+  /**
+   * Create new instance of <code>HttpComponentsRequestFactoryBasicAuth</code>.
+   *
+   * @param host the http host
+   */
   public HttpComponentsRequestFactoryBasicAuth(HttpHost host) {
     super(createHttpClient());
     this.host = host;
@@ -89,6 +94,12 @@ public class HttpComponentsRequestFactoryBasicAuth extends HttpComponentsClientH
     return credsProvider;
   }
 
+  /**
+   * Set credentials to field <code>credsProvider</code>.
+   *
+   * @param username the username, part of credentials
+   * @param password the password, part of credentials
+   */
   public void setCredentials(String username, String password) {
     credsProvider.setCredentials(
         new AuthScope(host.getHostName(), host.getPort(), AuthScope.ANY_REALM),

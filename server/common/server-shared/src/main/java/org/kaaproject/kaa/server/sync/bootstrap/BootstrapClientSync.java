@@ -24,6 +24,12 @@ public final class BootstrapClientSync {
   private final int requestId;
   private final List<ProtocolVersionId> keys;
 
+  /**
+   * Create new instance of <code>BootstrapClientSync</code>.
+   *
+   * @param requestId is request id
+   * @param keys is <code>List</code> of protocol version ids
+   */
   public BootstrapClientSync(int requestId, List<ProtocolVersionId> keys) {
     super();
     this.requestId = requestId;

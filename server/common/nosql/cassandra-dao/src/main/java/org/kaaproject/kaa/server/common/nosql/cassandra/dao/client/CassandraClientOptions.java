@@ -57,6 +57,12 @@ public class CassandraClientOptions {
 
   private QueryOptions queryOptions;
 
+  /**
+   * Get value of field queryOptions. If it's null, than create new instance and assign on this
+   * field.
+   *
+   * @return queryOptions
+   */
   public QueryOptions getQueryOptions() {
     if (queryOptions == null) {
       queryOptions = new QueryOptions();
@@ -70,6 +76,12 @@ public class CassandraClientOptions {
     this.queryOptions = queryOptions;
   }
 
+  /**
+   * Getter of socketOptions. If this field is null, than create new instance of
+   * <code>SocketOptions</code> and set default values.
+   *
+   * @return value of field <code>socketOptions</code>
+   */
   public SocketOptions getSocketOptions() {
     if (socketOptions == null) {
       socketOptions = new SocketOptions();

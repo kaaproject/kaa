@@ -30,6 +30,9 @@ public class PluginInfoListBox extends ValueListBox<PluginInfoDto> {
     super(new AppenderInfoListBoxRenderer());
   }
 
+  /**
+   * Reset.
+   */
   public void reset() {
     List<PluginInfoDto> emptyList = Collections.emptyList();
     setValue(null);

@@ -230,6 +230,9 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V>
 
   protected abstract void onShown();
 
+  /**
+   * Disable Visibility.
+   */
   public void reset() {
     dateTimeCreatedLabel.setVisible(false);
     createdDateTime.setVisible(false);
@@ -266,6 +269,9 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V>
     registrations.clear();
   }
 
+  /**
+   * Set read only.
+   */
   public void setReadOnly() {
     saveButton.setVisible(false);
     activateButton.setVisible(false);
@@ -279,6 +285,9 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V>
     registrations.clear();
   }
 
+  /**
+   * Set data.
+   */
   public void setData(T struct) {
     this.active = struct.getStatus() != UpdateStatus.INACTIVE;
     if (!isEmpty(struct.getCreatedUsername())) {
@@ -341,6 +350,9 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V>
     fireChanged();
   }
 
+  /**
+   * Set body label.
+   */
   public void setBodyLabelText(String text) {
     if (hasLabel()) {
       bodyLabel.setText(text);
@@ -372,6 +384,9 @@ public abstract class BaseStructView<T extends AbstractStructureDto, V>
     fireChanged();
   }
 
+  /**
+   * Fire changed.
+   */
   public void fireChanged() {
     if (!this.active) {
       boolean valid = validateBody();

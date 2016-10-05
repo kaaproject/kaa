@@ -26,7 +26,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.kaaproject.avro.ui.shared.Fqn;
 import org.kaaproject.avro.ui.shared.FqnVersion;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.control.service.ControlService;
@@ -111,9 +111,16 @@ public class CtlSchemaParser {
     return parser.parse(avroSchema);
   }
 
+  /**
+   * Parse CTL schema from string and return <code>CTLSchemaDto</code> instance.
+   *
+   * @param body is body of CTL schema
+   * @param applicationId is application id
+   * @return <code>CTLSchemaDto</code> instance
+   */
   public CTLSchemaDto parse(String body, String applicationId)
       throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
-    CTLSchemaMetaInfoDto metaInfo = new CTLSchemaMetaInfoDto();
+    CtlSchemaMetaInfoDto metaInfo = new CtlSchemaMetaInfoDto();
     String fqn = null;
 
     ObjectNode object = new ObjectMapper().readValue(body, ObjectNode.class);
@@ -130,7 +137,7 @@ public class CtlSchemaParser {
     } else {
       fqn = object.get(NAMESPACE).getTextValue() + "." + object.get(NAME).getTextValue();
     }
-    metaInfo = new CTLSchemaMetaInfoDto(fqn, tenantId, applicationId);
+    metaInfo = new CtlSchemaMetaInfoDto(fqn, tenantId, applicationId);
     CTLSchemaDto schema = new CTLSchemaDto();
     schema.setMetaInfo(metaInfo);
 

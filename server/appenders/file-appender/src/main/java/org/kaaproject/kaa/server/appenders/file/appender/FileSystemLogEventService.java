@@ -35,7 +35,7 @@ public interface FileSystemLogEventService {
    * Create log user and log group and give them permissions to access
    * logs of application with specific id.
    *
-   * @param applicationId the application id
+   * @param appender      the appender
    * @param config        the File log appender config
    * @param path          the path to logs directory
    */
