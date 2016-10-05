@@ -49,6 +49,9 @@ public class GlobalEndpointActorMessageProcessor
   private final ClusterService clusterService;
   private final OperationsService operationsService;
 
+  /**
+   * All-args constructor.
+   */
   public GlobalEndpointActorMessageProcessor(AkkaContext context, String appToken,
                                              EndpointObjectHash key, String actorKey) {
     super(new GlobalEndpointActorState(Base64Util.encode(key.getData()), actorKey),
@@ -62,6 +65,11 @@ public class GlobalEndpointActorMessageProcessor
     routes = new RouteTable<>(nodeId);
   }
 
+  /**
+   * Process an endpoint route message.
+   *
+   * @param message endpoint route message
+   */
   public void processRouteMessage(EndpointRouteMessage message) {
     LOG.debug("[{}] Processing {} operation for address {}",
         endpointKey, message.getOperation(), message.getAddress());
@@ -78,6 +86,11 @@ public class GlobalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process a cluster update.
+   *
+   * @param context actor context
+   */
   public void processClusterUpdate(ActorContext context) {
     if (!clusterService.isMainEntityNode(key)) {
       LOG.debug("[{}] No longer a global endpoint node for {}", endpointKey);

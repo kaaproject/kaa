@@ -108,7 +108,9 @@ public class LocalEndpointActorMessageProcessor
 
   private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
 
-
+  /**
+   * All-args constructor.
+   */
   public LocalEndpointActorMessageProcessor(AkkaContext context,
                                             String appToken,
                                             EndpointObjectHash key,
@@ -123,10 +125,22 @@ public class LocalEndpointActorMessageProcessor
     this.userAttachResponseMap = new LinkedHashMap<>();
   }
 
+  /**
+   * Process an endpoint sync.
+   *
+   * @param context actor context
+   * @param message sync request message
+   */
   public void processEndpointSync(ActorContext context, SyncRequestMessage message) {
     sync(context, message);
   }
 
+  /**
+   * Process an endpoint event receive message.
+   *
+   * @param context actor context
+   * @param message endpoint event receive message
+   */
   public void processEndpointEventReceiveMessage(ActorContext context,
                                                  EndpointEventReceiveMessage message) {
     EndpointEventDeliveryMessage response;
@@ -153,6 +167,11 @@ public class LocalEndpointActorMessageProcessor
     tellParent(context, response);
   }
 
+  /**
+   * Process a thrift notification.
+   *
+   * @param context actor context.
+   */
   public void processThriftNotification(ActorContext context) {
     Set<ChannelMetaData> channels = state.getChannelsByTypes(
         TransportType.CONFIGURATION, TransportType.NOTIFICATION);
@@ -161,6 +180,12 @@ public class LocalEndpointActorMessageProcessor
     syncChannels(context, channels, true, true);
   }
 
+  /**
+   * Process a user configuration update message.
+   *
+   * @param context actor context
+   * @param message endpoint user configuration update message
+   */
   public void processUserConfigurationUpdate(ActorContext context,
                                              EndpointUserConfigurationUpdateMessage message) {
     if (message.getUserConfigurationUpdate() != null) {
@@ -210,6 +235,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process a notification message.
+   *
+   * @param context actor context
+   * @param message notification message
+   */
   public void processNotification(ActorContext context, NotificationMessage message) {
     LOG.debug("[{}][{}] Processing notification message {}", endpointKey, actorKey, message);
 
@@ -242,6 +273,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process a request timeout message.
+   *
+   * @param context actor context
+   * @param message request timeout message
+   */
   public void processRequestTimeoutMessage(ActorContext context, RequestTimeoutMessage message) {
     ChannelMetaData channel = state.getChannelByRequestId(message.getRequestId());
     if (channel != null) {
@@ -338,7 +375,7 @@ public class LocalEndpointActorMessageProcessor
     if (context.getStatus() != SyncStatus.SUCCESS) {
       return context;
     }
-    if (state.isUcfHashRequiresIntialization()) {
+    if (state.isUcfHashRequiresInitialization()) {
       byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
       LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}",
           endpointKey, context.getRequestHash(),
@@ -779,6 +816,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process an endpoint user action message.
+   *
+   * @param context actor context
+   * @param message endpoint user action message
+   */
   public void processEndpointUserActionMessage(ActorContext context,
                                                EndpointUserActionMessage message) {
     Set<ChannelMetaData> eventChannels = state.getChannelsByTypes(
@@ -836,6 +879,13 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process disconnect message.
+   *
+   * @param context actor context
+   * @param message channel aware message
+   * @return        true if channel is disconnected otherwise false
+   */
   public boolean processDisconnectMessage(ActorContext context, ChannelAware message) {
     LOG.debug("[{}][{}] Received disconnect message for channel [{}]",
         endpointKey, actorKey, message.getChannelUuid());
@@ -851,6 +901,13 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process a ping message.
+   *
+   * @param context actor context
+   * @param message channel aware message
+   * @return        true if channel is found otherwise false
+   */
   public boolean processPingMessage(ActorContext context, ChannelAware message) {
     LOG.debug("[{}][{}] Received ping message for channel [{}]",
         endpointKey, actorKey, message.getChannelUuid());
@@ -870,6 +927,14 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   *
+   * Process a timeout message.
+   *
+   * @param context actor context
+   * @param message channel timeout message
+   * @return        true if channel is removed otherwise false
+   */
   public boolean processChannelTimeoutMessage(ActorContext context,
                                               ChannelTimeoutMessage message) {
     LOG.debug("[{}][{}] Received channel timeout message for channel [{}]",
@@ -900,6 +965,12 @@ public class LocalEndpointActorMessageProcessor
     }
   }
 
+  /**
+   * Process a log delivery message.
+   *
+   * @param context actor context
+   * @param message log delivery message
+   */
   public void processLogDeliveryMessage(ActorContext context, LogDeliveryMessage message) {
     LOG.debug("[{}][{}] Received log delivery message for request [{}] with status {}",
         endpointKey, actorKey, message.getRequestId(),
@@ -921,6 +992,12 @@ public class LocalEndpointActorMessageProcessor
     logUploadResponseMap.clear();
   }
 
+  /**
+   * Process a user verification message.
+   *
+   * @param context actor context
+   * @param message user verification response message
+   */
   public void processUserVerificationMessage(ActorContext context,
                                              UserVerificationResponseMessage message) {
     LOG.debug("[{}][{}] Received user verification message for request [{}] with status {}",

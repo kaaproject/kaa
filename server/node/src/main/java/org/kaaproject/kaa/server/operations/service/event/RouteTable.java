@@ -177,6 +177,12 @@ public class RouteTable {
     return servers == null || !servers.contains(serverId);
   }
 
+  /**
+   * Remove a local address.
+   *
+   * @param endpoint endpoint object hash
+   * @return         removed address
+   */
   public RouteTableAddress removeLocal(EndpointObjectHash endpoint) {
     clearRoutes(endpoint);
     RouteTableAddress addressToRemove = null;
@@ -252,6 +258,11 @@ public class RouteTable {
     }
   }
 
+  /**
+   * Remove a route table address.
+   *
+   * @param address address
+   */
   public void removeByAddress(RouteTableAddress address) {
     Set<Entry<RouteTableKey, Map<String, RouteTableAddress>>> entrySet = routes.entrySet();
     Iterator<Entry<RouteTableKey, Map<String, RouteTableAddress>>> iterator = entrySet.iterator();

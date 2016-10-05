@@ -22,6 +22,9 @@ public abstract class AbstractEndpointActorState {
   protected final String actorKey;
   private long lastActivityTime;
 
+  /**
+   * All-args constructor.
+   */
   public AbstractEndpointActorState(String endpointKey, String actorKey) {
     super();
     this.endpointKey = endpointKey;

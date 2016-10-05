@@ -49,6 +49,9 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
   private boolean ucfHashIntialized;
   private byte[] ucfHash;
 
+  /**
+   * All-args constructor.
+   */
   public LocalEndpointActorState(String endpointKey, String actorKey) {
     super(endpointKey, actorKey);
     this.channelMap = new ChannelMap(endpointKey, actorKey);
@@ -171,12 +174,22 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
     this.subscriptionStates = new HashMap<>(subscriptionStates);
   }
 
-  public boolean isUcfHashRequiresIntialization() {
+  /**
+   * Returns whether hash requires initialization.
+   *
+   * @return true if hash requires initialization otherwise false
+   */
+  public boolean isUcfHashRequiresInitialization() {
     return isValidForUser() && !ucfHashIntialized;
   }
 
+  /**
+   * Returns whether user configuration update is pending.
+   *
+   * @return true if user configuration update is pending otherwise false
+   */
   public boolean isUserConfigurationUpdatePending() {
-    if (!isValidForUser() || isUcfHashRequiresIntialization()) {
+    if (!isValidForUser() || isUcfHashRequiresInitialization()) {
       return false;
     }
     return !Arrays.equals(ucfHash, endpointProfile.getUserConfigurationHash());

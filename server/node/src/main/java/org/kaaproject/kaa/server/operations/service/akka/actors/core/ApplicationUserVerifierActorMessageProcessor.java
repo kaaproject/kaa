@@ -98,6 +98,11 @@ public class ApplicationUserVerifierActorMessageProcessor {
     }
   }
 
+  /**
+   * Verifies a user.
+   *
+   * @param message user verification request message
+   */
   public void verifyUser(UserVerificationRequestMessage message) {
     UserVerifier verifier = userVerifiers.get(message.getVerifierId());
     if (verifier != null) {
@@ -111,6 +116,11 @@ public class ApplicationUserVerifierActorMessageProcessor {
     }
   }
 
+  /**
+   * Process a notification.
+   *
+   * @param notification notification
+   */
   public void processNotification(Notification notification) {
     LOG.debug("Process user verifier notification [{}]", notification);
     String verifierToken = notification.getUserVerifierToken();
