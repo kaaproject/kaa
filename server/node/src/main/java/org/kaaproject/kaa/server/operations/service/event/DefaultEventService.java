@@ -177,6 +177,9 @@ public class DefaultEventService implements EventService {
     return ecfvThL;
   }
 
+  /**
+   * Bean init-method.
+   */
   @PostConstruct
   public void initBean() {
     LOG.info("Init default event service.");
@@ -185,6 +188,9 @@ public class DefaultEventService implements EventService {
         operationsServerConfig.getMaxNumberNeighborConnections());
   }
 
+  /**
+   * Bean destroy-method.
+   */
   @PreDestroy
   public void onStop() {
     if (neighbors != null) {

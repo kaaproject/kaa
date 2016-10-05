@@ -146,6 +146,15 @@ public class BootstrapTransportService
     private final boolean supportUnencryptedConnection;
     private final OperationsServerListService opsListService;
 
+    /**
+     * Create new instance of <code>BootstrapMessageHandler</code>.
+     *
+     * @param opsListService the ops list service
+     * @param executor the executor
+     * @param platformProtocols the platform protocols
+     * @param keyPair the key pair
+     * @param supportUnencryptedConnection the support unencrypted connection
+     */
     public BootstrapMessageHandler(OperationsServerListService opsListService,
                                    ExecutorService executor,
                                    Set<String> platformProtocols,

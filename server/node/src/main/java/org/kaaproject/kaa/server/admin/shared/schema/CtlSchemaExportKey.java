@@ -31,6 +31,12 @@ public class CtlSchemaExportKey implements Serializable {
     super();
   }
 
+  /**
+   * Create new instance of <code>CtlSchemaExportKey</code>.
+   *
+   * @param ctlSchemaId the CTL schema id
+   * @param exportMethod the export method
+   */
   public CtlSchemaExportKey(String ctlSchemaId,
                             CTLSchemaExportMethod exportMethod) {
     super();

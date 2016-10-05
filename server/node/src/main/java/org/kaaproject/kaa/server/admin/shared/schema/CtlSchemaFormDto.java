@@ -30,6 +30,12 @@ public class CtlSchemaFormDto extends CTLSchemaDto {
     super();
   }
 
+  /**
+   * Create new instance of <code>CtlSchemaFormDto</code>.
+   *
+   * @param ctlSchema is ctl schema, get data from it and put to new instance of
+   *                  <code>CtlSchemaFormDto</code>
+   */
   public CtlSchemaFormDto(CTLSchemaDto ctlSchema) {
     super();
     setId(ctlSchema.getId());

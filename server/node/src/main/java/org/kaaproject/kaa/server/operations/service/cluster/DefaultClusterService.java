@@ -86,6 +86,9 @@ public class DefaultClusterService implements ClusterService {
     super();
   }
 
+  /**
+   * Bean init-method.
+   */
   @PostConstruct
   public void initBean() {
     LOG.info("Init default cluster service.");
@@ -93,6 +96,9 @@ public class DefaultClusterService implements ClusterService {
         operationsServerConfig.getMaxNumberNeighborConnections());
   }
 
+  /**
+   * bean destroy method.
+   */
   @PreDestroy
   public void onStop() {
     if (neighbors != null) {

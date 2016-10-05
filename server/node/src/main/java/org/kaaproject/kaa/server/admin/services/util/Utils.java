@@ -47,6 +47,13 @@ public class Utils {
     return new KaaAdminServiceException(message, ServiceErrorCode.GENERAL_ERROR);
   }
 
+  /**
+   * Handle exception.
+   *
+   * @param exception is <code>Exception</code> instance
+   * @param logException is true if need write logs
+   * @return instance of <code>KaaAdminServiceException</code>
+   */
   public static KaaAdminServiceException handleException(Exception exception,
                                                          boolean logException) {
     if (logException) {
@@ -73,6 +80,13 @@ public class Utils {
     }
   }
 
+  /**
+   * Throw exception if reference is null and return this reference if not.
+   *
+   * @param reference is reference to check
+   * @param <T> is type of reference
+   * @return reference
+   */
   public static <T> T checkNotNull(T reference) throws KaaAdminServiceException {
     if (reference == null) {
       throw new KaaAdminServiceException(
@@ -81,6 +95,13 @@ public class Utils {
     return reference;
   }
 
+  /**
+   * Throw exception if field isn't unique - the storedEmails already contains this field.
+   *
+   * @param field        is checking field
+   * @param storedEmails is <code>Set</code> where search field
+   * @param fieldName    is field name
+   */
   public static void checkFieldUniquieness(String field,
                                            Set<String> storedEmails,
                                            String fieldName)
@@ -90,11 +111,16 @@ public class Utils {
     if (!isAdded) {
       throw new KaaAdminServiceException(
           String.format("Entered %s is already used by another user!", fieldName),
-          ServiceErrorCode.INVALID_ARGUMENTS);
+          ServiceErrorCode.INVALID_ARGUMENTS
+      );
     }
   }
 
-
+  /**
+   * Get authenticated user from spring security holder.
+   *
+   * @return user data transfer object
+   */
   public static AuthUserDto getCurrentUser() throws KaaAdminServiceException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication.getPrincipal() instanceof AuthUserDto) {

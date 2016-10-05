@@ -111,6 +111,13 @@ public class CtlSchemaParser {
     return parser.parse(avroSchema);
   }
 
+  /**
+   * Parse CTL schema from string and return <code>CTLSchemaDto</code> instance.
+   *
+   * @param body is body of CTL schema
+   * @param applicationId is application id
+   * @return <code>CTLSchemaDto</code> instance
+   */
   public CTLSchemaDto parse(String body, String applicationId)
       throws ControlServiceException, JsonParseException, JsonMappingException, IOException {
     CtlSchemaMetaInfoDto metaInfo = new CtlSchemaMetaInfoDto();
