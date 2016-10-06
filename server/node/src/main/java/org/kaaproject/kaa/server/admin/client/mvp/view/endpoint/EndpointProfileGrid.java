@@ -119,7 +119,7 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
 
     @Override
     protected SimplePager getPager() {
-        return new SimplePager(SimplePager.TextLocation.CENTER, pagerResources, false, 0, true){
+        return new SimplePager(SimplePager.TextLocation.CENTER, pagerResources, false, 0, false){
             @Override
             protected String createText() {
                 Range range = getDisplay().getVisibleRange();

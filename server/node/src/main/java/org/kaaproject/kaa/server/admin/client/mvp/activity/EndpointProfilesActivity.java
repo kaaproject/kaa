@@ -137,6 +137,7 @@ public class EndpointProfilesActivity extends AbstractActivity implements BaseLi
             }
         }));
 
+
         reset();
     }
 
