@@ -41,9 +41,9 @@ public:
      *
      * @param response the response from the server
      * @see LogSyncResponse
-     *
+     * @param deliveryTime The time point the log was delivered at
      */
-    virtual void onLogSyncResponse(const LogSyncResponse& response) = 0;
+    virtual void onLogSyncResponse(const LogSyncResponse& response, std::size_t deliveryTime) = 0;
 
     virtual ~ILoggingTransport() {}
 };

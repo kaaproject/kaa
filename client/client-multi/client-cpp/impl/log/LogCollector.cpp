@@ -294,10 +294,9 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
     return request;
 }
 
-void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
+void LogCollector::onLogUploadResponse(const LogSyncResponse& response, std::size_t deliveryTime)
 {
     if (!response.deliveryStatuses.is_null()) {
-        auto deliveryTime = TimeUtils::getCurrentTimeInMs();
         const auto& deliveryStatuses = response.deliveryStatuses.get_array();
 
         for (const auto& status : deliveryStatuses) {

@@ -34,7 +34,7 @@ public:
     virtual void sync();
 
     virtual std::shared_ptr<LogSyncRequest> createLogSyncRequest();
-    virtual void onLogSyncResponse(const LogSyncResponse& response);
+    virtual void onLogSyncResponse(const LogSyncResponse& response, std::size_t deliveryTime);
 
 private:
     ILogProcessor&   logProcessor_;
