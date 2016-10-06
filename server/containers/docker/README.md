@@ -73,7 +73,7 @@ Base image configuration is done using the following environment variables:
 You can use some prepared files in **server/containers/docker/docker-compose-1-node** folder. 
 
 First of all in **server/containers/docker/using-compose/kaa-example.env** please specify the 
-**TRANSPORT_PUBLIC_INTERFACE=**
+**TRANSPORT_PUBLIC_INTERFACE**
 
 For getting your public host just run
 
