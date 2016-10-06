@@ -78,7 +78,9 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
 
   };
 
-
+  /**
+   * Instantiates a new CassandraLogAppender.
+   */
   public CassandraLogAppender() {
     super(CassandraConfig.class);
     scheduler.scheduleWithFixedDelay(new Runnable() {
@@ -137,13 +139,15 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
                   listener.onSuccess();
                   cassandraSuccessLogCount.getAndAdd(logCount);
                   break;
+                default:
+                  break;
               }
               LOG.debug("[{}] appended {} logs to cassandra collection", tableName, logEventPack.getEvents().size());
             } else {
               listener.onInternalError();
             }
-          } catch (Exception e) {
-            LOG.warn("Got exception. Can't process log events", e);
+          } catch (Exception ex) {
+            LOG.warn("Got exception. Can't process log events", ex);
             listener.onInternalError();
           }
         }
@@ -167,8 +171,8 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
       executor = Executors.newFixedThreadPool(executorPoolSize);
       callbackExecutor = Executors.newFixedThreadPool(callbackPoolSize);
       LOG.info("Cassandra log appender initialized");
-    } catch (Exception e) {
-      LOG.error("Failed to init cassandra log appender: ", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to init cassandra log appender: ", ex);
     }
   }
 
@@ -229,9 +233,9 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
         GenericRecord decodedLog = eventConverter.decodeBinary(logEvent.getLogData());
         events.add(new CassandraLogEventDto(header, decodedLog));
       }
-    } catch (IOException e) {
-      LOG.error("Unexpected IOException while decoding LogEvents", e);
-      throw e;
+    } catch (IOException ex) {
+      LOG.error("Unexpected IOException while decoding LogEvents", ex);
+      throw ex;
     }
     return events;
   }
@@ -286,12 +290,12 @@ public class CassandraLogAppender extends AbstractLogAppender<CassandraConfig> {
     }
 
     @Override
-    public void onFailure(Throwable t) {
+    public void onFailure(Throwable throwable) {
       cassandraFailureLogCount.getAndAdd(size);
-      LOG.warn("Failed to store record", t);
-      if (t instanceof UnsupportedFeatureException) {
+      LOG.warn("Failed to store record", throwable);
+      if (throwable instanceof UnsupportedFeatureException) {
         callback.onRemoteError();
-      } else if (t instanceof IOException) {
+      } else if (throwable instanceof IOException) {
         callback.onConnectionError();
       } else {
         callback.onInternalError();

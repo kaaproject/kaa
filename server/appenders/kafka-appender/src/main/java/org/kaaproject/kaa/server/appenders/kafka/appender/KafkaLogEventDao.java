@@ -43,13 +43,16 @@ public class KafkaLogEventDao implements LogEventDao {
   private static final String KEY_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
   private static final String VALUE_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
 
-  private final Random RANDOM = new Random();
+  private static final Random RANDOM = new Random();
 
   private KafkaProducer<String, String> producer;
   private KafkaConfig configuration;
   private String topicName;
   private int partitionCount;
 
+  /**
+   * Instantiates a new KafkaLogEventDao.
+   */
   public KafkaLogEventDao(KafkaConfig configuration) {
     if (configuration == null) {
       throw new IllegalArgumentException("Configuration shouldn't be null");
@@ -58,13 +61,13 @@ public class KafkaLogEventDao implements LogEventDao {
     this.configuration = configuration;
     this.topicName = configuration.getTopic();
     this.partitionCount = configuration.getPartitionCount();
-    Properties kafkaProperties = new Properties();
     StringBuilder serverList = new StringBuilder();
     for (KafkaServer server : configuration.getKafkaServers()) {
       serverList.append(server.getHost() + ":" + server.getPort() + ",");
     }
     serverList = serverList.deleteCharAt(serverList.length() - 1);
     LOG.info("Init kafka cluster with property {}={}", ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList);
+    Properties kafkaProperties = new Properties();
     kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, serverList.toString());
     LOG.info("Init kafka cluster with property {}={}", ProducerConfig.ACKS_CONFIG,
         configuration.getKafkaAcknowledgement());
@@ -97,11 +100,11 @@ public class KafkaLogEventDao implements LogEventDao {
     for (KafkaLogEventDto dto : logEventDtoList) {
       ProducerRecord<String, String> recordToWrite;
       if (configuration.getUseDefaultPartitioner()) {
-        recordToWrite = new ProducerRecord<String, String>(topicName, getKey(dto), formKafkaJSON(dto,
+        recordToWrite = new ProducerRecord<String, String>(topicName, getKey(dto), formKafkaJson(dto,
             eventConverter, headerConverter));
       } else {
-        recordToWrite = new ProducerRecord<String, String>(topicName, calculatePartitionID(dto), getKey(dto),
-            formKafkaJSON(dto, eventConverter, headerConverter));
+        recordToWrite = new ProducerRecord<String, String>(topicName, calculatePartitionId(dto), getKey(dto),
+            formKafkaJson(dto, eventConverter, headerConverter));
       }
       results.add(producer.send(recordToWrite, callback));
     }
@@ -116,7 +119,7 @@ public class KafkaLogEventDao implements LogEventDao {
     }
   }
 
-  private int calculatePartitionID(KafkaLogEventDto eventDto) {
+  private int calculatePartitionId(KafkaLogEventDto eventDto) {
     return eventDto.hashCode() % partitionCount;
   }
 
@@ -135,15 +138,15 @@ public class KafkaLogEventDao implements LogEventDao {
     }
   }
 
-  private String formKafkaJSON(KafkaLogEventDto dto, GenericAvroConverter<GenericRecord> eventConverter,
+  private String formKafkaJson(KafkaLogEventDto dto, GenericAvroConverter<GenericRecord> eventConverter,
                                GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
-    String eventJSON = eventConverter.encodeToJson(dto.getEvent());
-    String headerJSON = headerConverter.encodeToJson(dto.getHeader());
+    String eventJson = eventConverter.encodeToJson(dto.getEvent());
+    String headerJson = headerConverter.encodeToJson(dto.getHeader());
     StringBuilder result = new StringBuilder("{");
-    if (headerJSON != null && !headerJSON.isEmpty()) {
-      result.append("\"header\":" + headerJSON + ",");
+    if (headerJson != null && !headerJson.isEmpty()) {
+      result.append("\"header\":" + headerJson + ",");
     }
-    result.append("\"event\":" + eventJSON + "}");
+    result.append("\"event\":" + eventJson + "}");
     return result.toString();
   }
 

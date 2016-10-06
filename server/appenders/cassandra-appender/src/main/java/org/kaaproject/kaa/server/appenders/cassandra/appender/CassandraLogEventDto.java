@@ -24,6 +24,9 @@ public class CassandraLogEventDto {
   private final RecordHeader header;
   private final GenericRecord event;
 
+  /**
+   * Instantiates a new CassandraLogEventDto.
+   */
   public CassandraLogEventDto(RecordHeader header, GenericRecord event) {
     super();
     this.header = header;

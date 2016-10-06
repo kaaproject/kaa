@@ -28,6 +28,9 @@ public class KafkaLogEventDto implements Serializable {
   private final RecordHeader header;
   private final GenericRecord event;
 
+  /**
+   * Instantiates a new KafkaLogEventDto.
+   */
   public KafkaLogEventDto(RecordHeader header, GenericRecord event) {
     super();
     this.header = header;

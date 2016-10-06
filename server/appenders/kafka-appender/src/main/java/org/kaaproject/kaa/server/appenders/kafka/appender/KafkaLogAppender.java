@@ -66,6 +66,9 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
 
   };
 
+  /**
+   * Instantiates a new KafkaLogAppender.
+   */
   public KafkaLogAppender() {
     super(KafkaConfig.class);
     scheduler.scheduleWithFixedDelay(new Runnable() {
@@ -123,8 +126,8 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
             } else {
               listener.onInternalError();
             }
-          } catch (Exception e) {
-            LOG.warn("Got exception. Can't process log events", e);
+          } catch (Exception ex) {
+            LOG.warn("Got exception. Can't process log events", ex);
             listener.onInternalError();
           }
         }
@@ -145,8 +148,8 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
       executor = Executors.newFixedThreadPool(executorPoolSize);
       topicName = configuration.getTopic();
       LOG.info("Kafka log appender initialized");
-    } catch (Exception e) {
-      LOG.error("Failed to init kafka log appender: ", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to init kafka log appender: ", ex);
     }
 
   }
@@ -165,9 +168,9 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
         GenericRecord decodedLog = eventConverter.decodeBinary(logEvent.getLogData());
         events.add(new KafkaLogEventDto(header, decodedLog));
       }
-    } catch (IOException e) {
-      LOG.error("Unexpected IOException while decoding LogEvents", e);
-      throw e;
+    } catch (IOException ex) {
+      LOG.error("Unexpected IOException while decoding LogEvents", ex);
+      throw ex;
     }
     return events;
   }
@@ -208,14 +211,14 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
     }
 
     @Override
-    public void onCompletion(RecordMetadata record, Exception e) {
-      if (e == null) {
+    public void onCompletion(RecordMetadata record, Exception ex) {
+      if (ex == null) {
         kafkaSuccessLogCount.getAndAdd(size);
         callback.onSuccess();
       } else {
         kafkaFailureLogCount.getAndAdd(size);
-        LOG.warn("Failed to store record", e);
-        if (e instanceof IOException) {
+        LOG.warn("Failed to store record", ex);
+        if (ex instanceof IOException) {
           callback.onConnectionError();
         } else {
           callback.onInternalError();

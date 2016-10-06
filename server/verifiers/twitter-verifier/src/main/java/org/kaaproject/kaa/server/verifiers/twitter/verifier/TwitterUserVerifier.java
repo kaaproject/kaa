@@ -105,8 +105,8 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
       callback.onTokenInvalid();
     } else {
       LOG.trace("Unable to verify token. Error code: [{}], message[{}]", error.get(CODE), error.get(MESSAGE));
-      callback.onVerificationFailure("Unable to verify token. Error code: " + error.get(CODE) +
-          ", message: " + error.get(MESSAGE));
+      callback.onVerificationFailure("Unable to verify token. Error code: " + error.get(CODE)
+                                     + ", message: " + error.get(MESSAGE));
     }
   }
 
@@ -150,8 +150,8 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
     tokenVerifiersPool.shutdown();
     try {
       httpClient.close();
-    } catch (IOException e) {
-      LOG.debug("Unable to close HttpClient ", e);
+    } catch (IOException ex) {
+      LOG.debug("Unable to close HttpClient ", ex);
     }
     LOG.info("twitter user verifier stopped");
   }
@@ -190,18 +190,18 @@ public class TwitterUserVerifier extends AbstractKaaUserVerifier<TwitterAvroConf
           callback.onVerificationFailure("Server response code:" + responseCode
               + ", no data can be retrieved");
         }
-      } catch (IOException e) {
-        LOG.debug("Connection error", e);
-        callback.onConnectionError(e.getMessage());
-      } catch (Exception e) {
-        LOG.debug("Unexpected error", e);
-        callback.onInternalError(e.getMessage());
+      } catch (IOException ex) {
+        LOG.debug("Connection error", ex);
+        callback.onConnectionError(ex.getMessage());
+      } catch (Exception ex) {
+        LOG.debug("Unexpected error", ex);
+        callback.onInternalError(ex.getMessage());
       } finally {
         if (closeableHttpResponse != null) {
           try {
             closeableHttpResponse.close();
-          } catch (IOException e) {
-            LOG.debug("Connection error: can't close CloseableHttpResponse ", e);
+          } catch (IOException ex) {
+            LOG.debug("Connection error: can't close CloseableHttpResponse ", ex);
           }
         }
       }

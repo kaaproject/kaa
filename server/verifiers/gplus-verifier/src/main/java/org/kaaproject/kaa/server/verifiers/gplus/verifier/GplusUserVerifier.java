@@ -62,8 +62,8 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     try {
       URI uri = new URI(GOOGLE_OAUTH + accessToken);
       threadPool.submit(new RunnableVerifier(uri, callback, userExternalId));
-    } catch (URISyntaxException e) {
-      LOG.warn("Internal error", e);
+    } catch (URISyntaxException ex) {
+      LOG.warn("Internal error", ex);
       callback.onInternalError();
     }
   }
@@ -100,8 +100,8 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
     if (null != httpClient) {
       try {
         httpClient.close();
-      } catch (IOException e) {
-        LOG.warn("Internal error: ", e);
+      } catch (IOException ex) {
+        LOG.warn("Internal error: ", ex);
       }
     }
     LOG.info("user verifier stopped");
@@ -151,18 +151,18 @@ public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> 
           LOG.trace("Server returned the following error code: {}", responseCode);
           callback.onInternalError();
         }
-      } catch (IOException e) {
-        LOG.warn("Internal error: ", e);
+      } catch (IOException ex) {
+        LOG.warn("Internal error: ", ex);
         callback.onInternalError();
-      } catch (Exception e) {
-        LOG.warn("Internal error: ", e);
+      } catch (Exception ex) {
+        LOG.warn("Internal error: ", ex);
         callback.onInternalError();
       } finally {
         if (null != closeableHttpResponse) {
           try {
             closeableHttpResponse.close();
-          } catch (IOException e) {
-            LOG.warn("Internal error: ", e);
+          } catch (IOException ex) {
+            LOG.warn("Internal error: ", ex);
           }
         }
       }

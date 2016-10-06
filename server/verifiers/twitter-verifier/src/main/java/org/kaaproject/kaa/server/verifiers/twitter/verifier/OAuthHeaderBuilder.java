@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
+//CHECKSTYLE:OFF
 public class OAuthHeaderBuilder {
   private final String SIGNATURE_METHOD;
   private final String REQUEST_METHOD;
@@ -62,6 +62,7 @@ public class OAuthHeaderBuilder {
 
     return header;
   }
+  //CHECKSTYLE:ON
 
   private String generateSignatureBase(String consumerKey, String accessToken, String timestamp, String nonce) {
     StringBuilder parameters = new StringBuilder();

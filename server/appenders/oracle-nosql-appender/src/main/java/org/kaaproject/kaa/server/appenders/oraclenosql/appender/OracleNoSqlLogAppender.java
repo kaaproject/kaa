@@ -83,7 +83,7 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
   private static String getHostName() {
     try {
       return InetAddress.getLocalHost().getHostName();
-    } catch (UnknownHostException e) {
+    } catch (UnknownHostException ex) {
       return "";
     }
   }
@@ -96,11 +96,11 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
         try {
           doAppendGenericAvro(logEventPack, header);
           listener.onSuccess();
-        } catch (FaultException e) {
-          LOG.error("Unable to append logs due to remote exception!", e);
+        } catch (FaultException ex) {
+          LOG.error("Unable to append logs due to remote exception!", ex);
           listener.onRemoteError();
-        } catch (Exception e) {
-          LOG.error("Unable to append logs!", e);
+        } catch (Exception ex) {
+          LOG.error("Unable to append logs!", ex);
           listener.onInternalError();
         }
       } else {
@@ -117,8 +117,8 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
   protected void initFromConfiguration(LogAppenderDto appender, OracleNoSqlConfig configuration) {
     try {
       kvStore = initKvStore(configuration);
-    } catch (Exception e) {
-      LOG.error("Failed to init kvStore: ", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to init kvStore: ", ex);
     }
   }
 
@@ -141,9 +141,9 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
       binaryDecoder = DecoderFactory.get().binaryDecoder(event.getLogData(), binaryDecoder);
       try {
         recordData = datumReader.read(recordData, binaryDecoder);
-      } catch (IOException e) {
-        LOG.error("[{}] Unable to read log event!", e);
-        throw e;
+      } catch (IOException ex) {
+        LOG.error("[{}] Unable to read log event!", ex);
+        throw ex;
       }
       wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_HEADER_FIELD, header);
       wrapperRecord.put(RecordWrapperSchemaGenerator.RECORD_DATA_FIELD, recordData);
@@ -165,9 +165,9 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
       Schema userSchema = new Schema.Parser().parse(logEventPack.getLogSchema().getSchema());
       datumReader = new GenericDatumReader<GenericRecord>(userSchema);
       wrapperRecord = new GenericData.Record(recordWrapperSchema);
-    } catch (Exception e) {
+    } catch (Exception ex) {
       LOG.error("[{}] Unable to initialize parameters for log event pack.", getName());
-      throw e;
+      throw ex;
     }
 
   }
@@ -231,8 +231,6 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
       helperHostPorts[i] = node.getHost() + ":" + node.getPort();
     }
 
-    KVStoreConfig config = new KVStoreConfig(configuration.getStoreName(), helperHostPorts);
-
     Properties securityProperties = new Properties();
     if (configuration.getUsername() != null) {
       username = configuration.getUsername();
@@ -270,6 +268,8 @@ public class OracleNoSqlLogAppender extends AbstractLogAppender<OracleNoSqlConfi
     if (configuration.getSslTrustStoreType() != null) {
       securityProperties.put(KVSecurityConstants.SSL_TRUSTSTORE_TYPE_PROPERTY, configuration.getSslTrustStoreType());
     }
+
+    KVStoreConfig config = new KVStoreConfig(configuration.getStoreName(), helperHostPorts);
     config.setSecurityProperties(securityProperties);
 
     KVStore kvStore = KVStoreFactory.getStore(config);

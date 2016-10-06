@@ -87,6 +87,9 @@ public class CassandraLogEventDao implements LogEventDao {
   private String keyspaceName;
   private CassandraConfig configuration;
 
+  /**
+   * Instantiates a new CassandraLogEventDao.
+   */
   public CassandraLogEventDao(CassandraConfig configuration) throws UnknownHostException {
     if (configuration == null) {
       throw new IllegalArgumentException("Configuration shouldn't be null");
@@ -249,8 +252,10 @@ public class CassandraLogEventDao implements LogEventDao {
 
   @Override
   public ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String tableName,
-                                               GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-                                               GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+                                               GenericAvroConverter<GenericRecord> eventConverter,
+                                               GenericAvroConverter<GenericRecord> headerConverter,
+                                               GenericAvroConverter<GenericRecord> clientProfileConverter,
+                                               GenericAvroConverter<GenericRecord> serverProfileConverter,
                                                String clientProfileJson, String serverProfileJson)
       throws IOException {
     LOG.debug("Execute async bath request for cassandra table {}", tableName);
@@ -388,6 +393,7 @@ public class CassandraLogEventDao implements LogEventDao {
             } else {
               throw new RuntimeException(ABSENT_SERVER_PROFILE_ERROR);
             }
+            break;
           case SERVER_BINARY:
             if (serverProfileBinary != null) {
               insert.value(element.getColumnName(), clientProfileBinary);
@@ -401,6 +407,8 @@ public class CassandraLogEventDao implements LogEventDao {
           case TS:
             reuseTsValue = formatTs(reuseTsValue, element);
             insert.value(element.getColumnName(), reuseTsValue);
+            break;
+          default:
             break;
         }
       }
@@ -421,20 +429,20 @@ public class CassandraLogEventDao implements LogEventDao {
       if (pattern == null || pattern.isEmpty()) {
         tsValue = ts + "";
       } else {
-        ThreadLocal<SimpleDateFormat> formatterTL = dateFormatMap.get(pattern);
-        if (formatterTL == null) {
-          formatterTL = new ThreadLocal<SimpleDateFormat>() {
+        ThreadLocal<SimpleDateFormat> formatterTl = dateFormatMap.get(pattern);
+        if (formatterTl == null) {
+          formatterTl = new ThreadLocal<SimpleDateFormat>() {
             @Override
             protected SimpleDateFormat initialValue() {
               return new SimpleDateFormat(pattern);
             }
           };
-          dateFormatMap.putIfAbsent(pattern, formatterTL);
+          dateFormatMap.putIfAbsent(pattern, formatterTl);
         }
-        SimpleDateFormat formatter = formatterTL.get();
+        SimpleDateFormat formatter = formatterTl.get();
         if (formatter == null) {
           formatter = new SimpleDateFormat(pattern);
-          formatterTL.set(formatter);
+          formatterTl.set(formatter);
         }
         tsValue = formatter.format(new Date(ts));
       }

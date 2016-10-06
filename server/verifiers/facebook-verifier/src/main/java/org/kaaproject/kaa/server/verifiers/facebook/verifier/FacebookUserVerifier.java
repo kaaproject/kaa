@@ -126,8 +126,8 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
       if (errorMap != null) {
         LOG.trace("Unable to verify token: {}, errcode: [{}]", errorMap.get(MESSAGE),
             errorMap.get(ERRCODE));
-        callback.onVerificationFailure("Unable to verify token: " + errorMap.get(MESSAGE) +
-            ", errorcode: " + errorMap.get(ERRCODE));
+        callback.onVerificationFailure("Unable to verify token: " + errorMap.get(MESSAGE)
+                                       + ", errorcode: " + errorMap.get(ERRCODE));
       } else {
         LOG.trace("Unable to verify token. HTTP response 400");
         callback.onVerificationFailure("Unable to verify token. HTTP response 400");
@@ -147,8 +147,8 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
     try {
       String facebookUriQuery = "input_token=" + userAccessToken + "&access_token=" + accessToken;
       uri = new URI(FACEBOOK_URI_SCHEME, FACEBOOK_URI_AUTHORITY, FACEBOOK_URI_PATH, facebookUriQuery, null);
-    } catch (URISyntaxException e) {
-      LOG.debug("Malformed URI", e);
+    } catch (URISyntaxException ex) {
+      LOG.debug("Malformed URI", ex);
     }
     return httpClient.execute(new HttpGet(uri));
   }
@@ -170,8 +170,8 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
     tokenVerifiersPool.shutdown();
     try {
       httpClient.close();
-    } catch (IOException e) {
-      LOG.debug("Unable to close HttpClient ", e);
+    } catch (IOException ex) {
+      LOG.debug("Unable to close HttpClient ", ex);
     }
     LOG.info("facebook user verifier stopped");
   }
@@ -216,18 +216,18 @@ public class FacebookUserVerifier extends AbstractKaaUserVerifier<FacebookAvroCo
           callback.onVerificationFailure("Server response code:" + responseCode
               + ", no data can be retrieved");
         }
-      } catch (IOException e) {
-        LOG.debug("Connection error", e);
-        callback.onConnectionError(e.getMessage());
-      } catch (Exception e) {
-        LOG.debug("Unexpected error", e);
-        callback.onInternalError(e.getMessage());
+      } catch (IOException ex) {
+        LOG.debug("Connection error", ex);
+        callback.onConnectionError(ex.getMessage());
+      } catch (Exception ex) {
+        LOG.debug("Unexpected error", ex);
+        callback.onInternalError(ex.getMessage());
       } finally {
         if (closeableHttpResponse != null) {
           try {
             closeableHttpResponse.close();
-          } catch (IOException e) {
-            LOG.debug("Connection error: can't close CloseableHttpResponse ", e);
+          } catch (IOException ex) {
+            LOG.debug("Connection error: can't close CloseableHttpResponse ", ex);
           }
         }
       }
