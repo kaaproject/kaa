@@ -44,6 +44,9 @@ public final class LogEvent implements Serializable {
   public LogEvent() {
   }
 
+  /**
+   * All-args constructor.
+   */
   public LogEvent(RecordHeader header, LogEventDto dto) {
     this.id = dto.getId();
     this.header = header;

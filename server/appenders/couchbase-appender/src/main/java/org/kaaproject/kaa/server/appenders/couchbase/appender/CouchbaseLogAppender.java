@@ -40,6 +40,13 @@ public class CouchbaseLogAppender extends AbstractLogAppender<CouchbaseConfig> {
     super(CouchbaseConfig.class);
   }
 
+  /**
+   * Saves logs into a couchbase database.
+   *
+   * @param logEventPack logs
+   * @param header       header
+   * @param listener     log delivery listener
+   */
   @Override
   public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
     if (!closed) {
@@ -52,8 +59,8 @@ public class CouchbaseLogAppender extends AbstractLogAppender<CouchbaseConfig> {
           LOG.debug("[{}] appended {} logs to couchbase bucket", getApplicationToken(), logEventPack.getEvents().size());
         }
         listener.onSuccess();
-      } catch (Exception e) {
-        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to internal error", getName()), e);
+      } catch (Exception ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to internal error", getName()), ex);
         listener.onInternalError();
       }
     } else {
@@ -67,8 +74,8 @@ public class CouchbaseLogAppender extends AbstractLogAppender<CouchbaseConfig> {
     LOG.debug("Initializing new instance of Couchbase log appender");
     try {
       logEventDao = new LogEventCouchbaseDao(configuration);
-    } catch (Exception e) {
-      LOG.error("Failed to init Couchbase log appender: ", e);
+    } catch (Exception ex) {
+      LOG.error("Failed to init Couchbase log appender: ", ex);
     }
   }
 

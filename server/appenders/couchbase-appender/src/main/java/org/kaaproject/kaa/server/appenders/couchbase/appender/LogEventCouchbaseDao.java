@@ -37,11 +37,14 @@ public class LogEventCouchbaseDao implements LogEventDao {
 
   private static final Logger LOG = LoggerFactory.getLogger(LogEventCouchbaseDao.class);
 
-  private final Random RANDOM = new Random();
+  private final Random random = new Random();
 
   private CouchbaseClient couchbaseClient;
   private CouchbaseTemplate couchbaseTemplate;
 
+  /**
+   * Instantiates the LogEventCouchbaseDao.
+   */
   public LogEventCouchbaseDao(CouchbaseConfig configuration) throws Exception {
 
     List<CouchbaseServerUri> couchbaseUris = configuration.getCouchbaseServerUris();
@@ -81,7 +84,7 @@ public class LogEventCouchbaseDao implements LogEventDao {
 
   private String getId(String id) {
     if (id == null || id.length() == 0) {
-      id = new UUID(System.currentTimeMillis(), RANDOM.nextLong()).toString();
+      id = new UUID(System.currentTimeMillis(), random.nextLong()).toString();
     }
     return id;
   }
