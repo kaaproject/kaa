@@ -305,7 +305,5 @@ else()
                         CMAKE_ARGS -DKAA_SDK_DIR=${KAA_SDK_DIR}
                         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
 
-    externalproject_add_step(kaa_rsa_keygen "Copying generated files"
-                             COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
-                             "${KAA_SRC_FOLDER}/gen" DEPENDEES install)
+    target_include_directories(kaac PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
 endif()

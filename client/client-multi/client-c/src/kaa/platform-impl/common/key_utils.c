@@ -39,7 +39,7 @@
 
 static mbedtls_pk_context pk_pub_context;
 #else
-#include <gen/kaa_keys_gen.h>
+#include <kaa_keys_gen.h>
 #endif /* KAA_RUNTIME_KEY_GENERATION */
 
 #define KAA_RSA_PUBLIC_KEY_LENGTH_MAX  294
