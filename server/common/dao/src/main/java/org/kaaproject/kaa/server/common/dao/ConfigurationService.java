@@ -192,7 +192,14 @@ public interface ConfigurationService {
      */
     ConfigurationSchemaDto saveConfSchema(ConfigurationSchemaDto configurationSchema);
 
-    String validateConfiguration(String appId, int schemaVersion, String configurationBody);
+    /**
+     * Validate configuration according to override configuration schema.
+     *
+     * @param appId             application ID
+     * @param schemaVersion     configuration schema version
+     * @param configurationBody configuration to validate
+     */
+    String validateOverrideConfigurationBody(String appId, int schemaVersion, String configurationBody);
 
     /**
      * Find configuration schema by id.

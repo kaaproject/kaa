@@ -62,7 +62,7 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
                 ApplicationDto applicationDto = applicationService.findAppByApplicationToken(appToken);
                 if (applicationDto != null) {
                     int schemaVersion = userConfig.getSchemaVersion();
-                    userConfig.setBody(configurationService.validateConfiguration(applicationDto.getId(), schemaVersion, userConfigBody));
+                    userConfig.setBody(configurationService.validateOverrideConfigurationBody(applicationDto.getId(), schemaVersion, userConfigBody));
                     userConfigurationDto = getDto(endpointUserConfigurationDao.save(userConfig));
                 } else {
                     LOG.warn("Can't find application with token {} for endpoint user configuration.", appToken);

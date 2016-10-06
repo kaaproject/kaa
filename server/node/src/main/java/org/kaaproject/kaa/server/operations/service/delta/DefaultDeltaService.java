@@ -197,14 +197,22 @@ public class DefaultDeltaService implements DeltaService {
      */
     private ConfigurationCacheEntry getDelta(final String endpointId, final String userId, DeltaCacheKey deltaKey, boolean useConfigurationRawSchema) throws GetDeltaException {
         EndpointUserConfigurationDto userConfiguration = findLatestUserConfiguration(userId, deltaKey);
-        Optional<EndpointSpecificConfigurationDto> epsConfigOpt = Optional.empty();
-        if (endpointId != null) {
-            epsConfigOpt = endpointSpecificConfigurationService.findByEndpointKeyHash(endpointId);
-        }
-        EndpointSpecificConfigurationDto epsConfig = epsConfigOpt.orElse(null);
+
+        EndpointSpecificConfigurationDto epsConfig = Optional.ofNullable(endpointId)
+                .flatMap(endpointSpecificConfigurationService::findByEndpointKeyHash)
+                .orElse(null);
+
+        EndpointObjectHash epsConfHash = Optional.ofNullable(epsConfig)
+                .map(EndpointSpecificConfigurationDto::getConfiguration)
+                .map(EndpointObjectHash::fromString)
+                .orElse(null);
+
+        EndpointObjectHash userConfHash = Optional.ofNullable(userConfiguration)
+                .map(EndpointUserConfigurationDto::getBody)
+                .map(EndpointObjectHash::fromString)
+                .orElse(null);
+
         final DeltaCacheKey newKey;
-        EndpointObjectHash userConfHash = userConfiguration != null ? EndpointObjectHash.fromString(userConfiguration.getBody()) : null;
-        EndpointObjectHash epsConfHash = epsConfigOpt.map(conf -> EndpointObjectHash.fromString(conf.getConfiguration())).orElse(null);
         if (userConfiguration != null || epsConfig != null) {
             newKey = new DeltaCacheKey(
                     deltaKey.getAppConfigVersionKey(),

@@ -260,6 +260,7 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
 
     @Override
     public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash) throws KaaAdminServiceException {
+        checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkEndpointProfile(endpointKeyHash);
             EndpointSpecificConfigurationDto configuration = controlService.deleteEndpointSpecificConfiguration(endpointKeyHash);

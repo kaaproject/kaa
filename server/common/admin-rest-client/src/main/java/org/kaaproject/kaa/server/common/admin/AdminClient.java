@@ -529,15 +529,15 @@ public class AdminClient {
     }
 
     public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) throws Exception {
-        return restTemplate.postForObject(restTemplate.getUrl() + "endpointConfiguration", configuration, EndpointSpecificConfigurationDto.class);
+        return restTemplate.postForObject(restTemplate.getUrl() + "endpointSpecificConfiguration", configuration, EndpointSpecificConfigurationDto.class);
     }
 
     public void deleteEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
-        restTemplate.delete(restTemplate.getUrl() + "endpointConfiguration/" + endpointKeyHash);
+        restTemplate.delete(restTemplate.getUrl() + "endpointSpecificConfiguration/" + endpointKeyHash);
     }
 
     public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
-        return restTemplate.getForObject(restTemplate.getUrl() + "endpointConfiguration/" + endpointKeyHash, EndpointSpecificConfigurationDto.class);
+        return restTemplate.getForObject(restTemplate.getUrl() + "endpointSpecificConfiguration/" + endpointKeyHash, EndpointSpecificConfigurationDto.class);
     }
 
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {

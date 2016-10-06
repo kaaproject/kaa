@@ -95,17 +95,13 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
         operationsService.syncServerProfile(appToken, endpointKey, key); 
         ThriftServerProfileUpdateMessage localMsg = new ThriftServerProfileUpdateMessage(thriftMsg);
         localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
-        dispatchMsg(context, localMsg, (nodeId, msg) -> {
-            clusterService.sendServerProfileUpdateMessage(nodeId, msg);
-        });
+        dispatchMsg(context, localMsg, clusterService::sendServerProfileUpdateMessage);
     }
 
     private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
         ThriftUnicastNotificationMessage localMsg = new ThriftUnicastNotificationMessage(thriftMsg);
         localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
-        dispatchMsg(context, localMsg, (nodeId, msg) -> {
-            clusterService.sendUnicastNotificationMessage(nodeId, msg);
-        });
+        dispatchMsg(context, localMsg, clusterService::sendUnicastNotificationMessage);
     }
 
     private void processEndpointConfigurationRefreshMsg(ActorContext context, ThriftEndpointConfigurationRefreshMessage thriftMsg) {

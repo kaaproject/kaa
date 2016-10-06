@@ -78,7 +78,7 @@ public class EndpointSpecificConfigurationServiceImpl implements EndpointSpecifi
     public EndpointSpecificConfigurationDto save(EndpointSpecificConfigurationDto configurationDto) {
         EndpointProfileDto profileDto = getEndpointProfileDto(configurationDto.getEndpointKeyHash());
         configurationDto.setConfigurationVersion(profileDto.getConfigurationVersion());
-        validateConfigurationBody(configurationDto, profileDto);
+        validateEndpointSpecificConfiguration(configurationDto, profileDto);
         return endpointSpecificConfigurationDao.save(configurationDto).toDto();
     }
 
@@ -88,13 +88,12 @@ public class EndpointSpecificConfigurationServiceImpl implements EndpointSpecifi
     }
 
 
-    private void validateConfigurationBody(EndpointSpecificConfigurationDto configurationDto, EndpointProfileDto ep) {
+    private void validateEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configurationDto, EndpointProfileDto ep) {
         validateString(configurationDto.getConfiguration(), "Endpoint specific configuration body is required");
         int configurationVersion = configurationDto.getConfigurationVersion();
         String appId = ep.getApplicationId();
         String configurationBody = configurationDto.getConfiguration();
-        configurationBody = configurationService.validateConfiguration(appId, configurationVersion, configurationBody);
-        validateString(configurationBody, "Provided configuration body is invalid");
+        configurationBody = configurationService.validateOverrideConfigurationBody(appId, configurationVersion, configurationBody);
         configurationDto.setConfiguration(configurationBody);
     }
 

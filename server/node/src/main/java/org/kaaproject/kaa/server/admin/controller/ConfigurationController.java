@@ -301,7 +301,7 @@ public class ConfigurationController extends AbstractAdminController {
             @ApiResponse(code = 404, message = "Specified endpoint does not exist"),
             @ApiResponse(code = 409, message = "Can't update entity with provided version. Entity already changed"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "endpointConfiguration", method = RequestMethod.POST)
+    @RequestMapping(value = "endpointSpecificConfiguration", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(
@@ -327,7 +327,7 @@ public class ConfigurationController extends AbstractAdminController {
                     "of the application does not match the Tenant ID of the authenticated user"),
             @ApiResponse(code = 404, message = "Specified endpoint does not exist"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "endpointConfiguration/{endpointKeyHash}", method = RequestMethod.GET)
+    @RequestMapping(value = "endpointSpecificConfiguration/{endpointKeyHash}", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(
@@ -352,7 +352,7 @@ public class ConfigurationController extends AbstractAdminController {
                     "of the application does not match the Tenant ID of the authenticated user"),
             @ApiResponse(code = 404, message = "Specified endpoint does not exist"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-    @RequestMapping(value = "endpointConfiguration/{endpointKeyHash}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "endpointSpecificConfiguration/{endpointKeyHash}", method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteEndpointSpecificConfiguration(
             @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
