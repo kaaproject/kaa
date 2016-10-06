@@ -15,6 +15,7 @@ sort_idx: 40
   - [Configuring general settings](#configuring-general-settings)
   - [Configuring outgoing mail settings](#configuring-outgoing-mail-settings)
   - [Managing System CTL](#managing-system-ctl)
+  - [Managing Tenants](#managing-tenants)
 - [Tenant admin](#tenant-admin)
   - [Managing applications](#managing-applications)
   - [Managing event class families](#managing-event-class-families)
@@ -87,7 +88,7 @@ The following three user types are available in Kaa :
 - Tenant developer
 
 **NOTE**
-In Kaa Sandbox, [default credentials]({{root_url}}/Programming-guide/Getting-started/#admin-ui) are provided for all three types of Kaa users.
+In Kaa Sandbox, [default credentials]({{root_url}}Getting-started/#administration-ui) are provided for all three types of Kaa users.
 
 # Kaa admin
 
@@ -140,6 +141,16 @@ To create a new version of the system CT of the same FQN, click **Create new ver
 To export the system CT, click **Export** and select export method from drop-down. See [CT schema export support999](999) for available export methods details.
 
 To delete the system CT version, click **Delete** on the top of the CT details.
+
+## Managing Tenants
+
+The Kaa IoT platform supports Multi-tenant architecture. It allows _Kaa admin_ to create separate scope for each instance of Tenant.
+Unlike _Kaa admin_, entities like _Tenant Admin_ and _Tenant Developer_ can be visible only in the scope of single Tenant.
+For more information about Multitenancy, check related description on [wiki]( https://en.wikipedia.org/wiki/Multitenancy ).
+
+"_Need image that describes Kaa multi-tenant architecture_"
+
+To learn how to manage _Tenants_ and _Tenant Admins_, check: [Users management]({{root_url}}Administration-guide/Users-management)
 
 # Tenant admin
 
