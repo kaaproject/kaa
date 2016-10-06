@@ -90,7 +90,7 @@ public class ControlZkServiceTest {
     Mockito.doNothing().when(controlZKNode).close();
 
     kaaNodeServerConfig.setZkEnabled(true);
-    ReflectionTestUtils.setField(zkService, "controlZKNode", controlZKNode);
+    ReflectionTestUtils.setField(zkService, "controlZkNode", controlZKNode);
     zkService.stop();
 
     Mockito.doThrow(IOException.class).when(controlZKNode).close();
@@ -113,7 +113,7 @@ public class ControlZkServiceTest {
     kaaNodeServerConfig.setZkEnabled(true);
 
     ControlNode controlZKNode = Mockito.mock(ControlNode.class);
-    ReflectionTestUtils.setField(zkService, "controlZKNode", controlZKNode);
+    ReflectionTestUtils.setField(zkService, "controlZkNode", controlZKNode);
 
     Assert.assertNotNull(zkService.getCurrentBootstrapNodes());
   }
@@ -133,7 +133,7 @@ public class ControlZkServiceTest {
 
     kaaNodeServerConfig.setZkEnabled(true);
     ControlNode controlZKNode = Mockito.mock(ControlNode.class);
-    ReflectionTestUtils.setField(zkService, "controlZKNode", controlZKNode);
+    ReflectionTestUtils.setField(zkService,  "controlZkNode", controlZKNode);
 
     List<OperationsNodeInfo> endpointNodes = Arrays.asList(
         new OperationsNodeInfo(new ConnectionInfo("host1", 123, null), new LoadInfo(1, 1.0), System.currentTimeMillis(), new ArrayList<TransportMetaData>()));

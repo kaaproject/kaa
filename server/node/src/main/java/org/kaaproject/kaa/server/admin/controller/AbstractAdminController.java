@@ -58,9 +58,7 @@ import java.io.IOException;
 @RequestMapping("api")
 public abstract class AbstractAdminController {
 
-  /**
-   * The Constant LOG.
-   */
+
   private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminController.class);
 
   /**

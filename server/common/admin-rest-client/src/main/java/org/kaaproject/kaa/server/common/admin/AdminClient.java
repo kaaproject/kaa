@@ -1256,7 +1256,7 @@ public class AdminClient {
   }
 
   /**
-   * Generates an SDK for the specified target platform from specified SDK profile .
+   * Generates an SDK for the specified target platform from specified SDK profile.
    *
    * @param sdkProfileId   the sdk profile id
    * @param targetPlatform the target platform
@@ -1271,7 +1271,7 @@ public class AdminClient {
   }
 
   /**
-   * Generates a new SDK from specified SDK profile .
+   * Generates a new SDK from specified SDK profile.
    */
   public void downloadSdk(SdkProfileDto key, String destination) throws Exception {
     FileResponseExtractor extractor = new FileResponseExtractor(new File(destination));
