@@ -15,16 +15,23 @@
  */
 package org.kaaproject.kaa.server.appenders.couchbase.appender;
 
+import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.cluster.ClusterInfo;
+import com.couchbase.client.java.env.CouchbaseEnvironment;
+import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
 import org.springframework.data.couchbase.core.CouchbaseTemplate;
 
 import java.util.List;
 
-public class KaaCouchbaseCluster extends AbstractCouchbaseConfiguration {
+public class KaaCouchbaseCluster {
 
     private final List<String> bootstrapHosts;
     private final String bucketName;
     private final String bucketPassword;
+    private CouchbaseEnvironment environment;
+    private CouchbaseCluster cluster;
+    private ClusterInfo clusterInfo;
 
     public KaaCouchbaseCluster(List<String> bootstrapHosts, String bucketName, String bucketPassword) {
         this.bootstrapHosts = bootstrapHosts;
@@ -32,29 +39,17 @@ public class KaaCouchbaseCluster extends AbstractCouchbaseConfiguration {
         this.bucketPassword = bucketPassword;
     }
 
-    @Override
-    protected List<String> getBootstrapHosts() {
-        return bootstrapHosts;
-    }
-
-    @Override
-    protected String getBucketName() {
-        return bucketName;
-    }
-
-    @Override
-    protected String getBucketPassword() {
-        return bucketPassword;
-    }
-
-    public CouchbaseTemplate createTemplate() throws Exception {
-        CouchbaseTemplate template = new CouchbaseTemplate(
-                couchbaseClusterInfo(),
-                couchbaseCluster().openBucket(getBucketName(), getBucketPassword()));
-        return template;
+    public CouchbaseTemplate connect() throws Exception {
+        environment = DefaultCouchbaseEnvironment.create();
+        cluster = CouchbaseCluster.create(environment, bootstrapHosts);
+        clusterInfo = cluster.clusterManager(bucketName, bucketPassword).info();
+        return new CouchbaseTemplate(
+                clusterInfo,
+                cluster.openBucket(bucketName, bucketPassword));
     }
 
     public void disconnect() throws Exception {
-        couchbaseCluster().disconnect();
+        cluster.disconnect();
+        environment.shutdownAsync();
     }
 }

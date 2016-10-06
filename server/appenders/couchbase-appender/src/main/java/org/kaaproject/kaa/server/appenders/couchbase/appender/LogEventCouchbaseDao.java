@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.appenders.couchbase.appender;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -43,8 +44,7 @@ public class LogEventCouchbaseDao implements LogEventDao {
                 configuration.getCouchbaseServerUris().stream().map(v -> v.getServerUri()).collect(Collectors.toList()),
                 configuration.getBucket(),
                 configuration.getPassword());
-
-        couchbaseTemplate = couchbaseConfiguration.createTemplate();
+        couchbaseTemplate = couchbaseConfiguration.connect();
         couchbaseTemplate.setWriteResultChecking(WriteResultChecking.EXCEPTION);
     }
 
@@ -67,7 +67,7 @@ public class LogEventCouchbaseDao implements LogEventDao {
             try {
                 couchbaseConfiguration.disconnect();
             } catch (Exception e) {
-                LOG.error("Failed to disconnect from couchbase claster!", e);
+                LOG.error("Failed to disconnect from couchbase cluster!", e);
             }
         }
     }
