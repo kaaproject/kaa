@@ -70,8 +70,26 @@ Base image configuration is done using the following environment variables:
 
 ## Single node installation
 
-You can use some prepared files in **docker-compose-1-node** folder. 
-Just navigate into any one of the possible folders in **docker-compose-1-node** folder 
+You can use some prepared files in **server/containers/docker/docker-compose-1-node** folder. 
+
+First of all in **server/containers/docker/using-compose/kaa-example.env** please specify the 
+**TRANSPORT_PUBLIC_INTERFACE=**
+
+For getting your public host just run
+
+for Linux or Mac OS:
+
+ ```ip
+  route get 8.8.8.8 | awk '{print $NF; exit}'
+ ```
+ 
+for Windows:
+
+ ```netsh
+  interface ip show address "Ethernet" | findstr "IP Address"
+ ```
+
+Navigate into any one of the possible folders in **docker-compose-1-node** folder 
 
  ```cd
  docker-compose-1-node/$SQL-NoSQL/ 

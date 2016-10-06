@@ -47,7 +47,7 @@ services:
       - BOOTSTRAP_HTTP=10089
       - OPERATIONS_TCP=10097
       - OPERATIONS_HTTP=10099
-     depends_on:
+    depends_on:
       - sql
       - nosql
       - zookeeper
