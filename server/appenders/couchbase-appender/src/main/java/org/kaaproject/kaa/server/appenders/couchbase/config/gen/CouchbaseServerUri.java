@@ -7,7 +7,7 @@ package org.kaaproject.kaa.server.appenders.couchbase.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class CouchbaseServerUri extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CouchbaseServerUri\",\"namespace\":\"org.kaaproject.kaa.server.appenders.couchbase.config.gen\",\"fields\":[{\"name\":\"serverUri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Server URI\",\"by_default\":\"http://127.0.0.1:8091/pools\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CouchbaseServerUri\",\"namespace\":\"org.kaaproject.kaa.server.appenders.couchbase.config.gen\",\"fields\":[{\"name\":\"serverUri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Server URI\",\"by_default\":\"http://127.0.0.1:8091\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String serverUri;
 
