@@ -20,6 +20,10 @@
 #include <cstdint>
 #include <string>
 
+#ifdef QNX_650_CPP11_TO_STRING_PATCH
+#include <custom/string.h>
+#endif
+
 #include <boost/asio.hpp>
 
 namespace kaa {
