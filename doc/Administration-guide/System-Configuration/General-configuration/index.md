@@ -130,6 +130,9 @@ to change it for development or debug process.
 <br> Specify additional package to scan kaa plugins configuration. For details look at
 [Log appender provisioning]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders#log-appender-provisioning) or
 [Owner verifier provisioning]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/#owner-verifier-provisioning).
+* *default_ttl*
+<br> Default: 7 days
+<br> Defines the live time of the notification
 
 ## Public host/ports configuration
 

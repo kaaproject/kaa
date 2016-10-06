@@ -109,6 +109,14 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     try {
       boolean createNewUser = (user.getId() == null);
 
+            String tempPassword = null;
+            if (createNewUser)  {
+                checkCreateUserPermission(user);
+                tempPassword = createNewUser(user);
+            } else {
+                checkEditUserPermission(user);
+                editUserFacadeUser(user);
+            }
       String tempPassword = null;
       if (createNewUser) {
         checkCreateUserPermission(user);

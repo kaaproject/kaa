@@ -59,7 +59,7 @@ s.license      = {
 
   # ――― Project Settings ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 
-  s.dependency "CocoaLumberjack"
+  s.dependency "CocoaLumberjack", "2.3"
   s.dependency "AFNetworking", "~> 3.x"
   s.dependency "sqlite3"
 

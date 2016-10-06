@@ -196,61 +196,61 @@ public class ControlServerUserIT extends AbstractTestControlServer {
     userWithSameEmail.setLastName(generateString("User"));
     userWithSameEmail.setAuthority(KaaAuthorityDto.TENANT_DEVELOPER);
 
-    client.editUser(user);
-    client.editUser(userWithSameEmail);
-  }
-
-  /**
-   * Test get user.
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testGetUser() throws Exception {
-    UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
-
-    UserDto storedUser = client.getUser(user.getId());
-
-    Assert.assertNotNull(storedUser);
-
-    assertUsersEquals(user, storedUser);
-  }
-
-  /**
-   * Test get users.
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testGetUsers() throws Exception {
-    loginTenantAdmin(tenantAdminDto.getUsername());
-    List<UserDto> users = new ArrayList<UserDto>(10);
-    for (int i = 0; i < 10; i++) {
-      UserDto user = createUser(tenantAdminDto, i % 2 == 0 ? KaaAuthorityDto.TENANT_DEVELOPER : KaaAuthorityDto.TENANT_USER);
-      users.add(user);
+        client.editUser(user);
+        client.editUser(userWithSameEmail);
     }
-
-    Collections.sort(users, new IdComparator());
-
-    List<UserDto> storedUsers = client.getUsers();
-    Collections.sort(storedUsers, new IdComparator());
-
-    Assert.assertEquals(users.size(), storedUsers.size());
-    for (int i = 0; i < users.size(); i++) {
-      UserDto user = users.get(i);
-      UserDto storedUser = storedUsers.get(i);
-      assertUsersEquals(user, storedUser);
+    
+    /**
+     * Test get user.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetUser() throws Exception {
+        UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
+        
+        UserDto storedUser = client.getUser(user.getId());
+        
+        Assert.assertNotNull(storedUser);
+        
+        assertUsersEquals(user, storedUser);
     }
-  }
-
-  /**
-   * Test update user.
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  public void testUpdateUser() throws Exception {
-    UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
+    
+    /**
+     * Test get users.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testGetUsers() throws Exception {
+        loginTenantAdmin(tenantAdminDto.getUsername());
+        List<UserDto> users  = new ArrayList<UserDto>(10);
+        for (int i=0;i<10;i++) {
+            UserDto user = createUser(tenantAdminDto, i%2==0 ? KaaAuthorityDto.TENANT_DEVELOPER : KaaAuthorityDto.TENANT_USER);
+            users.add(user);
+        }
+        
+        Collections.sort(users, new IdComparator());
+        
+        List<UserDto> storedUsers = client.getUsers();
+        Collections.sort(storedUsers, new IdComparator());
+        
+        Assert.assertEquals(users.size(), storedUsers.size());
+        for (int i=0;i<users.size();i++) {
+            UserDto user = users.get(i);
+            UserDto storedUser = storedUsers.get(i);
+            assertUsersEquals(user, storedUser);
+        }
+    }
+    
+    /**
+     * Test update user.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testUpdateUser() throws Exception {
+        UserDto user = createUser(KaaAuthorityDto.TENANT_DEVELOPER);
 
     final String PASSWORD = "test_password";
     client.changePassword(user.getUsername(), user.getTempPassword(), PASSWORD);

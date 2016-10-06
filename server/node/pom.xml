@@ -635,6 +635,22 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>copy-admin-web-test</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/admin-web</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy-conf</id>
                         <phase>process-resources</phase>
                         <goals>
