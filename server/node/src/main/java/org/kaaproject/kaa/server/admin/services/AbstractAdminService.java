@@ -318,34 +318,40 @@ public abstract class AbstractAdminService implements InitializingBean {
     }
   }
 
-    CreateUserResult saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user, boolean doSendTempPassword) throws Exception {
-        CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
-        try {
-            if (!isEmpty(result.getPassword()) && doSendTempPassword) {
-                messagingService.sendTempPassword(user.getUsername(),
-                        result.getPassword(),
-                        user.getMail());
-            }
-        } catch (Exception e) {
-            LOG.error("Can't send temporary password. Exception was catched: ", e);
-            if (isEmpty(user.getExternalUid())) {
-                userFacade.deleteUser(result.getUserId());
-            }
-            StringBuilder errorMessage = new StringBuilder("Failed to send email with temporary password. ");
-            if (e instanceof MailException) {
-                errorMessage.append("Please, check outgoing email settings. ");
-            }
-            throw new KaaAdminServiceException(String.valueOf(errorMessage.append("See server logs for details.")), ServiceErrorCode.GENERAL_ERROR);
-        }
-        return result;
+  CreateUserResult saveUser(org.kaaproject.kaa.common.dto.admin.UserDto user,
+                            boolean doSendTempPassword) throws Exception {
+    CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
+    try {
+      if (!isEmpty(result.getPassword()) && doSendTempPassword) {
+        messagingService.sendTempPassword(user.getUsername(),
+            result.getPassword(),
+            user.getMail());
+      }
+    } catch (Exception ex) {
+      LOG.error("Can't send temporary password. Exception was catched: ", ex);
+      if (isEmpty(user.getExternalUid())) {
+        userFacade.deleteUser(result.getUserId());
+      }
+      StringBuilder errorMessage = new StringBuilder("Failed to send email"
+          + " with temporary password. ");
+      if (ex instanceof MailException) {
+        errorMessage.append("Please, check outgoing email settings. ");
+      }
+      throw new KaaAdminServiceException(
+          String.valueOf(errorMessage.append("See server logs for details.")),
+          ServiceErrorCode.GENERAL_ERROR
+      );
     }
+    return result;
+  }
 
-    String createNewUser(org.kaaproject.kaa.common.dto.admin.UserDto user, boolean doSendTempPassword) throws Exception {
-        checkFieldUniquieness(
-                user.getUsername(),
-                userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet()),
-                "userName"
-        );
+  String createNewUser(org.kaaproject.kaa.common.dto.admin.UserDto user,
+                       boolean doSendTempPassword) throws Exception {
+    checkFieldUniquieness(
+        user.getUsername(),
+        userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet()),
+        "userName"
+    );
 
     checkFieldUniquieness(
         user.getMail(),
@@ -353,10 +359,10 @@ public abstract class AbstractAdminService implements InitializingBean {
         "email"
     );
 
-        CreateUserResult result = saveUser(user, doSendTempPassword);
-        user.setExternalUid(result.getUserId().toString());
-        return result.getPassword();
-    }
+    CreateUserResult result = saveUser(user, doSendTempPassword);
+    user.setExternalUid(result.getUserId().toString());
+    return result.getPassword();
+  }
 
   void editUserFacadeUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
       throws KaaAdminServiceException, ControlServiceException {

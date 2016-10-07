@@ -604,19 +604,20 @@ public class DataSource {
 
   /**
    * Edits a user.
+   *
    * @param user     new user
    * @param callback callback which should be called with a result
    */
-    public void editUser(UserDto user, final AsyncCallback<UserDto> callback) {
-        userRpcService.editUser(user, true, new DataCallback<UserDto>(callback) {
-            @Override
-            protected void onResult(UserDto result) {
-                if (KaaAdmin.getAuthInfo().getAuthority() == KaaAuthorityDto.TENANT_ADMIN) {
-                    refreshUsers();
-                }
-            }
-        });
-    }
+  public void editUser(UserDto user, final AsyncCallback<UserDto> callback) {
+    userRpcService.editUser(user, true, new DataCallback<UserDto>(callback) {
+      @Override
+      protected void onResult(UserDto result) {
+        if (KaaAdmin.getAuthInfo().getAuthority() == KaaAuthorityDto.TENANT_ADMIN) {
+          refreshUsers();
+        }
+      }
+    });
+  }
 
   /**
    * Returns a user with a specified identifier in async way.
