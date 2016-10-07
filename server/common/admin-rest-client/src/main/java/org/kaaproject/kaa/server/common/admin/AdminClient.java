@@ -533,11 +533,11 @@ public class AdminClient {
     }
 
     public void deleteEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
-        restTemplate.delete(restTemplate.getUrl() + "endpointSpecificConfiguration/" + endpointKeyHash);
+        restTemplate.delete(restTemplate.getUrl() + "endpointSpecificConfiguration/" + toUrlSafe(endpointKeyHash));
     }
 
     public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
-        return restTemplate.getForObject(restTemplate.getUrl() + "endpointSpecificConfiguration/" + endpointKeyHash, EndpointSpecificConfigurationDto.class);
+        return restTemplate.getForObject(restTemplate.getUrl() + "endpointSpecificConfiguration/" + toUrlSafe(endpointKeyHash), EndpointSpecificConfigurationDto.class);
     }
 
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {
