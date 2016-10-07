@@ -142,7 +142,7 @@ You should see something like that:
 ![Add Couchbase log appender](attach/add-couchbase-log-appender.png)
 10. Define a URL and bucket which will be used for receiving logs.
 ![Define URL](attach/define-url.png)
-11. Go to sandbox and download binary for testing the appender:
+11. Go to Data collection demos in Sandbox.
 ![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
 Use instruction from sandbox to run demo application.
 12. Open http://%your_host_name%:8091 and choose : Data Buckets -> kaa -> Documents:
