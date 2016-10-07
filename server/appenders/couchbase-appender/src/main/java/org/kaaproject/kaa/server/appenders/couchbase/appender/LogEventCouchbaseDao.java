@@ -32,51 +32,59 @@ import java.util.stream.Collectors;
 
 public class LogEventCouchbaseDao implements LogEventDao {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LogEventCouchbaseDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LogEventCouchbaseDao.class);
 
-    private final Random RANDOM = new Random();
+  private final Random random = new Random();
 
-    private KaaCouchbaseCluster couchbaseConfiguration;
-    private CouchbaseTemplate couchbaseTemplate;
+  private KaaCouchbaseCluster couchbaseConfiguration;
+  private CouchbaseTemplate couchbaseTemplate;
 
-    public LogEventCouchbaseDao(CouchbaseConfig configuration) throws Exception {
-        couchbaseConfiguration = new KaaCouchbaseCluster(
-                configuration.getCouchbaseServerUris().stream().map(v -> v.getServerUri()).collect(Collectors.toList()),
-                configuration.getBucket(),
-                configuration.getPassword());
-        couchbaseTemplate = couchbaseConfiguration.connect();
-        couchbaseTemplate.setWriteResultChecking(WriteResultChecking.EXCEPTION);
+  /**
+   * Instantiates a new Log event couchbase dao.
+   *
+   * @param configuration the configuration
+   * @throws Exception the exception
+   */
+  public LogEventCouchbaseDao(CouchbaseConfig configuration) throws Exception {
+    couchbaseConfiguration = new KaaCouchbaseCluster(
+        configuration.getCouchbaseServerUris().stream()
+            .map(v -> v.getServerUri())
+            .collect(Collectors.toList()),
+        configuration.getBucket(),
+        configuration.getPassword());
+    couchbaseTemplate = couchbaseConfiguration.connect();
+    couchbaseTemplate.setWriteResultChecking(WriteResultChecking.EXCEPTION);
+  }
+
+  @Override
+  public List<LogEvent> save(RecordHeader recordHeader, List<LogEventDto> logEventDtos) {
+    List<LogEvent> logEvents = new ArrayList<>(logEventDtos.size());
+    for (LogEventDto logEventDto : logEventDtos) {
+      LogEvent logEvent = new LogEvent(recordHeader, logEventDto);
+      logEvent.setId(getId(logEventDto.getId()));
+      logEvents.add(logEvent);
     }
+    LOG.debug("Saving {} log events", logEvents.size());
+    couchbaseTemplate.insert(logEvents);
+    return logEvents;
+  }
 
-    @Override
-    public List<LogEvent> save(RecordHeader recordHeader, List<LogEventDto> logEventDtos) {
-        List<LogEvent> logEvents = new ArrayList<>(logEventDtos.size());
-        for (LogEventDto logEventDto : logEventDtos) {
-            LogEvent logEvent = new LogEvent(recordHeader, logEventDto);
-            logEvent.setId(getId(logEventDto.getId()));
-            logEvents.add(logEvent);
-        }
-        LOG.debug("Saving {} log events", logEvents.size());
-        couchbaseTemplate.insert(logEvents);
-        return logEvents;
+  @Override
+  public void close() {
+    if (couchbaseConfiguration != null) {
+      try {
+        couchbaseConfiguration.disconnect();
+      } catch (Exception ex) {
+        LOG.error("Failed to disconnect from couchbase cluster!", ex);
+      }
     }
+  }
 
-    @Override
-    public void close() {
-        if (couchbaseConfiguration != null) {
-            try {
-                couchbaseConfiguration.disconnect();
-            } catch (Exception e) {
-                LOG.error("Failed to disconnect from couchbase cluster!", e);
-            }
-        }
+  private String getId(String id) {
+    if (id == null || id.length() == 0) {
+      id = new UUID(System.currentTimeMillis(), random.nextLong()).toString();
     }
-
-    private String getId(String id) {
-        if (id == null || id.length() == 0) {
-            id = new UUID(System.currentTimeMillis(), RANDOM.nextLong()).toString();
-        }
-        return id;
-    }
+    return id;
+  }
 
 }

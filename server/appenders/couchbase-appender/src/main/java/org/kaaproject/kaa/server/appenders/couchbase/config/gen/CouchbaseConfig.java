@@ -3,6 +3,7 @@
  * 
  * DO NOT EDIT DIRECTLY
  */
+
 package org.kaaproject.kaa.server.appenders.couchbase.config.gen;  
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
