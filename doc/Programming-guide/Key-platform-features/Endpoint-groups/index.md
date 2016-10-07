@@ -10,42 +10,49 @@ sort_idx: 30
 * TOC
 {:toc}
 
-Kaa provides a mechanism for endpoints aggregation within the application that is based on groups. Grouping endpoints enables you to activate specific configuration parameters, 
-control access to notification topics, etc.
-This guide will familiarize you with the basic concepts of designing endpoint groups. It is assumed that you have either set up a Kaa Sandbox, or a fully-blown Kaa cluster 
-already and that you have created a tenant and an application in Kaa(use [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/createKaaAdmin) or 
-[Admin UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins)). 
-It is strongly recommended to get familiar with Endpoint profiles before you proceed.
+In this section, you can learn how to create [endpoint groups]({{root_url}}Glossary/#endpoint-group).
 
-[Endpoint profile]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/) is a virtual identity or "passport" of the endpoint. 
-Kaa allows for aggregating endpoints related to the same application into endpoint groups this is achieved by filtering the data in the profiles.
-The _endpoint group_ represents an independent managed entity which is defined by the profile filters assigned to the group. 
-Those endpoints whose profiles match the profile filters of the specific endpoint group become automatically 
-registered as members of this group. There is no restriction for endpoints on having membership in a number of groups at a time.
+Endpoint grouping is a Kaa feature that allows you to aggregate your [endpoints]({{root_url}}Glossary/#endpoint-ep) into endpoint groups within an [application]({{root_url}}Glossary/#kaa-application).
+The membership of an endpoint in a group is based on matching the [endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) to the [profile filter]({{root_url}}Glossary/#profile filter) assigned to that group.
+This means that those endpoints whose profiles match the profile filters of a specific endpoint group become automatically registered as members of that group.
+Endpoint group is an independently managed entity defined by the profile filter assigned to it.
 
-Endpoint group profile filters are predicate expressions which define characteristics of group members (endpoints). These filters are executed against the endpoint 
-profile to figure out whether or not the endpoint belongs to the group.
+Profile filters are predicate expressions that define characteristics of group members (endpoints).
+These filters are executed against the endpoint profile to figure out whether or not the endpoint belongs to the group.
 
-**NOTE**: Different profile schema versions may require separate profile filters due to the schema structural differences. 
-In case a group has no filter assigned for a specific profile schema version, the group does not apply to the endpoints that use the profile of this schema version.
+You can create unlimited number of groups.
+Any endpoint can be a member of unlimited number of groups at the same time.
 
-## Profile filters ##
+## Prerequisites
 
-Profile filters in Kaa are based on the [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html) (SpEL). 
-All filters must be specified as predicates (statements which may be either true or false). 
-Profile filters are evaluated using following context variables: 
+To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox), or a [single Kaa node]({{root_url}}Administration-guide/System-installation/Single-node-installation/), or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
+After that, you need to create a tenant, tenant admin, application, and user (if you use Sandbox, you don't need to create a tenant and application).
+To do this, you can use the [users management]({{root_url}}Administration-guide/Users-management/) guide or [tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [user]({{root_url}}Programming-guide/Server-REST-APIs/#/User) and [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application) APIs.
 
-* "cp" - Client-side endpoint profile
-* "sp" - Server-side endpoint profile
-* "ekh" - Endpoint key hash
+It is strongly recommended that you first read the [Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) section before you proceed.
 
-### Profile filter examples ###
+## Profile filters
+
+Profile filters in Kaa are based on the [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html) (SpEL).
+All filters must be specified as predicates (statements that may be either true or false).
+
+Profile filters are evaluated using the following context variables:
+
+* cp --- Client-side endpoint profile
+* sp --- Server-side endpoint profile
+* ekh ---Endpoint key hash
+
+>**NOTE**: Different profile schema versions may require separate profile filters due to the schema structural differences.
+>In case a group has no filter assigned for a specific profile schema version, the group will not apply to the endpoints that use the profile of this schema version.
+{:.note}
+
+### Profile filter examples
 
 The following example illustrates the general idea of profile filters.
 
-About which filters we can use, see the table below. 
-
-1. Let's assume the following client-side profile schema.
+<ol>
+<li markdown="1">
+Let's assume we have the following client-side profile schema.
 
 ```json
 [  
@@ -102,8 +109,10 @@ About which filters we can use, see the table below.
    }
 ]
 ```
-
-2. Let's assume the following server-side profile schema. Please note that this schema is less complex only for demonstration purposes. 
+</li>
+<li markdown="1">
+Let's assume we have the following server-side profile schema.
+For the sake of example, we will make it a fairly simple schema.
 
 ```json
 [  
@@ -127,8 +136,9 @@ About which filters we can use, see the table below.
    }
 ]
 ```
-
-3. Second, let's assume the following client-side endpoint profile, which corresponds to the schema.
+</li>
+<li markdown="1">
+Let's have the following client-side endpoint profile to complement our client-side schema.
 
 ```json
 {  
@@ -154,8 +164,9 @@ About which filters we can use, see the table below.
    "nullableRecordField":null
 }
 ```
-
-4. Let's assume the following server-side endpoint profile, which corresponds to the schema.
+</li>
+<li markdown="1">
+Let's have the following server-side endpoint profile to complement our server-side schema.
 
 ```json
 {  
@@ -166,26 +177,34 @@ About which filters we can use, see the table below.
    ]
 }
 ```
+</li>
+</ol>
 
-At last, the following filters will yield true when applied to the given endpoint.
+When you incorporated all the above schemas, the following filters will return **true** when applied to the given endpoint.
 
-| Filter |Explanation| 
+| Filter |Description| 
 |-------------------------------------------------------------------------------------------------------------|
-|#cp.simpleField=='CLIENT_SIDE_SIMPLE_FIELD' | The client-side endpoint profile contains simpleField with the value 'SIMPLE_FIELD'. |
-|#sp.arraySimpleField[1]=='SERVER_SIDE_VALUE_2' | The server-side endpoint profile contains arraySimpleField, which is an array containing the element 'VALUE2' in the position 
-|{'AAAAABBBBCCCDDD='}.contains(#ekh) | The endpoint key hash is AAAAABBBBCCCDDD= |
-|#cp.arraySimpleField.size()==2 | The client-side endpoint profile contains arraySimpleField, which is a collection containing two elements. |
-|#cp.recordField.otherSimpleField==123 | The client-side endpoint profile contains recordField, which is a record containing otherSimpleField set to '123'. |
-|#cp.recordField.otherMapSimpleField.size()==2 | The client-side endpoint profile contains recordField, which is a record containing otherMapSimpleField, which is a collection containing two entries. |
-|#cp.arrayRecordField[1].otherSimpleField==789 |The client-side endpoint profile contains arrayRecordField, which is an array. This array contains an element in the position 1, which is a record containing otherSimpleField set to '789'.|
-|#cp.nullableRecordField==null |An example of how to check a field for the null value.|
+|#cp.simpleField=='CLIENT_SIDE_SIMPLE_FIELD' | The client-side endpoint profile contains <code>simpleField</code> whith the **SIMPLE_FIELD** value. |
+|#sp.arraySimpleField[1]=='SERVER_SIDE_VALUE_2' | The server-side endpoint profile contains the <code>arraySimpleField</code> array that stores the **VALUE2** at index **1**.
+|{'AAAAABBBBCCCDDD='}.contains(#ekh) | The endpoint key hash is **AAAAABBBBCCCDDD=** |
+|#cp.arraySimpleField.size()==2 | The client-side endpoint profile contains the <code>arraySimpleField</code> array that stores two elements. |
+|#cp.recordField.otherSimpleField==123 | The client-side endpoint profile contains the <code>recordField</code> record where <code>otherSimpleField</code> is set to **123**. |
+|#cp.recordField.otherMapSimpleField.size()==2 | The client-side endpoint profile contains the <code>recordField</code> record in which the <code>otherMapSimpleField</code> collection contains two entries. |
+|#cp.arrayRecordField[1].otherSimpleField==789 |The client-side endpoint profile contains the <code>arrayRecordField</code> array. This array stores an element at index **1** which is a record containing <code>otherSimpleField</code> set to **789**.|
+|#cp.nullableRecordField==null |An example of how to check a field for the **null** value.|
 |#cp.arraySimpleField[0]=='CLIENT_SIDE_VALUE_1' and # sp.arraySimpleField[0]=='SERVER_SIDE_VALUE_1'|An example of how to combine several conditions in a query.|
-|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The arrayRecordField field is an array of records. It contains at least one element that contains otherSimpleField with the value.| 
+|!#arrayRecordField.?[otherSimpleField==456].isEmpty() |The <code>arrayRecordField</code> field is an array of records. It stores at least one element that contains <code>otherSimpleField</code> set to a value.| 
 
-## Using endpoint groups ##
+## Using endpoint groups
 
-Each Kaa application has a special, built-in, non-user-editable group "all" with weight 0. Weight of group responsible for her priority. Group with the biggest weight is the most priority.   
-Also group has:
+Every Kaa application, when created, becomes a member of the default group [all]({{root_url}}Glossary/#group-all).
+This default group is created for every application and cannot be edited by users.
+
+Every group has a *weight* that represents the group priority.
+Higher weight number corresponds to higher priority.
+The weight of the group *all* is *0*, which is the lowest priority.
+
+The group *all* also has the following attributes:
 
 * Name
 * Weight
@@ -194,18 +213,23 @@ Also group has:
 * [Configurations]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/#configuration-schema)
 * [Notification topics]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#notification-topics)
 
-The associated profile filter is automatically set equal to 'true' for each profile 
-schema version in the system. Therefore, group "all" contains every endpoint registered in the application. You can create your custom endpoint groups using the 
-[Admin UI](#adding-endpoint-groups) or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup).
+The associated profile filter is automatically set equal to **true** for each profile schema version in the system.
+Therefore, the group *all* contains every endpoint registered in the application.
+You can create your custom endpoint groups using the [Administration UI](#adding-endpoint-groups) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup).
 
-**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
+>**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
+{:.note}
 
-Each group can be associated with multiple profile filters, each specific to a separate client-side and server-side profile schema version combination. 
-Only one profile filter can be defined for a profile schema version combination. However, you may also define profile filters that are agnostic to either 
-client-side or server-side profile part. In this case, either client-side profile or server-side profile will not be accessible in the filter. 
-This is useful in case you want to specify an endpoint group that is based on certain client-side profile property and is not affected by server-side profile updates and vice-versa. 
- 
-Client-side Endpoint Profile A
+You can assign multiple filters to a group.
+Every profile filter is specific to one combination of client-side and server-side profile schema version.
+Only one profile filter can be defined for a profile schema version combination.
+However, you can also define profile filters that are not specific to neither client-side nor server-side profile part.
+In this case, either client-side profile or server-side profile part will not be accessible in the filter.
+This is useful in case you want to specify an endpoint group that is based on certain client-side profile properties and is not affected by the server-side profile updates and the other way around.
+
+Below are examples of client-server schema combinations.
+
+Client-side endpoint profile A.
 
 ```json
 { 
@@ -215,7 +239,7 @@ Client-side Endpoint Profile A
     "build":"2.0.1"
 }
 ```
-Server-side Endpoint Profile A
+Server-side endpoint profile A.
 
 ```json
 { 
@@ -223,7 +247,7 @@ Server-side Endpoint Profile A
     "activationFlag": "true"
 }
 ```
-Client-side Endpoint Profile B
+Client-side endpoint profile B.
 
 ```json
 { 
@@ -233,7 +257,7 @@ Client-side Endpoint Profile B
     "build":"3.0 RC1"
 }
 ```
-Server-side Endpoint Profile B
+Server-side endpoint profile B.
 
 ```json
 { 
@@ -242,7 +266,7 @@ Server-side Endpoint Profile B
 }
 ```
 
-Client-side Endpoint Profile C 
+Client-side endpoint profile C.
 
 ```json
 { 
@@ -252,7 +276,7 @@ Client-side Endpoint Profile C
     "build":"3.0 RC1"
 }
 ```
-Server-side Endpoint Profile C
+Server-side endpoint profile C.
 
 ```json
 { 
@@ -261,91 +285,78 @@ Server-side Endpoint Profile C
 }
 ```
 
-**NOTE**: Once a profile filter is created, you need to activate it. Filters that are not activated do not impact endpoint groups and do not affect the endpoints. 
+>**NOTE**: Once a profile filter is created, you need to activate it.
+>Filters that are not activated do not affect any endpoint groups or endpoints.
+>See [Adding profile filters](#adding-profile-filters).
 
 ## Custom endpoint groups
 
-The table below demonstrates the use of profile filters and results of filtering for sample profiles.
+The table below demonstrates the use of profile filters and filtering results for sample profiles.
 
 | Group name                                |Filter                                       | result for profile A   | result for profile B   | result for profile C |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |Android Froyo                              | endpoints	#cp.os.toString().equals("Android") and #cp.os_version.toString().startsWith("2.2")	|true    |false	|false |
-| Android endpoints                         |#cp.os.toString().equals("Android")                                                            |true    |true	|false |
+|Android endpoints                          |#cp.os.toString().equals("Android")                                                            |true    |true	|false |
 |iOS 8 endpoints	                        | #cp.os.toString().equals("iOS") and #cp.os_version.toString().startsWith("8")                 |false	 |false	|true  |
 |iOS 8 endpoints	                        | #cp.os.toString().equals("iOS") and #cp.os_version.toString().startsWith("8")                 |false	 |false	|true  |
 |3.0 RC1 QA group endpoints                 |#cp.build.toString().equals("3.0 RC1")                                                         |false	 |true	|true  |
 |Deactivated devices                        | # sp.activationFlag == false                                                                  |false	 |true  |false |
 |iOS devices with premium subscription plan | #cp.os.toString().equals("iOS") and #sp.subscriptionPlan.toString().equals("Premium")         |false	 |false |true  |
 
-## Adding endpoint groups ##
+## Adding endpoint groups
 
-Endpoint groups are created based on the profile filter.
-To add a new endpoint group, do the following:
+Endpoint groups are created based on the profile filters.
 
-1. Open the **Endpoint groups** window by clicking **Endpoint groups** under the application menu on the navigation panel and then click **Add endpoint group**.
+To add a new endpoint group:
 
-![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
+1. Under the **Schemas** section of the application, click **Endpoint groups**, then click **Add endpoint group**.
 
+	![endpoint-groups](admin-ui/endpoint-groups.png "endpoint-groups")
 
-2. In the **Add endpoint group** window, fill in the required fields and then click **Add**.
+2. On the **Add endpoint group** page, fill in the required fields and click **Add**.
 
-![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
+	![create-endpoint-group](admin-ui/create-endpoint-group.png "create-endpoint-group")
 
-3. In the **Endpoint group** window, add profile filters, configurations, and notifications topics to the group, 
-    if necessary (see the following paragraphs for instructions).
+3. On the **Endpoint group** page, add profile filters, configurations, and notification topics to the group, if necessary.
 
-![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
+	![add-profile-filters-to-group](admin-ui/add-profile-filters-to-group.png "add-profile-filters-to-group")
 
-### Add profile filter to endpoint group ###
+### Adding profile filters
 
-To add a profile filter to the endpoint group, do the following:
+To add a profile filter for an endpoint group:
 
-1. In the **Endpoint group** window, click **Add profile filter**.
-2. In the **Profile filter** window, select the schema version.
-3. On the **Draft** tab, enter the description and [filter body](#profile-filters).
+1. Under the **Schemas** section of the application, click **Endpoint groups**, then select the required group by clicking on the corresponding row in the list.
+
+2. On the **Endpoint group** page, click **Add profile filter**.
+
+3. On the **Profile filter** page, select the schema version.
+
+4. Switch to the **Draft** tab, enter a description (optional) and a [filter body](#profile-filters).
 
     ![profile-filter-details](admin-ui/profile-filter-details.png "profile-filter-details.png")
 
-    **NOTE**: In order to test profile filter click Test filter. Afterwards the Test profile filter window will be displayed. 
-    Complete the endpoint and/or server profile forms and then click Test filter.
-
+    >**TIP**: To test profile filter, click **Test filter**.
+    >The **Test profile filter** menu will open.
+    >Complete the endpoint and/or server profile forms and click **Test filter**.
+    {:.tip}
+    
     ![test-profile-filter](admin-ui/test-profile-filter.png "test-profile-filter.png")
     
-4. Click **Save** to save the profile filter.
-   
-    **NOTE**: You can save the data on the **Draft** tab and return to update it later as many times as needed until you click **Activate**.
-   
-5. Click **Activate** to activate the profile filter.
-   
-   All the specified information will be displayed on the **Active** tab.
+5. Click **Save** to save the profile filter.
 
-## REST API ##
+	>**TIP**: You can save your data on the **Draft** tab and return to update it later as many times as needed until you click **Activate**.
+	{:.tip}
+	
+6. Click **Activate** to activate the profile filter.
+   The profile filter information you entered is now visible in the **Active** tab.
 
-Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Grouping) documentation page for detailed description of the REST API, 
-its purpose, interfaces and features supported.
+## Using REST API
 
-Admin REST API provides the following actions:
+In alternative to using the Administration UI, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#/Profiling) to perform the above actions.
 
-* [Activate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/activateProfileFilter)
-* [Deactivate profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deactivateProfileFilter)
-* [Delete endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteEndpointGroup)
-* [Delete profile filter record]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/deleteProfileFilterRecord)
-* [Create/Edit endpoint group]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup)
-* [Get endpoint group based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroup)
-* [Get endpoint groups based on application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointGroupsByApplicationToken)
-* [Get endpoint profiles bodies based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointProfileBodyByEndpointGroupId)
-* [Get endpoint profiles based on endpoint group id]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getEndpointProfileByEndpointGroupId)
-* [Create/edit profile filter]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editProfileFilter)
-* [Get profile filter record]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getProfileFilterRecord)
-* [Get profile filter records]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getProfileFilterRecordsByEndpointGroupId)
-* [Get vacant profile schemas]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/getVacantProfileSchemasByEndpointGroupId)
-
-
-
-## Further reading ##
+## Further reading
 
 * [Spring Expression Language](http://docs.spring.io/spring/docs/3.0.x/reference/expressions.html)
-
 * [Avro](http://avro.apache.org/)
 
 

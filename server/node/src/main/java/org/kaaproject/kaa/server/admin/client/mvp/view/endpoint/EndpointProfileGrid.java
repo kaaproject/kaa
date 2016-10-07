@@ -122,15 +122,15 @@ public class EndpointProfileGrid extends AbstractGrid<EndpointProfileDto, String
     return BaseEncoding.base64().encode(value.getEndpointKeyHash());
   }
 
-  @Override
-  protected SimplePager getPager() {
-    return new SimplePager(SimplePager.TextLocation.CENTER, pagerResources, false, 0, true) {
-      @Override
-      protected String createText() {
-        Range range = getDisplay().getVisibleRange();
-        int currentPage = range.getStart() / (range.getLength() != 0 ? range.getLength() : 1) + 1;
-        return Utils.messages.pagerText(currentPage + "");
-      }
+    @Override
+    protected SimplePager getPager() {
+        return new SimplePager(SimplePager.TextLocation.CENTER, pagerResources, false, 0, false){
+            @Override
+            protected String createText() {
+                Range range = getDisplay().getVisibleRange();
+                int currentPage = range.getStart() / (range.getLength() != 0 ? range.getLength() : 1) + 1;
+                return Utils.messages.pagerText(currentPage + "");
+            }
 
       @Override
       public void setPageStart(int index) {

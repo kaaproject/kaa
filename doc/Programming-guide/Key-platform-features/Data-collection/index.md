@@ -65,7 +65,6 @@ A simple definition of a log record with no data fields.
     ]
 }
 ```
-`
 
 ### Adding log schema
 
@@ -304,20 +303,18 @@ RecordInfo logDeliveryReport = logDeliveryStatus.get();
 ```cpp
 #include <iostream>
 #include <exception>
+#include <kaa/Kaa.hpp>
  
-include <kaa/Kaa.hpp>
- 
-using namespace kaa;
+...
  
 // Create an endpoint instance
-auto kaaClient = Kaa::newClient();
-  
+auto kaaClient = kaa::Kaa::newClient();
 // Start an endpoint
 kaaClient->start();
- 
+
 // Create a log entity (according to the org.kaaproject.sample.LogData sample schema above) 
-KaaUserLogRecord logRecord;
-logRecord.level = Level::INFO;
+kaa::KaaUserLogRecord logRecord;
+logRecord.level = kaa_log::Level::INFO;
 logRecord.tag = "tag";
 logRecord.message = "message";
  
@@ -328,7 +325,7 @@ try {
     auto recordInfo = recordDeliveryCallback.get();
     auto bucketInfo = recordInfo.getBucketInfo();
     std::cout << "Received log record delivery info. Bucket Id [" <<  bucketInfo.getBucketId() << "]. "
-              << "Record delivery time [" << recordInfo.getRecordDeliveryTimeMs() << " ms]." << std::endl;
+        << "Record delivery time [" << recordInfo.getRecordDeliveryTimeMs() << " ms]." << std::endl;
 } catch (std::exception& e) {
     std::cout << "Exception was caught while waiting for callback result: " << e.what() << std::endl;
 }
@@ -485,16 +482,17 @@ kaaClient.setLogStorage(new AndroidSQLiteDBLogStorage(/*Android context*/, "kaa_
 
 ```cpp
 #include <memory>
- 
 #include <kaa/log/SQLiteDBLogStorage.hpp>
- 
-using namespace kaa;
+#include <kaa/Kaa.hpp>
  
 ...
  
-auto persistentStorage = std::make_shared<SQLiteDBLogStorage>(kaaClient->getKaaClientContext());
+// Create an endpoint instance
+auto kaaClient = kaa::Kaa::newClient();	 
+// Create the storage
+auto persistentStorage = std::make_shared<kaa::SQLiteDBLogStorage>(kaaClient->getKaaClientContext());
 // Setting SQLite log storage implementation
-kaaClient->setStorage(persistentStorage);
+kaaClient->setLogStorage(persistentStorage);
 ```
 
 </div>

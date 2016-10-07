@@ -79,7 +79,7 @@ The `by_default` parameter defines the default sampling period value which is se
 				{
 					"name": "samplePeriod",
 					"type": "int",
-					"by_default": "1"
+					"by_default": 1
 				}
 			]
 		}
@@ -88,15 +88,13 @@ The `by_default` parameter defines the default sampling period value which is se
 		
 4. On the Sandbox main page, click **Administration** and log in as a tenant developer using default **devuser** username and **devuser123** password.
 
-5. Click the **Applications** arrow to unfold the list and click the arrow of the application you created in [Adding an application](#adding-an-application), then click **Schemas** > **Log** and click the **Add schema** button.
+5. Click the **Applications** arrow to unfold the list and click the arrow of the application you created in [Add application](#add-application), then click **Schemas** > **Log** and click the **Add schema** button.
 
 6. On the **Add log schema** page, enter a name and description of the new data collection schema and select the CT created from the data-schema.json file.
 
 	![Data collection schema](attach/new_data_schema2.png)
 
-7. Scroll down and use the **Upload from file** function to find the previously created data-schema.json file and click **Upload**.
-
-8. Click the **Add** button at the top of the page.
+7. Click the **Add** button at the top of the page.
 
 >**NOTE:** Alternatively, you can use the [Schema Avro UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#avro-ui-forms) form to create the schema.
 {: .note}
@@ -137,7 +135,7 @@ To generate an SDK for your new application:
 
 	![Configure SDK](attach/configure_sdk.png)
 
-	>**NOTE:** Version numbers in the screenshot correspond to the version numbers obtained in [Creating schemas](#creating-schemas).
+	>**NOTE:** Version numbers in the screenshot correspond to the version numbers obtained in [Create schemas](#create-schemas).
 	>Your version numbers may be different from the example.
 	>You should use the version numbers of your own configuration and data collection schemas.
 	{: .note}
@@ -301,12 +299,7 @@ Click the appropriate tab to see a code example for the application that sends t
 </ul>
 
 <div class="tab-content">
-<div id="#app-obj-c" class="tab-pane fade in active" markdown="1" >
 
-
-</div>
-
-<div class="tab-content">
 <div id="app-c" class="tab-pane fade in active" markdown="1" >
 
 ```c
@@ -481,7 +474,8 @@ class ConfigurationCollection : public kaa::IConfigurationReceiver {
 public:
     ConfigurationCollection()
         : kaaClient_(kaa::Kaa::newClient())
-        , interval_(samplePeriod_ = 0)
+        , samplePeriod_(0)
+        , interval_(samplePeriod_)
         , timer_(service_, interval_) 
     {
         // Set a custom strategy for uploading logs.
@@ -510,6 +504,11 @@ public:
     {
         // Run the Kaa endpoint.
         kaaClient_->start();
+        // Read default sample period
+        samplePeriod_ = kaaClient_->getConfiguration().samplePeriod;
+        std::cout << "Default sample period: " << samplePeriod_<< std::endl;
+        // Default sample period
+        timer_.expires_from_now(boost::posix_time::seconds(samplePeriod_));
         service_.run();
     }
     

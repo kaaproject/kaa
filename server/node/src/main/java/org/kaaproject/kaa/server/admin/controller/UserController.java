@@ -244,43 +244,37 @@ public class UserController extends AbstractAdminController {
     return userService.getUser(userId);
   }
 
-  /**
-   * Edits user to the list of all users.
-   *
-   * @param user the user
-   * @return the user dto
-   * @throws KaaAdminServiceException the kaa admin service exception
-   */
-  @ApiOperation(value = "Create/Edit user",
-      notes = "Creates or edits a user. To create a user you do not need to specify "
-          + "the user ID, its Tenant ID will be set to the Tenant ID of the "
-          + "request submitter. A random password will be generated and presented "
-          + "in the success response in the tempPassword field. To edit user "
-          + "specify the user ID. If a user with the specified ID exists, it will be updated. "
-          + "Only users with the TENANT_ADMIN role can perform "
-          + "this operation.")
-  @ApiResponses(value = {
-      @ApiResponse(code = 400, message = "Some of the mandatory "
-          + "fields are not correct or are empty"),
-      @ApiResponse(code = 401, message = "The user is not authenticated "
-          + "or invalid credentials were provided"),
-      @ApiResponse(code = 403, message = "The authenticated user does not have the required "
-          + "TENANT_ADMIN role or the Tenant ID of the editing user "
-          + "does not match the Tenant ID of the authenticated user"),
-      @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
-  @RequestMapping(value = "user", method = RequestMethod.POST)
-  @ResponseBody
-  public UserDto editUser(
-      @ApiParam(name = "user",
-          value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority",
-          required = true)
-      @Valid @RequestBody UserDto user) throws KaaAdminServiceException {
-    try {
-      return userService.editUser(user);
-    } catch (Exception ex) {
-      throw Utils.handleException(ex);
+    /**
+     * Edits user to the list of all users.
+     *
+     * @param user the user
+     * @return the user dto
+     * @throws KaaAdminServiceException the kaa admin service exception
+     */
+    @ApiOperation(value = "Create/Edit user",
+            notes = "Creates or edits a user. To create a user you do not need to specify the user ID, its Tenant ID will be set to the Tenant ID of the " +
+                    "request submitter. A random password will be generated and presented in the success response in the tempPassword field. To edit user " +
+                    "specify the user ID. If a user with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role can perform " +
+                    "this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Some of the mandatory fields are not correct or are empty"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user " +
+                    "does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "user", method = RequestMethod.POST)
+    @ResponseBody
+    public UserDto editUser(
+            @ApiParam(name = "user", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
+           @Valid @RequestBody UserDto user,
+            @RequestParam(value="doSendTempPassword", required = false, defaultValue = "false")
+            boolean doSendTempPassword) throws KaaAdminServiceException {
+        try {
+            return userService.editUser(user, doSendTempPassword);
+        } catch (Exception e) {
+            throw Utils.handleException(e);
+        }
     }
-  }
 
   /**
    * Delete user by user id.
