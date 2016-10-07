@@ -199,7 +199,7 @@ public interface ConfigurationService {
      * @param schemaVersion     configuration schema version
      * @param configurationBody configuration to validate
      */
-    String validateOverrideConfigurationBody(String appId, int schemaVersion, String configurationBody);
+    String normalizeAccordingToOverrideConfigurationSchema(String appId, int schemaVersion, String configurationBody);
 
     /**
      * Find configuration schema by id.

@@ -63,7 +63,7 @@ public class EndpointSpecificConfigurationMigration {
 
     private void addEndpointSpecificConfigurationTable() {
         cassandraSession.execute("CREATE TABLE IF NOT EXISTS ep_specific_conf (\n" +
-                "    ep_key_hash text,\n" +
+                "    ep_key_hash blob,\n" +
                 "    cf_ver int,\n" +
                 "    body text,\n" +
                 "    opt_lock bigint,\n" +

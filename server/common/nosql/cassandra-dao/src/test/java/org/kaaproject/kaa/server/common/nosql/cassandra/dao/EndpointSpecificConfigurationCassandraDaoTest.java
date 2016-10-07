@@ -36,26 +36,24 @@ import java.util.List;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class EndpointSpecificConfigurationCassandraDaoTest extends AbstractCassandraTest {
 
-    private static final String KEY = "key";
-    private static final String KEY_2 = "key2";
+    private static final byte[] KEY = "key".getBytes();
+    private static final byte[] KEY_2 = "key2".getBytes();
     private static final String BODY = "body";
     private EndpointSpecificConfigurationDto saved1;
     private EndpointSpecificConfigurationDto saved2;
     private EndpointSpecificConfigurationDto saved3;
 
     @Test
-    public void testRemoveByEndpointKeyHash() throws Exception {
-        List<CassandraEndpointSpecificConfiguration> found = endpointSpecificConfigurationDao.find();
-        Assert.assertTrue(found.size() == 3);
-        endpointSpecificConfigurationDao.removeByEndpointKeyHash(KEY);
-        found = endpointSpecificConfigurationDao.find();
-        Assert.assertTrue(found.size() == 1);
+    public void testRemoveByEndpointKeyHashAndConfigurationVersion() throws Exception {
+        Assert.assertTrue(endpointSpecificConfigurationDao.find().size() == 3);
+        endpointSpecificConfigurationDao.removeByEndpointKeyHashAndConfigurationVersion(KEY, 0);
+        Assert.assertTrue(endpointSpecificConfigurationDao.find().size() == 2);
+        Assert.assertTrue(endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY, 0) == null);
     }
 
     @Test
     public void testFindByEndpointKeyHashAndConfigurationVersion() throws Exception {
-        List<CassandraEndpointSpecificConfiguration> found = endpointSpecificConfigurationDao.find();
-        Assert.assertTrue(found.size() == 3);
+        Assert.assertTrue(endpointSpecificConfigurationDao.find().size() == 3);
         EndpointSpecificConfigurationDto found1 = endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY, 0).toDto();
         EndpointSpecificConfigurationDto found2 = endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY, 1).toDto();
         EndpointSpecificConfigurationDto found3 = endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY_2, 0).toDto();

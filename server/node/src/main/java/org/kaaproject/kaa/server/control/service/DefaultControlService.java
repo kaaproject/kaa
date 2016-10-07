@@ -887,28 +887,43 @@ public class DefaultControlService implements ControlService {
     @Override
     public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) {
         configuration = endpointSpecificConfigurationService.save(configuration);
-        sendEndpointConfigurationRefreshMessage(configuration.getEndpointKeyHash());
+        sendEndpointConfigurationRefreshMessage(configuration);
         return configuration;
     }
 
     @Override
-    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) {
-        return endpointSpecificConfigurationService.findByEndpointKeyHash(endpointKeyHash)
-                .orElseThrow(() -> new NotFoundException("Endpoint specific configuration not found"));
+    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) {
+        Optional<EndpointSpecificConfigurationDto> result;
+        if (confSchemaVersion == null) {
+            result = endpointSpecificConfigurationService.findActiveConfigurationByEndpointKeyHash(endpointKeyHash);
+        } else {
+            result = endpointSpecificConfigurationService.findByEndpointKeyHashAndConfSchemaVersion(endpointKeyHash, confSchemaVersion);
+        }
+        return result.orElseThrow(() -> new NotFoundException("Endpoint specific configuration not found"));
     }
 
     @Override
-    public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash) {
-        EndpointSpecificConfigurationDto configuration = endpointSpecificConfigurationService.deleteByEndpointKeyHash(endpointKeyHash)
+    public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) {
+        Optional<EndpointSpecificConfigurationDto> result;
+        if (confSchemaVersion == null) {
+            result = endpointSpecificConfigurationService.deleteActiveConfigurationByEndpointKeyHash(endpointKeyHash);
+        } else {
+            result = endpointSpecificConfigurationService.deleteByEndpointKeyHashAndConfSchemaVersion(endpointKeyHash, confSchemaVersion);
+        }
+        EndpointSpecificConfigurationDto configuration = result
                 .orElseThrow(() -> new NotFoundException("Endpoint specific configuration not found"));
-        sendEndpointConfigurationRefreshMessage(endpointKeyHash);
+        sendEndpointConfigurationRefreshMessage(configuration);
         return configuration;
     }
 
-    private void sendEndpointConfigurationRefreshMessage(String endpointKeyHash) {
-        checkNeighbors();
-        byte[] endpointKeyHashBytes = Base64Util.decode(endpointKeyHash);
+    private void sendEndpointConfigurationRefreshMessage(EndpointSpecificConfigurationDto configuration) {
+        byte[] endpointKeyHashBytes = configuration.getEndpointKeyHash();
         EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(endpointKeyHashBytes);
+        if (!configuration.getConfigurationSchemaVersion().equals(endpointProfile.getConfigurationVersion())) {
+            return;
+        }
+        checkNeighbors();
+        String endpointKeyHash = Base64Util.encode(configuration.getEndpointKeyHash());
         ApplicationDto appDto = applicationService.findAppById(endpointProfile.getApplicationId());
         OperationsNodeInfo server = resolve(endpointKeyHash);
 

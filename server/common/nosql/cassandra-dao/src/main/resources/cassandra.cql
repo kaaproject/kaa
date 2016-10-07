@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS kaa.credentials (
 );
 
 CREATE TABLE IF NOT EXISTS kaa.ep_specific_conf (
-    ep_key_hash text,
+    ep_key_hash blob,
     cf_ver int,
     body text,
     opt_lock bigint,

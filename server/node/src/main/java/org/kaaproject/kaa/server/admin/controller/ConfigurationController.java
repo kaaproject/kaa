@@ -28,6 +28,7 @@ import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.common.Base64Util;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -305,7 +306,9 @@ public class ConfigurationController extends AbstractAdminController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(
-            @ApiParam(name = "endpointSpecificConfiguration", value = "endpointSpecificConfigurationDto body. Mandatory fields: endpointKeyHash, configuration", required = true)
+            @ApiParam(name = "endpointSpecificConfiguration",
+                    value = "endpointSpecificConfigurationDto body. Mandatory fields: endpointKeyHash, configuration. Optional fields: configurationSchemaVersion (currently active endpoint configuration schema version is used by default)",
+                    required = true)
             @RequestBody EndpointSpecificConfigurationDto endpointSpecificConfiguration) throws KaaAdminServiceException {
        return configurationService.editEndpointSpecificConfiguration(endpointSpecificConfiguration);
     }
@@ -331,8 +334,14 @@ public class ConfigurationController extends AbstractAdminController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(
-            @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
-        return configurationService.findEndpointSpecificConfiguration(endpointKeyHash);
+            @PathVariable String endpointKeyHash,
+            @ApiParam(name = "configurationSchemaVersion",
+                    value = "Configuration schema version",
+                    defaultValue = "By default currently active endpoint's configuration schema is used",
+                    required = false)
+            @RequestParam(required = false, value = "configurationSchemaVersion") Integer confSchemaVersion)
+            throws KaaAdminServiceException {
+        return configurationService.findEndpointSpecificConfiguration(Base64Util.decode(endpointKeyHash), confSchemaVersion);
     }
 
     /**
@@ -355,8 +364,14 @@ public class ConfigurationController extends AbstractAdminController {
     @RequestMapping(value = "endpointSpecificConfiguration/{endpointKeyHash}", method = RequestMethod.DELETE)
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteEndpointSpecificConfiguration(
-            @PathVariable String endpointKeyHash) throws KaaAdminServiceException {
-        configurationService.deleteEndpointSpecificConfiguration(endpointKeyHash);
+            @PathVariable String endpointKeyHash,
+            @ApiParam(name = "configurationSchemaVersion",
+                    value = "Configuration schema version",
+                    defaultValue = "By default currently active  endpoint's configuration schema is used",
+                    required = false)
+            @RequestParam(required = false, value = "configurationSchemaVersion") Integer confSchemaVersion)
+            throws KaaAdminServiceException {
+        configurationService.deleteEndpointSpecificConfiguration(Base64Util.decode(endpointKeyHash), confSchemaVersion);
     }
 
     /**

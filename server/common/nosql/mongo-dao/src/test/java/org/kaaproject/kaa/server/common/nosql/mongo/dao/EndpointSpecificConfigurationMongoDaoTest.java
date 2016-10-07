@@ -30,14 +30,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/mongo-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class EndpointSpecificConfigurationMongoDaoTest extends AbstractMongoTest {
-    private static final String KEY = "key";
-    private static final String KEY_2 = "key2";
+    private static final byte[] KEY = "key".getBytes();
+    private static final byte[] KEY_2 = "key2".getBytes();
     private static final String BODY = "body";
     private EndpointSpecificConfigurationDto saved1;
     private EndpointSpecificConfigurationDto saved2;
@@ -54,18 +52,16 @@ public class EndpointSpecificConfigurationMongoDaoTest extends AbstractMongoTest
     }
 
     @Test
-    public void testRemoveByEndpointKeyHash() throws Exception {
-        List<EndpointSpecificConfiguration> found = endpointSpecificConfigurationDao.find();
-        Assert.assertTrue(found.size() == 3);
-        endpointSpecificConfigurationDao.removeByEndpointKeyHash(KEY);
-        found = endpointSpecificConfigurationDao.find();
-        Assert.assertTrue(found.size() == 1);
+    public void testRemoveByEndpointKeyHashAndConfigurationVersion() throws Exception {
+        Assert.assertTrue(endpointSpecificConfigurationDao.find().size() == 3);
+        endpointSpecificConfigurationDao.removeByEndpointKeyHashAndConfigurationVersion(KEY, 0);
+        Assert.assertTrue(endpointSpecificConfigurationDao.find().size() == 2);
+        Assert.assertTrue(endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY, 0) == null);
     }
 
     @Test
     public void testFindByEndpointKeyHashAndConfigurationVersion() throws Exception {
-        List<EndpointSpecificConfiguration> found = endpointSpecificConfigurationDao.find();
-        Assert.assertTrue(found.size() == 3);
+        Assert.assertTrue(endpointSpecificConfigurationDao.find().size() == 3);
         EndpointSpecificConfigurationDto found1 = endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY, 0).toDto();
         EndpointSpecificConfigurationDto found2 = endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY, 1).toDto();
         EndpointSpecificConfigurationDto found3 = endpointSpecificConfigurationDao.findByEndpointKeyHashAndConfigurationVersion(KEY_2, 0).toDto();

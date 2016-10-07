@@ -92,7 +92,7 @@ public interface ConfigurationService extends RemoteService {
 
     EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) throws KaaAdminServiceException;
 
-    EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) throws KaaAdminServiceException;
+    EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) throws KaaAdminServiceException;
 
-    EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash) throws KaaAdminServiceException;
+    EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) throws KaaAdminServiceException;
 }

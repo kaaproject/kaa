@@ -31,7 +31,7 @@ public class CassandraEndpointSpecificConfigurationTest {
 
     @Test
     public void dataConversionTest() throws Exception {
-        EndpointSpecificConfigurationDto dto = new EndpointSpecificConfigurationDto("hash", 1, "conf body", 2L);
+        EndpointSpecificConfigurationDto dto = new EndpointSpecificConfigurationDto("hash".getBytes(), 1, "conf body", 2L);
         CassandraEndpointSpecificConfiguration configuration = new CassandraEndpointSpecificConfiguration(dto);
         Assert.assertEquals(dto, configuration.toDto());
     }

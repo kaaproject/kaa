@@ -243,7 +243,7 @@ public abstract class AbstractCassandraTest {
         return generatedCredentials;
     }
 
-    protected EndpointSpecificConfigurationDto generateEpsConfigurationDto(String endpointKeyHash,
+    protected EndpointSpecificConfigurationDto generateEpsConfigurationDto(byte[] endpointKeyHash,
                                                                            Integer configurationVersion,
                                                                            String configuration,
                                                                            Long version) {

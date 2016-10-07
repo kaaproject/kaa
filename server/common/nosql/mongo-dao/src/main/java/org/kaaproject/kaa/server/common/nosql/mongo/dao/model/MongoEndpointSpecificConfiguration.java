@@ -45,7 +45,7 @@ public class MongoEndpointSpecificConfiguration implements EndpointSpecificConfi
     private String id;
     @Indexed
     @Field(EP_SPECIFIC_CONFIGURATION_KEY_HASH)
-    private String endpointKeyHash;
+    private byte[] endpointKeyHash;
     @Field(EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION)
     private Integer configurationVersion;
     @Field(EP_SPECIFIC_CONFIGURATION_CONFIGURATION)
@@ -59,7 +59,7 @@ public class MongoEndpointSpecificConfiguration implements EndpointSpecificConfi
 
     public MongoEndpointSpecificConfiguration(EndpointSpecificConfigurationDto dto) {
         this.endpointKeyHash = dto.getEndpointKeyHash();
-        this.configurationVersion = dto.getConfigurationVersion();
+        this.configurationVersion = dto.getConfigurationSchemaVersion();
         this.configuration = dto.getConfiguration();
         this.version = dto.getVersion();
         generateId();
@@ -68,22 +68,22 @@ public class MongoEndpointSpecificConfiguration implements EndpointSpecificConfi
     @Override
     public EndpointSpecificConfigurationDto toDto() {
         EndpointSpecificConfigurationDto dto = new EndpointSpecificConfigurationDto();
-        dto.setEndpointKeyHash(new String(this.getEndpointKeyHash()));
+        dto.setEndpointKeyHash(this.getEndpointKeyHash());
         dto.setConfiguration(this.getConfiguration());
-        dto.setConfigurationVersion(this.getConfigurationVersion());
+        dto.setConfigurationSchemaVersion(this.getConfigurationVersion());
         dto.setVersion(this.getVersion());
         return dto;
     }
 
     protected void generateId() {
-        id = endpointKeyHash + '#' + configurationVersion;
+        id = new String(endpointKeyHash) + '#' + configurationVersion;
     }
 
-    public String getEndpointKeyHash() {
+    public byte[] getEndpointKeyHash() {
         return endpointKeyHash;
     }
 
-    public void setEndpointKeyHash(String endpointKeyHash) {
+    public void setEndpointKeyHash(byte[] endpointKeyHash) {
         this.endpointKeyHash = endpointKeyHash;
     }
 

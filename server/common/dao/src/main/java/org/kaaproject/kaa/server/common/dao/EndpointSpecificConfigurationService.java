@@ -27,31 +27,49 @@ import java.util.Optional;
 public interface EndpointSpecificConfigurationService {
 
     /**
-     * Find endpoint specific configuration by endpoint key hash
+     * Find currently active endpoint specific configuration by endpoint key hash
      *
      * @param endpointKeyHash
      * @return the endpoint specific configuration
      */
-    Optional<EndpointSpecificConfigurationDto> findByEndpointKeyHash(String endpointKeyHash);
+    Optional<EndpointSpecificConfigurationDto> findActiveConfigurationByEndpointKeyHash(byte[] endpointKeyHash);
 
     /**
-     * Find endpoint specific configuration by endpoint profile
+     * Find endpoint specific configuration by endpoint key hash and configuration schema version
+     *
+     * @param endpointKeyHash
+     * @param confSchemaVersion configuration schema version
+     * @return the endpoint specific configuration
+     */
+    Optional<EndpointSpecificConfigurationDto> findByEndpointKeyHashAndConfSchemaVersion(byte[] endpointKeyHash, Integer confSchemaVersion);
+
+    /**
+     * Find currently active endpoint specific configuration by endpoint profile
      *
      * @param endpointProfileDto
      * @return the endpoint specific configuration
      */
-    Optional<EndpointSpecificConfigurationDto> findByEndpointProfile(EndpointProfileDto endpointProfileDto);
+    Optional<EndpointSpecificConfigurationDto> findActiveConfigurationByEndpointProfile(EndpointProfileDto endpointProfileDto);
 
     /**
-     * Delete endpoint specific configuration by endpoint key hash
+     * Delete currently active endpoint specific configuration by endpoint key hash
      *
      * @param endpointKeyHash
      * @return deleted endpoint specific configuration
      */
-    Optional<EndpointSpecificConfigurationDto> deleteByEndpointKeyHash(String endpointKeyHash);
+    Optional<EndpointSpecificConfigurationDto> deleteActiveConfigurationByEndpointKeyHash(byte[] endpointKeyHash);
 
     /**
-     * Save endpoint specific configuration by endpoint key hash
+     * Delete endpoint specific configuration by endpoint key hash and configuration schema version
+     *
+     * @param endpointKeyHash
+     * @param confSchemaVersion configuration schema version
+     * @return deleted endpoint specific configuration
+     */
+    Optional<EndpointSpecificConfigurationDto> deleteByEndpointKeyHashAndConfSchemaVersion(byte[] endpointKeyHash, Integer confSchemaVersion);
+
+    /**
+     * Save endpoint specific configuration
      *
      * @param configurationDto endpoint specific configuration
      * @return saved endpoint specific configuration

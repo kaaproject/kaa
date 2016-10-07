@@ -532,12 +532,23 @@ public class AdminClient {
         return restTemplate.postForObject(restTemplate.getUrl() + "endpointSpecificConfiguration", configuration, EndpointSpecificConfigurationDto.class);
     }
 
-    public void deleteEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
-        restTemplate.delete(restTemplate.getUrl() + "endpointSpecificConfiguration/" + toUrlSafe(endpointKeyHash));
+    public void deleteActiveEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
+        restTemplate.delete(restTemplate.getUrl() + "endpointSpecificConfiguration/{endpointKeyHash}", toUrlSafe(endpointKeyHash));
     }
 
-    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
-        return restTemplate.getForObject(restTemplate.getUrl() + "endpointSpecificConfiguration/" + toUrlSafe(endpointKeyHash), EndpointSpecificConfigurationDto.class);
+    public EndpointSpecificConfigurationDto findActiveEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "endpointSpecificConfiguration/{endpointKeyHash}",
+                EndpointSpecificConfigurationDto.class, toUrlSafe(endpointKeyHash));
+    }
+
+    public void deleteEndpointSpecificConfigurationByEndpointKeyHashAndConfigurationSchemaVersion(String endpointKeyHash, int configurationSchemaVersion) throws Exception {
+        restTemplate.delete(restTemplate.getUrl() + "endpointSpecificConfiguration/{endpointKeyHash}?configurationSchemaVersion={configurationSchemaVersion}",
+                toUrlSafe(endpointKeyHash), configurationSchemaVersion);
+    }
+
+    public EndpointSpecificConfigurationDto findEndpointSpecificConfigurationByEndpointKeyHashAndConfigurationSchemaVersion(String endpointKeyHash, int configurationSchemaVersion) throws Exception {
+        return restTemplate.getForObject(restTemplate.getUrl() + "endpointSpecificConfiguration/{endpointKeyHash}?configurationSchemaVersion={configurationSchemaVersion}",
+                EndpointSpecificConfigurationDto.class, toUrlSafe(endpointKeyHash), configurationSchemaVersion);
     }
 
     public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {

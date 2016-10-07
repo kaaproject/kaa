@@ -351,7 +351,7 @@ public class DefaultOperationsService implements OperationsService {
 
     @Override
     public byte[] fetchEndpointSpecificConfigurationHash(EndpointProfileDto profile) {
-        Optional<EndpointSpecificConfigurationDto> configuration = endpointSpecificConfigurationService.findByEndpointProfile(profile);
+        Optional<EndpointSpecificConfigurationDto> configuration = endpointSpecificConfigurationService.findActiveConfigurationByEndpointProfile(profile);
         return configuration.filter(conf -> conf.getConfiguration() != null)
                 .map(dto -> EndpointObjectHash.fromString(dto.getConfiguration()).getData()).orElse(null);
     }

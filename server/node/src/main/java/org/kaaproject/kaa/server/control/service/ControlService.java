@@ -594,17 +594,19 @@ public interface ControlService {
      * Retrieves endpoint specific configuration by endpoint key hash.
      *
      * @param endpointKeyHash endpoint key hash
+     * @param confSchemaVersion configuration schema version
      * @return endpoint specific configuration
      */
-    EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash);
+    EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion);
 
     /**
      * Deletes endpoint specific configuration by endpoint key hash.
      *
      * @param endpointKeyHash endpoint key hash
+     * @param confSchemaVersion configuration schema version
      * @return deleted endpoint specific configuration
      */
-    EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash);
+    EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion);
 
     /**
      * Activate configuration.

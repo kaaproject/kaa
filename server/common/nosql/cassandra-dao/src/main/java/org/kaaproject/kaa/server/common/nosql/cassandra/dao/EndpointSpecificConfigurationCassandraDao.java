@@ -30,6 +30,7 @@ import org.springframework.stereotype.Repository;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_COLUMN_FAMILY_NAME;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_KEY_HASH_PROPERTY;
@@ -60,19 +61,20 @@ public class EndpointSpecificConfigurationCassandraDao extends AbstractVersionab
     }
 
     @Override
-    public void removeByEndpointKeyHash(String endpointKeyHash) {
-        LOG.debug("Remove endpoint specific configuration by endpointKeyHash {}", endpointKeyHash);
+    public void removeByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, Integer confSchemaVersion) {
+        LOG.debug("Remove endpoint specific configuration by endpointKeyHash {} and confSchemaVersion {}", endpointKeyHash, confSchemaVersion);
         Delete.Where deleteQuery = delete().from(getColumnFamilyName())
-                .where(eq(EPS_CONFIGURATION_KEY_HASH_PROPERTY, endpointKeyHash));
-        LOG.trace("Remove endpoint specific configuration by endpointKeyHash query {}", deleteQuery);
+                .where(eq(EPS_CONFIGURATION_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash)))
+                .and(eq(EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY, confSchemaVersion));
+        LOG.trace("Remove endpoint specific configuration by endpointKeyHash and confSchemaVersion query {}", deleteQuery);
         execute(deleteQuery);
     }
 
     @Override
-    public CassandraEndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(String endpointKeyHash, int configurationVersion) {
+    public CassandraEndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, int configurationVersion) {
         LOG.debug("Try to find endpoint specific configuration by endpointKeyHash {} and configurationVersion {}", endpointKeyHash, configurationVersion);
         Select.Where where = select().from(getColumnFamilyName())
-                .where(eq(EPS_CONFIGURATION_KEY_HASH_PROPERTY, endpointKeyHash))
+                .where(eq(EPS_CONFIGURATION_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash)))
                 .and(eq(EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY, configurationVersion));
         LOG.trace("Try to find endpoint specific configuration by cql select {}", where);
         CassandraEndpointSpecificConfiguration configuration = findOneByStatement(where);

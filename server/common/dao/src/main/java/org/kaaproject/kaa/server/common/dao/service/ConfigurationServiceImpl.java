@@ -469,7 +469,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public String validateOverrideConfigurationBody(String appId, int schemaVersion, String configurationBody) {
+    public String normalizeAccordingToOverrideConfigurationSchema(String appId, int schemaVersion, String configurationBody) {
         ConfigurationSchemaDto schemaDto = this.findConfSchemaByAppIdAndVersion(appId, schemaVersion);
         if (schemaDto != null) {
             OverrideSchema overrideSchema = new OverrideSchema(schemaDto.getOverrideSchema());

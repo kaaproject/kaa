@@ -80,7 +80,7 @@ import static org.kaaproject.kaa.server.admin.services.util.Utils.checkNotNull;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.schema.ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateString;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateNotNull;
 
 
 public abstract class AbstractAdminService implements InitializingBean {
@@ -230,10 +230,10 @@ public abstract class AbstractAdminService implements InitializingBean {
         }
     }
 
-    EndpointProfileDto checkEndpointProfile(String endpointKeyHash) throws KaaAdminServiceException {
+    EndpointProfileDto checkEndpointProfile(byte[] endpointKeyHash) throws KaaAdminServiceException {
         try {
-            validateString(endpointKeyHash, "Missing endpoint key hash");
-            EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(Base64Util.decode(endpointKeyHash));
+            validateNotNull(endpointKeyHash, "Missing endpoint key hash");
+            EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(endpointKeyHash);
             checkNotNull(endpointProfile);
             checkApplicationId(endpointProfile.getApplicationId());
             return endpointProfile;

@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION_KEY_HASH;
@@ -38,13 +37,15 @@ public class EndpointSpecificConfigurationMongoDao extends AbstractVersionableMo
     private static final Logger LOG = LoggerFactory.getLogger(EndpointSpecificConfigurationMongoDao.class);
 
     @Override
-    public void removeByEndpointKeyHash(String endpointKeyHash) {
+    public void removeByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, Integer confSchemaVersion) {
         LOG.debug("Remove endpoint specific configuration by endpoint key hash [{}] ", endpointKeyHash);
-        mongoTemplate.remove(query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash)), getCollectionName());
+        mongoTemplate.remove(
+                query(where(EP_SPECIFIC_CONFIGURATION_KEY_HASH).is(endpointKeyHash)
+                        .and(EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION).is(confSchemaVersion)), getCollectionName());
     }
 
     @Override
-    public EndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(String endpointKeyHash, int configurationVersion) {
+    public EndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, int configurationVersion) {
         LOG.debug("Try to find endpoint specific configuration by endpointKeyHash {} and configurationVersion {}", endpointKeyHash, configurationVersion);
         EndpointSpecificConfiguration configuration = findOne(query(where(EP_SPECIFIC_CONFIGURATION_KEY_HASH).is(endpointKeyHash)
                 .and(EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION).is(configurationVersion)));

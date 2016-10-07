@@ -246,11 +246,11 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     }
 
     @Override
-    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(String endpointKeyHash) throws KaaAdminServiceException {
+    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkEndpointProfile(endpointKeyHash);
-            EndpointSpecificConfigurationDto configuration = controlService.findEndpointSpecificConfiguration(endpointKeyHash);
+            EndpointSpecificConfigurationDto configuration = controlService.findEndpointSpecificConfiguration(endpointKeyHash, confSchemaVersion);
             Utils.checkNotNull(configuration);
             return configuration;
         } catch (Exception e) {
@@ -259,11 +259,11 @@ public class ConfigurationServiceImpl extends AbstractAdminService implements Co
     }
 
     @Override
-    public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(String endpointKeyHash) throws KaaAdminServiceException {
+    public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) throws KaaAdminServiceException {
         checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
         try {
             checkEndpointProfile(endpointKeyHash);
-            EndpointSpecificConfigurationDto configuration = controlService.deleteEndpointSpecificConfiguration(endpointKeyHash);
+            EndpointSpecificConfigurationDto configuration = controlService.deleteEndpointSpecificConfiguration(endpointKeyHash, confSchemaVersion);
             Utils.checkNotNull(configuration);
             return configuration;
         } catch (Exception e) {

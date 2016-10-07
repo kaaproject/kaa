@@ -29,20 +29,24 @@ import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointSpecificConfiguration;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_CONFIGURATION_BODY_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_KEY_HASH_PROPERTY;
 
 @Table(name = CassandraModelConstants.EPS_CONFIGURATION_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointSpecificConfiguration implements EndpointSpecificConfiguration, Serializable {
+
     @Transient
     private static final long serialVersionUID = -8639669282952330290L;
 
     @PartitionKey
     @Column(name = EPS_CONFIGURATION_KEY_HASH_PROPERTY)
-    private String endpointKeyHash;
+    private ByteBuffer endpointKeyHash;
     @ClusteringColumn
     @Column(name = EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY)
     private Integer configurationVersion;
@@ -55,8 +59,8 @@ public final class CassandraEndpointSpecificConfiguration implements EndpointSpe
     }
 
     public CassandraEndpointSpecificConfiguration(EndpointSpecificConfigurationDto dto) {
-        this.endpointKeyHash = dto.getEndpointKeyHash();
-        this.configurationVersion = dto.getConfigurationVersion();
+        this.endpointKeyHash = getByteBuffer(dto.getEndpointKeyHash());
+        this.configurationVersion = dto.getConfigurationSchemaVersion();
         this.configuration = dto.getConfiguration();
         this.version = dto.getVersion();
     }
@@ -64,18 +68,18 @@ public final class CassandraEndpointSpecificConfiguration implements EndpointSpe
     @Override
     public EndpointSpecificConfigurationDto toDto() {
         EndpointSpecificConfigurationDto dto = new EndpointSpecificConfigurationDto();
-        dto.setEndpointKeyHash(this.getEndpointKeyHash());
+        dto.setEndpointKeyHash(getBytes(this.getEndpointKeyHash()));
         dto.setConfiguration(this.getConfiguration());
-        dto.setConfigurationVersion(this.getConfigurationVersion());
+        dto.setConfigurationSchemaVersion(this.getConfigurationVersion());
         dto.setVersion(this.getVersion());
         return dto;
     }
 
-    public String getEndpointKeyHash() {
+    public ByteBuffer getEndpointKeyHash() {
         return endpointKeyHash;
     }
 
-    public void setEndpointKeyHash(String endpointKeyHash) {
+    public void setEndpointKeyHash(ByteBuffer endpointKeyHash) {
         this.endpointKeyHash = endpointKeyHash;
     }
 
