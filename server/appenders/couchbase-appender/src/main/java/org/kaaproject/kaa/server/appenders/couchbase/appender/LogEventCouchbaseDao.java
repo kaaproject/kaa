@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.appenders.couchbase.appender;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseConfig;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
@@ -29,6 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.couchbase.core.CouchbaseTemplate;
 import org.springframework.data.couchbase.core.WriteResultChecking;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class LogEventCouchbaseDao implements LogEventDao {
 
