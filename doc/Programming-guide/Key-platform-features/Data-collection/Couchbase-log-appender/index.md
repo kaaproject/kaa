@@ -52,7 +52,7 @@ An example configuration that matches to previously introduced Avro schema is as
 {
     "couchbaseServerUris":[
         {
-            "serverUri":"http://127.0.0.1:8091/pools"
+            "serverUri":"http://127.0.0.1:8091"
         }
     ],
     "bucket":"kaa",
@@ -87,7 +87,7 @@ where file ```couchbaseLogAppender.json``` contains following data:
     "maxLogSchemaVersion":2147483647,
     "minLogSchemaVersion":1,
     "tenantId":"1",
-    "jsonConfiguration":"{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091/pools\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}"
+    "jsonConfiguration":"{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}"
 }
 ```
 
@@ -109,7 +109,7 @@ Example result:
         "LSVERSION"
     ],
     "id": "65551",
-    "jsonConfiguration": "{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091/pools\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}",
+    "jsonConfiguration": "{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}",
     "maxLogSchemaVersion": 2147483647,
     "minLogSchemaVersion": 1,
     "name": "Sample Couchbase log appender",
