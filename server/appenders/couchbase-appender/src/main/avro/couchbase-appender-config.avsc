@@ -17,7 +17,7 @@
                         {
                             "name":"serverUri",
                             "displayName":"Server URI",
-                            "by_default":"http://127.0.0.1:8091/pools",
+                            "by_default":"http://127.0.0.1:8091",
                             "type":"string"
                         }
                     ]

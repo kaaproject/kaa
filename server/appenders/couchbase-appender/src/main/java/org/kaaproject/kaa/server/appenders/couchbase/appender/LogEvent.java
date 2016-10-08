@@ -19,11 +19,11 @@ package org.kaaproject.kaa.server.appenders.couchbase.appender;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.couchbase.client.java.repository.annotation.Field;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
-import org.springframework.data.couchbase.core.mapping.Field;
 
 import com.couchbase.client.java.document.json.JsonObject;
 

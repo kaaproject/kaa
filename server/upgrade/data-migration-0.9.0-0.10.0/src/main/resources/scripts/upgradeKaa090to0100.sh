@@ -83,7 +83,7 @@ echo "Install kaa-node.deb 0.10.0 version"
 sudo dpkg -i kaa-node.deb
 
 echo "Upgrade databases data"
-java -jar db-migration.one-jar.jar -u $username -p $password -h $host -db $dbName -nosql $nosql -driver $driverClassName -url $jdbcUrl
+java -jar data-migration_0.9.0-0.10.0.jar -u $username -p $password -h $host -db $dbName -nosql $nosql -driver $driverClassName -url $jdbcUrl
 
 echo "Start kaa-node"
 sudo service kaa-node start
