@@ -1,60 +1,31 @@
-# Kaa Docker image
+---
+layout: page
+title: Docker deployment
+permalink: /:path/
+sort_idx: 40
+---
 
-This readme contains information about Kaa Docker image deployment.
+{% include variables.md %}
 
-Default environments that comes in this package is:
-  - Fully functional Kaa cluster (Nx Kaa node, 1x Zookeeper node, 1x Database SQL node, 1x Database NoSQL node)
+* TOC
+{:toc}
+
+This guide explains how to deploy Kaa in Docker.
+
+Default environments:
+
+  - Fully functional Kaa cluster (Nx Kaa nodes, 1x Zookeeper node, 1x Database SQL node, 1x Database NoSQL node)
     - Kaa node
     - Zookeeper node
-    - MariaDb/PostgreSQL
+    - MariaDB/PostgreSQL
     - MongoDB/Cassandra
 
-Base image configuration is done using the following environment variables:
-
-| VARIABLE         		       	|   DEFAULT					| NOTE / POSSIBLE VALUES
-|-----------------------------|--------------------------|----------------------------
-| SERVICES_WAIT_TIMEOUT			| -1 (forever)				| Seconds (integer) before timeout while waiting for ZK/SQL/NoSQL to be ready, otherwise abort.<br>10: wait 10 seconds.<br>0: don't wait<br>-1: wait forever.
-|								|							|
-| ZOOKEEPER_NODE_LIST			| localhost:2181			| <i>comma separated list</i>
-| 								| 							|
-| SQL_PROVIDER_NAME				| mariadb 					| mariadb , postgresql
-| JDBC_HOST						| localhost					|
-| JDBC_PORT						| if mariadb: 3306<br>if postgresql: 5432|
-| JDBC_USERNAME					| sqladmin					|
-| JDBC_PASSWORD					| admin						|
-| JDBC_DB_NAME					| kaa 						|
- 								| 							|
-| CASSANDRA_CLUSTER_NAME		| Kaa Cluster 				|
-| CASSANDRA_KEYSPACE_NAME		| kaa 						|
-| CASSANDRA_NODE_LIST			| localhost:9042 			| <i>comma separated list</i>
-| CASSANDRA_USE_SSL				| false 					|
-| CASSANDRA_USE_JMX				| true 						|
-| CASSANDRA_USE_CREDENTIALS		| false 					|
-| CASSANDRA_USERNAME 			| (empty) 					|
-| CASSANDRA_PASSWORD 			| (empty) 					| 
-| 								| 							| 
-| MONGODB_NODE_LIST 			| localhost:27017 			| 
-| MONGODB_DB_NAME				| kaa 						| 
-| MONGODB_WRITE_CONCERN 		| acknowledged 				| 
-| 								| 							| 
-| NOSQL_PROVIDER_NAME			| mongodb 					| mongodb , cassandra
-|								|							|
-| CONTROL_SERVER_ENABLED		| true						| true/false
-| BOOTSTRAP_SERVER_ENABLED		| true						| true/false
-| OPERATIONS_SERVER_ENABLED		| true						| true/false
-| THRIFT_HOST					| localhost					| 
-| THRIFT_PORT					| 9090						| 
-| ADMIN_PORT					| 8080						| 
-| SUPPORT_UNENCRYPTED_CONNECTION| true						| true/false
-| TRANSPORT_BIND_INTERFACE		| 0.0.0.0					| 
-| TRANSPORT_PUBLIC_INTERFACE	| current public host					|
-| METRICS_ENABLED				| true 						| true/false
- 
 # Steps to deploy
 
 1. Download debian package from [official site](http://www.kaaproject.org/download-kaa/)
- or build your Kaa project locally (kaa-node.deb located in **server/node/target/**)
- Put kaa-node.deb into **server/containers/docker/** folder.
+ or build your Kaa project locally (kaa-node.deb located in **server/node/target/**).
+ 
+    Put kaa-node.deb into **server/containers/docker/** folder.
  
 2. From server/containers/docker folder execute:
 
@@ -73,17 +44,20 @@ Base image configuration is done using the following environment variables:
 You can use some prepared files in **server/containers/docker/docker-compose-1-node** folder. 
 
 First of all in **server/containers/docker/using-compose/kaa-example.env** please specify the 
-**TRANSPORT_PUBLIC_INTERFACE** and **JDBC_HOST**
+
+**TRANSPORT_PUBLIC_INTERFACE** 
+
+For mode details use [public host/ports configuration]({{root_url}}Administration-guide/System-Configuration/General-configuration/#public-hostports-configuration) page.
 
 For getting your public host just run
 
-for Linux or Mac OS:
+for **Linux** or **Mac OS**:
 
  ```ip
   route get 8.8.8.8 | awk '{print $NF; exit}'
  ```
  
-for Windows:
+for **Windows**:
 
  ```netsh
   interface ip show address "Ethernet" | findstr "IP Address"
@@ -94,6 +68,7 @@ Navigate into any one of the possible folders in **docker-compose-1-node** folde
  ```cd
  docker-compose-1-node/$SQL-NoSQL/ 
  ```
+ 
  where all available options of SQL-NoSQL databases:
  
  * mariadb-mongodb
@@ -199,3 +174,47 @@ For getting names of all Docker containers, run:
  ```docker
  ps -a
  ```
+ 
+# Base image configuration
+
+ Base image configuration is done using the following environment variables:
+ 
+ | VARIABLE         		       	|   DEFAULT					| NOTE / POSSIBLE VALUES
+ |-----------------------------|--------------------------|----------------------------
+ | SERVICES_WAIT_TIMEOUT			| -1 (forever)				| Seconds (integer) before timeout while waiting for ZK/SQL/NoSQL to be ready, otherwise abort.<br>10: wait 10 seconds.<br>0: don't wait<br>-1: wait forever.
+ |								|							|
+ | ZOOKEEPER_NODE_LIST			| localhost:2181			| <i>comma separated list</i>
+ | 								| 							|
+ | SQL_PROVIDER_NAME				| mariadb 					| mariadb , postgresql
+ | JDBC_HOST						| localhost					|
+ | JDBC_PORT						| if mariadb: 3306<br>if postgresql: 5432|
+ | JDBC_USERNAME					| sqladmin					|
+ | JDBC_PASSWORD					| admin						|
+ | JDBC_DB_NAME					| kaa 						|
+  								| 							|
+ | CASSANDRA_CLUSTER_NAME		| Kaa Cluster 				|
+ | CASSANDRA_KEYSPACE_NAME		| kaa 						|
+ | CASSANDRA_NODE_LIST			| localhost:9042 			| <i>comma separated list</i>
+ | CASSANDRA_USE_SSL				| false 					|
+ | CASSANDRA_USE_JMX				| true 						|
+ | CASSANDRA_USE_CREDENTIALS		| false 					|
+ | CASSANDRA_USERNAME 			| (empty) 					|
+ | CASSANDRA_PASSWORD 			| (empty) 					| 
+ | 								| 							| 
+ | MONGODB_NODE_LIST 			| localhost:27017 			| 
+ | MONGODB_DB_NAME				| kaa 						| 
+ | MONGODB_WRITE_CONCERN 		| acknowledged 				| 
+ | 								| 							| 
+ | NOSQL_PROVIDER_NAME			| mongodb 					| mongodb , cassandra
+ |								|							|
+ | CONTROL_SERVER_ENABLED		| true						| true/false
+ | BOOTSTRAP_SERVER_ENABLED		| true						| true/false
+ | OPERATIONS_SERVER_ENABLED		| true						| true/false
+ | THRIFT_HOST					| localhost					| 
+ | THRIFT_PORT					| 9090						| 
+ | ADMIN_PORT					| 8080						| 
+ | SUPPORT_UNENCRYPTED_CONNECTION| true						| true/false
+ | TRANSPORT_BIND_INTERFACE		| 0.0.0.0					| 
+ | TRANSPORT_PUBLIC_INTERFACE	| current public host					|
+ | METRICS_ENABLED				| true 						| true/false
+  

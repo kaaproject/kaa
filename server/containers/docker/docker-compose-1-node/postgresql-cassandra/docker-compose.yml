@@ -16,7 +16,7 @@
 
 version: '2'
 services:
-  sql:
+  postgresql_sql:
     image: postgres:9.4
     networks:
       - back-tier
@@ -29,12 +29,15 @@ services:
       - back-tier
     volumes:
       - zookeeper-data:/tmp/zookeeper
-  nosql:
+  cassandra_nosql:
     image: cassandra:3.7
     networks:
       - back-tier
     volumes:
       - nosql-data:/data/db
+      - ./../../using-compose/cassandra-image/cassandra.cql:/cassandra.cql
+      - ./../../using-compose/cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh
+    command: bash -c "/initKeySpaceCassandra.sh"
   kaa_0:
     image: kaa-node:0.10.0
     env_file: ../../using-compose/kaa-example.env
@@ -48,8 +51,8 @@ services:
       - OPERATIONS_TCP=10097
       - OPERATIONS_HTTP=10099
     depends_on:
-      - sql
-      - nosql
+      - postgresql_sql
+      - cassandra_nosql
       - zookeeper
     networks:
       - back-tier

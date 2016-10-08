@@ -17,21 +17,21 @@
 
 version: '2'
 services:
-  postgresql_sql:
-    image: postgres:9.4
+  sql:
+    image:
     networks:
       - back-tier
     volumes:
       - sql-data:/var/lib/sql
-    env_file: postgresql-sql-example.env
+    env_file:
   zookeeper:
     image: jplock/zookeeper:3.4.8
     networks:
       - back-tier
     volumes:
       - zookeeper-data:/tmp/zookeeper
-  mongodb_nosql:
-    image: mongo:3.2
+  nosql:
+    image:
     networks:
       - back-tier
     volumes:

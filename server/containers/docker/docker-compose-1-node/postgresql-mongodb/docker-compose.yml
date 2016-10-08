@@ -16,7 +16,7 @@
 
 version: '2'
 services:
-  sql:
+  postgresql_sql:
     image: postgres:9.4
     networks:
       - back-tier
@@ -29,7 +29,7 @@ services:
       - back-tier
     volumes:
       - zookeeper-data:/tmp/zookeeper
-  nosql:
+  mongo_nosql:
     image: mongo:3.2
     networks:
       - back-tier
@@ -48,8 +48,8 @@ services:
       - OPERATIONS_TCP=10097
       - OPERATIONS_HTTP=10099
     depends_on:
-      - sql
-      - nosql
+      - postgresql_sql
+      - mongo_nosql
       - zookeeper
     networks:
       - back-tier

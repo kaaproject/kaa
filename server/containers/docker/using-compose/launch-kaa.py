@@ -19,7 +19,7 @@ import sys
 import platform
 from subprocess import check_output, CalledProcessError
 
-variationsOfdatabases = ['mariadb-mongodb', 'mariadb-cassandra', 'postgresql-mongodb', 'postgresql-cassandra'];
+variationsOfDatabases = ['mariadb-mongodb', 'mariadb-cassandra', 'postgresql-mongodb', 'postgresql-cassandra'];
 
 DEFAULT_IMAGE_MARIADB="mariadb:5.5";
 DEFAULT_IMAGE_POSTGRESQL="postgres:9.4";
@@ -83,29 +83,35 @@ def getstatusoutput(cmd):
 def getInputedVariationsDataBases() :
     isValid = False;
     try:
-        for i in range(0, len(variationsOfdatabases)):
-            if sys.argv[1] == variationsOfdatabases[i]:
+        for i in range(0, len(variationsOfDatabases)):
+            if sys.argv[1] == variationsOfDatabases[i]:
                 isValid = True;
-                return variationsOfdatabases[i];
+                return variationsOfDatabases[i];
         if isValid == False:
             sys.exit();
     except:
-        print ("Please choose correct variation of SQL and NoSQL databases \n"+str(variationsOfdatabases));
+        print ("Please choose correct variation of SQL and NoSQL databases \n"+str(variationsOfDatabases));
         sys.exit();
 
 
-def configureThirdPartyComponents(fileName) :
+def configureThirdPartyComponents(fileName, template) :
     sql_nosql = getInputedVariationsDataBases().split("-");
-    with open(fileName, 'r') as file:
+    with open(template, 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
         if " sql:" in data[i]:
+            data[i]=("  "+sql_nosql[0]+"_sql:"+"\n");
             data[i+1]="    image: "+dockerImages[sql_nosql[0]]+"\n";
         if " nosql:" in data[i]:
+            data[i]=("  "+sql_nosql[1]+"_nosql:"+"\n");
             data[i+1]="    image: "+dockerImages[sql_nosql[1]]+"\n";
         if "env_file" in data[i]:
             data[i]="    env_file: "+sql_nosql[0]+"-sql-example.env\n"
-    with open(fileName, 'w') as fout:
+        if ("- nosql-data" in data[i]) & (sql_nosql[1]=="cassandra"):
+            data.insert(i+1, "      - ./cassandra-image/cassandra.cql:/cassandra.cql\n");
+            data.insert(i+2, "      - ./cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh\n");
+            data.insert(i+3, "    command: bash -c \"/initKeySpaceCassandra.sh\"\n");
+    with open(fileName, 'w+') as fout:
         fout.write(''.join(data));
     return;
 
@@ -175,10 +181,13 @@ def insertInFile(file, index, value) :
     f.close();
 
 
-def setTransportPublicInterface() :
+def setTransportPublicInterfaceAndSqlDataBase() :
+    sql_nosql = getInputedVariationsDataBases().split("-");
     with open('kaa-example.env', 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
+        if 'JDBC_HOST' in data[i]:
+            data[i]=("JDBC_HOST="+sql_nosql[0]+"_sql"+"\n");
         if 'TRANSPORT_PUBLIC_INTERFACE' in data[i]:
             if platform.system() == 'Windows':
                 data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getExternalHostWindows())+'\n'
@@ -225,6 +234,7 @@ def configureConfFileNginx(strConf, proxyHost, proxyPort) :
 
 
 def stopRunningContainers() :
+    print ('Stopping all docker containers');
     runningContainers = getstatusoutput('docker ps -q')[1];
     if runningContainers != '':
         subprocess.call('docker stop $(docker ps -q)', shell=True);
@@ -232,6 +242,7 @@ def stopRunningContainers() :
 
 
 def removeAvailableContainers() :
+    print ('Removing all docker containers');
     availableContainers = getstatusoutput('docker ps -a -q')[1];
     if availableContainers != '':
         subprocess.call('docker rm $(docker ps -a -q)', shell=True);
@@ -239,8 +250,8 @@ def removeAvailableContainers() :
 
 
 stopRunningContainers();
-configureThirdPartyComponents('third-party-docker-compose.yml');
-setTransportPublicInterface();
+configureThirdPartyComponents('third-party-docker-compose.yml', 'third-party-docker-compose.yml.template');
+setTransportPublicInterfaceAndSqlDataBase();
 print ('TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs()));
 
 subprocess.call("docker-compose -f third-party-docker-compose.yml up -d", shell=True);
