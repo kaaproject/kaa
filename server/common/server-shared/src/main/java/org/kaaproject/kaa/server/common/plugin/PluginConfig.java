@@ -20,32 +20,31 @@ import org.apache.avro.Schema;
 
 /**
  * Represents configuration of particular plugin.
- * 
- * @author Igor Kulikov
  *
+ * @author Igor Kulikov
  */
 public interface PluginConfig {
 
-    /**
-     * Returns the plugin display name. There is no strict rule for this
-     * name to be unique.
-     * 
-     * @return the plugin display name
-     */
-    String getPluginTypeName();
-    
-    /**
-     * Returns the class name of the plugin implementation.
-     *
-     * @return the class name of the plugin implementation
-     */
-    String getPluginClassName();
-    
-    /**
-     * Returns the avro schema of the plugin configuration.
-     *
-     * @return the avro schema of the plugin configuration
-     */
-    Schema getPluginConfigSchema();
-    
+  /**
+   * Returns the plugin display name. There is no strict rule for this
+   * name to be unique.
+   *
+   * @return the plugin display name
+   */
+  String getPluginTypeName();
+
+  /**
+   * Returns the class name of the plugin implementation.
+   *
+   * @return the class name of the plugin implementation
+   */
+  String getPluginClassName();
+
+  /**
+   * Returns the avro schema of the plugin configuration.
+   *
+   * @return the avro schema of the plugin configuration
+   */
+  Schema getPluginConfigSchema();
+
 }

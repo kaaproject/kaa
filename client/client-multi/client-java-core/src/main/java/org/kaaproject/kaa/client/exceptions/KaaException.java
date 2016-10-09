@@ -20,17 +20,16 @@ package org.kaaproject.kaa.client.exceptions;
  * Basic exception of Kaa client SDK.
  *
  * @author Andrew Shvayka
- *
  */
 public class KaaException extends Exception {
 
-    private static final long serialVersionUID = -859911925908759066L;
+  private static final long serialVersionUID = -859911925908759066L;
 
-    public KaaException(Exception cause){
-        super(cause);
-    }
+  public KaaException(Exception cause) {
+    super(cause);
+  }
 
-    public KaaException(String message) {
-        super(message);
-    }
+  public KaaException(String message) {
+    super(message);
+  }
 }

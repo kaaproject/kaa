@@ -16,70 +16,77 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class ApplicationCtlSchemasPlace extends TreePlace {
 
-    protected String applicationId;
+  protected String applicationId;
 
-    public ApplicationCtlSchemasPlace(String applicationId) {
-        this.applicationId = applicationId;
+  public ApplicationCtlSchemasPlace(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.applicationCtl();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
 
-    public String getApplicationId() {
-        return applicationId;
+    if (obj == null) {
+      return false;
+    }
+
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+
+    ApplicationCtlSchemasPlace other = (ApplicationCtlSchemasPlace) obj;
+    if (applicationId == null && other.applicationId != null) {
+      return false;
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ApplicationPlace(applicationId);
+  }
+
+  @Prefix(value = "appCtlSchemas")
+  public static class Tokenizer
+      implements PlaceTokenizer<ApplicationCtlSchemasPlace>, PlaceConstants {
+
+    @Override
+    public ApplicationCtlSchemasPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new ApplicationCtlSchemasPlace(PlaceParams.getParam(APPLICATION_ID));
     }
 
     @Override
-    public String getName() {
-        return Utils.constants.applicationCtl();
+    public String getToken(ApplicationCtlSchemasPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      return PlaceParams.generateToken();
     }
-
-    @Prefix(value = "appCtlSchemas")
-    public static class Tokenizer implements PlaceTokenizer<ApplicationCtlSchemasPlace>, PlaceConstants {
-
-        @Override
-        public ApplicationCtlSchemasPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new ApplicationCtlSchemasPlace(PlaceParams.getParam(APPLICATION_ID));
-        }
-
-        @Override
-        public String getToken(ApplicationCtlSchemasPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ApplicationCtlSchemasPlace other = (ApplicationCtlSchemasPlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null)
-                return false;
-        } else if (!applicationId.equals(other.applicationId))
-            return false;
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
-    }
+  }
 
 }

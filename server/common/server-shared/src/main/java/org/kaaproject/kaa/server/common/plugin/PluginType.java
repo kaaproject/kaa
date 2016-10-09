@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.common.plugin;
 
 public enum PluginType {
 
-    LOG_APPENDER,
-    USER_VERIFIER
-    
+  LOG_APPENDER,
+  USER_VERIFIER
+
 }

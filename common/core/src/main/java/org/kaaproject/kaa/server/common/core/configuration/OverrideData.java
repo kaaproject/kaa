@@ -20,10 +20,10 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 
 public class OverrideData extends AbstractConfigurationData<OverrideSchema> {
 
-    private static final long serialVersionUID = -7653556860774181372L;
+  private static final long serialVersionUID = -7653556860774181372L;
 
-    public OverrideData(OverrideSchema schema, String data) {
-        super(schema, data);
-    }
+  public OverrideData(OverrideSchema schema, String data) {
+    super(schema, data);
+  }
 
 }

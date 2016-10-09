@@ -16,28 +16,29 @@
 
 package org.netty.http.server.common.server;
 
-import io.netty.channel.ChannelHandlerContext;
-import org.junit.Test;
-import org.kaaproject.kaa.server.common.server.NettyChannelContext;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import io.netty.channel.ChannelHandlerContext;
+
+import org.junit.Test;
+import org.kaaproject.kaa.server.common.server.NettyChannelContext;
+
 public class NettyChannelContextTest {
-    @Test
-    public void getSetTest() {
-        ChannelHandlerContext context = mock(ChannelHandlerContext.class);
-        NettyChannelContext nettyChannelContext = new NettyChannelContext(context);
-        Object o1 = new Object();
-        nettyChannelContext.writeAndFlush(o1);
-        verify(context).writeAndFlush(o1);
-        Exception e = new Exception();
-        nettyChannelContext.fireExceptionCaught(e);
-        verify(context).fireExceptionCaught(e);
-        Object o2 = new Object();
-        nettyChannelContext.writeAndFlush(o2);
-        verify(context).writeAndFlush(o2);
-        nettyChannelContext.flush();
-        verify(context).flush();
-    }
+  @Test
+  public void getSetTest() {
+    ChannelHandlerContext context = mock(ChannelHandlerContext.class);
+    NettyChannelContext nettyChannelContext = new NettyChannelContext(context);
+    Object o1 = new Object();
+    nettyChannelContext.writeAndFlush(o1);
+    verify(context).writeAndFlush(o1);
+    Exception e = new Exception();
+    nettyChannelContext.fireExceptionCaught(e);
+    verify(context).fireExceptionCaught(e);
+    Object o2 = new Object();
+    nettyChannelContext.writeAndFlush(o2);
+    verify(context).writeAndFlush(o2);
+    nettyChannelContext.flush();
+    verify(context).flush();
+  }
 }

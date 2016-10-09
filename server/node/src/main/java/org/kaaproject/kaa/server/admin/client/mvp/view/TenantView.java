@@ -18,15 +18,16 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 
 public interface TenantView extends BaseDetailsView {
 
-    HasValue<String> getTenantName();
+  HasValue<String> getTenantName();
 
-    AbstractGrid<UserDto, String> getTenantAdminsGrid();
+  AbstractGrid<UserDto, String> getTenantAdminsGrid();
 
-    HasClickHandlers getAddTenantAdminButton();
+  HasClickHandlers getAddTenantAdminButton();
 
 }

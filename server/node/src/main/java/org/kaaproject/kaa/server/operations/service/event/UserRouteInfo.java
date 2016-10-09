@@ -21,101 +21,112 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.Rou
 
 public final class UserRouteInfo {
 
-    private final String serverId;
-    private final String tenantId;
-    private final String userId;
-    private final RouteOperation routeOperation;
+  private final String serverId;
+  private final String tenantId;
+  private final String userId;
+  private final RouteOperation routeOperation;
 
-    public UserRouteInfo(String tenantId, String userId) {
-        this(tenantId, userId, null, RouteOperation.ADD);
-    }
+  public UserRouteInfo(String tenantId, String userId) {
+    this(tenantId, userId, null, RouteOperation.ADD);
+  }
 
-    public UserRouteInfo(String tenantId, String userId, String serverId, RouteOperation routeOperation) {
-        super();
-        this.tenantId = tenantId;
-        this.userId = userId;
-        this.serverId = serverId;
-        this.routeOperation = routeOperation;
-    }
+  /**
+   * Create new instance of <code>UserRouteInfo</code>.
+   *
+   * @param tenantId       the tenant id
+   * @param userId         the user id
+   * @param serverId       the server id
+   * @param routeOperation the route operation
+   */
+  public UserRouteInfo(String tenantId,
+                       String userId,
+                       String serverId,
+                       RouteOperation routeOperation) {
+    super();
+    this.tenantId = tenantId;
+    this.userId = userId;
+    this.serverId = serverId;
+    this.routeOperation = routeOperation;
+  }
 
-    public String getServerId() {
-        return serverId;
-    }
+  public String getServerId() {
+    return serverId;
+  }
 
-    public String getTenantId() {
-        return tenantId;
-    }
+  public String getTenantId() {
+    return tenantId;
+  }
 
-    public String getUserId() {
-        return userId;
-    }
+  public String getUserId() {
+    return userId;
+  }
 
-    public RouteOperation getRouteOperation() {
-        return routeOperation;
-    }
+  public RouteOperation getRouteOperation() {
+    return routeOperation;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UserRouteInfo [serverId=");
-        builder.append(serverId);
-        builder.append(", tenantId=");
-        builder.append(tenantId);
-        builder.append(", userId=");
-        builder.append(userId);
-        builder.append(", routeOperation=");
-        builder.append(routeOperation);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("UserRouteInfo [serverId=");
+    builder.append(serverId);
+    builder.append(", tenantId=");
+    builder.append(tenantId);
+    builder.append(", userId=");
+    builder.append(userId);
+    builder.append(", routeOperation=");
+    builder.append(routeOperation);
+    builder.append("]");
+    return builder.toString();
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((routeOperation == null) ? 0 : routeOperation.hashCode());
-        result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
-        result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((routeOperation == null) ? 0 : routeOperation.hashCode());
+    result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
+    result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
+    result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UserRouteInfo other = (UserRouteInfo) obj;
-        if (routeOperation != other.routeOperation) {
-            return false;
-        }
-        if (serverId == null) {
-            if (other.serverId != null) {
-                return false;
-            }
-        } else if (!serverId.equals(other.serverId)) {
-            return false;
-        }
-        if (tenantId == null) {
-            if (other.tenantId != null) {
-                return false;
-            }
-        } else if (!tenantId.equals(other.tenantId)) {
-            return false;
-        }
-        if (userId == null) {
-            if (other.userId != null) {
-                return false;
-            }
-        } else if (!userId.equals(other.userId)) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    UserRouteInfo other = (UserRouteInfo) obj;
+    if (routeOperation != other.routeOperation) {
+      return false;
+    }
+    if (serverId == null) {
+      if (other.serverId != null) {
+        return false;
+      }
+    } else if (!serverId.equals(other.serverId)) {
+      return false;
+    }
+    if (tenantId == null) {
+      if (other.tenantId != null) {
+        return false;
+      }
+    } else if (!tenantId.equals(other.tenantId)) {
+      return false;
+    }
+    if (userId == null) {
+      if (other.userId != null) {
+        return false;
+      }
+    } else if (!userId.equals(other.userId)) {
+      return false;
+    }
+    return true;
+  }
 }

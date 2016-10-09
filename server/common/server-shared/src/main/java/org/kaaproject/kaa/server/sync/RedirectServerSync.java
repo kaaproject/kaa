@@ -17,58 +17,58 @@
 package org.kaaproject.kaa.server.sync;
 
 public final class RedirectServerSync {
-    private int accessPointId;
+  private int accessPointId;
 
-    public RedirectServerSync() {
-    }
+  public RedirectServerSync() {
+  }
 
-    /**
-     * All-args constructor.
-     */
-    public RedirectServerSync(int accessPointId) {
-        this.accessPointId = accessPointId;
-    }
+  /**
+   * All-args constructor.
+   */
+  public RedirectServerSync(int accessPointId) {
+    this.accessPointId = accessPointId;
+  }
 
-    public int getAccessPointId() {
-        return accessPointId;
-    }
+  public int getAccessPointId() {
+    return accessPointId;
+  }
 
-    public void setAccessPointId(int accessPointId) {
-        this.accessPointId = accessPointId;
-    }
+  public void setAccessPointId(int accessPointId) {
+    this.accessPointId = accessPointId;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + accessPointId;
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + accessPointId;
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        RedirectServerSync other = (RedirectServerSync) obj;
-        if (accessPointId != other.accessPointId) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    RedirectServerSync other = (RedirectServerSync) obj;
+    if (accessPointId != other.accessPointId) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RedirectServerSync [accessPointId=");
-        builder.append(accessPointId);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("RedirectServerSync [accessPointId=");
+    builder.append(accessPointId);
+    builder.append("]");
+    return builder.toString();
+  }
 }

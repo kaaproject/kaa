@@ -20,14 +20,13 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 /**
  * Abstract class that identifies the session keep-alive message.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public abstract class SessionPingMessage extends SessionControlMessage {
 
-    public SessionPingMessage(SessionInfo session) {
-        super(session);
-    }
+  public SessionPingMessage(SessionInfo session) {
+    super(session);
+  }
 
 }

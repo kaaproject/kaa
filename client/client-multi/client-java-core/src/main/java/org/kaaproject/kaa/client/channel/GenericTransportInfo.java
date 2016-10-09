@@ -20,86 +20,89 @@ import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 
 /**
  * Generic implementation of {@link TransportConnectionInfo} that is based on
- * {@link ProtocolMetaData}
- * 
- * @author Andrew Shvayka
+ * {@link ProtocolMetaData}.
  *
+ * @author Andrew Shvayka
  */
 public class GenericTransportInfo implements TransportConnectionInfo {
 
-    protected final ServerType serverType;
-    protected final TransportProtocolId transportId;
-    protected final ProtocolMetaData md;
+  protected final ServerType serverType;
+  protected final TransportProtocolId transportId;
+  protected final ProtocolMetaData md;
 
-    public GenericTransportInfo(ServerType serverType, ProtocolMetaData md) {
-        super();
-        this.serverType = serverType;
-        this.md = md;
-        this.transportId = new TransportProtocolId(md.getProtocolVersionInfo().getId(), md.getProtocolVersionInfo().getVersion());
+  /**
+   * All-args constructor.
+   */
+  public GenericTransportInfo(ServerType serverType, ProtocolMetaData md) {
+    super();
+    this.serverType = serverType;
+    this.md = md;
+    this.transportId = new TransportProtocolId(md.getProtocolVersionInfo().getId(),
+            md.getProtocolVersionInfo().getVersion());
+  }
+
+  @Override
+  public ServerType getServerType() {
+    return serverType;
+  }
+
+  @Override
+  public TransportProtocolId getTransportId() {
+    return transportId;
+  }
+
+  @Override
+  public int getAccessPointId() {
+    return md.getAccessPointId();
+  }
+
+  @Override
+  public byte[] getConnectionInfo() {
+    return md.getConnectionInfo().array();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof GenericTransportInfo)) {
+      return false;
     }
 
-    @Override
-    public ServerType getServerType() {
-        return serverType;
+    GenericTransportInfo that = (GenericTransportInfo) obj;
+
+    if (md != null ? !md.equals(that.md) : that.md != null) {
+      return false;
+    }
+    if (serverType != that.serverType) {
+      return false;
+    }
+    if (transportId != null ? !transportId.equals(that.transportId) : that.transportId != null) {
+      return false;
     }
 
-    @Override
-    public TransportProtocolId getTransportId() {
-        return transportId;
-    }
+    return true;
+  }
 
-    @Override
-    public int getAccessPointId() {
-        return md.getAccessPointId();
-    }
+  @Override
+  public int hashCode() {
+    int result = serverType != null ? serverType.hashCode() : 0;
+    result = 31 * result + (transportId != null ? transportId.hashCode() : 0);
+    result = 31 * result + (md != null ? md.hashCode() : 0);
+    return result;
+  }
 
-    @Override
-    public byte[] getConnectionInfo() {
-        return md.getConnectionInfo().array();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof GenericTransportInfo)) {
-            return false;
-        }
-
-        GenericTransportInfo that = (GenericTransportInfo) o;
-
-        if (md != null ? !md.equals(that.md) : that.md != null) {
-            return false;
-        }
-        if (serverType != that.serverType) {
-            return false;
-        }
-        if (transportId != null ? !transportId.equals(that.transportId) : that.transportId != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = serverType != null ? serverType.hashCode() : 0;
-        result = 31 * result + (transportId != null ? transportId.hashCode() : 0);
-        result = 31 * result + (md != null ? md.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("GenericTransportInfo [serverType=");
-        builder.append(serverType);
-        builder.append(", transportId=");
-        builder.append(transportId);
-        builder.append(", md=");
-        builder.append(md);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("GenericTransportInfo [serverType=");
+    builder.append(serverType);
+    builder.append(", transportId=");
+    builder.append(transportId);
+    builder.append(", md=");
+    builder.append(md);
+    builder.append("]");
+    return builder.toString();
+  }
 }

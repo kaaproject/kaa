@@ -16,16 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.servlet;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.iharder.Base64;
 
 import org.kaaproject.kaa.common.dto.file.FileData;
@@ -37,39 +27,53 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-public class CtlExportServlet extends HttpServlet implements Servlet, ServletParams {
+import java.io.IOException;
+import java.net.URLDecoder;
 
-    private static final long serialVersionUID = 1584721028492234643L;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(CtlExportServlet.class);
+public class CtlExportServlet extends HttpServlet implements ServletParams {
 
-    private static final int BUFFER = 1024 * 100;
+  private static final long serialVersionUID = 1584721028492234643L;
 
-    @Autowired
-    private CacheService cacheService;
+  private static final Logger LOG = LoggerFactory.getLogger(CtlExportServlet.class);
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+  private static final int BUFFER = 1024 * 100;
+
+  @Autowired
+  private CacheService cacheService;
+
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    SpringBeanAutowiringSupport
+        .processInjectionBasedOnServletContext(this, config.getServletContext());
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    String ctlExportKeyBase64 = URLDecoder
+        .decode(request.getParameter(CTL_EXPORT_KEY_PARAMETER), "UTF-8");
+    try {
+      CtlSchemaExportKey key = (CtlSchemaExportKey) Base64
+          .decodeToObject(ctlExportKeyBase64, Base64.URL_SAFE, null);
+      FileData ctlExportData = cacheService.getExportedCtlSchema(key);
+      ServletUtils.prepareDisposition(request, response, ctlExportData.getFileName());
+      response.setContentType(ctlExportData.getContentType());
+      response.setContentLength(ctlExportData.getFileData().length);
+      response.setBufferSize(BUFFER);
+      response.getOutputStream().write(ctlExportData.getFileData());
+      response.flushBuffer();
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in CtlExportServlet.doGet: ", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: "
+          + ex.getMessage());
     }
-
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String ctlExportKeyBase64 = URLDecoder.decode(request.getParameter(CTL_EXPORT_KEY_PARAMETER), "UTF-8");
-        try {
-            CtlSchemaExportKey key = (CtlSchemaExportKey) Base64.decodeToObject(ctlExportKeyBase64, Base64.URL_SAFE, null);
-            FileData ctlExportData = cacheService.getExportedCtlSchema(key);
-            ServletUtils.prepareDisposition(request, response, ctlExportData.getFileName());
-            response.setContentType(ctlExportData.getContentType());
-            response.setContentLength(ctlExportData.getFileData().length);
-            response.setBufferSize(BUFFER);
-            response.getOutputStream().write(ctlExportData.getFileData());
-            response.flushBuffer();
-        } catch (Exception e) {
-            LOG.error("Unexpected error in CtlExportServlet.doGet: ", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: " + e.getMessage());
-        }
-    }
+  }
 }

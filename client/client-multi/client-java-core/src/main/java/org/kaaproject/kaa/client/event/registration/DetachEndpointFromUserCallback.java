@@ -24,16 +24,15 @@ package org.kaaproject.kaa.client.event.registration;
  * endpoint.
  *
  * @author Taras Lemkin
- *
  * @see EndpointRegistrationManager
  * @see EndpointRegistrationManager#setDetachedCallback
  */
 public interface DetachEndpointFromUserCallback {
 
-    /**
-     * Callback on current endpoint is detached from user.
-     *
-     * @param endpointAccessToken the endpoint access token
-     */
-    void onDetachedFromUser(String endpointAccessToken);
+  /**
+   * Callback on current endpoint is detached from user.
+   *
+   * @param endpointAccessToken the endpoint access token
+   */
+  void onDetachedFromUser(String endpointAccessToken);
 }

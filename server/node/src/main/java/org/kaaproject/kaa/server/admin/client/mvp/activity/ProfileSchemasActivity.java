@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.place.shared.Place;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -25,36 +27,35 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ProfileSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-import com.google.gwt.place.shared.Place;
+public class ProfileSchemasActivity
+    extends AbstractBaseCtlSchemasActivity<EndpointProfileSchemaDto, ProfileSchemasPlace> {
 
-public class ProfileSchemasActivity extends AbstractBaseCtlSchemasActivity<EndpointProfileSchemaDto, ProfileSchemasPlace> {
+  private String applicationId;
 
-    private String applicationId;
+  public ProfileSchemasActivity(ProfileSchemasPlace place, ClientFactory clientFactory) {
+    super(place, EndpointProfileSchemaDto.class, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
 
-    public ProfileSchemasActivity(ProfileSchemasPlace place, ClientFactory clientFactory) {
-        super(place, EndpointProfileSchemaDto.class, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
+  @Override
+  protected BaseListView<EndpointProfileSchemaDto> getView() {
+    return clientFactory.getProfileSchemasView();
+  }
 
-    @Override
-    protected BaseListView<EndpointProfileSchemaDto> getView() {
-        return clientFactory.getProfileSchemasView();
-    }
+  @Override
+  protected AbstractDataProvider<EndpointProfileSchemaDto, String> getDataProvider(
+      AbstractGrid<EndpointProfileSchemaDto, String> dataGrid) {
+    return new ProfileSchemasDataProvider(dataGrid, listView, applicationId);
+  }
 
-    @Override
-    protected AbstractDataProvider<EndpointProfileSchemaDto, String> getDataProvider(
-            AbstractGrid<EndpointProfileSchemaDto, String> dataGrid) {
-        return new ProfileSchemasDataProvider(dataGrid, listView, applicationId);
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new ProfileSchemaPlace(applicationId, "");
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new ProfileSchemaPlace(applicationId, "");
-    }
-
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new ProfileSchemaPlace(applicationId, id);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new ProfileSchemaPlace(applicationId, id);
+  }
 
 }

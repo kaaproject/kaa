@@ -16,24 +16,24 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.place.shared.Place;
 
+import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+
 public class HeaderActivityMapper implements ActivityMapper {
 
-    private final HeaderActivity headerActivity;
+  private final HeaderActivity headerActivity;
 
-    public HeaderActivityMapper(ClientFactory clientFactory) {
-        super();
-        this.headerActivity = new HeaderActivity(clientFactory);
-    }
+  public HeaderActivityMapper(ClientFactory clientFactory) {
+    super();
+    this.headerActivity = new HeaderActivity(clientFactory);
+  }
 
-    @Override
-    public Activity getActivity(Place place) {
-        return headerActivity;
-    }
+  @Override
+  public Activity getActivity(Place place) {
+    return headerActivity;
+  }
 }
 

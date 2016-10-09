@@ -17,9 +17,8 @@
 package org.kaaproject.kaa.common.channels.communication;
 
 /**
- * @author Andrey Panasenko
- *
+ * @author Andrey Panasenko.
  */
-public class HttpLongPollParameters extends IPParameters {
+public class HttpLongPollParameters extends IpParameters {
 
 }

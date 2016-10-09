@@ -22,43 +22,44 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolExcepti
  * Kaatcp PingRequest Class.
  * The PINGREQ message is an "are you alive?" message that is sent
  * from a connected client to the server.
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 public class PingRequest extends MqttFrame {
 
 
-    /**
-     * Default constructor.
-     */
-    public PingRequest() {
-        super();
-        setMessageType(MessageType.PINGREQ);
-        remainingLength = 0;
-    }
+  /**
+   * Default constructor.
+   */
+  public PingRequest() {
+    super();
+    setMessageType(MessageType.PINGREQ);
+    remainingLength = 0;
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#pack()
-     */
-    @Override
-    protected void pack() {
-        // Do nothing
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#pack()
+   */
+  @Override
+  protected void pack() {
+    // Do nothing
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#decode()
-     */
-    @Override
-    protected void decode() throws KaaTcpProtocolException {
-        // Do nothing
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#decode()
+   */
+  @Override
+  protected void decode() throws KaaTcpProtocolException {
+    // Do nothing
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
-     */
-    @Override
-    public boolean isNeedCloseConnection() {
-        return false;
-    }
+  /* (non-Javadoc)
+   * @see
+   * org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+   */
+  @Override
+  public boolean isNeedCloseConnection() {
+    return false;
+  }
 
 }

@@ -16,7 +16,7 @@
 
 /**
  * Provides Kaatcp messages implementation.
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 package org.kaaproject.kaa.common.channels.protocols.kaatcp.messages;

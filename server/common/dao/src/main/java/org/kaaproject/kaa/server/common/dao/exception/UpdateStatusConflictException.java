@@ -18,9 +18,9 @@ package org.kaaproject.kaa.server.common.dao.exception;
 
 public class UpdateStatusConflictException extends IncorrectParameterException {
 
-    private static final long serialVersionUID = 1543676362262749379L;
+  private static final long serialVersionUID = 1543676362262749379L;
 
-    public UpdateStatusConflictException(String message) {
-        super(message);
-    }
+  public UpdateStatusConflictException(String message) {
+    super(message);
+  }
 }

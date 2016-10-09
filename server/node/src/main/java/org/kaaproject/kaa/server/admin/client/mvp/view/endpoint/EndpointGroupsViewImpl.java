@@ -23,24 +23,24 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EndpointGroupsViewImpl extends BaseListViewImpl<EndpointGroupDto> {
 
-    public EndpointGroupsViewImpl() {
-        super(true);
-    }
+  public EndpointGroupsViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<EndpointGroupDto, String> createGrid() {
-        return new EndpointGroupGrid();
-    }
+  @Override
+  protected AbstractGrid<EndpointGroupDto, String> createGrid() {
+    return new EndpointGroupGrid();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.endpointGroups();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.endpointGroups();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewEndpointGroup();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewEndpointGroup();
+  }
 
 }
 

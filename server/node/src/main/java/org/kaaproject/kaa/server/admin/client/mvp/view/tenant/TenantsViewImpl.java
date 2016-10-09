@@ -23,23 +23,23 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class TenantsViewImpl extends BaseListViewImpl<TenantDto> {
 
-        public TenantsViewImpl() {
-            super(true);
-        }
+  public TenantsViewImpl() {
+    super(true);
+  }
 
-        @Override
-        protected AbstractGrid<TenantDto, String> createGrid() {
-            return new TenantsGrid();
-        }
+  @Override
+  protected AbstractGrid<TenantDto, String> createGrid() {
+    return new TenantsGrid();
+  }
 
-        @Override
-        protected String titleString() {
-            return Utils.constants.tenants();
-        }
+  @Override
+  protected String titleString() {
+    return Utils.constants.tenants();
+  }
 
-        @Override
-        protected String addButtonString() {
-            return Utils.constants.addNewTenant();
-        }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewTenant();
+  }
 }
 

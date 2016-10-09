@@ -20,16 +20,16 @@ package org.kaaproject.kaa.client.channel;
  * Describes traffic direction that channel supports.
  */
 public enum ChannelDirection {
-    /**
-     *  From the endpoint to the server
-     */
-    UP,
-    /**
-     *  From the server to the enpoint
-     */
-    DOWN,
-    /**
-     * In both ways
-     */
-    BIDIRECTIONAL
+  /**
+   * From the endpoint to the server.
+   */
+  UP,
+  /**
+   * From the server to the enpoint.
+   */
+  DOWN,
+  /**
+   * In both ways.
+   */
+  BIDIRECTIONAL
 }

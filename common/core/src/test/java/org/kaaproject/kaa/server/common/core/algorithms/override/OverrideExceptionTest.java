@@ -21,39 +21,39 @@ import org.junit.Test;
 
 public class OverrideExceptionTest {
 
-    @Test
-    public void testMergeExceptionEmptyConstructor() {
-        OverrideException mergeException = new OverrideException();
+  @Test
+  public void testMergeExceptionEmptyConstructor() {
+    OverrideException mergeException = new OverrideException();
 
-        Assert.assertNull(mergeException.getMessage());
-        Assert.assertNull(mergeException.getCause());
-    }
+    Assert.assertNull(mergeException.getMessage());
+    Assert.assertNull(mergeException.getCause());
+  }
 
-    @Test
-    public void testMergeExceptionConstructorWithMessageParameter() {
-        String message = "test_message";
-        OverrideException mergeException = new OverrideException(message);
+  @Test
+  public void testMergeExceptionConstructorWithMessageParameter() {
+    String message = "test_message";
+    OverrideException mergeException = new OverrideException(message);
 
-        Assert.assertEquals(message, mergeException.getMessage());
-        Assert.assertNull(mergeException.getCause());
-    }
+    Assert.assertEquals(message, mergeException.getMessage());
+    Assert.assertNull(mergeException.getCause());
+  }
 
-    @Test
-    public void testMergeExceptionConstructorWithMessageAndCauseParameters() {
-        String message = "test_message";
-        Exception cause = new RuntimeException();
-        OverrideException mergeException = new OverrideException(message, cause);
+  @Test
+  public void testMergeExceptionConstructorWithMessageAndCauseParameters() {
+    String message = "test_message";
+    Exception cause = new RuntimeException();
+    OverrideException mergeException = new OverrideException(message, cause);
 
-        Assert.assertEquals(message, mergeException.getMessage());
-        Assert.assertTrue(cause == mergeException.getCause());
-    }
+    Assert.assertEquals(message, mergeException.getMessage());
+    Assert.assertTrue(cause == mergeException.getCause());
+  }
 
-    @Test
-    public void testMergeExceptionConstructorWithCauseParameter() {
-        Exception cause = new RuntimeException();
-        OverrideException mergeException = new OverrideException(cause);
+  @Test
+  public void testMergeExceptionConstructorWithCauseParameter() {
+    Exception cause = new RuntimeException();
+    OverrideException mergeException = new OverrideException(cause);
 
-        Assert.assertEquals(cause.toString(), mergeException.getMessage());
-        Assert.assertTrue(cause == mergeException.getCause());
-    }
+    Assert.assertEquals(cause.toString(), mergeException.getMessage());
+    Assert.assertTrue(cause == mergeException.getCause());
+  }
 }

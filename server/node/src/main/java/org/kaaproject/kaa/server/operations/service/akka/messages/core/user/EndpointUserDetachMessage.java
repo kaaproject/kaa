@@ -20,8 +20,8 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 public class EndpointUserDetachMessage extends EndpointUserActionMessage {
 
-    public EndpointUserDetachMessage(EndpointObjectHash key, String userId, String originator) {
-        super(key, userId, originator);
-    }
+  public EndpointUserDetachMessage(EndpointObjectHash key, String userId, String originator) {
+    super(key, userId, originator);
+  }
 
 }

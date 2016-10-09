@@ -18,13 +18,13 @@ package org.kaaproject.kaa.server.transports.tcp.transport.commands;
 
 import org.kaaproject.kaa.server.transports.tcp.transport.netty.AbstractKaaTcpCommandProcessor;
 
-public class KaaTcpCommand extends AbstractKaaTcpCommandProcessor{
+public class KaaTcpCommand extends AbstractKaaTcpCommandProcessor {
 
-    static final String KAA_TCP = "KaaTcp";
+  static final String KAA_TCP = "KaaTcp";
 
-    @Override
-    public String getName() {
-        return KAA_TCP;
-    }
+  @Override
+  public String getName() {
+    return KAA_TCP;
+  }
 
 }

@@ -19,57 +19,48 @@ package org.kaaproject.kaa.client.channel;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 
 /**
- *
- * @author Yaroslav Zeygerman
- *
+ * @author Yaroslav Zeygerman.
  * @see KaaDataChannel
  */
 public interface KaaInternalChannelManager extends KaaChannelManager {
 
-    /**
-     * Reports to Channel Manager about the new server.
-     *
-     * @param newServer
-     *            the parameters of the new server.
-     * @see TransportConnectionInfo
-     *
-     */
-    void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer);
+  /**
+   * Reports to Channel Manager about the new server.
+   *
+   * @param newServer the parameters of the new server.
+   * @see TransportConnectionInfo
+   */
+  void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer);
 
-    /**
-     * Sets connectivity checker to the existing channels.
-     *
-     * @param checker
-     *            platform-dependent connectivity checker.
-     * @see ConnectivityChecker
-     *
-     */
-    void setConnectivityChecker(ConnectivityChecker checker);
+  /**
+   * Sets connectivity checker to the existing channels.
+   *
+   * @param checker platform-dependent connectivity checker.
+   * @see ConnectivityChecker
+   */
+  void setConnectivityChecker(ConnectivityChecker checker);
 
-    /**
-     * Shuts down the manager and all registered channels. The instance can no
-     * longer be used.
-     *
-     */
-    void shutdown();
+  /**
+   * Shuts down the manager and all registered channels. The instance can no
+   * longer be used.
+   */
+  void shutdown();
 
-    /**
-     * Pauses all active channels.
-     *
-     */
-    void pause();
+  /**
+   * Pauses all active channels.
+   */
+  void pause();
 
-    /**
-     * Restores channels' activity.
-     *
-     */
-    void resume();
+  /**
+   * Restores channels' activity.
+   */
+  void resume();
 
-    void setOperationMultiplexer(KaaDataMultiplexer multiplexer);
+  void setOperationMultiplexer(KaaDataMultiplexer multiplexer);
 
-    void setOperationDemultiplexer(KaaDataDemultiplexer demultiplexer);
+  void setOperationDemultiplexer(KaaDataDemultiplexer demultiplexer);
 
-    void setBootstrapMultiplexer(KaaDataMultiplexer multiplexer);
+  void setBootstrapMultiplexer(KaaDataMultiplexer multiplexer);
 
-    void setBootstrapDemultiplexer(KaaDataDemultiplexer demultiplexer);
+  void setBootstrapDemultiplexer(KaaDataDemultiplexer demultiplexer);
 }

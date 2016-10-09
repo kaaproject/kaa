@@ -17,52 +17,69 @@
 package org.kaaproject.kaa.server.datamigration.model;
 
 public class CtlMetaInfo {
-    private final Long id;
-    private final String fqn;
-    private final Long appId;
-    private final Long tenantId;
+  private final Long id;
+  private final String fqn;
+  private final Long appId;
+  private final Long tenantId;
 
-    public CtlMetaInfo(Long id, String fqn, Long appId, Long tenantId) {
-        this.id = id;
-        this.fqn = fqn;
-        this.appId = appId;
-        this.tenantId = tenantId;
+  /**
+   * Create new instance of ctl meta info.
+   *
+   * @param id       the uniq identifier
+   * @param fqn      the full qualified name of type
+   * @param appId    the application id
+   * @param tenantId the tenant id
+   */
+  public CtlMetaInfo(Long id, String fqn, Long appId, Long tenantId) {
+    this.id = id;
+    this.fqn = fqn;
+    this.appId = appId;
+    this.tenantId = tenantId;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CtlMetaInfo that = (CtlMetaInfo) o;
-
-        if (!fqn.equals(that.fqn)) return false;
-        if (appId != null ? !appId.equals(that.appId) : that.appId != null) return false;
-        return tenantId != null ? tenantId.equals(that.tenantId) : that.tenantId == null;
-
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
     }
 
-    @Override
-    public int hashCode() {
-        int result = fqn.hashCode();
-        result = 31 * result + (appId != null ? appId.hashCode() : 0);
-        result = 31 * result + (tenantId != null ? tenantId.hashCode() : 0);
-        return result;
+    CtlMetaInfo that = (CtlMetaInfo) obj;
+
+    if (!fqn.equals(that.fqn)) {
+      return false;
     }
 
-    public Long getAppId() {
-        return appId;
+    if (appId != null ? !appId.equals(that.appId) : that.appId != null) {
+      return false;
     }
+    return tenantId != null ? tenantId.equals(that.tenantId) : that.tenantId == null;
+  }
 
-    public Long getTenantId() {
-        return tenantId;
-    }
+  @Override
+  public int hashCode() {
+    int result = fqn.hashCode();
+    result = 31 * result + (appId != null ? appId.hashCode() : 0);
+    result = 31 * result + (tenantId != null ? tenantId.hashCode() : 0);
+    return result;
+  }
 
-    public String getFqn() {
-        return fqn;
-    }
+  public Long getAppId() {
+    return appId;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Long getTenantId() {
+    return tenantId;
+  }
+
+  public String getFqn() {
+    return fqn;
+  }
+
+  public Long getId() {
+    return id;
+  }
 }

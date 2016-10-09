@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
 /*
  * Copyright 2014 CyberVision, Inc.
  *
@@ -34,28 +35,28 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  */
 public abstract class EndpointUserActionMessage implements UserAwareMessage {
 
-    private final EndpointObjectHash key;
-    private final String userId;
-    private final String originator;
+  private final EndpointObjectHash key;
+  private final String userId;
+  private final String originator;
 
-    protected EndpointUserActionMessage(EndpointObjectHash key, String userId, String originator) {
-        super();
-        this.key = key;
-        this.userId = userId;
-        this.originator = originator;
-    }
+  protected EndpointUserActionMessage(EndpointObjectHash key, String userId, String originator) {
+    super();
+    this.key = key;
+    this.userId = userId;
+    this.originator = originator;
+  }
 
-    public EndpointObjectHash getKey() {
-        return key;
-    }
+  public EndpointObjectHash getKey() {
+    return key;
+  }
 
-    @Override
-    public String getUserId() {
-        return userId;
-    }
+  @Override
+  public String getUserId() {
+    return userId;
+  }
 
-    public String getOriginator() {
-        return originator;
-    }
+  public String getOriginator() {
+    return originator;
+  }
 
 }

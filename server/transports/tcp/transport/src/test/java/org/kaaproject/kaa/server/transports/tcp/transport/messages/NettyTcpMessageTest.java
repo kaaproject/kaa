@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport.messages;
 
-import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.Constants;
@@ -33,111 +31,113 @@ import org.kaaproject.kaa.server.transport.session.SessionCreateListener;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.mockito.Mockito;
 
+import java.util.UUID;
+
 public class NettyTcpMessageTest {
 
-    @Test
-    public void connectTest() {
-        UUID channelId = UUID.randomUUID();
-        ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.ASYNC;
-        CipherPair sessionKey = Mockito.mock(CipherPair.class);
-        EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
-        String applicationToken = "AppToken";
-        String sdkToken = "SdkToken";
-        int keepAlive = 100;
+  @Test
+  public void connectTest() {
+    UUID channelId = UUID.randomUUID();
+    ChannelContext ctx = Mockito.mock(ChannelContext.class);
+    ChannelType channelType = ChannelType.ASYNC;
+    CipherPair sessionKey = Mockito.mock(CipherPair.class);
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
+    String applicationToken = "AppToken";
+    String sdkToken = "SdkToken";
+    int keepAlive = 100;
 
-        SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, sdkToken, keepAlive, true);
+    SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+        applicationToken, sdkToken, keepAlive, true);
 
-        Connect command = new Connect(keepAlive, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, "aesSessionKey".getBytes(),
-                "syncRequest".getBytes(), "signature".getBytes());
-        SessionCreateListener listener = Mockito.mock(SessionCreateListener.class);
-        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
-        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-        NettyTcpConnectMessage message = new NettyTcpConnectMessage(channelId, ctx, command, channelType, listener, responseBuilder,
-                errorBuilder);
+    Connect command = new Connect(keepAlive, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, "aesSessionKey".getBytes(),
+        "syncRequest".getBytes(), "signature".getBytes());
+    SessionCreateListener listener = Mockito.mock(SessionCreateListener.class);
+    MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+    ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+    NettyTcpConnectMessage message = new NettyTcpConnectMessage(channelId, ctx, command, channelType, listener, responseBuilder,
+        errorBuilder);
 
-        Assert.assertEquals(channelId, message.getChannelUuid());
-        Assert.assertEquals(channelType, message.getChannelType());
-        Assert.assertEquals(ctx, message.getChannelContext());
+    Assert.assertEquals(channelId, message.getChannelUuid());
+    Assert.assertEquals(channelType, message.getChannelType());
+    Assert.assertEquals(ctx, message.getChannelContext());
 
-        Assert.assertEquals(responseBuilder, message.getMessageBuilder());
-        Assert.assertEquals(errorBuilder, message.getErrorBuilder());
+    Assert.assertEquals(responseBuilder, message.getMessageBuilder());
+    Assert.assertEquals(errorBuilder, message.getErrorBuilder());
 
-        Assert.assertArrayEquals("syncRequest".getBytes(), message.getEncodedMessageData());
-        Assert.assertArrayEquals("aesSessionKey".getBytes(), message.getEncodedSessionKey());
-        Assert.assertArrayEquals("signature".getBytes(), message.getSessionKeySignature());
-        message.onSessionCreated(session);
-        Mockito.verify(listener).onSessionCreated(session);
-        Assert.assertNotNull(message.toString());
-    }
+    Assert.assertArrayEquals("syncRequest".getBytes(), message.getEncodedMessageData());
+    Assert.assertArrayEquals("aesSessionKey".getBytes(), message.getEncodedSessionKey());
+    Assert.assertArrayEquals("signature".getBytes(), message.getSessionKeySignature());
+    message.onSessionCreated(session);
+    Mockito.verify(listener).onSessionCreated(session);
+    Assert.assertNotNull(message.toString());
+  }
 
-    @Test
-    public void syncTest() {
-        SyncRequest syncRequest = new SyncRequest();
-        Assert.assertNotNull(syncRequest);
-        UUID channelId = UUID.randomUUID();
-        ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.ASYNC;
-        CipherPair sessionKey = Mockito.mock(CipherPair.class);
-        EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
-        String applicationToken = "AppToken";
-        String sdkToken = "SdkToken";
-        int keepAlive = 100;
+  @Test
+  public void syncTest() {
+    SyncRequest syncRequest = new SyncRequest();
+    Assert.assertNotNull(syncRequest);
+    UUID channelId = UUID.randomUUID();
+    ChannelContext ctx = Mockito.mock(ChannelContext.class);
+    ChannelType channelType = ChannelType.ASYNC;
+    CipherPair sessionKey = Mockito.mock(CipherPair.class);
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
+    String applicationToken = "AppToken";
+    String sdkToken = "SdkToken";
+    int keepAlive = 100;
 
-        SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, sdkToken, keepAlive, true);
+    SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+        applicationToken, sdkToken, keepAlive, true);
 
-        SyncRequest command = new SyncRequest("avroObject".getBytes(), false, false);
+    SyncRequest command = new SyncRequest("avroObject".getBytes(), false, false);
 
-        NettyTcpSyncMessage message = new NettyTcpSyncMessage(command, session, null, null);
+    NettyTcpSyncMessage message = new NettyTcpSyncMessage(command, session, null, null);
 
-        Assert.assertArrayEquals("avroObject".getBytes(), message.getEncodedMessageData());
-        Assert.assertEquals(session, message.getSessionInfo());
-        Assert.assertNotNull(message.toString());
-    }
+    Assert.assertArrayEquals("avroObject".getBytes(), message.getEncodedMessageData());
+    Assert.assertEquals(session, message.getSessionInfo());
+    Assert.assertNotNull(message.toString());
+  }
 
-    @Test
-    public void disconnectTest() {
-        UUID channelId = UUID.randomUUID();
-        ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.ASYNC;
-        CipherPair sessionKey = Mockito.mock(CipherPair.class);
-        EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
-        String applicationToken = "AppToken";
-        String sdkToken = "SdkToken";
-        int keepAlive = 100;
+  @Test
+  public void disconnectTest() {
+    UUID channelId = UUID.randomUUID();
+    ChannelContext ctx = Mockito.mock(ChannelContext.class);
+    ChannelType channelType = ChannelType.ASYNC;
+    CipherPair sessionKey = Mockito.mock(CipherPair.class);
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
+    String applicationToken = "AppToken";
+    String sdkToken = "SdkToken";
+    int keepAlive = 100;
 
-        SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, sdkToken, keepAlive, true);
+    SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+        applicationToken, sdkToken, keepAlive, true);
 
-        NettyTcpDisconnectMessage message = new NettyTcpDisconnectMessage(session);
+    NettyTcpDisconnectMessage message = new NettyTcpDisconnectMessage(session);
 
-        Assert.assertEquals(channelId, message.getChannelUuid());
-        Assert.assertEquals(channelType, message.getChannelType());
-        Assert.assertEquals(ctx, message.getChannelContext());
-        Assert.assertEquals(session, message.getSessionInfo());
-    }
+    Assert.assertEquals(channelId, message.getChannelUuid());
+    Assert.assertEquals(channelType, message.getChannelType());
+    Assert.assertEquals(ctx, message.getChannelContext());
+    Assert.assertEquals(session, message.getSessionInfo());
+  }
 
-    @Test
-    public void pingTest() {
-        UUID channelId = UUID.randomUUID();
-        ChannelContext ctx = Mockito.mock(ChannelContext.class);
-        ChannelType channelType = ChannelType.ASYNC;
-        CipherPair sessionKey = Mockito.mock(CipherPair.class);
-        EndpointObjectHash key = EndpointObjectHash.fromSHA1("key");
-        String applicationToken = "AppToken";
-        String sdkToken = "SdkToken";
-        int keepAlive = 100;
+  @Test
+  public void pingTest() {
+    UUID channelId = UUID.randomUUID();
+    ChannelContext ctx = Mockito.mock(ChannelContext.class);
+    ChannelType channelType = ChannelType.ASYNC;
+    CipherPair sessionKey = Mockito.mock(CipherPair.class);
+    EndpointObjectHash key = EndpointObjectHash.fromSha1("key");
+    String applicationToken = "AppToken";
+    String sdkToken = "SdkToken";
+    int keepAlive = 100;
 
-        SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
-                applicationToken, sdkToken, keepAlive, true);
+    SessionInfo session = new SessionInfo(channelId, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, ctx, channelType, sessionKey, key,
+        applicationToken, sdkToken, keepAlive, true);
 
-        NettyTcpPingMessage message = new NettyTcpPingMessage(session);
+    NettyTcpPingMessage message = new NettyTcpPingMessage(session);
 
-        Assert.assertEquals(channelId, message.getChannelUuid());
-        Assert.assertEquals(channelType, message.getChannelType());
-        Assert.assertEquals(ctx, message.getChannelContext());
-        Assert.assertEquals(session, message.getSessionInfo());
-    }
+    Assert.assertEquals(channelId, message.getChannelUuid());
+    Assert.assertEquals(channelType, message.getChannelType());
+    Assert.assertEquals(ctx, message.getChannelContext());
+    Assert.assertEquals(session, message.getSessionInfo());
+  }
 }

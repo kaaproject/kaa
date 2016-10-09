@@ -16,59 +16,62 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
-import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
-import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class UnauthorizedSessionDialog extends AvroUiDialog {
-    
-    public UnauthorizedSessionDialog(final Listener listener) {
-        super(false, true);
-        
-        setWidth("500px");
-        
-        setTitle(Utils.constants.sessionExpired());
-        
-        VerticalPanel dialogContents = new VerticalPanel();
-        dialogContents.setSpacing(4);
-        add(dialogContents);
-        
-        AlertPanel warningPanel = new AlertPanel(AlertPanel.Type.WARNING);
-        warningPanel.setMessage(Utils.messages.sessionExpiredMessage());
-        
-        dialogContents.add(warningPanel);
-        
-        Button loginButton = new Button(Utils.constants.logInAgain(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                hide();
-                listener.onLogin();
-            }
-        });
-        
-        Button ignoreButton = new Button(Utils.constants.ignore(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                hide();
-                listener.onIgnore();
-            }
-        });
-        addButton(loginButton);
-        addButton(ignoreButton);
-    }
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    public interface Listener {
-        
-        public void onLogin();
-        
-        public void onIgnore();
-        
-    }   
+public class UnauthorizedSessionDialog extends AvroUiDialog {
+
+  /**
+   * Instantiates a new UnauthorizedSessionDialog.
+   */
+  public UnauthorizedSessionDialog(final Listener listener) {
+    super(false, true);
+
+    setWidth("500px");
+
+    setTitle(Utils.constants.sessionExpired());
+
+    VerticalPanel dialogContents = new VerticalPanel();
+    dialogContents.setSpacing(4);
+    add(dialogContents);
+
+    AlertPanel warningPanel = new AlertPanel(AlertPanel.Type.WARNING);
+    warningPanel.setMessage(Utils.messages.sessionExpiredMessage());
+
+    dialogContents.add(warningPanel);
+
+    Button loginButton = new Button(Utils.constants.logInAgain(), new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        hide();
+        listener.onLogin();
+      }
+    });
+
+    Button ignoreButton = new Button(Utils.constants.ignore(), new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        hide();
+        listener.onIgnore();
+      }
+    });
+    addButton(loginButton);
+    addButton(ignoreButton);
+  }
+
+  public interface Listener {
+
+    public void onLogin();
+
+    public void onIgnore();
+
+  }
 
 }
 

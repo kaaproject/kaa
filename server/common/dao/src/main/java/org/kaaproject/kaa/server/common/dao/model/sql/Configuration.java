@@ -16,9 +16,21 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_BODY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.binaryToString;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.stringToBinary;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
+
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,174 +38,171 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_BODY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_CONFIGURATION_SCHEMA_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.CONFIGURATION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.binaryToString;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.stringToBinary;
 
 @Entity
 @Table(name = CONFIGURATION_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Configuration extends AbstractStructure<ConfigurationDto> implements Serializable {
 
-    private static final long serialVersionUID = -216908432141461265L;
+  private static final long serialVersionUID = -216908432141461265L;
 
-    private static final Charset UTF8 = Charset.forName("UTF-8");
+  private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    @Column(name = CONFIGURATION_CONFIGURATION_SCHEMA_VERSION)
-    protected int schemaVersion;
+  @Column(name = CONFIGURATION_CONFIGURATION_SCHEMA_VERSION)
+  protected int schemaVersion;
 
-    @Lob
-    @Column(name = CONFIGURATION_CONFIGURATION_BODY)
-    private byte[] configurationBody;
+  @Lob
+  @Column(name = CONFIGURATION_CONFIGURATION_BODY)
+  private byte[] configurationBody;
 
-    @ManyToOne
-    @JoinColumn(name = CONFIGURATION_CONFIGURATION_SCHEMA_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private ConfigurationSchema configurationSchema;
+  @ManyToOne
+  @JoinColumn(name = CONFIGURATION_CONFIGURATION_SCHEMA_ID, nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private ConfigurationSchema configurationSchema;
 
-    public Configuration() {
+  public Configuration() {
+  }
+
+  public Configuration(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * Instantiates the Configuration.
+   */
+  public Configuration(ConfigurationDto dto) {
+    super(dto);
+    if (dto != null) {
+      Long schemaId = getLongId(dto.getSchemaId());
+      this.configurationSchema = schemaId != null ? new ConfigurationSchema(schemaId) : null;
+      this.configurationBody = stringToBinary(dto.getBody());
+      this.schemaVersion = dto.getSchemaVersion();
     }
+  }
 
-    public Configuration(Long id) {
-        this.id = id;
-    }
+  public byte[] getConfigurationBody() {
+    return configurationBody;
+  }
 
-    public Configuration(ConfigurationDto dto) {
-        super(dto);
-        if (dto != null) {
-            Long schemaId = getLongId(dto.getSchemaId());
-            this.configurationSchema = schemaId != null ? new ConfigurationSchema(schemaId) : null;
-            this.configurationBody = stringToBinary(dto.getBody());
-            this.schemaVersion = dto.getSchemaVersion();
-        }
-    }
+  public void setConfigurationBody(byte[] configurationBody) {
+    this.configurationBody = configurationBody;
+  }
 
-    public byte[] getConfigurationBody() {
-        return configurationBody;
-    }
+  public ConfigurationSchema getConfigurationSchema() {
+    return configurationSchema;
+  }
 
-    public void setConfigurationBody(byte[] configurationBody) {
-        this.configurationBody = configurationBody;
-    }
+  public void setConfigurationSchema(ConfigurationSchema configurationSchema) {
+    this.configurationSchema = configurationSchema;
+  }
 
-    public ConfigurationSchema getConfigurationSchema() {
-        return configurationSchema;
-    }
+  public String getSchemaId() {
+    return configurationSchema != null ? configurationSchema.getStringId() : null;
+  }
 
-    public void setConfigurationSchema(ConfigurationSchema configurationSchema) {
-        this.configurationSchema = configurationSchema;
-    }
+  public String getApplicationId() {
+    return application != null ? application.getStringId() : null;
+  }
 
-    public String getSchemaId() {
-        return configurationSchema != null ? configurationSchema.getStringId() : null;
-    }
+  public String getEndpointGroupId() {
+    return endpointGroup != null ? endpointGroup.getStringId() : null;
+  }
 
-    public String getApplicationId() {
-        return application != null ? application.getStringId() : null;
-    }
+  public int getSchemaVersion() {
+    return schemaVersion;
+  }
 
-    public String getEndpointGroupId() {
-        return endpointGroup != null ? endpointGroup.getStringId() : null;
-    }
+  public void setSchemaVersion(int schemaVersion) {
+    this.schemaVersion = schemaVersion;
+  }
 
-    public int getSchemaVersion() {
-        return schemaVersion;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + super.hashCode();
+    result = prime * result + Arrays.hashCode(configurationBody);
+    result = prime * result + ((configurationSchema == null) ? 0 : configurationSchema.hashCode());
+    return result;
+  }
 
-    public void setSchemaVersion(int schemaVersion) {
-        this.schemaVersion = schemaVersion;
+  @Override
+  public boolean equals(Object obj) {
+    if (!super.equals(obj)) {
+      return false;
     }
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Configuration other = (Configuration) obj;
+    if (!Arrays.equals(configurationBody, other.configurationBody)) {
+      return false;
+    }
+    if (configurationSchema == null) {
+      if (other.configurationSchema != null) {
+        return false;
+      }
+    } else if (!configurationSchema.equals(other.configurationSchema)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + super.hashCode();
-        result = prime * result + Arrays.hashCode(configurationBody);
-        result = prime * result + ((configurationSchema == null) ? 0 : configurationSchema.hashCode());
-        return result;
-    }
+  @Override
+  public ConfigurationDto toDto() {
+    ConfigurationDto dto = super.toDto();
+    dto.setBody(binaryToString(configurationBody));
+    dto.setSchemaId(ModelUtils.getStringId(configurationSchema.getId()));
+    dto.setSchemaVersion(schemaVersion);
+    dto.setProtocolSchema(configurationSchema != null
+        ? configurationSchema.getProtocolSchema()
+        : null);
+    return dto;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Configuration other = (Configuration) obj;
-        if (!Arrays.equals(configurationBody, other.configurationBody)) {
-            return false;
-        }
-        if (configurationSchema == null) {
-            if (other.configurationSchema != null) {
-                return false;
-            }
-        } else if (!configurationSchema.equals(other.configurationSchema)) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  protected ConfigurationDto createDto() {
+    return new ConfigurationDto();
+  }
 
-    @Override
-    public ConfigurationDto toDto() {
-        ConfigurationDto dto = super.toDto();
-        dto.setBody(binaryToString(configurationBody));
-        dto.setSchemaId(ModelUtils.getStringId(configurationSchema.getId()));
-        dto.setSchemaVersion(schemaVersion);
-        dto.setProtocolSchema(configurationSchema != null ? configurationSchema.getProtocolSchema() : null);
-        return dto;
-    }
+  @Override
+  protected GenericModel<ConfigurationDto> newInstance(Long id) {
+    return new Configuration(id);
+  }
 
-    @Override
-    protected ConfigurationDto createDto() {
-        return new ConfigurationDto();
+  @Override
+  public String getBody() {
+    if (configurationBody != null) {
+      return new String(configurationBody, UTF8);
     }
+    return null;
+  }
 
-    @Override
-    protected GenericModel<ConfigurationDto> newInstance(Long id) {
-        return new Configuration(id);
+  @Override
+  public void setBody(String body) {
+    if (body != null) {
+      configurationBody = body.getBytes(UTF8);
+    } else {
+      configurationBody = null;
     }
+  }
 
-    @Override
-    public String getBody() {
-        if (configurationBody != null) {
-            return new String(configurationBody, UTF8);
-        }
-        return null;
-    }
-
-    @Override
-    public void setBody(String body) {
-        if (body != null) {
-            configurationBody = body.getBytes(UTF8);
-        } else {
-            configurationBody = null;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Configuration [sequenceNumber=" + sequenceNumber + ", schemaVersion="
-                + schemaVersion + ", description=" + description + ", createdTime=" + createdTime + ", lastModifyTime="
-                + lastModifyTime + ", activatedTime=" + activatedTime + ", deactivatedTime=" + deactivatedTime + ", createdUsername=" + createdUsername
-                + ", modifiedUsername=" + modifiedUsername + ", activatedUsername=" + activatedUsername + ", deactivatedUsername=" + deactivatedUsername
-                + ", endpointCount=" + endpointCount + ", status=" + status + ", id=" + id + ", version=" + getVersion() + "]";
-    }
+  @Override
+  public String toString() {
+    return "Configuration [sequenceNumber=" + sequenceNumber + ", schemaVersion="
+        + schemaVersion + ", description=" + description + ", createdTime="
+        + createdTime + ", lastModifyTime="
+        + lastModifyTime + ", activatedTime=" + activatedTime + ", deactivatedTime="
+        + deactivatedTime + ", createdUsername=" + createdUsername
+        + ", modifiedUsername=" + modifiedUsername + ", activatedUsername=" + activatedUsername
+        + ", deactivatedUsername=" + deactivatedUsername + ", endpointCount=" + endpointCount
+        + ", status=" + status + ", id=" + id + ", version=" + getVersion() + "]";
+  }
 
 }

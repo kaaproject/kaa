@@ -18,9 +18,9 @@ package org.kaaproject.kaa.client.util;
 
 public interface Base64 {
 
-    byte[] decodeBase64(final byte[] base64Data);
-    
-    byte[] decodeBase64(final String base64String);
-    
-    byte[] encodeBase64(final byte[] binaryData);
+  byte[] decodeBase64(final byte[] base64Data);
+
+  byte[] decodeBase64(final String base64String);
+
+  byte[] encodeBase64(final byte[] binaryData);
 }

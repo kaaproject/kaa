@@ -20,41 +20,42 @@ import java.util.List;
 
 /**
  * The interface Configuration schema dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface ConfigurationSchemaDao<T> extends SqlDao<T> {
 
-    /**
-     * Find configuration schemas by application id.
-     *
-     * @param applicationId the application id
-     * @return the list of configuration schemas
-     */
-    List<T> findByApplicationId(String applicationId);
+  /**
+   * Find configuration schemas by application id.
+   *
+   * @param applicationId the application id
+   * @return the list of configuration schemas
+   */
+  List<T> findByApplicationId(String applicationId);
 
-    /**
-     * Find latest configuration schema by application id.
-     *
-     * @param applicationId the application id
-     * @return the configuration schema
-     */
-    T findLatestByApplicationId(String applicationId);
+  /**
+   * Find latest configuration schema by application id.
+   *
+   * @param applicationId the application id
+   * @return the configuration schema
+   */
+  T findLatestByApplicationId(String applicationId);
 
-    /**
-     * Gets latest configuration schema by application id.
-     *
-     * @param applicationId the application id
-     * @param version the version of configuration schema
-     * @return the latest configuration schema
-     */
-    T findByAppIdAndVersion(String applicationId, int version);
+  /**
+   * Gets latest configuration schema by application id.
+   *
+   * @param applicationId the application id
+   * @param version       the version of configuration schema
+   * @return the latest configuration schema
+   */
+  T findByAppIdAndVersion(String applicationId, int version);
 
-    /**
-     * Find schemas without active/inactive configurations
-     *
-     * @param applicationId the application id
-     * @param usedSchemaIds The list of schemas with active/inactive configurations
-     * @return The list of vacant configuration schemas
-     */
-    List<T> findVacantSchemas(String applicationId, List<String> usedSchemaIds);
+  /**
+   * Find schemas without active/inactive configurations.
+   *
+   * @param applicationId the application id
+   * @param usedSchemaIds The list of schemas with active/inactive configurations
+   * @return The list of vacant configuration schemas
+   */
+  List<T> findVacantSchemas(String applicationId, List<String> usedSchemaIds);
 }

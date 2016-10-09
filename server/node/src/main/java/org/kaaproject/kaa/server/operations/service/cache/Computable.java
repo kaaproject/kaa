@@ -17,21 +17,20 @@
 package org.kaaproject.kaa.server.operations.service.cache;
 
 
-
 /**
  * The Interface Computable.
  *
  * @param <K> the key type
  * @param <V> the value type
  */
-public interface Computable<K,V> {
-    
-    /**
-     * Compute.
-     *
-     * @param key the key
-     * @return the v
-     */
-    V compute(K key);
+public interface Computable<K, V> {
+
+  /**
+   * Compute.
+   *
+   * @param key the key
+   * @return the v
+   */
+  V compute(K key);
 
 }

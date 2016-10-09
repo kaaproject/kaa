@@ -16,49 +16,49 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class UserProfilePlace extends TreePlace {
 
-    public UserProfilePlace() {
+  public UserProfilePlace() {
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof UserProfilePlace);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.accountProfile();
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return null;
+  }
+
+  @Prefix(value = "usrProf")
+  public static class Tokenizer implements PlaceTokenizer<UserProfilePlace>, PlaceConstants {
+
+    @Override
+    public UserProfilePlace getPlace(String token) {
+      return new UserProfilePlace();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj != null && (obj instanceof UserProfilePlace);
+    public String getToken(UserProfilePlace place) {
+      PlaceParams.clear();
+      return PlaceParams.generateToken();
     }
-
-    @Prefix(value = "usrProf")
-    public static class Tokenizer implements PlaceTokenizer<UserProfilePlace>, PlaceConstants {
-
-        @Override
-        public UserProfilePlace getPlace(String token) {
-            return new UserProfilePlace();
-        }
-
-        @Override
-        public String getToken(UserProfilePlace place) {
-            PlaceParams.clear();
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public String getName() {
-        return Utils.constants.accountProfile();
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return null;
-    }
+  }
 
 }

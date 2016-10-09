@@ -16,24 +16,24 @@
 
 package org.kaaproject.kaa.common.avro;
 
-import java.util.Comparator;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 
+import java.util.Comparator;
+
 public class AvroDataComparator implements Comparator<Object> {
-    private Schema schema;
+  private Schema schema;
 
-    public AvroDataComparator() {
-        super();
-    }
+  public AvroDataComparator() {
+    super();
+  }
 
-    @Override
-    public int compare(Object o1, Object o2) {
-        return GenericData.get().compare(o1, o2, schema);
-    }
+  @Override
+  public int compare(Object o1, Object o2) {
+    return GenericData.get().compare(o1, o2, schema);
+  }
 
-    public void setSchema(Schema schema) {
-        this.schema = schema;
-    }
+  public void setSchema(Schema schema) {
+    this.schema = schema;
+  }
 }

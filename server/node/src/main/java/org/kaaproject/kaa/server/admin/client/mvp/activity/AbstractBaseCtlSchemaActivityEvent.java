@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.EventBus;
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
@@ -36,64 +36,65 @@ import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 import java.util.List;
 
 public abstract class AbstractBaseCtlSchemaActivityEvent<S extends BaseSchemaDto,
-        T extends BaseSchemaViewDto<S>,
-        V extends BaseCtlSchemaView,
-        P extends AbstractSchemaPlaceEvent>
-        extends AbstractBaseCtlSchemaActivity<S, T, V, P>
-        implements ErrorMessageCustomizer, FormDataLoader {
+    T extends BaseSchemaViewDto<S>,
+    V extends BaseCtlSchemaView,
+    P extends AbstractSchemaPlaceEvent>
+    extends AbstractBaseCtlSchemaActivity<S, T, V, P>
+    implements ErrorMessageCustomizer, FormDataLoader {
 
-    protected String ecfId;
-    protected String ecfVersionId;
-    protected int ecfVersion;
+  protected String ecfId;
+  protected String ecfVersionId;
+  protected int ecfVersion;
 
-    public AbstractBaseCtlSchemaActivityEvent(P place,
-                                              ClientFactory clientFactory) {
-        super(place, clientFactory);
-    }
+  public AbstractBaseCtlSchemaActivityEvent(P place, ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
 
-    @Override
-    protected T newEntity() {
-        T schema = newSchema();
-        return schema;
-    }
+  @Override
+  protected T newEntity() {
+    T schema = newSchema();
+    return schema;
+  }
 
-    @Override
-    protected String getEntityId(P place) {
-        return place.getSchemaId();
-    }
+  @Override
+  protected String getEntityId(P place) {
+    return place.getSchemaId();
+  }
 
-    @Override
-    protected void onEntityRetrieved() {
-        if (create) {
-            registrations.add(detailsView.getNewCtlButton().addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    CtlSchemaPlace newCtlPlace = null;
+  @Override
+  protected void onEntityRetrieved() {
+    if (create) {
+      registrations.add(detailsView.getNewCtlButton().addClickHandler(new ClickHandler() {
+        @Override
+        public void onClick(ClickEvent event) {
+          CtlSchemaPlace newCtlPlace = null;
 
-                    newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.TENANT, place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, true);
-                    newCtlPlace.setSchemaType(getPlaceSchemaType());
-                    newCtlPlace.setPreviousPlace(place);
-                    canceled = true;
-                    goTo(newCtlPlace);
+          newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.TENANT, place.getEcfId(),
+              place.getEcfVersionId(), place.getEcfVersion(), true, true);
+          newCtlPlace.setSchemaType(getPlaceSchemaType());
+          newCtlPlace.setPreviousPlace(place);
+          canceled = true;
+          goTo(newCtlPlace);
 
-                }
-            }));
-
-            KaaAdmin.getDataSource().getTenantLevelCTLSchemaReferenceForECF(place.getEcfId(), place.getEventClassDtoList(), new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
-                    @Override
-                    public void onFailureImpl(Throwable caught) {
-                        Utils.handleException(caught, detailsView);
-                    }
-
-                    @Override
-                    public void onSuccessImpl(List<CtlSchemaReferenceDto> result) {
-                        detailsView.getCtlSchemaReference().setAcceptableValues(result);
-                        bindDetailsView(true);
-                    }
-                });
-                detailsView.getSchemaForm().setFormDataLoader(this);
-        } else {
-            bindDetailsView(false);
         }
+      }));
+
+      KaaAdmin.getDataSource().getTenantLevelCtlSchemaReferenceForEcf(place.getEcfId(),
+          place.getEventClassDtoList(), new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
+            @Override
+            public void onFailureImpl(Throwable caught) {
+              Utils.handleException(caught, detailsView);
+            }
+
+            @Override
+            public void onSuccessImpl(List<CtlSchemaReferenceDto> result) {
+              detailsView.getCtlSchemaReference().setAcceptableValues(result);
+              bindDetailsView(true);
+            }
+          });
+      detailsView.getSchemaForm().setFormDataLoader(this);
+    } else {
+      bindDetailsView(false);
     }
+  }
 }

@@ -16,34 +16,37 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.stats;
 
-import java.util.UUID;
-
 import org.kaaproject.kaa.server.operations.service.akka.AkkaStatusListener;
+
+import java.util.UUID;
 
 public final class StatusRequestMessage {
 
-    private final UUID id;
-    private final AkkaStatusListener listener;
-    
-    public StatusRequestMessage(UUID id) {
-        this(id, null);
-    }
+  private final UUID id;
+  private final AkkaStatusListener listener;
 
-    public StatusRequestMessage(AkkaStatusListener listener) {
-        this(UUID.randomUUID(), listener);
-    }
-    
-    public StatusRequestMessage(UUID id, AkkaStatusListener listener) {
-        super();
-        this.id = id;
-        this.listener = listener;
-    }
+  public StatusRequestMessage(UUID id) {
+    this(id, null);
+  }
 
-    public UUID getId() {
-        return id;
-    }
+  public StatusRequestMessage(AkkaStatusListener listener) {
+    this(UUID.randomUUID(), listener);
+  }
 
-    public AkkaStatusListener getListener() {
-        return listener;
-    }
+  /**
+   * Instantiates the StatusRequestMessage.
+   */
+  public StatusRequestMessage(UUID id, AkkaStatusListener listener) {
+    super();
+    this.id = id;
+    this.listener = listener;
+  }
+
+  public UUID getId() {
+    return id;
+  }
+
+  public AkkaStatusListener getListener() {
+    return listener;
+  }
 }

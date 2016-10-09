@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.header;
 
-import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
-import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsLabel;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -30,52 +25,65 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
+import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsLabel;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class HeaderViewImpl extends Composite implements HeaderView {
 
-    interface HeaderViewImplUiBinder extends UiBinder<Widget, HeaderViewImpl> { }
-    private static HeaderViewImplUiBinder uiBinder = GWT.create(HeaderViewImplUiBinder.class);
+  private static HeaderViewImplUiBinder uiBinder = GWT.create(HeaderViewImplUiBinder.class);
+  @UiField(provided = true)
+  final ActionsLabel settingsLabel;
+  @UiField(provided = true)
+  final KaaAdminStyle kaaAdminStyle;
+  @UiField
+  Label usernameLabel;
+  @UiField
+  Label signoutLabel;
+  @UiField
+  Label title;
+  private Presenter presenter;
 
-    private Presenter presenter;
+  /**
+   * Instantiates a new HeaderViewImpl.
+   */
+  public HeaderViewImpl() {
+    settingsLabel = new ActionsLabel(Utils.constants.settings());
+    kaaAdminStyle = Utils.kaaAdminStyle;
+    settingsLabel.setStyleName(kaaAdminStyle.bAppHeaderMenu());
+    initWidget(uiBinder.createAndBindUi(this));
+    signoutLabel.setText(Utils.constants.signOut());
+    title.addClickHandler(new ClickHandler() {
 
-    @UiField Label usernameLabel;
-    @UiField Label signoutLabel;
-    @UiField(provided=true) final ActionsLabel settingsLabel;
-    @UiField Label title;
-    @UiField(provided=true) final KaaAdminStyle kaaAdminStyle;
+      @Override
+      public void onClick(ClickEvent event) {
+        presenter.goToHome();
+      }
+    });
+  }
 
-    public HeaderViewImpl() {
-        settingsLabel = new ActionsLabel(Utils.constants.settings());
-        kaaAdminStyle = Utils.kaaAdminStyle;
-        settingsLabel.setStyleName(kaaAdminStyle.bAppHeaderMenu());
-        initWidget(uiBinder.createAndBindUi(this));
-        signoutLabel.setText(Utils.constants.signOut());
-        title.addClickHandler(new ClickHandler() {
+  @Override
+  public void setPresenter(Presenter presenter) {
+    this.presenter = presenter;
+  }
 
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.goToHome();
-            }
-        });
-    }
+  @Override
+  public Label getUsernameLabel() {
+    return usernameLabel;
+  }
 
-    @Override
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-    }
+  @Override
+  public Label getSignoutLabel() {
+    return signoutLabel;
+  }
 
-    @Override
-    public Label getUsernameLabel() {
-        return usernameLabel;
-    }
+  @Override
+  public ActionsLabel getSettingsLabel() {
+    return settingsLabel;
+  }
 
-    @Override
-    public Label getSignoutLabel() {
-        return signoutLabel;
-    }
-
-    @Override
-    public ActionsLabel getSettingsLabel() {
-        return settingsLabel;
-    }
+  interface HeaderViewImplUiBinder extends UiBinder<Widget, HeaderViewImpl> {
+  }
 
 }

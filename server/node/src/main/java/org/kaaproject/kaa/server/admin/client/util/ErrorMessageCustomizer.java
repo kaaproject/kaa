@@ -18,6 +18,6 @@ package org.kaaproject.kaa.server.admin.client.util;
 
 public interface ErrorMessageCustomizer {
 
-    String customizeErrorMessage(Throwable caught);
-    
+  String customizeErrorMessage(Throwable caught);
+
 }

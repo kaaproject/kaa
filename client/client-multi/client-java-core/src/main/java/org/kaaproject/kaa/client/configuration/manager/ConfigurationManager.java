@@ -61,42 +61,41 @@ import org.kaaproject.kaa.client.configuration.storage.ConfigurationPersistenceM
  * </pre>
  *
  * @author Yaroslav Zeygerman
- *
  * @see CommonRecord
  * @see ConfigurationReceiver
  * @see ConfigurationPersistenceManager
  */
 public interface ConfigurationManager {
 
-    /**
-     * Subscribes for configuration updates.<br>
-     * <br>
-     * <b>NOTE:</b> Attempting to subscribe two instances of
-     * {@link ConfigurationReceiver} such as
-     * {@code receiver1.equals(receiver2) == true}
-     * will result the fact that only first instance will be subscribed.
-     *
-     * @param receiver object to receive updates
-     * @see ConfigurationReceiver
-     */
-    void subscribeForConfigurationUpdates(ConfigurationReceiver receiver);
+  /**
+   * Subscribes for configuration updates.<br>
+   * <br>
+   * <b>NOTE:</b> Attempting to subscribe two instances of
+   * {@link ConfigurationReceiver} such as
+   * {@code receiver1.equals(receiver2) == true}
+   * will result the fact that only first instance will be subscribed.
+   *
+   * @param receiver object to receive updates
+   * @see ConfigurationReceiver
+   */
+  void subscribeForConfigurationUpdates(ConfigurationReceiver receiver);
 
-    /**
-     * Unsubscribes from configuration updates.<br>
-     * <br>
-     * <b>NOTE:</b> Attempting to unsubscribe object which was not subscribed previously will
-     * not make any effect.
-     *
-     * @param receiver object which is no longer needs configuration updates
-     * @see ConfigurationReceiver
-     */
-    void unsubscribeFromConfigurationUpdates(ConfigurationReceiver receiver);
+  /**
+   * Unsubscribes from configuration updates.<br>
+   * <br>
+   * <b>NOTE:</b> Attempting to unsubscribe object which was not subscribed previously will
+   * not make any effect.
+   *
+   * @param receiver object which is no longer needs configuration updates
+   * @see ConfigurationReceiver
+   */
+  void unsubscribeFromConfigurationUpdates(ConfigurationReceiver receiver);
 
-    /**
-     * Retrieves full configuration
-     *
-     * @return common object with full configuration
-     * @see CommonRecord
-     */
-    CommonRecord getConfiguration();
+  /**
+   * Retrieves full configuration.
+   *
+   * @return common object with full configuration
+   * @see CommonRecord
+   */
+  CommonRecord getConfiguration();
 }

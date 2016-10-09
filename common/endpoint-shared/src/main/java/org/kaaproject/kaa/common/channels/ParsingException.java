@@ -19,14 +19,14 @@ package org.kaaproject.kaa.common.channels;
 /**
  * ParsingException Class.
  * Used to indicate error during Avro SupportedChannel object conversations.
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 public class ParsingException extends Exception {
 
-    private static final long serialVersionUID = -8699414933370024424L;
+  private static final long serialVersionUID = -8699414933370024424L;
 
-    public ParsingException(String error) {
-        super(error);
-    }
+  public ParsingException(String error) {
+    super(error);
+  }
 }

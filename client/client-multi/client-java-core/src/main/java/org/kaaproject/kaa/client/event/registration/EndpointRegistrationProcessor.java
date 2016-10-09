@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.client.event.registration;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse;
@@ -29,57 +25,59 @@ import org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This processor that applies the endpoint registration
  * updates received from the remote server.
  *
  * @author Taras Lemkin
- *
  */
 public interface EndpointRegistrationProcessor {
 
-    /**
-     * Retrieves current attach requests.
-     *
-     * @return the map of access tokens.
-     * @see EndpointAccessToken
-     */
-    Map<Integer, EndpointAccessToken> getAttachEndpointRequests(); // TODO
+  /**
+   * Retrieves current attach requests.
+   *
+   * @return the map of access tokens.
+   * @see EndpointAccessToken
+   */
+  Map<Integer, EndpointAccessToken> getAttachEndpointRequests(); // TODO
 
-    /**
-     * Retrieves current detach requests.
-     *
-     * @return the map of endpoint key hashes.
-     * @see EndpointKeyHash
-     */
-    Map<Integer, EndpointKeyHash> getDetachEndpointRequests();
+  /**
+   * Retrieves current detach requests.
+   *
+   * @return the map of endpoint key hashes.
+   * @see EndpointKeyHash
+   */
+  Map<Integer, EndpointKeyHash> getDetachEndpointRequests();
 
-    /**
-     * Retrieves the user attach request.
-     *
-     * @return the user attach request.
-     * @see UserAttachRequest
-     */
-    UserAttachRequest getUserAttachRequest();
+  /**
+   * Retrieves the user attach request.
+   *
+   * @return the user attach request.
+   * @see UserAttachRequest
+   */
+  UserAttachRequest getUserAttachRequest();
 
-    /**
-     * Updates the manager's state.
-     *
-     * @param   attachResponses         the list of attach responses.
-     * @param   detachResponses         the list of detach responses.
-     * @param   userResponse            the user attach response.
-     * @param   userAttachNotification  the user attach notification
-     * @param   userDetachNotification  the user detach notification
-     *
-     * @throws  IOException the io exception
-     * @see     EndpointAttachResponse
-     * @see     EndpointDetachResponse
-     * @see     UserAttachResponse
-     */
-    void onUpdate(List<EndpointAttachResponse> attachResponses,
-            List<EndpointDetachResponse> detachResponses,
-            UserAttachResponse userResponse,
-            UserAttachNotification userAttachNotification,
-            UserDetachNotification userDetachNotification) throws IOException;
+  /**
+   * Updates the manager's state.
+   *
+   * @param attachResponses        the list of attach responses.
+   * @param detachResponses        the list of detach responses.
+   * @param userResponse           the user attach response.
+   * @param userAttachNotification the user attach notification
+   * @param userDetachNotification the user detach notification
+   * @throws IOException the io exception
+   * @see EndpointAttachResponse
+   * @see EndpointDetachResponse
+   * @see UserAttachResponse
+   */
+  void onUpdate(List<EndpointAttachResponse> attachResponses,
+                List<EndpointDetachResponse> detachResponses,
+                UserAttachResponse userResponse,
+                UserAttachNotification userAttachNotification,
+                UserDetachNotification userDetachNotification) throws IOException;
 
 }

@@ -23,9 +23,9 @@ import org.junit.Test;
 
 public class EndpointConfigurationTest {
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(MongoEndpointConfiguration.class).suppress(Warning.NONFINAL_FIELDS).verify();
-    }
-    
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(MongoEndpointConfiguration.class).suppress(Warning.NONFINAL_FIELDS).verify();
+  }
+
 }

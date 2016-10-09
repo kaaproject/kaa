@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TOKEN_PROPERTY;
+
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.UserVerifierDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.UserVerifier;
@@ -27,56 +33,52 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.USER_VERIFIER_TOKEN_PROPERTY;
-
 @Repository
-public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier> implements UserVerifierDao<UserVerifier> {
+public class HibernateUserVerifierDao extends HibernateAbstractDao<UserVerifier>
+        implements UserVerifierDao<UserVerifier> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateUserVerifierDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateUserVerifierDao.class);
 
-    @Override
-    protected Class<UserVerifier> getEntityClass() {
-        return UserVerifier.class;
+  @Override
+  protected Class<UserVerifier> getEntityClass() {
+    return UserVerifier.class;
+  }
+
+  @Override
+  public List<UserVerifier> findByAppId(String appId) {
+    List<UserVerifier> appenders = Collections.emptyList();
+    LOG.debug("Searching user verifiers by application id [{}]", appId);
+    if (isNotBlank(appId)) {
+      appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.and(
+              Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)))
+      );
     }
-
-    @Override
-    public List<UserVerifier> findByAppId(String appId) {
-        List<UserVerifier> appenders = Collections.emptyList();
-        LOG.debug("Searching user verifiers by application id [{}]", appId);
-        if (isNotBlank(appId)) {
-            appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)))
-            );
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(appenders.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", appId, appenders.size());
-        }
-        return appenders;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(appenders.toArray()));
+    } else {
+      LOG.debug("[{}] Search result: {}.", appId, appenders.size());
     }
+    return appenders;
+  }
 
-    @Override
-    public UserVerifier findByAppIdAndVerifierToken(String appId, String verifierToken) {
-        LOG.debug("Searching user verifier by application id [{}] and verifier token [{}]", appId, verifierToken);
-        UserVerifier verifier = null;
-        if (isNotBlank(appId) && isNotBlank(verifierToken)) {
-            verifier = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.eq(USER_VERIFIER_TOKEN_PROPERTY, verifierToken))
-            );
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{}] Search result: {}.", appId, verifierToken, verifier);
-        } else {
-            LOG.debug("[{},{}] Search result: {}.", appId, verifierToken, verifier != null);
-        }
-        return verifier;
+  @Override
+  public UserVerifier findByAppIdAndVerifierToken(String appId, String verifierToken) {
+    LOG.debug("Searching user verifier by application id [{}] and verifier token [{}]",
+            appId, verifierToken);
+    UserVerifier verifier = null;
+    if (isNotBlank(appId) && isNotBlank(verifierToken)) {
+      verifier = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.and(
+              Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+              Restrictions.eq(USER_VERIFIER_TOKEN_PROPERTY, verifierToken))
+      );
     }
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{},{}] Search result: {}.", appId, verifierToken, verifier);
+    } else {
+      LOG.debug("[{},{}] Search result: {}.", appId, verifierToken, verifier != null);
+    }
+    return verifier;
+  }
 }

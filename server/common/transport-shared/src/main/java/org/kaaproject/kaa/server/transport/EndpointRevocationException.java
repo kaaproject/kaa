@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.transport;
 
 /**
@@ -20,17 +21,16 @@ package org.kaaproject.kaa.server.transport;
  * during existing communication session.
  *
  * @author Andrew Shvayka
- *
  * @since v0.9.0
  */
 public class EndpointRevocationException extends Exception {
 
-    private static final long serialVersionUID = 1000L;
+  private static final long serialVersionUID = 1000L;
 
-    /**
-     * Constructs a new exception with no detail message.
-     */
-    public EndpointRevocationException() {
-        super();
-    }
+  /**
+   * Constructs a new exception with no detail message.
+   */
+  public EndpointRevocationException() {
+    super();
+  }
 }

@@ -26,31 +26,33 @@ import javax.tools.JavaFileObject.Kind;
  */
 public enum JavaDynamicUtils {
 
-    /** The instance. */
-    INSTANCE;
+  /**
+   * The instance.
+   */
+  INSTANCE;
 
-    /**
-     * Creates the uri.
-     *
-     * @param str the str
-     * @return the uri
-     */
-    public URI createURI(String str) {
-        try {
-            return new URI(str);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e); //NOSONAR
-        }
+  /**
+   * Creates the uri.
+   *
+   * @param str the str
+   * @return the uri
+   */
+  public URI createUri(String str) {
+    try {
+      return new URI(str);
+    } catch (URISyntaxException ex) {
+      throw new RuntimeException(ex); //NOSONAR
     }
+  }
 
-    /**
-     * Gets the class name with ext.
-     *
-     * @param className the class name
-     * @return the class name with ext
-     */
-    public String getClassNameWithExt(String className) {
-        return className + Kind.SOURCE.extension;
-    }
+  /**
+   * Gets the class name with ext.
+   *
+   * @param className the class name
+   * @return the class name with ext
+   */
+  public String getClassNameWithExt(String className) {
+    return className + Kind.SOURCE.extension;
+  }
 
 }

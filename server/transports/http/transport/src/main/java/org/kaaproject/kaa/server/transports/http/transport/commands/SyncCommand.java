@@ -17,39 +17,38 @@
 /**
  *
  */
+
 package org.kaaproject.kaa.server.transports.http.transport.commands;
 
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 
-/**
- * The Class SyncCommand.
- */
-public class SyncCommand extends AbstractHttpSyncCommand implements CommonEPConstans {
 
-    @Override
-    public ChannelType getChannelType() {
-        return ChannelType.SYNC;
-    }
+public class SyncCommand extends AbstractHttpSyncCommand implements CommonEpConstans {
 
-    /**
-     * Instantiates a new sync command.
-     */
-    public SyncCommand() {
-        super();
-        LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
-    }
+  /**
+   * Instantiates a new sync command.
+   */
+  public SyncCommand() {
+    super();
+    LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#isNeedConnectionClose()
-     */
-    @Override
-    public boolean isNeedConnectionClose() {
-        return true;
-    }
+  public static String getCommandName() {
+    return SYNC_COMMAND;
+  }
 
-    public static String getCommandName() {
-        return SYNC_COMMAND;
-    }
+  @Override
+  public ChannelType getChannelType() {
+    return ChannelType.SYNC;
+  }
+
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.common.http.server.CommandProcessor#isNeedConnectionClose()
+   */
+  @Override
+  public boolean isNeedConnectionClose() {
+    return true;
+  }
 
 }

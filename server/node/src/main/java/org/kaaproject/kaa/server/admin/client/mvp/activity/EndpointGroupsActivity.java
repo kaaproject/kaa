@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -26,43 +29,41 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EndpointGroupsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+public class EndpointGroupsActivity
+    extends AbstractListActivity<EndpointGroupDto, EndpointGroupsPlace> {
 
-public class EndpointGroupsActivity extends AbstractListActivity<EndpointGroupDto, EndpointGroupsPlace> {
+  private String applicationId;
 
-    private String applicationId;
+  public EndpointGroupsActivity(EndpointGroupsPlace place, ClientFactory clientFactory) {
+    super(place, EndpointGroupDto.class, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
 
-    public EndpointGroupsActivity(EndpointGroupsPlace place, ClientFactory clientFactory) {
-        super(place, EndpointGroupDto.class, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
+  @Override
+  protected BaseListView<EndpointGroupDto> getView() {
+    return clientFactory.getEndpointGroupsView();
+  }
 
-    @Override
-    protected BaseListView<EndpointGroupDto> getView() {
-        return clientFactory.getEndpointGroupsView();
-    }
+  @Override
+  protected AbstractDataProvider<EndpointGroupDto, String> getDataProvider(
+      AbstractGrid<EndpointGroupDto, String> dataGrid) {
+    return new EndpointGroupsDataProvider(dataGrid, listView, applicationId);
+  }
 
-    @Override
-    protected AbstractDataProvider<EndpointGroupDto, String> getDataProvider(
-            AbstractGrid<EndpointGroupDto, String> dataGrid) {
-        return new EndpointGroupsDataProvider(dataGrid, listView, applicationId);
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new EndpointGroupPlace(applicationId, "", false, false);
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new EndpointGroupPlace(applicationId, "", false, false);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new EndpointGroupPlace(applicationId, id, false, false);
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new EndpointGroupPlace(applicationId, id, false, false);
-    }
-
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().deleteEndpointGroup(id, callback);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    KaaAdmin.getDataSource().deleteEndpointGroup(id, callback);
+  }
 
 
 }

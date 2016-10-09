@@ -20,16 +20,22 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.sql.DataSource;
 
-final public class DataSources {
+public final class DataSources {
 
-    public static DataSource getDataSource(Options opt) {
-        BasicDataSource bds = new BasicDataSource();
-        bds.setDriverClassName(opt.getDriverClassName());
-        bds.setUrl(opt.getJdbcUrl());
-        bds.setUsername(opt.getUsername());
-        bds.setPassword(opt.getPassword());
-        bds.setDefaultAutoCommit(false);
-        return bds;
-    }
+  /**
+   * Create data source based on passed options.
+   *
+   * @param opt options that used to build data source
+   * @return the data source
+   */
+  public static DataSource getDataSource(Options opt) {
+    BasicDataSource bds = new BasicDataSource();
+    bds.setDriverClassName(opt.getDriverClassName());
+    bds.setUrl(opt.getJdbcUrl());
+    bds.setUsername(opt.getUsername());
+    bds.setPassword(opt.getPassword());
+    bds.setDefaultAutoCommit(false);
+    return bds;
+  }
 
 }

@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.client;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.connectivity.PingConnectivityChecker;
 import org.kaaproject.kaa.client.context.ExecutorContext;
@@ -30,59 +27,66 @@ import org.kaaproject.kaa.client.transport.DesktopHttpClient;
 import org.kaaproject.kaa.client.util.Base64;
 import org.kaaproject.kaa.client.util.CommonsBase64;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
 
-    private final KaaClientProperties properties;
-    private final ExecutorContext executorContext;
-    
-    public DesktopKaaPlatformContext() {
-        this(null);
-    }
-    
-    public DesktopKaaPlatformContext(KaaClientProperties properties) {
-        this(properties, new SimpleExecutorContext());
-    }
+  private final KaaClientProperties properties;
+  private final ExecutorContext executorContext;
 
-    public DesktopKaaPlatformContext(KaaClientProperties properties, ExecutorContext executorContext) {
-        super();
-        this.properties = properties;
-        this.executorContext = executorContext;
-    }
+  public DesktopKaaPlatformContext() {
+    this(null);
+  }
 
-    @Override
-    public AbstractHttpClient createHttpClient(String url,
-            PrivateKey privateKey, PublicKey publicKey,
-            PublicKey remotePublicKey) {
-        return new DesktopHttpClient(url, privateKey, publicKey, remotePublicKey);
-    }
+  public DesktopKaaPlatformContext(KaaClientProperties properties) {
+    this(properties, new SimpleExecutorContext());
+  }
 
-    @Override
-    public PersistentStorage createPersistentStorage() {
-        return new FilePersistentStorage();
-    }
+  /**
+   * All-args constructor.
+   */
+  public DesktopKaaPlatformContext(
+          KaaClientProperties properties, ExecutorContext executorContext) {
+    super();
+    this.properties = properties;
+    this.executorContext = executorContext;
+  }
 
-    @Override
-    public Base64 getBase64() {
-        return CommonsBase64.getInstance();
-    }
+  @Override
+  public AbstractHttpClient createHttpClient(String url,
+                                             PrivateKey privateKey, PublicKey publicKey,
+                                             PublicKey remotePublicKey) {
+    return new DesktopHttpClient(url, privateKey, publicKey, remotePublicKey);
+  }
 
-    @Override
-    public ConnectivityChecker createConnectivityChecker() {
-        return new PingConnectivityChecker();
-    }
+  @Override
+  public PersistentStorage createPersistentStorage() {
+    return new FilePersistentStorage();
+  }
 
-    @Override
-    public KaaClientProperties getProperties() {
-        return properties;
-    }
-    
-    @Override
-    public ExecutorContext getExecutorContext() {
-        return executorContext;
-    }
+  @Override
+  public Base64 getBase64() {
+    return CommonsBase64.getInstance();
+  }
 
-    @Override
-    public boolean needToCheckClientState() {
-        return true;
-    }
+  @Override
+  public ConnectivityChecker createConnectivityChecker() {
+    return new PingConnectivityChecker();
+  }
+
+  @Override
+  public KaaClientProperties getProperties() {
+    return properties;
+  }
+
+  @Override
+  public ExecutorContext getExecutorContext() {
+    return executorContext;
+  }
+
+  @Override
+  public boolean needToCheckClientState() {
+    return true;
+  }
 }

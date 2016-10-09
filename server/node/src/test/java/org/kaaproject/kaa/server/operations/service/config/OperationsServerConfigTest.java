@@ -31,23 +31,22 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author Andrey Panasenko
- *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/config-test-context.xml")
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class OperationsServerConfigTest {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(OperationsServerConfigTest.class);
+  protected static final Logger LOG = LoggerFactory.getLogger(OperationsServerConfigTest.class);
 
-    @Autowired
-    private OperationsServerConfig config;
+  @Autowired
+  private OperationsServerConfig config;
 
-    @Test
-    public void ConfigFillParamsTest() {
-        assertNotNull(config);
+  @Test
+  public void ConfigFillParamsTest() {
+    assertNotNull(config);
 
-        assertEquals(3, config.getMaxNumberNeighborConnections());
-        assertEquals(10, config.getUserHashPartitions());
-    }
+    assertEquals(3, config.getMaxNumberNeighborConnections());
+    assertEquals(10, config.getUserHashPartitions());
+  }
 }

@@ -16,45 +16,48 @@
 
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
-import java.util.Map;
-
 import org.apache.flume.Event;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 
+import java.util.Map;
+
 public class KaaRecordEvent implements Event {
 
-    private RecordHeader recordHeader;
-    private Map<String, String> headers;
-    private byte[] body;
-    
-    public KaaRecordEvent(RecordHeader recordHeader, Map<String, String> headers, byte[] body) {
-        this.recordHeader = recordHeader;
-        this.headers = headers;
-        this.body = body;
-    }
+  private RecordHeader recordHeader;
+  private Map<String, String> headers;
+  private byte[] body;
 
-    public RecordHeader getRecordHeader() {
-        return recordHeader;
-    }
+  /**
+   * Create a new instance of KaaRecordEvent.
+   */
+  public KaaRecordEvent(RecordHeader recordHeader, Map<String, String> headers, byte[] body) {
+    this.recordHeader = recordHeader;
+    this.headers = headers;
+    this.body = body;
+  }
 
-    @Override
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
+  public RecordHeader getRecordHeader() {
+    return recordHeader;
+  }
 
-    @Override
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
-    }
+  @Override
+  public Map<String, String> getHeaders() {
+    return headers;
+  }
 
-    @Override
-    public byte[] getBody() {
-        return body;
-    }
+  @Override
+  public void setHeaders(Map<String, String> headers) {
+    this.headers = headers;
+  }
 
-    @Override
-    public void setBody(byte[] body) {
-        this.body = body;
-    }
-    
+  @Override
+  public byte[] getBody() {
+    return body;
+  }
+
+  @Override
+  public void setBody(byte[] body) {
+    this.body = body;
+  }
+
 }

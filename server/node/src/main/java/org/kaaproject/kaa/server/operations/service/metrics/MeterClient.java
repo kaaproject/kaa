@@ -18,6 +18,6 @@ package org.kaaproject.kaa.server.operations.service.metrics;
 
 public interface MeterClient {
 
-    void mark();
-    
+  void mark();
+
 }

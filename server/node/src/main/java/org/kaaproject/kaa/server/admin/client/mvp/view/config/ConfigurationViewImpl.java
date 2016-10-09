@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.config;
 
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
@@ -26,84 +31,80 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+public class ConfigurationViewImpl
+    extends BaseRecordViewImpl<ConfigurationRecordFormDto, RecordField>
+    implements ConfigurationView {
 
-public class ConfigurationViewImpl extends BaseRecordViewImpl<ConfigurationRecordFormDto, RecordField> 
-                        implements ConfigurationView {
+  private VersionListBox schema;
+  private SizedTextBox schemaVersion;
 
-    private VersionListBox schema;
-    private SizedTextBox schemaVersion;
+  public ConfigurationViewImpl(boolean create) {
+    super(create);
+  }
 
-    public ConfigurationViewImpl(boolean create) {
-        super(create);
+  @Override
+  protected AbstractRecordPanel<ConfigurationRecordFormDto, RecordField> createRecordPanel() {
+    return new ConfigurationPanel(this);
+  }
+
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.configuration();
+  }
+
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.configuration();
+  }
+
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.configurationDetails();
+  }
+
+  @Override
+  protected int initDetailsTableImpl() {
+    int row = -1;
+    Label schemaLabel = new Label(Utils.constants.schemaVersion());
+    detailsTable.setWidget(++row, 0, schemaLabel);
+
+    if (create) {
+      schemaLabel.addStyleName(Utils.avroUiStyle.requiredField());
+      schema = new VersionListBox();
+      schema.setWidth("80px");
+      VerticalPanel panel = new VerticalPanel();
+      panel.setWidth("100%");
+      panel.add(schema);
+      panel.add(new HTML("&nbsp;"));
+      detailsTable.setWidget(row, 1, panel);
+      schema.addValueChangeHandler(this);
+    } else {
+      schemaVersion = new KaaAdminSizedTextBox(-1, false);
+      schemaVersion.setWidth("100%");
+      detailsTable.setWidget(row, 1, schemaVersion);
     }
 
-    @Override
-    protected AbstractRecordPanel<ConfigurationRecordFormDto, RecordField> createRecordPanel() {
-        return new ConfigurationPanel(this);
-    }
+    return row;
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.configuration();
+  @Override
+  protected void resetImpl() {
+    super.resetImpl();
+    if (create) {
+      schema.reset();
+    } else {
+      schemaVersion.setValue("");
     }
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.configuration();
-    }
+  @Override
+  public VersionListBox getSchema() {
+    return schema;
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.configurationDetails();
-    }
-
-    @Override
-    protected int initDetailsTableImpl() {
-        int row = -1;
-        Label schemaLabel = new Label(Utils.constants.schemaVersion());
-        detailsTable.setWidget(++row, 0, schemaLabel);
-
-        if (create) {
-            schemaLabel.addStyleName(Utils.avroUiStyle.requiredField());
-            schema = new VersionListBox();
-            schema.setWidth("80px");
-            VerticalPanel panel = new VerticalPanel();
-            panel.setWidth("100%");
-            panel.add(schema);
-            panel.add(new HTML("&nbsp;"));
-            detailsTable.setWidget(row, 1, panel);
-            schema.addValueChangeHandler(this);
-        } else {
-            schemaVersion = new KaaAdminSizedTextBox(-1, false);
-            schemaVersion.setWidth("100%");
-            detailsTable.setWidget(row, 1, schemaVersion);
-        }
-
-        return row;
-    }
-    
-    @Override
-    protected void resetImpl() {
-        super.resetImpl();
-        if (create) {
-            schema.reset();
-        } else {
-            schemaVersion.setValue("");
-        }
-    }
-
-    @Override
-    public VersionListBox getSchema() {
-        return schema;
-    }
-
-    @Override
-    public HasValue<String> getSchemaVersion() {
-        return schemaVersion;
-    }
+  @Override
+  public HasValue<String> getSchemaVersion() {
+    return schemaVersion;
+  }
 
 }

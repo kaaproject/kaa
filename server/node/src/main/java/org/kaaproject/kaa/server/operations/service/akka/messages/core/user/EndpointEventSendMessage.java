@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-import java.util.Collections;
-import java.util.List;
+import akka.actor.ActorRef;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.LocalEndpointActor;
@@ -25,50 +24,55 @@ import org.kaaproject.kaa.server.operations.service.akka.actors.core.user.LocalU
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.sync.Event;
 
-import akka.actor.ActorRef;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents message with events.
  * Originator: {@link LocalEndpointActor}
  * Destination: {@link LocalUserActor}
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
-public class EndpointEventSendMessage extends EndpointAwareMessage implements UserAwareMessage{
+public class EndpointEventSendMessage extends EndpointAwareMessage implements UserAwareMessage {
 
-    private final String userId;
-    private final List<Event> events;
+  private final String userId;
+  private final List<Event> events;
 
-    public EndpointEventSendMessage(String userId, List<Event> events, EndpointObjectHash endpointKey, String applicationToken, ActorRef originator) {
-        super(applicationToken, endpointKey, originator);
-        this.userId = userId;
-        this.events = Collections.unmodifiableList(events);
-    }
+  /**
+   * All-args constructor.
+   */
+  public EndpointEventSendMessage(String userId, List<Event> events,
+                                  EndpointObjectHash endpointKey, String applicationToken,
+                                  ActorRef originator) {
+    super(applicationToken, endpointKey, originator);
+    this.userId = userId;
+    this.events = Collections.unmodifiableList(events);
+  }
 
-    @Override
-    public String getUserId() {
-        return userId;
-    }
+  @Override
+  public String getUserId() {
+    return userId;
+  }
 
-    public List<Event> getEvents() {
-        return events;
-    }
+  public List<Event> getEvents() {
+    return events;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointEventSendMessage [userId=");
-        builder.append(userId);
-        builder.append(", events=");
-        builder.append(events);
-        builder.append(", getAppToken()=");
-        builder.append(getAppToken());
-        builder.append(", getKey()=");
-        builder.append(getKey());
-        builder.append(", getOriginator()=");
-        builder.append(getOriginator());
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointEventSendMessage [userId=");
+    builder.append(userId);
+    builder.append(", events=");
+    builder.append(events);
+    builder.append(", getAppToken()=");
+    builder.append(getAppToken());
+    builder.append(", getKey()=");
+    builder.append(getKey());
+    builder.append(", getOriginator()=");
+    builder.append(getOriginator());
+    builder.append("]");
+    return builder.toString();
+  }
 }

@@ -32,11 +32,11 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
  */
 public interface OnDetachEndpointOperationCallback {
 
-    /**
-     * Callback on endpoint detach response<br>
-     *
-     * @param result The enum value [{@code SUCCESS, FAILURE}]
-     * @see org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType
-     */
-    void onDetach(SyncResponseResultType result);
+  /**
+   * Callback on endpoint detach response<br>
+   *
+   * @param result The enum value [{@code SUCCESS, FAILURE}]
+   * @see org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType
+   */
+  void onDetach(SyncResponseResultType result);
 }

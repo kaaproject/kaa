@@ -16,55 +16,60 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.navigation;
 
-import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
-import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.core.client.GWT;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.web.bindery.event.shared.EventBus;
+
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
+import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class NavigationViewImpl extends Composite implements NavigationView {
 
-    interface NavigationViewImplUiBinder extends UiBinder<Widget, NavigationViewImpl> { }
-    private static NavigationViewImplUiBinder uiBinder = GWT.create(NavigationViewImplUiBinder.class);
+  private static NavigationViewImplUiBinder uiBinder = GWT.create(NavigationViewImplUiBinder.class);
+  @UiField(provided = true)
+  final CellTree menuTree;
+  @UiField(provided = true)
+  final KaaAdminStyle kaaAdminStyle;
+  private NavigationTreeViewModel treeModel;
 
-    @UiField(provided = true) final CellTree menuTree;
-    @UiField(provided = true) final KaaAdminStyle kaaAdminStyle;
+  /**
+   * Instantiates a new NavigationViewImpl.
+   */
+  public NavigationViewImpl() {
+    treeModel = new NavigationTreeViewModel();
+    menuTree = new CellTree(treeModel, null);
+    kaaAdminStyle = Utils.kaaAdminStyle;
 
-    private NavigationTreeViewModel treeModel;
+    initWidget(uiBinder.createAndBindUi(this));
+  }
 
-    public NavigationViewImpl() {
-        treeModel = new NavigationTreeViewModel();
-        menuTree = new CellTree(treeModel, null);
-        kaaAdminStyle = Utils.kaaAdminStyle;
+  @Override
+  public void setPresenter(Presenter presenter) {
+  }
 
-        initWidget(uiBinder.createAndBindUi(this));
-    }
+  @Override
+  public SingleSelectionModel<TreePlace> getSelectionModel() {
+    return treeModel.getSelectionModel();
+  }
 
-    @Override
-    public void setPresenter(Presenter presenter) {
-    }
+  @Override
+  public CellTree getMenuTree() {
+    return menuTree;
+  }
 
-    @Override
-    public SingleSelectionModel<TreePlace> getSelectionModel() {
-        return treeModel.getSelectionModel();
-    }
+  @Override
+  public void setEventBus(EventBus eventBus) {
+    treeModel.setEventBus(eventBus);
+  }
 
-    @Override
-    public CellTree getMenuTree() {
-        return menuTree;
-    }
-
-    @Override
-    public void setEventBus(EventBus eventBus) {
-        treeModel.setEventBus(eventBus);
-    }
+  interface NavigationViewImplUiBinder extends UiBinder<Widget, NavigationViewImpl> {
+  }
 
 }

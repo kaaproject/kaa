@@ -16,51 +16,54 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
 
+import com.google.gwt.user.cellview.client.DataGrid;
+
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractStructGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.profile.ProfileFilterRecordKey;
 
-import com.google.gwt.user.cellview.client.DataGrid;
+public class ProfileFilterStructGrid
+    extends AbstractStructGrid<ProfileFilterDto, ProfileFilterRecordDto, ProfileFilterRecordKey> {
 
-public class ProfileFilterStructGrid extends AbstractStructGrid<ProfileFilterDto, ProfileFilterRecordDto, ProfileFilterRecordKey> {
+  @Override
+  protected float constructColumnsImpl(DataGrid<ProfileFilterRecordDto> table) {
+    float prefWidth = 0;
+    prefWidth += constructStringColumn(table,
+        Utils.constants.endpointProfileSchema(),
+        new StringValueProvider<ProfileFilterRecordDto>() {
+          @Override
+          public String getValue(ProfileFilterRecordDto item) {
+            return item.getEndpointProfileSchemaVersion() != null
+                ? item.getEndpointProfileSchemaVersion() + ""
+                : "";
+          }
+        }, 60);
+    prefWidth += constructStringColumn(table,
+        Utils.constants.serverProfileSchema(),
+        new StringValueProvider<ProfileFilterRecordDto>() {
+          @Override
+          public String getValue(ProfileFilterRecordDto item) {
+            return item.getServerProfileSchemaVersion() != null
+                ? item.getServerProfileSchemaVersion() + ""
+                : "";
+          }
+        }, 60);
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<ProfileFilterRecordDto> table) {
-        float prefWidth = 0;
-        prefWidth += constructStringColumn(table,
-                Utils.constants.endpointProfileSchema(),
-                new StringValueProvider<ProfileFilterRecordDto>() {
-                    @Override
-                    public String getValue(ProfileFilterRecordDto item) {
-                        return item.getEndpointProfileSchemaVersion() != null ? 
-                                item.getEndpointProfileSchemaVersion() + "" : "";
-                    }
-                }, 60);
-        prefWidth += constructStringColumn(table,
-                Utils.constants.serverProfileSchema(),
-                new StringValueProvider<ProfileFilterRecordDto>() {
-                    @Override
-                    public String getValue(ProfileFilterRecordDto item) {
-                        return item.getServerProfileSchemaVersion() != null ? 
-                                item.getServerProfileSchemaVersion() + "" : "";
-                    }
-                }, 60);
-        
-        prefWidth += super.constructColumnsImpl(table);
-        
-        return prefWidth;
+    prefWidth += super.constructColumnsImpl(table);
+
+    return prefWidth;
+  }
+
+  @Override
+  protected ProfileFilterRecordKey getObjectId(ProfileFilterRecordDto value) {
+    if (value != null) {
+      return new ProfileFilterRecordKey(value.getEndpointProfileSchemaId(),
+          value.getServerProfileSchemaId(), value.getEndpointGroupId());
+    } else {
+      return null;
     }
-    
-    @Override
-    protected ProfileFilterRecordKey getObjectId(ProfileFilterRecordDto value) {
-        if (value != null) {
-            return new ProfileFilterRecordKey(value.getEndpointProfileSchemaId(), 
-                    value.getServerProfileSchemaId(), value.getEndpointGroupId());
-        } else {
-            return null;
-        }
-    }
-    
+  }
+
 }

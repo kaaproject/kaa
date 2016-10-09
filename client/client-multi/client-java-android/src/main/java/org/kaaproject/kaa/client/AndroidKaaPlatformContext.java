@@ -16,8 +16,7 @@
 
 package org.kaaproject.kaa.client;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import android.content.Context;
 
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.connectivity.AndroidConnectivityChecker;
@@ -30,61 +29,71 @@ import org.kaaproject.kaa.client.transport.AndroidHttpClient;
 import org.kaaproject.kaa.client.util.AndroidBase64;
 import org.kaaproject.kaa.client.util.Base64;
 
-import android.content.Context;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public class AndroidKaaPlatformContext implements KaaClientPlatformContext {
 
-    private final Context context;
-    private final KaaClientProperties properties;
-    private final ExecutorContext executorContext;
+  private final Context context;
+  private final KaaClientProperties properties;
+  private final ExecutorContext executorContext;
 
-    public AndroidKaaPlatformContext(Context context) {
-        this(context, null);
-    }
+  public AndroidKaaPlatformContext(Context context) {
+    this(context, null);
+  }
 
-    public AndroidKaaPlatformContext(Context context, KaaClientProperties properties) {
-        this(context, properties, new SimpleExecutorContext());
-    }
+  public AndroidKaaPlatformContext(Context context, KaaClientProperties properties) {
+    this(context, properties, new SimpleExecutorContext());
+  }
 
-    public AndroidKaaPlatformContext(Context context, KaaClientProperties properties, ExecutorContext executorContext) {
-        super();
-        this.context = context;
-        this.properties = properties;
-        this.executorContext = executorContext;
-    }
+  /**
+   * Instantiates a new AndroidKaaPlatformContext.
+   *
+   * @param context           the context
+   * @param properties        the Kaa client properties
+   * @param executorContext   the executor context
+   */
+  public AndroidKaaPlatformContext(Context context, KaaClientProperties properties,
+                                   ExecutorContext executorContext) {
+    super();
+    this.context = context;
+    this.properties = properties;
+    this.executorContext = executorContext;
+  }
 
-    @Override
-    public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
-        return new AndroidHttpClient(url, privateKey, publicKey, remotePublicKey);
-    }
+  @Override
+  public AbstractHttpClient createHttpClient(String url, PrivateKey privateKey,
+                                             PublicKey publicKey, PublicKey remotePublicKey) {
+    return new AndroidHttpClient(url, privateKey, publicKey, remotePublicKey);
+  }
 
-    @Override
-    public PersistentStorage createPersistentStorage() {
-        return new AndroidInternalPersistentStorage(context);
-    }
+  @Override
+  public PersistentStorage createPersistentStorage() {
+    return new AndroidInternalPersistentStorage(context);
+  }
 
-    @Override
-    public Base64 getBase64() {
-        return AndroidBase64.getInstance();
-    }
+  @Override
+  public Base64 getBase64() {
+    return AndroidBase64.getInstance();
+  }
 
-    @Override
-    public ConnectivityChecker createConnectivityChecker() {
-        return new AndroidConnectivityChecker(context);
-    }
+  @Override
+  public ConnectivityChecker createConnectivityChecker() {
+    return new AndroidConnectivityChecker(context);
+  }
 
-    @Override
-    public KaaClientProperties getProperties() {
-        return properties;
-    }
+  @Override
+  public KaaClientProperties getProperties() {
+    return properties;
+  }
 
-    @Override
-    public ExecutorContext getExecutorContext() {
-        return executorContext;
-    }
+  @Override
+  public ExecutorContext getExecutorContext() {
+    return executorContext;
+  }
 
-    @Override
-    public boolean needToCheckClientState() {
-        return false;
-    }
+  @Override
+  public boolean needToCheckClientState() {
+    return false;
+  }
 }

@@ -22,8 +22,8 @@ import org.junit.Test;
 
 public class RemoteEndpointEventTest {
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(RemoteEndpointEvent.class).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(RemoteEndpointEvent.class).verify();
+  }
 }

@@ -28,53 +28,69 @@ import java.util.Map;
 
 public interface KaaClientState {
 
-    boolean isRegistered();
-    void setRegistered(boolean registered);
+  boolean isRegistered();
 
-    PrivateKey getPrivateKey();
-    PublicKey getPublicKey();
+  void setRegistered(boolean registered);
 
-    EndpointKeyHash getEndpointKeyHash();
+  PrivateKey getPrivateKey();
 
-    void setAppStateSeqNumber(int appStateSeqNumber);
-    int getAppStateSeqNumber();
+  PublicKey getPublicKey();
 
-    void setIfNeedProfileResync(boolean needProfileResync);
-    boolean isNeedProfileResync();
+  EndpointKeyHash getEndpointKeyHash();
 
-    void setProfileHash(EndpointObjectHash hash);
-    EndpointObjectHash getProfileHash();
+  int getAppStateSeqNumber();
 
-    void addTopic(Topic topic);
-    void removeTopic(Long topicId);
-    void addTopicSubscription(Long topicId);
-    void removeTopicSubscription(Long topicId);
-    boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
+  void setAppStateSeqNumber(int appStateSeqNumber);
 
-    void setTopicListHash(Integer topicListHash);
-    Integer getTopicListHash();
+  void setIfNeedProfileResync(boolean needProfileResync);
 
-    Map<Long, Integer> getNfSubscriptions();
-    Collection<Topic> getTopics();
+  boolean isNeedProfileResync();
 
-    void setAttachedEndpointsList(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
-    Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointsList();
+  EndpointObjectHash getProfileHash();
 
-    void setEndpointAccessToken(String token);
-    String getEndpointAccessToken();
+  void setProfileHash(EndpointObjectHash hash);
 
-    int getAndIncrementEventSeqNum();
-    int getEventSeqNum();
-    void setEventSeqNum(int newSeqNum);
+  void addTopic(Topic topic);
 
-    boolean isAttachedToUser();
-    void setAttachedToUser(boolean isAttached);
+  void removeTopic(Long topicId);
 
-    boolean isConfigurationVersionUpdated();
+  void addTopicSubscription(Long topicId);
 
-    void persist();
+  void removeTopicSubscription(Long topicId);
 
-    String refreshEndpointAccessToken();
+  boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
 
-    void clean();
+  Integer getTopicListHash();
+
+  void setTopicListHash(Integer topicListHash);
+
+  Map<Long, Integer> getNfSubscriptions();
+
+  Collection<Topic> getTopics();
+
+  Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointsList();
+
+  void setAttachedEndpointsList(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
+
+  String getEndpointAccessToken();
+
+  void setEndpointAccessToken(String token);
+
+  int getAndIncrementEventSeqNum();
+
+  int getEventSeqNum();
+
+  void setEventSeqNum(int newSeqNum);
+
+  boolean isAttachedToUser();
+
+  void setAttachedToUser(boolean isAttached);
+
+  boolean isConfigurationVersionUpdated();
+
+  void persist();
+
+  String refreshEndpointAccessToken();
+
+  void clean();
 }

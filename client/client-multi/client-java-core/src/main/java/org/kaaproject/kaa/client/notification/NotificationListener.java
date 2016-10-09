@@ -16,27 +16,25 @@
 
 package org.kaaproject.kaa.client.notification;
 
-import javax.annotation.Generated;
-
 import org.kaaproject.kaa.schema.base.Notification;
+
+import javax.annotation.Generated;
 
 /**
  * The listener to notifications.
  *
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
- *
  */
 @Generated("NotificationListener.java.template")
 public interface NotificationListener {
 
-    /**
-     * Called on each new notification.
-     *
-     * @param topicId the topic's id.
-     * @param notification the notification object.
-     *
-     */
-    void onNotification(long topicId, Notification notification);
+  /**
+   * Called on each new notification.
+   *
+   * @param topicId      the topic's id.
+   * @param notification the notification object.
+   */
+  void onNotification(long topicId, Notification notification);
 
 }

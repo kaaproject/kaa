@@ -17,9 +17,9 @@
 package org.kaaproject.kaa.server.common.dao;
 
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+
+import java.util.List;
 
 /**
  * The interface Application service.
@@ -27,61 +27,61 @@ import org.kaaproject.kaa.common.dto.ApplicationDto;
 public interface ApplicationService {
 
 
-    /**
-     * Find applications by tenant id.
-     *
-     * @param tenantId the tenant id
-     * @return the list of found applications
-     */
-    List<ApplicationDto> findAppsByTenantId(String tenantId);
+  /**
+   * Find applications by tenant id.
+   *
+   * @param tenantId the tenant id
+   * @return the list of found applications
+   */
+  List<ApplicationDto> findAppsByTenantId(String tenantId);
 
-    /**
-     * Remove applications by tenant id.
-     *
-     * @param tenantId the tenant id
-     */
-    void removeAppsByTenantId(String tenantId);
+  /**
+   * Remove applications by tenant id.
+   *
+   * @param tenantId the tenant id
+   */
+  void removeAppsByTenantId(String tenantId);
 
-    /**
-     * Find application by id.
-     *
-     * @param id the string id of application
-     * @return the application dto object
-     */
-    ApplicationDto findAppById(String id);
+  /**
+   * Find application by id.
+   *
+   * @param id the string id of application
+   * @return the application dto object
+   */
+  ApplicationDto findAppById(String id);
 
-    /**
-     * Remove application by id.
-     *
-     * @param id the string id of application
-     */
-    void removeAppById(String id);
+  /**
+   * Remove application by id.
+   *
+   * @param id the string id of application
+   */
+  void removeAppById(String id);
 
-    /**
-     * Find application by application token.
-     *
-     * @param applicationToken the application token (random generated string)
-     * @return the application dto object
-     */
-    ApplicationDto findAppByApplicationToken(String applicationToken);
+  /**
+   * Find application by application token.
+   *
+   * @param applicationToken the application token (random generated string)
+   * @return the application dto object
+   */
+  ApplicationDto findAppByApplicationToken(String applicationToken);
 
-    /**
-     * Save application. If application object has id,
-     * than application will be updated else will be inserted like new object.
-     * <p>
-     * After saving new application will be generated:
-     * </p>
-     * <ul>
-     * <li>Default Configuration schema</li>
-     * <li>Default Profile schema</li>
-     * <li>Default Notification schema</li>
-     * <li>Default group "All"</li>
-     * <li>Default profile filter attached to group "All".</li>
-     * <li>Default configuration will be generated based on base schema.</li>
-     * </ul>
-     *
-     * @param applicationDto the application dto
-     * @return the saved application dto object
-     */
-    ApplicationDto saveApp(ApplicationDto applicationDto);
+  /**
+   * Save application. If application object has id,
+   * than application will be updated else will be inserted like new object.
+   * <p>
+   * After saving new application will be generated:
+   * </p>
+   * <ul>
+   * <li>Default Configuration schema</li>
+   * <li>Default Profile schema</li>
+   * <li>Default Notification schema</li>
+   * <li>Default group "All"</li>
+   * <li>Default profile filter attached to group "All".</li>
+   * <li>Default configuration will be generated based on base schema.</li>
+   * </ul>
+   *
+   * @param applicationDto the application dto
+   * @return the saved application dto object
+   */
+  ApplicationDto saveApp(ApplicationDto applicationDto);
 }

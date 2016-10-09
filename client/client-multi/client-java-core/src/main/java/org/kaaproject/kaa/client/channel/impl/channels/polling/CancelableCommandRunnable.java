@@ -19,42 +19,45 @@ package org.kaaproject.kaa.client.channel.impl.channels.polling;
 
 public abstract class CancelableCommandRunnable implements CancelableRunnable {
 
-    protected volatile Command currentCommand;
-    private volatile boolean isRunning = false;
+  protected volatile Command currentCommand;
+  private volatile boolean isRunning = false;
 
-    @Override
-    public void run() {
-        isRunning = true;
+  @Override
+  public void run() {
+    isRunning = true;
+    try {
+      if (!Thread.currentThread().isInterrupted()) {
+        executeCommand();
+      }
+    } finally {
+      isRunning = false;
+      synchronized (this) {
+        this.notifyAll();
+      }
+    }
+  }
+
+  /**
+   * Waits until a command executed.
+   */
+  public void waitUntilExecuted() {
+    while (isRunning) {
+      synchronized (this) {
         try {
-            if (!Thread.currentThread().isInterrupted()) {
-                executeCommand();
-            }
-        } finally {
-            isRunning = false;
-            synchronized(this) {
-                this.notifyAll();
-            }
+          this.wait();
+        } catch (InterruptedException ex) { //NOSONAR
         }
+      }
     }
+  }
 
-    public void waitUntilExecuted() {
-        while (isRunning) {
-            synchronized(this) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) { //NOSONAR
-                }
-            }
-        }
+  @Override
+  public void cancel() {
+    if (currentCommand != null) {
+      currentCommand.cancel();
     }
+  }
 
-    @Override
-    public void cancel() {
-        if (currentCommand != null) {
-            currentCommand.cancel();
-        }
-    }
-
-    protected abstract void executeCommand();
+  protected abstract void executeCommand();
 
 }

@@ -22,15 +22,15 @@ import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 
 public class AvroByteArrayConverterTest {
 
-    @Test
-    public void testStaticMethod() throws Exception{
-        BasicEndpointProfile profile = new BasicEndpointProfile("test");
-        AvroByteArrayConverter<BasicEndpointProfile> converter = new AvroByteArrayConverter<>(BasicEndpointProfile.class);
-        byte[] data = converter.toByteArray(profile);
-        Assert.assertNotNull(data);
-        BasicEndpointProfile copy = converter.fromByteArray(data);
-        Assert.assertNotNull(copy);
-        Assert.assertEquals(profile.getProfileBody(), copy.getProfileBody());
-    }    
-    
+  @Test
+  public void testStaticMethod() throws Exception {
+    BasicEndpointProfile profile = new BasicEndpointProfile("test");
+    AvroByteArrayConverter<BasicEndpointProfile> converter = new AvroByteArrayConverter<>(BasicEndpointProfile.class);
+    byte[] data = converter.toByteArray(profile);
+    Assert.assertNotNull(data);
+    BasicEndpointProfile copy = converter.fromByteArray(data);
+    Assert.assertNotNull(copy);
+    Assert.assertEquals(profile.getProfileBody(), copy.getProfileBody());
+  }
+
 }

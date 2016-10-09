@@ -24,139 +24,141 @@ import org.slf4j.LoggerFactory;
  * Reference implementation for {@link LogUploadStrategy}.
  */
 public class DefaultLogUploadStrategy implements LogUploadStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultLogUploadStrategy.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultLogUploadStrategy.class);
 
-    private static final int DEFAULT_UPLOAD_TIMEOUT = 2 * 60;
-    private static final int DEFAULT_UPLOAD_CHECK_PERIOD = 30;
-    private static final int DEFAULT_RETRY_PERIOD = 5 * 60;
-    private static final int DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
-    private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
-    private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
-    private static final int DEFAULT_BATCH_COUNT = 256;
-    private static final int MAX_PARALLEL_UPLOADS = Integer.MAX_VALUE;
-    private static final boolean DEFAULT_UPLOAD_LOCKED = false;
-
-
-    protected int timeout = DEFAULT_UPLOAD_TIMEOUT;
-    protected int uploadCheckPeriod = DEFAULT_UPLOAD_CHECK_PERIOD;
-    protected int retryPeriod = DEFAULT_RETRY_PERIOD;
-    protected int volumeThreshold = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
-    protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
-    protected int batchSize = DEFAULT_BATCH_SIZE;
-    protected int batchCount = DEFAULT_BATCH_COUNT;
-    protected int maxParallelUploads = MAX_PARALLEL_UPLOADS;
-    protected volatile boolean isUploadLocked = DEFAULT_UPLOAD_LOCKED;
+  private static final int DEFAULT_UPLOAD_TIMEOUT = 2 * 60;
+  private static final int DEFAULT_UPLOAD_CHECK_PERIOD = 30;
+  private static final int DEFAULT_RETRY_PERIOD = 5 * 60;
+  private static final int DEFAULT_UPLOAD_VOLUME_THRESHOLD = 8 * 1024;
+  private static final int DEFAULT_UPLOAD_COUNT_THRESHOLD = 64;
+  private static final int DEFAULT_BATCH_SIZE = 8 * 1024;
+  private static final int DEFAULT_BATCH_COUNT = 256;
+  private static final int MAX_PARALLEL_UPLOADS = Integer.MAX_VALUE;
+  private static final boolean DEFAULT_UPLOAD_LOCKED = false;
 
 
-    @Override
-    public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
-        LogUploadStrategyDecision decision;
+  protected int timeout = DEFAULT_UPLOAD_TIMEOUT;
+  protected int uploadCheckPeriod = DEFAULT_UPLOAD_CHECK_PERIOD;
+  protected int retryPeriod = DEFAULT_RETRY_PERIOD;
+  protected int volumeThreshold = DEFAULT_UPLOAD_VOLUME_THRESHOLD;
+  protected int countThreshold = DEFAULT_UPLOAD_COUNT_THRESHOLD;
+  protected int batchSize = DEFAULT_BATCH_SIZE;
+  protected int batchCount = DEFAULT_BATCH_COUNT;
+  protected int maxParallelUploads = MAX_PARALLEL_UPLOADS;
+  protected volatile boolean isUploadLocked = DEFAULT_UPLOAD_LOCKED;
 
-        if(!isUploadLocked) {
-            decision = checkUploadNeeded(status);
-        }else{
-            decision = LogUploadStrategyDecision.NOOP;
-        }
 
-        return decision;
+  @Override
+  public LogUploadStrategyDecision isUploadNeeded(LogStorageStatus status) {
+    LogUploadStrategyDecision decision;
+
+    if (!isUploadLocked) {
+      decision = checkUploadNeeded(status);
+    } else {
+      decision = LogUploadStrategyDecision.NOOP;
     }
 
-    protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status){
-        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
-        if (status.getConsumedVolume() >= volumeThreshold) {
-            LOG.info("Need to upload logs - current size: {}, threshold: {}", status.getConsumedVolume(), volumeThreshold);
-            decision = LogUploadStrategyDecision.UPLOAD;
-        } else if (status.getRecordCount() >= countThreshold) {
-            LOG.info("Need to upload logs - current count: {}, threshold: {}", status.getRecordCount(), countThreshold);
-            decision = LogUploadStrategyDecision.UPLOAD;
-        }
-        return decision;
-    }
+    return decision;
+  }
 
-    @Override
-    public int getTimeout() {
-        return timeout;
+  protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
+    LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
+    if (status.getConsumedVolume() >= volumeThreshold) {
+      LOG.info("Need to upload logs - current size: {}, threshold: {}",
+              status.getConsumedVolume(), volumeThreshold);
+      decision = LogUploadStrategyDecision.UPLOAD;
+    } else if (status.getRecordCount() >= countThreshold) {
+      LOG.info("Need to upload logs - current count: {}, threshold: {}",
+              status.getRecordCount(), countThreshold);
+      decision = LogUploadStrategyDecision.UPLOAD;
     }
+    return decision;
+  }
 
-    @Override
-    public void onTimeout(LogFailoverCommand controller) {
-        //TODO: fix issue described in KAA-1039
+  @Override
+  public int getTimeout() {
+    return timeout;
+  }
+
+  public void setTimeout(int timeout) {
+    this.timeout = timeout;
+  }
+
+  @Override
+  public void onTimeout(LogFailoverCommand controller) {
+    //TODO: fix issue described in KAA-1039
+    controller.retryLogUpload(retryPeriod);
+  }
+
+  @Override
+  public void onFailure(LogFailoverCommand controller, LogDeliveryErrorCode code) {
+    switch (code) {
+      case NO_APPENDERS_CONFIGURED:
+      case APPENDER_INTERNAL_ERROR:
+      case REMOTE_CONNECTION_ERROR:
+      case REMOTE_INTERNAL_ERROR:
         controller.retryLogUpload(retryPeriod);
+        break;
+      default:
+        break;
     }
+  }
 
-    @Override
-    public void onFailure(LogFailoverCommand controller, LogDeliveryErrorCode code) {
-        switch (code) {
-        case NO_APPENDERS_CONFIGURED:
-        case APPENDER_INTERNAL_ERROR:
-        case REMOTE_CONNECTION_ERROR:
-        case REMOTE_INTERNAL_ERROR:
-            controller.retryLogUpload(retryPeriod);
-            break;
-        default:
-            break;
-        }
-    }
+  public void setRetryPeriod(int retryPeriod) {
+    this.retryPeriod = retryPeriod;
+  }
 
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
+  public int getVolumeThreshold() {
+    return volumeThreshold;
+  }
 
-    public void setRetryPeriod(int retryPeriod) {
-        this.retryPeriod = retryPeriod;
-    }
+  public void setVolumeThreshold(int volumeThreshold) {
+    this.volumeThreshold = volumeThreshold;
+  }
 
-    public int getVolumeThreshold() {
-        return volumeThreshold;
-    }
+  public int getCountThreshold() {
+    return countThreshold;
+  }
 
-    public void setVolumeThreshold(int volumeThreshold) {
-        this.volumeThreshold = volumeThreshold;
-    }
+  public void setCountThreshold(int countThreshold) {
+    this.countThreshold = countThreshold;
+  }
 
-    public int getCountThreshold() {
-        return countThreshold;
-    }
+  public void setBatch(int batch) {
+    this.batchSize = batch;
+  }
 
-    public void setCountThreshold(int countThreshold) {
-        this.countThreshold = countThreshold;
-    }
+  public void setBatchCount(int batchCount) {
+    this.batchCount = batchCount;
+  }
 
-    public void setBatch(int batch) {
-        this.batchSize = batch;
-    }
+  @Override
+  public int getUploadCheckPeriod() {
+    return uploadCheckPeriod;
+  }
 
-    public void setBatchCount(int batchCount) {
-        this.batchCount = batchCount;
-    }
+  public void setUploadCheckPeriod(int uploadCheckPeriod) {
+    this.uploadCheckPeriod = uploadCheckPeriod;
+  }
 
-    @Override
-    public int getUploadCheckPeriod() {
-        return uploadCheckPeriod;
-    }
+  public void lockUpload() {
+    isUploadLocked = true;
+  }
 
-    public void setUploadCheckPeriod(int uploadCheckPeriod) {
-        this.uploadCheckPeriod = uploadCheckPeriod;
-    }
+  public void unlockUpload() {
+    isUploadLocked = false;
+  }
 
-    public void lockUpload(){
-        isUploadLocked = true;
-    }
+  public boolean isUploadLocked() {
+    return isUploadLocked;
+  }
 
-    public void unlockUpload(){
-        isUploadLocked = false;
-    }
+  @Override
+  public int getMaxParallelUploads() {
+    return maxParallelUploads;
+  }
 
-    public boolean isUploadLocked(){
-        return isUploadLocked;
-    }
-
-    @Override
-    public int getMaxParallelUploads() {
-        return maxParallelUploads;
-    }
-
-    public void setMaxParallelUploads(int maxParallelUploads) {
-        this.maxParallelUploads = maxParallelUploads;
-    }
+  public void setMaxParallelUploads(int maxParallelUploads) {
+    this.maxParallelUploads = maxParallelUploads;
+  }
 }

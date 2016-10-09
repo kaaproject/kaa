@@ -32,31 +32,31 @@ import org.springframework.stereotype.Service;
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private UserFacade userFacade;
+  @Autowired
+  private UserFacade userFacade;
 
-    @Autowired
-    private ControlService controlService;
+  @Autowired
+  private ControlService controlService;
 
-    @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
-        User user = userFacade.findByUserName(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("user not found");
-        }
-        AuthUserDto authUser = new AuthUserDto(user);
-        if (authUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN) {
-            UserDto userDto;
-            try {
-                userDto = controlService.getUserByExternalUid(authUser.getExternalUid());
-                authUser.setId(userDto.getId());
-                authUser.setTenantId(userDto.getTenantId());
-            } catch (ControlServiceException e) {
-                throw new UsernameNotFoundException("unable to fetch user details", e);
-            }
-        }
-        return authUser;
+  @Override
+  public UserDetails loadUserByUsername(String username)
+      throws UsernameNotFoundException {
+    User user = userFacade.findByUserName(username);
+    if (user == null) {
+      throw new UsernameNotFoundException("user not found");
     }
+    AuthUserDto authUser = new AuthUserDto(user);
+    if (authUser.getAuthority() != KaaAuthorityDto.KAA_ADMIN) {
+      UserDto userDto;
+      try {
+        userDto = controlService.getUserByExternalUid(authUser.getExternalUid());
+        authUser.setId(userDto.getId());
+        authUser.setTenantId(userDto.getTenantId());
+      } catch (ControlServiceException ex) {
+        throw new UsernameNotFoundException("unable to fetch user details", ex);
+      }
+    }
+    return authUser;
+  }
 
 }

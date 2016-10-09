@@ -16,37 +16,40 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import com.google.gwt.text.shared.Renderer;
+
+import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
-
-import com.google.gwt.text.shared.Renderer;
-
 public class MultiAefMapListBox extends MultiValueListBox<AefMapInfoDto> {
 
-    public MultiAefMapListBox() {
-        super(new AefMapInfoDtoRenderer());
+  public MultiAefMapListBox() {
+    super(new AefMapInfoDtoRenderer());
+  }
+
+  /**
+   * Reset.
+   */
+  public void reset() {
+    List<AefMapInfoDto> emptyList = Collections.emptyList();
+    setValue(null);
+    setAcceptableValues(emptyList);
+  }
+
+  static class AefMapInfoDtoRenderer implements Renderer<AefMapInfoDto> {
+
+    @Override
+    public String render(AefMapInfoDto object) {
+      return object != null ? (object.getEcfName() + " ver." + object.getVersion()) : "";
     }
 
-    public void reset() {
-        List<AefMapInfoDto> emptyList = Collections.emptyList();
-        setValue(null);
-        setAcceptableValues(emptyList);
+    @Override
+    public void render(AefMapInfoDto object, Appendable appendable)
+        throws IOException {
+      appendable.append(render(object));
     }
-
-    static class AefMapInfoDtoRenderer implements Renderer<AefMapInfoDto> {
-
-        @Override
-        public String render(AefMapInfoDto object) {
-            return object != null ? (object.getEcfName() + " ver." + object.getVersion()) : "";
-        }
-
-        @Override
-        public void render(AefMapInfoDto object, Appendable appendable)
-                throws IOException {
-            appendable.append(render(object));
-        }
-    }
+  }
 }

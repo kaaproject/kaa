@@ -16,16 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.servlet;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -36,51 +26,62 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-public class FileUpload extends HttpServlet{
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-    private static final long serialVersionUID = 2959115024959843564L;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(FileUpload.class);
+public class FileUpload extends HttpServlet {
 
-    @Autowired
-    private CacheService cacheService;
+  private static final long serialVersionUID = 2959115024959843564L;
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
-          config.getServletContext());
+  private static final Logger LOG = LoggerFactory.getLogger(FileUpload.class);
+
+  @Autowired
+  private CacheService cacheService;
+
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+        config.getServletContext());
+  }
+  //CHECKSTYLE:OFF
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    //CHECKSTYLE:ON
+    ServletFileUpload upload = new ServletFileUpload();
+
+    try {
+      FileItemIterator iter = upload.getItemIterator(request);
+      if (iter.hasNext()) {
+        FileItemStream item = iter.next();
+        String name = item.getFieldName();
+
+        LOG.debug("Uploading file '{}' with item name '{}'", item.getName(), name);
+
+        InputStream stream = item.openStream();
+
+        // Process the input stream
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Streams.copy(stream, out, true);
+
+        byte[] data = out.toByteArray();
+
+        cacheService.uploadedFile(name, data);
+      } else {
+        LOG.error("No file found in post request!");
+        throw new RuntimeException("No file found in post request!");
+      }
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in FileUpload.doPost: ", ex);
+      throw new RuntimeException(ex);
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
-        ServletFileUpload upload = new ServletFileUpload();
-
-        try{
-            FileItemIterator iter = upload.getItemIterator(request);
-            if (iter.hasNext()) {
-                FileItemStream item = iter.next();
-                String name = item.getFieldName();
-
-                LOG.debug("Uploading file '{}' with item name '{}'", item.getName(), name);
-
-                InputStream stream = item.openStream();
-
-                // Process the input stream
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                Streams.copy(stream, out, true);
-
-                byte[] data = out.toByteArray();
-
-                cacheService.uploadedFile(name, data);
-            } else {
-                LOG.error("No file found in post request!");
-                throw new RuntimeException("No file found in post request!");
-            }
-        } catch(Exception e){
-            LOG.error("Unexpected error in FileUpload.doPost: ", e);
-            throw new RuntimeException(e);
-        }
-
-    }
+  }
 }

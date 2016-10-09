@@ -21,10 +21,12 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
 
 public interface LogAppenderBuilder {
 
-    /**
-     * @param   appenderConfig the appender config
-     * @return  the log appender
-     * @throws  ReflectiveOperationException the reflective operation exception
-     */
-    LogAppender getAppender(LogAppenderDto appenderConfig) throws ReflectiveOperationException;
+  /**
+   * Returns a log appender.
+   *
+   * @param appenderConfig the appender config
+   * @return the log appender
+   * @throws ReflectiveOperationException the reflective operation exception
+   */
+  LogAppender getAppender(LogAppenderDto appenderConfig) throws ReflectiveOperationException;
 }

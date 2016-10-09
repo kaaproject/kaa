@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.http.transport;
 
-import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
@@ -27,27 +25,29 @@ import org.kaaproject.kaa.server.transports.http.transport.messages.NettyHttpSyn
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.UUID;
+
 public class HttpHandlerTest {
 
-    @Test
-    public void testFlow() throws Exception{
-        UUID uuid = UUID.randomUUID();
-        MessageHandler messageHandler = Mockito.mock(MessageHandler.class);
-        AbstractHttpSyncCommand commandMock = Mockito.mock(AbstractHttpSyncCommand.class);
-        Mockito.when(commandMock.getChannelType()).thenReturn(ChannelType.SYNC);
-        HttpHandler handler = new HttpHandler(uuid, messageHandler);
-        handler.channelRead0(null, commandMock);
-        Mockito.verify(messageHandler).process(Mockito.any(NettyHttpSyncMessage.class));
-    }
+  @Test
+  public void testFlow() throws Exception {
+    UUID uuid = UUID.randomUUID();
+    MessageHandler messageHandler = Mockito.mock(MessageHandler.class);
+    AbstractHttpSyncCommand commandMock = Mockito.mock(AbstractHttpSyncCommand.class);
+    Mockito.when(commandMock.getChannelType()).thenReturn(ChannelType.SYNC);
+    HttpHandler handler = new HttpHandler(uuid, messageHandler);
+    handler.channelRead0(null, commandMock);
+    Mockito.verify(messageHandler).process(Mockito.any(NettyHttpSyncMessage.class));
+  }
 
-    @Test
-    public void buildTest() {
-        HttpHandler httpHandler = new HttpHandler(null, null);
-        AbstractHttpSyncCommand commandMock = Mockito.mock(AbstractHttpSyncCommand.class);
-        ReflectionTestUtils.setField(httpHandler, "command", commandMock);
-        Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(new Exception("Some exception")));
-        Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, null, false));
-        Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, new byte[1], false));
-        Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, false));
-    }
+  @Test
+  public void buildTest() {
+    HttpHandler httpHandler = new HttpHandler(null, null);
+    AbstractHttpSyncCommand commandMock = Mockito.mock(AbstractHttpSyncCommand.class);
+    ReflectionTestUtils.setField(httpHandler, "command", commandMock);
+    Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(new Exception("Some exception")));
+    Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, null, false));
+    Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, new byte[1], false));
+    Assert.assertArrayEquals(new Object[]{commandMock}, httpHandler.build(null, false));
+  }
 }

@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
-import org.kaaproject.avro.ui.gwt.client.input.HasInputEventHandlers;
-import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
-
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -27,32 +23,38 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 
+import org.kaaproject.avro.ui.gwt.client.input.HasInputEventHandlers;
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
+
 public class ExtendedPasswordTextBox extends PasswordTextBox implements HasInputEventHandlers {
+  /**
+   * Instantiates a new ExtendedPasswordTextBox.
+   */
+  public ExtendedPasswordTextBox() {
+    addValueChangeHandler(new ValueChangeHandler<String>() {
+      @Override
+      public void onValueChange(ValueChangeEvent<String> event) {
+        fireInputEvent();
+      }
+    });
+    addKeyUpHandler(new KeyUpHandler() {
+      @Override
+      public void onKeyUp(KeyUpEvent event) {
+        fireInputEvent();
+      }
+    });
+  }
 
-    public ExtendedPasswordTextBox() {
-        addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                fireInputEvent();
-            }
-        });
-        addKeyUpHandler(new KeyUpHandler() {
-            @Override
-            public void onKeyUp(KeyUpEvent  event) {
-                fireInputEvent();
-            }
-        });
-    }
+  private void fireInputEvent() {
+    InputEvent event = new InputEvent(this);
+    fireEvent(event);
+  }
 
-    private void fireInputEvent() {
-        InputEvent event = new InputEvent(this);
-        fireEvent(event);
-    }
-
-    @Override
-    public HandlerRegistration addInputHandler(InputEventHandler handler) {
-        return this.addHandler(handler, InputEvent.TYPE);
-    }
+  @Override
+  public HandlerRegistration addInputHandler(InputEventHandler handler) {
+    return this.addHandler(handler, InputEvent.TYPE);
+  }
 
 
 }

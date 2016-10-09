@@ -31,42 +31,46 @@ import javax.tools.JavaFileObject.Kind;
  * The Class JavaDynamicManager.
  */
 public class JavaDynamicManager extends
-        ForwardingJavaFileManager<JavaFileManager> {
-    
-    /** The compiled objects. */
-    private Map<String, JavaDynamicBean> compiledObjects = new HashMap<String, JavaDynamicBean>();
+    ForwardingJavaFileManager<JavaFileManager> {
 
-    /**
-     * Instantiates a new java dynamic manager.
-     *
-     * @param fileManager the file manager
-     */
-    public JavaDynamicManager(JavaFileManager fileManager) {
-        super(fileManager);
-    }
+  /**
+   * The compiled objects.
+   */
+  private Map<String, JavaDynamicBean> compiledObjects = new HashMap<String, JavaDynamicBean>();
 
-    /* (non-Javadoc)
-     * @see javax.tools.ForwardingJavaFileManager#getJavaFileForOutput(javax.tools.JavaFileManager.Location, java.lang.String, javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
-     */
-    @Override
-    public JavaFileObject getJavaFileForOutput(Location location,
-            String qualifiedName, Kind kind, FileObject outputFile)
-            throws IOException {
-        JavaDynamicBean object =  compiledObjects.get(qualifiedName);
-        if (object == null) {
-            object = new JavaDynamicBean(qualifiedName);
-            compiledObjects.put(qualifiedName, object);
-        }
-        return object;
-    }
+  /**
+   * Instantiates a new java dynamic manager.
+   *
+   * @param fileManager the file manager
+   */
+  public JavaDynamicManager(JavaFileManager fileManager) {
+    super(fileManager);
+  }
 
-    /**
-     * Gets the compiled objects.
-     *
-     * @return the compiled objects
-     */
-    public Collection<JavaDynamicBean> getCompiledObjects() {
-        return compiledObjects.values();
+  /* (non-Javadoc)
+   * @see javax.tools.ForwardingJavaFileManager#getJavaFileForOutput(
+   *      javax.tools.JavaFileManager.Location, java.lang.String,
+   *      javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
+   */
+  @Override
+  public JavaFileObject getJavaFileForOutput(Location location,
+                                             String qualifiedName, Kind kind, FileObject outputFile)
+      throws IOException {
+    JavaDynamicBean object = compiledObjects.get(qualifiedName);
+    if (object == null) {
+      object = new JavaDynamicBean(qualifiedName);
+      compiledObjects.put(qualifiedName, object);
     }
+    return object;
+  }
+
+  /**
+   * Gets the compiled objects.
+   *
+   * @return the compiled objects
+   */
+  public Collection<JavaDynamicBean> getCompiledObjects() {
+    return compiledObjects.values();
+  }
 
 }

@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 public interface KaaSchema extends Serializable {
 
-    String getRawSchema();
+  String getRawSchema();
 
-    boolean isEmpty();
+  boolean isEmpty();
 }

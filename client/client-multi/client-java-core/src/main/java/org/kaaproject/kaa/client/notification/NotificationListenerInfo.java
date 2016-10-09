@@ -24,29 +24,28 @@ package org.kaaproject.kaa.client.notification;
  * {@link NotificationManager#addNotificationListener(Long, NotificationListener)},
  * {@link NotificationManager#subscribeToTopics(java.util.List, boolean)},
  * {@link NotificationManager#addTopicListListener(NotificationTopicListListener)}.</p>
- *
  */
 @Deprecated
 public class NotificationListenerInfo {
-    @Deprecated
-    public enum Action {
-        ADD,
-        REMOVE
-    }
+  private final NotificationListener listener;
+  private final Action action;
 
-    private final NotificationListener listener;
-    private final Action action;
+  public NotificationListenerInfo(NotificationListener listener, Action action) {
+    this.listener = listener;
+    this.action = action;
+  }
 
-    public NotificationListenerInfo(NotificationListener listener, Action action) {
-        this.listener = listener;
-        this.action = action;
-    }
+  public NotificationListener getListener() {
+    return listener;
+  }
 
-    public NotificationListener getListener() {
-        return listener;
-    }
+  public Action getAction() {
+    return action;
+  }
 
-    public Action getAction() {
-        return action;
-    }
+  @Deprecated
+  public enum Action {
+    ADD,
+    REMOVE
+  }
 }

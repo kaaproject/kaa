@@ -16,36 +16,39 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class SystemCtlSchemasDataProvider extends AbstractDataProvider<CTLSchemaMetaInfoDto, String>{
+public class SystemCtlSchemasDataProvider
+    extends AbstractDataProvider<CtlSchemaMetaInfoDto, String> {
 
-    public SystemCtlSchemasDataProvider(AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid,
-                                    HasErrorMessage hasErrorMessage) {
-        super(dataGrid, hasErrorMessage);
-    }
+  public SystemCtlSchemasDataProvider(AbstractGrid<CtlSchemaMetaInfoDto, String> dataGrid,
+                                      HasErrorMessage hasErrorMessage) {
+    super(dataGrid, hasErrorMessage);
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().getSystemLevelCTLSchemas(new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().getSystemLevelCtlSchemas(
+        new AsyncCallback<List<CtlSchemaMetaInfoDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-            }
-            @Override
-            public void onSuccess(List<CTLSchemaMetaInfoDto> result) {
-                callback.onSuccess(result);
-            }
+          }
+
+          @Override
+          public void onSuccess(List<CtlSchemaMetaInfoDto> result) {
+            callback.onSuccess(result);
+          }
         });
-    }
+  }
 
 }

@@ -16,96 +16,118 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
+import com.google.gwt.http.client.URL;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.http.client.URL;
-
 public class PlaceParams {
 
-    public static final String PARAMS_SEPARATOR = "&";
+  public static final String PARAMS_SEPARATOR = "&";
 
-    private static Map<String,String> paramsMap = new HashMap<String,String>();
+  private static Map<String, String> paramsMap = new HashMap<String, String>();
 
-    public static String generateToken() {
-        StringBuilder paramsUrl = new StringBuilder();
-        for (String key : paramsMap.keySet()) {
-            String val = paramsMap.get(key);
-            if (paramsUrl.length() > 0) {
-                paramsUrl.append(PARAMS_SEPARATOR);
-            }
-            paramsUrl.append(key).append("=").append(URL.encodeQueryString(val));
+  /**
+   * Generate token.
+   *
+   * @return the token
+   */
+  public static String generateToken() {
+    StringBuilder paramsUrl = new StringBuilder();
+    for (String key : paramsMap.keySet()) {
+      String val = paramsMap.get(key);
+      if (paramsUrl.length() > 0) {
+        paramsUrl.append(PARAMS_SEPARATOR);
+      }
+      paramsUrl.append(key).append("=").append(URL.encodeQueryString(val));
+    }
+    return paramsUrl.toString();
+  }
+
+  /**
+   * Params from token.
+   *
+   * @param token the token
+   */
+  public static void paramsFromToken(String token) {
+    paramsMap.clear();
+    if (token != null && token.trim().length() > 0) {
+      String[] params = token.split(PARAMS_SEPARATOR);
+      for (String param : params) {
+        String[] keyVal = param.split("=");
+        if (keyVal != null && keyVal.length == 2) {
+          paramsMap.put(keyVal[0], URL.decodeQueryString(keyVal[1]));
         }
-        return paramsUrl.toString();
+      }
     }
+  }
 
-    public static void paramsFromToken(String token) {
-        paramsMap.clear();
-        if (token != null && token.trim().length() > 0) {
-            String[] params = token.split(PARAMS_SEPARATOR);
-            for (String param : params) {
-                String[] keyVal = param.split("=");
-                if (keyVal != null && keyVal.length == 2) {
-                    paramsMap.put(keyVal[0], URL.decodeQueryString(keyVal[1]));
-                }
-            }
-        }
-    }
+  public static void clear() {
+    paramsMap.clear();
+  }
 
-    public static void clear() {
-        paramsMap.clear();
-    }
+  public static String getParam(String key) {
+    String val = paramsMap.get(key);
+    return isEmptyVal(val) ? null : val;
+  }
 
-    public static String getParam(String key) {
-        String val = paramsMap.get(key);
-        return isEmptyVal(val) ? null : val;
-    }
+  public static boolean getBooleanParam(String key) {
+    String val = paramsMap.get(key);
+    return isEmptyVal(val) ? false : Boolean.valueOf(val);
+  }
 
-    public static boolean getBooleanParam(String key) {
-        String val = paramsMap.get(key);
-        return isEmptyVal(val) ? false : Boolean.valueOf(val);
+  /**
+   * Get int param.
+   *
+   * @param key the key
+   * @return int value
+   */
+  public static int getIntParam(String key) {
+    String val = paramsMap.get(key);
+    try {
+      return isEmptyVal(val) ? 0 : Integer.valueOf(val);
+    } catch (NumberFormatException nfe) {
+      return 0;
     }
+  }
 
-    public static int getIntParam(String key) {
-        String val = paramsMap.get(key);
-        try {
-            return isEmptyVal(val) ? 0 : Integer.valueOf(val);
-        } catch (NumberFormatException nfe) {
-            return 0;
-        }
-    }
-    
-    public static boolean hasParam(String key) {
-        return paramsMap.containsKey(key);
-    }
-    
-    public static double getDoubleParam(String key) {
-        String val = paramsMap.get(key);
-        try {
-            return isEmptyVal(val) ? 0 : Double.valueOf(val);
-        } catch (NumberFormatException nfe) {
-            return 0;
-        }
-    }
+  public static boolean hasParam(String key) {
+    return paramsMap.containsKey(key);
+  }
 
-    private static boolean isEmptyVal(String val) {
-        return val == null || val.length()==0 || val.equals("null");
+  /**
+   * Get double param.
+   *
+   * @param key the key
+   * @return double value
+   */
+  public static double getDoubleParam(String key) {
+    String val = paramsMap.get(key);
+    try {
+      return isEmptyVal(val) ? 0 : Double.valueOf(val);
+    } catch (NumberFormatException nfe) {
+      return 0;
     }
+  }
 
-    public static void putParam(String key, String val) {
-        paramsMap.put(key, val);
-    }
+  private static boolean isEmptyVal(String val) {
+    return val == null || val.length() == 0 || val.equals("null");
+  }
 
-    public static void putBooleanParam(String key, boolean val) {
-        paramsMap.put(key, Boolean.toString(val));
-    }
+  public static void putParam(String key, String val) {
+    paramsMap.put(key, val);
+  }
 
-    public static void putDoubleParam(String key, double val) {
-        paramsMap.put(key, Double.toString(val));
-    }
+  public static void putBooleanParam(String key, boolean val) {
+    paramsMap.put(key, Boolean.toString(val));
+  }
 
-    public static void putIntParam(String key, int val) {
-        paramsMap.put(key, Integer.toString(val));
-    }
+  public static void putDoubleParam(String key, double val) {
+    paramsMap.put(key, Double.toString(val));
+  }
+
+  public static void putIntParam(String key, int val) {
+    paramsMap.put(key, Integer.toString(val));
+  }
 
 }

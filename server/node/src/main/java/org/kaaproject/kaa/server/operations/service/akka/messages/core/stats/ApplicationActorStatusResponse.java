@@ -19,9 +19,9 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.stats;
 import java.util.UUID;
 
 public class ApplicationActorStatusResponse extends ActorStatusResponse {
-    
-    public ApplicationActorStatusResponse(UUID requestId, int endpointCount) {
-        super(requestId, endpointCount);
-    }
+
+  public ApplicationActorStatusResponse(UUID requestId, int endpointCount) {
+    super(requestId, endpointCount);
+  }
 
 }

@@ -17,16 +17,15 @@
 package org.kaaproject.kaa.client.common;
 
 /**
- * Common fixed interface
+ * Common fixed interface.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface CommonFixed extends SchemaDependent {
 
-    /**
-     * @return fixed bytes
-     */
-    byte [] getBytes();
+  /**
+   * @return fixed bytes.
+   */
+  byte[] getBytes();
 
 }

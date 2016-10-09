@@ -16,37 +16,37 @@
 
 package org.kaaproject.kaa.server.common;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 public class EnvironmentTest {
 
-    @Test
-    public void logStateTest() throws Exception {
-        Logger LOG = mock(Logger.class);
-        Field logField = Environment.class.getDeclaredField("LOG");
-        // set final static field
-        setFinalStatic(logField, LOG);
-        Environment.logState();
-        verify(LOG, atLeastOnce()).info(any(String.class), any(Version.class), any(Version.class));
-    }
+  @Test
+  public void logStateTest() throws Exception {
+    Logger LOG = mock(Logger.class);
+    Field logField = Environment.class.getDeclaredField("LOG");
+    // set final static field
+    setFinalStatic(logField, LOG);
+    Environment.logState();
+    verify(LOG, atLeastOnce()).info(any(String.class), any(Version.class), any(Version.class));
+  }
 
-    // sets final static field to an object
-    private void setFinalStatic(Field field, Object newValue) throws Exception {
-        field.setAccessible(true);
+  // sets final static field to an object
+  private void setFinalStatic(Field field, Object newValue) throws Exception {
+    field.setAccessible(true);
 
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+    Field modifiersField = Field.class.getDeclaredField("modifiers");
+    modifiersField.setAccessible(true);
+    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-        field.set(null, newValue);
-    }
+    field.set(null, newValue);
+  }
 }

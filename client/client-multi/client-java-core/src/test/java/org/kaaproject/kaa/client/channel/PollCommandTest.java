@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.PollCommand;
 import org.kaaproject.kaa.client.channel.impl.channels.polling.RawDataProcessor;
@@ -27,48 +23,52 @@ import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
 import org.mockito.Mockito;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class PollCommandTest {
 
-    @Test
-    public void testPollCommand() throws Exception {
-        AbstractHttpClient client = Mockito.mock(AbstractHttpClient.class);
-        RawDataProcessor processor = Mockito.mock(RawDataProcessor.class);
-        Map<TransportType, ChannelDirection> transportTypes = new HashMap<>();
-        IPTransportInfo serverInfo = Mockito.mock(IPTransportInfo.class);
+  @Test
+  public void testPollCommand() throws Exception {
+    AbstractHttpClient client = Mockito.mock(AbstractHttpClient.class);
+    RawDataProcessor processor = Mockito.mock(RawDataProcessor.class);
+    Map<TransportType, ChannelDirection> transportTypes = new HashMap<>();
+    IpTransportInfo serverInfo = Mockito.mock(IpTransportInfo.class);
 
-        Mockito.when(processor.createRequest(transportTypes)).thenReturn(null);
+    Mockito.when(processor.createRequest(transportTypes)).thenReturn(null);
 
-        PollCommand command = new PollCommand(client, processor, transportTypes, serverInfo);
-        command.execute();
+    PollCommand command = new PollCommand(client, processor, transportTypes, serverInfo);
+    command.execute();
 
-        Mockito.when(processor.createRequest(transportTypes)).thenReturn(new LinkedHashMap<String, byte[]>());
+    Mockito.when(processor.createRequest(transportTypes)).thenReturn(new LinkedHashMap<String, byte[]>());
 
-        command.execute();
+    command.execute();
 
-        Mockito.verify(client, Mockito.times(1)).executeHttpRequest(Mockito.eq(""), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean());
-        Mockito.verify(processor, Mockito.times(1)).onResponse(Mockito.any(byte[].class));
-        Mockito.verify(processor, Mockito.times(2)).createRequest(transportTypes);
+    Mockito.verify(client, Mockito.times(1)).executeHttpRequest(Mockito.eq(""), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean());
+    Mockito.verify(processor, Mockito.times(1)).onResponse(Mockito.any(byte[].class));
+    Mockito.verify(processor, Mockito.times(2)).createRequest(transportTypes);
 
-        Mockito.when(client.canAbort()).thenReturn(false);
-        command.cancel();
-        Mockito.when(client.canAbort()).thenReturn(true);
-        command.cancel();
-        Mockito.verify(client, Mockito.times(1)).abort();
-    }
+    Mockito.when(client.canAbort()).thenReturn(false);
+    command.cancel();
+    Mockito.when(client.canAbort()).thenReturn(true);
+    command.cancel();
+    Mockito.verify(client, Mockito.times(1)).abort();
+  }
 
-    @Test
-    public void testOnServerError() throws Exception {
-        AbstractHttpClient client = Mockito.mock(AbstractHttpClient.class);
-        RawDataProcessor processor = Mockito.mock(RawDataProcessor.class);
-        Map<TransportType, ChannelDirection> transportTypes = new HashMap<>();
-        IPTransportInfo serverInfo = Mockito.mock(IPTransportInfo.class);
+  @Test
+  public void testOnServerError() throws Exception {
+    AbstractHttpClient client = Mockito.mock(AbstractHttpClient.class);
+    RawDataProcessor processor = Mockito.mock(RawDataProcessor.class);
+    Map<TransportType, ChannelDirection> transportTypes = new HashMap<>();
+    IpTransportInfo serverInfo = Mockito.mock(IpTransportInfo.class);
 
-        Mockito.when(client.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
+    Mockito.when(client.executeHttpRequest(Mockito.anyString(), Mockito.any(LinkedHashMap.class), Mockito.anyBoolean())).thenThrow(new Exception());
 
-        PollCommand command = new PollCommand(client, processor, transportTypes, serverInfo);
-        command.execute();
+    PollCommand command = new PollCommand(client, processor, transportTypes, serverInfo);
+    command.execute();
 
-        Mockito.verify(processor, Mockito.times(1)).onServerError(serverInfo);
-    }
+    Mockito.verify(processor, Mockito.times(1)).onServerError(serverInfo);
+  }
 
 }

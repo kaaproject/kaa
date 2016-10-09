@@ -24,9 +24,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.nio.ByteBuffer;
-import java.util.Random;
-
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -44,143 +41,146 @@ import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 
+import java.nio.ByteBuffer;
+import java.util.Random;
+
 public class ControlNodeIT {
 
-    private static final String ENDPOINT_NODE_HOST = "192.168.0.101";
-    private static final String SECONDARY_NODE_HOST = "192.168.0.2";
-    private static final String CONTROL_NODE_HOST = "192.168.0.1";
-    private CuratorFramework zkClient;
-    private TestingCluster cluster;
+  private static final String ENDPOINT_NODE_HOST = "192.168.0.101";
+  private static final String SECONDARY_NODE_HOST = "192.168.0.2";
+  private static final String CONTROL_NODE_HOST = "192.168.0.1";
+  private CuratorFramework zkClient;
+  private TestingCluster cluster;
 
-    @Before
-    public void beforeTest() {
-        try {
-            cluster = new TestingCluster(3);
-            cluster.start();
-            zkClient = CuratorFrameworkFactory.newClient(cluster.getConnectString(), buildDefaultRetryPolicy());
-            zkClient.start();
-        } catch (Exception e) {
-            System.err.println("Unable to initialize cluster before test! " + e);
-        }
+  @Before
+  public void beforeTest() {
+    try {
+      cluster = new TestingCluster(3);
+      cluster.start();
+      zkClient = CuratorFrameworkFactory.newClient(cluster.getConnectString(), buildDefaultRetryPolicy());
+      zkClient.start();
+    } catch (Exception e) {
+      System.err.println("Unable to initialize cluster before test! " + e);
     }
+  }
 
-    @After
-    public void afterTest() {
-        try {
-            zkClient.close();
-            cluster.close();
-        } catch (Exception e) {
-            System.err.println("Unable to shutdown cluster after test! " + e);
-        }
+  @After
+  public void afterTest() {
+    try {
+      zkClient.close();
+      cluster.close();
+    } catch (Exception e) {
+      System.err.println("Unable to shutdown cluster after test! " + e);
     }
+  }
 
-    @Test
-    public void masterFailoverTest() throws Exception {
-        Timing timing = new Timing();
+  @Test
+  public void masterFailoverTest() throws Exception {
+    Timing timing = new Timing();
 
-        ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+    ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
 
-        ControlNodeInfo secondaryNodeInfo = buildSecondaryNodeInfo();
+    ControlNodeInfo secondaryNodeInfo = buildSecondaryNodeInfo();
 
-        OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+    OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
 
-        OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
-        endpointNode.start();
-        assertNull(endpointNode.getControlServerInfo());
+    OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
+    endpointNode.start();
+    assertNull(endpointNode.getControlServerInfo());
 
-        ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
-        assertFalse(controlNode.isMaster());
-        controlNode.start();
-        ControlNode secondaryNode = new ControlNode(secondaryNodeInfo, zkClient);
-        assertFalse(secondaryNode.isMaster());
-        secondaryNode.start();
-        timing.sleepABit();
-        assertTrue(controlNode.isMaster());
-        assertFalse(secondaryNode.isMaster());
-        assertNotNull(endpointNode.getControlServerInfo());
-        assertEquals(CONTROL_NODE_HOST, endpointNode.getControlServerInfo().getConnectionInfo().getThriftHost().toString());
+    ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
+    assertFalse(controlNode.isMaster());
+    controlNode.start();
+    ControlNode secondaryNode = new ControlNode(secondaryNodeInfo, zkClient);
+    assertFalse(secondaryNode.isMaster());
+    secondaryNode.start();
+    timing.sleepABit();
+    assertTrue(controlNode.isMaster());
+    assertFalse(secondaryNode.isMaster());
+    assertNotNull(endpointNode.getControlServerInfo());
+    assertEquals(CONTROL_NODE_HOST, endpointNode.getControlServerInfo().getConnectionInfo().getThriftHost().toString());
 
-        controlNode.close();
-        timing.sleepABit();
+    controlNode.close();
+    timing.sleepABit();
 
-        assertNotNull(endpointNode.getControlServerInfo());
-        assertEquals(SECONDARY_NODE_HOST, endpointNode.getControlServerInfo().getConnectionInfo().getThriftHost().toString());
-        secondaryNode.close();
-        endpointNode.close();
-    }
+    assertNotNull(endpointNode.getControlServerInfo());
+    assertEquals(SECONDARY_NODE_HOST, endpointNode.getControlServerInfo().getConnectionInfo().getThriftHost().toString());
+    secondaryNode.close();
+    endpointNode.close();
+  }
 
-    @Test
-    public void masterListenerTest() throws Exception {
-        Timing timing = new Timing();
+  @Test
+  public void masterListenerTest() throws Exception {
+    Timing timing = new Timing();
 
-        ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
-        ControlNodeInfo secondaryNodeInfo = buildSecondaryNodeInfo();
-        OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+    ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+    ControlNodeInfo secondaryNodeInfo = buildSecondaryNodeInfo();
+    OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
 
-        OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
-        ControlNodeListener mockListener = mock(ControlNodeListener.class);
-        endpointNode.addListener(mockListener);
-        endpointNode.start();
+    OperationsNode endpointNode = new OperationsNode(endpointNodeInfo, zkClient);
+    ControlNodeListener mockListener = mock(ControlNodeListener.class);
+    endpointNode.addListener(mockListener);
+    endpointNode.start();
 
-        ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
-        controlNode.start();
-        ControlNode secondaryNode = new ControlNode(secondaryNodeInfo, zkClient);
-        secondaryNode.start();
-        timing.sleepABit();
-        verify(mockListener).onControlNodeChange(controlNodeInfo);
+    ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
+    controlNode.start();
+    ControlNode secondaryNode = new ControlNode(secondaryNodeInfo, zkClient);
+    secondaryNode.start();
+    timing.sleepABit();
+    verify(mockListener).onControlNodeChange(controlNodeInfo);
 
-        int random = new Random().nextInt();
-        controlNodeInfo.setBootstrapServerCount(random);
-        controlNode.updateNodeData(controlNodeInfo);
+    int random = new Random().nextInt();
+    controlNodeInfo.setBootstrapServerCount(random);
+    controlNode.updateNodeData(controlNodeInfo);
 
-        int random2 = new Random().nextInt();
-        secondaryNodeInfo.setBootstrapServerCount(random2);
-        secondaryNode.updateNodeData(secondaryNodeInfo);
+    int random2 = new Random().nextInt();
+    secondaryNodeInfo.setBootstrapServerCount(random2);
+    secondaryNode.updateNodeData(secondaryNodeInfo);
 
-        timing.sleepABit();
-        verify(mockListener).onControlNodeChange(controlNodeInfo);
-        assertEquals(new Integer(random), endpointNode.getControlServerInfo().getBootstrapServerCount());
-        assertEquals(new Integer(random2), secondaryNode.getCurrentNodeInfo().getBootstrapServerCount());
+    timing.sleepABit();
+    verify(mockListener).onControlNodeChange(controlNodeInfo);
+    assertEquals(new Integer(random), endpointNode.getControlServerInfo().getBootstrapServerCount());
+    assertEquals(new Integer(random2), secondaryNode.getCurrentNodeInfo().getBootstrapServerCount());
 
-        controlNode.close();
-        timing.sleepABit();
-        verify(mockListener).onControlNodeDown();
-        verify(mockListener).onControlNodeChange(secondaryNodeInfo);
+    controlNode.close();
+    timing.sleepABit();
+    verify(mockListener).onControlNodeDown();
+    verify(mockListener).onControlNodeChange(secondaryNodeInfo);
 
-        assertTrue(endpointNode.removeListener(mockListener));
-        assertFalse(endpointNode.removeListener(mockListener));
+    assertTrue(endpointNode.removeListener(mockListener));
+    assertFalse(endpointNode.removeListener(mockListener));
 
-        secondaryNode.close();
-        endpointNode.close();
-    }
+    secondaryNode.close();
+    endpointNode.close();
+  }
 
-    private RetryPolicy buildDefaultRetryPolicy() {
-        return new ExponentialBackoffRetry(100, 1);
-    }
+  private RetryPolicy buildDefaultRetryPolicy() {
+    return new ExponentialBackoffRetry(100, 1);
+  }
 
-    private OperationsNodeInfo buildOperationsNodeInfo() {
-        OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
-        ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
-        nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000, testKeyData));
-        nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
-        nodeInfo.setTimeStarted(System.currentTimeMillis());
-        nodeInfo.setTransports(BootstrapNodeIT.getHttpAndTcpTransportMD() );
-        return nodeInfo;
-    }
+  private OperationsNodeInfo buildOperationsNodeInfo() {
+    OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
+    ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10, 11, 12, 45, 34, 23, 67, 89, 66, 12});
+    nodeInfo.setConnectionInfo(new ConnectionInfo(ENDPOINT_NODE_HOST, 1000, testKeyData));
+    nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
+    nodeInfo.setTimeStarted(System.currentTimeMillis());
+    nodeInfo.setTransports(BootstrapNodeIT.getHttpAndTcpTransportMD());
+    return nodeInfo;
+  }
 
-    private ControlNodeInfo buildSecondaryNodeInfo() {
-        ControlNodeInfo secondaryNodeInfo = new ControlNodeInfo();
-        secondaryNodeInfo.setConnectionInfo(new ConnectionInfo(SECONDARY_NODE_HOST, 1000, null));
-        secondaryNodeInfo.setBootstrapServerCount(1);
-        secondaryNodeInfo.setOperationsServerCount(2);
-        return secondaryNodeInfo;
-    }
+  private ControlNodeInfo buildSecondaryNodeInfo() {
+    ControlNodeInfo secondaryNodeInfo = new ControlNodeInfo();
+    secondaryNodeInfo.setConnectionInfo(new ConnectionInfo(SECONDARY_NODE_HOST, 1000, null));
+    secondaryNodeInfo.setBootstrapServerCount(1);
+    secondaryNodeInfo.setOperationsServerCount(2);
+    return secondaryNodeInfo;
+  }
 
-    private ControlNodeInfo buildControlNodeInfo() {
-        ControlNodeInfo controlNodeInfo = new ControlNodeInfo();
-        controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000, null));
-        controlNodeInfo.setBootstrapServerCount(3);
-        controlNodeInfo.setOperationsServerCount(4);
-        return controlNodeInfo;
-    }
+  private ControlNodeInfo buildControlNodeInfo() {
+    ControlNodeInfo controlNodeInfo = new ControlNodeInfo();
+    controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000, null));
+    controlNodeInfo.setBootstrapServerCount(3);
+    controlNodeInfo.setOperationsServerCount(4);
+    return controlNodeInfo;
+  }
 }

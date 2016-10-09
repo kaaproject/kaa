@@ -16,35 +16,34 @@
 
 package org.kaaproject.kaa.client.notification;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.kaaproject.kaa.common.endpoint.gen.Notification;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Processes notifications.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface NotificationProcessor {
 
-    /**
-     * Called on topics' list update.
-     *
-     * @param list the new topics' list.
-     * @see Topic
-     */
-    void topicsListUpdated(List<Topic> list);
+  /**
+   * Called on topics' list update.
+   *
+   * @param list the new topics' list.
+   * @see Topic
+   */
+  void topicsListUpdated(List<Topic> list);
 
-    /**
-     * Called when new notifications arrived.
-     *
-     * @param notifications the list of new notifications.
-     * @throws IOException the io exception
-     * @see Notification
-     */
-    void notificationReceived(List<Notification> notifications) throws IOException;
+  /**
+   * Called when new notifications arrived.
+   *
+   * @param notifications the list of new notifications.
+   * @throws IOException the io exception
+   * @see Notification
+   */
+  void notificationReceived(List<Notification> notifications) throws IOException;
 
 }

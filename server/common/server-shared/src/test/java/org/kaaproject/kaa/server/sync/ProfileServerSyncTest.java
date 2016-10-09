@@ -21,11 +21,11 @@ import org.junit.Test;
 
 public class ProfileServerSyncTest {
 
-    @Test
-    public void profileServerSyncTest(){
-        SyncResponseStatus status = SyncResponseStatus.DELTA;
-        ProfileServerSync serverSync = new ProfileServerSync();
-        serverSync.setResponseStatus(status);
-        Assert.assertEquals(status, serverSync.getResponseStatus());
-    }
+  @Test
+  public void profileServerSyncTest() {
+    SyncResponseStatus status = SyncResponseStatus.DELTA;
+    ProfileServerSync serverSync = new ProfileServerSync();
+    serverSync.setResponseStatus(status);
+    Assert.assertEquals(status, serverSync.getResponseStatus());
+  }
 }

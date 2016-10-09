@@ -16,7 +16,7 @@
 
 /**
  * Provides ...
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 package org.kaaproject.kaa.server.operations.service.event;

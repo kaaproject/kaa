@@ -22,8 +22,8 @@ import org.junit.Test;
 
 public class EndpointEventTest {
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(EndpointEvent.class).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(EndpointEvent.class).verify();
+  }
 }

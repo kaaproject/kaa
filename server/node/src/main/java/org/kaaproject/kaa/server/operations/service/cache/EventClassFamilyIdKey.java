@@ -18,77 +18,77 @@ package org.kaaproject.kaa.server.operations.service.cache;
 
 import java.io.Serializable;
 
-public final class EventClassFamilyIdKey implements Serializable{
+public final class EventClassFamilyIdKey implements Serializable {
 
-	/**
-     *
-     */
-    private static final long serialVersionUID = -1478813575025459972L;
+  private static final long serialVersionUID = -1478813575025459972L;
 
-    private final String tenantId;
-    private final String name;
+  private final String tenantId;
+  private final String name;
 
-    public EventClassFamilyIdKey(String tenantId, String name) {
-        super();
-        this.tenantId = tenantId;
-        this.name = name;
+  /**
+   * All-args constructor.
+   */
+  public EventClassFamilyIdKey(String tenantId, String name) {
+    super();
+    this.tenantId = tenantId;
+    this.name = name;
+  }
+
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getTenantId() {
-        return tenantId;
+    if (obj == null) {
+      return false;
     }
-
-    public String getName() {
-        return name;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
-        return result;
+    EventClassFamilyIdKey other = (EventClassFamilyIdKey) obj;
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClassFamilyIdKey other = (EventClassFamilyIdKey) obj;
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (tenantId == null) {
-            if (other.tenantId != null) {
-                return false;
-            }
-        } else if (!tenantId.equals(other.tenantId)) {
-            return false;
-        }
-        return true;
+    if (tenantId == null) {
+      if (other.tenantId != null) {
+        return false;
+      }
+    } else if (!tenantId.equals(other.tenantId)) {
+      return false;
     }
+    return true;
+  }
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("EventClassFamilyIdKey [tenantId=");
-		builder.append(tenantId);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append("]");
-		return builder.toString();
-	}
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EventClassFamilyIdKey [tenantId=");
+    builder.append(tenantId);
+    builder.append(", name=");
+    builder.append(name);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

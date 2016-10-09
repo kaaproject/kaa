@@ -18,29 +18,30 @@ package org.kaaproject.kaa.server.admin.client.util;
 
 public class SchemaErrorMessageCustomizer implements ErrorMessageCustomizer {
 
-    private static final String  LEFT_SQUARE_BRACKET = "[";
-    private static final String  RIGHT_SQUARE_BRACKET = "]";
-    private static final String  SEMICOLON = ";";
-    
-    @Override
-    public String customizeErrorMessage(Throwable caught) {
-        String origMessage = caught.getLocalizedMessage();        
-        String errorMessage = null;
-        int leftSquareBracketIndex = origMessage.indexOf(LEFT_SQUARE_BRACKET);
-        int rightSquareBracketIndex = -1;
-        if (leftSquareBracketIndex != -1) {
-            rightSquareBracketIndex = origMessage.indexOf(RIGHT_SQUARE_BRACKET, leftSquareBracketIndex);
-        }        
-        if (rightSquareBracketIndex != -1) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Incorrect json schema: Please check your schema at");
-            String[] array = origMessage.substring(leftSquareBracketIndex, rightSquareBracketIndex).split(SEMICOLON);
-            if (array != null && array.length == 2) {
-                builder.append(array[1]);
-                errorMessage = builder.toString();
-            }
-        } 
-        return errorMessage;
+  private static final String LEFT_SQUARE_BRACKET = "[";
+  private static final String RIGHT_SQUARE_BRACKET = "]";
+  private static final String SEMICOLON = ";";
+
+  @Override
+  public String customizeErrorMessage(Throwable caught) {
+    String origMessage = caught.getLocalizedMessage();
+    String errorMessage = null;
+    int leftSquareBracketIndex = origMessage.indexOf(LEFT_SQUARE_BRACKET);
+    int rightSquareBracketIndex = -1;
+    if (leftSquareBracketIndex != -1) {
+      rightSquareBracketIndex = origMessage.indexOf(RIGHT_SQUARE_BRACKET, leftSquareBracketIndex);
     }
+    if (rightSquareBracketIndex != -1) {
+      StringBuilder builder = new StringBuilder();
+      builder.append("Incorrect json schema: Please check your schema at");
+      String[] array = origMessage.substring(leftSquareBracketIndex, rightSquareBracketIndex)
+              .split(SEMICOLON);
+      if (array != null && array.length == 2) {
+        builder.append(array[1]);
+        errorMessage = builder.toString();
+      }
+    }
+    return errorMessage;
+  }
 
 }

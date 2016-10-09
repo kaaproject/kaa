@@ -41,33 +41,33 @@ import java.util.List;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class TopicListEntryMongoDaoTest extends AbstractMongoTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TopicListEntryMongoDaoTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TopicListEntryMongoDaoTest.class);
 
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
+  @BeforeClass
+  public static void init() throws Exception {
+    MongoDBTestRunner.setUp();
+  }
 
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
+  @AfterClass
+  public static void after() throws Exception {
+    MongoDBTestRunner.tearDown();
+  }
 
-    @After
-    public void afterTest() throws IOException {
-        MongoDataLoader.clearDBData();
-    }
+  @After
+  public void afterTest() throws IOException {
+    MongoDataLoader.clearDBData();
+  }
 
-    @Test
-    public void findEndpointUserConfigurationDtoTest() throws IOException {
-        List<TopicDto> topics = new ArrayList<>();
-        topics.add(generateTopicDto(null, TopicTypeDto.OPTIONAL));
-        byte[] hash = "hash".getBytes();
-        int simpleHash = 123;
-        TopicListEntryDto topicListEntryDto = new TopicListEntryDto(123, hash, topics);
-        topicListEntryDao.save(topicListEntryDto);
+  @Test
+  public void findEndpointUserConfigurationDtoTest() throws IOException {
+    List<TopicDto> topics = new ArrayList<>();
+    topics.add(generateTopicDto(null, TopicTypeDto.OPTIONAL));
+    byte[] hash = "hash".getBytes();
+    int simpleHash = 123;
+    TopicListEntryDto topicListEntryDto = new TopicListEntryDto(123, hash, topics);
+    topicListEntryDao.save(topicListEntryDto);
 
-        MongoTopicListEntry topicListEntry = topicListEntryDao.findByHash(hash);
-        Assert.assertEquals(simpleHash, topicListEntry.getSimpleHash());
-    }
+    MongoTopicListEntry topicListEntry = topicListEntryDao.findByHash(hash);
+    Assert.assertEquals(simpleHash, topicListEntry.getSimpleHash());
+  }
 }

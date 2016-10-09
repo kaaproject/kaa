@@ -18,11 +18,11 @@ package org.kaaproject.kaa.client.configuration;
 
 public class ConfigurationRuntimeException extends RuntimeException {
 
-    public ConfigurationRuntimeException() {
+  public ConfigurationRuntimeException() {
 
-    }
+  }
 
-    public ConfigurationRuntimeException(String msg) {
-        super(msg);
-    }
+  public ConfigurationRuntimeException(String msg) {
+    super(msg);
+  }
 }

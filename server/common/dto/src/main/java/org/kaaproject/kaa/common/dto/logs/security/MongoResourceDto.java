@@ -19,34 +19,34 @@ package org.kaaproject.kaa.common.dto.logs.security;
 import java.io.Serializable;
 
 public class MongoResourceDto implements Serializable {
-    
-    private static final long serialVersionUID = 5368229024855643715L;
-    
-    private String db;
-    private String collection;
-    
-    public MongoResourceDto () {
-        
-    }
-    
-    public MongoResourceDto(String db, String collection) {
-        this.db = db;
-        this.collection = collection;
-    }
-    
-    public void setDB(String db) {
-        this.db = db;
-    }
-    
-    public String getDB() {
-        return db;
-    }
-    
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
-    
-    public String getCollection() {
-        return collection;
-    }
+
+  private static final long serialVersionUID = 5368229024855643715L;
+
+  private String db;
+  private String collection;
+
+  public MongoResourceDto() {
+
+  }
+
+  public MongoResourceDto(String db, String collection) {
+    this.db = db;
+    this.collection = collection;
+  }
+
+  public String getDb() {
+    return db;
+  }
+
+  public void setDb(String db) {
+    this.db = db;
+  }
+
+  public String getCollection() {
+    return collection;
+  }
+
+  public void setCollection(String collection) {
+    this.collection = collection;
+  }
 }

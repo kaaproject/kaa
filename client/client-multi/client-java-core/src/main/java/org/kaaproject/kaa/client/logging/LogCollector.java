@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import javax.annotation.Generated;
-
 import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.schema.base.Log;
+
+import javax.annotation.Generated;
 
 /**
  * <p>Interface for a log collector.</p>
@@ -40,12 +40,12 @@ import org.kaaproject.kaa.schema.base.Log;
 @Generated("LogCollector.java.template")
 public interface LogCollector extends GenericLogCollector {
 
-    /**
-     * Adds a log record to a log storage.
-     *
-     * @param record A log record object.
-     *
-     * @return The {@link RecordFuture} object which allows tracking a delivery status of a log record.
-     */
-    RecordFuture addLogRecord(Log record);
+  /**
+   * Adds a log record to a log storage.
+   *
+   * @param record A log record object.
+   * @return The {@link RecordFuture} object which allows tracking a delivery status of a log
+   *         record.
+   */
+  RecordFuture addLogRecord(Log record);
 }

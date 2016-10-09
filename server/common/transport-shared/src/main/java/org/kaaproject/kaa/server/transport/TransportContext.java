@@ -16,52 +16,63 @@
 
 package org.kaaproject.kaa.server.transport;
 
-import java.security.PublicKey;
-
 import org.kaaproject.kaa.server.transport.message.MessageHandler;
+
+import java.security.PublicKey;
 
 /**
  * Provides a context for transport initialization parameters and {@link MessageHandler}.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public class TransportContext {
 
-    private final TransportProperties commonProperties;
-    private final PublicKey serverKey;
-    private final MessageHandler handler;
-    
-    public TransportContext(TransportProperties commonProperties, PublicKey serverKey, MessageHandler handler) {
-        super();
-        this.commonProperties = commonProperties;
-        this.serverKey = serverKey;
-        this.handler = handler;
-    }
-    
-    public TransportContext(TransportContext other){
-        this(other.getCommonProperties(), other.getServerKey(), other.getHandler());
-    }
+  private final TransportProperties commonProperties;
+  private final PublicKey serverKey;
+  private final MessageHandler handler;
 
-    public TransportProperties getCommonProperties() {
-        return commonProperties;
-    }
+  /**
+   * Create new instance of <code>TransportContext</code>.
+   *
+   * @param commonProperties contain properties
+   * @param serverKey is server key
+   * @param handler is handler
+   */
+  public TransportContext(
+          TransportProperties commonProperties,
+          PublicKey serverKey,
+          MessageHandler handler
+  ) {
+    super();
+    this.commonProperties = commonProperties;
+    this.serverKey = serverKey;
+    this.handler = handler;
+  }
 
-    /**
-     * Returns {@link PublicKey} that is used during the encoding/decoding 
-     * of the messages that are dispatched by this {@link Transport}.
-     * 
-     * @return the public key
-     */
-    public PublicKey getServerKey() {
-        return serverKey;
-    }
+  public TransportContext(TransportContext other) {
+    this(other.getCommonProperties(), other.getServerKey(), other.getHandler());
+  }
 
-    /**
-     * Returns {@link MessageHandler} for this {@link Transport}
-     * @return the message handler
-     */
-    public MessageHandler getHandler() {
-        return handler;
-    }
+  public TransportProperties getCommonProperties() {
+    return commonProperties;
+  }
+
+  /**
+   * Returns {@link PublicKey} that is used during the encoding/decoding
+   * of the messages that are dispatched by this {@link Transport}.
+   *
+   * @return the public key
+   */
+  public PublicKey getServerKey() {
+    return serverKey;
+  }
+
+  /**
+   * Returns {@link MessageHandler} for this {@link Transport}.
+   *
+   * @return the message handler
+   */
+  public MessageHandler getHandler() {
+    return handler;
+  }
 }

@@ -23,39 +23,42 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
  */
 public class TarEntryData {
 
-    /** The entry. */
-    private TarArchiveEntry entry;
-    
-    /** The data. */
-    byte[] data;
-    
-    /**
-     * Instantiates a new zip entry data.
-     *
-     * @param entry the entry
-     * @param data the data
-     */
-    public TarEntryData(TarArchiveEntry entry, byte[] data) {
-        this.entry = entry;
-        this.data = data;
-    }
-    
-    /**
-     * Gets the entry.
-     *
-     * @return the entry
-     */
-    public TarArchiveEntry getEntry() {
-        return entry;
-    }
+  /**
+   * The data.
+   */
+  byte[] data;
+  /**
+   * The entry.
+   */
+  private TarArchiveEntry entry;
 
-    /**
-     * Gets the data.
-     *
-     * @return the data
-     */
-    public byte[] getData() {
-        return data;
-    }
+  /**
+   * Instantiates a new zip entry data.
+   *
+   * @param entry the entry
+   * @param data  the data
+   */
+  public TarEntryData(TarArchiveEntry entry, byte[] data) {
+    this.entry = entry;
+    this.data = data;
+  }
+
+  /**
+   * Gets the entry.
+   *
+   * @return the entry
+   */
+  public TarArchiveEntry getEntry() {
+    return entry;
+  }
+
+  /**
+   * Gets the data.
+   *
+   * @return the data
+   */
+  public byte[] getData() {
+    return data;
+  }
 
 }
