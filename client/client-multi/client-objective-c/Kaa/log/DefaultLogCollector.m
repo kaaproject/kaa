@@ -31,7 +31,7 @@
             @try {
                 BucketInfo *bucketInfo = [weakSelf.storage addLogRecord:[[LogRecord alloc] initWithRecord:record]];
                 weakSelf.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
-                [weakSelf addDeliveryRunner:runner bucketInfo:bucketInfo];
+                [weakSelf addDeliveryRunner:runner byBucketInfoKey:@(bucketInfo.bucketId)];
             }
             @catch (NSException *exception) {
                 DDLogWarn(@"%@ Can't serialize log record: %@", TAG, record);

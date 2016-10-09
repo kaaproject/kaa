@@ -29,12 +29,17 @@
 #import "ExecutorContext.h"
 #import "MemLogStorage.h"
 #import "DefaultLogCollector.h"
+#import "KaaClient.h"
+#import "NSDate+Timestamp.h"
 
+
+#pragma mark - NoTimeoutLogCollector
 @interface NoTimeoutLogCollector : DefaultLogCollector
 
 - (void)checkDeliveryTimeoutForBucketId:(int32_t)bucketId;
 
 @end
+
 
 @implementation NoTimeoutLogCollector
 
@@ -45,6 +50,8 @@
 
 @end
 
+
+#pragma mark - TestLogStorageStatus
 @interface TestLogStorageStatus : NSObject <LogStorageStatus>
 
 @property (nonatomic) int64_t consumedVolume;
@@ -221,5 +228,5 @@
     [verifyCount(logTransport, times(maxParallelUploads)) sync];
 }
 
-
 @end
+
