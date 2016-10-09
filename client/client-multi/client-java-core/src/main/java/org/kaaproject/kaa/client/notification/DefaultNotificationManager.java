@@ -16,17 +16,6 @@
 
 package org.kaaproject.kaa.client.notification;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.kaaproject.kaa.client.channel.NotificationTransport;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
@@ -38,11 +27,21 @@ import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Default {@link NotificationManager} implementation.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public class DefaultNotificationManager implements NotificationManager, NotificationProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNotificationManager.class);
@@ -131,6 +130,12 @@ public class DefaultNotificationManager implements NotificationManager, Notifica
         List<Topic> topicList = new LinkedList<Topic>();
 
         synchronized (topics) {
+            for (Topic t : state.getTopics()) {
+                if (!topics.containsValue(t)) {
+                    topics.put(t.getId(), t);
+                }
+            }
+
             for (Topic topic : topics.values()) {
                 topicList.add(topic);
             }
