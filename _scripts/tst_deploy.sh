@@ -135,15 +135,18 @@ gather_docs_from_all_verions() {
 generate_jekyll_data() {
   mkdir -p _data
   echo_green "Generating config data"
-  printf "%s\nversion: %s \ndocs_root: %s" "---" "$1" "$DOCS_ROOT" > _data/config.yml
+  printf "%s\nversion: %s \ndocs_root: %s" "---" "$1" "$DOCS_ROOT" > _data/generated_config.yml
   echo_green "Generating menu data"
-  ruby scripts/create_global_toc.rb
+  ruby _scripts/create_global_toc.rb
+  ruby _scripts/generate_latest_structure.rb
 }
 
 # Commits generated data
 commit_jekyll_data() {
   git add _data/*
   git commit -m "Updated global toc and version"
+  git add $DOCS_ROOT/latest/*
+  git commit -m "Updated latest"
 }
 
 # Merges files frm $1 (should be latest version tag) into gh-pages branch
@@ -198,7 +201,7 @@ test_docs() {
   jekyll_root=test-gh-pages-$curr_tag
   latest=$curr_tag
   if [ ! -d $jekyll_root ]; then
-    echo "Generating directory structure"
+    echo_green "Generating directory structure"
     mkdir -p $jekyll_root
     cp -R gh-pages-stub/* $jekyll_root
     mkdir -p $jekyll_root/$DOCS_ROOT
