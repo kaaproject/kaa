@@ -45,7 +45,6 @@ sort_idx: 40
     - [REST log appender](#rest-log-appender)
     - [MongoDB log appender](#mongodb-log-appender)
     - [Flume log appender](#flume-log-appender)
-    - [CDAP log appender](#cdap-log-appender)
     - [Oracle NoSQL log appender](#oracle-nosql-log-appender)
     - [Cassandra log appender](#cassandra-log-appender)
     - [Kafka log appender](#kafka-log-appender)
@@ -71,7 +70,7 @@ This guide explains how to manage develop applications in Kaa Admin UI and how t
 
 This guide also explains how to use _Avro UI forms GWT Sandbox_, which is a testing environment for Avro UI forms.
 
-This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the [Installation guide]({{root_url}}Programming-guide/Getting-started/#installation) for more info.
+This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the [Installation guide]({{root_url}}Administration-guide/System-installation/) for more info.
 
 # First registration
 
@@ -138,7 +137,7 @@ To view another version of the system CT, click on the version drop-down and sel
 
 To create a new version of the system CT of the same FQN, click **Create new version** on the top of CT details.
 
-To export the system CT, click **Export** and select export method from drop-down. See [CT schema export support999](999) for available export methods details.
+To export the system CT, click **Export** and select export method from drop-down.
 
 To delete the system CT version, click **Delete** on the top of the CT details.
 
@@ -180,7 +179,7 @@ To edit the application, open the **Application details** window by clicking the
 
 ## Managing event class families
 
-To use the Kaa [events feature999](999) for one or more applications, the tenant admin should create an event class family (ECF). Each ECF should be described using the [Avro](http://avro.apache.org/docs/current/spec.html) format.
+To use the Kaa [events feature]({{root_url}}Programming-guide/Key-platform-features/Events) for one or more applications, the tenant admin should create an event class family (ECF). Each ECF should be described using the [Avro](http://avro.apache.org/docs/current/spec.html) format.
 
 To create a new ECF, do the following:
 
@@ -225,7 +224,7 @@ To view a CT, open the CT details window by clicking the row in the list in the 
 
 To view another version of the CT, click on the version drop-down and select the appropriate version.
 To create a new version of the tenant CT of the same FQN, click **Create new version** on the top of CT details.
-To export the CT, click Export and select export method from drop-down. See [CT schema export support999](999) for available export methods details.
+To export the CT, click Export and select export method from drop-down. See [CT schema export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export) for available export methods details.
 To delete the tenant CT version, click Delete on the top of the CT details.
 
 # Tenant developer
@@ -294,7 +293,7 @@ The list of client-side endpoint profile schemas created by a tenant developer f
 
 <img src="attach/View%20client-side%20endpoint%20profile%20schema.png" width="800" height="430">
 
-To export the client-side EP profile schema, click **Export** in the last column of desired schema row and select export method from drop-down. See [CT schema export support999](999) for available export methods details.
+To export the client-side EP profile schema, click **Export** in the last column of desired schema row and select export method from drop-down. See [CT schema export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export) for available export methods details.
 
 As a tenant developer, you can create new client-side EP schemas for the application as follows:
 
@@ -320,7 +319,7 @@ The list of server-side endpoint profile schemas created by a tenant developer f
 
 <img src="attach/Server-side%20endpoint%20profile%20schema.png" width="800" height="430">
 
-To export the server-side EP profile schema, click **Export** in the last column of desired schema row and select export method from drop-down. See [CT schema export support999](999) for available export methods details.
+To export the server-side EP profile schema, click **Export** in the last column of desired schema row and select export method from drop-down. See [CT schema export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export) for available export methods details.
 
 As a tenant developer, you can create new server-side EP schemas for the application as follows:
 
@@ -467,7 +466,7 @@ To add a profile filter to the endpoint group, do the following:
 
 1. In the **Endpoint group** window, click **Add profile filter**.
 2. In the **Profile filter** window, select the schema version.
-3. On the **Draft** tab, enter the description and [filter body999](999).
+3. On the **Draft** tab, enter the description and [filter body]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups/#profile-filters).
 
     <img src="attach/image2015-3-4%2019-32-55.png" width="600" height="500">
 
@@ -504,7 +503,7 @@ Now all the endpoints belonging to the current group will be subscribed to notif
 
 ## Adding event family mappings
 
-[Event family mappings999](999) are used by tenant developers to set event class families for the application and determine the actions for each class family - whether an application should be a source, a sink, or both.
+[Event family mappings]({{root_url}}Programming-guide/Key-platform-features/Events/#event-family-mapping) are used by tenant developers to set event class families for the application and determine the actions for each class family - whether an application should be a source, a sink, or both.
 
 To view the list of ECFs which are mapped to the application, open the **Event family mappings** window by clicking **Event family mappings** under the application on the navigation panel.
 
@@ -534,7 +533,7 @@ A tenant developer can set a log appender for a log schema depending on the data
 
 ### File log appender
 
-To create a log appender of the [file system storage type999](999), do the following:
+To create a log appender of the [file system storage type]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/), do the following:
 
 1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
@@ -558,7 +557,7 @@ To create a log appender for access via REST, do the following:
 
 ### MongoDB log appender
 
-To create a log appender of the [MongoDB storage type999](999), do the following:
+To create a log appender of the [MongoDB storage type]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/), do the following:
 
 1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
@@ -585,20 +584,8 @@ To create a log appender which will be integrated with Hadoop or Spark, do the f
     <img src="attach/image2015-3-5%2013-0-48.png" width="400" height="400">
 7. Click Add.
 
-### CDAP log appender
-
-To create a log appender which will be integrated with [CDAP999](999), do the following:
-
-1. In the **Log appenders** window, click **Add log appender**.
-2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to _Cdap_.
-4. Fill in the CDAP log appender configuration form.
-5. Click **Add**.
-
-    <img src="attach/image2015-3-5%2013-2-25.png" width="400" height="450">
-
 ### Oracle NoSQL log appender
-To create a log appender of the [Oracle NoSQL key/value storage type999](999), do the following:
+To create a log appender of the [Oracle NoSQL key/value storage type]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender), do the following:
 
 1. In the Log appenders window, click Add log appender.
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
@@ -609,7 +596,7 @@ To create a log appender of the [Oracle NoSQL key/value storage type999](999), d
     <img src="attach/image2015-3-5%2013-3-53.png" width="400" height="400">
 
 ### Cassandra log appender
-To create a log appender of the [Cassandra storage type999](999), do the following:
+To create a log appender of the [Cassandra storage type]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/), do the following:
 
 1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
@@ -620,7 +607,7 @@ To create a log appender of the [Cassandra storage type999](999), do the followi
     <img src="attach/image2015-3-26%2014-5-10.png" width="400" height="370">
 
 ### Kafka log appender
-To create a log appender of the [Kafka storage type999](999), do the following:
+To create a log appender of the [Kafka storage type]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender/), do the following:
 
 1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
@@ -632,7 +619,7 @@ To create a log appender of the [Kafka storage type999](999), do the following:
 
 ### Couchbase log appender
 
-To create a log appender of the [Couchbase storage type999](999), do the following:
+To create a log appender of the [Couchbase storage type]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Couchbase-log-appender/), do the following:
 
 1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
@@ -731,7 +718,7 @@ To view a CT, open the CT details window by clicking the row in the list in the 
 To view another version of the CT, click on the version drop-down and select the appropriate version.
 
 To create a new version of the application CT of the same FQN, click **Create new version** on the top of CT details.
-To export the CT, click **Export** and select export method from drop-down. See [CT schema export support999](999) for available export methods details.
+To export the CT, click **Export** and select export method from drop-down. See [CT schema export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export) for available export methods details.
 To delete the application CT version, click **Delete** on the top of the CT details.
 
 To promote the application CT from application to tenant scope, click **Promote**.
@@ -852,6 +839,6 @@ If the Avro schema is added in the JSON format rather than via GUI, the followin
 *   optional - defines whether the field on UI is optional or mandatory
 *   weight - defines a relative width of the corresponding column on UI (only for arrays in the schema)
 *   keyIndex - defines the order in which the fields of a record are displayed in a row (only for arrays of records in the schema; integer; if this parameter is defined selectively for specific fields of the record, the other fields of the record will not be displayed)
-*   overrideStrategy - defines [how to merge arrays in the configuration across the endpoint groups999](999) (only for arrays in the schema; accepted values are "replace" and "append"; "replace" by default)
+*   overrideStrategy - defines [how to merge arrays in the configuration across the endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/#override-algorithm) (only for arrays in the schema; accepted values are "replace" and "append"; "replace" by default)
 *   fieldAccess - defines the viewing and editing restrictions for the field (accepted values are "read_only", "editable" and "hidden"; "editable" by default)
 *   inputType - defines whether the characters will be masked or not when the user enters the field value (accepted values are "password" and "plain"; "plain" by default)
