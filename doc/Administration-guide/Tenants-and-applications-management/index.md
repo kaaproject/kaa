@@ -145,7 +145,7 @@ To delete the system CT version, click **Delete** on the top of the CT details.
 ## Managing Tenants
 
 The Kaa IoT platform supports Multi-tenant architecture. It allows _Kaa admin_ to create separate scope for each instance of Tenant.
-Unlike _Kaa admin_, entities like _Tenant Admin_ and _Tenant Developer_ can be visible only in the scope of single Tenant.
+Unlike _Kaa admin_, entities _Tenant Admin_ and _Tenant Developer_ can be visible only in the scope of single Tenant.
 For more information about Multitenancy, check related description on [wiki]( https://en.wikipedia.org/wiki/Multitenancy ).
 
 "_Need image that describes Kaa multi-tenant architecture_"
