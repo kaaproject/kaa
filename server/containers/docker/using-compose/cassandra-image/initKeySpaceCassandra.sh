@@ -27,7 +27,7 @@ waitForCassandra() {
     local I=0
     until [ ! $SERVICES_WAIT_TIMEOUT -lt 0 ] && [ $I -gt $SERVICES_WAIT_TIMEOUT ]; do
         echo "Waiting for Cassandra 127.0.0.1:9042"
-        isCassandraReachable && cqlsh -f cassandra.cql && return 0;
+        isCassandraReachable && cqlsh -f cassandra.cql && echo "Cassandra is reachable" > initCassandra.log && return 0;
         sleep 1;
         let I=I+1;
     done;
@@ -36,4 +36,9 @@ waitForCassandra() {
     exit 1;
 }
 
-waitForCassandra
+if [ ! -f initCassandra.log ]; then
+    touch initCassandra.log
+fi
+if [ ! -s initCassandra.log ]; then
+    waitForCassandra
+fi
