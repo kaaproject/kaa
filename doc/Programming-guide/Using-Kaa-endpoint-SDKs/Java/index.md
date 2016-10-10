@@ -167,9 +167,9 @@ However, you can specify a different folder using `KaaClientProperties`.
 To do this, set the path to the new folder using the `setWorkingDirectory()` method and then pass the client properties instance as an argument of the `DesktopKaaPlatformContext` constructor.
 
 
-## Comparing platforms
+## Platform comparison
 
-The only difference between the Android client and the Java desktop client is the implementaion of the `KaaPlatformContext` class.
+The only difference between the Android client and the Java desktop client is the implementation of the `KaaPlatformContext` class.
 See the table below for comparison between the desktop and Android clients.
 
 |Method|Desktop|Android| Description |
@@ -180,7 +180,7 @@ See the table below for comparison between the desktop and Android clients.
 |`createConnectivityChecker`|  Same  |  Same | Checks network connection.|
 |`getExecutorContext`| Same  | Same  | Creates instances of the `ExecutorService` class for SDK internal usage.|
 |`getProperties`| Same  | Same  | Returns `KaaClientProperties` that contains important information about the client SDK.|
-|`needToCheckClientState`| Returns **true**  | Returns **false** | Set off/on to check feasibility of the transition between lifecycle states.|
+|`needToCheckClientState`| Returns **true**  | Returns **false** | Set off/on to check feasibility of the transition between the life sycle states.|
 
 
 
