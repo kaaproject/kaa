@@ -16,7 +16,7 @@
 
 version: '2'
 services:
-  mariadb_sql:
+  sql:
     image: mariadb:5.5
     networks:
       - back-tier
@@ -29,18 +29,18 @@ services:
       - back-tier
     volumes:
       - zookeeper-data:/tmp/zookeeper
-  cassandra_nosql:
+  nosql:
     image: cassandra:3.7
     networks:
       - back-tier
     volumes:
       - nosql-data:/data/db
-      - ./../../using-compose/cassandra-image/cassandra.cql:/cassandra.cql
+      - ./../../../../../server/common/nosql/cassandra-dao/src/main/resources/cassandra.cql:/cassandra.cql
       - ./../../using-compose/cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh
-    command: bash -c "/initKeySpaceCassandra.sh"
+    command: bash -c "/docker-entrypoint.sh cassandra -f & /initKeySpaceCassandra.sh"
   kaa_0:
     image: kaa-node:0.10.0
-    env_file: ../../using-compose/kaa-example.env
+    env_file: ../kaa-example.env
     environment:
       - SQL_PROVIDER_NAME=mariadb
       - NOSQL_PROVIDER_NAME=cassandra
@@ -51,8 +51,8 @@ services:
       - OPERATIONS_TCP=10097
       - OPERATIONS_HTTP=10099
     depends_on:
-      - mariadb_sql
-      - cassandra_nosql
+      - sql
+      - nosql
       - zookeeper
     networks:
       - back-tier

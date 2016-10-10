@@ -16,7 +16,7 @@
 
 version: '2'
 services:
-  mariadb_sql:
+  sql:
     image: mariadb:5.5
     networks:
       - back-tier
@@ -29,7 +29,7 @@ services:
       - back-tier
     volumes:
       - zookeeper-data:/tmp/zookeeper
-  mongo_nosql:
+  nosql:
     image: mongo:3.2
     networks:
       - back-tier
@@ -37,7 +37,7 @@ services:
       - nosql-data:/data/db
   kaa_0:
     image: kaa-node:0.10.0
-    env_file: ../../using-compose/kaa-example.env
+    env_file: ../kaa-example.env
     environment:
       - SQL_PROVIDER_NAME=mariadb
       - NOSQL_PROVIDER_NAME=mongodb
@@ -48,8 +48,8 @@ services:
       - OPERATIONS_TCP=10097
       - OPERATIONS_HTTP=10099
     depends_on:
-      - mariadb_sql
-      - mongo_nosql
+      - sql
+      - nosql
       - zookeeper
     networks:
       - back-tier

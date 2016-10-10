@@ -48,6 +48,9 @@ kaaNodeNames = [];
 
 NGINX_TEMPLATE = '        server {{PROXY_HOST_KAA}}:{{PROXY_PORT}};'
 
+cassandraInitScriptLocation = '      - ./../../../../server/common/nosql/cassandra-dao/src/main/resources/cassandra.cql:/cassandra.cql';
+cassandraWaitScriptLoc = '      - ./cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh';
+commandEntrypointCassandra = '    command: bash -c \"/initKeySpaceCassandra.sh & /docker-entrypoint.sh cassandra -f\"';
 
 def getExternalHostLinuxMacOs() :
     try:
@@ -94,24 +97,24 @@ def getInputedVariationsDataBases() :
         sys.exit();
 
 
-def configureThirdPartyComponents(fileName, template) :
+def configureThirdPartyComponents(newFile, template) :
     sql_nosql = getInputedVariationsDataBases().split("-");
     with open(template, 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
         if " sql:" in data[i]:
-            data[i]=("  "+sql_nosql[0]+"_sql:"+"\n");
+            data[i]=("  "+getInputedVariationsDataBases()+"_sql:"+"\n");
             data[i+1]="    image: "+dockerImages[sql_nosql[0]]+"\n";
         if " nosql:" in data[i]:
-            data[i]=("  "+sql_nosql[1]+"_nosql:"+"\n");
+            data[i]=("  "+getInputedVariationsDataBases()+"_nosql:"+"\n");
             data[i+1]="    image: "+dockerImages[sql_nosql[1]]+"\n";
         if "env_file" in data[i]:
             data[i]="    env_file: "+sql_nosql[0]+"-sql-example.env\n"
-        if ("- nosql-data" in data[i]) & (sql_nosql[1]=="cassandra"):
-            data.insert(i+1, "      - ./cassandra-image/cassandra.cql:/cassandra.cql\n");
-            data.insert(i+2, "      - ./cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh\n");
-            data.insert(i+3, "    command: bash -c \"/initKeySpaceCassandra.sh\"\n");
-    with open(fileName, 'w+') as fout:
+        if (sql_nosql[1]=="cassandra") & ("- nosql-data" in data[i]):
+            data.insert(i+1, (cassandraInitScriptLocation+"\n"));
+            data.insert(i+2, (cassandraWaitScriptLoc+"\n"));
+            data.insert(i+3, (commandEntrypointCassandra+"\n"));
+    with open(newFile, 'w+') as fout:
         fout.write(''.join(data));
     return;
 
@@ -181,19 +184,23 @@ def insertInFile(file, index, value) :
     f.close();
 
 
-def setTransportPublicInterfaceAndSqlDataBase() :
+def configureKaaEnvFile(newFile, templateFileName) :
     sql_nosql = getInputedVariationsDataBases().split("-");
-    with open('kaa-example.env', 'r') as file:
+    with open(templateFileName, 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
         if 'JDBC_HOST' in data[i]:
-            data[i]=("JDBC_HOST="+sql_nosql[0]+"_sql"+"\n");
+            data[i]=str.replace(data[i], '{{sql}}', getInputedVariationsDataBases()+"_sql");
+        if sql_nosql[1] == 'cassandra':
+            data[i]=str.replace(data[i], '{{cassandra_nosql}}', getInputedVariationsDataBases()+"_nosql");
+        elif sql_nosql[1] == 'mongodb':
+            data[i]=str.replace(data[i], '{{mongo_nosql}}', getInputedVariationsDataBases()+"_nosql");
         if 'TRANSPORT_PUBLIC_INTERFACE' in data[i]:
             if platform.system() == 'Windows':
                 data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getExternalHostWindows())+'\n'
             else:
                 data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getExternalHostLinuxMacOs())+'\n'
-    with open('kaa-example.env', 'w') as fout:
+    with open(newFile, 'w+') as fout:
         fout.write(''.join(data));
 
 
@@ -251,7 +258,7 @@ def removeAvailableContainers() :
 
 stopRunningContainers();
 configureThirdPartyComponents('third-party-docker-compose.yml', 'third-party-docker-compose.yml.template');
-setTransportPublicInterfaceAndSqlDataBase();
+configureKaaEnvFile('kaa-example.env', 'kaa-example.env.template');
 print ('TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs()));
 
 subprocess.call("docker-compose -f third-party-docker-compose.yml up -d", shell=True);

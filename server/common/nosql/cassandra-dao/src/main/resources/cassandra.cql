@@ -1,5 +1,4 @@
-DROP KEYSPACE IF EXISTS kaa;
-CREATE KEYSPACE kaa WITH replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+CREATE KEYSPACE IF NOT EXISTS kaa WITH replication = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 
 CREATE TYPE IF NOT EXISTS kaa.ecf_ver_state (
     ecf_id text,

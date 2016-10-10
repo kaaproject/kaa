@@ -21,4 +21,4 @@ waitForCassandra() {
     exit 1;
 }
 
-. /docker-entrypoint.sh cassandra -f & waitForCassandra
+waitForCassandra
