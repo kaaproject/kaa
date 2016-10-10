@@ -18,12 +18,12 @@
 version: '2'
 services:
   sql:
-    image: mariadb:5.5
+    image:
     networks:
       - back-tier
     volumes:
       - sql-data:/var/lib/sql
-    env_file: mariadb-sql-example.env
+    env_file:
   zookeeper:
     image: jplock/zookeeper:3.4.8
     networks:
@@ -31,7 +31,7 @@ services:
     volumes:
       - zookeeper-data:/tmp/zookeeper
   nosql:
-    image: mongo:3.2
+    image:
     networks:
       - back-tier
     volumes:

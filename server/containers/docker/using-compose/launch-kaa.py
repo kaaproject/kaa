@@ -19,7 +19,7 @@ import sys
 import platform
 from subprocess import check_output, CalledProcessError
 
-variationsOfdatabases = ['mariadb-mongodb', 'mariadb-cassandra', 'postgresql-mongodb', 'postgresql-cassandra'];
+variationsOfDatabases = ['mariadb-mongodb', 'mariadb-cassandra', 'postgresql-mongodb', 'postgresql-cassandra'];
 
 DEFAULT_IMAGE_MARIADB="mariadb:5.5";
 DEFAULT_IMAGE_POSTGRESQL="postgres:9.4";
@@ -48,6 +48,9 @@ kaaNodeNames = [];
 
 NGINX_TEMPLATE = '        server {{PROXY_HOST_KAA}}:{{PROXY_PORT}};'
 
+cassandraInitScriptLocation = '      - ./../../../../server/common/nosql/cassandra-dao/src/main/resources/cassandra.cql:/cassandra.cql';
+cassandraWaitScriptLoc = '      - ./cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh';
+commandEntrypointCassandra = '    command: bash -c \"/initKeySpaceCassandra.sh & /docker-entrypoint.sh cassandra -f\"';
 
 def getExternalHostLinuxMacOs() :
     try:
@@ -83,29 +86,35 @@ def getstatusoutput(cmd):
 def getInputedVariationsDataBases() :
     isValid = False;
     try:
-        for i in range(0, len(variationsOfdatabases)):
-            if sys.argv[1] == variationsOfdatabases[i]:
+        for i in range(0, len(variationsOfDatabases)):
+            if sys.argv[1] == variationsOfDatabases[i]:
                 isValid = True;
-                return variationsOfdatabases[i];
+                return variationsOfDatabases[i];
         if isValid == False:
             sys.exit();
     except:
-        print ("Please choose correct variation of SQL and NoSQL databases \n"+str(variationsOfdatabases));
+        print ("Please choose correct variation of SQL and NoSQL databases \n"+str(variationsOfDatabases));
         sys.exit();
 
 
-def configureThirdPartyComponents(fileName) :
+def configureThirdPartyComponents(newFile, template) :
     sql_nosql = getInputedVariationsDataBases().split("-");
-    with open(fileName, 'r') as file:
+    with open(template, 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
         if " sql:" in data[i]:
+            data[i]=("  "+getInputedVariationsDataBases()+"_sql:"+"\n");
             data[i+1]="    image: "+dockerImages[sql_nosql[0]]+"\n";
         if " nosql:" in data[i]:
+            data[i]=("  "+getInputedVariationsDataBases()+"_nosql:"+"\n");
             data[i+1]="    image: "+dockerImages[sql_nosql[1]]+"\n";
         if "env_file" in data[i]:
             data[i]="    env_file: "+sql_nosql[0]+"-sql-example.env\n"
-    with open(fileName, 'w') as fout:
+        if (sql_nosql[1]=="cassandra") & ("- nosql-data" in data[i]):
+            data.insert(i+1, (cassandraInitScriptLocation+"\n"));
+            data.insert(i+2, (cassandraWaitScriptLoc+"\n"));
+            data.insert(i+3, (commandEntrypointCassandra+"\n"));
+    with open(newFile, 'w+') as fout:
         fout.write(''.join(data));
     return;
 
@@ -175,16 +184,23 @@ def insertInFile(file, index, value) :
     f.close();
 
 
-def setTransportPublicInterface() :
-    with open('kaa-example.env', 'r') as file:
+def configureKaaEnvFile(newFile, templateFileName) :
+    sql_nosql = getInputedVariationsDataBases().split("-");
+    with open(templateFileName, 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
+        if 'JDBC_HOST' in data[i]:
+            data[i]=str.replace(data[i], '{{sql}}', getInputedVariationsDataBases()+"_sql");
+        if sql_nosql[1] == 'cassandra':
+            data[i]=str.replace(data[i], '{{cassandra_nosql}}', getInputedVariationsDataBases()+"_nosql");
+        elif sql_nosql[1] == 'mongodb':
+            data[i]=str.replace(data[i], '{{mongo_nosql}}', getInputedVariationsDataBases()+"_nosql");
         if 'TRANSPORT_PUBLIC_INTERFACE' in data[i]:
             if platform.system() == 'Windows':
                 data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getExternalHostWindows())+'\n'
             else:
                 data[i] = 'TRANSPORT_PUBLIC_INTERFACE='+str(getExternalHostLinuxMacOs())+'\n'
-    with open('kaa-example.env', 'w') as fout:
+    with open(newFile, 'w+') as fout:
         fout.write(''.join(data));
 
 
@@ -225,6 +241,7 @@ def configureConfFileNginx(strConf, proxyHost, proxyPort) :
 
 
 def stopRunningContainers() :
+    print ('Stopping all docker containers');
     runningContainers = getstatusoutput('docker ps -q')[1];
     if runningContainers != '':
         subprocess.call('docker stop $(docker ps -q)', shell=True);
@@ -232,6 +249,7 @@ def stopRunningContainers() :
 
 
 def removeAvailableContainers() :
+    print ('Removing all docker containers');
     availableContainers = getstatusoutput('docker ps -a -q')[1];
     if availableContainers != '':
         subprocess.call('docker rm $(docker ps -a -q)', shell=True);
@@ -239,8 +257,8 @@ def removeAvailableContainers() :
 
 
 stopRunningContainers();
-configureThirdPartyComponents('third-party-docker-compose.yml');
-setTransportPublicInterface();
+configureThirdPartyComponents('third-party-docker-compose.yml', 'third-party-docker-compose.yml.template');
+configureKaaEnvFile('kaa-example.env', 'kaa-example.env.template');
 print ('TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs()));
 
 subprocess.call("docker-compose -f third-party-docker-compose.yml up -d", shell=True);
