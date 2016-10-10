@@ -37,14 +37,14 @@
 #define KAA_PRIVATE_KEY_STORAGE "private.key"
 #define KAA_PUBLIC_KEY_STORAGE "public.key"
 
+#define KAA_RSA_PUBLIC_KEY_LENGTH_MAX  294
+#define KAA_SHA1_PUB_LEN               20
+#define KAA_SHA1_PUB_BASE64_LEN        28
+
 static mbedtls_pk_context pk_pub_context;
 #else
 #include <gen/kaa_keys_gen.h>
 #endif /* KAA_RUNTIME_KEY_GENERATION */
-
-#define KAA_RSA_PUBLIC_KEY_LENGTH_MAX  294
-#define KAA_SHA1_PUB_LEN               20
-#define KAA_SHA1_PUB_BASE64_LEN        28
 
 
 mbedtls_pk_context kaa_pk_context_;
@@ -140,7 +140,8 @@ kaa_error_t ext_get_sha1_base64_public(const uint8_t **sha1, size_t *length)
         return KAA_ERR_BADPARAM;
     }
     static size_t sha1_base64_len = 0;
-    static uint8_t sha1_base64_buffer[KAA_SHA1_PUB_BASE64_LEN];
+    /* Additional byte for NULL terminator */
+    static uint8_t sha1_base64_buffer[KAA_SHA1_PUB_BASE64_LEN + 1];
     static int initialized = false;
     if (!initialized) {
         uint8_t pub_key[KAA_RSA_PUBLIC_KEY_LENGTH_MAX];
