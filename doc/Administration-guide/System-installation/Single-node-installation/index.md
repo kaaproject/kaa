@@ -15,12 +15,6 @@ This guide describes how to install and configure your Kaa components on a singl
 If this is the first time you use Kaa or you are not sure if you can manually install the node, use [Kaa Sandbox]({{root_url}}Getting-started/#kaa-sandbox).
 Kaa Sandbox emulates a single-node Kaa installation which comes already pre-configured so you can start developing your applications right away.
 
->**NOTE:** This guide is verified against:
->
-> * Ubuntu 14.04 LTS Desktop 64-bit
-> * Ubuntu 16.04 LTS Desktop 64-bit
-> * CentOS 6.7 64-bit
-{:.note}
 
 ## Prerequisites
 
@@ -29,12 +23,19 @@ Kaa supports the following operating system families and provides installation p
 * Ubuntu and Debian systems
 * Red Hat/CentOS/Oracle 5 or Red Hat 6 systems
 
-To use Kaa, your system must meet the following minimum system requirements:
+>**NOTE:** This guide is verified against:
+>
+> * Ubuntu 14.04 LTS Desktop 64-bit
+> * Ubuntu 16.04 LTS Desktop 64-bit
+> * CentOS 6.7 64-bit
+{:.note}
+
+To use Kaa, your system must meet the following minimum requirements:
 
 * 64-bit OS
 * 4 Gb RAM
 
-Kaa requires the following third party components to be installed and configured:
+Kaa requires the following third-party components to be installed and configured:
 
 * [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 * [PostgreSQL 9.4](http://www.postgresql.org/download/)
@@ -49,9 +50,9 @@ Installation of the third-party components is described in the next section.
 
 ## Installation
 
-### Third party components
+### Third-party components
 
-Follow the instructions below to install the required third party components.
+Follow the instructions below to install the required third-party components.
 
 <ul class="nav nav-tabs">
 	<li class="active"><a data-toggle="tab" href="#Ubuntu">Ubuntu 14.04/16.04</a></li>
