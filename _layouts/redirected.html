@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% include variables.md %}
+{% if page.redirect_to == "$HOME" %}
+	{% capture redirect_url %}{{ home_url }}{% endcapture %}
+{% elsif page.redirect_to == "$LATEST" %}
+	{% capture redirect_url %}{{ site.baseurl }}{{ page.url | replace_first: 'latest', latest_version }}{% endcapture %}
+{% else %}
+	{% capture redirect_url %}{{ root_url }}{{ page.redirect_to }}{% endcapture %}
+{% endif %}
+<link rel="canonical" href="{{ redirect_url }}"/>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="refresh" content="0;url={{ redirect_url }}" />
+</head>
+<body>
+    <h1>Redirecting...</h1>
+      <a href="{{ redirect_url }}">Click here if you are not redirected.<a>
+      <script>location='{{ redirect_url }}'</script>
+</body>
+</html>
