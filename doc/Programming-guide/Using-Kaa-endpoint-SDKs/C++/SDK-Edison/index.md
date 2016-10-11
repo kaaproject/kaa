@@ -111,6 +111,7 @@ This way we get object files `.o` and shared object files `.so` that are require
 
         mkdir edison_root && cd edison_root
         export EDISON_ROOT=$(pwd)
+        export HOST_PYTHON=$(which python)
 
    Download Cross Compiler Toolchain for Intel [32-bit](https://downloadmirror.intel.com/24472/eng/toolchain-20140724-linux32.sh) or [64-bit](https://downloadmirror.intel.com/24472/eng/toolchain-20140724-linux64.sh) depending on your system architecture.
    Change the access permissions and run `toolchain-20140724-linux*.sh` script:
@@ -178,7 +179,7 @@ This way we get object files `.o` and shared object files `.so` that are require
         wget http://botan.randombit.net/releases/Botan-1.11.27.tgz
         tar -xvzf Botan-1.11.27.tgz
         cd Botan-1.11.27
-        /usr/bin/python -E configure.py --cpu=x86_32 --cc-bin=${CROSS_COMPILE}g++ --prefix=${SDKTARGETSYSROOT}/usr
+        ${HOST_PYTHON} -E configure.py --cpu=x86_32 --cc-bin=${CROSS_COMPILE}g++ --prefix=${SDKTARGETSYSROOT}/usr
         make && make install
         ln -rs ${SDKTARGETSYSROOT}/usr/include/botan-1.11/botan ${SDKTARGETSYSROOT}/usr/include/botan
         
