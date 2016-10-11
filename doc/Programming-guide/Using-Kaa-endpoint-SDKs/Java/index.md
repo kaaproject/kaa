@@ -174,9 +174,9 @@ See the table below for comparison between the desktop and Android clients.
 
 |Method|Desktop|Android| Description |
 |---|---|---|
-|`createHttpClient`| Same | Same  | `HttpClient` is used to respond to the server over HTTP `KaaDataChannel`.|
+|`createHttpClient`| Same | Same  | Creates an HTTP client that is used in HTTP Kaa data channel to send responses to the server.|
 |`createPersistentStorage`|  Uses file storage | Uses Android internal storage | Persists the client state.|
-|`getBase64`|  Uses Apache Base64 |  Uses Android Base64 | Encode/decodes data, e.g. an endpoint key hash.|
+|`getBase64`|  Uses Apache Base64 |  Uses Android Base64 | Encodes/decodes data to be sent over network without losses, e.g. an endpoint key hash.|
 |`createConnectivityChecker`|  Same  |  Same | Checks network connection.|
 |`getExecutorContext`| Same  | Same  | Creates instances of the `ExecutorService` class for SDK internal usage.|
 |`getProperties`| Same  | Same  | Returns `KaaClientProperties` that contains important information about the client SDK.|
