@@ -1,0 +1,14 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/IKaaChannelManager.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/IKaaChannelManager.hpp">
+<area shape="rect" id="node4" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="900,124,1099,151"/>
+<area shape="rect" id="node17" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="1327,199,1546,240"/>
+<area shape="rect" id="node20" href="$IConnectivityChecker_8hpp.html" title="kaa/channel/connectivity\l/IConnectivityChecker.hpp" alt="" coords="1131,199,1303,240"/>
+<area shape="rect" id="node21" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="1419,124,1627,151"/>
+<area shape="rect" id="node7" href="$IFailoverStrategy_8hpp.html" title="kaa/failover/IFailoverStrategy.hpp" alt="" coords="893,206,1106,233"/>
+<area shape="rect" id="node11" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="1541,295,1727,322"/>
+<area shape="rect" id="node12" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="5,295,212,322"/>
+<area shape="rect" id="node13" href="$ChannelDirection_8hpp.html" title="kaa/channel/ChannelDirection.hpp" alt="" coords="237,295,455,322"/>
+<area shape="rect" id="node14" href="$IKaaDataMultiplexer_8hpp.html" title="kaa/channel/IKaaDataMultiplexer.hpp" alt="" coords="255,206,491,233"/>
+<area shape="rect" id="node16" href="$IKaaDataDemultiplexer_8hpp.html" title="kaa/channel/IKaaDataDemultiplexer.hpp" alt="" coords="616,206,868,233"/>
+<area shape="rect" id="node9" href="$FailoverCommon_8hpp.html" title="kaa/failover/FailoverCommon.hpp" alt="" coords="887,295,1101,322"/>
+<area shape="rect" id="node18" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="1319,288,1517,329"/>
+</map>

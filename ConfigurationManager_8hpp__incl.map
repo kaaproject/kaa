@@ -1,0 +1,18 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/configuration/manager/ConfigurationManager.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/configuration/manager/ConfigurationManager.hpp">
+<area shape="rect" id="node2" href="$KaaObservable_8hpp.html" title="kaa/observer/KaaObservable.hpp" alt="" coords="409,131,619,158"/>
+<area shape="rect" id="node27" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="1888,303,2095,329"/>
+<area shape="rect" id="node29" href="$IConfigurationProcessor_8hpp.html" title="kaa/configuration/IConfiguration\lProcessor.hpp" alt="" coords="910,213,1113,255"/>
+<area shape="rect" id="node30" href="$IConfigurationManager_8hpp.html" title="kaa/configuration/manager\l/IConfigurationManager.hpp" alt="" coords="1418,124,1597,165"/>
+<area shape="rect" id="node33" href="$IConfigurationHashContainer_8hpp.html" title="kaa/configuration/IConfiguration\lHashContainer.hpp" alt="" coords="1254,213,1457,255"/>
+<area shape="rect" id="node34" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="1791,221,1965,247"/>
+<area shape="rect" id="node8" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="51,221,185,247"/>
+<area shape="rect" id="node26" href="$Log_8hpp.html" title="kaa/logging/Log.hpp" alt="" coords="499,221,636,247"/>
+<area shape="rect" id="node9" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="643,303,785,329"/>
+<area shape="rect" id="node15" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="825,377,1014,419"/>
+<area shape="rect" id="node19" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="1238,377,1457,419"/>
+<area shape="rect" id="node20" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="1453,474,1639,501"/>
+<area shape="rect" id="node21" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="1231,467,1429,508"/>
+<area shape="rect" id="node31" href="$IConfigurationStorage_8hpp.html" title="kaa/configuration/storage\l/IConfigurationStorage.hpp" alt="" coords="1039,377,1213,419"/>
+<area shape="rect" id="node35" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="1661,303,1863,329"/>
+<area shape="rect" id="node36" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="1633,385,1841,411"/>
+</map>

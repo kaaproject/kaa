@@ -1,0 +1,30 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/KaaThread.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/KaaThread.hpp">
+<area shape="rect" id="node2" href="$BootstrapManager_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/bootstrap\l/BootstrapManager.hpp" alt="" coords="1370,235,1534,306"/>
+<area shape="rect" id="node3" href="$KaaTimer_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/utils\l/KaaTimer.hpp" alt="" coords="1583,109,1718,180"/>
+<area shape="rect" id="node4" href="$DefaultOperationTcpChannel_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/channel\l/impl/DefaultOperationTcpChannel.hpp" alt="" coords="1754,235,1998,306"/>
+<area shape="rect" id="node6" href="$KaaChannelManager_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/channel\l/KaaChannelManager.hpp" alt="" coords="1559,235,1729,306"/>
+<area shape="rect" id="node7" href="$LogCollector_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/LogCollector.hpp" alt="" coords="2022,243,2250,299"/>
+<area shape="rect" id="node8" href="$AbstractHttpChannel_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/channel\l/impl/AbstractHttpChannel.hpp" alt="" coords="176,235,373,306"/>
+<area shape="rect" id="node11" href="$HttpClient_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/http\l/HttpClient.hpp" alt="" coords="455,109,590,180"/>
+<area shape="rect" id="node12" href="$DefaultOperationLongPollChannel_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/channel\l/impl/DefaultOperationLongPoll\lChannel.hpp" alt="" coords="422,228,623,313"/>
+<area shape="rect" id="node13" href="$ClientStatus_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/ClientStatus.hpp" alt="" coords="648,243,853,299"/>
+<area shape="rect" id="node15" href="$KaaObservable_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/observer\l/KaaObservable.hpp" alt="" coords="782,109,941,180"/>
+<area shape="rect" id="node17" href="$NotificationManager_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/notification\l/NotificationManager.hpp" alt="" coords="928,235,1101,306"/>
+<area shape="rect" id="node18" href="$AbstractExecutorContext_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/context\l/AbstractExecutorContext.hpp" alt="" coords="2275,235,2467,306"/>
+<area shape="rect" id="node23" href="$ThreadPool_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/utils\l/ThreadPool.hpp" alt="" coords="1845,109,1979,180"/>
+<area shape="rect" id="node24" href="$EventManager_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/event\l/EventManager.hpp" alt="" coords="1151,235,1294,306"/>
+<area shape="rect" id="node25" href="$EventTransport_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/event\l/EventTransport.hpp" alt="" coords="1017,109,1159,180"/>
+<area shape="rect" id="node26" href="$AbstractTransactable_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/transact\l/AbstractTransactable.hpp" alt="" coords="1183,109,1355,180"/>
+<area shape="rect" id="node27" href="$EndpointRegistrationManager_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/event\l/registration/EndpointRegistration\lManager.hpp" alt="" coords="1260,361,1471,447"/>
+<area shape="rect" id="node28" href="$MemoryLogStorage_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/MemoryLog\lStorage.hpp" alt="" coords="2054,109,2253,180"/>
+<area shape="rect" id="node29" href="$SQLiteDBLogStorage_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/SQLiteDBLog\lStorage.hpp" alt="" coords="2276,109,2487,180"/>
+<area shape="rect" id="node5" href="$KaaClient_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/KaaClient.hpp" alt="" coords="925,502,1115,558"/>
+<area shape="rect" id="node9" href="$DefaultBootstrapChannel_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/channel\l/impl/DefaultBootstrapChannel.hpp" alt="" coords="5,369,227,439"/>
+<area shape="rect" id="node10" href="$DefaultOperationHttpChannel_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/channel\l/impl/DefaultOperationHttpChannel.hpp" alt="" coords="251,369,498,439"/>
+<area shape="rect" id="node14" href="$KaaClientContext_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/KaaClientContext.hpp" alt="" coords="623,376,857,432"/>
+<area shape="rect" id="node16" href="$ConfigurationManager_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/configuration\l/manager/ConfigurationManager.hpp" alt="" coords="905,369,1135,439"/>
+<area shape="rect" id="node19" href="$SimpleExecutorContext_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/context\l/SimpleExecutorContext.hpp" alt="" coords="2165,369,2349,439"/>
+<area shape="rect" id="node22" href="$SingleThreadExecutorContext_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/context\l/SingleThreadExecutorContext.hpp" alt="" coords="2374,369,2594,439"/>
+<area shape="rect" id="node20" href="$KaaClientPlatformContext_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/KaaClientPlatform\lContext.hpp" alt="" coords="2149,495,2365,565"/>
+<area shape="rect" id="node21" href="$Kaa_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/Kaa.hpp" alt="" coords="2178,613,2337,669"/>
+</map>

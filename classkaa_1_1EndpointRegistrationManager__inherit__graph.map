@@ -1,0 +1,4 @@
+<map id="kaa::EndpointRegistrationManager" name="kaa::EndpointRegistrationManager">
+<area shape="rect" id="node2" href="$classkaa_1_1IEndpointRegistrationManager.html" title="The interface to a module which associates endpoints with users. " alt="" coords="5,5,176,47"/>
+<area shape="rect" id="node3" href="$classkaa_1_1IRegistrationProcessor.html" title="kaa::IRegistrationProcessor" alt="" coords="200,13,379,39"/>
+</map>

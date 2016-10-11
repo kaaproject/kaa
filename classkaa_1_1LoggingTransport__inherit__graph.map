@@ -1,0 +1,5 @@
+<map id="kaa::LoggingTransport" name="kaa::LoggingTransport">
+<area shape="rect" id="node2" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\l\&lt; TransportType::LOGGING \&gt;" alt="" coords="5,80,197,121"/>
+<area shape="rect" id="node3" href="$classkaa_1_1IKaaTransport.html" title="kaa::IKaaTransport" alt="" coords="36,5,167,32"/>
+<area shape="rect" id="node4" href="$classkaa_1_1ILoggingTransport.html" title="kaa::ILoggingTransport" alt="" coords="221,87,373,114"/>
+</map>

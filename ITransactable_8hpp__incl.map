@@ -1,0 +1,13 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/transact/ITransactable.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/transact/ITransactable.hpp">
+<area shape="rect" id="node2" href="$TransactionId_8hpp.html" title="kaa/transact/Transaction\lId.hpp" alt="" coords="698,124,862,165"/>
+<area shape="rect" id="node25" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="1219,288,1394,315"/>
+<area shape="rect" id="node3" href="$UuidGenerator_8hpp.html" title="kaa/common/UuidGenerator.hpp" alt="" coords="516,213,724,240"/>
+<area shape="rect" id="node4" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="867,288,1008,315"/>
+<area shape="rect" id="node10" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="924,452,1113,493"/>
+<area shape="rect" id="node15" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="591,363,809,404"/>
+<area shape="rect" id="node17" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="1482,541,1667,568"/>
+<area shape="rect" id="node18" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="601,452,799,493"/>
+<area shape="rect" id="node26" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="1203,370,1410,397"/>
+<area shape="rect" id="node28" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="1435,370,1637,397"/>
+<area shape="rect" id="node29" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="1529,459,1737,486"/>
+</map>

@@ -1,0 +1,29 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/AbstractHttpChannel.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/AbstractHttpChannel.hpp">
+<area shape="rect" id="node2" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="1334,399,1475,426"/>
+<area shape="rect" id="node11" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="934,481,1153,523"/>
+<area shape="rect" id="node13" href="$ImpermanentDataChannel_8hpp.html" title="kaa/channel/ImpermanentData\lChannel.hpp" alt="" coords="336,124,535,165"/>
+<area shape="rect" id="node16" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="184,221,319,247"/>
+<area shape="rect" id="node20" href="$Log_8hpp.html" title="kaa/logging/Log.hpp" alt="" coords="1072,221,1209,247"/>
+<area shape="rect" id="node21" href="$HttpClient_8hpp.html" title="kaa/http/HttpClient.hpp" alt="" coords="833,131,987,158"/>
+<area shape="rect" id="node23" href="$IHttpResponse_8hpp.html" title="kaa/http/IHttpResponse.hpp" alt="" coords="1837,310,2018,337"/>
+<area shape="rect" id="node24" href="$IHttpRequest_8hpp.html" title="kaa/http/IHttpRequest.hpp" alt="" coords="1589,310,1761,337"/>
+<area shape="rect" id="node25" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="652,310,896,337"/>
+<area shape="rect" id="node28" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="2043,310,2217,337"/>
+<area shape="rect" id="node29" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="2045,399,2252,426"/>
+<area shape="rect" id="node30" href="$RsaEncoderDecoder_8hpp.html" title="kaa/security/RsaEncoderDecoder.hpp" alt="" coords="2217,221,2453,247"/>
+<area shape="rect" id="node35" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArray\lConverter.hpp" alt="" coords="2812,392,2995,433"/>
+<area shape="rect" id="node43" href="$MultipartPostHttpRequest_8hpp.html" title="kaa/http/MultipartPostHttp\lRequest.hpp" alt="" coords="1437,213,1610,255"/>
+<area shape="rect" id="node45" href="$HttpDataProcessor_8hpp.html" title="kaa/transport/HttpDataProcessor.hpp" alt="" coords="1685,131,1919,158"/>
+<area shape="rect" id="node47" href="$TransportException_8hpp.html" title="kaa/transport/TransportException.hpp" alt="" coords="2874,221,3109,247"/>
+<area shape="rect" id="node49" href="$IPTransportInfo_8hpp.html" title="kaa/channel/IPTransportInfo.hpp" alt="" coords="1103,131,1312,158"/>
+<area shape="rect" id="node50" href="$TransportProtocolIdConstants_8hpp.html" title="kaa/channel/TransportProtocol\lIdConstants.hpp" alt="" coords="3180,124,3379,165"/>
+<area shape="rect" id="node8" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="1911,481,2101,523"/>
+<area shape="rect" id="node14" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="524,399,723,426"/>
+<area shape="rect" id="node15" href="$IConnectivityChecker_8hpp.html" title="kaa/channel/connectivity\l/IConnectivityChecker.hpp" alt="" coords="737,481,909,523"/>
+<area shape="rect" id="node22" href="$IHttpClient_8hpp.html" title="kaa/http/IHttpClient.hpp" alt="" coords="889,221,1048,247"/>
+<area shape="rect" id="node26" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="747,399,955,426"/>
+<area shape="rect" id="node31" href="$KeyUtils_8hpp.html" title="kaa/security/KeyUtils.hpp" alt="" coords="1855,399,2021,426"/>
+<area shape="rect" id="node32" href="$IEncoderDecoder_8hpp.html" title="kaa/security/IEncoderDecoder.hpp" alt="" coords="2429,399,2647,426"/>
+<area shape="rect" id="node42" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="3375,481,3531,523"/>
+<area shape="rect" id="node44" href="$HttpUrl_8hpp.html" title="kaa/http/HttpUrl.hpp" alt="" coords="1428,310,1565,337"/>
+</map>

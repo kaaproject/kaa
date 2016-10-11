@@ -1,0 +1,18 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/KaaClientPlatformContext.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/KaaClientPlatformContext.hpp">
+<area shape="rect" id="node3" href="$KaaClientProperties_8hpp.html" title="kaa/KaaClientProperties.hpp" alt="" coords="1017,131,1202,158"/>
+<area shape="rect" id="node6" href="$IKaaClientPlatformContext_8hpp.html" title="kaa/IKaaClientPlatformContext.hpp" alt="" coords="43,221,267,247"/>
+<area shape="rect" id="node7" href="$IExecutorContext_8hpp.html" title="kaa/context/IExecutorContext.hpp" alt="" coords="102,303,317,329"/>
+<area shape="rect" id="node8" href="$SimpleExecutorContext_8hpp.html" title="kaa/context/SimpleExecutor\lContext.hpp" alt="" coords="369,124,551,165"/>
+<area shape="rect" id="node34" href="$PingConnectivityChecker_8hpp.html" title="kaa/channel/connectivity\l/PingConnectivityChecker.hpp" alt="" coords="1327,452,1521,493"/>
+<area shape="rect" id="node36" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="1437,124,1593,165"/>
+<area shape="rect" id="node9" href="$AbstractExecutorContext_8hpp.html" title="kaa/context/AbstractExecutor\lContext.hpp" alt="" coords="393,213,583,255"/>
+<area shape="rect" id="node10" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="462,377,597,404"/>
+<area shape="rect" id="node28" href="$ThreadPool_8hpp.html" title="kaa/utils/ThreadPool.hpp" alt="" coords="614,303,778,329"/>
+<area shape="rect" id="node11" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="605,459,747,486"/>
+<area shape="rect" id="node16" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="1184,541,1373,583"/>
+<area shape="rect" id="node21" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="891,541,1109,583"/>
+<area shape="rect" id="node22" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="859,638,1045,665"/>
+<area shape="rect" id="node23" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="637,631,835,672"/>
+<area shape="rect" id="node31" href="$IThreadPool_8hpp.html" title="kaa/utils/IThreadPool.hpp" alt="" coords="847,377,1015,404"/>
+<area shape="rect" id="node35" href="$IConnectivityChecker_8hpp.html" title="kaa/channel/connectivity\l/IConnectivityChecker.hpp" alt="" coords="694,541,866,583"/>
+</map>

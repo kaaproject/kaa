@@ -1,0 +1,5 @@
+<map id="kaa::ConfigurationTransport" name="kaa::ConfigurationTransport">
+<area shape="rect" id="node2" href="$classkaa_1_1AbstractKaaTransport.html" title="kaa::AbstractKaaTransport\l\&lt; TransportType::CONFIGURATION \&gt;" alt="" coords="184,5,424,47"/>
+<area shape="rect" id="node3" href="$classkaa_1_1IKaaTransport.html" title="kaa::IKaaTransport" alt="" coords="5,13,136,39"/>
+<area shape="rect" id="node4" href="$classkaa_1_1IConfigurationTransport.html" title="kaa::IConfigurationTransport" alt="" coords="213,71,395,98"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classkaa_1_1IAccessPointCommand.html" title="kaa::IAccessPointCommand" alt="" coords="5,5,189,32"/>
+<area shape="rect" id="node2" href="$classkaa_1_1ILogFailoverCommand.html" title="kaa::ILogFailoverCommand" alt="" coords="237,5,416,32"/>
+<area shape="rect" id="node3" href="$classkaa_1_1LogCollector.html" title="kaa::LogCollector" alt="" coords="464,56,585,83"/>
+<area shape="rect" id="node4" href="$classkaa_1_1ILogCollector.html" title="The public interface to the Kaa log collecting subsystem. " alt="" coords="264,56,389,83"/>
+<area shape="rect" id="node5" href="$classkaa_1_1ILogProcessor.html" title="kaa::ILogProcessor" alt="" coords="261,107,392,133"/>
+</map>

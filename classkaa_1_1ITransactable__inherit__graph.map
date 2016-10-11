@@ -1,0 +1,5 @@
+<map id="kaa::ITransactable" name="kaa::ITransactable">
+<area shape="rect" id="node2" href="$classkaa_1_1AbstractTransactable.html" title="kaa::AbstractTransactable\l\&lt; std::list\&lt; Event \&gt; \&gt;" alt="" coords="180,5,351,47"/>
+<area shape="rect" id="node4" href="$classkaa_1_1AbstractTransactable.html" title="kaa::AbstractTransactable\l\&lt; Container \&gt;" alt="" coords="180,71,351,112"/>
+<area shape="rect" id="node3" href="$classkaa_1_1EventManager.html" title="kaa::EventManager" alt="" coords="399,13,529,39"/>
+</map>

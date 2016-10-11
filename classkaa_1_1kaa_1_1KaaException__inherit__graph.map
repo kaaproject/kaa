@@ -1,0 +1,10 @@
+<map id="kaa::kaa::KaaException" name="kaa::kaa::KaaException">
+<area shape="rect" id="node3" href="$classkaa_1_1BadCredentials.html" title="The exception is thrown to indicate that something is wrong with the input identification data..." alt="" coords="395,5,531,32"/>
+<area shape="rect" id="node4" href="$classkaa_1_1kaa_1_1TransportException.html" title="kaa::kaa::TransportException" alt="" coords="370,56,557,83"/>
+<area shape="rect" id="node6" href="$classkaa_1_1TransportException.html" title="kaa::TransportException" alt="" coords="384,107,543,133"/>
+<area shape="rect" id="node7" href="$classkaa_1_1TransportNotFoundException.html" title="The exception is thrown to indicate that Kaa SDK isn&#39;t fully initialized. " alt="" coords="356,157,571,184"/>
+<area shape="rect" id="node8" href="$classkaa_1_1TransportRedirectException.html" title="The exception is thrown to indicate that transport redirect response will be processed. " alt="" coords="360,208,567,235"/>
+<area shape="rect" id="node9" href="$classkaa_1_1UnavailableTopicException.html" title="kaa::UnavailableTopicException" alt="" coords="362,259,565,285"/>
+<area shape="rect" id="node2" title="STL class. " alt="" coords="5,132,105,159"/>
+<area shape="rect" id="node5" href="$classkaa_1_1HttpTransportException.html" title="kaa::HttpTransportException" alt="" coords="619,56,801,83"/>
+</map>
