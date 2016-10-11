@@ -1,0 +1,30 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/DefaultOperationHttpChannel.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/impl/DefaultOperationHttpChannel.hpp">
+<area shape="rect" id="node2" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="876,474,1017,501"/>
+<area shape="rect" id="node17" href="$AbstractHttpChannel_8hpp.html" title="kaa/channel/impl/Abstract\lHttpChannel.hpp" alt="" coords="1281,124,1453,165"/>
+<area shape="rect" id="node50" href="$HttpTransportException_8hpp.html" title="kaa/common/exception\l/HttpTransportException.hpp" alt="" coords="2812,213,2996,255"/>
+<area shape="rect" id="node8" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="2296,556,2485,597"/>
+<area shape="rect" id="node13" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="573,556,792,597"/>
+<area shape="rect" id="node15" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="517,653,702,679"/>
+<area shape="rect" id="node16" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="981,645,1179,687"/>
+<area shape="rect" id="node18" href="$ImpermanentDataChannel_8hpp.html" title="kaa/channel/ImpermanentData\lChannel.hpp" alt="" coords="302,213,501,255"/>
+<area shape="rect" id="node20" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="466,310,601,337"/>
+<area shape="rect" id="node24" href="$Log_8hpp.html" title="kaa/logging/Log.hpp" alt="" coords="855,310,993,337"/>
+<area shape="rect" id="node25" href="$HttpClient_8hpp.html" title="kaa/http/HttpClient.hpp" alt="" coords="717,221,872,247"/>
+<area shape="rect" id="node27" href="$IHttpResponse_8hpp.html" title="kaa/http/IHttpResponse.hpp" alt="" coords="1136,392,1317,419"/>
+<area shape="rect" id="node28" href="$IHttpRequest_8hpp.html" title="kaa/http/IHttpRequest.hpp" alt="" coords="1342,392,1514,419"/>
+<area shape="rect" id="node29" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="94,392,338,419"/>
+<area shape="rect" id="node31" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="2323,392,2498,419"/>
+<area shape="rect" id="node32" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="2425,474,2631,501"/>
+<area shape="rect" id="node33" href="$RsaEncoderDecoder_8hpp.html" title="kaa/security/RsaEncoderDecoder.hpp" alt="" coords="2015,310,2251,337"/>
+<area shape="rect" id="node38" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArray\lConverter.hpp" alt="" coords="2669,467,2851,508"/>
+<area shape="rect" id="node45" href="$MultipartPostHttpRequest_8hpp.html" title="kaa/http/MultipartPostHttp\lRequest.hpp" alt="" coords="1505,303,1679,344"/>
+<area shape="rect" id="node46" href="$HttpDataProcessor_8hpp.html" title="kaa/transport/HttpDataProcessor.hpp" alt="" coords="1754,221,1987,247"/>
+<area shape="rect" id="node47" href="$TransportException_8hpp.html" title="kaa/transport/TransportException.hpp" alt="" coords="2773,310,3008,337"/>
+<area shape="rect" id="node48" href="$IPTransportInfo_8hpp.html" title="kaa/channel/IPTransportInfo.hpp" alt="" coords="962,221,1171,247"/>
+<area shape="rect" id="node49" href="$TransportProtocolIdConstants_8hpp.html" title="kaa/channel/TransportProtocol\lIdConstants.hpp" alt="" coords="1415,556,1614,597"/>
+<area shape="rect" id="node19" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="493,474,691,501"/>
+<area shape="rect" id="node26" href="$IHttpClient_8hpp.html" title="kaa/http/IHttpClient.hpp" alt="" coords="1119,310,1278,337"/>
+<area shape="rect" id="node34" href="$KeyUtils_8hpp.html" title="kaa/security/KeyUtils.hpp" alt="" coords="2081,474,2247,501"/>
+<area shape="rect" id="node35" href="$IEncoderDecoder_8hpp.html" title="kaa/security/IEncoderDecoder.hpp" alt="" coords="1837,474,2056,501"/>
+<area shape="rect" id="node44" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="3215,556,3371,597"/>
+</map>

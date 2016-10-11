@@ -1,0 +1,14 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/profile/ProfileManager.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/profile/ProfileManager.hpp">
+<area shape="rect" id="node3" href="$IProfileManager_8hpp.html" title="kaa/profile/IProfileManager.hpp" alt="" coords="1666,131,1865,158"/>
+<area shape="rect" id="node5" href="$IProfileContainer_8hpp.html" title="kaa/profile/IProfileContainer.hpp" alt="" coords="658,221,862,247"/>
+<area shape="rect" id="node13" href="$DefaultProfileContainer_8hpp.html" title="kaa/profile/DefaultProfile\lContainer.hpp" alt="" coords="679,124,841,165"/>
+<area shape="rect" id="node14" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArray\lConverter.hpp" alt="" coords="886,213,1069,255"/>
+<area shape="rect" id="node26" href="$IProfileTransport_8hpp.html" title="kaa/channel/transport\l/IProfileTransport.hpp" alt="" coords="1173,213,1320,255"/>
+<area shape="rect" id="node28" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="1361,131,1535,158"/>
+<area shape="rect" id="node7" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="1847,303,2036,344"/>
+<area shape="rect" id="node22" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="337,303,493,344"/>
+<area shape="rect" id="node29" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="1345,221,1551,247"/>
+<area shape="rect" id="node31" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="1576,221,1779,247"/>
+<area shape="rect" id="node32" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="2061,310,2269,337"/>
+<area shape="rect" id="node33" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="2139,392,2325,419"/>
+</map>

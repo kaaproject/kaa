@@ -1,0 +1,13 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/log/ILogUploadStrategy.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/log/ILogUploadStrategy.hpp">
+<area shape="rect" id="node2" href="$ILogCollector_8hpp.html" title="NOTE: THIS FILE IS AUTO&#45;GENERATED. DO NOT EDIT IT MANUALLY. " alt="" coords="145,131,377,187"/>
+<area shape="rect" id="node6" href="$LogCollector_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/LogCollector.hpp" alt="" coords="225,250,453,306"/>
+<area shape="rect" id="node7" href="$DefaultLogUploadStrategy_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/Default\lLogUploadStrategy.hpp" alt="" coords="888,124,1061,195"/>
+<area shape="rect" id="node3" href="$IKaaClient_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/IKaaClient.hpp" alt="" coords="5,250,200,306"/>
+<area shape="rect" id="node4" href="$Kaa_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/Kaa.hpp" alt="" coords="23,361,182,417"/>
+<area shape="rect" id="node5" href="$KaaClient_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/KaaClient.hpp" alt="" coords="225,361,415,417"/>
+<area shape="rect" id="node8" href="$PeriodicLogUploadStrategy_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/strategies\l/PeriodicLogUploadStrategy.hpp" alt="" coords="477,243,683,313"/>
+<area shape="rect" id="node9" href="$RecordCountLogUploadStrategy_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/strategies\l/RecordCountLogUploadStrategy.hpp" alt="" coords="708,243,943,313"/>
+<area shape="rect" id="node10" href="$RecordCountWithTimeLimitLogUploadStrategy_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/strategies\l/RecordCountWithTimeLimitLogUploadStrategy.hpp" alt="" coords="967,243,1284,313"/>
+<area shape="rect" id="node11" href="$StorageSizeLogUploadStrategy_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/strategies\l/StorageSizeLogUploadStrategy.hpp" alt="" coords="1308,243,1537,313"/>
+<area shape="rect" id="node12" href="$StorageSizeWithTimeLimitLogUploadStrategy_8hpp.html" title="/home/Projects/kaa\l/client/client&#45;multi\l/client&#45;cpp/kaa/log/strategies\l/StorageSizeWithTimeLimitLogUploadStrategy.hpp" alt="" coords="1561,243,1873,313"/>
+</map>

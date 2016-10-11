@@ -1,0 +1,16 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/KaaClientContext.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/KaaClientContext.hpp">
+<area shape="rect" id="node2" href="$IKaaClientContext_8hpp.html" title="IKaaClientContext.hpp" alt="" coords="434,184,585,211"/>
+<area shape="rect" id="node3" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="242,259,449,285"/>
+<area shape="rect" id="node16" href="$ClientStatus_8hpp.html" title="kaa/ClientStatus.hpp" alt="" coords="692,109,833,136"/>
+<area shape="rect" id="node29" href="$KaaClientProperties_8hpp.html" title="kaa/KaaClientProperties.hpp" alt="" coords="1511,109,1697,136"/>
+<area shape="rect" id="node31" href="$ILogger_8hpp.html" title="kaa/logging/ILogger.hpp" alt="" coords="1721,109,1879,136"/>
+<area shape="rect" id="node32" href="$IExecutorContext_8hpp.html" title="kaa/context/IExecutorContext.hpp" alt="" coords="13,109,227,136"/>
+<area shape="rect" id="node13" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="473,259,676,285"/>
+<area shape="rect" id="node7" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="1003,333,1192,375"/>
+<area shape="rect" id="node14" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="477,341,685,367"/>
+<area shape="rect" id="node15" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="407,430,593,457"/>
+<area shape="rect" id="node20" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="873,184,1007,211"/>
+<area shape="rect" id="node21" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="1220,259,1361,285"/>
+<area shape="rect" id="node24" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="709,333,928,375"/>
+<area shape="rect" id="node25" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="617,423,815,464"/>
+</map>

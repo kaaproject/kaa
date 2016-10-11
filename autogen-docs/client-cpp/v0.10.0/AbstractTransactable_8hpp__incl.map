@@ -1,0 +1,16 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/transact/AbstractTransactable.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/transact/AbstractTransactable.hpp">
+<area shape="rect" id="node3" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="168,124,303,151"/>
+<area shape="rect" id="node22" href="$Log_8hpp.html" title="kaa/logging/Log.hpp" alt="" coords="45,288,183,315"/>
+<area shape="rect" id="node23" href="$ITransactable_8hpp.html" title="kaa/transact/ITransactable.hpp" alt="" coords="1061,124,1260,151"/>
+<area shape="rect" id="node4" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="43,363,185,389"/>
+<area shape="rect" id="node9" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="659,527,849,568"/>
+<area shape="rect" id="node14" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="326,437,545,479"/>
+<area shape="rect" id="node16" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="1217,616,1403,643"/>
+<area shape="rect" id="node17" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="336,527,535,568"/>
+<area shape="rect" id="node24" href="$TransactionId_8hpp.html" title="kaa/transact/Transaction\lId.hpp" alt="" coords="1079,199,1243,240"/>
+<area shape="rect" id="node31" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="1249,363,1424,389"/>
+<area shape="rect" id="node25" href="$UuidGenerator_8hpp.html" title="kaa/common/UuidGenerator.hpp" alt="" coords="593,288,801,315"/>
+<area shape="rect" id="node32" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="1020,445,1227,471"/>
+<area shape="rect" id="node34" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="1251,445,1454,471"/>
+<area shape="rect" id="node35" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="1265,534,1473,561"/>
+</map>

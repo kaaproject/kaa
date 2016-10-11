@@ -1,0 +1,4 @@
+<map id="kaa::StorageSizeWithTimeLimitLogUploadStrategy" name="kaa::StorageSizeWithTimeLimitLogUploadStrategy">
+<area shape="rect" id="node2" href="$classkaa_1_1DefaultLogUploadStrategy.html" title="The default ILogUploadStrategy implementation. " alt="" coords="5,80,204,107"/>
+<area shape="rect" id="node3" href="$classkaa_1_1ILogUploadStrategy.html" title="The public interface for the log upload strategy. " alt="" coords="23,5,186,32"/>
+</map>

@@ -1,0 +1,14 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/log/ILogCollector.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/log/ILogCollector.hpp">
+<area shape="rect" id="node4" href="$ILogStorage_8hpp.html" title="kaa/log/ILogStorage.hpp" alt="" coords="1495,109,1658,136"/>
+<area shape="rect" id="node28" href="$ILogUploadStrategy_8hpp.html" title="kaa/log/ILogUploadStrategy.hpp" alt="" coords="2143,341,2349,367"/>
+<area shape="rect" id="node30" href="$ILogDeliveryListener_8hpp.html" title="kaa/log/ILogDeliveryListener.hpp" alt="" coords="1683,109,1889,136"/>
+<area shape="rect" id="node31" href="$RecordFuture_8hpp.html" title="kaa/log/RecordFuture.hpp" alt="" coords="1965,109,2135,136"/>
+<area shape="rect" id="node7" href="$BucketInfo_8hpp.html" title="kaa/log/BucketInfo.hpp" alt="" coords="1823,259,1978,285"/>
+<area shape="rect" id="node8" href="$LogBucket_8hpp.html" title="kaa/log/LogBucket.hpp" alt="" coords="1245,184,1399,211"/>
+<area shape="rect" id="node11" href="$LogRecord_8hpp.html" title="kaa/log/LogRecord.hpp" alt="" coords="761,259,915,285"/>
+<area shape="rect" id="node13" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArray\lConverter.hpp" alt="" coords="865,333,1048,375"/>
+<area shape="rect" id="node24" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="204,423,360,464"/>
+<area shape="rect" id="node21" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="537,423,726,464"/>
+<area shape="rect" id="node33" href="$RecordInfo_8hpp.html" title="kaa/log/RecordInfo.hpp" alt="" coords="1969,184,2123,211"/>
+<area shape="rect" id="node34" href="$TimeUtils_8hpp.html" title="kaa/utils/TimeUtils.hpp" alt="" coords="2053,259,2205,285"/>
+</map>

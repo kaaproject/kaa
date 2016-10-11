@@ -1,0 +1,29 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/event/EventManager.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/event/EventManager.hpp">
+<area shape="rect" id="node6" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="829,452,970,479"/>
+<area shape="rect" id="node19" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="1768,281,1903,307"/>
+<area shape="rect" id="node23" href="$IEventManager_8hpp.html" title="kaa/event/IEventManager.hpp" alt="" coords="290,199,482,225"/>
+<area shape="rect" id="node31" href="$IEventListenersResolver_8hpp.html" title="kaa/event/IEventListeners\lResolver.hpp" alt="" coords="528,273,697,315"/>
+<area shape="rect" id="node33" href="$EventTransport_8hpp.html" title="kaa/event/EventTransport.hpp" alt="" coords="2423,199,2615,225"/>
+<area shape="rect" id="node37" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="2725,452,2932,479"/>
+<area shape="rect" id="node45" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="2781,370,2956,397"/>
+<area shape="rect" id="node47" href="$IEventDataProcessor_8hpp.html" title="kaa/event/IEventDataProcessor.hpp" alt="" coords="725,370,951,397"/>
+<area shape="rect" id="node48" href="$AbstractTransactable_8hpp.html" title="kaa/transact/AbstractTransactable.hpp" alt="" coords="1442,124,1685,151"/>
+<area shape="rect" id="node10" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="1441,527,1630,568"/>
+<area shape="rect" id="node15" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="1859,527,2078,568"/>
+<area shape="rect" id="node16" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="2092,623,2277,650"/>
+<area shape="rect" id="node17" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="1869,616,2068,657"/>
+<area shape="rect" id="node24" href="$TransactionId_8hpp.html" title="kaa/transact/Transaction\lId.hpp" alt="" coords="1296,273,1460,315"/>
+<area shape="rect" id="node25" href="$UuidGenerator_8hpp.html" title="kaa/common/UuidGenerator.hpp" alt="" coords="1274,370,1482,397"/>
+<area shape="rect" id="node32" href="$IFetchEventListeners_8hpp.html" title="kaa/event/IFetchEventListeners.hpp" alt="" coords="423,370,650,397"/>
+<area shape="rect" id="node34" href="$IEventTransport_8hpp.html" title="kaa/channel/transport\l/IEventTransport.hpp" alt="" coords="3134,527,3281,568"/>
+<area shape="rect" id="node35" href="$AbstractKaaTransport_8hpp.html" title="kaa/channel/transport\l/AbstractKaaTransport.hpp" alt="" coords="2557,273,2732,315"/>
+<area shape="rect" id="node36" href="$IKaaTransport_8hpp.html" title="kaa/channel/transport\l/IKaaTransport.hpp" alt="" coords="2559,363,2706,404"/>
+<area shape="rect" id="node40" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="2240,370,2484,397"/>
+<area shape="rect" id="node44" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="2060,363,2216,404"/>
+<area shape="rect" id="node41" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="2135,452,2333,479"/>
+<area shape="rect" id="node42" href="$IConnectivityChecker_8hpp.html" title="kaa/channel/connectivity\l/IConnectivityChecker.hpp" alt="" coords="2153,527,2325,568"/>
+<area shape="rect" id="node43" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="2401,534,2609,561"/>
+<area shape="rect" id="node46" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="2957,452,3159,479"/>
+<area shape="rect" id="node49" href="$Log_8hpp.html" title="kaa/logging/Log.hpp" alt="" coords="1273,199,1411,225"/>
+<area shape="rect" id="node50" href="$ITransactable_8hpp.html" title="kaa/transact/ITransactable.hpp" alt="" coords="1600,199,1799,225"/>
+</map>

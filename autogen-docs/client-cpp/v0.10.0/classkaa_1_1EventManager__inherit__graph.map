@@ -1,0 +1,7 @@
+<map id="kaa::EventManager" name="kaa::EventManager">
+<area shape="rect" id="node2" href="$classkaa_1_1IEventManager.html" title="kaa::IEventManager" alt="" coords="205,5,340,32"/>
+<area shape="rect" id="node3" href="$classkaa_1_1IEventListenersResolver.html" title="kaa::IEventListenersResolver" alt="" coords="180,56,365,83"/>
+<area shape="rect" id="node4" href="$classkaa_1_1IEventDataProcessor.html" title="kaa::IEventDataProcessor" alt="" coords="188,107,357,133"/>
+<area shape="rect" id="node5" href="$classkaa_1_1AbstractTransactable.html" title="kaa::AbstractTransactable\l\&lt; std::list\&lt; Event \&gt; \&gt;" alt="" coords="187,158,358,199"/>
+<area shape="rect" id="node6" href="$classkaa_1_1ITransactable.html" title="kaa::ITransactable" alt="" coords="5,165,132,192"/>
+</map>

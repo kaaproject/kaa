@@ -1,0 +1,4 @@
+<map id="kaa::SyncDataProcessor" name="kaa::SyncDataProcessor">
+<area shape="rect" id="node2" href="$classkaa_1_1IKaaDataMultiplexer.html" title="kaa::IKaaDataMultiplexer" alt="" coords="5,5,171,32"/>
+<area shape="rect" id="node3" href="$classkaa_1_1IKaaDataDemultiplexer.html" title="kaa::IKaaDataDemultiplexer" alt="" coords="195,5,376,32"/>
+</map>

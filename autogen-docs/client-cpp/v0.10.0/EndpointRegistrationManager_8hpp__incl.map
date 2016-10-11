@@ -1,0 +1,30 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/event/registration/EndpointRegistrationManager.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/event/registration/EndpointRegistrationManager.hpp">
+<area shape="rect" id="node2" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="2409,414,2551,441"/>
+<area shape="rect" id="node20" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="2511,146,2646,173"/>
+<area shape="rect" id="node23" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="526,414,733,441"/>
+<area shape="rect" id="node25" href="$UserTransport_8hpp.html" title="kaa/event/registration\l/UserTransport.hpp" alt="" coords="2118,139,2263,180"/>
+<area shape="rect" id="node42" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="1575,325,1750,351"/>
+<area shape="rect" id="node45" href="$IRegistrationProcessor_8hpp.html" title="kaa/event/registration\l/IRegistrationProcessor.hpp" alt="" coords="2752,317,2931,359"/>
+<area shape="rect" id="node46" href="$IEndpointRegistrationManager_8hpp.html" title="kaa/event/registration\l/IEndpointRegistrationManager.hpp" alt="" coords="2954,407,3177,448"/>
+<area shape="rect" id="node8" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="761,496,951,537"/>
+<area shape="rect" id="node13" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="1359,496,1577,537"/>
+<area shape="rect" id="node15" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="1271,593,1457,619"/>
+<area shape="rect" id="node16" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="1531,585,1730,627"/>
+<area shape="rect" id="node26" href="$AbstractKaaTransport_8hpp.html" title="kaa/channel/transport\l/AbstractKaaTransport.hpp" alt="" coords="1247,228,1422,269"/>
+<area shape="rect" id="node44" href="$IUserTransport_8hpp.html" title="kaa/channel/transport\l/IUserTransport.hpp" alt="" coords="2137,496,2284,537"/>
+<area shape="rect" id="node27" href="$IKaaTransport_8hpp.html" title="kaa/channel/transport\l/IKaaTransport.hpp" alt="" coords="755,317,901,359"/>
+<area shape="rect" id="node29" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="1774,325,2018,351"/>
+<area shape="rect" id="node37" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="1077,317,1233,359"/>
+<area shape="rect" id="node30" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="1361,414,1559,441"/>
+<area shape="rect" id="node35" href="$IConnectivityChecker_8hpp.html" title="kaa/channel/connectivity\l/IConnectivityChecker.hpp" alt="" coords="1839,496,2011,537"/>
+<area shape="rect" id="node36" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="1127,503,1335,530"/>
+<area shape="rect" id="node31" href="$IFailoverStrategy_8hpp.html" title="kaa/failover/IFailoverStrategy.hpp" alt="" coords="1601,503,1815,530"/>
+<area shape="rect" id="node32" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="203,593,410,619"/>
+<area shape="rect" id="node33" href="$ChannelDirection_8hpp.html" title="kaa/channel/ChannelDirection.hpp" alt="" coords="435,593,653,619"/>
+<area shape="rect" id="node34" href="$IKaaDataMultiplexer_8hpp.html" title="kaa/channel/IKaaDataMultiplexer.hpp" alt="" coords="451,503,687,530"/>
+<area shape="rect" id="node43" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="1584,414,1787,441"/>
+<area shape="rect" id="node47" href="$IUserAttachCallback_8hpp.html" title="kaa/event/registration\l/IUserAttachCallback.hpp" alt="" coords="3393,496,3561,537"/>
+<area shape="rect" id="node48" href="$IAttachStatusListener_8hpp.html" title="kaa/event/registration\l/IAttachStatusListener.hpp" alt="" coords="2978,496,3153,537"/>
+<area shape="rect" id="node49" href="$IAttachEndpointCallback_8hpp.html" title="kaa/event/registration\l/IAttachEndpointCallback.hpp" alt="" coords="3177,496,3369,537"/>
+<area shape="rect" id="node50" href="$IDetachEndpointCallback_8hpp.html" title="kaa/event/registration\l/IDetachEndpointCallback.hpp" alt="" coords="2759,496,2953,537"/>
+</map>

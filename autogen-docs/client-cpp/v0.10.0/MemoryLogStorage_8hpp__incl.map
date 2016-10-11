@@ -1,0 +1,16 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/log/MemoryLogStorage.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/log/MemoryLogStorage.hpp">
+<area shape="rect" id="node4" href="$KaaThread_8hpp.html" title="kaa/KaaThread.hpp" alt="" coords="548,199,682,225"/>
+<area shape="rect" id="node22" href="$ILogStorage_8hpp.html" title="kaa/log/ILogStorage.hpp" alt="" coords="1152,124,1315,151"/>
+<area shape="rect" id="node38" href="$ILogStorageStatus_8hpp.html" title="kaa/log/ILogStorageStatus.hpp" alt="" coords="1900,124,2098,151"/>
+<area shape="rect" id="node39" href="$LogStorageConstants_8hpp.html" title="kaa/log/LogStorageConstants.hpp" alt="" coords="1816,355,2030,382"/>
+<area shape="rect" id="node5" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="419,273,560,300"/>
+<area shape="rect" id="node9" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="523,437,712,479"/>
+<area shape="rect" id="node14" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="371,348,590,389"/>
+<area shape="rect" id="node16" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="262,445,448,471"/>
+<area shape="rect" id="node17" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="40,437,238,479"/>
+<area shape="rect" id="node23" href="$BucketInfo_8hpp.html" title="kaa/log/BucketInfo.hpp" alt="" coords="943,199,1098,225"/>
+<area shape="rect" id="node24" href="$LogBucket_8hpp.html" title="kaa/log/LogBucket.hpp" alt="" coords="1156,199,1311,225"/>
+<area shape="rect" id="node25" href="$LogRecord_8hpp.html" title="kaa/log/LogRecord.hpp" alt="" coords="1179,273,1334,300"/>
+<area shape="rect" id="node27" href="$AvroByteArrayConverter_8hpp.html" title="kaa/common/AvroByteArray\lConverter.hpp" alt="" coords="1234,348,1417,389"/>
+<area shape="rect" id="node34" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="2208,437,2364,479"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/IPTransportInfo.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/IPTransportInfo.hpp">
+<area shape="rect" id="node3" href="$Log_8hpp.html" title="kaa/logging/Log.hpp" alt="" coords="293,124,430,151"/>
+<area shape="rect" id="node19" href="$LoggingUtils_8hpp.html" title="kaa/logging/LoggingUtils.hpp" alt="" coords="879,206,1065,233"/>
+<area shape="rect" id="node23" href="$SecurityDefinitions_8hpp.html" title="kaa/security/SecurityDefinitions.hpp" alt="" coords="43,124,269,151"/>
+<area shape="rect" id="node25" href="$GenericTransportInfo_8hpp.html" title="kaa/channel/GenericTransport\lInfo.hpp" alt="" coords="389,199,584,240"/>
+<area shape="rect" id="node4" href="$KaaDefaults_8hpp.html" title="kaa/KaaDefaults.hpp" alt="" coords="224,206,365,233"/>
+<area shape="rect" id="node9" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="401,288,591,329"/>
+<area shape="rect" id="node14" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="716,288,935,329"/>
+<area shape="rect" id="node16" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="885,385,1070,411"/>
+<area shape="rect" id="node17" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="1175,377,1374,419"/>
+<area shape="rect" id="node21" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="1061,295,1267,322"/>
+<area shape="rect" id="node22" href="$FailoverCommon_8hpp.html" title="kaa/failover/FailoverCommon.hpp" alt="" coords="1393,295,1607,322"/>
+</map>
