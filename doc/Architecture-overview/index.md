@@ -108,14 +108,25 @@ High availability of Kaa Cluster also depends on HA of SQL and NoSQL databases.
 ### Active load balancing
 
 Kaa SDK chooses Bootstrap and Operations service instances pseudo-randomly during session initiation.
-For more details, see [System components overview]({{root_url}}Administration-guide/System-components-overview/).
+Two load balancing methods are used depending on the on the originator of requests to the Kaa cluster: Kaa endpoint SDK or REST API.
 
-## Endpoint SDK
+#### Endpoint SDK requests
 
-Kaa endpoint SDK is a library that provides communication, data marshalling, persistence, and other functions available in Kaa depending on the [SDK type]({{root_url}}Glossary/#sdk-type).
-The client SDK abstracts the communication protocol, data persistence, and other implementation details that may be specific for any concrete solution based on Kaa.
+Kaa SDK chooses the Bootstrap and the Operations service instances pseudo-randomly during the session initiation.
+However, if the cluster is heavily loaded, random distribution of endpoints may not be efficient.
+Also, when a new node joins the cluster, it is required to re-balance the load in the updated topology for optimal performance.
 
-Endpoint SDK helps save time on development routine and allows you to concentrate on your business logic.
+Kaa server uses the active load balancing approach to instruct some of the endpoints to reconnect to a different Operations service thus equalizing the load across the nodes.
+The algorithm takes the server load data (connected endpoints count, load average, etc.) published by Kaa nodes as an input, and periodically recalculates the weight values of each node.
+Then, the overloaded nodes are instructed to redirect to a different node some of endpoints that request connection.
+
+A similar approach can be used to take some load off a node by means of a scheduled service, or to gradually migrate the cluster across the physical or virtual machines.
+To do that, you need to set up a custom load balancing strategy by implementing the [Rebalancer](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/Rebalancer.java) interface.
+See the default [implementation](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/EndpointCountRebalancer.java) for more details.
+
+#### REST API requests
+
+For REST API load balancing, you can use the existing HTTP(s) load balancing solutions with sticky session support, such as [Nginx](https://www.nginx.com/), [AWS Elastic Load balancing](https://aws.amazon.com/elasticloadbalancing/), [Google Cloud LB](https://cloud.google.com/compute/docs/load-balancing-and-autoscaling).
 
 ## Kaa instance
 
