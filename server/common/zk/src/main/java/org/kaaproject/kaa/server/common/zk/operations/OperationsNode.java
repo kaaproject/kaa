@@ -105,4 +105,13 @@ public class OperationsNode extends WorkerNodeTracker {
   public OperationsNodeInfo getNodeInfo() {
     return nodeInfo;
   }
+
+  @Override
+  public String toString() {
+    return "OperationsNode {" +
+            "host =" + nodeInfo.getConnectionInfo().getThriftHost() +
+            "port =" + nodeInfo.getConnectionInfo().getThriftPort() +
+            "timeStarted =" + nodeInfo.getTimeStarted() +
+            '}';
+  }
 }

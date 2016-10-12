@@ -95,7 +95,7 @@ public class DefaultAkkaService implements AkkaService {
     akka = ActorSystem.create(EPS, context.getConfig());
     LOG.info("Initializing Akka EPS actor...");
     opsActor = akka.actorOf(Props.create(
-        new OperationsServerActor.ActorCreator(context))
+         new OperationsServerActor.ActorCreator(context))
         .withDispatcher(CORE_DISPATCHER_NAME), EPS);
     LOG.info("Lookup platform protocols");
     Set<String> platformProtocols = PlatformLookup.lookupPlatformProtocols(
@@ -198,8 +198,10 @@ public class DefaultAkkaService implements AkkaService {
 
   @Override
   public void removeStatusListener() {
-    this.statusListenerThread.stopped = true;
-    this.statusListenerThread.interrupt();
+    if (this.statusListenerThread != null) {
+      this.statusListenerThread.stopped = true;
+      this.statusListenerThread.interrupt();
+    }
   }
 
   public class StatusListenerThread extends Thread {

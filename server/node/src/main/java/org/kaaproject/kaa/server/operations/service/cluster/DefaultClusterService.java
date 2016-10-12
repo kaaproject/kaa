@@ -93,7 +93,7 @@ public class DefaultClusterService implements ClusterService {
   public void initBean() {
     LOG.info("Init default cluster service.");
     neighbors = new Neighbors<>(KaaThriftService.OPERATIONS_SERVICE, new MessageTemplate(),
-        operationsServerConfig.getMaxNumberNeighborConnections());
+            operationsServerConfig.getMaxNumberNeighborConnections());
   }
 
   /**
@@ -118,9 +118,9 @@ public class DefaultClusterService implements ClusterService {
     this.operationsNode = operationsNode;
     this.id = Neighbors.getServerId(this.operationsNode.getNodeInfo().getConnectionInfo());
     neighbors.setZkNode(
-        KaaThriftService.OPERATIONS_SERVICE,
-        this.operationsNode.getNodeInfo().getConnectionInfo(),
-        operationsNode);
+            KaaThriftService.OPERATIONS_SERVICE,
+            this.operationsNode.getNodeInfo().getConnectionInfo(),
+            operationsNode);
     if (resolver != null) {
       updateResolver(this.resolver);
     }
@@ -138,20 +138,26 @@ public class DefaultClusterService implements ClusterService {
     operationsNode.addListener(new OperationsNodeListener() {
       @Override
       public void onNodeUpdated(OperationsNodeInfo node) {
-        LOG.debug("Update of node {} is pushed to resolver {}", node, resolver);
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Update of node {} is pushed to resolver {}", DefaultClusterService.toString(node), resolver);
+        }
         resolver.onNodeUpdated(node);
       }
 
       @Override
       public void onNodeRemoved(OperationsNodeInfo node) {
-        LOG.debug("Remove of node {} is pushed to resolver {}", node, resolver);
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Remove of node {} is pushed to resolver {}", DefaultClusterService.toString(node), resolver);
+        }
         resolver.onNodeRemoved(node);
         notifyListener();
       }
 
       @Override
       public void onNodeAdded(OperationsNodeInfo node) {
-        LOG.debug("Add of node {} is pushed to resolver {}", node, resolver);
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("Add of node {} is pushed to resolver {}", DefaultClusterService.toString(node), resolver);
+        }
         resolver.onNodeAdded(node);
         notifyListener();
       }
@@ -166,6 +172,10 @@ public class DefaultClusterService implements ClusterService {
     for (OperationsNodeInfo info : operationsNode.getCurrentOperationServerNodes()) {
       resolver.onNodeUpdated(info);
     }
+  }
+
+  private static String toString(OperationsNodeInfo node) {
+    return "[" + node.getConnectionInfo().getThriftHost() + ":" + node.getConnectionInfo().getThriftPort() + ":" + node.getTimeStarted() + "]-[" + node.getLoadInfo() + "]";
   }
 
   @Override
@@ -222,13 +232,13 @@ public class DefaultClusterService implements ClusterService {
   public void sendServerProfileUpdateMessage(String serverId,
                                              ThriftServerProfileUpdateMessage msg) {
     sendServerProfileUpdateMessage(
-        serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
+            serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
   }
 
   private void sendServerProfileUpdateMessage(String serverId,
                                               OperationsServiceMsg msg) {
     NeighborConnection<MessageTemplate, OperationsServiceMsg> server =
-        neighbors.getNeghborConnection(serverId);
+            neighbors.getNeghborConnection(serverId);
     if (server == null) {
       LOG.warn("Specified server {} not found in neighbors list", serverId);
     } else {
@@ -272,19 +282,19 @@ public class DefaultClusterService implements ClusterService {
 
   private EndpointAddress fromThriftAddress(ThriftEntityAddress source) {
     return new EndpointAddress(
-        source.getTenantId(),
-        source.getApplicationToken(),
-        EndpointObjectHash.fromBytes(source.getEntityId()));
+            source.getTenantId(),
+            source.getApplicationToken(),
+            EndpointObjectHash.fromBytes(source.getEntityId()));
   }
 
   private EndpointClusterAddress fromThriftAddress(ThriftEntityClusterAddress source) {
     ThriftEntityAddress address = source.getAddress();
     EndpointObjectHash endpointKey = EndpointObjectHash.fromBytes(address.getEntityId());
     return new EndpointClusterAddress(
-        source.getNodeId(),
-        address.getTenantId(),
-        address.getApplicationToken(),
-        endpointKey);
+            source.getNodeId(),
+            address.getTenantId(),
+            address.getApplicationToken(),
+            endpointKey);
   }
 
   private ActorClassifier fromThriftActorClassifier(ThriftActorClassifier actorClassifier) {
@@ -293,8 +303,8 @@ public class DefaultClusterService implements ClusterService {
 
   private EndpointRouteMessage fromThriftMsg(ThriftEntityRouteMessage source) {
     return new EndpointRouteMessage(
-        fromThriftAddress(source.getAddress()),
-        fromThriftOperation(source.getOperation()));
+            fromThriftAddress(source.getAddress()),
+            fromThriftOperation(source.getOperation()));
   }
 
   private RouteOperation fromThriftOperation(ThriftRouteOperation operation) {
@@ -311,8 +321,8 @@ public class DefaultClusterService implements ClusterService {
   }
 
   private void sendMessagesToServer(
-      NeighborConnection<MessageTemplate, OperationsServiceMsg> server,
-      Collection<OperationsServiceMsg> messages) {
+          NeighborConnection<MessageTemplate, OperationsServiceMsg> server,
+          Collection<OperationsServiceMsg> messages) {
     try {
       LOG.trace("Sending to server {} messages: {}", server.getId(), messages);
       server.sendMessages(messages);
