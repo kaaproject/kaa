@@ -1,0 +1,6 @@
+<map id="kaa::ImpermanentDataChannel" name="kaa::ImpermanentDataChannel">
+<area shape="rect" id="node3" href="$classkaa_1_1AbstractHttpChannel.html" title="kaa::AbstractHttpChannel" alt="" coords="120,155,288,181"/>
+<area shape="rect" id="node2" href="$classkaa_1_1IDataChannel.html" title="kaa::IDataChannel" alt="" coords="141,5,267,32"/>
+<area shape="rect" id="node4" href="$classkaa_1_1DefaultBootstrapChannel.html" title="kaa::DefaultBootstrapChannel" alt="" coords="5,237,197,263"/>
+<area shape="rect" id="node5" href="$classkaa_1_1DefaultOperationHttpChannel.html" title="kaa::DefaultOperationHttp\lChannel" alt="" coords="221,229,392,271"/>
+</map>

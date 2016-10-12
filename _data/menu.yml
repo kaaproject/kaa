@@ -1,0 +1,392 @@
+---
+"/docs/v0.10.0/":
+  _sort_idx: 1000
+  level: 1
+  subitems:
+    Welcome-Home:
+      _sort_idx: 5
+      subitems: {}
+      text: Welcome / Home
+      url: "/docs/v0.10.0/Welcome-Home/"
+    Getting-started:
+      _sort_idx: 10
+      subitems: {}
+      text: Getting started
+      url: "/docs/v0.10.0/Getting-started/"
+    Architecture-overview:
+      _sort_idx: 15
+      subitems: {}
+      text: Architecture overview
+      url: "/docs/v0.10.0/Architecture-overview/"
+    Programming-guide:
+      _sort_idx: 20
+      level: 2
+      subitems:
+        Your-first-Kaa-application:
+          _sort_idx: 10
+          subitems: {}
+          text: Your first Kaa application
+          url: "/docs/v0.10.0/Programming-guide/Your-first-Kaa-application/"
+        Key-platform-features:
+          _sort_idx: 30
+          level: 3
+          subitems:
+            Devices-provisioning-and-registration:
+              _sort_idx: 10
+              subitems: {}
+              text: Endpoint provisioning and registration
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Devices-provisioning-and-registration/"
+            Common-Type-Library:
+              _sort_idx: 20
+              subitems: {}
+              text: Common Type Library (CTL)
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Common-Type-Library/"
+            Endpoint-profiles:
+              _sort_idx: 20
+              subitems: {}
+              text: Endpoint profiles
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Endpoint-profiles/"
+            Endpoint-groups:
+              _sort_idx: 30
+              subitems: {}
+              text: Endpoint groups
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Endpoint-groups/"
+            Endpoint-ownership:
+              _sort_idx: 40
+              subitems: {}
+              text: Endpoint ownership
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Endpoint-ownership/"
+            Data-collection:
+              _sort_idx: 50
+              level: 4
+              subitems:
+                Cassandra-log-appender:
+                  _sort_idx: 10
+                  subitems: {}
+                  text: Cassandra log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/"
+                Couchbase-log-appender:
+                  _sort_idx: 30
+                  subitems: {}
+                  text: Couchbase log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/Couchbase-log-appender/"
+                File-system-log-appender:
+                  _sort_idx: 40
+                  subitems: {}
+                  text: File system log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/"
+                Flume-log-appender:
+                  _sort_idx: 50
+                  subitems: {}
+                  text: Flume log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/Flume-log-appender/"
+                Kafka-log-appender:
+                  _sort_idx: 60
+                  subitems: {}
+                  text: Kafka log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender/"
+                MongoDB-log-appender:
+                  _sort_idx: 70
+                  subitems: {}
+                  text: MongoDB log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/"
+                Oracle-NoSQL-log-appender:
+                  _sort_idx: 80
+                  subitems: {}
+                  text: Oracle NoSQL log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender/"
+                Rest-log-appender:
+                  _sort_idx: 90
+                  subitems: {}
+                  text: Rest log appender
+                  url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/"
+              text: Data collection
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/"
+            Configuration-management:
+              _sort_idx: 60
+              subitems: {}
+              text: Configuration management
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Configuration-management/"
+            Notifications:
+              _sort_idx: 70
+              subitems: {}
+              text: Notifications
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Notifications/"
+            Events:
+              _sort_idx: 80
+              subitems: {}
+              text: Events
+              url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Events/"
+          text: Key platform features
+          url: "/docs/v0.10.0/Programming-guide/Key-platform-features/"
+        Using-Kaa-endpoint-SDKs:
+          _sort_idx: 40
+          level: 3
+          subitems:
+            C:
+              _sort_idx: 10
+              level: 4
+              subitems:
+                SDK-Linux:
+                  _sort_idx: 10
+                  subitems: {}
+                  text: Linux
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/"
+                SDK-ESP8266:
+                  _sort_idx: 20
+                  subitems: {}
+                  text: ESP8266
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/"
+                SDK-TI-CC3200:
+                  _sort_idx: 30
+                  subitems: {}
+                  text: Texas Instruments CC3200
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-TI-CC3200/"
+                SDK-UDOO:
+                  _sort_idx: 40
+                  subitems: {}
+                  text: UDOO
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-UDOO/"
+                SDK-Edison:
+                  _sort_idx: 60
+                  subitems: {}
+                  text: Intel Edison
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Edison/"
+                SDK-RPi:
+                  _sort_idx: 60
+                  subitems: {}
+                  text: Raspberry Pi
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-RPi/"
+                SDK-Beaglebone:
+                  _sort_idx: 70
+                  subitems: {}
+                  text: Beaglebone
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Beaglebone/"
+                SDK-QNX-Neutrino:
+                  _sort_idx: 90
+                  subitems: {}
+                  text: QNX Neutrino RTOS
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-QNX-Neutrino/"
+              text: C
+              url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/"
+            C++:
+              _sort_idx: 20
+              level: 4
+              subitems:
+                SDK-Linux:
+                  _sort_idx: 10
+                  subitems: {}
+                  text: Linux
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/"
+                SDK-RPi:
+                  _sort_idx: 20
+                  subitems: {}
+                  text: Raspberry Pi
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-RPi/"
+                SDK-Beaglebone:
+                  _sort_idx: 30
+                  subitems: {}
+                  text: Beaglebone
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Beaglebone/"
+                SDK-Samsung-Artik-5:
+                  _sort_idx: 50
+                  subitems: {}
+                  text: Samsung Artik 5
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Samsung-Artik-5/"
+                SDK-Windows:
+                  _sort_idx: 50
+                  subitems: {}
+                  text: Windows
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Windows/"
+                SDK-Edison:
+                  _sort_idx: 60
+                  subitems: {}
+                  text: Intel Edison
+                  url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Edison/"
+              text: C++
+              url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/"
+            Objective-C:
+              _sort_idx: 30
+              subitems: {}
+              text: Objective-C
+              url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C/"
+            Java:
+              _sort_idx: 40
+              subitems: {}
+              text: Java
+              url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/Java/"
+            Supported-platforms:
+              _sort_idx: 60
+              subitems: {}
+              text: Supported platforms
+              url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/Supported-platforms/"
+          text: Using Kaa endpoint SDKs
+          url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/"
+        Server-REST-APIs:
+          _sort_idx: 60
+          subitems: {}
+          text: Server REST APIs
+          url: "/docs/v0.10.0/Programming-guide/Server-REST-APIs/"
+      text: Programming guide
+      url: "/docs/v0.10.0/Programming-guide/"
+    Administration-guide:
+      _sort_idx: 30
+      level: 2
+      subitems:
+        System-components-overview:
+          _sort_idx: 10
+          subitems: {}
+          text: System components overview
+          url: "/docs/v0.10.0/Administration-guide/System-components-overview/"
+        System-installation:
+          _sort_idx: 20
+          level: 3
+          subitems:
+            Single-node-installation:
+              _sort_idx: 20
+              subitems: {}
+              text: Single node installation guide
+              url: "/docs/v0.10.0/Administration-guide/System-installation/Single-node-installation/"
+            Cluster-setup:
+              _sort_idx: 30
+              level: 4
+              subitems:
+                MariaDB-cluster-setup-guide:
+                  _sort_idx: 30
+                  subitems: {}
+                  text: MariaDB cluster setup guide
+                  url: "/docs/v0.10.0/Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/"
+              text: Cluster setup guide
+              url: "/docs/v0.10.0/Administration-guide/System-installation/Cluster-setup/"
+          text: System installation
+          url: "/docs/v0.10.0/Administration-guide/System-installation/"
+        System-Configuration:
+          _sort_idx: 30
+          level: 3
+          subitems:
+            General-configuration:
+              _sort_idx: 10
+              subitems: {}
+              text: General configuration
+              url: "/docs/v0.10.0/Administration-guide/System-Configuration/General-configuration/"
+            Transport-configuration:
+              _sort_idx: 30
+              subitems: {}
+              text: Transport configuration
+              url: "/docs/v0.10.0/Administration-guide/System-Configuration/Transport-configuration/"
+            Database-configuration:
+              _sort_idx: 220
+              subitems: {}
+              text: Database configuration
+              url: "/docs/v0.10.0/Administration-guide/System-Configuration/Database-configuration/"
+          text: System configuration
+          url: "/docs/v0.10.0/Administration-guide/System-Configuration/"
+        Tenants-and-applications-management:
+          _sort_idx: 40
+          subitems: {}
+          text: Tenants and applications management
+          url: "/docs/v0.10.0/Administration-guide/Tenants-and-applications-management/"
+        Users-management:
+          _sort_idx: 50
+          subitems: {}
+          text: Users management
+          url: "/docs/v0.10.0/Administration-guide/Users-management/"
+        Upgrading-your-instance:
+          _sort_idx: 60
+          level: 3
+          subitems:
+            0.9.x-to-0.10.x:
+              _sort_idx: 10
+              subitems: {}
+              text: 0.9.x to 0.10.x
+              url: "/docs/v0.10.0/Administration-guide/Upgrading-your-instance/0.9.x-to-0.10.x/"
+            0.8.1-to-0.9.0:
+              _sort_idx: 20
+              subitems: {}
+              text: 0.8.1 to 0.9.0
+              url: "/docs/v0.10.0/Administration-guide/Upgrading-your-instance/0.8.1-to-0.9.0/"
+          text: Upgrading your instance
+          url: "/docs/v0.10.0/Administration-guide/Upgrading-your-instance/"
+        Troubleshooting:
+          _sort_idx: 888888880
+          subitems: {}
+          text: Troubleshooting
+          url: "/docs/v0.10.0/Administration-guide/Troubleshooting/"
+      text: Administration guide
+      url: "/docs/v0.10.0/Administration-guide/"
+    Customization-guide:
+      _sort_idx: 40
+      level: 2
+      subitems:
+        Customizable-system-components:
+          _sort_idx: 10
+          level: 3
+          subitems:
+            Log-appenders:
+              _sort_idx: 30
+              subitems: {}
+              text: Log appenders
+              url: "/docs/v0.10.0/Customization-guide/Customizable-system-components/Log-appenders/"
+            Owner-verifiers:
+              _sort_idx: 40
+              subitems: {}
+              text: Owner verifiers
+              url: "/docs/v0.10.0/Customization-guide/Customizable-system-components/Owner-verifiers/"
+          text: Customizable system components
+          url: "/docs/v0.10.0/Customization-guide/Customizable-system-components/"
+        Code-style:
+          _sort_idx: 40
+          level: 3
+          subitems:
+            Java:
+              _sort_idx: 10
+              subitems: {}
+              text: Java
+              url: "/docs/v0.10.0/Customization-guide/Code-style/Java/"
+            C-C++:
+              _sort_idx: 30
+              subitems: {}
+              text: C/C++
+              url: "/docs/v0.10.0/Customization-guide/Code-style/C-C++/"
+            Objective-C:
+              _sort_idx: 40
+              subitems: {}
+              text: Objective-C
+              url: "/docs/v0.10.0/Customization-guide/Code-style/Objective-C/"
+            Shell:
+              _sort_idx: 50
+              subitems: {}
+              text: Shell
+              url: "/docs/v0.10.0/Customization-guide/Code-style/Shell/"
+          text: Code style
+          url: "/docs/v0.10.0/Customization-guide/Code-style/"
+        How-to-contribute:
+          _sort_idx: 50
+          level: 3
+          subitems:
+            Git-flow:
+              _sort_idx: 10
+              subitems: {}
+              text: Git flow
+              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Git-flow/"
+            Documentation-contribution-and-style-guide:
+              _sort_idx: 30
+              subitems: {}
+              text: Documentation contribution and style guide
+              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Documentation-contribution-and-style-guide/"
+          text: How to contribute
+          url: "/docs/v0.10.0/Customization-guide/How-to-contribute/"
+      text: Customization guide
+      url: "/docs/v0.10.0/Customization-guide/"
+    Glossary:
+      _sort_idx: 50
+      subitems: {}
+      text: Glossary
+      url: "/docs/v0.10.0/Glossary/"
+    Whats-new:
+      _sort_idx: 60
+      subitems: {}
+      text: What's new
+      url: "/docs/v0.10.0/Whats-new/"
+  text: Redirect
+  url: "/docs/v0.10.0/"

@@ -1,0 +1,26 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/impl" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/channel/impl">
+<area shape="rect" id="node1" href="dir_24d927864bbe8706310d595c06b80730.html" title="impl" alt="" coords="144,52,216,100"/>
+<area shape="rect" id="node2" href="dir_095dd2e017f052272b364f2f99d3318b.html" title="kaatcp" alt="" coords="144,148,216,196"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000009_000021.html" title="1" alt="" coords="184,122,192,137"/>
+<area shape="rect" id="node3" href="dir_2388e22699db144ab8d61a7d359feada.html" title="http" alt="" coords="33,532,105,580"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000009_000020.html" title="5" alt="" coords="51,504,59,519"/>
+<area shape="rect" id="node4" href="dir_953e7d5a3c2fa91b57291c570922f069.html" title="logging" alt="" coords="217,244,289,292"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000009_000024.html" title="1" alt="" coords="253,217,261,232"/>
+<area shape="rect" id="node5" href="dir_93ad56dfbe7f5773145204eae8daa284.html" title="utils" alt="" coords="291,148,363,196"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000009_000031.html" title="1" alt="" coords="276,124,284,138"/>
+<area shape="rect" id="node6" href="dir_9531016e8752d79c05d91feb74e5080e.html" title="common" alt="" coords="144,340,216,388"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000009_000011.html" title="2" alt="" coords="163,312,171,327"/>
+<area shape="rect" id="node7" href="dir_65af26d52ff1d4d0aa3831890063662b.html" title="security" alt="" coords="192,532,264,580"/>
+<area shape="rect" id="edge7-headlabel" href="dir_000009_000028.html" title="5" alt="" coords="280,527,288,541"/>
+<area shape="rect" id="node8" href="dir_e6f029ad171c62b4286f176bdcec40bd.html" title="transport" alt="" coords="144,436,216,484"/>
+<area shape="rect" id="edge8-headlabel" href="dir_000009_000030.html" title="3" alt="" coords="152,409,160,423"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000021_000011.html" title="2" alt="" coords="184,314,192,329"/>
+<area shape="rect" id="edge9-headlabel" href="dir_000024_000011.html" title="2" alt="" coords="212,323,220,338"/>
+<area shape="rect" id="edge10-headlabel" href="dir_000031_000024.html" title="1" alt="" coords="285,227,293,242"/>
+<area shape="rect" id="edge11-headlabel" href="dir_000031_000011.html" title="1" alt="" coords="232,344,240,359"/>
+<area shape="rect" id="edge12-headlabel" href="dir_000011_000030.html" title="1" alt="" coords="175,410,183,425"/>
+<area shape="rect" id="edge13-headlabel" href="dir_000030_000020.html" title="3" alt="" coords="112,519,120,534"/>
+<area shape="rect" id="edge14-headlabel" href="dir_000030_000011.html" title="1" alt="" coords="177,400,185,414"/>
+<area shape="rect" id="edge15-headlabel" href="dir_000030_000028.html" title="1" alt="" coords="211,505,219,519"/>
+<area shape="rect" id="clust1" href="dir_6f8362012f67daa15c9e8d06dead0ab9.html" title="channel" alt="" coords="133,16,227,111"/>
+</map>

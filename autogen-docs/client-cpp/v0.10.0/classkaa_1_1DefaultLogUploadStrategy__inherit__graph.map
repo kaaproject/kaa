@@ -1,0 +1,8 @@
+<map id="kaa::DefaultLogUploadStrategy" name="kaa::DefaultLogUploadStrategy">
+<area shape="rect" id="node3" href="$classkaa_1_1PeriodicLogUploadStrategy.html" title="kaa::PeriodicLogUploadStrategy" alt="" coords="463,5,668,32"/>
+<area shape="rect" id="node4" href="$classkaa_1_1RecordCountLogUploadStrategy.html" title="kaa::RecordCountLogUpload\lStrategy" alt="" coords="473,57,658,98"/>
+<area shape="rect" id="node5" href="$classkaa_1_1RecordCountWithTimeLimitLogUploadStrategy.html" title="kaa::RecordCountWithTime\lLimitLogUploadStrategy" alt="" coords="476,122,655,163"/>
+<area shape="rect" id="node6" href="$classkaa_1_1StorageSizeLogUploadStrategy.html" title="kaa::StorageSizeLogUpload\lStrategy" alt="" coords="475,187,655,229"/>
+<area shape="rect" id="node7" href="$classkaa_1_1StorageSizeWithTimeLimitLogUploadStrategy.html" title="kaa::StorageSizeWithTime\lLimitLogUploadStrategy" alt="" coords="478,253,653,294"/>
+<area shape="rect" id="node2" href="$classkaa_1_1ILogUploadStrategy.html" title="The public interface for the log upload strategy. " alt="" coords="5,129,168,156"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="kaa::LogCollector" name="kaa::LogCollector">
+<area shape="rect" id="node2" href="$classkaa_1_1ILogCollector.html" title="The public interface to the Kaa log collecting subsystem. " alt="" coords="5,80,131,107"/>
+<area shape="rect" id="node3" href="$classkaa_1_1ILogProcessor.html" title="kaa::ILogProcessor" alt="" coords="155,80,285,107"/>
+<area shape="rect" id="node4" href="$classkaa_1_1ILogFailoverCommand.html" title="kaa::ILogFailoverCommand" alt="" coords="309,80,488,107"/>
+<area shape="rect" id="node5" href="$classkaa_1_1IAccessPointCommand.html" title="kaa::IAccessPointCommand" alt="" coords="307,5,491,32"/>
+</map>

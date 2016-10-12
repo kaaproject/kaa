@@ -1,0 +1,6 @@
+org.kaaproject.kaa.client
+org.kaaproject.kaa.client.connectivity
+org.kaaproject.kaa.client.logging
+org.kaaproject.kaa.client.persistence
+org.kaaproject.kaa.client.transport
+org.kaaproject.kaa.client.util

@@ -1,0 +1,4 @@
+<map id="kaa::MemoryLogStorage" name="kaa::MemoryLogStorage">
+<area shape="rect" id="node2" href="$classkaa_1_1ILogStorage.html" title="Interface of a log storage. " alt="" coords="5,5,124,32"/>
+<area shape="rect" id="node3" href="$classkaa_1_1ILogStorageStatus.html" title="The public interface to represent the current log storage state. " alt="" coords="148,5,304,32"/>
+</map>

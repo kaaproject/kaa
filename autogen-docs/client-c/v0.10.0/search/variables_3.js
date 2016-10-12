@@ -1,0 +1,13 @@
+var searchData=
+[
+  ['callback',['callback',['../structkaa__notification__listener__t.html#aefb9a2723d87dac210de5d683b7fd337',1,'kaa_notification_listener_t::callback()'],['../structkaa__topic__listener__t.html#a2940b0fae07f95c59a1cebb0e5bf629d',1,'kaa_topic_listener_t::callback()']]],
+  ['channel_5fmanager',['channel_manager',['../structkaa__context__s.html#a563e3011ddbf59b57d0af1f8989285f5',1,'kaa_context_s']]],
+  ['configuration_5fmanager',['configuration_manager',['../structkaa__context__s.html#a2915ba1cdab5bb227c321cbcd345726b',1,'kaa_context_s']]],
+  ['connack_5fhandler',['connack_handler',['../structkaatcp__parser__handlers__t.html#ada9c5a522d3172ec78c23e75f65729fe',1,'kaatcp_parser_handlers_t']]],
+  ['connect_5fflags',['connect_flags',['../structkaatcp__connect__t.html#a5ac2a8b741b118db4cbeb27f5ca3fb41',1,'kaatcp_connect_t']]],
+  ['connection_5fdata',['connection_data',['../structkaa__access__point__t.html#abf34cc6d04db3d1c7a7cb6bf0a48697d',1,'kaa_access_point_t']]],
+  ['connection_5fdata_5flen',['connection_data_len',['../structkaa__access__point__t.html#ab671dffd9e960fceae1037f170f811ae',1,'kaa_access_point_t']]],
+  ['context',['context',['../structkaa__configuration__root__receiver__t.html#a4ffcb05ee51c3978b0672d1b7719562d',1,'kaa_configuration_root_receiver_t::context()'],['../structkaa__event__listeners__callback__t.html#a82d7b28894be3f98a8de98eba0bb5cfd',1,'kaa_event_listeners_callback_t::context()'],['../structkaa__notification__listener__t.html#a2ca7b76c2ad08afa455b4a75a65ea755',1,'kaa_notification_listener_t::context()'],['../structkaa__topic__listener__t.html#a0daeda37dff53b2aba46a5e7b85cc6b0',1,'kaa_topic_listener_t::context()'],['../structkaa__dns__resolve__listener__t.html#a9682df73ab83d093b11ef2dacf17f770',1,'kaa_dns_resolve_listener_t::context()'],['../structkaa__transport__channel__interface__t.html#a10af061241ae36553436f33e738707b5',1,'kaa_transport_channel_interface_t::context()'],['../structkaa__attachment__status__listeners__t.html#a8072ccf5aca85ef56eb9da706a64c533',1,'kaa_attachment_status_listeners_t::context()'],['../structkaa__endpoint__status__listener__t.html#a2430835b6c1c88d1ec29bf30bed5f335',1,'kaa_endpoint_status_listener_t::context()']]],
+  ['ctx',['ctx',['../structkaa__log__delivery__listener__t.html#af6b6d5753a227248a6bfeb62530569a5',1,'kaa_log_delivery_listener_t']]],
+  ['current',['current',['../structkaa__platform__message__writer__t.html#af9f72abedf3a723f3028da8c48f1d077',1,'kaa_platform_message_writer_t::current()'],['../structkaa__platform__message__reader__t.html#a07a6efe6273d01d213aaee7ea9096c62',1,'kaa_platform_message_reader_t::current()']]]
+];

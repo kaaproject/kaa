@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['callback',['callback',['../structkaa__notification__listener__t.html#aefb9a2723d87dac210de5d683b7fd337',1,'kaa_notification_listener_t::callback()'],['../structkaa__topic__listener__t.html#a2940b0fae07f95c59a1cebb0e5bf629d',1,'kaa_topic_listener_t::callback()']]],
+  ['cc32xx_5fbinary_5ffile_5fdelete',['cc32xx_binary_file_delete',['../cc32xx_2platform_2file__utils_8h.html#ae6baa3962bf7498c0001eb08840b8e39',1,'file_utils.h']]],
+  ['cc32xx_5fbinary_5ffile_5fread',['cc32xx_binary_file_read',['../cc32xx_2platform_2file__utils_8h.html#a51201b23a97d442770f9f4af0a5e8be3',1,'file_utils.h']]],
+  ['cc32xx_5fbinary_5ffile_5fstore',['cc32xx_binary_file_store',['../cc32xx_2platform_2file__utils_8h.html#ab6177f18e14c4e2498974532eb87ac56',1,'file_utils.h']]],
+  ['cc32xx_5fclock_5fgetms',['cc32xx_clock_getms',['../cc32xx_2platform_2time_8h.html#ac795197ed71b22e663f838a28ec242d8',1,'time.h']]],
+  ['cc32xx_5freboot',['cc32xx_reboot',['../cc32xx_2platform_2stdio_8h.html#a6ac33b470469524e60f865bfa4669e8c',1,'stdio.h']]],
+  ['cc32xx_5ftime',['cc32xx_time',['../cc32xx_2platform_2time_8h.html#a7e10e9ebc11761d74f94e1b8068b52f2',1,'time.h']]],
+  ['channel_5fmanager',['channel_manager',['../structkaa__context__s.html#a563e3011ddbf59b57d0af1f8989285f5',1,'kaa_context_s']]],
+  ['check',['check',['../avro__private_8h.html#a0b425d4ccf959915ada235b0d29d419e',1,'avro_private.h']]],
+  ['check_5fparam',['check_param',['../avro__private_8h.html#a4b760fa8760d82b91d10a437a19facd2',1,'avro_private.h']]],
+  ['check_5fprefix',['check_prefix',['../avro__private_8h.html#afa1404e02985fdf7a9412c0e39d96827',1,'avro_private.h']]],
+  ['check_5fset',['check_set',['../avro__private_8h.html#ae74bb29ae5bebf0fac2436c99bd9d055',1,'avro_private.h']]],
+  ['config_5fschema_5fversion_5fvalue',['CONFIG_SCHEMA_VERSION_VALUE',['../kaa__platform__common_8h.html#ae1c38e284ad322b04903df024151aac3a3403ed11e13ed9acad720b89270e31f7',1,'kaa_platform_common.h']]],
+  ['configuration_5fmanager',['configuration_manager',['../structkaa__context__s.html#a2915ba1cdab5bb227c321cbcd345726b',1,'kaa_context_s']]],
+  ['connack_5fhandler',['connack_handler',['../structkaatcp__parser__handlers__t.html#ada9c5a522d3172ec78c23e75f65729fe',1,'kaatcp_parser_handlers_t']]],
+  ['connect_5fflags',['connect_flags',['../structkaatcp__connect__t.html#a5ac2a8b741b118db4cbeb27f5ca3fb41',1,'kaatcp_connect_t']]],
+  ['connection_5fdata',['connection_data',['../structkaa__access__point__t.html#abf34cc6d04db3d1c7a7cb6bf0a48697d',1,'kaa_access_point_t']]],
+  ['connection_5fdata_5flen',['connection_data_len',['../structkaa__access__point__t.html#ab671dffd9e960fceae1037f170f811ae',1,'kaa_access_point_t']]],
+  ['connection_5ferror',['CONNECTION_ERROR',['../ext__user__callback_8h.html#a559358527402a47143c853838b783eb4a933f614e4909db5914bb021329f26f8a',1,'ext_user_callback.h']]],
+  ['container_5fof',['container_of',['../avro__private_8h.html#a05ba3b87aa18585b0a3e19fd622cbec0',1,'avro_private.h']]],
+  ['context',['context',['../structkaa__configuration__root__receiver__t.html#a4ffcb05ee51c3978b0672d1b7719562d',1,'kaa_configuration_root_receiver_t::context()'],['../structkaa__event__listeners__callback__t.html#a82d7b28894be3f98a8de98eba0bb5cfd',1,'kaa_event_listeners_callback_t::context()'],['../structkaa__notification__listener__t.html#a2ca7b76c2ad08afa455b4a75a65ea755',1,'kaa_notification_listener_t::context()'],['../structkaa__topic__listener__t.html#a0daeda37dff53b2aba46a5e7b85cc6b0',1,'kaa_topic_listener_t::context()'],['../structkaa__dns__resolve__listener__t.html#a9682df73ab83d093b11ef2dacf17f770',1,'kaa_dns_resolve_listener_t::context()'],['../structkaa__transport__channel__interface__t.html#a10af061241ae36553436f33e738707b5',1,'kaa_transport_channel_interface_t::context()'],['../structkaa__attachment__status__listeners__t.html#a8072ccf5aca85ef56eb9da706a64c533',1,'kaa_attachment_status_listeners_t::context()'],['../structkaa__endpoint__status__listener__t.html#a2430835b6c1c88d1ec29bf30bed5f335',1,'kaa_endpoint_status_listener_t::context()']]],
+  ['ctx',['ctx',['../structkaa__log__delivery__listener__t.html#af6b6d5753a227248a6bfeb62530569a5',1,'kaa_log_delivery_listener_t']]],
+  ['current',['current',['../structkaa__platform__message__writer__t.html#af9f72abedf3a723f3028da8c48f1d077',1,'kaa_platform_message_writer_t::current()'],['../structkaa__platform__message__reader__t.html#a07a6efe6273d01d213aaee7ea9096c62',1,'kaa_platform_message_reader_t::current()']]]
+];

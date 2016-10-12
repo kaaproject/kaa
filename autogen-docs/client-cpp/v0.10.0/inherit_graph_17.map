@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classkaa_1_1IDataChannel.html" title="kaa::IDataChannel" alt="" coords="5,78,132,105"/>
+<area shape="rect" id="node2" href="$classkaa_1_1DefaultOperationLongPollChannel.html" title="kaa::DefaultOperationLong\lPollChannel" alt="" coords="192,5,367,47"/>
+<area shape="rect" id="node3" href="$classkaa_1_1DefaultOperationTcpChannel.html" title="kaa::DefaultOperationTcp\lChannel" alt="" coords="195,71,363,112"/>
+<area shape="rect" id="node4" href="$classkaa_1_1ImpermanentDataChannel.html" title="kaa::ImpermanentDataChannel" alt="" coords="180,137,379,163"/>
+<area shape="rect" id="node5" href="$classkaa_1_1AbstractHttpChannel.html" title="kaa::AbstractHttpChannel" alt="" coords="427,137,595,163"/>
+<area shape="rect" id="node6" href="$classkaa_1_1DefaultBootstrapChannel.html" title="kaa::DefaultBootstrapChannel" alt="" coords="643,107,835,134"/>
+<area shape="rect" id="node7" href="$classkaa_1_1DefaultOperationHttpChannel.html" title="kaa::DefaultOperationHttp\lChannel" alt="" coords="653,159,824,200"/>
+</map>

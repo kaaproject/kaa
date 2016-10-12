@@ -1,0 +1,2407 @@
+---
+---
+/* custom template */
+html, body {
+   height: 100%;
+   font-family: 'Open Sans', Tahoma;
+   color:#000000;
+}
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  height: 100%;
+  font-family: 'Open Sans', Tahoma;
+}
+
+/* Table options */
+
+table, th, td {
+   /* border: 1px solid black; */
+   outline: 1px solid #DEDEDE;
+}
+
+table {
+	width: 100%;
+}
+
+th, td {
+    padding: 15px;
+    vertical-align: center;
+	color: #5b5b5b;
+}
+
+tr, tr:nth-child(even) {background-color: #fafafa}
+
+th {
+    background-color: #f4f4f4;
+}
+
+.nav {
+   font-family: 'Open Sans', Tahoma;
+   font-size:13px;
+}
+
+a {
+  color:#f7ad41;
+}
+
+a:hover {
+  text-decoration:none;
+}
+
+hr {
+  border-color:#dedede;
+}
+
+.wrapper, .row {
+/*    height: 100%; */
+   margin-left:0;
+   margin-right:0;
+}
+
+.wrapper-full, .row-full {
+   height: 100%;
+}
+
+.wrapper:before, .wrapper:after,
+.column:before, .column:after {
+    content: "";
+    display: table;
+}
+
+.wrapper:after,
+.column:after {
+    clear: both;
+}
+
+.column {
+    height: 100%;
+    overflow: auto;
+    /* zoom:1; */
+}
+
+.column .padding {
+    padding: 20px;
+}
+
+.full{
+	padding-top:70px;
+}
+
+.box {
+    bottom: 0; /* increase for footer use */
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color:#444444;
+  /*
+    background-image:url('/assets/example/bg_suburb.jpg');
+    background-size:cover;
+    background-attachment:fixed;
+  */
+}
+
+.divider {
+    margin-top:32px;
+}
+
+
+.navbar-blue {
+    border-width:0;
+    background-color:#3B5999;
+    color:#ffffff;
+    font-family:arial,sans-serif;
+    top:0;
+    position:fixed;
+    width:inherit;
+}
+
+.navbar-blue li > a,.navbar-toggle  {
+   color:#efefef;
+}
+
+.navbar-blue .dropdown-menu li a {color:#2A4888;}
+.navbar-blue .dropdown-menu li > a {padding-left:30px;}
+
+.navbar-blue li>a:hover, .navbar-blue li>a:focus, .navbar-blue .open, .navbar-blue .open>a, .navbar-blue .open>a:hover, .navbar-blue .open>a:focus {
+   background-color:#2A4888;
+   color:#fff;
+}
+
+#main {
+   background-color:#ffffff;
+   padding-left:0;
+   padding-right:0;
+   overflow:auto;
+
+}
+#main .img-circle {
+   margin-top:18px;
+   height:70px;
+   width:70px;
+}
+
+/*#main .content {
+  background-color:#ffffff;
+  overflow: auto;
+  height:100%;
+  min-height:100%;
+
+}*/
+
+#main .footer {
+  position: relative;
+  clear:both;
+}
+
+#sidebar {
+    padding:0px;
+	/* padding-top:15px; */
+}
+
+#split-bar {
+	position: fixed;
+	display: table;
+	width: 5px;
+	height: 100%;
+	background: #dcdcdc;
+	cursor: ew-resize;
+	z-index: 10;
+}
+
+#split-bar-dots {
+	display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    color: #717171;
+    font-size: 20px;
+    line-height: 0.5;
+}
+
+@media screen and (max-width: 768px){
+	#sidebar, #search{
+		width: 8.33333333% !important;
+	}
+	#main{
+		width: 91.66666667% !important;
+	}
+	#split-bar{
+		display: none;
+	}
+	.row-offcanvas-left.active #sidebar.sidebar-offcanvas { 
+		width: 33% !important;
+	}
+	.row-offcanvas-left.active #search {
+		width: 33% !important;
+	}
+}
+
+#sidebar, #sidebar a, #sidebar-footer a {
+    color:#ccc;
+    background-color:#4b4b4b;
+	font-weight: 800;
+	/* text-shadow:0 0 2px #3c3c3c; */
+    /* padding-left:5px; */
+}
+
+#markdown-toc, #markdown-toc ol, #markdown-toc ul{
+	list-style-type: none !important;
+}
+
+#markdown-toc ol, #markdown-toc ul{
+	padding-left: 20px;
+}
+
+#sidebar .nav li>a:hover {
+    background-color:#f7ad41!important;
+    color:#393939;
+}
+
+#sidebar .nav > li > .dropdown-menu {
+    background-color:#4b4b4b!important;
+}
+
+#sidebar .nav li.menu-selected a{
+    background-color:#f7ad41 !important;
+    color:#393939;
+}
+
+#sidebar .nav > li> .menu-has-child {
+    /* background-color:#3c3c3c; */
+    color:#ccc;
+}
+
+#sidebar .nav > li> .li-0 {padding-left:5px;}
+#sidebar .nav > li> .li-1 {padding-left:15px;}
+#sidebar .nav > li> .li-2 {padding-left:25px;}
+#sidebar .nav > li> .li-3 {padding-left:35px;}
+#sidebar .nav > li> .li-4 {padding-left:45px;}
+#sidebar .nav > li> .li-5 {padding-left:55px;}
+
+#sidebar .nav > .sidebar-header{
+    /* background-color:#444444; */
+    color:#f7ad41;
+}
+
+.logo {
+  display:block;
+
+  background-color:#ffffff;
+  /*color:#3B5999;
+  height:28px;
+  width:28px;
+  margin:9px;
+  margin-right:2px;
+  margin-left:15px;
+  font-size:20px;
+  font-weight:700;
+  text-align:center;
+  text-decoration:none;
+  text-shadow:0 0 1px;
+  border-radius:2px;*/
+}
+
+
+#sidebar-footer {
+  background-color:#444444;
+  position:absolute;
+  bottom:5px;
+  padding:5px;
+}
+#footer {
+  margin-bottom:20px;
+}
+
+/* bootstrap overrides */
+
+h1,h2,h3 {
+   font-weight:800;
+}
+
+.navbar-toggle, .close {
+	outline:0;
+}
+
+.navbar-toggle .icon-bar {
+	background-color: #fff;
+}
+
+.btn-primary,.label-primary,.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus  {
+	background-color:#3B5999;
+    color:#fffffe;
+}
+.btn-default {
+    color:#666666;
+    text-shadow:0 0 1px rgba(0,0,0,.3);
+}
+.form-control {
+
+}
+
+.panel textarea, .well textarea, textarea.form-control
+{
+   resize: none;
+}
+
+.badge{
+   color:#3B5999;
+   background-color:#fff;
+}
+.badge:hover, .badge-inverse{
+   background-color:#3B5999;
+   color:#fff;
+}
+
+.jumbotron {
+  background-color:transparent;
+}
+.label-default {
+  background-color:#dddddd;
+}
+.page-header {
+  margin-top: 55px;
+  padding-top: 9px;
+  border-top:1px solid #eeeeee;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+
+.panel-default .panel-heading {
+  background-color:#f9fafb;
+  color:#555555;
+}
+
+.col-sm-9.full {
+    width: 100%;
+}
+
+.modal-header, .modal-footer {
+	background-color:#f2f2f2;
+    font-weight:800;
+    font-size:12px;
+}
+
+.modal-footer i, .well i {
+    font-size:20px;
+    color:#c0c0c0;
+}
+
+.modal-body {
+	padding:0px;
+}
+
+.modal-body textarea.form-control
+{
+   resize: none;
+   border:0;
+   box-shadow:0 0 0;
+}
+
+small.text-muted {
+  font-family:courier,courier-new,monospace;
+}
+
+
+/* adjust the contents on smaller devices */
+@media (max-width: 768px) {
+
+  .column .padding {
+    padding: 7px;
+  }
+
+  .full{
+	padding-top:20px;
+  }
+
+  .navbar-blue {
+	background-color:#3B5999;
+    top:0;
+    width:100%;
+    position:relative;
+  }
+
+}
+
+
+/*
+ * off canvas sidebar
+ * --------------------------------------------------
+ */
+@media screen and (max-width: 768px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 0.25s ease-out;
+    -moz-transition: all 0.25s ease-out;
+    transition: all 0.25s ease-out;
+  }
+
+  .row-offcanvas-left.active {
+    left: 33%;
+  }
+
+  .row-offcanvas-left.active .sidebar-offcanvas {
+    left: -33%;
+    position: absolute;
+    top: 0;
+    width: 33%;
+  }
+
+  #sidebar, #sidebar a, #sidebar-footer a {
+    padding-left:0px;
+  }
+
+  #sidebar .nav a{
+	padding-left: 10px;
+  }
+}
+
+
+/* custom css */
+/* footer */
+/* sticky footer */
+#page-content-wrapper{min-height: 100%;}
+
+body:before {
+  content:"";
+  height:100%;
+  float:left;
+  width:0;
+  margin-top:-32767px;/* thank you Erik J - negate effect of float*/
+}
+
+.container-fluid{
+  padding: 40px;
+  max-width: 1200px;
+  overflow:auto;
+  padding-bottom: 160px; /* must be same height as the footer */
+}
+
+.footer{
+  position: relative;
+  margin-top: -160px; /* negative value of footer height */
+  height: 160px;
+  clear:both;
+}
+
+.footer p{
+	margin-top: 100px;
+	margin-bottom: 0;
+	line-height: 60px;
+    text-align: center;
+	background-color: #f6f6f6;
+}
+/* sticky footer */
+.footer a{
+	color: #666;
+}
+
+.footer a:hover{
+	color: #f7ad41;
+}
+/* footer */
+
+/* content */
+#sidebar li, p, li{
+	font-size: 16px;
+	line-height: 1.5;
+	text-align: justify;
+	color: #5b5b5b;
+}
+
+h1{
+	margin-top: 60px;
+	margin-bottom: 20px;
+	font-size: 40px;
+	color: #5b5b5b;
+}
+
+#sidebar h2, h2, .info_title{
+	margin-top: 30px;
+	margin-bottom: 20px;
+	font-size: 32px;
+	color: #5b5b5b;
+}
+
+h3{
+	font-size: 22px;
+	color: #5b5b5b;
+}
+
+h4{
+	font-weight: 800;
+	margin-top: 20px;
+	color: #5b5b5b;
+}
+
+iframe{
+	display: block;
+	margin: 20px auto;
+}
+
+li img {
+    transform: translateX(-20px);
+}
+
+img {
+    vertical-align: middle;
+    height: auto;
+	max-width: 100%;
+	width: auto;
+    margin: 20px auto;
+    display: block;
+	max-height: 600px; /*for really big images*/
+}
+
+button.collapse_control{
+    border: none;
+    border-radius: 0;
+    outline: none;
+    background: #f7ad41;
+    color: #fff;
+    padding: 5px 10px;
+    padding-right: 17px;
+    font-family: 'Open Sans', Verdana;
+    position: relative;
+	width: 120px;
+}
+
+button.collapse_control.more{
+	margin-top: 10px;
+}
+
+button.collapse_control:before {
+    content: "";
+    display: block;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+	border-bottom: 5px solid #fff;
+    width: 0;
+    height: 0;
+    position: absolute;
+    right: 5px;
+    top: 13px;
+}
+
+button.collapse_control.more:before {
+    border-top: 5px solid #fff;
+    border-bottom: 0px;
+}
+
+.featherlight img{
+	max-height: initial;
+}
+
+.content img{
+	cursor: pointer;
+}
+
+/* quote */
+blockquote{
+	padding: 15px 20px 15px 15px;
+	border-left: 5px solid #F7AD41;
+    background: #FFF2DF;
+	position: relative;
+	font-size: 16px;
+}
+blockquote:before{
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 10px;
+    width: 40px;
+    height: 36px;
+    display: block;
+}
+blockquote table{
+	outline: 2px solid #FFF2DF;
+}
+blockquote.note{
+	padding: 15px 20px 15px 50px;
+	border-left: 5px solid #72cb66;
+    background: #eaf7e8;
+}
+blockquote.note:before{
+	background-image: url('{{ site.baseurl }}/public/notes/note.png');
+}
+blockquote.note table{
+	outline: 2px solid #eaf7e8;
+}
+blockquote.tip{
+	padding: 15px 20px 15px 50px;
+	border-left: 5px solid #4650ad;
+    background: #ecedf7;
+}
+blockquote.tip:before{
+	background-image: url('{{ site.baseurl }}/public/notes/tip.png');
+}
+blockquote.tip table{
+	outline: 2px solid #ecedf7;
+}
+blockquote.important{
+	padding: 15px 20px 15px 50px;
+	border-left: 5px solid #F7AD41;
+    background: #FFF2DF;
+}
+blockquote.important:before{
+	background-image: url('{{ site.baseurl }}/public/notes/important.png');
+}
+blockquote.important table{
+	outline: 2px solid #FFF2DF;
+}
+blockquote.caution{
+	padding: 15px 20px 15px 50px;
+	border-left: 5px solid #f22f2f;
+    background: #feeaea;
+}
+blockquote.caution:before{
+	background-image: url('{{ site.baseurl }}/public/notes/caution.png');
+}
+blockquote.caution table{
+	outline: 2px solid #feeaea;
+}
+/* quote */
+
+/* tables */
+table{
+	margin: 20px auto;
+	outline: 2px solid white;
+}
+td, th{
+	font-size: 16px;
+}
+/* tables */
+
+/* tabs */
+.nav-tabs{
+	font-size: 22px;
+	font-weight: 800;
+	color: #666;
+	border-bottom: 2px solid #f7ad41;
+}
+
+.nav-tabs>li{
+	background: #f6f6f6;
+	margin-bottom: 0 !important;
+}
+
+.nav-tabs>li>a{
+	color: #666;
+	text-align: center!important;
+    	padding: 10px 15px!important;
+	min-width: 60px;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover{
+	color: #fff;
+    background-color: #f7ad41;
+}
+
+pre, .nav-tabs>li>a {
+    margin-right: 0 !important;
+	border: none !important;
+	border-radius: 0 !important;
+}
+
+/* tabs */
+/* content */
+
+/* sidebar*/
+.logo img{
+	transform: initial;
+	max-width: 100% !important;
+	margin: 20px auto 0;
+	border-radius: 8px;
+}
+
+#sidebar .logo{
+	padding: 0px 15px;
+}
+
+#sidebar .nav .logo:hover{
+	background-color: transparent !important;
+}
+
+/* Search */
+#search{
+	position: fixed;
+    bottom: 0;
+    background: #4b4b4b;
+	width: 16.66666667%;
+}
+#search input{
+    width: 84%;
+    margin: 13px 8%;
+    padding: 6px 6px 6px 40px;
+    background: url('{{ site.baseurl }}/public/search.png') #434343;
+    background-repeat: no-repeat;
+    background-size: 30px;
+    background-position-y: center;
+    background-position-x: 5px;
+    font-size: 16px;
+    border: none;
+	font-family: 'Open Sans';
+}
+#sidebar{
+	height: calc(100% - 60px);
+}
+@media screen and (max-width: 768px) {
+  #search{
+	width: 33%;
+  }
+  #search input{
+	visibility: hidden;
+  }
+  .active #search input{
+	visibility: visible;
+  }
+}
+/* Search results */
+#search-results{
+	padding-left: 0;
+	list-style: none;
+}
+#search-results li{
+	background: #f2f2f2;
+    padding: 1px 20px 15px;
+    margin: 10px 0;
+}
+#search-results li p{
+	text-align: left;
+}
+.search .btn-default{
+	background: #f7ad41;
+	color: #fff;
+	font-weight: 800;
+	border: none;
+	border-radius: 0;
+}
+.search .btn-default:active{
+	border: none;
+	background: #4b4b4b;
+	color: #fff;
+	outline: none;
+}
+.search #search-box{
+	background: #f2f2f2;
+	color: #5b5b5b;
+	font-weight: 800;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+	margin-top: -2px;
+}
+.search #version-select {
+	position: relative;
+    height: 34px;
+    background: #f2f2f2;
+    border: 0;
+    color: #5b5b5b;
+    font-weight: 800;
+    padding-left: 12px;
+	padding-right: 30px;
+	appearance:none;
+    -moz-appearance:none; /* Firefox */
+    -webkit-appearance:none; /* Safari and Chrome */
+	background: url('{{ site.baseurl }}/public/drop-down.png') no-repeat right #f2f2f2;
+}
+.search #version-select:before {
+    content: "";
+    display: block;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+	border-bottom: 5px solid #5b5b5b;
+    width: 0;
+    height: 0;
+    position: absolute;
+    right: 5px;
+    top: 13px;
+}
+.search #version-select:focus, .search #search-box:focus, .search .btn-default:focus{
+	outline: none;
+}
+/* Search results */
+/* Search */
+/* navigation*/
+#sidebar a {
+    background: none;
+}
+.li-1, .li-2, .li-3, .li-4, .li-5, .li-6{
+	/* display: none; */
+	max-height: 0;
+    transition: max-height 0.15s ease-out;
+    overflow: hidden;
+    background: #d5d5d5;
+}
+li.menu-opened + ul{
+	/* display: block; */
+	max-height: 2800px;
+    transition: max-height 0.25s ease-in;
+}
+#sidebar h2, #sidebar h4{
+	color: #f7ad41;
+	text-align: center;
+	font-weight: 800;
+}
+
+#sidebar .nav ul{
+	list-style: none;
+	padding-left: 0;
+}
+
+.nav li a{
+    padding: 10px 5px;
+    text-align: left;
+    display: block;
+}
+
+#sidebar .nav > li a{
+	text-align: initial;
+	padding-left: 10px;
+}
+
+#sidebar .nav > .li-1 a{
+	padding-left: 27px;
+	background-color: #3c3c3c;
+}
+
+#sidebar .nav > .li-1 > .li-2 a{
+	padding-left: 44px;
+	background-color: #333333;
+}
+
+#sidebar .nav > .li-1 > .li-2 > .li-3 a{
+	padding-left: 48px;
+	background-color: #2f2f2f;
+}
+#sidebar .nav > .li-1 > .li-2 > .li-3 > .li-4 a{
+	padding-left: 48px;
+	}
+#sidebar .nav > .li-1 > .li-2 > .li-3 > .li-4 > .li-5 a{
+	padding-left: 48px;
+	}
+
+.caret {
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 4px dashed;
+	margin: 0px 4px 3px;
+	transform: rotate(0deg) translate(0px, 0px);
+	transition: transform 0.25s linear;
+}
+
+.car-field:hover .caret{
+	transform: rotate(90deg) translate(2px, 2px);
+	transition: transform 0.25s linear;
+}
+
+.dropdown-toggle .caret, .menu-opened .caret{
+    border-top: 4px dashed;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+	margin: 0px 6px 0px 2px;
+}
+
+.dropdown-toggle .car-field:hover .caret, .menu-opened .car-field:hover .caret{
+	transform: initial;
+	transition: none;
+}
+
+.dropdown-toggle .caret{
+	margin: 4px 4px 0px;
+}
+/* navigation*/
+/* sidebar drop-down */
+.dropdown-menu{
+	left: 50%;
+    transform: translateX(-50%);
+}
+
+#sidebar .nav > li  a.dropdown-toggle{
+	text-align: center !important;
+	max-width: 164px;
+    margin: 0 auto;
+    background-color: #434343 !important;
+	color: #f7ad41 !important;
+	margin-bottom: 10px;
+	font-weight: 800;
+}
+/* sidebar drop-down */
+/* sidebar*/
+/* Custom scroll for webkit */
+/* ::-webkit-scrollbar
+{
+  width: 10px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track
+{
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb
+{
+  background: rgba(0, 0, 0, 0.5);
+} */
+/* Custom scroll for webkit */
+/* Rest API */
+.swagger-section #message-bar{
+	min-height: initial !important;
+	padding-top: 0 !important;
+}
+
+.swagger-section .swagger-ui-wrap{
+	max-width: initial !important;
+}
+
+#resources, .endpoints{
+	padding-left: 0;
+}
+
+#resources_container{
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span.path a{
+	font-size: 16px!important;
+	font-weight: 400!important;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options{
+	margin: 30px 10px 0 0!important;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources #admin_api_endpoint_list.endpoints .options{
+	margin: 3px 10px 0 0!important;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources #admin_api_endpoint_list.endpoints .options li a{
+	color: #f7ad41;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.heading ul.options li:last-child{
+	padding: 5px 0;
+}
+
+.sandbox_header .submit{
+	color: #000;
+	padding: 4px 6px;
+}
+
+.swagger-section .swagger-ui-wrap .model-signature .description div{
+	font-size: 16px!important;
+}
+
+.container{
+	width: 100%;
+    max-width: 1160px;
+}
+
+.swagger-section .swagger-ui-wrap table thead tr th{
+	font-size: 16px!important;
+}
+
+.swagger-section .swagger-ui-wrap .model-signature .description div, .swagger-section .swagger-ui-wrap table tbody tr td{
+	font-size: 16px!important;
+}
+
+.container .footer{
+	height: initial;
+}
+
+.container .footer h4{
+	font-size: 14px;
+	margin: 0;
+}
+
+.swagger-section table, .swagger-section th, .swagger-section td, .swagger-section tr, .swagger-section tr:nth-child(even){
+	outline: none;
+	background: none;
+}
+
+.path a{
+	color: #ccc !important;
+}
+
+table p{
+	text-align: initial !important;
+}
+
+/* tabs */
+.signature-nav{
+	font-size: 22px;
+	font-weight: 800;
+	color: #666;
+	border-bottom: 2px solid #f7ad41;
+	display: table;
+}
+
+.signature-nav>li{
+	background: #f6f6f6;
+	margin-bottom: 0 !important;
+}
+
+.signature-nav>li>.description-link,
+.signature-nav>li>.snippet-link{
+	color: #666;
+}
+
+.signature-nav>li.active>.description-link.selected, .signature-nav>li.active>.description-link.selected:focus, .signature-nav>li.active>.description-link.selected:hover,
+.signature-nav>li.active>.snippet-lin.selected, .signature-nav>li.active>.snippet-lin.selected:focus, .signature-nav>li.active>.snippet-lin.selected:hover{
+	color: #fff;
+    background-color: #f7ad41;
+}
+
+pre, .signature-nav>li>a {
+    margin-right: 0 !important;
+	border: none !important;
+	border-radius: 0 !important;
+}
+/* tabs */
+/* Original style from softwaremaniacs.org (c) Ivan Sagalaev <Maniac@SoftwareManiacs.Org> */
+.swagger-section pre code {
+  display: block;
+  padding: 0.5em;
+  background: #F0F0F0;
+}
+.swagger-section pre code,
+.swagger-section pre .subst,
+.swagger-section pre .tag .title,
+.swagger-section pre .lisp .title,
+.swagger-section pre .clojure .built_in,
+.swagger-section pre .nginx .title {
+  color: black;
+}
+.swagger-section pre .string,
+.swagger-section pre .title,
+.swagger-section pre .constant,
+.swagger-section pre .parent,
+.swagger-section pre .tag .value,
+.swagger-section pre .rules .value,
+.swagger-section pre .rules .value .number,
+.swagger-section pre .preprocessor,
+.swagger-section pre .ruby .symbol,
+.swagger-section pre .ruby .symbol .string,
+.swagger-section pre .aggregate,
+.swagger-section pre .template_tag,
+.swagger-section pre .django .variable,
+.swagger-section pre .smalltalk .class,
+.swagger-section pre .addition,
+.swagger-section pre .flow,
+.swagger-section pre .stream,
+.swagger-section pre .bash .variable,
+.swagger-section pre .apache .tag,
+.swagger-section pre .apache .cbracket,
+.swagger-section pre .tex .command,
+.swagger-section pre .tex .special,
+.swagger-section pre .erlang_repl .function_or_atom,
+.swagger-section pre .markdown .header {
+  color: #800;
+}
+.swagger-section pre .comment,
+.swagger-section pre .annotation,
+.swagger-section pre .template_comment,
+.swagger-section pre .diff .header,
+.swagger-section pre .chunk,
+.swagger-section pre .markdown .blockquote {
+  color: #888;
+}
+.swagger-section pre .number,
+.swagger-section pre .date,
+.swagger-section pre .regexp,
+.swagger-section pre .literal,
+.swagger-section pre .smalltalk .symbol,
+.swagger-section pre .smalltalk .char,
+.swagger-section pre .go .constant,
+.swagger-section pre .change,
+.swagger-section pre .markdown .bullet,
+.swagger-section pre .markdown .link_url {
+  color: #080;
+}
+.swagger-section pre .label,
+.swagger-section pre .javadoc,
+.swagger-section pre .ruby .string,
+.swagger-section pre .decorator,
+.swagger-section pre .filter .argument,
+.swagger-section pre .localvars,
+.swagger-section pre .array,
+.swagger-section pre .attr_selector,
+.swagger-section pre .important,
+.swagger-section pre .pseudo,
+.swagger-section pre .pi,
+.swagger-section pre .doctype,
+.swagger-section pre .deletion,
+.swagger-section pre .envvar,
+.swagger-section pre .shebang,
+.swagger-section pre .apache .sqbracket,
+.swagger-section pre .nginx .built_in,
+.swagger-section pre .tex .formula,
+.swagger-section pre .erlang_repl .reserved,
+.swagger-section pre .prompt,
+.swagger-section pre .markdown .link_label,
+.swagger-section pre .vhdl .attribute,
+.swagger-section pre .clojure .attribute,
+.swagger-section pre .coffeescript .property {
+  color: #88F;
+}
+.swagger-section pre .keyword,
+.swagger-section pre .id,
+.swagger-section pre .phpdoc,
+.swagger-section pre .title,
+.swagger-section pre .built_in,
+.swagger-section pre .aggregate,
+.swagger-section pre .css .tag,
+.swagger-section pre .javadoctag,
+.swagger-section pre .phpdoc,
+.swagger-section pre .yardoctag,
+.swagger-section pre .smalltalk .class,
+.swagger-section pre .winutils,
+.swagger-section pre .bash .variable,
+.swagger-section pre .apache .tag,
+.swagger-section pre .go .typename,
+.swagger-section pre .tex .command,
+.swagger-section pre .markdown .strong,
+.swagger-section pre .request,
+.swagger-section pre .status {
+  font-weight: bold;
+}
+.swagger-section pre .markdown .emphasis {
+  font-style: italic;
+}
+.swagger-section pre .nginx .built_in {
+  font-weight: normal;
+}
+.swagger-section pre .coffeescript .javascript,
+.swagger-section pre .javascript .xml,
+.swagger-section pre .tex .formula,
+.swagger-section pre .xml .javascript,
+.swagger-section pre .xml .vbscript,
+.swagger-section pre .xml .css,
+.swagger-section pre .xml .cdata {
+  opacity: 0.5;
+}
+.swagger-section .swagger-ui-wrap {
+  line-height: 1;
+  font-family: 'Open Sans', "Droid Sans", sans-serif;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  /* JSONEditor specific styling */
+}
+.swagger-section .swagger-ui-wrap b,
+.swagger-section .swagger-ui-wrap strong {
+  font-family: 'Open Sans', "Droid Sans", sans-serif;
+  font-weight: bold;
+}
+.swagger-section .swagger-ui-wrap q,
+.swagger-section .swagger-ui-wrap blockquote {
+  quotes: none;
+}
+.swagger-section .swagger-ui-wrap p {
+  line-height: 1.4em;
+  padding: 0 0 10px;
+  color: #5b5b5b;
+}
+.swagger-section .swagger-ui-wrap q:before,
+.swagger-section .swagger-ui-wrap q:after,
+.swagger-section .swagger-ui-wrap blockquote:before,
+.swagger-section .swagger-ui-wrap blockquote:after {
+  content: none;
+}
+.swagger-section .swagger-ui-wrap .heading_with_menu h1,
+.swagger-section .swagger-ui-wrap .heading_with_menu h2,
+.swagger-section .swagger-ui-wrap .heading_with_menu h3,
+.swagger-section .swagger-ui-wrap .heading_with_menu h4,
+.swagger-section .swagger-ui-wrap .heading_with_menu h5,
+.swagger-section .swagger-ui-wrap .heading_with_menu h6 {
+  display: block;
+  clear: none;
+  float: left;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 60%;
+}
+.swagger-section .swagger-ui-wrap table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 10px auto 20px;
+}
+.swagger-section .swagger-ui-wrap table thead tr th {
+  padding: 5px;
+  font-size: 0.9em;
+  color: #cbcbcb;
+  border-bottom: 2px solid #d8d8d8;
+  font-weight: 800;
+}
+.swagger-section .swagger-ui-wrap table tbody tr:last-child td {
+  border-bottom: none;
+}
+.swagger-section .swagger-ui-wrap table tbody tr.offset {
+  background-color: #f0f0f0;
+}
+.swagger-section .swagger-ui-wrap table tbody tr td {
+  padding: 6px;
+  font-size: 0.9em;
+  border-bottom: 1px solid #cccccc;
+  vertical-align: top;
+  line-height: 1.3em;
+}
+.swagger-section .swagger-ui-wrap ol {
+  margin: 0px 0 10px;
+  padding: 0 0 0 18px;
+  list-style-type: decimal;
+}
+.swagger-section .swagger-ui-wrap ol li {
+  padding: 5px 0px;
+  font-size: 0.9em;
+  color: #333333;
+}
+.swagger-section .swagger-ui-wrap ol,
+.swagger-section .swagger-ui-wrap ul {
+  list-style: none;
+}
+.swagger-section .swagger-ui-wrap h1 a,
+.swagger-section .swagger-ui-wrap h2 a,
+.swagger-section .swagger-ui-wrap h3 a,
+.swagger-section .swagger-ui-wrap h4 a,
+.swagger-section .swagger-ui-wrap h5 a,
+.swagger-section .swagger-ui-wrap h6 a {
+  text-decoration: none;
+}
+.swagger-section .swagger-ui-wrap h1 a:hover,
+.swagger-section .swagger-ui-wrap h2 a:hover,
+.swagger-section .swagger-ui-wrap h3 a:hover,
+.swagger-section .swagger-ui-wrap h4 a:hover,
+.swagger-section .swagger-ui-wrap h5 a:hover,
+.swagger-section .swagger-ui-wrap h6 a:hover {
+  text-decoration: none;
+}
+.swagger-section .swagger-ui-wrap h1 span.divider,
+.swagger-section .swagger-ui-wrap h2 span.divider,
+.swagger-section .swagger-ui-wrap h3 span.divider,
+.swagger-section .swagger-ui-wrap h4 span.divider,
+.swagger-section .swagger-ui-wrap h5 span.divider,
+.swagger-section .swagger-ui-wrap h6 span.divider {
+  color: #aaaaaa;
+}
+.swagger-section .swagger-ui-wrap a {
+  color: #f7ad41;
+}
+.swagger-section .swagger-ui-wrap a img {
+  border: none;
+}
+.swagger-section .swagger-ui-wrap article,
+.swagger-section .swagger-ui-wrap aside,
+.swagger-section .swagger-ui-wrap details,
+.swagger-section .swagger-ui-wrap figcaption,
+.swagger-section .swagger-ui-wrap figure,
+.swagger-section .swagger-ui-wrap footer,
+.swagger-section .swagger-ui-wrap header,
+.swagger-section .swagger-ui-wrap hgroup,
+.swagger-section .swagger-ui-wrap menu,
+.swagger-section .swagger-ui-wrap nav,
+.swagger-section .swagger-ui-wrap section,
+.swagger-section .swagger-ui-wrap summary {
+  display: block;
+}
+.swagger-section .swagger-ui-wrap pre {
+  font-family: 'Open Sans', "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+  background-color: #f5f5f5;
+  padding: 10px;
+}
+.swagger-section .swagger-ui-wrap pre code,
+.swagger-section .swagger-ui-wrap .description {
+  line-height: 1.6em;
+  background: #fefefe;
+}
+.swagger-section .swagger-ui-wrap .description {
+    padding: 0.5em;
+}
+.swagger-section .swagger-ui-wrap .content > .content-type > div > label {
+  clear: both;
+  display: block;
+  color: #0F6AB4;
+  font-size: 1.1em;
+  margin: 0;
+  padding: 15px 0 5px;
+}
+.swagger-section .swagger-ui-wrap .content pre {
+  font-size: 12px;
+  margin-top: 0px;
+  padding: 0px;
+}
+.swagger-section .swagger-ui-wrap .icon-btn {
+  cursor: pointer;
+}
+.swagger-section .swagger-ui-wrap .info_title {
+  padding-bottom: 10px;
+  font-weight: bold;
+  font-size: 25px;
+}
+.swagger-section .swagger-ui-wrap .footer {
+  margin-top: 20px;
+}
+.swagger-section .swagger-ui-wrap p.big,
+.swagger-section .swagger-ui-wrap div.big p {
+  font-size: 1em;
+  margin-bottom: 10px;
+}
+.swagger-section .swagger-ui-wrap form.fullwidth ol li.string input,
+.swagger-section .swagger-ui-wrap form.fullwidth ol li.url input,
+.swagger-section .swagger-ui-wrap form.fullwidth ol li.text textarea,
+.swagger-section .swagger-ui-wrap form.fullwidth ol li.numeric input {
+  width: 500px !important;
+}
+.swagger-section .swagger-ui-wrap .info_license {
+  padding-bottom: 5px;
+}
+.swagger-section .swagger-ui-wrap .info_tos {
+  padding-bottom: 5px;
+}
+.swagger-section .swagger-ui-wrap .message-fail {
+  color: #cc0000;
+}
+.swagger-section .swagger-ui-wrap .info_url {
+  padding-bottom: 5px;
+}
+.swagger-section .swagger-ui-wrap .info_email {
+  padding-bottom: 5px;
+}
+.swagger-section .swagger-ui-wrap .info_name {
+  padding-bottom: 5px;
+}
+.swagger-section .swagger-ui-wrap .info_description {
+  padding-bottom: 10px;
+  font-size: 15px;
+}
+.swagger-section .swagger-ui-wrap .markdown ol li,
+.swagger-section .swagger-ui-wrap .markdown ul li {
+  padding: 3px 0px;
+  line-height: 1.4em;
+  color: #333333;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.string input,
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.url input,
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.numeric input {
+  display: block;
+  padding: 4px;
+  width: auto;
+  clear: both;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.string input.title,
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.url input.title,
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.numeric input.title {
+  font-size: 1.3em;
+}
+.swagger-section .swagger-ui-wrap table.fullwidth {
+  width: 100%;
+}
+.swagger-section .swagger-ui-wrap .model-signature {
+  font-family: 'Open Sans', "Droid Sans", sans-serif;
+  font-size: 1em;
+  line-height: 1.5em;
+}
+.swagger-section .swagger-ui-wrap .model-signature .signature-nav a {
+  text-decoration: none;
+  color: #fff;
+  background: #4b4b4b;
+  padding: 10px 15px;
+}
+.swagger-section .swagger-ui-wrap .model-signature .signature-nav a:hover {
+  color: white;
+  /*background: #dcdcdc;*/
+  padding: 10px 15px;
+}
+.swagger-section .swagger-ui-wrap .model-signature .signature-nav .selected {
+  color: white;
+  text-decoration: none;
+  background: #f7ad41;
+  padding: 10px 15px;
+}
+.swagger-section .swagger-ui-wrap .model-signature .propType {
+  color: #5555aa;
+}
+.swagger-section .swagger-ui-wrap .model-signature pre {
+  font-size: .85em;
+  line-height: 1.2em;
+  overflow: auto;
+/*   max-height: 200px; */
+}
+.swagger-section .swagger-ui-wrap .model-signature ul.signature-nav {
+  display: table;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-bottom: 2px solid #f7ad41;
+}
+.swagger-section .swagger-ui-wrap .model-signature ul.signature-nav li:last-child {
+  padding-right: 0;
+  border-right: none;
+}
+.swagger-section .swagger-ui-wrap .model-signature ul.signature-nav li {
+  float: left;
+  display: flex;
+}
+.swagger-section .swagger-ui-wrap .model-signature .propOpt {
+  color: #555;
+}
+.swagger-section .swagger-ui-wrap .model-signature .snippet small {
+  font-size: 0.75em;
+}
+.swagger-section .swagger-ui-wrap .model-signature .propOptKey {
+  font-style: italic;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description .strong {
+  font-weight: bold;
+  color: #000;
+  font-size: .9em;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description div {
+  font-size: 0.9em;
+  line-height: 1.5em;
+  margin-left: 1em;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description .stronger {
+  font-weight: bold;
+  color: #000;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description .propWrap .optionsWrapper {
+  border-spacing: 0;
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #bbbbbb;
+  display: none;
+  font-size: 11px;
+  max-width: 400px;
+  line-height: 30px;
+  color: black;
+  padding: 5px;
+  margin-left: 10px;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description .propWrap .optionsWrapper th {
+  text-align: center;
+  background-color: #eeeeee;
+  border: 1px solid #bbbbbb;
+  font-size: 11px;
+  color: #666666;
+  font-weight: bold;
+  padding: 5px;
+  line-height: 15px;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description .propWrap .optionsWrapper .optionName {
+  font-weight: bold;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description .propDesc.markdown > p:first-child,
+.swagger-section .swagger-ui-wrap .model-signature .description .propDesc.markdown > p:last-child {
+  display: inline;
+}
+.swagger-section .swagger-ui-wrap .model-signature .description .propDesc.markdown > p:not(:first-child):before {
+  display: block;
+  content: '';
+}
+.swagger-section .swagger-ui-wrap .model-signature .description span:last-of-type.propDesc.markdown > p:only-child {
+  margin-right: -3px;
+}
+.swagger-section .swagger-ui-wrap .model-signature .propName {
+  font-weight: bold;
+}
+.swagger-section .swagger-ui-wrap .model-signature .signature-container {
+  clear: both;
+}
+.swagger-section .swagger-ui-wrap .body-textarea {
+  width: 300px;
+  height: 100px;
+  border: none;
+  padding: 5px;
+}
+.swagger-section .swagger-ui-wrap .markdown p code,
+.swagger-section .swagger-ui-wrap .markdown li code {
+  font-family: 'Open Sans', 'Open Sans', "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+  background-color: #f0f0f0;
+  color: black;
+  padding: 1px 3px;
+}
+.swagger-section .swagger-ui-wrap .required {
+  font-weight: bold;
+}
+.swagger-section .swagger-ui-wrap .editor_holder {
+  font-family: 'Open Sans', 'Open Sans', "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+  font-size: 0.9em;
+}
+.swagger-section .swagger-ui-wrap .editor_holder label {
+  font-weight: normal!important;
+  /* JSONEditor uses bold by default for all labels, we revert that back to normal to not give the impression that by default fields are required */
+}
+.swagger-section .swagger-ui-wrap .editor_holder label.required {
+  font-weight: bold!important;
+}
+.swagger-section .swagger-ui-wrap input.parameter {
+  width: 300px;
+  border: none;
+  padding: 5px;
+}
+.swagger-section .swagger-ui-wrap select{
+  border: none;
+  padding: 5px;
+}
+.swagger-section .swagger-ui-wrap td,
+.swagger-section .swagger-ui-wrap th{
+	width: initial!important;
+	max-width: initial!important;
+	vertical-align: middle;
+}
+.swagger-section .swagger-ui-wrap table table{
+	margin: 0;
+}
+.swagger-section .swagger-ui-wrap h1 {
+  color: black;
+  font-size: 1.5em;
+  line-height: 1.3em;
+  padding: 10px 0 10px 0;
+  font-family: 'Open Sans', 'Open Sans', "Droid Sans", sans-serif;
+  font-weight: bold;
+}
+.swagger-section .swagger-ui-wrap .heading_with_menu {
+  float: none;
+  clear: both;
+  overflow: hidden;
+  display: block;
+}
+.swagger-section .swagger-ui-wrap .heading_with_menu ul {
+  display: block;
+  clear: none;
+  float: right;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+.swagger-section .swagger-ui-wrap h2 {
+  color: black;
+  font-size: 1.3em;
+  padding: 10px 0 10px 0;
+}
+.swagger-section .swagger-ui-wrap h2 a {
+  color: black;
+}
+.swagger-section .swagger-ui-wrap h2 span.sub {
+  font-size: 0.7em;
+  color: #999999;
+  font-style: italic;
+}
+.swagger-section .swagger-ui-wrap h2 span.sub a {
+  color: #777777;
+}
+.swagger-section .swagger-ui-wrap span.weak {
+  color: #666666;
+}
+.swagger-section .swagger-ui-wrap .message-success {
+  color: #89BF04;
+}
+.swagger-section .swagger-ui-wrap caption,
+.swagger-section .swagger-ui-wrap th,
+.swagger-section .swagger-ui-wrap td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+.swagger-section .swagger-ui-wrap .code {
+  font-family: 'Open Sans', 'Open Sans', "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.text textarea {
+  font-family: 'Open Sans', 'Open Sans', "Droid Sans", sans-serif;
+  height: 250px;
+  padding: 4px;
+  display: block;
+  clear: both;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.select select {
+  display: block;
+  clear: both;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.boolean {
+  float: none;
+  clear: both;
+  overflow: hidden;
+  display: block;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.boolean label {
+  display: block;
+  float: left;
+  clear: none;
+  margin: 0;
+  padding: 0;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.boolean input {
+  display: block;
+  float: left;
+  clear: none;
+  margin: 0 5px 0 0;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li.required label {
+  color: black;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li label {
+  display: block;
+  clear: both;
+  width: auto;
+  padding: 0 0 3px;
+  color: #666666;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li label abbr {
+  padding-left: 3px;
+  color: #888888;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.inputs ol li p.inline-hints {
+  margin-left: 0;
+  font-style: italic;
+  font-size: 0.9em;
+  margin: 0;
+}
+.swagger-section .swagger-ui-wrap form.formtastic fieldset.buttons {
+  margin: 0;
+  padding: 0;
+}
+.swagger-section .swagger-ui-wrap span.blank,
+.swagger-section .swagger-ui-wrap span.empty {
+  color: #888888;
+  font-style: italic;
+}
+.swagger-section .swagger-ui-wrap .markdown h3 {
+  color: #547f00;
+}
+.swagger-section .swagger-ui-wrap .markdown h4 {
+  color: #666666;
+}
+.swagger-section .swagger-ui-wrap .markdown pre {
+  font-family: 'Open Sans', "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+  background-color: #fcf6db;
+  border: 1px solid #e5e0c6;
+  padding: 10px;
+  margin: 0 0 10px 0;
+}
+.swagger-section .swagger-ui-wrap .markdown pre code {
+  line-height: 1.6em;
+}
+.swagger-section .swagger-ui-wrap div.gist {
+  margin: 20px 0 25px 0 !important;
+}
+.swagger-section .swagger-ui-wrap ul#resources {
+  font-family: 'Open Sans', "Droid Sans", sans-serif;
+  font-size: 0.9em;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource {
+  border-bottom: 1px solid #dddddd;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource:hover div.heading h2 a,
+.swagger-section .swagger-ui-wrap ul#resources li.resource.active div.heading h2 a {
+  color: #5b5b5b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource:hover div.heading ul.options li a,
+.swagger-section .swagger-ui-wrap ul#resources li.resource.active div.heading ul.options li a {
+  color: #555555;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource:last-child {
+  border-bottom: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading {
+  border: none;
+  float: none;
+  clear: both;
+  overflow: hidden;
+  display: block;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options {
+  overflow: hidden;
+  padding: 0;
+  display: block;
+  clear: none;
+  float: right;
+  margin: 14px 10px 0 0;
+  font-weight: 800;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li {
+  float: left;
+  clear: none;
+  margin: 0;
+  padding: 2px 10px;
+  border-right: 1px solid #dddddd;
+  color: #666666;
+  font-size: 0.9em;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li a {
+  color: #cbcbcb;
+  text-decoration: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li a:hover {
+  text-decoration: underline;
+  color: black;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li a:hover,
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li a:active,
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li a.active {
+  text-decoration: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li:first-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li.first {
+  padding-left: 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li:last-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options li.last {
+  padding-right: 0;
+  border-right: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options:first-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options.first {
+  padding-left: 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading h2 {
+  color: #ccc;
+  padding-left: 0;
+  display: block;
+  clear: none;
+  float: left;
+  font-family: 'Open Sans', "Droid Sans", sans-serif;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading h2 a {
+  color: #5b5b5b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading h2 a:hover {
+  color: #333333;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation {
+  float: none;
+  clear: both;
+  overflow: hidden;
+  display: block;
+  margin: 0 0 10px;
+  padding: 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading {
+  float: none;
+  clear: both;
+  overflow: hidden;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 {
+  display: block;
+  clear: none;
+  float: left;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  line-height: 1.1em;
+  color: black;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span.path {
+  padding-left: 10px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span.path a {
+  color: #ccc;
+  text-decoration: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span.path a:hover {
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span.http_method a {
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-block;
+  width: 80px;
+  text-align: center;
+  color: #fff!important;
+  padding: 10px 0;
+  font-size: 16px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span {
+  margin: 0;
+  padding: 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading ul.options {
+  overflow: hidden;
+  padding: 0;
+  display: block;
+  clear: none;
+  float: right;
+  margin: 6px 10px 0 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading ul.options li {
+  float: left;
+  clear: none;
+  margin: 0;
+  padding: 2px 10px;
+  font-size: 0.9em;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading ul.options li a {
+  text-decoration: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading ul.options li.access {
+  color: black;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content {
+  border-top: none;
+  padding: 30px 20px;
+  margin: 0 0 20px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content h4 {
+  font-size: 1.1em;
+  margin: 0;
+  padding: 15px 0 5px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.sandbox_header {
+  float: none;
+  clear: both;
+  overflow: hidden;
+  display: block;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.sandbox_header a {
+  padding: 4px 0 0 10px;
+  display: inline-block;
+  font-size: 0.9em;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.sandbox_header input.submit {
+  display: block;
+  clear: none;
+  float: left;
+  padding: 6px 15px;
+  background: #f7ad41;
+  color: #fff;
+  border: none;
+  text-transform: capitalize;
+  font-size: 18px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.sandbox_header span.response_throbber {
+  background-image: url('{{ site.baseurl }}/images/rest-api/throbber.gif');
+  width: 128px;
+  height: 16px;
+  display: block;
+  clear: none;
+  float: right;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content form input[type='text'].error {
+  outline-color: #fb8787;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content form select[name='parameterContentType'] {
+  max-width: 300px;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.content div.response div.block pre {
+  font-family: 'Open Sans', "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+  padding: 10px;
+  font-size: 0.9em;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.heading {
+  background-color: #4b4b4b;
+  border: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.heading h3 span.http_method a {
+  background-color: #f7ad41;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.heading ul.options li {
+  border-right: 1px solid #dddddd;
+  border-right-color: #f0e0ca;
+  color: #c5862b;
+  padding: 5px 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.heading ul.options li a {
+  color: #c5862b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.content {
+  background-color: #f6f6f6;
+  border: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.content h4 {
+  color: #4b4b4b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.content div.sandbox_header a {
+  color: #dcb67f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.heading {
+  background-color: #fcffcd;
+  border: 1px solid black;
+  border-color: #ffd20f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.heading h3 span.http_method a {
+  text-transform: uppercase;
+  background-color: #ffd20f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.heading ul.options li {
+  border-right: 1px solid #dddddd;
+  border-right-color: #ffd20f;
+  color: #ffd20f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.heading ul.options li a {
+  color: #ffd20f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.content {
+  background-color: #fcffcd;
+  border: 1px solid black;
+  border-color: #ffd20f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.content h4 {
+  color: #ffd20f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.content div.sandbox_header a {
+  color: #6fc992;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.heading {
+  background-color: #4b4b4b;
+  border: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.heading h3 span.http_method a {
+  text-transform: uppercase;
+  background-color: #f7ad41;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.heading ul.options li {
+  border-right: 1px solid #dddddd;
+  border-right-color: #e8c6c7;
+  color: #a41e22;
+  padding: 5px 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.heading ul.options li a {
+  color: #a41e22;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.content {
+  background-color: #f6f6f6;
+  border: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.content h4 {
+  color: #4b4b4b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.content div.sandbox_header a {
+  color: #c8787a;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.heading {
+  background-color: #4b4b4b;
+  border: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.heading h3 span.http_method a {
+  background-color: #f7ad41;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.heading ul.options li {
+  border-right: 1px solid #dddddd;
+  border-right-color: #c3e8d1;
+  color: #10a54a;
+  padding: 5px 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.heading ul.options li a {
+  color: #10a54a;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.content {
+  background-color: #f6f6f6;
+  border: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.content h4 {
+  color: #4b4b4b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.content div.sandbox_header a {
+  color: #6fc992;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading {
+  background-color: #FCE9E3;
+  border: 1px solid #F5D5C3;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading h3 span.http_method a {
+  background-color: #D38042;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading ul.options li {
+  border-right: 1px solid #dddddd;
+  border-right-color: #f0cecb;
+  color: #D38042;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading ul.options li a {
+  color: #D38042;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.content {
+  background-color: #faf0ef;
+  border: 1px solid #f0cecb;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.content h4 {
+  color: #D38042;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.content div.sandbox_header a {
+  color: #dcb67f;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.heading {
+  background-color: #4b4b4b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.heading h3 span.http_method a {
+  background-color: #f7ad41;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.heading ul.options li {
+  border-right: 1px solid #dddddd;
+  border-right-color: #c3d9ec;
+  color: #0f6ab4;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.heading ul.options li a {
+  color: #f7ad41;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.content {
+  /* background-color: #ebf3f9;
+  border: 1px solid #c3d9ec; */
+  background-color: #f6f6f6;
+  border: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.content h4 {
+  color: #4b4b4b;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.content div.sandbox_header a {
+  color: #6fa5d2;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.options div.heading {
+  background-color: #e7f0f7;
+  border: 1px solid #c3d9ec;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.options div.heading h3 span.http_method a {
+  background-color: #0f6ab4;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.options div.heading ul.options li {
+  border-right: 1px solid #dddddd;
+  border-right-color: #c3d9ec;
+  color: #0f6ab4;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.options div.heading ul.options li a {
+  color: #0f6ab4;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.options div.content {
+  background-color: #ebf3f9;
+  border: 1px solid #c3d9ec;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.options div.content h4 {
+  color: #0f6ab4;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.options div.content div.sandbox_header a {
+  color: #6fa5d2;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.content,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.content,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.content,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.content,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.content,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.content {
+  border-top: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.heading ul.options li:last-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.heading ul.options li:last-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.heading ul.options li:last-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.heading ul.options li:last-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading ul.options li:last-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.heading ul.options li:last-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.get div.heading ul.options li.last,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post div.heading ul.options li.last,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.head div.heading ul.options li.last,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.put div.heading ul.options li.last,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.patch div.heading ul.options li.last,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.delete div.heading ul.options li.last {
+  padding-right: 0;
+  border-right: none;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations ul.options li a:hover,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations ul.options li a:active,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations ul.options li a.active {
+  text-decoration: underline;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations ul.options li:first-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations ul.options li.first {
+  padding-left: 0;
+}
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations:first-child,
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations.first {
+  padding-left: 0;
+}
+.swagger-section .swagger-ui-wrap p#colophon {
+  margin: 0 15px 40px 15px;
+  padding: 10px 0;
+  font-size: 0.8em;
+  border-top: 1px solid #dddddd;
+  font-family: 'Open Sans', "Droid Sans", sans-serif;
+  color: #999999;
+  font-style: italic;
+}
+.swagger-section .swagger-ui-wrap p#colophon a {
+  text-decoration: none;
+  color: #547f00;
+}
+.swagger-section .swagger-ui-wrap h3 {
+  color: black;
+  font-size: 1.1em;
+  padding: 10px 0 10px 0;
+}
+.swagger-section .swagger-ui-wrap .markdown ol,
+.swagger-section .swagger-ui-wrap .markdown ul {
+  font-family: 'Open Sans', "Droid Sans", sans-serif;
+  margin: 5px 0 10px;
+  padding: 0 0 0 18px;
+  list-style-type: disc;
+}
+.swagger-section .swagger-ui-wrap form.form_box {
+  background-color: #ebf3f9;
+  border: 1px solid #c3d9ec;
+  padding: 10px;
+}
+.swagger-section .swagger-ui-wrap form.form_box label {
+  color: #0f6ab4 !important;
+}
+.swagger-section .swagger-ui-wrap form.form_box input[type=submit] {
+  display: block;
+  padding: 10px;
+}
+.swagger-section .swagger-ui-wrap form.form_box p.weak {
+  font-size: 0.8em;
+}
+.swagger-section .swagger-ui-wrap form.form_box p {
+  font-size: 0.9em;
+  padding: 0 0 15px;
+  color: #7e7b6d;
+}
+.swagger-section .swagger-ui-wrap form.form_box p a {
+  color: #646257;
+}
+.swagger-section .swagger-ui-wrap form.form_box p strong {
+  color: black;
+}
+.swagger-section .swagger-ui-wrap .operation-status td.markdown > p:last-child {
+  padding-bottom: 0;
+}
+.swagger-section .title {
+  font-style: bold;
+}
+.swagger-section .secondary_form {
+  display: none;
+}
+.swagger-section .main_image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.swagger-section .oauth_body {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+.swagger-section .oauth_submit {
+  text-align: center;
+}
+.swagger-section .api-popup-dialog {
+  z-index: 10000;
+  position: absolute;
+  width: 500px;
+  background: #FFF;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: none;
+  font-size: 13px;
+  color: #777;
+}
+.swagger-section .api-popup-dialog .api-popup-title {
+  font-size: 24px;
+  padding: 10px 0;
+}
+.swagger-section .api-popup-dialog .api-popup-title {
+  font-size: 24px;
+  padding: 10px 0;
+}
+.swagger-section .api-popup-dialog .error-msg {
+  padding-left: 5px;
+  padding-bottom: 5px;
+}
+.swagger-section .api-popup-dialog .api-popup-authbtn {
+  height: 30px;
+}
+.swagger-section .api-popup-dialog .api-popup-cancel {
+  height: 30px;
+}
+.swagger-section .api-popup-scopes {
+  padding: 10px 20px;
+}
+.swagger-section .api-popup-scopes li {
+  padding: 5px 0;
+  line-height: 20px;
+}
+.swagger-section .api-popup-scopes li input {
+  position: relative;
+  top: 2px;
+}
+.swagger-section .api-popup-scopes .api-scope-desc {
+  padding-left: 20px;
+  font-style: italic;
+}
+.swagger-section .api-popup-actions {
+  padding-top: 10px;
+}
+.swagger-section .access {
+  float: right;
+}
+.swagger-section .auth {
+  float: right;
+}
+.swagger-section .api-ic {
+  height: 18px;
+  vertical-align: middle;
+  display: inline-block;
+  background: url('{{ site.baseurl }}/images/rest-api/explorer_icons.png') no-repeat;
+}
+.swagger-section .api-ic .api_information_panel {
+  position: relative;
+  margin-top: 20px;
+  margin-left: -5px;
+  background: #FFF;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: none;
+  font-size: 13px;
+  max-width: 300px;
+  line-height: 30px;
+  color: black;
+  padding: 5px;
+}
+.swagger-section .api-ic .api_information_panel p .api-msg-enabled {
+  color: green;
+}
+.swagger-section .api-ic .api_information_panel p .api-msg-disabled {
+  color: red;
+}
+.swagger-section .api-ic:hover .api_information_panel {
+  position: absolute;
+  display: block;
+}
+.swagger-section .ic-info {
+  background-position: 0 0;
+  width: 18px;
+  margin-top: -6px;
+  margin-left: 4px;
+}
+.swagger-section .ic-warning {
+  background-position: -60px 0;
+  width: 18px;
+  margin-top: -6px;
+  margin-left: 4px;
+}
+.swagger-section .ic-error {
+  background-position: -30px 0;
+  width: 18px;
+  margin-top: -6px;
+  margin-left: 4px;
+}
+.swagger-section .ic-off {
+  background-position: -90px 0;
+  width: 58px;
+  margin-top: -4px;
+  cursor: pointer;
+}
+.swagger-section .ic-on {
+  background-position: -160px 0;
+  width: 58px;
+  margin-top: -4px;
+  cursor: pointer;
+}
+.swagger-section #header {
+  background-color: #89bf04;
+  padding: 14px;
+}
+.swagger-section #input_baseUrl {
+  width: 400px;
+}
+.swagger-section #api_selector {
+  display: block;
+  clear: none;
+  float: right;
+}
+.swagger-section #api_selector .input {
+  display: block;
+  clear: none;
+  float: left;
+  margin: 0 10px 0 0;
+}
+.swagger-section #api_selector input {
+  font-size: 0.9em;
+  padding: 3px;
+  margin: 0;
+}
+.swagger-section #input_apiKey {
+  width: 200px;
+}
+.swagger-section #explore {
+  display: block;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 8px;
+  font-size: 0.9em;
+  color: white;
+  background-color: #547f00;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+}
+.swagger-section #explore:hover {
+  background-color: #547f00;
+}
+.swagger-section #header #logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: none;
+  background: transparent url('{{ site.baseurl }}/images/rest-api/logo_small.png) no-repeat left center;
+  padding: 20px 0 20px 40px;
+  color: white;
+}
+.swagger-section #content_message {
+  margin: 10px 15px;
+  font-style: italic;
+  color: #999999;
+}
+.swagger-section #message-bar {
+  min-height: 30px;
+  text-align: center;
+  padding-top: 10px;
+}
+.swagger-section .swagger-collapse:before {
+  content: "-";
+}
+.swagger-section .swagger-expand:before {
+  content: "+";
+}
+/* custom css */
+.swagger-section #message-bar{
+	min-height: initial;
+	padding-top: 0;
+}
+
+.swagger-section .swagger-ui-wrap{
+	max-width: initial;
+}
+
+.swagger-section .swagger-ui-wrap a{
+	color: #f7ad41;
+}
+
+#resources, .endpoints{
+	padding-left: 0;
+}
+
+#resources_container{
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation div.heading h3 span.path a{
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.swagger-section .swagger-ui-wrap ul#resources li.resource div.heading ul.options{
+	margin: 38px 10px 0 0;
+}
+
+.sandbox_header .submit{
+	color: #000;
+	padding: 4px 6px;
+}
+
+.swagger-section .swagger-ui-wrap .model-signature .description div{
+	font-size: 16px;
+}
+
+.container{
+	width: 100%;
+    max-width: 1160px;
+}
+
+.swagger-section table, .swagger-section th, .swagger-section td, .swagger-section tr, .swagger-section tr:nth-child(even){
+	outline: none;
+	background: none;
+}
+
+.swagger-section p, .swagger-section li{
+	font-size: 16px;
+}
+
+.swagger-section .swagger-ui-wrap .model-signature .description div, .swagger-section .swagger-ui-wrap table tbody tr td{
+	font-size: 14px;
+}
+
+.container .footer{
+	height: initial;
+}
+
+.container .footer h4{
+	font-size: 14px;
+	margin: 0;
+}
+
+.footer p{
+	font-size: 16px;
+}
+/* custom end */
+/* rest api */

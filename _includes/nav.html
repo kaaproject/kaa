@@ -1,0 +1,34 @@
+    <!--{% assign navurl =  page.url | replace: '/:path' , '' %}
+    {% assign navurl =  navurl | prepend: page.dir %}
+    {% assign navurl =  navurl | replace: '//' , '/' %}-->
+    {% assign next_lvl = include.lvl | plus: 1 %}
+    {% assign navurl = page.url %}
+    {% for item in include.nav %}
+    
+        {% assign key = item[0] %}
+        {% assign val = item[1] %}
+        
+        {% if ?val.subitems.size > 0 %}
+          {% assign postfix = '<span class="car-field"><span class="caret"></span></span>'  %}
+          {% assign li-class = 'menu-has-child'  %}
+		  
+        {% else %}
+          {% assign li-class = ''  %}
+          {% assign postfix = ""  %}
+        {% endif %}
+          {% if val.url == navurl %}
+            <li class="menu-selected menu-opened"><a href="{{ site.baseurl }}{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
+		  {% elsif navurl contains val.url %}
+			<li class="menu-opened"><a href="{{ site.baseurl }}{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
+          {% else %}
+            <li><a href="{{ site.baseurl }}{{ val.url }}">{{ postfix }}{{ val.text }}</a></li>
+          {% endif %}	
+
+		{% if ?val.subitems.size > 0 %}
+		<ul class="li-{{next_lvl}}">
+		{% include nav.html nav=val.subitems lvl=next_lvl %}
+		</ul>
+		{% assign next_lvl = next_lvl | minus: 1 %}
+		{% endif %}
+
+    {% endfor %}

@@ -1,0 +1,25 @@
+<map id="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/notification/NotificationTransport.hpp" name="/home/Projects/kaa/client/client&#45;multi/client&#45;cpp/kaa/notification/NotificationTransport.hpp">
+<area shape="rect" id="node5" href="$IKaaTransport_8hpp.html" title="kaa/channel/transport\l/IKaaTransport.hpp" alt="" coords="1310,213,1456,255"/>
+<area shape="rect" id="node6" href="$IKaaClientStateStorage_8hpp.html" title="kaa/IKaaClientStateStorage.hpp" alt="" coords="1649,303,1856,329"/>
+<area shape="rect" id="node17" href="$INotificationTransport_8hpp.html" title="kaa/channel/transport\l/INotificationTransport.hpp" alt="" coords="642,213,814,255"/>
+<area shape="rect" id="node19" href="$AbstractKaaTransport_8hpp.html" title="kaa/channel/transport\l/AbstractKaaTransport.hpp" alt="" coords="1390,124,1565,165"/>
+<area shape="rect" id="node39" href="$IKaaClientContext_8hpp.html" title="kaa/IKaaClientContext.hpp" alt="" coords="1485,221,1660,247"/>
+<area shape="rect" id="node41" href="$INotificationProcessor_8hpp.html" title="kaa/notification/INotification\lProcessor.hpp" alt="" coords="1839,124,2020,165"/>
+<area shape="rect" id="node10" href="$EndpointObjectHash_8hpp.html" title="kaa/common/EndpointObject\lHash.hpp" alt="" coords="2096,377,2286,419"/>
+<area shape="rect" id="node20" href="$IKaaChannelManager_8hpp.html" title="kaa/channel/IKaaChannelManager.hpp" alt="" coords="1034,221,1278,247"/>
+<area shape="rect" id="node34" href="$KaaException_8hpp.html" title="kaa/common/exception\l/KaaException.hpp" alt="" coords="236,213,392,255"/>
+<area shape="rect" id="node21" href="$IDataChannel_8hpp.html" title="kaa/channel/IDataChannel.hpp" alt="" coords="780,303,978,329"/>
+<area shape="rect" id="node30" href="$ITransportConnectionInfo_8hpp.html" title="kaa/channel/ITransportConnection\lInfo.hpp" alt="" coords="1142,377,1360,419"/>
+<area shape="rect" id="node32" href="$IConnectivityChecker_8hpp.html" title="kaa/channel/connectivity\l/IConnectivityChecker.hpp" alt="" coords="793,377,965,419"/>
+<area shape="rect" id="node33" href="$EndpointConnectionInfo_8hpp.html" title="kaa/EndpointConnectionInfo.hpp" alt="" coords="1763,385,1971,411"/>
+<area shape="rect" id="node22" href="$IFailoverStrategy_8hpp.html" title="kaa/failover/IFailoverStrategy.hpp" alt="" coords="555,385,768,411"/>
+<area shape="rect" id="node25" href="$ServerType_8hpp.html" title="kaa/channel/ServerType.hpp" alt="" coords="1633,474,1818,501"/>
+<area shape="rect" id="node26" href="$TransportType_8hpp.html" title="kaa/common/TransportType.hpp" alt="" coords="121,474,328,501"/>
+<area shape="rect" id="node27" href="$ChannelDirection_8hpp.html" title="kaa/channel/ChannelDirection.hpp" alt="" coords="403,474,622,501"/>
+<area shape="rect" id="node28" href="$IKaaDataMultiplexer_8hpp.html" title="kaa/channel/IKaaDataMultiplexer.hpp" alt="" coords="194,385,430,411"/>
+<area shape="rect" id="node29" href="$IKaaDataDemultiplexer_8hpp.html" title="kaa/channel/IKaaDataDemultiplexer.hpp" alt="" coords="1436,385,1688,411"/>
+<area shape="rect" id="node23" href="$FailoverCommon_8hpp.html" title="kaa/failover/FailoverCommon.hpp" alt="" coords="646,474,859,501"/>
+<area shape="rect" id="node31" href="$TransportProtocolId_8hpp.html" title="kaa/channel/TransportProtocol\lId.hpp" alt="" coords="1152,467,1350,508"/>
+<area shape="rect" id="node40" href="$KaaClientStateListener_8hpp.html" title="kaa/KaaClientStateListener.hpp" alt="" coords="1422,303,1624,329"/>
+<area shape="rect" id="node42" href="$INotificationManager_8hpp.html" title="kaa/notification/INotification\lManager.hpp" alt="" coords="1839,213,2020,255"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="kaa::PeriodicLogUploadStrategy" name="kaa::PeriodicLogUploadStrategy">
+<area shape="rect" id="node2" href="$classkaa_1_1DefaultLogUploadStrategy.html" title="The default ILogUploadStrategy implementation. " alt="" coords="9,80,207,107"/>
+<area shape="rect" id="node3" href="$classkaa_1_1ILogUploadStrategy.html" title="The public interface for the log upload strategy. " alt="" coords="27,5,189,32"/>
+</map>

@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['read',['read',['../structavro__reader__t__.html#aca631276eaf02819e82a6b6d314160e9',1,'avro_reader_t_']]],
+  ['read_5fboolean',['read_boolean',['../structavro__encoding__t.html#ae24b1ebc321ded5975cf08543c2ef277',1,'avro_encoding_t']]],
+  ['read_5fbytes',['read_bytes',['../structavro__encoding__t.html#a6b22f6e2427e7cb436ea3f44e345e044',1,'avro_encoding_t']]],
+  ['read_5fdouble',['read_double',['../structavro__encoding__t.html#ac4770ae2ee0d3065f62075701d0089f4',1,'avro_encoding_t']]],
+  ['read_5ffloat',['read_float',['../structavro__encoding__t.html#a076825d7f58c11a3be2e6cee6dfcb33b',1,'avro_encoding_t']]],
+  ['read_5fint',['read_int',['../structavro__encoding__t.html#ae36cbe651e3dbda62d0e2caa8f13e148',1,'avro_encoding_t']]],
+  ['read_5flong',['read_long',['../structavro__encoding__t.html#aa2997cbe4e18cc156e55e9efa48f670e',1,'avro_encoding_t']]],
+  ['read_5fnull',['read_null',['../structavro__encoding__t.html#a0b18fd719002e829dba18960d05676b9',1,'avro_encoding_t']]],
+  ['read_5fstring',['read_string',['../structavro__encoding__t.html#a751bd0572c3880b3b58e4c63668b68a1',1,'avro_encoding_t']]],
+  ['reason',['reason',['../structkaatcp__disconnect__t.html#a6202692f983ba8398cfe42d3b14b436b',1,'kaatcp_disconnect_t']]],
+  ['remote_5fconnection_5ferror',['REMOTE_CONNECTION_ERROR',['../ext__log__upload__strategy_8h.html#ab2efccc09394604e94070439ff1c051aa80b2036bdc2a7046ecd4ff543db2777b',1,'ext_log_upload_strategy.h']]],
+  ['remote_5ferror',['REMOTE_ERROR',['../ext__user__callback_8h.html#a559358527402a47143c853838b783eb4a2e2185175852248e575a9ca5e7cd72cd',1,'ext_user_callback.h']]],
+  ['remote_5finternal_5ferror',['REMOTE_INTERNAL_ERROR',['../ext__log__upload__strategy_8h.html#ab2efccc09394604e94070439ff1c051aa42c5f8c0bf8776c0c66e1111d0fae091',1,'ext_log_upload_strategy.h']]],
+  ['request_5fserialize',['request_serialize',['../structkaa__extension.html#a1658210576aca8cecd7dde14122f9252',1,'kaa_extension']]],
+  ['ret_5fstate_5fbuffer_5fnot_5fenough',['RET_STATE_BUFFER_NOT_ENOUGH',['../ext__tcp__utils_8h.html#a9884d1900551cc48b10eb99300cc3ad4ac41807c94ef403b440519a55decd3889',1,'ext_tcp_utils.h']]],
+  ['ret_5fstate_5fvalue_5ferror',['RET_STATE_VALUE_ERROR',['../ext__tcp__utils_8h.html#a9884d1900551cc48b10eb99300cc3ad4a177260a9d2dc142c9f22aaaed92a9c62',1,'ext_tcp_utils.h']]],
+  ['ret_5fstate_5fvalue_5fin_5fprogress',['RET_STATE_VALUE_IN_PROGRESS',['../ext__tcp__utils_8h.html#a9884d1900551cc48b10eb99300cc3ad4ac80420513e578502adcdf7e02350998c',1,'ext_tcp_utils.h']]],
+  ['ret_5fstate_5fvalue_5fready',['RET_STATE_VALUE_READY',['../ext__tcp__utils_8h.html#a9884d1900551cc48b10eb99300cc3ad4a76b90bb08810d56c7b8ddda4478b6e08',1,'ext_tcp_utils.h']]],
+  ['retry_5fperiod',['retry_period',['../structkaa__failover__decision__t.html#a44ec720873738c274d9c5658a84b82af',1,'kaa_failover_decision_t']]],
+  ['return_5fcode',['return_code',['../structkaatcp__connack__t.html#ac3d3cf58d3f98df6ba590d749c68cc0c',1,'kaatcp_connack_t']]],
+  ['rsa_5fencrypt',['rsa_encrypt',['../kaa__aes__rsa_8h.html#ac50daaec993eaac94274d4449a4a864a',1,'kaa_aes_rsa.h']]],
+  ['rsa_5fsign',['rsa_sign',['../kaa__aes__rsa_8h.html#ac0d925820977ab1262e3098deb9a07ef',1,'kaa_aes_rsa.h']]]
+];
