@@ -378,10 +378,7 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
         self->need_resync = true;
         KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to resync profile...");
-        kaa_transport_channel_interface_t *channel =
-                kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
-        if (channel)
-            channel->sync_handler(channel->context, profile_sync_services, 1);
+        error_code = kaa_profile_force_sync(self);
     }
 
 
@@ -395,7 +392,9 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
 
 kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile_body)
 {
-#if KAA_PROFILE_SCHEMA_VERSION > 0
+#if KAA_PROFILE_SCHEMA_VERSION <= 0
+    return KAA_ERR_NONE;
+#else
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
@@ -442,19 +441,24 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
 
     self->need_resync = true;
 
-    kaa_transport_channel_interface_t *channel =
-            kaa_channel_manager_get_transport_channel(self->channel_manager, profile_sync_services[0]);
-    if (channel)
-        channel->sync_handler(channel->context, profile_sync_services, 1);
-
+    return kaa_profile_force_sync(self);
 #endif
-    return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token)
 {
     KAA_RETURN_IF_NIL2(self, token, KAA_ERR_BADPARAM);
-    return kaa_status_set_endpoint_access_token(self->status, token);
+
+    kaa_error_t error =  kaa_status_set_endpoint_access_token(self->status, token);
+    if (error == KAA_ERR_NONE) {
+        self->need_resync = true;
+        /* The function can be called before the channels are created, thus
+         * ignore the error code.
+         */
+        kaa_profile_force_sync(self);
+    }
+
+    return error;
 }
 
 kaa_error_t kaa_profile_manager_get_endpoint_id(kaa_profile_manager_t *self, kaa_endpoint_id_p result_id)
