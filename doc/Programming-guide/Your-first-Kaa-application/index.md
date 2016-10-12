@@ -186,7 +186,7 @@ To do this, run the following commands in the terminal.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
 
-		cmake_minimum_required(VERSION 2.8.8)
+		cmake_minimum_required(VERSION 2.8.12)
 		project(kaa-application C)
 		
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
@@ -307,16 +307,15 @@ Click the appropriate tab to see a code example for the application that sends t
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-
-#include <kaa/kaa.h>
-#include <kaa/platform/kaa_client.h>
-#include <kaa/kaa_error.h>
-#include <kaa/kaa_configuration_manager.h>
-#include <kaa/kaa_logging.h>
-#include <kaa/gen/kaa_logging_gen.h>
-#include <kaa/platform/kaa_client.h>
+#include <kaa.h>
+#include <platform/kaa_client.h>
+#include <kaa_error.h>
+#include <kaa_configuration_manager.h>
+#include <kaa_logging.h>
+#include <gen/kaa_logging_gen.h>
+#include <platform/kaa_client.h>
 #include <utilities/kaa_log.h>
-#include <kaa/platform-impl/common/ext_log_upload_strategies.h>
+#include <platform-impl/common/ext_log_upload_strategies.h>
 
 static int32_t sample_period;
 static time_t  last_sample_time;
@@ -366,7 +365,6 @@ int main(void)
     srand(time(NULL));
 
     /* Prepare Kaa client. */
-
     kaa_client_t *kaa_client = NULL;
     kaa_error_t error = kaa_client_create(&kaa_client, NULL);
     if (error) {
@@ -374,7 +372,6 @@ int main(void)
     }
 
     /* Configure notification manager. */
-
     kaa_configuration_root_receiver_t receiver = {
         .context = NULL,
         .on_configuration_updated = on_configuration_updated
@@ -389,14 +386,14 @@ int main(void)
     }
 
     /* Obtain default configuration shipped within SDK. */
-
     const kaa_root_configuration_t *dflt = kaa_configuration_manager_get_configuration(
         kaa_client_get_context(kaa_client)->configuration_manager);
 
     printf("Default sample period: %i seconds\n", dflt->sample_period);
 
+    sample_period = dflt->sample_period;
+    
     /* Configure data collection. */
-
     void *log_storage_context         = NULL;
     void *log_upload_strategy_context = NULL;
 
@@ -437,23 +434,23 @@ int main(void)
     if (error) {
         return EXIT_FAILURE;
     }
+    
 
     /* Start Kaa SDK's main loop. example_callback is called once per second. */
-
     error = kaa_client_start(kaa_client, example_callback, kaa_client, 1);
 
-    /* Should get here only after Kaa stops. */
-
+    /* Should get here only after Kaa stop. */
     kaa_client_destroy(kaa_client);
-
+    
     if (error) {
         return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
 }
-
 ```
+>**NOTE:** Use the links to the [code]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/kaa_demo.c) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/CMakeLists.txt) files of the example.
+{:.note}
 
 </div>
 
