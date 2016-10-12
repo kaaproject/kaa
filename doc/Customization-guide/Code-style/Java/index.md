@@ -13,6 +13,7 @@ This guide describes tools used to check style and format Java source code.
 
 # IntelliJ IDEA plugin
 [Checkstyle](https://github.com/jshiell/checkstyle-idea) plugin installation:
+
 1. Go to *File>Settings>IDE Settings>plugins*.
 2. Click on the *Browse repositories* button.
 3. Type *Checkstyle-idea* and install the plugin.
@@ -21,10 +22,12 @@ This guide describes tools used to check style and format Java source code.
 6. Add the configuration file (`checkstyle.xml`) from root of the Kaa project.
 
 Plugin configuration:
+
 1. Go to *Analyze>Inspect code*.
 2. Create a new profile with the checkstyle inspector.
 
 Plugin usage:
+
 1. Go to *Analyze>Inspect code*.
 2. Select an inspection scope and an inspection profile.
 
@@ -38,6 +41,7 @@ Configuration is located in root of the Kaa project (`checkstyle.xml`).
 # Automatic code formatter
 In order to automate Java code formatting it is preferred to use IntelliJ IDEA with appropriate Google Java Style settings.  
 Installing the code style settings:
+
 1. Download [IntelliJ Java Google Style](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml).
 2. Go to *File>Settings>Editor>Code Style*.
 3. Press *Manage* button and import a checkstyle configuration (`checkstyle.xml`) from root of the Kaa project.
