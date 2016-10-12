@@ -20,13 +20,13 @@
     <parent>
         <groupId>org.kaaproject.kaa.server</groupId>
         <version>0.9.0</version>
-        <artifactId>verifiers</artifactId>
+        <artifactId>appenders</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server.verifiers</groupId>
-    <artifactId>gplus-verifier</artifactId>
+    <groupId>org.kaaproject.kaa.server.appenders</groupId>
+    <artifactId>cdap-appender</artifactId>
     <packaging>jar</packaging>
 
-    <name>Kaa Google+ verifier</name>
+    <name>Kaa Cdap Appender</name>
     <url>http://kaaproject.org</url>
 
     <properties>
@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
-            <artifactId>verifier-shared</artifactId>
+            <artifactId>log-shared</artifactId>
         </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
@@ -60,6 +60,10 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
         <dependency>
+            <groupId>co.cask.cdap</groupId>
+            <artifactId>cdap-stream-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -70,18 +74,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-        </dependency>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
 
     <build>
@@ -107,8 +103,24 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/logback.xml</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
 
 </project>

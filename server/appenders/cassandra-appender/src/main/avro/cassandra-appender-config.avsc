@@ -67,13 +67,7 @@
             "type":"string"
         },
         {
-            "name":"tableNamePattern",
-            "displayName":"Table name pattern",
-            "type":"string",
-            "by_default":"logs_$app_token_$config_hash"
-        },
-        {
-            "name":"columnMapping",
+            "name":"columnMappingList",
             "displayName":"Column Mapping",
             "minRowCount":1,
             "type":{
@@ -81,119 +75,146 @@
                 "items":{
                     "namespace":"org.kaaproject.kaa.server.appenders.cassandra.config.gen",
                     "type":"record",
-                    "name":"ColumnMappingElement",
+                    "name":"DataMappingElement",
                     "fields":[
                         {
-                            "name":"type",
-                            "displayName":"Type",
-                            "weight":0.2,
-                            "by_default":"HEADER_FIELD",
+                            "name":"filter",
+                            "displayName":"Activation condition",
+                            "type":"string",
+                            "by_default":"true"
+                        },
+                        {
+                            "name":"tableNamePattern",
+                            "displayName":"Table name pattern",
+                            "type":"string",
+                            "by_default":"logs_$app_token_$config_hash"
+                        },
+                        {
+                            "name":"columnMapping",
+                            "displayName":"Column Mapping",
+                            "minRowCount":1,
                             "type":{
-                                "name":"ColumnMappingElementType",
-                                "type":"enum",
-                                "symbols":[
-                                    "HEADER_FIELD",
-                                    "EVENT_FIELD",
-                                    "CLIENT_FIELD",
-                                    "SERVER_FIELD",
-                                    "HEADER_JSON",
-                                    "EVENT_JSON",
-                                    "CLIENT_JSON",
-                                    "SERVER_JSON",
-                                    "HEADER_BINARY",
-                                    "EVENT_BINARY",
-                                    "CLIENT_BINARY",
-                                    "SERVER_BINARY",
-                                    "UUID",
-                                    "TS"
-                                ]
+                                "type":"array",
+                                "items":{
+                                    "namespace":"org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+                                    "type":"record",
+                                    "name":"ColumnMappingElement",
+                                    "fields":[
+                                        {
+                                            "name":"type",
+                                            "displayName":"Type",
+                                            "weight":0.2,
+                                            "by_default":"HEADER_FIELD",
+                                            "type":{
+                                                "name":"ColumnMappingElementType",
+                                                "type":"enum",
+                                                "symbols":[
+                                                    "HEADER_FIELD",
+                                                    "EVENT_FIELD",
+                                                    "CLIENT_FIELD",
+                                                    "SERVER_FIELD",
+                                                    "HEADER_JSON",
+                                                    "EVENT_JSON",
+                                                    "CLIENT_JSON",
+                                                    "SERVER_JSON",
+                                                    "HEADER_BINARY",
+                                                    "EVENT_BINARY",
+                                                    "CLIENT_BINARY",
+                                                    "SERVER_BINARY",
+                                                    "UUID",
+                                                    "TS"
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "name":"value",
+                                            "displayName":"Value",
+                                            "weight":0.2,
+                                            "by_default":"applicationToken",
+                                            "type":[
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        {
+                                            "name":"columnName",
+                                            "displayName":"Name",
+                                            "weight":0.2,
+                                            "by_default":"application_token",
+                                            "type":"string"
+                                        },
+                                        {
+                                            "name":"columnType",
+                                            "displayName":"Column Type",
+                                            "weight":0.2,
+                                            "by_default":"BOOLEAN",
+                                            "type":{
+                                                "name":"ColumnType",
+                                                "type":"enum",
+                                                "symbols":[
+                                                    "BIGINT",
+                                                    "BLOB",
+                                                    "BOOLEAN",
+                                                    "DOUBLE",
+                                                    "FLOAT",
+                                                    "INT",
+                                                    "TEXT",
+                                                    "UUID"
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "name":"partitionKey",
+                                            "displayName":"Is part of partition key?",
+                                            "weight":0.1,
+                                            "by_default":false,
+                                            "type":"boolean"
+                                        },
+                                        {
+                                            "name":"clusteringKey",
+                                            "displayName":"Is part of clustering key?",
+                                            "weight":0.1,
+                                            "by_default":false,
+                                            "type":"boolean"
+                                        }
+                                    ]
+                                }
                             }
                         },
                         {
-                            "name":"value",
-                            "displayName":"Value",
-                            "weight":0.2,
-                            "by_default":"applicationToken",
-                            "type":[
-                                "string",
-                                "null"
-                            ]
-                        },
-                        {
-                            "name":"columnName",
-                            "displayName":"Name",
-                            "weight":0.2,
-                            "by_default":"application_token",
-                            "type":"string"
-                        },
-                        {
-                            "name":"columnType",
-                            "displayName":"Column Type",
-                            "weight":0.2,
-                            "by_default":"BOOLEAN",
+                            "name":"clusteringMapping",
+                            "displayName":"Clustering",
+                            "minRowCount":0,
                             "type":{
-                                "name":"ColumnType",
-                                "type":"enum",
-                                "symbols":[
-                                    "BIGINT",
-                                    "BLOB",
-                                    "BOOLEAN",
-                                    "DOUBLE",
-                                    "FLOAT",
-                                    "INT",
-                                    "TEXT",
-                                    "UUID"
-                                ]
-                            }
-                        },
-                        {
-                            "name":"partitionKey",
-                            "displayName":"Is part of partition key?",
-                            "weight":0.1,
-                            "by_default":false,
-                            "type":"boolean"
-                        },
-                        {
-                            "name":"clusteringKey",
-                            "displayName":"Is part of clustering key?",
-                            "weight":0.1,
-                            "by_default":false,
-                            "type":"boolean"
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "name":"clusteringMapping",
-            "displayName":"Clustering",
-            "minRowCount":0,
-            "type":{
-                "type":"array",
-                "items":{
-                    "namespace":"org.kaaproject.kaa.server.appenders.cassandra.config.gen",
-                    "type":"record",
-                    "name":"ClusteringElement",
-                    "fields":[
-                        {
-                            "name":"columnName",
-                            "displayName":"Name",
-                            "weight":0.2,
-                            "by_default":"application_token",
-                            "type":"string"
-                        },
-                        {
-                            "name":"order",
-                            "displayName":"Order",
-                            "weight":0.2,
-                            "by_default":"DESC",
-                            "type":{
-                                "name":"OrderType",
-                                "type":"enum",
-                                "symbols":[
-                                    "DESC",
-                                    "ASC"
-                                ]
+                                "type":"array",
+                                "items":{
+                                    "namespace":"org.kaaproject.kaa.server.appenders.cassandra.config.gen",
+                                    "type":"record",
+                                    "name":"ClusteringElement",
+                                    "fields":[
+                                        {
+                                            "name":"columnName",
+                                            "displayName":"Name",
+                                            "weight":0.2,
+                                            "by_default":"application_token",
+                                            "type":"string"
+                                        },
+                                        {
+                                            "name":"order",
+                                            "displayName":"Order",
+                                            "weight":0.2,
+                                            "by_default":"DESC",
+                                            "type":{
+                                                "name":"OrderType",
+                                                "type":"enum",
+                                                "symbols":[
+                                                    "DESC",
+                                                    "ASC"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
                             }
                         }
                     ]
@@ -217,6 +238,12 @@
                 },
                 "null"
             ]
+        },
+        {
+            "name":"cassandraMaxBatchSize",
+            "displayName":"Cassandra max batch size (in kb)",
+            "by_default": 50,
+            "type":"int"
         },
         {
             "namespace":"org.kaaproject.kaa.server.appenders.cassandra.config.gen",
@@ -372,24 +399,6 @@
                         "NONE",
                         "SNAPPY",
                         "LZ4"
-                    ]
-                },
-                "null"
-            ]
-        },
-        {
-            "namespace":"org.kaaproject.kaa.server.appenders.cassandra.config.gen",
-            "name":"cassandraExecuteRequestType",
-            "by_default":"SYNC",
-            "optional":true,
-            "displayName":"Cassandra execute request type",
-            "type":[
-                {
-                    "name":"CassandraExecuteRequestType",
-                    "type":"enum",
-                    "symbols":[
-                        "SYNC",
-                        "ASYNC"
                     ]
                 },
                 "null"
