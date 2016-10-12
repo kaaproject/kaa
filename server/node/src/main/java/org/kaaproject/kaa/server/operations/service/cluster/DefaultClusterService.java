@@ -175,7 +175,8 @@ public class DefaultClusterService implements ClusterService {
   }
 
   private static String toString(OperationsNodeInfo node) {
-    return "[" + node.getConnectionInfo().getThriftHost() + ":" + node.getConnectionInfo().getThriftPort() + ":" + node.getTimeStarted() + "]-[" + node.getLoadInfo() + "]";
+    return "[" + node.getConnectionInfo().getThriftHost() + ":" + node.getConnectionInfo().getThriftPort() + ":" + node.getTimeStarted() + "]-["
+        + node.getLoadInfo() + "]";
   }
 
   @Override

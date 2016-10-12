@@ -105,10 +105,7 @@ public class BootstrapNode extends WorkerNodeTracker {
 
   @Override
   public String toString() {
-    return "BootstrapNode {" +
-        "host =" + nodeInfo.getConnectionInfo().getThriftHost() +
-        "port =" + nodeInfo.getConnectionInfo().getThriftPort() +
-        "timeStarted =" + nodeInfo.getTimeStarted() +
-        '}';
+    return "BootstrapNode {" + "host =" + nodeInfo.getConnectionInfo().getThriftHost()
+        + "port =" + nodeInfo.getConnectionInfo().getThriftPort() + "timeStarted =" + nodeInfo.getTimeStarted() + '}';
   }
 }
