@@ -87,11 +87,11 @@ public class OperationsNode extends WorkerNodeTracker {
       public void doWithZkClient(CuratorFramework client) throws Exception {
         nodeInfo.setTimeStarted(System.currentTimeMillis());
         nodePath = client
-                .create()
-                .creatingParentsIfNeeded()
-                .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-                .forPath(OPERATIONS_SERVER_NODE_PATH + OPERATIONS_SERVER_NODE_PATH,
-                        operationsNodeAvroConverter.get().toByteArray(nodeInfo));
+            .create()
+            .creatingParentsIfNeeded()
+            .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
+            .forPath(OPERATIONS_SERVER_NODE_PATH + OPERATIONS_SERVER_NODE_PATH,
+                operationsNodeAvroConverter.get().toByteArray(nodeInfo));
         LOG.info("Created node with path: " + nodePath);
       }
     });
@@ -104,5 +104,11 @@ public class OperationsNode extends WorkerNodeTracker {
    */
   public OperationsNodeInfo getNodeInfo() {
     return nodeInfo;
+  }
+
+  @Override
+  public String toString() {
+    return "OperationsNode {" + "host =" + nodeInfo.getConnectionInfo().getThriftHost() + "port =" + nodeInfo.getConnectionInfo().getThriftPort()
+        + "timeStarted =" + nodeInfo.getTimeStarted() + '}';
   }
 }

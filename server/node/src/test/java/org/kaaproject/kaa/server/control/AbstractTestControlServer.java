@@ -97,6 +97,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sql.DataSource;
 
@@ -275,6 +276,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
    * The random.
    */
   private final Random random = new Random();
+  private final AtomicInteger seq = new AtomicInteger(0);
   /**
    * The tenant admin dto.
    */
@@ -1228,7 +1230,7 @@ public abstract class AbstractTestControlServer extends AbstractTest {
     EventClassFamilyVersionDto eventClassFamilyVersion = new EventClassFamilyVersionDto();
     List<EventClassDto> records = new ArrayList<>();
 
-    String className = "Test" + random.nextInt(1000);
+    String className = "Test" + seq.incrementAndGet();
     CTLSchemaDto ctlSchema = this.createCTLSchema(className, EVENT_CLASS_FAMILY_NAMESPACE, 1, tenantId, null, null, null);
     EventClassDto ec = new EventClassDto();
     ec.setFqn(EVENT_CLASS_FAMILY_NAMESPACE + "." + className);
