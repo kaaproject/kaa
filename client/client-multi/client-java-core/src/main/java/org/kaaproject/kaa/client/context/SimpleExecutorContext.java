@@ -33,11 +33,17 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
   private static final Logger LOG = LoggerFactory.getLogger(SingleThreadExecutorContext.class);
 
   private static final int SINGLE_THREAD = 1;
+  private static final int DEFAULT_THREADS_IDLE_MILLISECONDS = 100;
 
   private final int lifeCycleThreadCount;
   private final int apiThreadCount;
   private final int callbackThreadCount;
   private final int scheduledThreadCount;
+
+  private final int maxLifeCycleThreadsIdleMilliseconds;
+  private final int maxApiThreadsIdleMilliseconds;
+  private final int maxCallbackThreadsIdleMilliseconds;
+  private final int maxScheduledThreadsIdleMilliseconds;
 
   private ExecutorService lifeCycleExecutor;
   private ExecutorService apiExecutor;
@@ -48,25 +54,39 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
     this(SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD, SINGLE_THREAD);
   }
 
+  public SimpleExecutorContext(int lifeCycleThreadCount, int apiThreadCount,
+                               int callbackThreadCount, int scheduledThreadCount) {
+    this(lifeCycleThreadCount, apiThreadCount,
+            callbackThreadCount, scheduledThreadCount,
+            DEFAULT_THREADS_IDLE_MILLISECONDS, DEFAULT_THREADS_IDLE_MILLISECONDS,
+            DEFAULT_THREADS_IDLE_MILLISECONDS, DEFAULT_THREADS_IDLE_MILLISECONDS);
+  }
+
   /**
    * All-args constructor.
    */
   public SimpleExecutorContext(int lifeCycleThreadCount, int apiThreadCount,
-                               int callbackThreadCount, int scheduledThreadCount) {
+                               int callbackThreadCount, int scheduledThreadCount,
+                               int maxLifeCycleThreadsIdleMilliseconds, int maxApiThreadsIdleMilliseconds,
+                               int maxCallbackThreadsIdleMilliseconds, int maxScheduledThreadsIdleMilliseconds) {
     super();
     this.lifeCycleThreadCount = lifeCycleThreadCount;
     this.apiThreadCount = apiThreadCount;
     this.callbackThreadCount = callbackThreadCount;
     this.scheduledThreadCount = scheduledThreadCount;
+    this.maxLifeCycleThreadsIdleMilliseconds = maxLifeCycleThreadsIdleMilliseconds;
+    this.maxApiThreadsIdleMilliseconds = maxApiThreadsIdleMilliseconds;
+    this.maxCallbackThreadsIdleMilliseconds = maxCallbackThreadsIdleMilliseconds;
+    this.maxScheduledThreadsIdleMilliseconds = maxScheduledThreadsIdleMilliseconds;
   }
 
   @Override
   public void init() {
     LOG.debug("Creating executor services");
-    lifeCycleExecutor = createExecutor(lifeCycleThreadCount);
-    apiExecutor = createExecutor(apiThreadCount);
-    callbackExecutor = createExecutor(callbackThreadCount);
-    scheduledExecutor = createScheduledExecutor(scheduledThreadCount);
+    lifeCycleExecutor = createExecutor(lifeCycleThreadCount, maxLifeCycleThreadsIdleMilliseconds);
+    apiExecutor = createExecutor(apiThreadCount, maxApiThreadsIdleMilliseconds);
+    callbackExecutor = createExecutor(callbackThreadCount, maxCallbackThreadsIdleMilliseconds);
+    scheduledExecutor = createScheduledExecutor(scheduledThreadCount, maxScheduledThreadsIdleMilliseconds);
     LOG.debug("Created executor services");
   }
 
@@ -98,7 +118,7 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
     return scheduledExecutor;
   }
 
-  private ExecutorService createExecutor(int threadsNumber) {
+  protected ExecutorService createExecutor(int threadsNumber, int maxThreadsIdleMilliseconds) {
     if (threadsNumber == 1) {
       return Executors.newSingleThreadExecutor();
     } else {
@@ -106,7 +126,7 @@ public class SimpleExecutorContext extends AbstractExecutorContext implements Ex
     }
   }
 
-  private ScheduledExecutorService createScheduledExecutor(int threadsNumber) {
+  protected ScheduledExecutorService createScheduledExecutor(int threadsNumber, int maxThreadsIdleMilliseconds) {
     if (threadsNumber == 1) {
       return Executors.newSingleThreadScheduledExecutor();
     } else {
