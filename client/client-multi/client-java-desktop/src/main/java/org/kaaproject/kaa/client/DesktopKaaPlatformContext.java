@@ -43,6 +43,18 @@ public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
     this(properties, new FlexibleExecutorContext());
   }
 
+  public DesktopKaaPlatformContext(int lifeCycleThreadCount, int apiThreadCount,
+                                   int callbackThreadCount, int scheduledThreadCount) {
+    this(null, new FlexibleExecutorContext(lifeCycleThreadCount, apiThreadCount,
+            callbackThreadCount, scheduledThreadCount));
+  }
+
+  public DesktopKaaPlatformContext(KaaClientProperties properties,int lifeCycleThreadCount, int apiThreadCount,
+                                   int callbackThreadCount, int scheduledThreadCount) {
+    this(properties, new FlexibleExecutorContext(lifeCycleThreadCount, apiThreadCount,
+            callbackThreadCount, scheduledThreadCount));
+  }
+
   /**
    * All-args constructor.
    */
