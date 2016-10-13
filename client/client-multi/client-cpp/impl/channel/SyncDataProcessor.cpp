@@ -17,6 +17,7 @@
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 #include "kaa/channel/SyncDataProcessor.hpp"
+#include <kaa/utils/TimeUtils.hpp>
 
 namespace kaa {
 
@@ -217,6 +218,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         return DemultiplexerReturnCode::FAILURE;
     }
 
+    auto deliveryTime = TimeUtils::getCurrentTimeInMs();
     DemultiplexerReturnCode returnCode = DemultiplexerReturnCode::SUCCESS;
 
     try {
@@ -307,7 +309,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
 #ifdef KAA_USE_LOGGING
         if (!syncResponse.logSyncResponse.is_null()) {
             if (loggingTransport_) {
-                loggingTransport_->onLogSyncResponse(syncResponse.logSyncResponse.get_LogSyncResponse());
+                loggingTransport_->onLogSyncResponse(syncResponse.logSyncResponse.get_LogSyncResponse(), deliveryTime);
             } else {
                 KAA_LOG_ERROR("Got log upload sync response, but logging transport was not set!");
             }
