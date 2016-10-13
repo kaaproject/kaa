@@ -53,24 +53,9 @@ The current version of Kaa Sandbox supports Oracle VirtualBox version 5.1.2 and 
 
 4. After you loaded the image, open the **Oracle VM VirtualBox Manager**, click **Settings** > **System** and adjust the amount of RAM and processors available to the VM.
 For optimal performance, we recommend at least 4 GB of RAM and at least 2 CPUs.
+Apply your settings and start the virtual machine.
 
-	>**TIP:** Configure your network settings.  
-	>The default VM networking configuration is NAT, which enables your host machine to connect to the [Kaa server]({{root_url}}Glossary/#kaa-server).
-	>This means that you will need to deploy your [Kaa client]({{root_url}}Glossary/#kaa-client) applications to your host machine to enable their communication with the Sandbox server.
-	>
-	>You can deploy the Kaa client applications to any hardware other than your host machine, and access Kaa web interfaces from your network devices.
-	>To do that, open the **Oracle VM VirtualBox Manager**, click **Settings** > **Network** and change the **Attached to** option to **Bridged Adapter**.
-	>
-	>To configure the networking mode, switch to the **Network** tab in the VM settings.
-	>Click **Advanced** to unfold the drop-down menu, and make sure the **Promiscuous Mode** option is set to **Allow All**.
-	{: .tip}
-
-   ![VM Networking settings](attach/vm_networking_settings.png)
-
-5. Apply the VM settings and start the virtual machine.
-
-6. Wait until the VirtualBox starts up and open [127.0.0.1:9080/sandbox](http://127.0.0.1:9080/sandbox) URL in your browser.
-If you changed the networking mode to **Bridged Adapter**, use _host machine ip_:9080/sandbox.
+5. Wait until the VirtualBox starts up and open [127.0.0.1:9080/sandbox](http://127.0.0.1:9080/sandbox) URL in your browser.
 
 <br>
 
