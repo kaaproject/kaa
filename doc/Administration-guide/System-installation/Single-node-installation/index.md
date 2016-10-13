@@ -582,7 +582,7 @@ cqlsh>
    Install PostgreSQL 9.4 PGDG file for CentOS 6 64-bit.
 
    ```bash
-   $ sudo yum localinstall http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
+   $ sudo yum localinstall https://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-3.noarch.rpm
    ```
 
    List available PostgreSQL installations and install the PostgreSQL server.
@@ -643,12 +643,12 @@ cqlsh>
    $ sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
 
    remove lines:
-   local   all      all                ident
-   host   all      all      127.0.0.1/32      ident
+   local   all             all                                     peer
+   host    all             all             127.0.0.1/32            ident
 
    add lines:
-   local   all      all                trust
-   host   all      all      127.0.0.1/32      trust
+   local   all             all                                     trust
+   host    all             all             127.0.0.1/32            trust
    ```
 
    Restart the database.
@@ -716,7 +716,7 @@ cqlsh>
    stderr_events_enabled=true
    ```
 
-   Configure the database to start automatically when OS starts.
+   Configure the supervision to start automatically when OS starts.
 
    ```bash
    $ sudo chkconfig supervisord on
