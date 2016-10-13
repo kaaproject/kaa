@@ -47,6 +47,7 @@ kaaAdminUiPorts = [];
 kaaNodeNames = [];
 
 NGINX_TEMPLATE = '        server {{PROXY_HOST_KAA}}:{{PROXY_PORT}};'
+NGINX_DEPENDS_SERVICES = '      - {{KAA_SERVICE_NAME}}'
 
 cassandraInitScriptLocation = '      - ./../../../../server/common/nosql/cassandra-dao/src/main/resources/cassandra.cql:/cassandra.cql';
 cassandraWaitScriptLoc = '      - ./cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh';
@@ -62,13 +63,6 @@ def getExternalHostLinuxMacOs() :
 def getExternalHostWindows() :
     try:
         return getstatusoutput("netsh interface ip show address \"Ethernet\" | findstr \"IP Address\"")[1].rsplit(' ', 1)[1];
-    except:
-        return "N/A";
-
-def getExternalHostKaa(kaaServiceName) :
-    externalHostKaaCommand = "docker inspect --format='{{(index (index .NetworkSettings.Networks ) \"usingcompose_front-tier\").IPAddress}}' usingcompose_"+kaaServiceName+"_1";
-    try:
-        return getstatusoutput(externalHostKaaCommand)[1];
     except:
         return "N/A";
 
@@ -124,15 +118,18 @@ def configurKaaNode(templateFileName, newFile) :
     kaaNodeNames.append(DEFAULT_KAA_SERVICE_NAME+'0');
     sql_nosqlList = getInputedVariationsDataBases().split("-");
     insertLine=0;
+    nginxDependsLine=0;
     with open(templateFileName, 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
         if 'kaa_lb:' in data[i]:
             insertLine=i;
+        if 'depends_on:' in data[i]:
+            nginxDependsLine=i-insertLine+1;
         data[i] = configurePorts( data[i], sql_nosqlList, 0 )
     with open(newFile, 'w+') as fout:
         fout.write(''.join(data));
-    return insertLine;
+    return [insertLine, nginxDependsLine];
 
 
 def configurePorts( strConf, sql_nosqlList, nodeNumber ) :
@@ -148,12 +145,12 @@ def configurePorts( strConf, sql_nosqlList, nodeNumber ) :
 
 
 def configureClusterModeKaa(templateFileName, newFile) :
-    insertLine=configurKaaNode(templateFileName, newFile);
+    insertLineArray=configurKaaNode(templateFileName, newFile);
     sql_nosqlList = getInputedVariationsDataBases().split("-");
     nodeCount = int(sys.argv[2]);
-    for i in range(1, nodeCount):
+    for nodeNumber in range(1, nodeCount):
         kaaService=''
-        j = 0;
+        widthOfKaaService = 0;
         with open(templateFileName) as input_data:
 
             for line in input_data:
@@ -163,12 +160,14 @@ def configureClusterModeKaa(templateFileName, newFile) :
             for line in input_data:
                 if line.strip() == 'kaa_lb:':
                     break;
-                j+=1;
+                widthOfKaaService+=1;
                 kaaService+=line;
-        kaaService = configurePorts( kaaService, sql_nosqlList, i );
-        kaaAdminUiPorts.append(KaaConfigPorts['ADMIN_PORT']+DEFAULT_INCREASE_PORT_VALUES*i);
-        kaaNodeNames.append(DEFAULT_KAA_SERVICE_NAME+str(i));
-        insertInFile(newFile, insertLine+(i-1)*j, kaaService);
+        kaaService = configurePorts( kaaService, sql_nosqlList, nodeNumber );
+        kaaAdminUiPorts.append(KaaConfigPorts['ADMIN_PORT']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber);
+        kaaNodeNames.append(DEFAULT_KAA_SERVICE_NAME+str(nodeNumber));
+        insertInFile(newFile, insertLineArray[0]+(nodeNumber-1)*widthOfKaaService, kaaService);
+        strConf=str.replace(str(NGINX_DEPENDS_SERVICES), '{{KAA_SERVICE_NAME}}', DEFAULT_KAA_SERVICE_NAME+str(nodeNumber));
+        insertInFile(newFile, (insertLineArray[0]+(nodeNumber-1)*widthOfKaaService)+widthOfKaaService+nodeNumber+insertLineArray[1], (strConf+"\n")); # insert depends for nginx
 
 
 def insertInFile(file, index, value) :
@@ -263,17 +262,14 @@ print ('TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs()));
 
 subprocess.call("docker-compose -f third-party-docker-compose.yml up -d", shell=True);
 
-kaaNodesStartCommand = 'docker-compose -f kaa-docker-compose.yml up -d ';
-
 createDefaultConfFileNginx('kaa-nginx-config/default.conf.template', 'kaa-nginx-config/kaa-default.conf')
 
 if len(sys.argv) == 2:
     configurKaaNode('kaa-docker-compose.yml.template', 'kaa-docker-compose.yml');
-    subprocess.call((kaaNodesStartCommand+' '.join(kaaNodeNames)), shell=True);
-    proxyHost=getExternalHostKaa(kaaNodeNames[0]);
+    proxyHost=kaaNodeNames[0];
     proxyPort=kaaAdminUiPorts[0];
     createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', proxyHost, proxyPort);
-    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d kaa_lb", shell=True);
+    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d", shell=True);
 elif len(sys.argv) == 3:
     try:
         nodeCount = int(sys.argv[2]);
@@ -281,14 +277,13 @@ elif len(sys.argv) == 3:
         print ('This parameter must be Integer');
         sys.exit();
     configureClusterModeKaa('kaa-docker-compose.yml.template', 'kaa-docker-compose.yml');
-    subprocess.call((kaaNodesStartCommand+' '.join(kaaNodeNames)), shell=True);
-    createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', getExternalHostKaa(kaaNodeNames[0]),  kaaAdminUiPorts[0]);
+    createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', kaaNodeNames[0],  kaaAdminUiPorts[0]);
     for i in range(1, nodeCount):
-        proxyHost=getExternalHostKaa(kaaNodeNames[i]);
+        proxyHost=kaaNodeNames[i];
         proxyPort=kaaAdminUiPorts[i];
         config = configureConfFileNginx(NGINX_TEMPLATE, proxyHost, proxyPort) + '\n';
         insertInFile('kaa-nginx-config/kaa-nginx.conf', 46, config);
-    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d kaa_lb", shell=True);
+    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d", shell=True);
 
 subprocess.call('docker-compose -f kaa-docker-compose.yml ps', shell=True);
 subprocess.call('docker-compose -f third-party-docker-compose.yml ps', shell=True);
