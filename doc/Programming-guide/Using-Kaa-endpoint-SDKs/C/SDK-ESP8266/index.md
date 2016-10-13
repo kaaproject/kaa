@@ -346,8 +346,6 @@ To invoke CMake, proceed as follows:
             -DWITH_EXTENSION_EVENT=OFF \
             -DWITH_EXTENSION_NOTIFICATION=OFF \
             -DWITH_EXTENSION_LOGGING=OFF \
-            -DWITH_EXTENSION_USER=OFF \
-            -DWITH_EXTENSION_PROFILE=OFF \
             -DKAA_MAX_LOG_LEVEL=3
         make
 
