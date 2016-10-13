@@ -17,9 +17,8 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
     private final int scheduledThreadCount;
 
     private final int maxLifeCycleThreadsIdleMilliseconds;
-    private final int maxCallbackThreadsIdleMilliseconds;
-    private final int maxScheduledThreadsIdleMilliseconds;
     private final int maxApiThreadsIdleMilliseconds;
+    private final int maxCallbackThreadsIdleMilliseconds;
 
     private ExecutorService lifeCycleExecutor;
     private ExecutorService apiExecutor;
@@ -42,14 +41,7 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
 
         maxLifeCycleThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
         maxCallbackThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
-        maxScheduledThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
         maxApiThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
-//        this(
-//                new FlexibleExecutorContextBuilder()
-//                        .setLifeCycleThreadCountAndIdleMilliseconds(
-//                                lifeCycleThreadCount, DEFAULT_MAX_THREAD_IDLE_MILLISECONDS)
-//
-//        );
     }
 
     /**
@@ -61,9 +53,8 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
         callbackThreadCount =  builder.getCallbackThreadCount();
         scheduledThreadCount = builder.getScheduledThreadCount();
         maxLifeCycleThreadsIdleMilliseconds = builder.getMaxLifeCycleThreadsIdleMilliseconds();
-        maxCallbackThreadsIdleMilliseconds = builder.getMaxApiThreadsIdleMilliseconds();
-        maxScheduledThreadsIdleMilliseconds = builder.getMaxCallbackThreadsIdleMilliseconds();
-        maxApiThreadsIdleMilliseconds = builder.getMaxScheduledThreadsIdleMilliseconds();
+        maxCallbackThreadsIdleMilliseconds = builder.getMaxCallbackThreadsIdleMilliseconds();
+        maxApiThreadsIdleMilliseconds = builder.getMaxApiThreadsIdleMilliseconds();
     }
 
     @Override
@@ -72,7 +63,7 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
         lifeCycleExecutor = createExecutor(lifeCycleThreadCount, maxLifeCycleThreadsIdleMilliseconds);
         apiExecutor = createExecutor(apiThreadCount, maxApiThreadsIdleMilliseconds);
         callbackExecutor = createExecutor(callbackThreadCount, maxCallbackThreadsIdleMilliseconds);
-        scheduledExecutor = createScheduledExecutor(scheduledThreadCount, maxScheduledThreadsIdleMilliseconds);
+        scheduledExecutor = createScheduledExecutor(scheduledThreadCount);
         LOG.debug("Created executor services");
     }
 
@@ -110,7 +101,7 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
                 new SynchronousQueue<Runnable>());
     }
 
-    private ScheduledExecutorService createScheduledExecutor(int nThreads, int maxThreadsIdleMilliseconds) {
+    private ScheduledExecutorService createScheduledExecutor(int nThreads) {
         return Executors.newScheduledThreadPool(nThreads);
     }
 
@@ -124,7 +115,6 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
         private int maxLifeCycleThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
         private int maxApiThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
         private int maxCallbackThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
-        private int maxScheduledThreadsIdleMilliseconds = DEFAULT_MAX_THREAD_IDLE_MILLISECONDS;
 
         public FlexibleExecutorContextBuilder setLifeCycleThreadCount(int lifeCycleThreadCount) {
             this.lifeCycleThreadCount = lifeCycleThreadCount;
@@ -162,11 +152,6 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
             return this;
         }
 
-        public FlexibleExecutorContextBuilder setMaxScheduledThreadsIdleMilliseconds(int maxScheduledThreadsIdleMilliseconds) {
-            this.maxScheduledThreadsIdleMilliseconds = maxScheduledThreadsIdleMilliseconds;
-            return this;
-        }
-
 
         public FlexibleExecutorContextBuilder setLifeCycleThreadCountAndIdleMilliseconds(
                 int lifeCycleThreadCount, int maxLifeCycleThreadsIdleMilliseconds) {
@@ -189,16 +174,10 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
             return this;
         }
 
-        public FlexibleExecutorContextBuilder setScheduledThreadCountAndIdleMilliseconds(
-                int scheduledThreadCount, int maxScheduledThreadsIdleMilliseconds) {
-            this.scheduledThreadCount = scheduledThreadCount;
-            this.maxScheduledThreadsIdleMilliseconds = maxScheduledThreadsIdleMilliseconds;
-            return this;
-        }
-
 
         public FlexibleExecutorContext build() {
-            return new FlexibleExecutorContext(this);
+            FlexibleExecutorContext f = new FlexibleExecutorContext(this);
+            return f;
         }
 
         int getLifeCycleThreadCount() {
@@ -227,10 +206,6 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
 
         int getMaxCallbackThreadsIdleMilliseconds() {
             return maxCallbackThreadsIdleMilliseconds;
-        }
-
-        int getMaxScheduledThreadsIdleMilliseconds() {
-            return maxScheduledThreadsIdleMilliseconds;
         }
     }
 }
