@@ -47,6 +47,7 @@ kaaAdminUiPorts = [];
 kaaNodeNames = [];
 
 NGINX_TEMPLATE = '        server {{PROXY_HOST_KAA}}:{{PROXY_PORT}};'
+NGINX_DEPENDS_SERVICES = '      - {{KAA_SERVICE_NAME}}'
 
 cassandraInitScriptLocation = '      - ./../../../../server/common/nosql/cassandra-dao/src/main/resources/cassandra.cql:/cassandra.cql';
 cassandraWaitScriptLoc = '      - ./cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh';
@@ -117,15 +118,18 @@ def configurKaaNode(templateFileName, newFile) :
     kaaNodeNames.append(DEFAULT_KAA_SERVICE_NAME+'0');
     sql_nosqlList = getInputedVariationsDataBases().split("-");
     insertLine=0;
+    nginxDependsLine=0;
     with open(templateFileName, 'r') as file:
         data = file.readlines();
     for i in range(0, len(data)):
         if 'kaa_lb:' in data[i]:
             insertLine=i;
+        if 'depends_on:' in data[i]:
+            nginxDependsLine=i-insertLine+1;
         data[i] = configurePorts( data[i], sql_nosqlList, 0 )
     with open(newFile, 'w+') as fout:
         fout.write(''.join(data));
-    return insertLine;
+    return [insertLine, nginxDependsLine];
 
 
 def configurePorts( strConf, sql_nosqlList, nodeNumber ) :
@@ -141,12 +145,12 @@ def configurePorts( strConf, sql_nosqlList, nodeNumber ) :
 
 
 def configureClusterModeKaa(templateFileName, newFile) :
-    insertLine=configurKaaNode(templateFileName, newFile);
+    insertLineArray=configurKaaNode(templateFileName, newFile);
     sql_nosqlList = getInputedVariationsDataBases().split("-");
     nodeCount = int(sys.argv[2]);
-    for i in range(1, nodeCount):
+    for nodeNumber in range(1, nodeCount):
         kaaService=''
-        j = 0;
+        widthOfKaaService = 0;
         with open(templateFileName) as input_data:
 
             for line in input_data:
@@ -156,12 +160,14 @@ def configureClusterModeKaa(templateFileName, newFile) :
             for line in input_data:
                 if line.strip() == 'kaa_lb:':
                     break;
-                j+=1;
+                widthOfKaaService+=1;
                 kaaService+=line;
-        kaaService = configurePorts( kaaService, sql_nosqlList, i );
-        kaaAdminUiPorts.append(KaaConfigPorts['ADMIN_PORT']+DEFAULT_INCREASE_PORT_VALUES*i);
-        kaaNodeNames.append(DEFAULT_KAA_SERVICE_NAME+str(i));
-        insertInFile(newFile, insertLine+(i-1)*j, kaaService);
+        kaaService = configurePorts( kaaService, sql_nosqlList, nodeNumber );
+        kaaAdminUiPorts.append(KaaConfigPorts['ADMIN_PORT']+DEFAULT_INCREASE_PORT_VALUES*nodeNumber);
+        kaaNodeNames.append(DEFAULT_KAA_SERVICE_NAME+str(nodeNumber));
+        insertInFile(newFile, insertLineArray[0]+(nodeNumber-1)*widthOfKaaService, kaaService);
+        strConf=str.replace(str(NGINX_DEPENDS_SERVICES), '{{KAA_SERVICE_NAME}}', DEFAULT_KAA_SERVICE_NAME+str(nodeNumber));
+        insertInFile(newFile, (insertLineArray[0]+(nodeNumber-1)*widthOfKaaService)+widthOfKaaService+nodeNumber+insertLineArray[1], (strConf+"\n")); # insert depends for nginx
 
 
 def insertInFile(file, index, value) :
