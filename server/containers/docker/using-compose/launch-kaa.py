@@ -65,13 +65,6 @@ def getExternalHostWindows() :
     except:
         return "N/A";
 
-def getExternalHostKaa(kaaServiceName) :
-    externalHostKaaCommand = "docker inspect --format='{{(index (index .NetworkSettings.Networks ) \"usingcompose_front-tier\").IPAddress}}' usingcompose_"+kaaServiceName+"_1";
-    try:
-        return getstatusoutput(externalHostKaaCommand)[1];
-    except:
-        return "N/A";
-
 def getstatusoutput(cmd):
     try:
         data = check_output(cmd, shell=True, universal_newlines=True)
@@ -263,17 +256,14 @@ print ('TRANSPORT_PUBLIC_INTERFACE=' + str(getExternalHostLinuxMacOs()));
 
 subprocess.call("docker-compose -f third-party-docker-compose.yml up -d", shell=True);
 
-kaaNodesStartCommand = 'docker-compose -f kaa-docker-compose.yml up -d ';
-
 createDefaultConfFileNginx('kaa-nginx-config/default.conf.template', 'kaa-nginx-config/kaa-default.conf')
 
 if len(sys.argv) == 2:
     configurKaaNode('kaa-docker-compose.yml.template', 'kaa-docker-compose.yml');
-    subprocess.call((kaaNodesStartCommand+' '.join(kaaNodeNames)), shell=True);
-    proxyHost=getExternalHostKaa(kaaNodeNames[0]);
+    proxyHost=kaaNodeNames[0];
     proxyPort=kaaAdminUiPorts[0];
     createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', proxyHost, proxyPort);
-    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d kaa_lb", shell=True);
+    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d", shell=True);
 elif len(sys.argv) == 3:
     try:
         nodeCount = int(sys.argv[2]);
@@ -281,14 +271,13 @@ elif len(sys.argv) == 3:
         print ('This parameter must be Integer');
         sys.exit();
     configureClusterModeKaa('kaa-docker-compose.yml.template', 'kaa-docker-compose.yml');
-    subprocess.call((kaaNodesStartCommand+' '.join(kaaNodeNames)), shell=True);
-    createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', getExternalHostKaa(kaaNodeNames[0]),  kaaAdminUiPorts[0]);
+    createConfFileNginx('kaa-nginx-config/nginx.conf.template', 'kaa-nginx-config/kaa-nginx.conf', kaaNodeNames[0],  kaaAdminUiPorts[0]);
     for i in range(1, nodeCount):
-        proxyHost=getExternalHostKaa(kaaNodeNames[i]);
+        proxyHost=kaaNodeNames[i];
         proxyPort=kaaAdminUiPorts[i];
         config = configureConfFileNginx(NGINX_TEMPLATE, proxyHost, proxyPort) + '\n';
         insertInFile('kaa-nginx-config/kaa-nginx.conf', 46, config);
-    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d kaa_lb", shell=True);
+    subprocess.call("docker-compose -f kaa-docker-compose.yml up -d", shell=True);
 
 subprocess.call('docker-compose -f kaa-docker-compose.yml ps', shell=True);
 subprocess.call('docker-compose -f third-party-docker-compose.yml ps', shell=True);
