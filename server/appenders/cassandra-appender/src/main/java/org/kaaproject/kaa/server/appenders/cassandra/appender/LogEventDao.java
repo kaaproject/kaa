@@ -16,31 +16,25 @@
 
 package org.kaaproject.kaa.server.appenders.cassandra.appender;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import com.datastax.driver.core.ResultSet;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
+import org.kaaproject.kaa.server.appenders.cassandra.config.gen.DataMappingElement;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface LogEventDao {
 
-  String createTable(String collectionName);
+    void createTable(String collectionName, DataMappingElement mappingElement);
 
-  List<CassandraLogEventDto> save(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-                                  GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-                                  GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
-                                  String clientProfileJson, String serverProfileJson) throws IOException;
+    ListenableFuture<List<ResultSet>> save(List<CassandraLogEventDto> logEventDtoList,
+                                           GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+                                           GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
+                                           String clientProfileJson, String serverProfileJson, String appToken) throws IOException;
 
-  ListenableFuture<ResultSet> saveAsync(List<CassandraLogEventDto> logEventDtoList, String collectionName,
-                                        GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-                                        GenericAvroConverter<GenericRecord> clientProfileConverter, GenericAvroConverter<GenericRecord> serverProfileConverter,
-                                        String clientProfileJson, String serverProfileJson) throws IOException;
+    void removeAll(String collectionName);
 
-  void removeAll(String collectionName);
-
-  void close();
+    void close();
 }

@@ -19,7 +19,7 @@ package org.kaaproject.kaa.client;
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.client.connectivity.PingConnectivityChecker;
 import org.kaaproject.kaa.client.context.ExecutorContext;
-import org.kaaproject.kaa.client.context.SimpleExecutorContext;
+import org.kaaproject.kaa.client.context.FlexibleExecutorContext;
 import org.kaaproject.kaa.client.persistence.FilePersistentStorage;
 import org.kaaproject.kaa.client.persistence.PersistentStorage;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
@@ -40,7 +40,7 @@ public class DesktopKaaPlatformContext implements KaaClientPlatformContext {
   }
 
   public DesktopKaaPlatformContext(KaaClientProperties properties) {
-    this(properties, new SimpleExecutorContext());
+    this(properties, new FlexibleExecutorContext());
   }
 
   /**
