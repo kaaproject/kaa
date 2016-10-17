@@ -35,7 +35,7 @@ The corresponding APIs are located in the kaa/platform/kaa_client.h file.
 - **Build system** allows generating and customizing the project files without having to create a build infrastructure for every compiler or IDE used.
 The build system is written using [CMake](https://cmake.org/).
 
-- **Extensions** are the application-level modules within SDK that provide implemetations of [Kaa platform key features]({{root_url}}Programming-guide/Key-platform-features/).
+- **Extensions** are the application-level modules within SDK that provide implementations of [Kaa platform key features]({{root_url}}Programming-guide/Key-platform-features/).
 Extensions are exposed to the user in a form of headers that are located in the **src/extensions** directory.
 
 ## Target support and portability
@@ -46,14 +46,14 @@ Its interface is located in the **kaa/platform/** directory.
 Below is the list of the target platforms for which Kaa C SDK already has an implementation of the platform layer:
 
 - POSIX
-    - [Linux]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
-    - [UDOO]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-UDOO/)
-    - [Windows (cygwin)]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Windows)
-    - [Raspberry PI]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-RPi/)
-    - [Beaglebone]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Beaglebone/)
-    - [QNX Neutrino]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-QNX-Neutrino/)
-- [ESP8266]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
-- [CC3200]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
+    - [Linux]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/)
+    - [UDOO]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-UDOO/)
+    - [Windows (cygwin)]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Windows)
+    - [Raspberry PI]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-RPi/)
+    - [Beaglebone]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Beaglebone/)
+    - [QNX Neutrino]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-QNX-Neutrino/)
+- [ESP8266]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/)
+- [CC3200]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-TI-CC3200/)
 
 ## Environment setup
 
