@@ -83,10 +83,9 @@ In case some tests fail, fix the issues or describe why the fix cannot be done.
 
 ### Review
 
-Every pull request is reviewed by the assigned team members.
-When reviewers have comments regarding a PR, they post the comments on the PR page for the author to incorporate them in the PR.
-When reviewers have no (more) comments regarding the PR, they posts an 'LGTM' comment on the PR page.
-A PR can be merged when it receives the 'LGTM' comment from at least two assigned reviewers.
+Every pull request is reviewed by the assigned team members as per standard [GitHub procedure](https://help.github.com/articles/about-pull-request-reviews/).
+Reviewers can comment on a PR, approve it, or request changes to it.
+A PR can be merged when it is approved by at least two assigned reviewers and has no pending requests for changes.
 
 ## Gatekeepers
 
