@@ -67,10 +67,6 @@ find_package_handle_standard_args(Botan
     BOTAN_INCLUDE_DIR
 )
 
-if(NOT WIN32 AND NOT APPLE)
-    list(APPEND BOTAN_LIBRARY "-lrt")
-endif(NOT WIN32 AND NOT APPLE)
-
 mark_as_advanced(BOTAN_FOUND
     BOTAN_LIBRARY
     BOTAN_INCLUDE_DIR)
