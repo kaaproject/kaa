@@ -56,7 +56,7 @@ For optimal performance, we recommend at least 4 GB of RAM and at least 2 CPUs.
 Apply your settings and start the virtual machine.
 
 	>**NOTE:** Your instance of Kaa Sandbox works out of the box with the default VM networking configuration set to NAT.
-	>This enables your host machine to connect to the [Kaa server]({{root_url}}Glossary/#kaa-server).
+	>This enables connection between your machine and [Kaa server]({{root_url}}Glossary/#kaa-server).
 	>However, you may want to switch to the **Bridged Adapter** mode.
 	>To do that, open the **Oracle VM VirtualBox Manager**, click **Settings** > **Network** and change the **Attached to** option to **Bridged Adapter**.
 	>The advantage of using this mode is that your Kaa Sandbox will work correctly even if you change your local machine IP.
