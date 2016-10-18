@@ -7,27 +7,42 @@ sort_idx: 50
 
 {% include variables.md %}
 
-We welcome you to join our rapidly growing community!
+* TOC
+{:toc}
 
-As an open-source project, we thrive from contributions by people like you to create the best possible platform for developing IoT solutions. We would love to see you mastering Kaa's source code, however, writing code is not the only way to contribute. There are many other options, such as providing ideas, suggestions and comments in [Kaa forum](https://groups.google.com/forum/#!forum/kaaproject) discussions, testing features and new releases, and reviewing and improving the documentation. Every contribution counts -- below you will find more information on how you can play a role.
+Welcome to Kaa community!
 
-## Joining the forum
-You can join our [forum](https://groups.google.com/forum/#!forum/kaaproject) to provide feedback, make features and functionality suggestions, ask questions, help other community members, or get in touch with our engineering team.
+As an open-source IoT solution, [Kaa platform]({{root_url}}Glossary/#kaa-platform) thrives from contributions by people like you.
+We would love to see you mastering the Kaa source code, however, writing code is not the only way you can contribute to Kaa.
 
-## Testing releases or issuing bug reports
+Feel free to use all of the contribution options:
 
-You can report your findings by creating a bug in [Jira®](http://jira.kaaproject.org/browse/KAA/). Please provide as much detail as possible so that any identified issues can be effectively resolved.
+- Join [Kaa StackOverflow](http://stackoverflow.com/questions/tagged/kaa) to find answers to common user questions and ask your own Kaa-related questions.
+- Use [Jira](http://jira.kaaproject.org/browse/KAA/) to provide feedback, make features and functionality suggestions, and help other community members.
+When reporting bugs, issues, and other problems you have come across using Kaa, please make sure you provide as much detail as possible so that the reported issue can be resolved effectively.
+- Contribute to Kaa project on [GitHub](https://github.com/kaaproject/kaa).
 
-## Contributing to the source code
+## Contribute to source code
 
-If you are willing to contribute to the Kaa code base, or to submit sample applications for Kaa Sandbox, you will need to register at [Kaa public Jira](http://jira.kaaproject.org/browse/KAA/), and then fill out and sign the [Individual Contributor Licensing Agreement](http://www.kaaproject.org/Uploads/ICLA.pdf) (ICLA). If you are contributing on behalf of an organization, you would also need to sign the [Corporate Contributor License Agreement](http://www.kaaproject.org/Uploads/CCLA.pdf) (CCLA). Please sign, scan and send the forms to [legal@kaaproject.org](mailto:legal@kaaproject.org).
+If you are willing to contribute to the Kaa code base, or submit sample [applications]({{root_url}}Glossary/#kaa-application) for [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox):
 
-To contribute to the source code, you will need to create a ticket describing the proposed change in [Jira](http://jira.kaaproject.org/browse/KAA/).
+1. Register at [Kaa public Jira](http://jira.kaaproject.org/browse/KAA/).
 
-We prefer that you contribute by submitting [GitHub pull requests](https://help.github.com/articles/using-pull-requests/) and posting a pull request link in corresponding Jira tickets. The Kaa open-source project is located [here](https://github.com/kaaproject/kaa). See our [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/) guide for more details.
+2. Fill out and sign the [Individual Contributor Licensing Agreement](http://www.kaaproject.org/Uploads/ICLA.pdf) (ICLA).
 
-After you submit your GitHub pull request, please provide a detailed description of your changes in the corresponding Jira ticket, and then move the ticket to the "in review" state.
+	>**NOTE:** If you are contributing on behalf of an organization, you would also need to sign the [Corporate Contributor License Agreement](http://www.kaaproject.org/Uploads/CCLA.pdf) (CCLA).
+	>Please sign, scan and send the forms to [legal@kaaproject.org](mailto:legal@kaaproject.org).
+	{:.note}
 
-## Improving documentation
+3. Create a Jira ticket describing your finding and/or the proposed change.
 
-Documentation is a part of the Kaa code base; it is stored under `doc/` subdirectory in the [main repository](https://github.com/kaaproject/kaa). That means contribution process is the same as for the source code. Be sure to check out our [Documentation contribution and style guide]({{root_url}}Customization-guide/Documentation-contribution-and-style-guide/).
+	>**NOTE:** When you contribute to Kaa project on GitHub, make sure you post your [pull request](https://help.github.com/articles/using-pull-requests/) link in the comments section of the related Jira ticket and change the ticket status to **In review**.
+	>See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
+	{:.note}
+
+## Improve documentation
+
+Documentation is a part of the Kaa code base.
+You can find the documentation files in the **doc/** subdirectory of the [main repository](https://github.com/kaaproject/kaa).
+That means that the contribution process is the same for both the source code and documentation.
+See [Documentation contribution and style guide]({{root_url}}Customization-guide/Documentation-contribution-and-style-guide/).
