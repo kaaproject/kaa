@@ -192,7 +192,8 @@ else()
        message("Error: avrogen.sh hasn't been found.")
     else()
        execute_process(COMMAND chmod +x ./${AVROGEN}
-                       COMMAND "./${AVROGEN}" 
+                       WORKING_DIRECTORY ${WORKDIR})
+       execute_process(COMMAND "./${AVROGEN}" 
                        WORKING_DIRECTORY ${WORKDIR})
     endif()
 endif()
