@@ -16,8 +16,8 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
 
 **Verified against:**
 
- - **Host OS:** **Ubuntu 16.04 64-bit LTS**
- - **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3.
+ - **Host OS:** Ubuntu 16.04 64-bit LTS
+ - **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3
 
 # Install dependencies
 
