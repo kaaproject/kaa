@@ -119,6 +119,10 @@ sort_idx: 50
 >A Kaa cluster represents a number of interconnected [Kaa server]({{root_url}}Glossary/#kaa-server) nodes.
 >Every Kaa cluster runs a particular [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment).
 
+### Kaa extension
+>An independent software module that implements certain functionality using [Kaa platform]({{root_url}}Glossary/#kaa-platform).
+>For example, [configuration management]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), etc.
+
 ### Kaa instance (Kaa deployment)
 >A set of specific [Kaa platform]({{root_url}}Glossary/#kaa-platform) functionality running on a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) and preserving its functional integrity when moved to a different cluster.
 
