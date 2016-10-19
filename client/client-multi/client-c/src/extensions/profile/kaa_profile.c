@@ -192,6 +192,10 @@ kaa_error_t kaa_profile_force_sync(kaa_profile_manager_t *self)
     return KAA_ERR_NONE;
 }
 
+static void kaa_profile_try_sync(kaa_profile_manager_t *self)
+{
+  (void)kaa_profile_force_sync(self);
+}
 
 bool kaa_profile_manager_is_profile_set(kaa_profile_manager_t *self)
 {
@@ -378,7 +382,7 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
     if (extension_options & KAA_PROFILE_RESYNC_OPTION) {
         self->need_resync = true;
         KAA_LOG_INFO(self->logger, KAA_ERR_NONE, "Going to resync profile...");
-        error_code = kaa_profile_force_sync(self);
+        kaa_profile_try_sync(self);
     }
 
 
@@ -392,9 +396,7 @@ kaa_error_t kaa_profile_handle_server_sync(kaa_profile_manager_t *self
 
 kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_profile_t *profile_body)
 {
-#if KAA_PROFILE_SCHEMA_VERSION <= 0
-    return KAA_ERR_NONE;
-#else
+#if KAA_PROFILE_SCHEMA_VERSION > 0
     KAA_RETURN_IF_NIL2(self, profile_body, KAA_ERR_BADPARAM);
 
     size_t serialized_profile_size = profile_body->get_size(profile_body);
@@ -441,8 +443,9 @@ kaa_error_t kaa_profile_manager_update_profile(kaa_profile_manager_t *self, kaa_
 
     self->need_resync = true;
 
-    return kaa_profile_force_sync(self);
+    kaa_profile_try_sync(self);
 #endif
+    return KAA_ERR_NONE;
 }
 
 kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t *self, const char *token)
@@ -452,10 +455,7 @@ kaa_error_t kaa_profile_manager_set_endpoint_access_token(kaa_profile_manager_t 
     kaa_error_t error =  kaa_status_set_endpoint_access_token(self->status, token);
     if (error == KAA_ERR_NONE) {
         self->need_resync = true;
-        /* The function can be called before the channels are created, thus
-         * ignore the error code.
-         */
-        kaa_profile_force_sync(self);
+        kaa_profile_try_sync(self);
     }
 
     return error;
