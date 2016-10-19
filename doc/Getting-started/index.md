@@ -53,24 +53,17 @@ The current version of Kaa Sandbox supports Oracle VirtualBox version 5.1.2 and 
 
 4. After you loaded the image, open the **Oracle VM VirtualBox Manager**, click **Settings** > **System** and adjust the amount of RAM and processors available to the VM.
 For optimal performance, we recommend at least 4 GB of RAM and at least 2 CPUs.
+Apply your settings and start the virtual machine.
 
-	>**TIP:** Configure your network settings.  
-	>The default VM networking configuration is NAT, which enables your host machine to connect to the [Kaa server]({{root_url}}Glossary/#kaa-server).
-	>This means that you will need to deploy your [Kaa client]({{root_url}}Glossary/#kaa-client) applications to your host machine to enable their communication with the Sandbox server.
-	>
-	>You can deploy the Kaa client applications to any hardware other than your host machine, and access Kaa web interfaces from your network devices.
+	>**NOTE:** Your instance of Kaa Sandbox works out of the box with the default VM networking configuration set to NAT.
+	>This enables connection between your machine and [Kaa server]({{root_url}}Glossary/#kaa-server).
+	>However, you may want to switch to the **Bridged Adapter** mode.
 	>To do that, open the **Oracle VM VirtualBox Manager**, click **Settings** > **Network** and change the **Attached to** option to **Bridged Adapter**.
-	>
-	>To configure the networking mode, switch to the **Network** tab in the VM settings.
-	>Click **Advanced** to unfold the drop-down menu, and make sure the **Promiscuous Mode** option is set to **Allow All**.
-	{: .tip}
+	>The advantage of using this mode is that your Kaa Sandbox will work correctly even if you change your local machine IP.
+	{:.note}
+5. Wait until the VirtualBox starts up and open [127.0.0.1:9080/sandbox](http://127.0.0.1:9080/sandbox) URL in your browser.
 
-   ![VM Networking settings](attach/vm_networking_settings.png)
-
-5. Apply the VM settings and start the virtual machine.
-
-6. Wait until the VirtualBox starts up and open [127.0.0.1:9080/sandbox](http://127.0.0.1:9080/sandbox) URL in your browser.
-If you changed the networking mode to **Bridged Adapter**, use _host machine ip_:9080/sandbox.
+6. Open the Sandbox **Management** page and specify the real IP of your machine in the <b>Kaahost/IP</b> block.
 
 <br>
 
@@ -174,7 +167,7 @@ Use the Sandbox to create your own Kaa applications.
 To do this, follow the instructions in [Your first Kaa application]({{root_url}}Programming-guide/Your-first-Kaa-application).
 
 >**NOTE:** Please note that Kaa Sandbox is not intended for production or commercial use.
->To run your applications online, you need to to deploy the Kaa platform into your environment.
+>To run your applications online, you need to deploy the Kaa platform into your environment.
 >To do this, follow the instructions in [System installation]({{root_url}}Administration-guide/System-installation).
 {: .note}
 
