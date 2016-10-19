@@ -124,6 +124,7 @@ First, you need to create an instance of `KaaClient`.
 Kaa SDK provides you with the `Kaa` class factory to be used for creating new instances of [Kaa client]({{root_url}}Glossary/#kaa-client).
 See the code example below.
 
+
 <ul class="nav nav-tabs">
 	<li class="active"><a data-toggle="tab" href="#java">Java</a></li>
 	<li><a data-toggle="tab" href="#android">Android</a></li>
@@ -134,23 +135,25 @@ See the code example below.
 <div id="java" class="tab-pane fade in active" markdown="1">
 
 ```java
-KaaClient client = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener());
+KaaClient client = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(), true);
 ```
 </div>
 
 <div id="android" class="tab-pane fade" markdown="1">
 
 ```java
-KaaClient client = Kaa.newClient(new AndroidKaaPlatformContext(), new SimpleKaaClientStateListener());
+KaaClient client = Kaa.newClient(new AndroidKaaPlatformContext(), new SimpleKaaClientStateListener(), true);
 ```
 </div>
 </div>
 
-The `newClient()` static method receives two mandatory arguments -- the platform-specific context and the implementation of the client state listener interface.
-
-The first argument can be either `DesktopKaaPlatformContext` for Java desktop or `AndroidKaaPlatformContext` for Android applications.
-
+The `newClient()` static method receives three mandatory arguments -- the platform-specific context, the implementation of the client state listener interface and
+the boolean argument specifies whether to generate public/private key pair automatically.
+                         
+The first argument can be either `DesktopKaaPlatformContext` for Java desktop or `AndroidKaaPlatformContext` for Android applications. 
 In this example, the second argument is the default implementation of `KaaClientStateListener` -- `SimpleKaaClientStateListener`, that is solely used to log the client state changes.
+And last one if set to **false** -- means using existing pre-generated public/private key pair, **true** -- means auto-generating new public/private key pair if absent.
+ 
 Whenever a new instance of Kaa client is created, the `start()` method is called to start the client operation and communication with the server.
 Starting from this point, you can use any features provided by the [Kaa platform]({{root_url}}Glossary/#kaa-platform), such as [data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), etc., in your application code.
 When you no longer need the client, you can call the `stop()` method to release resources and stop the client communication with the server.

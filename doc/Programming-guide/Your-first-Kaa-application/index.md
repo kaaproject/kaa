@@ -595,37 +595,36 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
+ 
 /**
  * Class implement functionality for First Kaa application. Application send temperature data
  * from the Kaa endpoint with required configured sampling period
  */
 public class FirstKaaDemo {
-
+ 
     private static final long DEFAULT_START_DELAY = 1000L;
-
+ 
     private static final Logger LOG = LoggerFactory.getLogger(FirstKaaDemo.class);
-
+ 
     private static KaaClient kaaClient;
-
+ 
     private static ScheduledFuture<?> scheduledFuture;
     private static ScheduledExecutorService scheduledExecutorService;
-
+ 
     public static void main(String[] args) {
         LOG.info(FirstKaaDemo.class.getSimpleName() + " app starting!");
-
+ 
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        /*
-         * Create the Kaa desktop context for the application.
-         */
+   
+        //Create the Kaa desktop context for the application.
         DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
-
+ 
         /*
          * Create a Kaa client and add a listener which displays the Kaa client
          * configuration as soon as the Kaa client is started.
          */
         kaaClient = Kaa.newClient(desktopKaaPlatformContext, new FirstKaaClientStateListener(), true);
-
+ 
         /*
          *  Used by log collector on each adding of the new log record in order to check whether to send logs to server.
          *  Start log upload when there is at least one record in storage.
@@ -633,13 +632,13 @@ public class FirstKaaDemo {
         RecordCountLogUploadStrategy strategy = new RecordCountLogUploadStrategy(1);
         strategy.setMaxParallelUploads(1);
         kaaClient.setLogUploadStrategy(strategy);
-
+ 
         /*
          * Persist configuration in a local storage to avoid downloading it each
          * time the Kaa client is started.
          */
         kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
-
+ 
         kaaClient.addConfigurationListener(new ConfigurationListener() {
             @Override
             public void onConfigurationUpdate(Configuration configuration) {
@@ -647,12 +646,10 @@ public class FirstKaaDemo {
                 onChangedConfiguration(TimeUnit.SECONDS.toMillis(configuration.getSamplePeriod()));
             }
         });
-
-        /*
-         * Start the Kaa client and connect it to the Kaa server.
-         */
+  
+        //Start the Kaa client and connect it to the Kaa server.
         kaaClient.start();
-
+ 
         LOG.info("--= Press any key to exit =--");
         try {
             System.in.read();
@@ -664,7 +661,7 @@ public class FirstKaaDemo {
         scheduledExecutorService.shutdown();
         kaaClient.stop();
     }
-
+ 
     /*
      * Method, that emulate getting temperature from real sensor.
      * Retrieves random temperature.
@@ -672,14 +669,14 @@ public class FirstKaaDemo {
     private static int getTemperatureRand() {
         return new Random().nextInt(10) + 25;
     }
-
+ 
     private static void onKaaStarted(long time) {
         if (time <= 0) {
             LOG.error("Wrong time is used. Please, check your configuration!");
             kaaClient.stop();
             System.exit(0);
         }
-
+ 
         scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
                 new Runnable() {
                     @Override
@@ -691,13 +688,13 @@ public class FirstKaaDemo {
                     }
                 }, 0, time, TimeUnit.MILLISECONDS);
     }
-
+ 
     private static void onChangedConfiguration(long time) {
         if (time == 0) {
             time = DEFAULT_START_DELAY;
         }
         scheduledFuture.cancel(false);
-
+ 
         scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
                 new Runnable() {
 
@@ -710,9 +707,9 @@ public class FirstKaaDemo {
                     }
                 }, 0, time, TimeUnit.MILLISECONDS);
     }
-
+ 
     private static class FirstKaaClientStateListener extends SimpleKaaClientStateListener {
-
+ 
         @Override
         public void onStarted() {
             super.onStarted();
@@ -724,7 +721,7 @@ public class FirstKaaDemo {
             onKaaStarted(TimeUnit.SECONDS.toMillis(configuration.getSamplePeriod()));
 
         }
-
+ 
         @Override
         public void onStopped() {
             super.onStopped();
@@ -938,32 +935,21 @@ To launch your Java application:
 
 <ol>
 	<li>
-		Save the application code into FirstKaaDemo.java file located in the **demo_app** directory.
+		Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
 	</li>
 	<li>
-		Build the application by running the following command from the **demo_app** directory.
-		
-		<pre>
-			javac -cp *.jar *.java
-		</pre>
-		
+		Build the application by running the following command from the <b>demo_app</b> directory.
+		<pre>javac -cp *.jar *.java</pre>
 	</li>
 	<li>
 		Launch the application.
-		
-		<br />
-		<br />
+        <br/>
+        <br/>
 		<b>Unix-based OS</b>
-		<pre>
-			java -cp '.:./*' FirstKaaDemo
-		</pre>
-		
-		<br />
-		<br />
+		<pre>java -cp '.:./*' FirstKaaDemo</pre>
+        <br/>
 		<b>Windows OS</b>
-		<pre>
-			java -cp '.;.\*' FirstKaaDemo
-		</pre>
+		<pre>java -cp '.;.\*' FirstKaaDemo</pre>
 	</li>
 </ol>
 
@@ -1056,7 +1042,7 @@ Your client application console will display the follownig messages.
         Sampled temperature: 34
         Sampled temperature: 25
 
-    This means that the sampling period has been successfully modified.
+This means that the sampling period has been successfully modified.
 
 
 ## Further reading

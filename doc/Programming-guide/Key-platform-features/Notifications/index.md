@@ -212,18 +212,19 @@ Below are code examples of how to get a list of available topics:
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
-...
-    KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext())
-    // Start Kaa client
-    kaaClient.start()
-...
  
-    List<Topic> topics = kaaClient.getTopics();
- 
-    for (Topic topic : topics) {
-        System.out.printf("Id: %s, name: %s, type: %s"
-                , topic.getId(), topic.getName(), topic.getSubscriptionType());
-    }
+...
+KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(), true)
+// Start Kaa client
+kaaClient.start()
+...
+
+List<Topic> topics = kaaClient.getTopics();
+
+for (Topic topic : topics) {
+    System.out.printf("Id: %s, name: %s, type: %s"
+            , topic.getId(), topic.getName(), topic.getSubscriptionType());
+}
 ```
 
 </div><div id="C_plus_plus-9" class="tab-pane fade" markdown="1" >
@@ -459,6 +460,7 @@ import org.kaaproject.kaa.client.KaaDesktop;
 import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+ 
 ...
 // Add listener
 kaaClient.addTopicListListener(new NotificationTopicListListener() {
@@ -469,6 +471,7 @@ kaaClient.addTopicListListener(new NotificationTopicListListener() {
             topic.getId(), topic.getName(), topic.getSubscriptionType());
     }
 }});
+ 
 ...
 // Remove listener
 kaaClient.removeTopicListListener(someOtherTopicUpdateListener);
@@ -561,6 +564,7 @@ To accommodate for simultaneous change of several subscription topics, consider 
 
 ```java
 import org.kaaproject.kaa.client.notification.NotificationManager;
+ 
 ...
 // Do subscription changes with parameter forceSync set to false
 kaaClient.subscribeToTopics(Arrays.asList("iOS 8 notifications", "another_optional_topic_id"), false);
@@ -648,6 +652,7 @@ As a result, the listener will receive notifications from all topics (all mandat
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.schema.sample.notification.ExampleNotification;
+ 
 ...
 public class BasicNotificationListener implements NotificationListener {
  
@@ -754,6 +759,7 @@ To receive notifications on some specific topic (either mandatory or optional), 
 ```java
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.schema.sample.notification.Notification;
+ 
 ...
 BasicNotificationListener specificListener = new BasicNotificationListener();
 // Add listener
