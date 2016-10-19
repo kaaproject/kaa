@@ -24,6 +24,7 @@
 #import "ExecutorContext.h"
 #import "KaaClientState.h"
 #import "UserTransport.h"
+#import "DefaultProfileTransport.h"
 #import "DefaultEndpointRegistrationManager.h"
 
 #define REQUEST_ID 42
@@ -240,6 +241,31 @@
     [NSThread sleepForTimeInterval:1.f];
     [verifyCount(delegate, times(1)) onDetachedEndpointWithAccessToken:@"foo"];
     [verifyCount(state, times(2)) setIsAttachedToUser:NO];
+}
+
+- (void)testCheckUpdateEndpointAccessToken {
+    NSString *endpointAccessToken = @"ENDPOINT_ACCESS_TOKEN_0001";
+    
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    [given([state endpointAccessToken]) willReturn:endpointAccessToken];
+
+    id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
+    KaaClientProperties *properties = mock([KaaClientProperties class]);
+    id<ProfileManager> profileManager = mockProtocol(@protocol(ProfileManager));
+
+    id<ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
+    [transport setClientState:state];
+    [transport setChannelManager:channelManager];
+    [transport setClientProperties:properties];
+    [transport setProfileManager:profileManager];
+    
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:transport];
+    [manager updateEndpointAccessToken:endpointAccessToken];
+    
+    ProfileSyncRequest *profileRequest = [transport createProfileRequest];
+    
+    XCTAssertNotNil(profileRequest);
+    XCTAssertTrue(endpointAccessToken == profileRequest.endpointAccessToken.data);
 }
 
 - (UserAttachResponse *)getUserAttachResponse {
