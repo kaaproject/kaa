@@ -108,14 +108,14 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
     return DEFAULT_MAX_THREADS;
   }
 
-  private ExecutorService createExecutor(int nThreads, int maxThreadsIdleMilliseconds) {
-    return new ThreadPoolExecutor(1, nThreads,
+  private ExecutorService createExecutor(int threadsAmount, int maxThreadsIdleMilliseconds) {
+    return new ThreadPoolExecutor(1, threadsAmount,
         maxThreadsIdleMilliseconds, TimeUnit.MILLISECONDS,
         new SynchronousQueue<Runnable>());
   }
 
-  private ScheduledExecutorService createScheduledExecutor(int nThreads) {
-    return Executors.newScheduledThreadPool(nThreads);
+  private ScheduledExecutorService createScheduledExecutor(int threadsAmount) {
+    return Executors.newScheduledThreadPool(threadsAmount);
   }
 
   public static class FlexibleExecutorContextBuilder {
@@ -165,7 +165,13 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
       return this;
     }
 
-
+    /**
+     * Set threads amount and appropriate idle time for life cycle threads.
+     *
+     * @param lifeCycleThreadCount                threads amount
+     * @param maxLifeCycleThreadsIdleMilliseconds idle time (milliseconds)
+     * @return builder
+     */
     public FlexibleExecutorContextBuilder setLifeCycleThreadCountAndIdleMilliseconds(
         int lifeCycleThreadCount, int maxLifeCycleThreadsIdleMilliseconds) {
       this.lifeCycleThreadCount = lifeCycleThreadCount;
@@ -173,6 +179,13 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
       return this;
     }
 
+    /**
+     * Set threads amount and appropriate idle time for api`s threads.
+     *
+     * @param apiThreadCount                threads amount
+     * @param maxApiThreadsIdleMilliseconds idle time (milliseconds)
+     * @return builder
+     */
     public FlexibleExecutorContextBuilder setApiThreadCountAndIdleMilliseconds(
         int apiThreadCount, int maxApiThreadsIdleMilliseconds) {
       this.apiThreadCount = apiThreadCount;
@@ -180,6 +193,13 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
       return this;
     }
 
+    /**
+     * Set threads amount and appropriate idle time for callback`s threads.
+     *
+     * @param callbackThreadCount                threads amount
+     * @param maxCallbackThreadsIdleMilliseconds idle time (milliseconds)
+     * @return builder
+     */
     public FlexibleExecutorContextBuilder setCallbackThreadCountAndIdleMilliseconds(
         int callbackThreadCount, int maxCallbackThreadsIdleMilliseconds) {
       this.callbackThreadCount = callbackThreadCount;
