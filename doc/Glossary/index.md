@@ -49,11 +49,11 @@ sort_idx: 50
 ### Common type (CT)
 >A versioned definition of data schema structure, managed within the [Common type library]({{root_url}}Glossary/#common-type-library-ctl).
 >Any CT can be reused in multiple places of [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment).  
->See [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-type-library) documentation section.
+>See [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library) documentation section.
 
 ### Common type library (CTL)
 >A repository of [common types]({{root_url}}Glossary/#common-type-ct) that can be reused in Kaa modules.  
->See [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-type-library) documentation section.
+>See [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library) documentation section.
 
 ### Control service
 >One of the three main service types in Kaa.
@@ -106,7 +106,7 @@ sort_idx: 50
 
 ### Kaa application
 >An integrity of configurations and code that utilizes [Kaa platform]({{root_url}}Glossary/#kaa-platform) functionality for a specific use case.  
->See [Your first Kaa application]({{root_url}}Programming-guide/Your-first-kaa-application/) documentation section.
+>See [Your first Kaa application]({{root_url}}Programming-guide/Your-first-Kaa-application/) documentation section.
 
 ### Kaa client
 >A client-side entity that implements the [endpoint]({{root_url}}Glossary/#endpoint-ep) functionality.
@@ -146,7 +146,7 @@ sort_idx: 50
 
 ### Load balancing strategy
 >A particular way of rebalancing the workload between the [Operations services]({{root_url}}Glossary/#operations-service) within a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) to achieve the desired load for each service.
->See [Active load balancing](Architecture-overview/#active-load-balancing) documentation section.
+>See [Active load balancing]({{root_url}}Architecture-overview/#active-load-balancing) documentation section.
 
 ### Log appender
 >A service utility within the [Operations service]({{root_url}}Glossary/#operations-service).
@@ -181,7 +181,7 @@ sort_idx: 50
 >See [Tenants and applications management]({{root_url}}Administration-guide/Tenants-and-applications-management/) documentation section.
 
 ### Tenant administrator
->A Kaa user who has the rights to manage [applications]({{root_url}}Glossary/#kaa-applications), users and event class families within a [tenant]({{root_url}}Glossary/#tenant).  
+>A Kaa user who has the rights to manage [applications]({{root_url}}Glossary/#kaa-application), users and event class families within a [tenant]({{root_url}}Glossary/#tenant).  
 >See also [Kaa administrator]({{root_url}}Glossary/#kaa-administrator) and [tenant developer]({{root_url}}Glossary/#tenant-developer).
 
 ### Tenant developer

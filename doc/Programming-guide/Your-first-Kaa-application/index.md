@@ -182,7 +182,7 @@ To do this, run the following commands in the terminal.
 
 		sudo apt-get install cmake
 		
-2. Create a direcory named **kaa** and unpack the C SDK archive it.
+2. Create a direcory named **kaa** and unpack the C SDK archive into it.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
 
@@ -224,7 +224,7 @@ Before using the C++ application code, be sure to complete the following steps:
 
 1. Install the required libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites).
 
-2. Create a **kaa** directory and unpack the C++ SDK in it.
+2. Create a **kaa** directory and unpack the C++ SDK into it.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
 
@@ -439,7 +439,7 @@ int main(void)
     /* Start Kaa SDK's main loop. example_callback is called once per second. */
     error = kaa_client_start(kaa_client, example_callback, kaa_client, 1);
 
-    /* Should get here only after Kaa stop. */
+    /* Should get here only after Kaa stops. */
     kaa_client_destroy(kaa_client);
     
     if (error) {
