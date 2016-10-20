@@ -19,19 +19,17 @@ package org.kaaproject.kaa.server.transport.message;
 /**
  * Converts an exception into objects specific to the corresponding transport
  * channel.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public interface ErrorBuilder {
 
-    /**
-     * Convert the exception into objects specific to the corresponding
-     * transport channel.
-     * 
-     * @param e
-     *            the exception to convert
-     * @return result the result of conversion
-     */
-    Object[] build(Exception e);
+  /**
+   * Convert the exception into objects specific to the corresponding
+   * transport channel.
+   *
+   * @param exception the exception to convert
+   * @return result the result of conversion
+   */
+  Object[] build(Exception exception);
 }

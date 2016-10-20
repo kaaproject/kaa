@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.datamigration.utils.datadefinition;
 
 public enum ReferenceOptions {
-    RESTRICT, CASCADE
+  RESTRICT, CASCADE
 }

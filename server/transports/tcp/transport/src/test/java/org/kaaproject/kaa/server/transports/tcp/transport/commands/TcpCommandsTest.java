@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport.commands;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
@@ -31,51 +33,49 @@ import org.kaaproject.kaa.server.transports.tcp.transport.messages.NettyTcpSyncM
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.mock;
-
 public class TcpCommandsTest {
-    @Test
-    public void kaaTcpCommandTest() {
-        KaaTcpCommandFactory commandFactory = new KaaTcpCommandFactory();
-        KaaTcpCommand command = (KaaTcpCommand)commandFactory.createCommandProcessor();
-        Assert.assertNotNull(command);
-        Assert.assertEquals(KaaTcpCommand.KAA_TCP, command.getName());
-    }
+  @Test
+  public void kaaTcpCommandTest() {
+    KaaTcpCommandFactory commandFactory = new KaaTcpCommandFactory();
+    KaaTcpCommand command = (KaaTcpCommand) commandFactory.createCommandProcessor();
+    Assert.assertNotNull(command);
+    Assert.assertEquals(KaaTcpCommand.KAA_TCP, command.getName());
+  }
 
-    @Test
-    public void kaaTcpCommandGetSetTest() {
-        int id = 1;
-        long syncTime = 1;
-        MqttFrame mqttFrame = new Connect();
-        KaaTcpCommand kaaTcpCommand = new KaaTcpCommand();
-        kaaTcpCommand.setCommandId(id);
-        kaaTcpCommand.setResponse(mqttFrame);
-        kaaTcpCommand.setSyncTime(syncTime);
-        Assert.assertEquals(id, kaaTcpCommand.getCommandId());
-        Assert.assertEquals(mqttFrame, kaaTcpCommand.getResponse());
-        Assert.assertEquals(syncTime, kaaTcpCommand.getSyncTime());
-    }
+  @Test
+  public void kaaTcpCommandGetSetTest() {
+    int id = 1;
+    long syncTime = 1;
+    MqttFrame mqttFrame = new Connect();
+    KaaTcpCommand kaaTcpCommand = new KaaTcpCommand();
+    kaaTcpCommand.setCommandId(id);
+    kaaTcpCommand.setResponse(mqttFrame);
+    kaaTcpCommand.setSyncTime(syncTime);
+    Assert.assertEquals(id, kaaTcpCommand.getCommandId());
+    Assert.assertEquals(mqttFrame, kaaTcpCommand.getResponse());
+    Assert.assertEquals(syncTime, kaaTcpCommand.getSyncTime());
+  }
 
-    @Test
-    public void kaaTcpCommandFactoryGetSetTest() {
-        KaaTcpCommandFactory kaaTcpCommandFactory = new KaaTcpCommandFactory();
-        Assert.assertEquals(KaaTcpCommand.KAA_TCP, kaaTcpCommandFactory.getCommandName());
-    }
+  @Test
+  public void kaaTcpCommandFactoryGetSetTest() {
+    KaaTcpCommandFactory kaaTcpCommandFactory = new KaaTcpCommandFactory();
+    Assert.assertEquals(KaaTcpCommand.KAA_TCP, kaaTcpCommandFactory.getCommandName());
+  }
 
-    @Test
-    public void nettyKaaTcpSyncMessageGetSetTest() {
-        Connect connect = new Connect(10, 10, new byte[10], null, null);
-        NettyTcpConnectMessage nettyTcpConnectMessage = new NettyTcpConnectMessage(null, null, connect, null, null, null, null);
-        Assert.assertEquals(connect.isEncrypted(), nettyTcpConnectMessage.isEncrypted());
-        Assert.assertEquals(connect.getKeepAlive(), nettyTcpConnectMessage.getKeepAlive());
-    }
+  @Test
+  public void nettyKaaTcpSyncMessageGetSetTest() {
+    Connect connect = new Connect(10, 10, new byte[10], null, null);
+    NettyTcpConnectMessage nettyTcpConnectMessage = new NettyTcpConnectMessage(null, null, connect, null, null, null, null);
+    Assert.assertEquals(connect.isEncrypted(), nettyTcpConnectMessage.isEncrypted());
+    Assert.assertEquals(connect.getKeepAlive(), nettyTcpConnectMessage.getKeepAlive());
+  }
 
-    @Test
-    public void nettyTcpSyncMessageGetSetTest() {
-        SyncRequest command = new SyncRequest(new byte[10], true, true);
-        SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), 10, mock(ChannelContext.class), ChannelType.ASYNC,
-                mock(MessageEncoderDecoder.CipherPair.class), EndpointObjectHash.fromString("hash"), "appToken", "sdkToken", 100, true);
-        NettyTcpSyncMessage nettyTcpSyncMessage = new NettyTcpSyncMessage(command, sessionInfo, null, null);
-        Assert.assertEquals(command.isEncrypted(), nettyTcpSyncMessage.isEncrypted());
-    }
+  @Test
+  public void nettyTcpSyncMessageGetSetTest() {
+    SyncRequest command = new SyncRequest(new byte[10], true, true);
+    SessionInfo sessionInfo = new SessionInfo(UUID.randomUUID(), 10, mock(ChannelContext.class), ChannelType.ASYNC,
+        mock(MessageEncoderDecoder.CipherPair.class), EndpointObjectHash.fromString("hash"), "appToken", "sdkToken", 100, true);
+    NettyTcpSyncMessage nettyTcpSyncMessage = new NettyTcpSyncMessage(command, sessionInfo, null, null);
+    Assert.assertEquals(command.isEncrypted(), nettyTcpSyncMessage.isEncrypted());
+  }
 }

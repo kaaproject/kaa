@@ -20,11 +20,10 @@ import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 
 public class RawDataFactory implements KaaDataFactory<RawSchema, RawData> {
 
-    @Override
-    public RawData createData(RawSchema schema, String data) {
-        return new RawData(schema, data);
-    }
-
+  @Override
+  public RawData createData(RawSchema schema, String data) {
+    return new RawData(schema, data);
+  }
 
 
 }

@@ -20,6 +20,6 @@ import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 
 public interface SchemaGenerationAlgorithmFactory {
 
-    SchemaGenerationAlgorithm createSchemaGenerator(DataSchema schema);
+  SchemaGenerationAlgorithm createSchemaGenerator(DataSchema schema);
 
 }

@@ -25,6 +25,28 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Test;
+import org.kaaproject.kaa.client.channel.BootstrapTransport;
+import org.kaaproject.kaa.client.channel.IpTransportInfo;
+import org.kaaproject.kaa.client.channel.IpTransportInfoTest;
+import org.kaaproject.kaa.client.channel.KaaDataChannel;
+import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
+import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
+import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
+import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
+import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
+import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
+import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
+import org.kaaproject.kaa.client.channel.failover.DefaultFailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
+import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
+import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
+import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
+import org.kaaproject.kaa.client.context.ExecutorContext;
+import org.kaaproject.kaa.client.transport.TransportException;
+import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
+
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -34,260 +56,238 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
-import org.kaaproject.kaa.client.channel.BootstrapTransport;
-import org.kaaproject.kaa.client.channel.failover.FailoverManager;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
-import org.kaaproject.kaa.client.channel.IPTransportInfoTest;
-import org.kaaproject.kaa.client.channel.KaaDataChannel;
-import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
-import org.kaaproject.kaa.client.channel.KaaDataMultiplexer;
-import org.kaaproject.kaa.client.channel.KaaInternalChannelManager;
-import org.kaaproject.kaa.client.channel.KaaInvalidChannelException;
-import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
-import org.kaaproject.kaa.client.channel.TransportProtocolIdConstants;
-import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
-import org.kaaproject.kaa.client.channel.failover.FailoverStatus;
-import org.kaaproject.kaa.client.channel.failover.strategies.DefaultFailoverStrategy;
-import org.kaaproject.kaa.client.channel.failover.strategies.FailoverStrategy;
-import org.kaaproject.kaa.client.channel.failover.DefaultFailoverManager;
-import org.kaaproject.kaa.client.context.ExecutorContext;
-import org.kaaproject.kaa.client.transport.TransportException;
-import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
-
 public class DefaultBootstrapManagerTest {
 
-    public class ChanelManagerMock implements KaaInternalChannelManager {
+  @Test
+  public void testReceiveOperationsServerList() throws TransportException {
+    BootstrapTransport transport = mock(BootstrapTransport.class);
+    DefaultBootstrapManager manager = new DefaultBootstrapManager(transport, null, null);
 
-        private boolean serverUpdated = false;
-        private String receivedUrl;
+    boolean exception = false;
+    try {
+      manager.receiveOperationsServerList();
+      manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
+    } catch (BootstrapRuntimeException e) {
+      exception = true;
+    }
+    assertTrue(exception);
 
-        public ChanelManagerMock() {
-        }
+    manager.receiveOperationsServerList();
 
-        public String getReceivedUrl() {
-            return receivedUrl;
-        }
+    verify(transport, times(2)).sync();
+  }
 
-        public boolean isServerUpdated() {
-            return serverUpdated;
-        }
+  @Test
+  public void testOperationsServerInfoRetrieving() throws TransportException, NoSuchAlgorithmException, InvalidKeySpecException {
+    ExecutorContext executorContext = mock(ExecutorContext.class);
+    DefaultBootstrapManager manager = new DefaultBootstrapManager(null, executorContext, null);
 
-        @Override
-        public void setConnectivityChecker(ConnectivityChecker checker) {
+    boolean exception = false;
+    try {
+      manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
+    } catch (BootstrapRuntimeException e) {
+      exception = true;
+    }
+    assertTrue(exception);
 
-        }
+    BootstrapTransport transport = mock(BootstrapTransport.class);
 
-        @Override
-        public void addChannel(KaaDataChannel channel) {
+    // Generating pseudo bootstrap key
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    keyGen.initialize(2048);
+    KeyPair keyPair = keyGen.genKeyPair();
 
-        }
+    List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
+    ProtocolMetaData md = IpTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
+            keyPair.getPublic());
+    list.add(md);
 
-        @Override
-        public void removeChannel(KaaDataChannel channel) {
+    ChanelManagerMock channelManager = spy(new ChanelManagerMock());
+    when(executorContext.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
+    FailoverStrategy strategy = new DefaultFailoverStrategy(1, 1, 1, TimeUnit.MILLISECONDS);
+    FailoverManager failoverManager =
+        spy(new DefaultFailoverManager(channelManager, executorContext, strategy, 1, TimeUnit.MILLISECONDS));
 
-        }
+    manager.setChannelManager(channelManager);
+    manager.setFailoverManager(failoverManager);
+    manager.setTransport(transport);
+    manager.onProtocolListUpdated(list);
+    manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
+    assertTrue(channelManager.isServerUpdated());
+    assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
-        @Override
-        public List<KaaDataChannel> getChannels() {
-            return null;
-        }
+    manager.useNextOperationsServerByAccessPointId("some.name".hashCode());
+    verify(channelManager, times(1)).onTransportConnectionInfoUpdated(any(TransportConnectionInfo.class));
+  }
 
-        @Override
-        public KaaDataChannel getChannel(String id) {
-            return null;
-        }
+  @Test
+  public void testUseServerByDnsName() throws NoSuchAlgorithmException {
+    DefaultBootstrapManager manager = new DefaultBootstrapManager(null, null, null);
 
-        @Override
-        public void onServerFailed(TransportConnectionInfo server, FailoverStatus status) {
+    ChanelManagerMock channelManager = spy(new ChanelManagerMock());
+    manager.setChannelManager(channelManager);
 
-        }
+    BootstrapTransport transport = mock(BootstrapTransport.class);
+    manager.setTransport(transport);
 
-        @Override
-        public void setFailoverManager(FailoverManager failoverManager) {
+    // Generating pseudo operation key
+    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    keyGen.initialize(2048);
+    KeyPair keyPair = keyGen.genKeyPair();
 
-        }
+    List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
+    ProtocolMetaData md = IpTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
+            keyPair.getPublic());
+    list.add(md);
 
-        @Override
-        public void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
-            receivedUrl = new IPTransportInfo(newServer).getURL();
-            serverUpdated = true;
-        }
+    manager.onProtocolListUpdated(list);
+    assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
 
-        @Override
-        public void clearChannelList() {
+    manager.useNextOperationsServerByAccessPointId("localhost2:9889".hashCode());
+    verify(transport, times(1)).sync();
 
-        }
+    list = new ArrayList<ProtocolMetaData>();
+    md = IpTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());
+    list.add(md);
 
-        @Override
-        public void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException {
+    manager.onProtocolListUpdated(list);
+    assertEquals("http://localhost2:9889", channelManager.getReceivedUrl());
+    assertTrue(channelManager.isServerUpdated());
+  }
 
-        }
+  public class ChanelManagerMock implements KaaInternalChannelManager {
 
-        @Override
-        public void removeChannel(String id) {
+    private boolean serverUpdated = false;
+    private String receivedUrl;
 
-        }
-
-        @Override
-        public void shutdown() {
-
-        }
-
-        @Override
-        public void pause() {
-
-        }
-
-        @Override
-        public void resume() {
-
-        }
-
-        @Override
-        public void setOperationMultiplexer(KaaDataMultiplexer multiplexer) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void setOperationDemultiplexer(KaaDataDemultiplexer demultiplexer) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void setBootstrapMultiplexer(KaaDataMultiplexer multiplexer) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void setBootstrapDemultiplexer(KaaDataDemultiplexer demultiplexer) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void sync(TransportType type) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void syncAck(TransportType type) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void syncAll(TransportType type) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public TransportConnectionInfo getActiveServer(TransportType logging) {
-            // TODO Auto-generated method stub
-            return null;
-        }
+    public ChanelManagerMock() {
     }
 
-    @Test
-    public void testReceiveOperationsServerList() throws TransportException {
-        BootstrapTransport transport = mock(BootstrapTransport.class);
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(transport, null, null);
-
-        boolean exception = false;
-        try {
-            manager.receiveOperationsServerList();
-            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
-        } catch (BootstrapRuntimeException e) {
-            exception = true;
-        }
-        assertTrue(exception);
-
-        manager.receiveOperationsServerList();
-
-        verify(transport, times(2)).sync();
+    public String getReceivedUrl() {
+      return receivedUrl;
     }
 
-    @Test
-    public void testOperationsServerInfoRetrieving() throws TransportException, NoSuchAlgorithmException, InvalidKeySpecException {
-        ExecutorContext executorContext = mock(ExecutorContext.class);
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, executorContext, null);
-
-        boolean exception = false;
-        try {
-            manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
-        } catch (BootstrapRuntimeException e) {
-            exception = true;
-        }
-        assertTrue(exception);
-
-        BootstrapTransport transport = mock(BootstrapTransport.class);
-
-        // Generating pseudo bootstrap key
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048);
-        KeyPair keyPair = keyGen.genKeyPair();
-
-        List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
-                keyPair.getPublic());
-        list.add(md);
-
-        ChanelManagerMock channelManager = spy(new ChanelManagerMock());
-        when(executorContext.getScheduledExecutor()).thenReturn(Executors.newScheduledThreadPool(1));
-        FailoverStrategy strategy = new DefaultFailoverStrategy(1, 1, 1, TimeUnit.MILLISECONDS);
-        FailoverManager failoverManager =
-                spy(new DefaultFailoverManager(channelManager, executorContext, strategy, 1, TimeUnit.MILLISECONDS));
-
-        manager.setChannelManager(channelManager);
-        manager.setFailoverManager(failoverManager);
-        manager.setTransport(transport);
-        manager.onProtocolListUpdated(list);
-        manager.useNextOperationsServer(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, FailoverStatus.NO_CONNECTIVITY);
-        assertTrue(channelManager.isServerUpdated());
-        assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
-
-        manager.useNextOperationsServerByAccessPointId("some.name".hashCode());
-        verify(channelManager, times(1)).onTransportConnectionInfoUpdated(any(TransportConnectionInfo.class));
+    public boolean isServerUpdated() {
+      return serverUpdated;
     }
 
-    @Test
-    public void testUseServerByDnsName() throws NoSuchAlgorithmException {
-        DefaultBootstrapManager manager = new DefaultBootstrapManager(null, null, null);
+    @Override
+    public void setConnectivityChecker(ConnectivityChecker checker) {
 
-        ChanelManagerMock channelManager = spy(new ChanelManagerMock());
-        manager.setChannelManager(channelManager);
-
-        BootstrapTransport transport = mock(BootstrapTransport.class);
-        manager.setTransport(transport);
-
-        // Generating pseudo operation key
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048);
-        KeyPair keyPair = keyGen.genKeyPair();
-
-        List<ProtocolMetaData> list = new ArrayList<ProtocolMetaData>();
-        ProtocolMetaData md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost", 9889,
-                keyPair.getPublic());
-        list.add(md);
-
-        manager.onProtocolListUpdated(list);
-        assertEquals("http://localhost:9889", channelManager.getReceivedUrl());
-
-        manager.useNextOperationsServerByAccessPointId("localhost2:9889".hashCode());
-        verify(transport, times(1)).sync();
-
-        list = new ArrayList<ProtocolMetaData>();
-        md = IPTransportInfoTest.buildMetaData(TransportProtocolIdConstants.HTTP_TRANSPORT_ID, "localhost2", 9889, keyPair.getPublic());
-        list.add(md);
-
-        manager.onProtocolListUpdated(list);
-        assertEquals("http://localhost2:9889", channelManager.getReceivedUrl());
-        assertTrue(channelManager.isServerUpdated());
     }
+
+    @Override
+    public void addChannel(KaaDataChannel channel) {
+
+    }
+
+    @Override
+    public void removeChannel(KaaDataChannel channel) {
+
+    }
+
+    @Override
+    public List<KaaDataChannel> getChannels() {
+      return null;
+    }
+
+    @Override
+    public KaaDataChannel getChannel(String id) {
+      return null;
+    }
+
+    @Override
+    public void onServerFailed(TransportConnectionInfo server, FailoverStatus status) {
+
+    }
+
+    @Override
+    public void setFailoverManager(FailoverManager failoverManager) {
+
+    }
+
+    @Override
+    public void onTransportConnectionInfoUpdated(TransportConnectionInfo newServer) {
+      receivedUrl = new IpTransportInfo(newServer).getUrl();
+      serverUpdated = true;
+    }
+
+    @Override
+    public void clearChannelList() {
+
+    }
+
+    @Override
+    public void setChannel(TransportType transport, KaaDataChannel channel) throws KaaInvalidChannelException {
+
+    }
+
+    @Override
+    public void removeChannel(String id) {
+
+    }
+
+    @Override
+    public void shutdown() {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void setOperationMultiplexer(KaaDataMultiplexer multiplexer) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setOperationDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setBootstrapMultiplexer(KaaDataMultiplexer multiplexer) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setBootstrapDemultiplexer(KaaDataDemultiplexer demultiplexer) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void sync(TransportType type) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void syncAck(TransportType type) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void syncAll(TransportType type) {
+      // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public TransportConnectionInfo getActiveServer(TransportType logging) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+  }
 }

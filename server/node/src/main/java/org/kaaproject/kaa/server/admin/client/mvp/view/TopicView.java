@@ -21,16 +21,16 @@ import com.google.gwt.user.client.ui.HasValue;
 
 public interface TopicView extends BaseDetailsView {
 
-    HasValue<String> getName();
+  HasValue<String> getName();
 
-    HasValue<Boolean> getMandatory();
+  HasValue<Boolean> getMandatory();
 
-    HasValue<String> getDescription();
+  HasValue<String> getDescription();
 
-    HasValue<String> getCreatedUsername();
+  HasValue<String> getCreatedUsername();
 
-    HasValue<String> getCreatedDateTime();
+  HasValue<String> getCreatedDateTime();
 
-    HasClickHandlers getSendNotificationButton();
+  HasClickHandlers getSendNotificationButton();
 
 }

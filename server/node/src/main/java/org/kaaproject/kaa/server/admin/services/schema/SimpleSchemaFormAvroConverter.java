@@ -16,64 +16,63 @@
 
 package org.kaaproject.kaa.server.admin.services.schema;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * The Class EcfSchemaFormAvroConverter.
  */
 public class SimpleSchemaFormAvroConverter extends SchemaFormAvroConverter {
 
-    /**
-     * Instantiates a new simple schema form avro converter.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public SimpleSchemaFormAvroConverter() throws IOException {
-        super();
+  /**
+   * Instantiates a new simple schema form avro converter.
+   *
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  public SimpleSchemaFormAvroConverter() throws IOException {
+    super();
+  }
+
+  /* (non-Javadoc)
+   */
+  @Override
+  protected void customizeRecordFields(Schema recordSchema, List<Field> fields) {
+    int index = getFieldIndex(fields, DEFAULT_VALUE);
+    if (index > -1) {
+      fields.remove(index);
     }
-    
-    /* (non-Javadoc)
-     * @see org.kaaproject.avro.ui.converter.SchemaFormAvroConverter#customizeRecordFields(org.apache.avro.Schema, java.util.List)
-     */
-    @Override
-    protected void customizeRecordFields(Schema recordSchema, List<Field> fields) {
-        int index = getFieldIndex(fields, DEFAULT_VALUE);
-        if (index > -1) {
-            fields.remove(index);
-        }
-        index = getFieldIndex(fields, DISPLAY_NAME);
-        if (index > -1) {
-            fields.remove(index);
-        }
-        index = getFieldIndex(fields, DISPLAY_PROMPT);
-        if (index > -1) {
-            fields.remove(index);
-        }
-        index = getFieldIndex(fields, WEIGHT);
-        if (index > -1) {
-            fields.remove(index);
-        }
-        index = getFieldIndex(fields, KEY_INDEX);
-        if (index > -1) {
-            fields.remove(index);
-        }
-        index = getFieldIndex(fields, MAX_LENGTH);
-        if (index > -1) {
-            fields.remove(index);
-        }
-        index = getFieldIndex(fields, INPUT_TYPE);
-        if (index > -1) {
-            fields.remove(index);
-        }
-        index = getFieldIndex(fields, MIN_ROW_COUNT);
-        if (index > -1) {
-            fields.remove(index);
-        }
+    index = getFieldIndex(fields, DISPLAY_NAME);
+    if (index > -1) {
+      fields.remove(index);
     }
+    index = getFieldIndex(fields, DISPLAY_PROMPT);
+    if (index > -1) {
+      fields.remove(index);
+    }
+    index = getFieldIndex(fields, WEIGHT);
+    if (index > -1) {
+      fields.remove(index);
+    }
+    index = getFieldIndex(fields, KEY_INDEX);
+    if (index > -1) {
+      fields.remove(index);
+    }
+    index = getFieldIndex(fields, MAX_LENGTH);
+    if (index > -1) {
+      fields.remove(index);
+    }
+    index = getFieldIndex(fields, INPUT_TYPE);
+    if (index > -1) {
+      fields.remove(index);
+    }
+    index = getFieldIndex(fields, MIN_ROW_COUNT);
+    if (index > -1) {
+      fields.remove(index);
+    }
+  }
 
 }

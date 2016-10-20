@@ -22,8 +22,8 @@ import org.junit.Test;
 
 public class UserRouteInfoTest {
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(UserRouteInfo.class).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(UserRouteInfo.class).verify();
+  }
 }

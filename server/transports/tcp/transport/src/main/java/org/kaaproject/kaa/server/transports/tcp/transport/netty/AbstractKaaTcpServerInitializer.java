@@ -24,11 +24,11 @@ import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.util.Attribute;
 
-import java.util.UUID;
-
 import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 /**
  * KaaTcpInitializer Class.
@@ -37,44 +37,46 @@ import org.slf4j.LoggerFactory;
  * @author Yaroslav Zeygerman
  */
 public abstract class AbstractKaaTcpServerInitializer extends ChannelInitializer<SocketChannel> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaTcpServerInitializer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaTcpServerInitializer.class);
 
-    /**
-     * KaaTcpServerInitializer constructor.
-     */
-    public AbstractKaaTcpServerInitializer() {
-        super();
-    }
+  /**
+   * KaaTcpServerInitializer constructor.
+   */
+  public AbstractKaaTcpServerInitializer() {
+    super();
+  }
 
-    /**
-     * init() method for necessary initializations.
-     * @throws Exception - initialization exceptions
-     */
-    public void init() throws Exception { //NOSONAR
-        LOG.debug("Default Server Initializer Init() started: ");
-    }
+  /**
+   * init() method for necessary initializations.
+   *
+   * @throws Exception - initialization exceptions
+   */
+  public void init() throws Exception { //NOSONAR
+    LOG.debug("Default Server Initializer Init() started: ");
+  }
 
-    @Override
-    protected void initChannel(SocketChannel ch) throws Exception {
-        final ChannelPipeline p = ch.pipeline();
+  @Override
+  protected void initChannel(SocketChannel ch) throws Exception {
+    final ChannelPipeline p = ch.pipeline();
 
-        final UUID uuid = UUID.randomUUID();
+    final UUID uuid = UUID.randomUUID();
 
-        LOG.debug("KaaTcpServerInitializer Initializing Channel {} connection from {}:{}"
-                , uuid, ch.remoteAddress().getAddress().toString(), ch.remoteAddress().getPort());
+    LOG.debug("KaaTcpServerInitializer Initializing Channel {} connection from {}:{}",
+            uuid, ch.remoteAddress().getAddress().toString(), ch.remoteAddress().getPort());
 
-        Attribute<UUID> uuidAttr = ch.attr(AbstractNettyServer.UUID_KEY);
-        uuidAttr.set(uuid);
+    Attribute<UUID> uuidAttr = ch.attr(AbstractNettyServer.UUID_KEY);
+    uuidAttr.set(uuid);
 
-        p.addLast("binaryDecoder", new ByteArrayDecoder());
-        p.addLast("kaaTcpDecoder", getDecoder());
-        p.addLast("binaryEncoder", new ByteArrayEncoder());
-        p.addLast("kaaTcpEncoder", new KaaTcpEncoder());
-        p.addLast("mainHandler", getMainHandler(uuid));
-        p.addLast("kaaTcpExceptionHandler", new KaaTcpExceptionHandler());
-    }
+    p.addLast("binaryDecoder", new ByteArrayDecoder());
+    p.addLast("kaaTcpDecoder", getDecoder());
+    p.addLast("binaryEncoder", new ByteArrayEncoder());
+    p.addLast("kaaTcpEncoder", new KaaTcpEncoder());
+    p.addLast("mainHandler", getMainHandler(uuid));
+    p.addLast("kaaTcpExceptionHandler", new KaaTcpExceptionHandler());
+  }
 
-    protected abstract KaaTcpDecoder getDecoder();
-    
-    protected abstract SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> getMainHandler(UUID uuid);
+  protected abstract KaaTcpDecoder getDecoder();
+
+  protected abstract SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor>
+      getMainHandler(UUID uuid);
 }

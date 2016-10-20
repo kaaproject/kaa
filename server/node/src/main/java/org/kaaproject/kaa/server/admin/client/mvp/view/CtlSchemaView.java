@@ -16,33 +16,33 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueListBox;
 
+import org.kaaproject.avro.ui.gwt.client.widget.ActionsButton;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
+
 public interface CtlSchemaView extends BaseDetailsView {
 
-    public HasClickHandlers getCreateNewSchemaVersionButton();
-    
-    public ActionsButton getExportActionsButton();
-    
-    public HasClickHandlers getUpdateSchemaScopeButton();
+  public HasClickHandlers getCreateNewSchemaVersionButton();
 
-    public HasClickHandlers getDeleteSchemaVersionButton();
-    
-    public Label getScope();
+  public ActionsButton getExportActionsButton();
 
-    public ValueListBox<Integer> getVersion();
+  public HasClickHandlers getUpdateSchemaScopeButton();
 
-    public HasValue<String> getCreatedUsername();
+  public HasClickHandlers getDeleteSchemaVersionButton();
 
-    public HasValue<String> getCreatedDateTime();
+  public Label getScope();
 
-    public RecordPanel getSchemaForm();
-    
+  public ValueListBox<Integer> getVersion();
+
+  public HasValue<String> getCreatedUsername();
+
+  public HasValue<String> getCreatedDateTime();
+
+  public RecordPanel getSchemaForm();
+
 }
 

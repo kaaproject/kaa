@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 
@@ -26,17 +27,17 @@ import java.util.List;
 @RemoteServiceRelativePath("springGwtServices/userService")
 public interface UserService extends RemoteService {
 
-    UserDto getUserProfile() throws KaaAdminServiceException;
+  UserDto getUserProfile() throws KaaAdminServiceException;
 
-    void editUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException;
+  void editUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException;
 
-    List<UserDto> getUsers() throws KaaAdminServiceException;
+  List<UserDto> getUsers() throws KaaAdminServiceException;
 
-    UserDto getUser(String userId) throws KaaAdminServiceException;
+  UserDto getUser(String userId) throws KaaAdminServiceException;
 
-    UserDto editUser(UserDto user, boolean doSendTempPassword) throws KaaAdminServiceException;
+  UserDto editUser(UserDto user, boolean doSendTempPassword) throws KaaAdminServiceException;
 
-    void deleteUser(String userId) throws KaaAdminServiceException;
+  void deleteUser(String userId) throws KaaAdminServiceException;
 
-    List<UserDto> findAllTenantAdminsByTenantId(String id) throws KaaAdminServiceException;
+  List<UserDto> findAllTenantAdminsByTenantId(String id) throws KaaAdminServiceException;
 }

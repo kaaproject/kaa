@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.common.dao.model;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
+
+import java.util.List;
 
 public interface TopicListEntry extends ToDto<TopicListEntryDto> {
 
-    List<String> getTopicIds();
+  List<String> getTopicIds();
 }

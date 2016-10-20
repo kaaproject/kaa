@@ -22,18 +22,18 @@ package org.kaaproject.kaa.server.common.thrift.util;
  * @param <T> the generic type
  */
 public interface ThriftActivity<T> {
-    
-    /**
-     * Do in template.
-     *
-     * @param t the t
-     */
-    public void doInTemplate(T t);
-    
-    /**
-     * Checks if is success.
-     *
-     * @param activitySuccess the activity success
-     */
-    public void isSuccess(boolean activitySuccess);
+
+  /**
+   * Do in template.
+   *
+   * @param template the template
+   */
+  public void doInTemplate(T template);
+
+  /**
+   * Checks if is success.
+   *
+   * @param activitySuccess the activity success
+   */
+  public void isSuccess(boolean activitySuccess);
 }

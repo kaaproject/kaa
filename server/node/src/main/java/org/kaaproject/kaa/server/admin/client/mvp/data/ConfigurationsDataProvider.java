@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
@@ -25,40 +25,46 @@ import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProv
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigRecordKey;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class ConfigurationsDataProvider extends AbstractDataProvider<ConfigurationRecordDto, ConfigRecordKey>{
+public class ConfigurationsDataProvider
+    extends AbstractDataProvider<ConfigurationRecordDto, ConfigRecordKey> {
 
-    private String endpointGroupId;
-    private boolean includeDeprecated = false;
+  private String endpointGroupId;
+  private boolean includeDeprecated = false;
+  
+  /**
+   * All-args constructor.
+   */
+  public ConfigurationsDataProvider(AbstractGrid<ConfigurationRecordDto, ConfigRecordKey> dataGrid,
+                                    HasErrorMessage hasErrorMessage,
+                                    String endpointGroupId, boolean includeDeprecated) {
+    super(dataGrid, hasErrorMessage, false);
+    this.endpointGroupId = endpointGroupId;
+    this.includeDeprecated = includeDeprecated;
+    addDataDisplay();
+  }
 
-    public ConfigurationsDataProvider(AbstractGrid<ConfigurationRecordDto, ConfigRecordKey> dataGrid,
-                                      HasErrorMessage hasErrorMessage,
-                                      String endpointGroupId, boolean includeDeprecated) {
-        super(dataGrid, hasErrorMessage, false);
-        this.endpointGroupId = endpointGroupId;
-        this.includeDeprecated = includeDeprecated;
-        addDataDisplay();
-    }
+  public void setIncludeDeprecated(boolean includeDeprecated) {
+    this.includeDeprecated = includeDeprecated;
+  }
 
-    public void setIncludeDeprecated(boolean includeDeprecated) {
-        this.includeDeprecated = includeDeprecated;
-    }
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadConfigurationRecords(
+        endpointGroupId, includeDeprecated, new AsyncCallback<List<ConfigurationRecordDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadConfigurationRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<ConfigurationRecordDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+          }
 
-            }
-            @Override
-            public void onSuccess(List<ConfigurationRecordDto> result) {
-                callback.onSuccess(result);
-            }
+          @Override
+          public void onSuccess(List<ConfigurationRecordDto> result) {
+            callback.onSuccess(result);
+          }
         });
-    }
+  }
 
 }
 

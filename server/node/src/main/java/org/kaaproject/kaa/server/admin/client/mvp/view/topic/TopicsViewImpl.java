@@ -23,24 +23,24 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class TopicsViewImpl extends BaseListViewImpl<TopicDto> {
 
-    public TopicsViewImpl() {
-        super(true);
-    }
+  public TopicsViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<TopicDto, String> createGrid() {
-        return new TopicGrid(false);
-    }
+  @Override
+  protected AbstractGrid<TopicDto, String> createGrid() {
+    return new TopicGrid(false);
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.notificationTopics();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.notificationTopics();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewNotificationTopic();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewNotificationTopic();
+  }
 
 }
 

@@ -19,13 +19,12 @@ package org.kaaproject.kaa.server.operations.service.cache;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import org.junit.Test;
-import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
 
 public class ConfigurationIdKeyTest {
 
-    @Test
-    public void testHashCodeAndEquals(){
-        EqualsVerifier.forClass(ConfigurationIdKey.class).verify();
-    }
-    
+  @Test
+  public void testHashCodeAndEquals() {
+    EqualsVerifier.forClass(ConfigurationIdKey.class).verify();
+  }
+
 }

@@ -21,34 +21,34 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 
 public class SchemaInfoDto extends VersionDto {
 
-    private static final long serialVersionUID = -8792655520011059405L;
-    
-    private String schemaName;
-    private RecordField schemaForm;
+  private static final long serialVersionUID = -8792655520011059405L;
 
-    public SchemaInfoDto() {
-        super();
-    }
-    
-    public SchemaInfoDto(VersionDto versionDto) {
-        this.id = versionDto.getId();
-        this.version = versionDto.getVersion();
-    }
-    
-    public RecordField getSchemaForm() {
-        return schemaForm;
-    }
+  private String schemaName;
+  private RecordField schemaForm;
 
-    public void setSchemaForm(RecordField schemaForm) {
-        this.schemaForm = schemaForm;
-    }
+  public SchemaInfoDto() {
+    super();
+  }
 
-    public String getSchemaName() {
-        return schemaName;
-    }
+  public SchemaInfoDto(VersionDto versionDto) {
+    this.id = versionDto.getId();
+    this.version = versionDto.getVersion();
+  }
 
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
-    }
- 
+  public RecordField getSchemaForm() {
+    return schemaForm;
+  }
+
+  public void setSchemaForm(RecordField schemaForm) {
+    this.schemaForm = schemaForm;
+  }
+
+  public String getSchemaName() {
+    return schemaName;
+  }
+
+  public void setSchemaName(String schemaName) {
+    this.schemaName = schemaName;
+  }
+
 }

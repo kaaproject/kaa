@@ -17,9 +17,9 @@
 package org.kaaproject.kaa.server.common.dao;
 
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.HistoryDto;
+
+import java.util.List;
 
 /**
  * The interface History service. This service manage history information about
@@ -28,47 +28,48 @@ import org.kaaproject.kaa.common.dto.HistoryDto;
  */
 public interface HistoryService {
 
-    /**
-     * Find histories by application id.
-     *
-     * @param appId the string id of application
-     * @return the list of found histories
-     */
-    List<HistoryDto> findHistoriesByAppId(String appId);
+  /**
+   * Find histories by application id.
+   *
+   * @param appId the string id of application
+   * @return the list of found histories
+   */
+  List<HistoryDto> findHistoriesByAppId(String appId);
 
-    /**
-     * Find history by application id and sequence number.
-     *
-     * @param appId  the string id of application
-     * @param seqNum the sequence number
-     * @return the found history dto
-     */
-    HistoryDto findHistoryBySeqNumber(String appId, int seqNum);
+  /**
+   * Find history by application id and sequence number.
+   *
+   * @param appId  the string id of application
+   * @param seqNum the sequence number
+   * @return the found history dto
+   */
+  HistoryDto findHistoryBySeqNumber(String appId, int seqNum);
 
-    /**
-     * Find histories by application id with sequence numbers which equal or more than start sequence number.
-     *
-     * @param appId       the string id of application
-     * @param startSeqNum the start sequence number
-     * @return the list of found histories
-     */
-    List<HistoryDto> findHistoriesBySeqNumberStart(String appId, int startSeqNum);
+  /**
+   * Find histories by application id with sequence numbers which equal or more than start sequence
+   * number.
+   *
+   * @param appId       the string id of application
+   * @param startSeqNum the start sequence number
+   * @return the list of found histories
+   */
+  List<HistoryDto> findHistoriesBySeqNumberStart(String appId, int startSeqNum);
 
-    /**
-     * Find histories by application id with sequence number between start and end sequence numbers.
-     *
-     * @param appId       the string id of application
-     * @param startSeqNum the start sequence number
-     * @param endSeqNum   the end sequence number
-     * @return the list of found histories
-     */
-    List<HistoryDto> findHistoriesBySeqNumberRange(String appId, int startSeqNum, int endSeqNum);
+  /**
+   * Find histories by application id with sequence number between start and end sequence numbers.
+   *
+   * @param appId       the string id of application
+   * @param startSeqNum the start sequence number
+   * @param endSeqNum   the end sequence number
+   * @return the list of found histories
+   */
+  List<HistoryDto> findHistoriesBySeqNumberRange(String appId, int startSeqNum, int endSeqNum);
 
-    /**
-     * Save history object.
-     *
-     * @param historyDto the history dto
-     * @return the history dto
-     */
-    HistoryDto saveHistory(HistoryDto historyDto);
+  /**
+   * Save history object.
+   *
+   * @param historyDto the history dto
+   * @return the history dto
+   */
+  HistoryDto saveHistory(HistoryDto historyDto);
 }

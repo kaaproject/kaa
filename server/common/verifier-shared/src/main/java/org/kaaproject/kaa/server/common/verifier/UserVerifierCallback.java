@@ -19,63 +19,61 @@ package org.kaaproject.kaa.server.common.verifier;
 /**
  * User verification callback. Helps to identify verification status and
  * possible reason failure
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public interface UserVerifierCallback {
 
-    /**
-     * On successful verification.
-     */
-    void onSuccess();
+  /**
+   * On successful verification.
+   */
+  void onSuccess();
 
-    /**
-     * Failed verification due to invalid token
-     */
-    void onTokenInvalid();
+  /**
+   * Failed verification due to invalid token.
+   */
+  void onTokenInvalid();
 
-    /**
-     * Failed verification due to outdated token
-     */
-    void onTokenExpired();
+  /**
+   * Failed verification due to outdated token.
+   */
+  void onTokenExpired();
 
-    /**
-     * Failed verification due to specified reason
-     * 
-     * @param reason
-     *            - reason of failure
-     */
-    void onVerificationFailure(String reason);
+  /**
+   * Failed verification due to specified reason.
+   *
+   * @param reason - reason of failure
+   */
+  void onVerificationFailure(String reason);
 
-    /**
-     * Failed verification due to internal error
-     */
-    void onInternalError();
+  /**
+   * Failed verification due to internal error.
+   */
+  void onInternalError();
 
-    /**
-     * Failed verification due to internal error
-     */
-    void onInternalError(String reason);
+  /**
+   * Failed verification due to internal error.
+   */
+  void onInternalError(String reason);
 
-    /**
-     * Failed verification due to connection error
-     */
-    void onConnectionError();
+  /**
+   * Failed verification due to connection error.
+   */
+  void onConnectionError();
 
-    /**
-     * Failed verification due to connection error
-     */
-    void onConnectionError(String reason);
+  /**
+   * Failed verification due to connection error.
+   */
+  void onConnectionError(String reason);
 
-    /**
-     * Failed verification due to remote authentication service error
-     */
-    void onRemoteError();
+  /**
+   * Failed verification due to remote authentication service error.
+   */
+  void onRemoteError();
 
-    /**
-     * Failed verification due to remote authentication service error
-     */
-    void onRemoteError(String reason);
+  /**
+   * Failed verification due to remote authentication service error.
+   */
+  void onRemoteError(String reason);
 
 }

@@ -16,36 +16,39 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.ui.ValueListBox;
+
+import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.server.admin.shared.plugin.PluginInfoDto;
-
-import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.ui.ValueListBox;
-
 public class PluginInfoListBox extends ValueListBox<PluginInfoDto> {
-    public PluginInfoListBox() {
-        super(new AppenderInfoListBoxRenderer());
+  public PluginInfoListBox() {
+    super(new AppenderInfoListBoxRenderer());
+  }
+
+  /**
+   * Reset.
+   */
+  public void reset() {
+    List<PluginInfoDto> emptyList = Collections.emptyList();
+    setValue(null);
+    setAcceptableValues(emptyList);
+  }
+
+  static class AppenderInfoListBoxRenderer implements Renderer<PluginInfoDto> {
+
+    @Override
+    public String render(PluginInfoDto object) {
+      return object != null ? object.getPluginTypeName() : "";
     }
 
-    public void reset() {
-        List<PluginInfoDto> emptyList = Collections.emptyList();
-        setValue(null);
-        setAcceptableValues(emptyList);
+    @Override
+    public void render(PluginInfoDto object, Appendable appendable) throws IOException {
+      appendable.append(render(object));
     }
-
-    static class AppenderInfoListBoxRenderer implements Renderer<PluginInfoDto> {
-
-        @Override
-        public String render(PluginInfoDto object) {
-            return object != null ? object.getPluginTypeName() : "";
-        }
-
-        @Override
-        public void render(PluginInfoDto object, Appendable appendable) throws IOException {
-            appendable.append(render(object));
-        }
-    }
+  }
 }

@@ -19,14 +19,14 @@ package org.kaaproject.kaa.server.operations.service.logs.aware;
 /**
  * Interface to be implemented by any object that wishes to be notified
  * of the Tenant Id that it runs in.
- *
  */
 public interface TenantAware {
-    
-    /**
-     * Set the Tenant Id that this object runs in.
-     * Normally this call will be used to initialize the Id.
-     * @param tenantId the Tenant Id to be used by this object
-     */
-    public void setTenantId(String tenantId);
+
+  /**
+   * Set the Tenant Id that this object runs in.
+   * Normally this call will be used to initialize the Id.
+   *
+   * @param tenantId the Tenant Id to be used by this object
+   */
+  public void setTenantId(String tenantId);
 }

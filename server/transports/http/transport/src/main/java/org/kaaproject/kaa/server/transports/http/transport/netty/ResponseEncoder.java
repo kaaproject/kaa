@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.netty;
 
-import java.util.UUID;
-
-import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,6 +24,12 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.Attribute;
+
+import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 
 /**
@@ -41,28 +41,28 @@ import io.netty.util.Attribute;
  */
 public class ResponseEncoder extends ChannelOutboundHandlerAdapter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ResponseEncoder.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ResponseEncoder.class);
 
-    @Override
-    public void write(ChannelHandlerContext ctx, Object msg,
-            ChannelPromise promise) throws Exception {
-        Attribute<UUID> sessionUuidAttr = ctx.channel().attr(AbstractNettyServer.UUID_KEY);
+  @Override
+  public void write(ChannelHandlerContext ctx, Object msg,
+                    ChannelPromise promise) throws Exception {
+    Attribute<UUID> sessionUuidAttr = ctx.channel().attr(AbstractNettyServer.UUID_KEY);
 
-        if (!(msg instanceof AbstractCommand)) {
-            LOG.warn("Session [{}] got invalid HTTP response: {}", sessionUuidAttr, msg);
-            super.write(ctx, msg, promise);
-            return;
-        }else{
-            LOG.trace("Session [{}] got valid HTTP response: {}", sessionUuidAttr, msg);
-        }
-
-        AbstractCommand cp = (AbstractCommand) msg;
-
-        HttpResponse httpResponse = cp.getResponse();
-
-        ChannelFuture future = ctx.writeAndFlush(httpResponse, promise);
-        if (!HttpHeaders.isKeepAlive(httpResponse)) {
-            future.addListener(ChannelFutureListener.CLOSE);
-        }
+    if (!(msg instanceof AbstractCommand)) {
+      LOG.warn("Session [{}] got invalid HTTP response: {}", sessionUuidAttr, msg);
+      super.write(ctx, msg, promise);
+      return;
+    } else {
+      LOG.trace("Session [{}] got valid HTTP response: {}", sessionUuidAttr, msg);
     }
+
+    AbstractCommand cp = (AbstractCommand) msg;
+
+    HttpResponse httpResponse = cp.getResponse();
+
+    ChannelFuture future = ctx.writeAndFlush(httpResponse, promise);
+    if (!HttpHeaders.isKeepAlive(httpResponse)) {
+      future.addListener(ChannelFutureListener.CLOSE);
+    }
+  }
 }

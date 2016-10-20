@@ -20,110 +20,114 @@ import java.io.Serializable;
 
 public abstract class AbstractDetailDto implements Serializable {
 
-    private static final long serialVersionUID = 2294246054281554195L;
+  private static final long serialVersionUID = 2294246054281554195L;
 
-    protected String name;
-    protected String description;
-    protected String createdUsername;
-    protected long createdTime;
-    
-    public AbstractDetailDto() {
-    }
-    
-    public AbstractDetailDto(AbstractDetailDto detailsDto) {
-        this.name = detailsDto.getName();
-        this.description = detailsDto.getDescription();
-        this.createdUsername = detailsDto.getCreatedUsername();
-        this.createdTime = detailsDto.getCreatedTime();
-    }
+  protected String name;
+  protected String description;
+  protected String createdUsername;
+  protected long createdTime;
 
-    public String getName() {
-        return name;
-    }
+  public AbstractDetailDto() {
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  /**
+   * Instantiates the AbstractDetailDto.
+   */
+  public AbstractDetailDto(AbstractDetailDto detailsDto) {
+    this.name = detailsDto.getName();
+    this.description = detailsDto.getDescription();
+    this.createdUsername = detailsDto.getCreatedUsername();
+    this.createdTime = detailsDto.getCreatedTime();
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getCreatedUsername() {
-        return createdUsername;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setCreatedUsername(String createdUsername) {
-        this.createdUsername = createdUsername;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public long getCreatedTime() {
-        return createdTime;
-    }
+  public String getCreatedUsername() {
+    return createdUsername;
+  }
 
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
-    }
+  public void setCreatedUsername(String createdUsername) {
+    this.createdUsername = createdUsername;
+  }
+
+  public long getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(long createdTime) {
+    this.createdTime = createdTime;
+  }
 
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
-        result = prime * result + ((createdUsername == null) ? 0 : createdUsername.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
+    result = prime * result + ((createdUsername == null) ? 0 : createdUsername.hashCode());
+    result = prime * result + ((description == null) ? 0 : description.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractDetailDto other = (AbstractDetailDto) obj;
-        if (createdTime != other.createdTime) {
-            return false;
-        }
-        if (createdUsername == null) {
-            if (other.createdUsername != null) {
-                return false;
-            }
-        } else if (!createdUsername.equals(other.createdUsername)) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    AbstractDetailDto other = (AbstractDetailDto) obj;
+    if (createdTime != other.createdTime) {
+      return false;
+    }
+    if (createdUsername == null) {
+      if (other.createdUsername != null) {
+        return false;
+      }
+    } else if (!createdUsername.equals(other.createdUsername)) {
+      return false;
+    }
+    if (description == null) {
+      if (other.description != null) {
+        return false;
+      }
+    } else if (!description.equals(other.description)) {
+      return false;
+    }
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        return "AbstractDetailDto [name=" + name + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
-                + "]";
-    }
+  @Override
+  public String toString() {
+    return "AbstractDetailDto [name=" + name + ", description=" + description
+           + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
+           + "]";
+  }
 
 }

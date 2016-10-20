@@ -19,81 +19,81 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getArrayCopy;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_CONFIGURATION;
 
-import java.io.Serializable;
-import java.util.Arrays;
-
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 @Document(collection = ENDPOINT_CONFIGURATION)
 public final class MongoEndpointConfiguration implements EndpointConfiguration, Serializable {
 
-    private static final long serialVersionUID = -5646769700581347085L;
+  private static final long serialVersionUID = -5646769700581347085L;
 
-    @Id
-    private byte[] configurationHash;
-    private byte[] configuration;
-    
-    public MongoEndpointConfiguration() {
+  @Id
+  private byte[] configurationHash;
+  private byte[] configuration;
+
+  public MongoEndpointConfiguration() {
+  }
+
+  public MongoEndpointConfiguration(EndpointConfigurationDto dto) {
+    this.configuration = dto.getConfiguration();
+    this.configurationHash = dto.getConfigurationHash();
+  }
+
+  public byte[] getConfigurationHash() {
+    return configurationHash;
+  }
+
+  public void setConfigurationHash(byte[] configurationHash) {
+    this.configurationHash = getArrayCopy(configurationHash);
+  }
+
+  public byte[] getConfiguration() {
+    return configuration;
+  }
+
+  public void setConfiguration(byte[] configuration) {
+    this.configuration = configuration;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    public MongoEndpointConfiguration(EndpointConfigurationDto dto) {
-        this.configuration = dto.getConfiguration();
-        this.configurationHash = dto.getConfigurationHash();
+    MongoEndpointConfiguration that = (MongoEndpointConfiguration) object;
+
+    if (!Arrays.equals(configuration, that.configuration)) {
+      return false;
+    }
+    if (!Arrays.equals(configurationHash, that.configurationHash)) {
+      return false;
     }
 
-    public byte[] getConfigurationHash() {
-        return configurationHash;
-    }
+    return true;
+  }
 
-    public void setConfigurationHash(byte[] configurationHash) {
-        this.configurationHash = getArrayCopy(configurationHash);
-    }
+  @Override
+  public int hashCode() {
+    int result = configurationHash != null ? Arrays.hashCode(configurationHash) : 0;
+    result = 31 * result + (configuration != null ? Arrays.hashCode(configuration) : 0);
+    return result;
+  }
 
-    public byte[] getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(byte[] configuration) {
-        this.configuration = configuration;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        MongoEndpointConfiguration that = (MongoEndpointConfiguration) o;
-
-        if (!Arrays.equals(configuration, that.configuration)) {
-            return false;
-        }
-        if (!Arrays.equals(configurationHash, that.configurationHash)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = configurationHash != null ? Arrays.hashCode(configurationHash) : 0;
-        result = 31 * result + (configuration != null ? Arrays.hashCode(configuration) : 0);
-        return result;
-    }
-
-    @Override
-    public EndpointConfigurationDto toDto() {
-        EndpointConfigurationDto dto = new EndpointConfigurationDto();
-        dto.setConfiguration(configuration);
-        dto.setConfigurationHash(configurationHash);
-        return dto;
-    }
+  @Override
+  public EndpointConfigurationDto toDto() {
+    EndpointConfigurationDto dto = new EndpointConfigurationDto();
+    dto.setConfiguration(configuration);
+    dto.setConfigurationHash(configurationHash);
+    return dto;
+  }
 
 }

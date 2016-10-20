@@ -22,28 +22,28 @@ import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeConfig;
 
 public abstract class FlumeClientManagerTest<T> {
 
-    protected T flumeNodes = null;
-    protected FlumeConfig configuration = null;
-    
-    protected byte[] testEventBody = new byte[] { 0, 1, 2, 3, 4, 5 };
+  protected T flumeNodes = null;
+  protected FlumeConfig configuration = null;
 
-    protected FlumeSourceRunner flumeSourceRunner = null;
-    protected FlumeClientManager<T> clientManager = null;
+  protected byte[] testEventBody = new byte[]{0, 1, 2, 3, 4, 5};
 
-    @Before
-    public final void setUp() throws Exception {
-        flumeSourceRunner = FlumeSourceRunner.getInstance();
-        configuration = new FlumeConfig();
+  protected FlumeSourceRunner flumeSourceRunner = null;
+  protected FlumeClientManager<T> clientManager = null;
+
+  @Before
+  public final void setUp() throws Exception {
+    flumeSourceRunner = FlumeSourceRunner.getInstance();
+    configuration = new FlumeConfig();
+  }
+
+  @After
+  public final void tearDown() throws Exception {
+    if (clientManager != null) {
+      clientManager.cleanUp();
     }
-
-    @After
-    public final void tearDown() throws Exception {
-        if (clientManager != null) {
-            clientManager.cleanUp();
-        }
-        if (flumeSourceRunner != null && flumeSourceRunner.isRunning()) {
-            flumeSourceRunner.stopFlumeSource();
-        }
+    if (flumeSourceRunner != null && flumeSourceRunner.isRunning()) {
+      flumeSourceRunner.stopFlumeSource();
     }
+  }
 
 }

@@ -23,8 +23,8 @@ import org.junit.Test;
 
 public class AvroBinaryDeltaTest {
 
-    @Test
-    public void equalsTest(){
-        EqualsVerifier.forClass(AvroBinaryDelta.class).suppress(Warning.NONFINAL_FIELDS).verify();
-    }
+  @Test
+  public void equalsTest() {
+    EqualsVerifier.forClass(AvroBinaryDelta.class).suppress(Warning.NONFINAL_FIELDS).verify();
+  }
 }

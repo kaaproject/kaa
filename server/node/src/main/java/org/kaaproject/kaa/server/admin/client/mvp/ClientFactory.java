@@ -16,125 +16,201 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
-import org.kaaproject.kaa.common.dto.*;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.web.bindery.event.shared.EventBus;
+
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.*;
-
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.event.shared.EventBus;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfVersionView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.EventClassView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.GetUserConfigView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.ProfileFilterView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.SdkProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UpdateUserConfigView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 
 public interface ClientFactory {
-    EventBus getEventBus();
-    PlaceController getPlaceController();
+  EventBus getEventBus();
 
-    HeaderView getHeaderView();
-    NavigationView getNavigationView();
+  PlaceController getPlaceController();
 
-    UserProfileView getUserProfileView();
+  HeaderView getHeaderView();
 
-    BaseListView<SdkProfileDto> getSdkProfilesView();
-    SdkProfileView getSdkProfileView();
-    BasePropertiesView getGeneralPropertiesView();
+  NavigationView getNavigationView();
 
-    BasePropertiesView getMailPropertiesView();
+  UserProfileView getUserProfileView();
 
-    BaseListView<TenantDto> getTenantsView();
-    TenantView getCreateTenantView();
-    TenantView getTenantView();
+  BaseListView<SdkProfileDto> getSdkProfilesView();
 
-    BaseListView<ApplicationDto> getApplicationsView();
-    ApplicationView getCreateApplicationView();
-    ApplicationView getApplicationView();
+  SdkProfileView getSdkProfileView();
 
-    AddSdkProfileView getAddSdkProfileView();
+  BasePropertiesView getGeneralPropertiesView();
 
-    BaseListView<UserDto> getUsersView();
-    UserView getCreateUserView();
-    UserView getUserView();
+  BasePropertiesView getMailPropertiesView();
 
-    BaseListView<EndpointProfileSchemaDto> getProfileSchemasView();
-    BaseCtlSchemaView getProfileSchemaView();
-    BaseCtlSchemaView getCreateProfileSchemaView();
+  BaseListView<TenantDto> getTenantsView();
 
-    BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView();
-    BaseCtlSchemaView getServerProfileSchemaView();
-    BaseCtlSchemaView getCreateServerProfileSchemaView();
+  TenantView getCreateTenantView();
 
-    BaseListView<ConfigurationSchemaDto> getConfigurationSchemasView();
-    BaseCtlSchemaView getConfigurationSchemaView();
-    BaseCtlSchemaView getCreateConfigurationSchemaView();
+  TenantView getTenantView();
 
-    BaseListView<NotificationSchemaDto> getNotificationSchemasView();
-    BaseCtlSchemaView getNotificationSchemaView();
-    BaseCtlSchemaView getCreateNotificationSchemaView();
+  BaseListView<ApplicationDto> getApplicationsView();
 
-    BaseListView<LogSchemaDto> getLogSchemasView();
-    BaseCtlSchemaView getLogSchemaView();
-    BaseCtlSchemaView getCreateLogSchemaView();
+  ApplicationView getCreateApplicationView();
 
-    BaseListView<EndpointGroupDto> getEndpointGroupsView();
-    EndpointGroupView getEndpointGroupView();
-    EndpointGroupView getCreateEndpointGroupView();
+  ApplicationView getApplicationView();
 
-    EndpointProfilesView getEndpointProfilesView();
-    EndpointProfileView getEndpointProfileView();
+  AddSdkProfileView getAddSdkProfileView();
 
-    ProfileFilterView getProfileFilterView();
-    ProfileFilterView getCreateProfileFilterView();
+  BaseListView<UserDto> getUsersView();
 
-    ConfigurationView getConfigurationView();
-    ConfigurationView getCreateConfigurationView();
+  UserView getCreateUserView();
 
-    BaseListView<TopicDto> getTopicsView();
-    TopicView getTopicView();
-    TopicView getCreateTopicView();
+  UserView getUserView();
 
-    SendNotificationView getSendNotificationView();
+  BaseListView<EndpointProfileSchemaDto> getProfileSchemasView();
 
-    BaseListView<EventClassFamilyDto> getEcfsView();
-    EcfView getEcfView();
-    EcfView getCreateEcfView();
+  BaseCtlSchemaView getProfileSchemaView();
 
-    EventClassView getEventClassView();
-    EventClassView getCreateEventClassView();
+  BaseCtlSchemaView getCreateProfileSchemaView();
 
-    EcfVersionView getCreateEcfVersionView();
-    EcfVersionView getEcfVersionView();
+  BaseListView<ServerProfileSchemaDto> getServerProfileSchemasView();
 
-    BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
-    AefMapView getAefMapView();
-    AefMapView getCreateAefMapView();
+  BaseCtlSchemaView getServerProfileSchemaView();
 
-    Place getHomePlace();
-    void setHomePlace(Place homePlace);
+  BaseCtlSchemaView getCreateServerProfileSchemaView();
 
-    BaseListView<LogAppenderDto> getAppendersView();
-    LogAppenderView getAppenderView();
-    LogAppenderView getCreateAppenderView();
+  BaseListView<ConfigurationSchemaDto> getConfigurationSchemasView();
 
-    BaseListView<UserVerifierDto> getUserVerifiersView();
-    UserVerifierView getUserVerifierView();
-    UserVerifierView getCreateUserVerifierView();
+  BaseCtlSchemaView getConfigurationSchemaView();
 
-    UpdateUserConfigView getUpdateUserConfigView();
-    GetUserConfigView getUserConfigView();
-    
-    CtlSchemasView getSystemCtlSchemasView();
-    CtlSchemasView getTenantCtlSchemasView();
-    CtlSchemasView getApplicationCtlSchemasView();
-    
-    CtlSchemaView getCreateCtlSchemaView();
-    CtlSchemaView getEditCtlSchemaView();
-    CtlSchemaView getEditApplicationCtlSchemaView();
-    CtlSchemaView getViewCtlSchemaView();
+  BaseCtlSchemaView getCreateConfigurationSchemaView();
+
+  BaseListView<NotificationSchemaDto> getNotificationSchemasView();
+
+  BaseCtlSchemaView getNotificationSchemaView();
+
+  BaseCtlSchemaView getCreateNotificationSchemaView();
+
+  BaseListView<LogSchemaDto> getLogSchemasView();
+
+  BaseCtlSchemaView getLogSchemaView();
+
+  BaseCtlSchemaView getCreateLogSchemaView();
+
+  BaseListView<EndpointGroupDto> getEndpointGroupsView();
+
+  EndpointGroupView getEndpointGroupView();
+
+  EndpointGroupView getCreateEndpointGroupView();
+
+  EndpointProfilesView getEndpointProfilesView();
+
+  EndpointProfileView getEndpointProfileView();
+
+  ProfileFilterView getProfileFilterView();
+
+  ProfileFilterView getCreateProfileFilterView();
+
+  ConfigurationView getConfigurationView();
+
+  ConfigurationView getCreateConfigurationView();
+
+  BaseListView<TopicDto> getTopicsView();
+
+  TopicView getTopicView();
+
+  TopicView getCreateTopicView();
+
+  SendNotificationView getSendNotificationView();
+
+  BaseListView<EventClassFamilyDto> getEcfsView();
+
+  EcfView getEcfView();
+
+  EcfView getCreateEcfView();
+
+  EventClassView getEventClassView();
+
+  EventClassView getCreateEventClassView();
+
+  EcfVersionView getCreateEcfVersionView();
+
+  EcfVersionView getEcfVersionView();
+
+  BaseListView<ApplicationEventFamilyMapDto> getAefMapsView();
+
+  AefMapView getAefMapView();
+
+  AefMapView getCreateAefMapView();
+
+  Place getHomePlace();
+
+  void setHomePlace(Place homePlace);
+
+  BaseListView<LogAppenderDto> getAppendersView();
+
+  LogAppenderView getAppenderView();
+
+  LogAppenderView getCreateAppenderView();
+
+  BaseListView<UserVerifierDto> getUserVerifiersView();
+
+  UserVerifierView getUserVerifierView();
+
+  UserVerifierView getCreateUserVerifierView();
+
+  UpdateUserConfigView getUpdateUserConfigView();
+
+  GetUserConfigView getUserConfigView();
+
+  CtlSchemasView getSystemCtlSchemasView();
+
+  CtlSchemasView getTenantCtlSchemasView();
+
+  CtlSchemasView getApplicationCtlSchemasView();
+
+  CtlSchemaView getCreateCtlSchemaView();
+
+  CtlSchemaView getEditCtlSchemaView();
+
+  CtlSchemaView getEditApplicationCtlSchemaView();
+
+  CtlSchemaView getViewCtlSchemaView();
 
 }

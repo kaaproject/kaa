@@ -16,38 +16,41 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.ui.ValueListBox;
+
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
-
-import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.ui.ValueListBox;
-
 public class SchemaInfoListBox extends ValueListBox<SchemaInfoDto> {
 
-    public SchemaInfoListBox() {
-        super(new SchemaInfoDtoRenderer());
+  public SchemaInfoListBox() {
+    super(new SchemaInfoDtoRenderer());
+  }
+
+  /**
+   * Reset.
+   */
+  public void reset() {
+    List<SchemaInfoDto> emptyList = Collections.emptyList();
+    setValue(null);
+    setAcceptableValues(emptyList);
+  }
+
+  static class SchemaInfoDtoRenderer implements Renderer<SchemaInfoDto> {
+
+    @Override
+    public String render(SchemaInfoDto object) {
+      return object != null ? object.getVersion() + "" : "";
     }
 
-    public void reset() {
-        List<SchemaInfoDto> emptyList = Collections.emptyList();
-        setValue(null);
-        setAcceptableValues(emptyList);
+    @Override
+    public void render(SchemaInfoDto object, Appendable appendable)
+        throws IOException {
+      appendable.append(render(object));
     }
-
-    static class SchemaInfoDtoRenderer implements Renderer<SchemaInfoDto> {
-
-        @Override
-        public String render(SchemaInfoDto object) {
-            return object != null ? object.getVersion() + "" : "";
-        }
-
-        @Override
-        public void render(SchemaInfoDto object, Appendable appendable)
-                throws IOException {
-            appendable.append(render(object));
-        }
-    }
+  }
 }

@@ -15,8 +15,9 @@
  */
 
 /**
- * 
+ *
  */
+
 package org.kaaproject.kaa.server.common.thrift.util;
 
 import java.util.concurrent.ExecutorService;
@@ -25,45 +26,47 @@ import java.util.concurrent.Executors;
 /**
  * The Class ThriftExecutor.
  *
- * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
+ * @author Andrey Panasenko apanasenko@cybervisiontech.com
  */
 public class ThriftExecutor {
 
-    /** The executor. */
-    private static ExecutorService executor = null;
+  /**
+   * The executor.
+   */
+  private static ExecutorService executor = null;
 
-    private ThriftExecutor() {
-    }
+  private ThriftExecutor() {
+  }
 
-    /**
-     * Execute.
-     *
-     * @param client the client
-     */
-    public static void execute(Runnable client) {
-        getExecutorService().execute(client);
+  /**
+   * Execute.
+   *
+   * @param client the client
+   */
+  public static void execute(Runnable client) {
+    getExecutorService().execute(client);
+  }
+
+  /**
+   * Shutdown.
+   */
+  public static void shutdown() {
+    if (executor != null) {
+      executor.shutdown();
+      executor = null;
     }
-    
-    /**
-     * Shutdown.
-     */
-    public static void shutdown() {
-        if (executor != null) {
-            executor.shutdown();
-            executor = null;
-        }
+  }
+
+  /**
+   * Gets the executor service.
+   *
+   * @return the executor service
+   */
+  private static synchronized ExecutorService getExecutorService() {
+    if (executor == null) {
+      executor = Executors.newCachedThreadPool();
     }
-    
-    /**
-     * Gets the executor service.
-     *
-     * @return the executor service
-     */
-    private static synchronized ExecutorService getExecutorService() {
-        if (executor == null) {
-            executor = Executors.newCachedThreadPool();
-        }
-        return executor;
-    }
-    
+    return executor;
+  }
+
 }

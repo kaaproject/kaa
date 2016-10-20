@@ -20,9 +20,9 @@ import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 
 public class OverrideDataFactory implements KaaDataFactory<OverrideSchema, OverrideData> {
 
-    @Override
-    public OverrideData createData(OverrideSchema schema, String data) {
-        return new OverrideData(schema, data);
-    }
+  @Override
+  public OverrideData createData(OverrideSchema schema, String data) {
+    return new OverrideData(schema, data);
+  }
 
 }

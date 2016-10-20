@@ -25,12 +25,14 @@ import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
  */
 public interface DeltaCalculatorFactory {
 
-    /**
-     * Creates a new DeltaCalculator object.
-     * @param protocolSchemaBody protocol the schema body
-     * @param baseDataSchema base the schema body
-     * @return the delta calculator
-     */
-    DeltaCalculationAlgorithm createDeltaCalculator(ProtocolSchema protocolSchemaBody, BaseSchema baseDataSchema);
+  /**
+   * Creates a new DeltaCalculator object.
+   *
+   * @param protocolSchemaBody protocol the schema body
+   * @param baseDataSchema     base the schema body
+   * @return the delta calculator
+   */
+  DeltaCalculationAlgorithm createDeltaCalculator(
+          ProtocolSchema protocolSchemaBody, BaseSchema baseDataSchema);
 
 }

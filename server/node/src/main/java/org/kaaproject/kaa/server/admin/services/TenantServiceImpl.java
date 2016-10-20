@@ -18,8 +18,6 @@ package org.kaaproject.kaa.server.admin.services;
 
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.UserDto;
-import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.TenantService;
@@ -27,61 +25,60 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service("tenantService")
 public class TenantServiceImpl extends AbstractAdminService implements TenantService {
 
-    /**
-     * The Constant LOG.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(TenantServiceImpl.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(TenantServiceImpl.class);
 
-    @Override
-    public List<TenantDto> getTenants() throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
-        try {
-            List<TenantDto> tenants = controlService.getTenants();
-            Utils.checkNotNull(tenants);
-            return  tenants;
+  @Override
+  public List<TenantDto> getTenants() throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+    try {
+      List<TenantDto> tenants = controlService.getTenants();
+      Utils.checkNotNull(tenants);
+      return tenants;
 
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
+  }
 
-    @Override
-    public TenantDto getTenant(String tenantId) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
-        try {
-            TenantDto tenantDto = controlService.getTenant(tenantId);
-            Utils.checkNotNull(tenantDto);
-            return tenantDto;
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
+  @Override
+  public TenantDto getTenant(String tenantId) throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+    try {
+      TenantDto tenantDto = controlService.getTenant(tenantId);
+      Utils.checkNotNull(tenantDto);
+      return tenantDto;
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
+  }
 
-    @Override
-    public TenantDto editTenant(TenantDto tenantUser) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
-        try {
-            return controlService.editTenant(tenantUser);
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
+  @Override
+  public TenantDto editTenant(TenantDto tenantUser) throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+    try {
+      return controlService.editTenant(tenantUser);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
+  }
 
-    @Override
-    public void deleteTenant(String tenantId) throws KaaAdminServiceException {
-        checkAuthority(KaaAuthorityDto.KAA_ADMIN);
-        try {
-            controlService.deleteTenant(tenantId);
-        } catch (Exception e) {
-            throw Utils.handleException(e);
-        }
+  @Override
+  public void deleteTenant(String tenantId) throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+    try {
+      controlService.deleteTenant(tenantId);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
     }
+  }
 
 
 }

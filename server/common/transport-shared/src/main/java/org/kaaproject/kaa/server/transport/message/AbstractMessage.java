@@ -16,78 +16,81 @@
 
 package org.kaaproject.kaa.server.transport.message;
 
-import java.util.UUID;
-
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.platform.PlatformAware;
+
+import java.util.UUID;
 
 /**
  * An abstract class that represents a platform aware message. It includes
  * references to response and error converters that are used to convert objects
  * into the channel specific data.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public abstract class AbstractMessage implements PlatformAware {
-    private final UUID uuid;
-    private final int platformId;
-    private final ChannelContext channelContext;
-    private final ChannelType channelType;
-    private final MessageBuilder responseConverter;
-    private final ErrorBuilder errorConverter;
+  private final UUID uuid;
+  private final int platformId;
+  private final ChannelContext channelContext;
+  private final ChannelType channelType;
+  private final MessageBuilder responseConverter;
+  private final ErrorBuilder errorConverter;
 
-    protected AbstractMessage(UUID uuid, Integer platformId, ChannelContext channelContext, ChannelType channelType,
-            MessageBuilder responseConverter, ErrorBuilder errorConverter) {
-        super();
-        this.uuid = uuid;
-        this.platformId = platformId;
-        this.channelContext = channelContext;
-        this.channelType = channelType;
-        this.responseConverter = responseConverter;
-        this.errorConverter = errorConverter;
-    }
+  protected AbstractMessage(UUID uuid,
+                            Integer platformId,
+                            ChannelContext channelContext,
+                            ChannelType channelType,
+                            MessageBuilder responseConverter,
+                            ErrorBuilder errorConverter) {
+    super();
+    this.uuid = uuid;
+    this.platformId = platformId;
+    this.channelContext = channelContext;
+    this.channelType = channelType;
+    this.responseConverter = responseConverter;
+    this.errorConverter = errorConverter;
+  }
 
-    public UUID getChannelUuid() {
-        return uuid;
-    }
+  public UUID getChannelUuid() {
+    return uuid;
+  }
 
-    public ChannelContext getChannelContext() {
-        return channelContext;
-    }
+  public ChannelContext getChannelContext() {
+    return channelContext;
+  }
 
-    public ChannelType getChannelType() {
-        return channelType;
-    }
+  public ChannelType getChannelType() {
+    return channelType;
+  }
 
-    public MessageBuilder getMessageBuilder() {
-        return responseConverter;
-    }
+  public MessageBuilder getMessageBuilder() {
+    return responseConverter;
+  }
 
-    public ErrorBuilder getErrorBuilder() {
-        return errorConverter;
-    }
+  public ErrorBuilder getErrorBuilder() {
+    return errorConverter;
+  }
 
-    @Override
-    public int getPlatformId() {
-        return platformId;
-    }
+  @Override
+  public int getPlatformId() {
+    return platformId;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("AbstractMessage [uuid=");
-        builder.append(uuid);
-        builder.append(", channelContext=");
-        builder.append(channelContext);
-        builder.append(", channelType=");
-        builder.append(channelType);
-        builder.append(", responseConverter=");
-        builder.append(responseConverter);
-        builder.append(", errorConverter=");
-        builder.append(errorConverter);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("AbstractMessage [uuid=");
+    builder.append(uuid);
+    builder.append(", channelContext=");
+    builder.append(channelContext);
+    builder.append(", channelType=");
+    builder.append(channelType);
+    builder.append(", responseConverter=");
+    builder.append(responseConverter);
+    builder.append(", errorConverter=");
+    builder.append(errorConverter);
+    builder.append("]");
+    return builder.toString();
+  }
 }

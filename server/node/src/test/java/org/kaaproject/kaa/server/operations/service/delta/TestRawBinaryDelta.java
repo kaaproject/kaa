@@ -16,58 +16,58 @@
 
 package org.kaaproject.kaa.server.operations.service.delta;
 
+import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
+
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
-
 public class TestRawBinaryDelta implements RawBinaryDelta {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 6942802579307423075L;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 6942802579307423075L;
 
-    byte[] delta;
+  byte[] delta;
 
-    public TestRawBinaryDelta(String delta) {
-        this.delta = delta.getBytes();
+  public TestRawBinaryDelta(String delta) {
+    this.delta = delta.getBytes();
+  }
+
+  @Override
+  public byte[] getData() throws IOException {
+    return delta;
+  }
+
+  @Override
+  public boolean hasChanges() {
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(delta);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Override
-    public byte[] getData() throws IOException {
-        return delta;
+    if (obj == null) {
+      return false;
     }
-
-    @Override
-    public boolean hasChanges() {
-        return true;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(delta);
-        return result;
+    TestRawBinaryDelta other = (TestRawBinaryDelta) obj;
+    if (!Arrays.equals(delta, other.delta)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        TestRawBinaryDelta other = (TestRawBinaryDelta) obj;
-        if (!Arrays.equals(delta, other.delta)) {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 
 }

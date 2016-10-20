@@ -22,102 +22,113 @@ import java.io.Serializable;
  * The Class AppVersionKey is used to model pair of Application Token and
  * version. Either Profile or Configuration version or App seqNumber may be
  * used, which depends on context.
- * 
+ *
  * @author ashvayka
  */
 public final class AppProfileVersionsKey implements Serializable {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+  /**
+   * The Constant serialVersionUID.
+   */
+  private static final long serialVersionUID = 1L;
 
-    /** The application token. */
-    private final String applicationToken;
+  /**
+   * The application token.
+   */
+  private final String applicationToken;
 
-    /** The version. */
-    private final Integer endpointProfileSchemaVersion;
+  /**
+   * The version.
+   */
+  private final Integer endpointProfileSchemaVersion;
 
-    /** The version. */
-    private final Integer serverProfileSchemaVersion;
+  /**
+   * The version.
+   */
+  private final Integer serverProfileSchemaVersion;
 
-    /**
-     * Instantiates a new app version key.
-     *
-     * @param applicationToken
-     *            the application token
-     * @param endpointProfileSchemaVersion
-     *            the endpoint profile schema version
-     * @param serverProfileSchemaVersion
-     *            the server profile schema version
-     */
-    public AppProfileVersionsKey(String applicationToken, Integer endpointProfileSchemaVersion, Integer serverProfileSchemaVersion) {
-        super();
-        this.applicationToken = applicationToken;
-        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
-        this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+  /**
+   * Instantiates a new app version key.
+   *
+   * @param applicationToken             the application token
+   * @param endpointProfileSchemaVersion the endpoint profile schema version
+   * @param serverProfileSchemaVersion   the server profile schema version
+   */
+  public AppProfileVersionsKey(String applicationToken,
+                               Integer endpointProfileSchemaVersion,
+                               Integer serverProfileSchemaVersion) {
+    super();
+    this.applicationToken = applicationToken;
+    this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+    this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+  }
+
+  public String getApplicationToken() {
+    return applicationToken;
+  }
+
+  public Integer getEndpointProfileSchemaVersion() {
+    return endpointProfileSchemaVersion;
+  }
+
+  public Integer getServerProfileSchemaVersion() {
+    return serverProfileSchemaVersion;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((applicationToken == null) ? 0 : applicationToken.hashCode());
+    result = prime * result
+        + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
+    result = prime * result
+        + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getApplicationToken() {
-        return applicationToken;
+    if (obj == null) {
+      return false;
     }
-
-    public Integer getEndpointProfileSchemaVersion() {
-        return endpointProfileSchemaVersion;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public Integer getServerProfileSchemaVersion() {
-        return serverProfileSchemaVersion;
+    AppProfileVersionsKey other = (AppProfileVersionsKey) obj;
+    if (applicationToken == null) {
+      if (other.applicationToken != null) {
+        return false;
+      }
+    } else if (!applicationToken.equals(other.applicationToken)) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-        result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
-        result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
-        return result;
+    if (endpointProfileSchemaVersion == null) {
+      if (other.endpointProfileSchemaVersion != null) {
+        return false;
+      }
+    } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AppProfileVersionsKey other = (AppProfileVersionsKey) obj;
-        if (applicationToken == null) {
-            if (other.applicationToken != null) {
-                return false;
-            }
-        } else if (!applicationToken.equals(other.applicationToken)) {
-            return false;
-        }
-        if (endpointProfileSchemaVersion == null) {
-            if (other.endpointProfileSchemaVersion != null) {
-                return false;
-            }
-        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
-            return false;
-        }
-        if (serverProfileSchemaVersion == null) {
-            if (other.serverProfileSchemaVersion != null) {
-                return false;
-            }
-        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
-            return false;
-        }
-        return true;
+    if (serverProfileSchemaVersion == null) {
+      if (other.serverProfileSchemaVersion != null) {
+        return false;
+      }
+    } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        return "AppProfileVersionsKey [applicationToken=" + applicationToken + ", endpointProfileSchemaVersion="
-                + endpointProfileSchemaVersion + ", serverProfileSchemaVersion=" + serverProfileSchemaVersion + "]";
-    }
+  @Override
+  public String toString() {
+    return "AppProfileVersionsKey [applicationToken=" + applicationToken
+        + ", endpointProfileSchemaVersion=" + endpointProfileSchemaVersion
+        + ", serverProfileSchemaVersion=" + serverProfileSchemaVersion + "]";
+  }
 
 }

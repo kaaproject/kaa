@@ -23,11 +23,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
@@ -49,150 +44,151 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class OperationsServiceTest {
-    private static final String UNICAST_NF_ID = "unicastNfId";
-    private static final String SYSTEM_TOPIC_NF_ID = "systemTopicNfId";
-    private static final String SYSTEM_TOPIC_ID = "systemTopicId";
-    private static final String SYSTEM_TOPIC_NAME = "systemTopicName";
-    private static final String USER_TOPIC_NF_ID = "userTopicNfId";
-    private static final String USER_TOPIC_ID = "userTopicId";
-    private static final String USER_TOPIC_NAME = "userTopicName";
+  public static final String COMPLEX_PROTOCOL_SCHEMA = "operations/service/delta/complexFieldsDeltaProtocolSchema.json";
+  protected static final Logger LOG = LoggerFactory.getLogger(DeltaServiceIT.class);
+  private static final String UNICAST_NF_ID = "unicastNfId";
+  private static final String SYSTEM_TOPIC_NF_ID = "systemTopicNfId";
+  private static final String SYSTEM_TOPIC_ID = "systemTopicId";
+  private static final String SYSTEM_TOPIC_NAME = "systemTopicName";
+  private static final String USER_TOPIC_NF_ID = "userTopicNfId";
+  private static final String USER_TOPIC_ID = "userTopicId";
+  private static final String USER_TOPIC_NAME = "userTopicName";
+  private OperationsService operationsService;
+  private NotificationDeltaService notificationDeltaService;
 
-    public static final String COMPLEX_PROTOCOL_SCHEMA = "operations/service/delta/complexFieldsDeltaProtocolSchema.json";
+  private TopicDto systemTopic;
+  private TopicDto userTopic;
+  private NotificationDto unicastNfDto;
+  private NotificationDto systemTopicNfDto;
+  private NotificationDto userTopicNfDto;
 
+  @Before
+  public void before() throws IOException {
+    operationsService = new DefaultOperationsService();
+    notificationDeltaService = mock(NotificationDeltaService.class);
+    ReflectionTestUtils.setField(operationsService, "notificationDeltaService", notificationDeltaService);
 
-    protected static final Logger LOG = LoggerFactory.getLogger(DeltaServiceIT.class);
+    unicastNfDto = new NotificationDto();
+    unicastNfDto.setId(UNICAST_NF_ID);
+    unicastNfDto.setTopicId(USER_TOPIC_ID);
+    unicastNfDto.setType(NotificationTypeDto.USER);
+    unicastNfDto.setBody("test".getBytes(Charset.defaultCharset()));
+    Mockito.when(notificationDeltaService.findUnicastNotificationById(UNICAST_NF_ID)).thenReturn(unicastNfDto);
 
-    private OperationsService operationsService;
-    private NotificationDeltaService notificationDeltaService;
+    systemTopicNfDto = new NotificationDto();
+    systemTopicNfDto.setId(SYSTEM_TOPIC_NF_ID);
+    systemTopicNfDto.setTopicId(SYSTEM_TOPIC_ID);
+    systemTopicNfDto.setBody("test".getBytes(Charset.defaultCharset()));
+    systemTopicNfDto.setType(NotificationTypeDto.SYSTEM);
+    systemTopicNfDto.setSecNum(1);
 
-    private TopicDto systemTopic;
-    private TopicDto userTopic;
-    private NotificationDto unicastNfDto;
-    private NotificationDto systemTopicNfDto;
-    private NotificationDto userTopicNfDto;
+    userTopicNfDto = new NotificationDto();
+    userTopicNfDto.setId(USER_TOPIC_NF_ID);
+    userTopicNfDto.setTopicId(USER_TOPIC_ID);
+    userTopicNfDto.setBody("test".getBytes(Charset.defaultCharset()));
+    userTopicNfDto.setType(NotificationTypeDto.USER);
+    userTopicNfDto.setSecNum(1);
 
-    @Before
-    public void before() throws IOException{
-        operationsService = new DefaultOperationsService();
-        notificationDeltaService = mock(NotificationDeltaService.class);
-        ReflectionTestUtils.setField(operationsService, "notificationDeltaService", notificationDeltaService);
+    systemTopic = new TopicDto();
+    systemTopic.setId(SYSTEM_TOPIC_ID);
+    systemTopic.setType(TopicTypeDto.MANDATORY);
+    systemTopic.setName(SYSTEM_TOPIC_NAME);
 
-        unicastNfDto = new NotificationDto();
-        unicastNfDto.setId(UNICAST_NF_ID);
-        unicastNfDto.setTopicId(USER_TOPIC_ID);
-        unicastNfDto.setType(NotificationTypeDto.USER);
-        unicastNfDto.setBody("test".getBytes(Charset.defaultCharset()));
-        Mockito.when(notificationDeltaService.findUnicastNotificationById(UNICAST_NF_ID)).thenReturn(unicastNfDto);
+    userTopic = new TopicDto();
+    userTopic.setId(USER_TOPIC_ID);
+    userTopic.setType(TopicTypeDto.OPTIONAL);
+    userTopic.setName(USER_TOPIC_NAME);
+  }
 
-        systemTopicNfDto = new NotificationDto();
-        systemTopicNfDto.setId(SYSTEM_TOPIC_NF_ID);
-        systemTopicNfDto.setTopicId(SYSTEM_TOPIC_ID);
-        systemTopicNfDto.setBody("test".getBytes(Charset.defaultCharset()));
-        systemTopicNfDto.setType(NotificationTypeDto.SYSTEM);
-        systemTopicNfDto.setSecNum(1);
+  @Test
+  public void updateSyncResponseEmptyTest() {
+    ServerSync response = new ServerSync();
+    response.setStatus(SyncStatus.SUCCESS);
+    ServerSync result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), null);
+    assertNull(result);
+  }
 
-        userTopicNfDto = new NotificationDto();
-        userTopicNfDto.setId(USER_TOPIC_NF_ID);
-        userTopicNfDto.setTopicId(USER_TOPIC_ID);
-        userTopicNfDto.setBody("test".getBytes(Charset.defaultCharset()));
-        userTopicNfDto.setType(NotificationTypeDto.USER);
-        userTopicNfDto.setSecNum(1);
-
-        systemTopic = new TopicDto();
-        systemTopic.setId(SYSTEM_TOPIC_ID);
-        systemTopic.setType(TopicTypeDto.MANDATORY);
-        systemTopic.setName(SYSTEM_TOPIC_NAME);
-
-        userTopic = new TopicDto();
-        userTopic.setId(USER_TOPIC_ID);
-        userTopic.setType(TopicTypeDto.OPTIONAL);
-        userTopic.setName(USER_TOPIC_NAME);
-    }
-
-    @Test
-    public void updateSyncResponseEmptyTest(){
-        ServerSync response = new ServerSync();
-        response.setStatus(SyncStatus.SUCCESS);
-        ServerSync result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), null);
-        assertNull(result);
-    }
-
-    @Test
-    public void updateSyncResponseNotEmptyTest(){
-        ServerSync response = new ServerSync();
-        response.setStatus(SyncStatus.SUCCESS);
-        response.setNotificationSync(new NotificationServerSync());
-        NotificationDto nfDto = new NotificationDto();
-        nfDto.setId("nfId");
-        nfDto.setBody("body".getBytes());
-        nfDto.setType(NotificationTypeDto.SYSTEM);
-        ServerSync result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
-        assertNotNull(result);
-        assertNotNull(result.getNotificationSync());
-        assertNotNull(result.getNotificationSync().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
+  @Test
+  public void updateSyncResponseNotEmptyTest() {
+    ServerSync response = new ServerSync();
+    response.setStatus(SyncStatus.SUCCESS);
+    response.setNotificationSync(new NotificationServerSync());
+    NotificationDto nfDto = new NotificationDto();
+    nfDto.setId("nfId");
+    nfDto.setBody("body".getBytes());
+    nfDto.setType(NotificationTypeDto.SYSTEM);
+    ServerSync result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
+    assertNotNull(result);
+    assertNotNull(result.getNotificationSync());
+    assertNotNull(result.getNotificationSync().getNotifications());
+    assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
 
 
-        response = new ServerSync();
-        response.setStatus(SyncStatus.SUCCESS);
-        NotificationServerSync nfResponse = new NotificationServerSync();
-        nfResponse.setNotifications(new ArrayList<Notification>());
+    response = new ServerSync();
+    response.setStatus(SyncStatus.SUCCESS);
+    NotificationServerSync nfResponse = new NotificationServerSync();
+    nfResponse.setNotifications(new ArrayList<Notification>());
 
-        response.setNotificationSync(new NotificationServerSync());
+    response.setNotificationSync(new NotificationServerSync());
 
-        result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
-        assertNotNull(result);
-        assertNotNull(result.getNotificationSync());
-        assertNotNull(result.getNotificationSync().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
-    }
+    result = operationsService.updateSyncResponse(response, Collections.singletonList(nfDto), null);
+    assertNotNull(result);
+    assertNotNull(result.getNotificationSync());
+    assertNotNull(result.getNotificationSync().getNotifications());
+    assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
+  }
 
-    @Test
-    public void updateSyncResponseUnicastTest(){
-        ServerSync response = new ServerSync();
-        response.setStatus(SyncStatus.SUCCESS);
-        response.setNotificationSync(new NotificationServerSync());
-        ServerSync result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), UNICAST_NF_ID);
-        assertNotNull(result);
-        assertNotNull(result.getNotificationSync());
-        assertNotNull(result.getNotificationSync().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
-        assertEquals(1, result.getNotificationSync().getNotifications().size());
-        assertEquals(UNICAST_NF_ID, result.getNotificationSync().getNotifications().get(0).getUid());
-        assertNotNull(result.getNotificationSync().getNotifications().get(0).getUid());
-        assertNull(result.getNotificationSync().getNotifications().get(0).getSeqNumber());
-    }
+  @Test
+  public void updateSyncResponseUnicastTest() {
+    ServerSync response = new ServerSync();
+    response.setStatus(SyncStatus.SUCCESS);
+    response.setNotificationSync(new NotificationServerSync());
+    ServerSync result = operationsService.updateSyncResponse(response, new ArrayList<NotificationDto>(), UNICAST_NF_ID);
+    assertNotNull(result);
+    assertNotNull(result.getNotificationSync());
+    assertNotNull(result.getNotificationSync().getNotifications());
+    assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
+    assertEquals(1, result.getNotificationSync().getNotifications().size());
+    assertEquals(UNICAST_NF_ID, result.getNotificationSync().getNotifications().get(0).getUid());
+    assertNotNull(result.getNotificationSync().getNotifications().get(0).getUid());
+    assertNull(result.getNotificationSync().getNotifications().get(0).getSeqNumber());
+  }
 
-    @Test
-    public void updateSyncResponseTopicTest(){
-        ServerSync response = new ServerSync();
-        response.setStatus(SyncStatus.SUCCESS);
-        response.setNotificationSync(new NotificationServerSync());
-        ServerSync result = operationsService.updateSyncResponse(response, Collections.singletonList(systemTopicNfDto), null);
-        assertNotNull(result);
-        assertNotNull(result.getNotificationSync());
-        assertNotNull(result.getNotificationSync().getNotifications());
-        assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
-        assertEquals(1, result.getNotificationSync().getNotifications().size());
-        assertEquals(SYSTEM_TOPIC_ID, result.getNotificationSync().getNotifications().get(0).getTopicId());
-        assertEquals(NotificationType.SYSTEM, result.getNotificationSync().getNotifications().get(0).getType());
-        assertNull(result.getNotificationSync().getNotifications().get(0).getUid());
-        assertNotNull(result.getNotificationSync().getNotifications().get(0).getSeqNumber());
-    }
+  @Test
+  public void updateSyncResponseTopicTest() {
+    ServerSync response = new ServerSync();
+    response.setStatus(SyncStatus.SUCCESS);
+    response.setNotificationSync(new NotificationServerSync());
+    ServerSync result = operationsService.updateSyncResponse(response, Collections.singletonList(systemTopicNfDto), null);
+    assertNotNull(result);
+    assertNotNull(result.getNotificationSync());
+    assertNotNull(result.getNotificationSync().getNotifications());
+    assertEquals(SyncResponseStatus.DELTA, result.getNotificationSync().getResponseStatus());
+    assertEquals(1, result.getNotificationSync().getNotifications().size());
+    assertEquals(SYSTEM_TOPIC_ID, result.getNotificationSync().getNotifications().get(0).getTopicId());
+    assertEquals(NotificationType.SYSTEM, result.getNotificationSync().getNotifications().get(0).getType());
+    assertNull(result.getNotificationSync().getNotifications().get(0).getUid());
+    assertNotNull(result.getNotificationSync().getNotifications().get(0).getSeqNumber());
+  }
 
-    @Test
-    public void isFirstRequestTest(){
-        EndpointProfileDto profile = new EndpointProfileDto();
-        assertTrue(DefaultOperationsService.isFirstRequest(profile));
-        profile.setConfigurationHash(new byte[0]);
-        assertTrue(DefaultOperationsService.isFirstRequest(profile));
-        
-        profile.setGroupState(Collections.singletonList(new EndpointGroupStateDto()));
-        assertFalse(DefaultOperationsService.isFirstRequest(profile));        
-    }
+  @Test
+  public void isFirstRequestTest() {
+    EndpointProfileDto profile = new EndpointProfileDto();
+    assertTrue(DefaultOperationsService.isFirstRequest(profile));
+    profile.setConfigurationHash(new byte[0]);
+    assertTrue(DefaultOperationsService.isFirstRequest(profile));
 
-    //TODO: adjust to current logic
+    profile.setGroupState(Collections.singletonList(new EndpointGroupStateDto()));
+    assertFalse(DefaultOperationsService.isFirstRequest(profile));
+  }
+
+  //TODO: adjust to current logic
 //    @Test
 //    public void buildResponseEmptyTest() throws GetDeltaException{
 //        GetDeltaResponse deltaResponse = new GetDeltaResponse(GetDeltaResponseType.NO_DELTA);

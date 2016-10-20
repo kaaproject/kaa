@@ -19,6 +19,13 @@
 #import "LogRecord.h"
 #import "KaaLogging.h"
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// NOTE: This file is AUTO-GENERATED
+// Any modifications MUST be done to the respective template
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #define TAG @"DefaultLogCollector >>>"
 
 @implementation DefaultLogCollector
@@ -31,7 +38,7 @@
             @try {
                 BucketInfo *bucketInfo = [weakSelf.storage addLogRecord:[[LogRecord alloc] initWithRecord:record]];
                 weakSelf.bucketInfoDictionary[@(bucketInfo.bucketId)] = bucketInfo;
-                [weakSelf addDeliveryRunner:runner bucketInfo:bucketInfo];
+                [weakSelf addDeliveryRunner:runner byBucketInfoKey:@(bucketInfo.bucketId)];
             }
             @catch (NSException *exception) {
                 DDLogWarn(@"%@ Can't serialize log record: %@", TAG, record);

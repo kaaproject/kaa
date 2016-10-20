@@ -18,28 +18,34 @@ package org.kaaproject.kaa.server.common.log.shared.appender.data;
 
 public class BaseProfileInfo implements ProfileInfo {
 
-    private final BaseSchemaInfo schemaInfo;
-    private final String body;
+  private final BaseSchemaInfo schemaInfo;
+  private final String body;
 
-    public BaseProfileInfo(BaseSchemaInfo schemaInfo, String body) {
-        super();
-        this.schemaInfo = schemaInfo;
-        this.body = body;
-    }
+  /**
+   * Create new instance of <code>BaseProfileInfo</code>.
+   *
+   * @param schemaInfo is schema of profile info
+   * @param body is body of profile info
+   */
+  public BaseProfileInfo(BaseSchemaInfo schemaInfo, String body) {
+    super();
+    this.schemaInfo = schemaInfo;
+    this.body = body;
+  }
 
-    @Override
-    public String getSchemaId() {
-        return schemaInfo.getSchemaId();
-    }
+  @Override
+  public String getSchemaId() {
+    return schemaInfo.getSchemaId();
+  }
 
-    @Override
-    public String getSchema() {
-        return schemaInfo.getSchema();
-    }
+  @Override
+  public String getSchema() {
+    return schemaInfo.getSchema();
+  }
 
-    @Override
-    public String getBody() {
-        return body;
-    }
+  @Override
+  public String getBody() {
+    return body;
+  }
 
 }

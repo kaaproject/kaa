@@ -16,23 +16,21 @@
 
 package org.kaaproject.kaa.client.configuration.base;
 
-import javax.annotation.Generated;
-
 import org.kaaproject.kaa.schema.base.Configuration;
+
+import javax.annotation.Generated;
 
 /**
  * The listener to configuration updates.
  *
  * @author Andrew Shvayka
- *
  */
 @Generated("ConfigurationListener.java.template")
 public interface ConfigurationListener {
-    /**
-     * Called on each configuration update.
-     *
-     * @param configuration the configuration object.
-     *
-     */
-    void onConfigurationUpdate(Configuration configuration);
+  /**
+   * Called on each configuration update.
+   *
+   * @param configuration the configuration object.
+   */
+  void onConfigurationUpdate(Configuration configuration);
 }

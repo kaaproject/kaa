@@ -24,39 +24,39 @@ import org.mockito.Mockito;
 
 public class StorageSizeLogUploadStrategyTest {
 
-    @Test
-    public void testLessThanVolumeThreshold() {
-        int thresholdVolume = 5;
+  @Test
+  public void testLessThanVolumeThreshold() {
+    int thresholdVolume = 5;
 
-        LogStorageStatus logStorageStatus = Mockito.mock(LogStorageStatus.class);
-        Mockito.when(logStorageStatus.getConsumedVolume()).thenReturn((long)(thresholdVolume - 1));
+    LogStorageStatus logStorageStatus = Mockito.mock(LogStorageStatus.class);
+    Mockito.when(logStorageStatus.getConsumedVolume()).thenReturn((long) (thresholdVolume - 1));
 
-        StorageSizeLogUploadStrategy strategy = new StorageSizeLogUploadStrategy(thresholdVolume);
+    StorageSizeLogUploadStrategy strategy = new StorageSizeLogUploadStrategy(thresholdVolume);
 
-        Assert.assertEquals(strategy.checkUploadNeeded(logStorageStatus), LogUploadStrategyDecision.NOOP);
-    }
+    Assert.assertEquals(strategy.checkUploadNeeded(logStorageStatus), LogUploadStrategyDecision.NOOP);
+  }
 
-    @Test
-    public void testEqualToVolumeThreshold() {
-        int thresholdVolume = 5;
+  @Test
+  public void testEqualToVolumeThreshold() {
+    int thresholdVolume = 5;
 
-        LogStorageStatus logStorageStatus = Mockito.mock(LogStorageStatus.class);
-        Mockito.when(logStorageStatus.getConsumedVolume()).thenReturn((long)thresholdVolume);
+    LogStorageStatus logStorageStatus = Mockito.mock(LogStorageStatus.class);
+    Mockito.when(logStorageStatus.getConsumedVolume()).thenReturn((long) thresholdVolume);
 
-        StorageSizeLogUploadStrategy strategy = new StorageSizeLogUploadStrategy(thresholdVolume);
+    StorageSizeLogUploadStrategy strategy = new StorageSizeLogUploadStrategy(thresholdVolume);
 
-        Assert.assertEquals(strategy.checkUploadNeeded(logStorageStatus), LogUploadStrategyDecision.UPLOAD);
-    }
+    Assert.assertEquals(strategy.checkUploadNeeded(logStorageStatus), LogUploadStrategyDecision.UPLOAD);
+  }
 
-    @Test
-    public void testGreaterThanVolumeThreshold() {
-        int thresholdVolume = 5;
+  @Test
+  public void testGreaterThanVolumeThreshold() {
+    int thresholdVolume = 5;
 
-        LogStorageStatus logStorageStatus = Mockito.mock(LogStorageStatus.class);
-        Mockito.when(logStorageStatus.getConsumedVolume()).thenReturn((long)(thresholdVolume + 1));
+    LogStorageStatus logStorageStatus = Mockito.mock(LogStorageStatus.class);
+    Mockito.when(logStorageStatus.getConsumedVolume()).thenReturn((long) (thresholdVolume + 1));
 
-        StorageSizeLogUploadStrategy strategy = new StorageSizeLogUploadStrategy(thresholdVolume);
+    StorageSizeLogUploadStrategy strategy = new StorageSizeLogUploadStrategy(thresholdVolume);
 
-        Assert.assertEquals(strategy.checkUploadNeeded(logStorageStatus), LogUploadStrategyDecision.UPLOAD);
-    }
+    Assert.assertEquals(strategy.checkUploadNeeded(logStorageStatus), LogUploadStrategyDecision.UPLOAD);
+  }
 }

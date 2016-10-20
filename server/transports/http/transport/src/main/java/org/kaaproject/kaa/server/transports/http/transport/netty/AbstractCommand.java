@@ -19,12 +19,12 @@ package org.kaaproject.kaa.server.transports.http.transport.netty;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 
-import java.util.UUID;
-import java.util.concurrent.Callable;
-
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
+import java.util.concurrent.Callable;
 
 /**
  * AbstractCommand abstract Class.
@@ -38,153 +38,142 @@ import org.slf4j.LoggerFactory;
  *
  * @author Andrey Panasenko
  */
-public abstract class AbstractCommand implements Callable<AbstractCommand>, KaaCommandProcessor<HttpRequest, HttpResponse> {
+public abstract class AbstractCommand
+    implements Callable<AbstractCommand>, KaaCommandProcessor<HttpRequest, HttpResponse> {
 
-    protected static final Logger LOG = LoggerFactory //NOSONAR
-            .getLogger(AbstractCommand.class);
+  protected static final Logger LOG = LoggerFactory //NOSONAR
+      .getLogger(AbstractCommand.class);
 
-    protected static String COMMAND_NAME = "";
+  protected static String COMMAND_NAME = "";
 
-    private HttpRequest httpRequest;
+  private HttpRequest httpRequest;
 
-    /** Session UUID */
-    private UUID sessionUuid;
 
-    /** Time of SYNC processing */
-    private long syncTime = 0;
+  private UUID sessionUuid;
 
-    /** integer representing ID of HTTP request */
-    private int commandId;
 
-    /**
-     * @return the commandId
-     */
-    @Override
-    public int getCommandId() {
-        return commandId;
-    }
+  private long syncTime = 0;
 
-    /**
-     * @param commandId the commandId to set
-     */
-    @Override
-    public void setCommandId(int commandId) {
-        this.commandId = commandId;
-    }
 
-    /**
-     * HttpRequest getter.
-     * @return HttpRequest
-     */
-    @Override
-    public HttpRequest getRequest() {
-        return httpRequest;
-    }
+  private int commandId;
 
-    /**
-     * HttpRequest setter.
-     * @param httpRequest - HTTP request
-     */
-    @Override
-    public void setRequest(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
+  /**
+   * Default CommandProcessor Class constructor.
+   */
+  public AbstractCommand() {
 
-    /**
-     * Static method getCommandName.
-     * Used to represent command part of URI.
-     * @return - String CommandName
-     */
-    public static String getCommandName() {
-        return COMMAND_NAME;
-    }
+  }
 
-    /**
-     * Command Name getter.
-     * @return String
-     */
-    @Override
-    public String getName() {
-        return COMMAND_NAME;
-    }
+  /**
+   * Static method getCommandName.
+   * Used to represent command part of URI.
+   *
+   * @return - String CommandName
+   */
+  public static String getCommandName() {
+    return COMMAND_NAME;
+  }
 
-    /**
-     * Default CommandProcessor Class constructor.
-     */
-    public AbstractCommand() {
 
-    }
+  @Override
+  public int getCommandId() {
+    return commandId;
+  }
 
-    /**
-     * parse() - used to decoder HttpRequest, find necessary CommandProcessor
-     * and create CommandProcessor instance using CommanFactory.getProcessor()
-     * @throws Exception - if HttpRequest parse failed or CommandProcessor not found.
-     */
-    public abstract void parse() throws Exception; //NOSONAR
 
-    /**
-     * process() - is run in executor thread and process requests.
-     * @throws Exception - if some error occurred during processing.
-     */
-    public abstract void process() throws Exception; //NOSONAR
+  @Override
+  public void setCommandId(int commandId) {
+    this.commandId = commandId;
+  }
 
-    /**
-     * getHttpResponse() - encode processing result into HTTP Response.
-     * @return HttpResponse.
-     */
-    @Override
-    public abstract HttpResponse getResponse();
 
-    @Override
-    public void setResponse(HttpResponse response) {
-        // Nothing to do
-    }
+  @Override
+  public HttpRequest getRequest() {
+    return httpRequest;
+  }
 
-    /**
-     * isNeedConnectionClose() - used to indicate is it necessary to close Channel after
-     * HTTP response returned to client.
-     * @return boolean - true to Close connection.
-     */
-    public abstract boolean isNeedConnectionClose();
+  /**
+   * HttpRequest setter.
+   *
+   * @param httpRequest - HTTP request
+   */
+  @Override
+  public void setRequest(HttpRequest httpRequest) {
+    this.httpRequest = httpRequest;
+  }
 
-    @Override
-    public AbstractCommand call() throws Exception {
-        LOG.trace("{} : Process start", getCommandName());
-        process();
-        LOG.trace("{}: Process finish", getCommandName());
-        return this;
-    }
 
-    /**
-     * @return the sessionUuid
-     */
-    public UUID getSessionUuid() {
-        return sessionUuid;
-    }
+  @Override
+  public String getName() {
+    return COMMAND_NAME;
+  }
 
-    /**
-     * @param sessionUuid the sessionUuid to set
-     */
-    public void setSessionUuid(UUID sessionUuid) {
-        this.sessionUuid = sessionUuid;
-    }
+  /**
+   * parse() - used to decoder HttpRequest, find necessary CommandProcessor
+   * and create CommandProcessor instance using CommanFactory.getProcessor()
+   *
+   * @throws Exception - if HttpRequest parse failed or CommandProcessor not found.
+   */
+  public abstract void parse() throws Exception; //NOSONAR
 
-    /**
-     * @return the syncTime
-     */
-    @Override
-    public long getSyncTime() {
-        return syncTime;
-    }
+  /**
+   * process() - is run in executor thread and process requests.
+   *
+   * @throws Exception - if some error occurred during processing.
+   */
+  public abstract void process() throws Exception; //NOSONAR
 
-    /**
-     * @param syncTime the syncTime to set
-     */
-    @Override
-    public void setSyncTime(long syncTime) {
-        this.syncTime = syncTime;
-    }
-    
-    public abstract int getNextProtocol();
+  /**
+   * getHttpResponse() - encode processing result into HTTP Response.
+   *
+   * @return HttpResponse.
+   */
+  @Override
+  public abstract HttpResponse getResponse();
+
+  @Override
+  public void setResponse(HttpResponse response) {
+    // Nothing to do
+  }
+
+  /**
+   * isNeedConnectionClose() - used to indicate is it necessary to close Channel after
+   * HTTP response returned to client.
+   *
+   * @return boolean - true to Close connection.
+   */
+  public abstract boolean isNeedConnectionClose();
+
+  @Override
+  public AbstractCommand call() throws Exception {
+    LOG.trace("{} : Process start", getCommandName());
+    process();
+    LOG.trace("{}: Process finish", getCommandName());
+    return this;
+  }
+
+
+  public UUID getSessionUuid() {
+    return sessionUuid;
+  }
+
+
+  public void setSessionUuid(UUID sessionUuid) {
+    this.sessionUuid = sessionUuid;
+  }
+
+
+  @Override
+  public long getSyncTime() {
+    return syncTime;
+  }
+
+
+  @Override
+  public void setSyncTime(long syncTime) {
+    this.syncTime = syncTime;
+  }
+
+  public abstract int getNextProtocol();
 
 }

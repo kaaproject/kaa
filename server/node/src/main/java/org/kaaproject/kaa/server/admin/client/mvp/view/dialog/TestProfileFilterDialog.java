@@ -16,6 +16,19 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CaptionPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
@@ -31,294 +44,304 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CaptionPanel;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+public class TestProfileFilterDialog extends FormPopup implements HasErrorMessage,
+    ErrorMessageCustomizer {
 
-public class TestProfileFilterDialog extends FormPopup implements HasErrorMessage, 
-                                                                     ErrorMessageCustomizer {
+  private AlertPanel matchedPanel;
+  private AlertPanel notMatchedPanel;
+  private AlertPanel errorPanel;
 
-    private AlertPanel matchedPanel;
-    private AlertPanel notMatchedPanel;
-    private AlertPanel errorPanel;
+  private RecordPanel endpointProfileRecordPanel;
+  private RecordPanel serverProfileRecordPanel;
+  private SizedTextArea filterPanel;
+  private Button testFilterButton;
 
-    private RecordPanel endpointProfileRecordPanel;
-    private RecordPanel serverProfileRecordPanel;
-    private SizedTextArea filterPanel;
-    private Button testFilterButton;
-    
-    private TestProfileFilterDialogListener listener;
-    
-    private String endpointProfileSchemaId;
-    private String serverProfileSchemaId;
-    
-    private SchemaInfoDto endpointProfile = null;
-    private SchemaInfoDto serverProfile = null;
-    
-    private TabPanel profileRecordsPanel;
+  private TestProfileFilterDialogListener listener;
 
-    public static void showTestProfileFilterDialog(TestProfileFilterDialogListener listener,
-            String endpointProfileSchemaId, String serverProfileSchemaId, String filterBody) {
-        TestProfileFilterDialog dialog = new TestProfileFilterDialog(listener, endpointProfileSchemaId, serverProfileSchemaId, filterBody);
-        dialog.center();
-        dialog.show();
-    }
+  private String endpointProfileSchemaId;
+  private String serverProfileSchemaId;
 
-    public TestProfileFilterDialog(TestProfileFilterDialogListener listener, 
-            String endpointProfileSchemaId, String serverProfileSchemaId, String filterBody) {
-        setWidth("100%");
-        setTitle(Utils.constants.testProfileFilter());
-        
-        this.listener = listener;
-        this.endpointProfileSchemaId = endpointProfileSchemaId;
-        this.serverProfileSchemaId = serverProfileSchemaId;
+  private SchemaInfoDto endpointProfile = null;
+  private SchemaInfoDto serverProfile = null;
 
-        VerticalPanel dialogContents = new VerticalPanel();
-        dialogContents.setSpacing(4);
-        dialogContents.getElement().getStyle().setOverflow(Overflow.AUTO);
-        setWidget(dialogContents);
-        
-        VerticalPanel infoPanel = new VerticalPanel();
+  private TabPanel profileRecordsPanel;
 
-        matchedPanel = new AlertPanel(AlertPanel.Type.SUCCESS);
-        matchedPanel.setVisible(false);
-        matchedPanel.setWidth("720px");
-        matchedPanel.setMessage(Utils.constants.filterMatched());
-        infoPanel.add(matchedPanel);
-        
-        notMatchedPanel = new AlertPanel(AlertPanel.Type.WARNING);
-        notMatchedPanel.setVisible(false);
-        notMatchedPanel.setWidth("720px");
-        notMatchedPanel.setMessage(Utils.constants.filterNotMatched());
-        infoPanel.add(notMatchedPanel);
-        
-        errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
-        errorPanel.setVisible(false);
-        errorPanel.setWidth("720px");
-        infoPanel.add(errorPanel);        
-        
-        infoPanel.setHeight("50px");
-        
-        dialogContents.add(infoPanel);
+  /**
+   * Instantiates a new TestProfileFilterDialog.
+   */
+  public TestProfileFilterDialog(TestProfileFilterDialogListener listener,
+                                 String endpointProfileSchemaId,
+                                 String serverProfileSchemaId,
+                                 String filterBody) {
+    setWidth("100%");
+    setTitle(Utils.constants.testProfileFilter());
 
-        FlexTable table  = new FlexTable();
-        table.setCellSpacing(6);
-        table.addStyleName(Utils.avroUiStyle.fieldWidget());
+    this.listener = listener;
+    this.endpointProfileSchemaId = endpointProfileSchemaId;
+    this.serverProfileSchemaId = serverProfileSchemaId;
 
-        int row = 0;
-        
-        profileRecordsPanel = new TabPanel();
-        table.setWidget(++row, 0, profileRecordsPanel);
-        
-        endpointProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder().
-                recordPanelWidth(700).createConfig(),
-                Utils.constants.schema(), this, false, false);
-        endpointProfileRecordPanel.setWidth("750px");
-        endpointProfileRecordPanel.getRecordWidget().setForceNavigation(true);
-        endpointProfileRecordPanel.setPreferredHeightPx(200);
-        endpointProfileRecordPanel.setHeight("320px");
-        endpointProfileRecordPanel.getElement().getStyle().setPropertyPx("maxHeight", 320);
-        endpointProfileRecordPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
+    VerticalPanel dialogContents = new VerticalPanel();
+    dialogContents.setSpacing(4);
+    dialogContents.getElement().getStyle().setOverflow(Overflow.AUTO);
+    setWidget(dialogContents);
 
-        endpointProfileRecordPanel.addValueChangeHandler(new ValueChangeHandler<RecordField>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<RecordField> event) {
-                validate();
-            }
-        });
-        
-        serverProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder().
-                recordPanelWidth(700).createConfig(),
-                Utils.constants.schema(), this, false, false);
-        
-        serverProfileRecordPanel.setWidth("750px");
-        serverProfileRecordPanel.getRecordWidget().setForceNavigation(true);
-        serverProfileRecordPanel.setPreferredHeightPx(200);
-        serverProfileRecordPanel.setHeight("320px");
-        serverProfileRecordPanel.getElement().getStyle().setPropertyPx("maxHeight", 320);
-        serverProfileRecordPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
+    matchedPanel = new AlertPanel(AlertPanel.Type.SUCCESS);
+    matchedPanel.setVisible(false);
+    matchedPanel.setWidth("720px");
+    matchedPanel.setMessage(Utils.constants.filterMatched());
 
-        serverProfileRecordPanel.addValueChangeHandler(new ValueChangeHandler<RecordField>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<RecordField> event) {
-                validate();
-            }
-        });
-        
-        filterPanel = new SizedTextArea(-1);
-        filterPanel.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 200);
-        filterPanel.getTextArea().getElement().getStyle().setPropertyPx("maxHeight", 200);
-        filterPanel.getTextArea().setWidth("725px");
-        filterPanel.getTextArea().getElement().getStyle().setPropertyPx("maxWidth", 725);
-        filterPanel.addInputHandler(new InputEventHandler() {
-            @Override
-            public void onInputChanged(InputEvent event) {
-                validate();
-            }
-        });
-        
-        SpanElement span = Document.get().createSpanElement();
-        span.appendChild(Document.get().createTextNode(Utils.constants.filterBody()));
-        span.addClassName("gwt-Label");
-        
-        CaptionPanel filterBodyPanel = new CaptionPanel(span.getString(), true);     
-        filterBodyPanel.setWidth("737px");
-        
-        filterBodyPanel.add(filterPanel);
-        
-        table.setWidget(++row, 0, filterBodyPanel);
-        table.getFlexCellFormatter().setColSpan(row, 0, 2);
+    VerticalPanel infoPanel = new VerticalPanel();
+    infoPanel.add(matchedPanel);
 
-        dialogContents.add(table);
+    notMatchedPanel = new AlertPanel(AlertPanel.Type.WARNING);
+    notMatchedPanel.setVisible(false);
+    notMatchedPanel.setWidth("720px");
+    notMatchedPanel.setMessage(Utils.constants.filterNotMatched());
+    infoPanel.add(notMatchedPanel);
 
-        testFilterButton = new Button(Utils.constants.testFilter(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                performTest();
-            }
-        });
-        testFilterButton.setEnabled(false);
+    errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
+    errorPanel.setVisible(false);
+    errorPanel.setWidth("720px");
+    infoPanel.add(errorPanel);
 
-        Button closeButton = new Button(Utils.constants.close(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                hide();
-            }
-        });
-        addButton(testFilterButton);
-        addButton(closeButton);
-        
-        filterPanel.setValue(filterBody);
+    infoPanel.setHeight("50px");
 
-        load();
-    }
-    
-    @Override
-    public void hide() {
-        super.hide();
-        TestProfileFilterDialog.this.listener.onClose(filterPanel.getValue());
-    }
-    
-    private void load() {
-        clearError();
-        processLoad();
-    }
-    
-    private void processLoad() {
-        if (Utils.isNotBlank(endpointProfileSchemaId) && endpointProfile == null) {
-            KaaAdmin.getDataSource().getEndpointProfileSchemaInfo(endpointProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
+    dialogContents.add(infoPanel);
+
+    FlexTable table = new FlexTable();
+    table.setCellSpacing(6);
+    table.addStyleName(Utils.avroUiStyle.fieldWidget());
+
+    int row = 0;
+
+    profileRecordsPanel = new TabPanel();
+    table.setWidget(++row, 0, profileRecordsPanel);
+
+    endpointProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(700).createConfig(),
+        Utils.constants.schema(), this, false, false);
+    endpointProfileRecordPanel.setWidth("750px");
+    endpointProfileRecordPanel.getRecordWidget().setForceNavigation(true);
+    endpointProfileRecordPanel.setPreferredHeightPx(200);
+    endpointProfileRecordPanel.setHeight("320px");
+    endpointProfileRecordPanel.getElement().getStyle().setPropertyPx("maxHeight", 320);
+    endpointProfileRecordPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
+
+    endpointProfileRecordPanel.addValueChangeHandler(new ValueChangeHandler<RecordField>() {
+      @Override
+      public void onValueChange(ValueChangeEvent<RecordField> event) {
+        validate();
+      }
+    });
+
+    serverProfileRecordPanel = new RecordPanel(new AvroWidgetsConfig.Builder()
+        .recordPanelWidth(700).createConfig(),
+        Utils.constants.schema(), this, false, false);
+
+    serverProfileRecordPanel.setWidth("750px");
+    serverProfileRecordPanel.getRecordWidget().setForceNavigation(true);
+    serverProfileRecordPanel.setPreferredHeightPx(200);
+    serverProfileRecordPanel.setHeight("320px");
+    serverProfileRecordPanel.getElement().getStyle().setPropertyPx("maxHeight", 320);
+    serverProfileRecordPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
+
+    serverProfileRecordPanel.addValueChangeHandler(new ValueChangeHandler<RecordField>() {
+      @Override
+      public void onValueChange(ValueChangeEvent<RecordField> event) {
+        validate();
+      }
+    });
+
+    filterPanel = new SizedTextArea(-1);
+    filterPanel.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 200);
+    filterPanel.getTextArea().getElement().getStyle().setPropertyPx("maxHeight", 200);
+    filterPanel.getTextArea().setWidth("725px");
+    filterPanel.getTextArea().getElement().getStyle().setPropertyPx("maxWidth", 725);
+    filterPanel.addInputHandler(new InputEventHandler() {
+      @Override
+      public void onInputChanged(InputEvent event) {
+        validate();
+      }
+    });
+
+    SpanElement span = Document.get().createSpanElement();
+    span.appendChild(Document.get().createTextNode(Utils.constants.filterBody()));
+    span.addClassName("gwt-Label");
+
+    CaptionPanel filterBodyPanel = new CaptionPanel(span.getString(), true);
+    filterBodyPanel.setWidth("737px");
+
+    filterBodyPanel.add(filterPanel);
+
+    table.setWidget(++row, 0, filterBodyPanel);
+    table.getFlexCellFormatter().setColSpan(row, 0, 2);
+
+    dialogContents.add(table);
+
+    testFilterButton = new Button(Utils.constants.testFilter(), new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        performTest();
+      }
+    });
+    testFilterButton.setEnabled(false);
+
+    Button closeButton = new Button(Utils.constants.close(), new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        hide();
+      }
+    });
+    addButton(testFilterButton);
+    addButton(closeButton);
+
+    filterPanel.setValue(filterBody);
+
+    load();
+  }
+
+  /**
+   * Show test profile filter dialog.
+   */
+  public static void showTestProfileFilterDialog(TestProfileFilterDialogListener listener,
+                                                 String endpointProfileSchemaId,
+                                                 String serverProfileSchemaId,
+                                                 String filterBody) {
+    TestProfileFilterDialog dialog = new TestProfileFilterDialog(
+        listener, endpointProfileSchemaId, serverProfileSchemaId, filterBody);
+    dialog.center();
+    dialog.show();
+  }
+
+  @Override
+  public void hide() {
+    super.hide();
+    TestProfileFilterDialog.this.listener.onClose(filterPanel.getValue());
+  }
+
+  private void load() {
+    clearError();
+    processLoad();
+  }
+
+  private void processLoad() {
+    if (Utils.isNotBlank(endpointProfileSchemaId) && endpointProfile == null) {
+      KaaAdmin.getDataSource()
+          .getEndpointProfileSchemaInfo(
+              endpointProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
                 @Override
                 public void onFailureImpl(Throwable caught) {
-                    Utils.handleException(caught, TestProfileFilterDialog.this);
+                  Utils.handleException(caught, TestProfileFilterDialog.this);
                 }
 
                 @Override
                 public void onSuccessImpl(SchemaInfoDto result) {
-                    endpointProfile = result;
-                    endpointProfileRecordPanel.setValue(result.getSchemaForm());
-                    endpointProfileRecordPanel.setTitle(result.getSchemaName());
-                    profileRecordsPanel.add(endpointProfileRecordPanel, Utils.constants.endpointProfile());
-                    processLoad();
+                  endpointProfile = result;
+                  endpointProfileRecordPanel.setValue(result.getSchemaForm());
+                  endpointProfileRecordPanel.setTitle(result.getSchemaName());
+                  profileRecordsPanel.add(
+                      endpointProfileRecordPanel, Utils.constants.endpointProfile());
+                  processLoad();
                 }
-            });
-        } else if (Utils.isNotBlank(serverProfileSchemaId) && serverProfile == null) {
-            KaaAdmin.getDataSource().getServerProfileSchemaInfo(serverProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
+              });
+    } else if (Utils.isNotBlank(serverProfileSchemaId) && serverProfile == null) {
+      KaaAdmin.getDataSource()
+          .getServerProfileSchemaInfo(
+              serverProfileSchemaId, new BusyAsyncCallback<SchemaInfoDto>() {
                 @Override
                 public void onFailureImpl(Throwable caught) {
-                    Utils.handleException(caught, TestProfileFilterDialog.this);
+                  Utils.handleException(caught, TestProfileFilterDialog.this);
                 }
 
                 @Override
                 public void onSuccessImpl(SchemaInfoDto result) {
-                    serverProfile = result;
-                    serverProfileRecordPanel.setValue(result.getSchemaForm());
-                    serverProfileRecordPanel.setTitle(result.getSchemaName());
-                    profileRecordsPanel.add(serverProfileRecordPanel, Utils.constants.serverProfile());
-                    processLoad();
+                  serverProfile = result;
+                  serverProfileRecordPanel.setValue(result.getSchemaForm());
+                  serverProfileRecordPanel.setTitle(result.getSchemaName());
+                  profileRecordsPanel.add(
+                      serverProfileRecordPanel, Utils.constants.serverProfile());
+                  processLoad();
                 }
-            });
-        } else {
-            profileRecordsPanel.selectTab(0);
-            if (endpointProfile != null) {
-                endpointProfileRecordPanel.getRecordWidget().onShown();
-            }
-            if (serverProfile != null) {
-                serverProfileRecordPanel.getRecordWidget().onShown();
-            }
-            center();
-            validate();
-        }
+              });
+    } else {
+      profileRecordsPanel.selectTab(0);
+      if (endpointProfile != null) {
+        endpointProfileRecordPanel.getRecordWidget().onShown();
+      }
+      if (serverProfile != null) {
+        serverProfileRecordPanel.getRecordWidget().onShown();
+      }
+      center();
+      validate();
     }
-    
-    private void validate() {
-        boolean valid = endpointProfile == null || endpointProfileRecordPanel.validate();
-        valid &= serverProfile == null || serverProfileRecordPanel.validate();
-        valid &= !Utils.isBlank(filterPanel.getValue());
-        testFilterButton.setEnabled(valid);
+  }
+
+  private void validate() {
+    boolean valid = endpointProfile == null || endpointProfileRecordPanel.validate();
+    valid &= serverProfile == null || serverProfileRecordPanel.validate();
+    valid &= !Utils.isBlank(filterPanel.getValue());
+    testFilterButton.setEnabled(valid);
+  }
+
+  private void performTest() {
+    clearMessages();
+    RecordField endpointProfileRecord = null;
+    RecordField serverProfileRecord = null;
+    if (endpointProfile != null) {
+      endpointProfileRecord = endpointProfileRecordPanel.getValue();
     }
+    if (serverProfile != null) {
+      serverProfileRecord = serverProfileRecordPanel.getValue();
+    }
+    String filterBody = filterPanel.getValue();
+    KaaAdmin.getDataSource()
+        .testProfileFilter(
+            endpointProfileRecord,
+            serverProfileRecord,
+            filterBody,
+            new BusyAsyncCallback<Boolean>() {
 
-    private void performTest () {
-        clearMessages();
-        RecordField endpointProfileRecord = null;
-        RecordField serverProfileRecord = null;
-        if (endpointProfile != null) {
-            endpointProfileRecord = endpointProfileRecordPanel.getValue();
-        }
-        if (serverProfile != null) {
-            serverProfileRecord = serverProfileRecordPanel.getValue();
-        }
-        String filterBody = filterPanel.getValue();
-        KaaAdmin.getDataSource().testProfileFilter(endpointProfileRecord, serverProfileRecord, filterBody, new BusyAsyncCallback<Boolean>() {
+              @Override
+              public void onFailureImpl(Throwable caught) {
+                Utils.handleException(
+                    caught, TestProfileFilterDialog.this, TestProfileFilterDialog.this);
+              }
 
-            @Override
-            public void onFailureImpl(Throwable caught) {
-                Utils.handleException(caught, TestProfileFilterDialog.this, TestProfileFilterDialog.this);
-            }
-
-            @Override
-            public void onSuccessImpl(Boolean result) {
+              @Override
+              public void onSuccessImpl(Boolean result) {
                 matchedPanel.setVisible(result);
                 notMatchedPanel.setVisible(!result);
-            }
-        });
-    }
-    
-    private void clearMessages() {
-        clearError();
-        matchedPanel.setVisible(false);
-        notMatchedPanel.setVisible(false);
-    }
+              }
+            });
+  }
 
-    @Override
-    public void clearError() {
-        errorPanel.setMessage("");
-        errorPanel.setVisible(false);
-    }
+  private void clearMessages() {
+    clearError();
+    matchedPanel.setVisible(false);
+    notMatchedPanel.setVisible(false);
+  }
 
-    @Override
-    public void setErrorMessage(String message) {
-        errorPanel.setMessage(message);
-        errorPanel.setVisible(true);
-    }
+  @Override
+  public void clearError() {
+    errorPanel.setMessage("");
+    errorPanel.setVisible(false);
+  }
 
-    @Override
-    public String customizeErrorMessage(Throwable caught) {
-        return caught.getLocalizedMessage();
-    }
-    
-    public static interface TestProfileFilterDialogListener {
-        
-        void onClose(String filterBody);
-        
-    }
+  @Override
+  public void setErrorMessage(String message) {
+    errorPanel.setMessage(message);
+    errorPanel.setVisible(true);
+  }
+
+  @Override
+  public String customizeErrorMessage(Throwable caught) {
+    return caught.getLocalizedMessage();
+  }
+
+  public static interface TestProfileFilterDialogListener {
+
+    void onClose(String filterBody);
+
+  }
 
 }

@@ -16,59 +16,70 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import akka.actor.ActorRef;
 
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;
 import org.kaaproject.kaa.server.sync.Event;
 
-import akka.actor.ActorRef;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EndpointEventReceiveMessage extends EndpointAwareMessage implements UserAwareMessage {
 
-    private final String userId;
-    private final List<EndpointEvent> events;
-    private final RouteTableAddress address;
+  private final String userId;
+  private final List<EndpointEvent> events;
+  private final RouteTableAddress address;
 
-    public EndpointEventReceiveMessage(String userId, List<EndpointEvent> events, RouteTableAddress address, ActorRef originator) {
-        super(address.getApplicationToken(), address.getEndpointKey(), originator);
-        this.userId = userId;
-        this.address = address;
-        this.events = Collections.unmodifiableList(events);
-    }
+  /**
+   * All-args constructor.
+   */
+  public EndpointEventReceiveMessage(String userId, List<EndpointEvent> events,
+                                     RouteTableAddress address, ActorRef originator) {
+    super(address.getApplicationToken(), address.getEndpointKey(), originator);
+    this.userId = userId;
+    this.address = address;
+    this.events = Collections.unmodifiableList(events);
+  }
 
-    @Override
-    public String getUserId() {
-        return userId;
-    }
+  @Override
+  public String getUserId() {
+    return userId;
+  }
 
-    public RouteTableAddress getAddress() {
-        return address;
-    }
+  public RouteTableAddress getAddress() {
+    return address;
+  }
 
-    public List<EndpointEvent> getEndpointEvents() {
-        return events;
-    }
+  /**
+   * Returns an endpoint event list.
+   *
+   * @return endpoint event list
+   */
+  public List<EndpointEvent> getEndpointEvents() {
+    return events;
+  }
 
-    public List<Event> getEvents() {
-        List<Event> result = new ArrayList<>(events.size());
-        for (EndpointEvent event : events) {
-            result.add(event.getEvent());
-        }
-        return result;
+  //CHECKSTYLE:OFF
+  public List<Event> getEvents() {
+    //CHECKSTYLE:ON
+    List<Event> result = new ArrayList<>(events.size());
+    for (EndpointEvent event : events) {
+      result.add(event.getEvent());
     }
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointEventReceiveMessage [userId=");
-        builder.append(userId);
-        builder.append(", events=");
-        builder.append(events);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointEventReceiveMessage [userId=");
+    builder.append(userId);
+    builder.append(", events=");
+    builder.append(events);
+    builder.append("]");
+    return builder.toString();
+  }
 }

@@ -22,17 +22,15 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  * Container for the configuration data hash.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface ConfigurationHashContainer {
 
-    /**
-     * Retrieves configuration data hash.
-     *
-     * @return EndpointObjectHash the endpoint object hash
-     * @see EndpointObjectHash
-     *
-     */
-    EndpointObjectHash getConfigurationHash();
+  /**
+   * Retrieves configuration data hash.
+   *
+   * @return EndpointObjectHash the endpoint object hash
+   * @see EndpointObjectHash
+   */
+  EndpointObjectHash getConfigurationHash();
 
 }

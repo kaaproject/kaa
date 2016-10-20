@@ -20,20 +20,20 @@ import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 
 public class ServerProfileSchemaViewDto extends BaseSchemaViewDto<ServerProfileSchemaDto> {
 
-    private static final long serialVersionUID = -5289268279407697791L;
-    
-    public ServerProfileSchemaViewDto() {
-        super();
-    }
+  private static final long serialVersionUID = -5289268279407697791L;
 
-    public ServerProfileSchemaViewDto(ServerProfileSchemaDto schema,
-            CtlSchemaFormDto ctlSchemaForm) {
-        super(schema, ctlSchemaForm);
-    }
+  public ServerProfileSchemaViewDto() {
+    super();
+  }
 
-    @Override
-    protected ServerProfileSchemaDto createEmptySchema() {
-        return new ServerProfileSchemaDto();
-    }
+  public ServerProfileSchemaViewDto(ServerProfileSchemaDto schema,
+                                    CtlSchemaFormDto ctlSchemaForm) {
+    super(schema, ctlSchemaForm);
+  }
+
+  @Override
+  protected ServerProfileSchemaDto createEmptySchema() {
+    return new ServerProfileSchemaDto();
+  }
 
 }

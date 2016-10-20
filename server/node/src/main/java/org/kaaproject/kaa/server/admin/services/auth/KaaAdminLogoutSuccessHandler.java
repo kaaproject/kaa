@@ -16,36 +16,36 @@
 
 package org.kaaproject.kaa.server.admin.services.auth;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
-
 public class KaaAdminLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
-    @Override
-    protected String determineTargetUrl(HttpServletRequest request,
-            HttpServletResponse response) {
-        String targetUrl = super.determineTargetUrl(request, response);
-        return targetUrl;
+  @Override
+  protected String determineTargetUrl(HttpServletRequest request,
+                                      HttpServletResponse response) {
+    String targetUrl = super.determineTargetUrl(request, response);
+    return targetUrl;
+  }
+
+  @Override
+  protected void handle(HttpServletRequest request,
+                        HttpServletResponse response, Authentication authentication)
+      throws IOException, ServletException {
+    String targetUrl = determineTargetUrl(request, response);
+
+    if (response.isCommitted()) {
+      logger.debug("Response has already been committed. Unable to redirect to "
+          + targetUrl);
+      return;
     }
 
-    @Override
-    protected void handle(HttpServletRequest request,
-            HttpServletResponse response, Authentication authentication)
-            throws IOException, ServletException {
-        String targetUrl = determineTargetUrl(request, response);
-
-        if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to "
-                    + targetUrl);
-            return;
-        }
-
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
+    response.setStatus(HttpServletResponse.SC_OK);
+  }
 }

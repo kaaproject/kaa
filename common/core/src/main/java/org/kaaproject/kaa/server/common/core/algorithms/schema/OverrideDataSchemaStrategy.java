@@ -16,54 +16,55 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
-import java.util.List;
-import java.util.Set;
-
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Type;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 
+import java.util.List;
+import java.util.Set;
+
 /**
- * This is override schema strategy for generating schema for configurations which are not in group "all"
+ * This is override schema strategy for generating schema for configurations which are not in group
+ * "all".
  */
 public class OverrideDataSchemaStrategy extends AbstractSchemaStrategy<OverrideSchema> {
 
-    @Override
-    public boolean isUuidOptional() {
-        return true;
-    }
+  @Override
+  public boolean isUuidOptional() {
+    return true;
+  }
 
-    @Override
-    public boolean isUnchangedSupported() {
-        return true;
-    }
+  @Override
+  public boolean isUnchangedSupported() {
+    return true;
+  }
 
-    @Override
-    public void onOptionalField(List<Schema> union) {
-        Schema nullSchema = Schema.create(Type.NULL);
-        if (!union.contains(nullSchema)) {
-            union.add(0, nullSchema);
-        }
+  @Override
+  public void onOptionalField(List<Schema> union) {
+    Schema nullSchema = Schema.create(Type.NULL);
+    if (!union.contains(nullSchema)) {
+      union.add(0, nullSchema);
     }
+  }
 
-    @Override
-    public void onMandatoryField(List<Schema> union) {
-        // Nothing to do
-    }
+  @Override
+  public void onMandatoryField(List<Schema> union) {
+    // Nothing to do
+  }
 
-    @Override
-    public Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords) {
-        return rootSchema;
-    }
+  @Override
+  public Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords) {
+    return rootSchema;
+  }
 
-    @Override
-    public boolean isArrayEditable() {
-        return false;
-    }
+  @Override
+  public boolean isArrayEditable() {
+    return false;
+  }
 
-    @Override
-    public OverrideSchema createSchema(Schema schema) {
-        return getSchemaFactory().createOverrideSchema(schema.toString());
-    }
+  @Override
+  public OverrideSchema createSchema(Schema schema) {
+    return getSchemaFactory().createOverrideSchema(schema.toString());
+  }
 
 }

@@ -16,41 +16,44 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_TABLE_NAME;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.io.Serializable;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.PROFILE_SCHEMA_TABLE_NAME;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = PROFILE_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class EndpointProfileSchema extends BaseSchema<EndpointProfileSchemaDto> implements Serializable {
+public class EndpointProfileSchema
+        extends BaseSchema<EndpointProfileSchemaDto>
+        implements Serializable {
 
-    private static final long serialVersionUID = 953188575107921799L;
+  private static final long serialVersionUID = 953188575107921799L;
 
-    public EndpointProfileSchema() {
-    }
+  public EndpointProfileSchema() {
+  }
 
-    public EndpointProfileSchema(Long id) {
-        setId(id);
-    }
+  public EndpointProfileSchema(Long id) {
+    setId(id);
+  }
 
-    public EndpointProfileSchema(EndpointProfileSchemaDto dto) {
-        super(dto);
-    }
+  public EndpointProfileSchema(EndpointProfileSchemaDto dto) {
+    super(dto);
+  }
 
-    @Override
-    protected EndpointProfileSchemaDto createDto() {
-        return new EndpointProfileSchemaDto();
-    }
+  @Override
+  protected EndpointProfileSchemaDto createDto() {
+    return new EndpointProfileSchemaDto();
+  }
 
-    @Override
-    protected GenericModel<EndpointProfileSchemaDto> newInstance(Long id) {
-        return new EndpointProfileSchema(id);
-    }
+  @Override
+  protected GenericModel<EndpointProfileSchemaDto> newInstance(Long id) {
+    return new EndpointProfileSchema(id);
+  }
 }

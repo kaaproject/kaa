@@ -24,13 +24,13 @@ import java.sql.SQLException;
 
 public class H2DBTestRunner extends DBTestRunner {
 
-    @Override
-    protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
-        return connection.prepareStatement("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
-    }
+  @Override
+  protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
+    return connection.prepareStatement("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'");
+  }
 
-    @Override
-    protected String getTrancateSql() {
-        return new StringBuilder("SET REFERENTIAL_INTEGRITY FALSE; TRUNCATE TABLE ").append(FORMATER).append("; SET REFERENTIAL_INTEGRITY TRUE;").toString();
-    }
+  @Override
+  protected String getTrancateSql() {
+    return new StringBuilder("SET REFERENTIAL_INTEGRITY FALSE; TRUNCATE TABLE ").append(FORMATER).append("; SET REFERENTIAL_INTEGRITY TRUE;").toString();
+  }
 }

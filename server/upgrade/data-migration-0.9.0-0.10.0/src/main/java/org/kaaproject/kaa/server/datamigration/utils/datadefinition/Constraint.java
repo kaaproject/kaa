@@ -17,109 +17,141 @@
 package org.kaaproject.kaa.server.datamigration.utils.datadefinition;
 
 public class Constraint {
-    private String constraintName;
-    private String field;
-    private ConstraintType type;
-    private String referencedTable;
-    private String referencedField;
-    private ReferenceOptions onDeleteOpt;
-    private ReferenceOptions onUpdateOpt;
+  private String constraintName;
+  private String field;
+  private ConstraintType type;
+  private String referencedTable;
+  private String referencedField;
+  private ReferenceOptions onDeleteOpt;
+  private ReferenceOptions onUpdateOpt;
 
-    public Constraint(String constraintName) {
-        this.constraintName = constraintName;
+  public Constraint(String constraintName) {
+    this.constraintName = constraintName;
+  }
+
+  public static Constraint constraint(String constraintName) {
+    return new Constraint(constraintName);
+  }
+
+  public String getConstraintName() {
+    return constraintName;
+  }
+
+  public String getField() {
+    return field;
+  }
+
+  public ConstraintType getType() {
+    return type;
+  }
+
+  public String getReferencedTable() {
+    return referencedTable;
+  }
+
+  public String getReferencedField() {
+    return referencedField;
+  }
+
+  public ReferenceOptions getOnDeleteOpt() {
+    return onDeleteOpt;
+  }
+
+  public ReferenceOptions getOnUpdateOpt() {
+    return onUpdateOpt;
+  }
+
+
+  /**
+   * Set unique constraint on specified field.
+   *
+   * @param field the name of field
+   */
+  public Constraint unique(String field) {
+    if (this.type != null) {
+      throw new BuilderException("Incorrect sequence of builder's methods");
     }
+    this.type = ConstraintType.PK;
+    this.field = field;
+    return this;
+  }
 
-    public String getConstraintName() {
-        return constraintName;
+  /**
+   * Set primary key constraint on specified field.
+   *
+   * @param field the name of field
+   */
+  public Constraint primaryKey(String field) {
+    if (this.type != null) {
+      throw new BuilderException("Incorrect sequence of builder's methods");
     }
+    this.type = ConstraintType.UNIQUE;
+    this.field = field;
+    return this;
+  }
 
-    public String getField() {
-        return field;
+  /**
+   * Set foreign key constraint on specified field.
+   *
+   * @param field the name of field
+   */
+  public Constraint foreignKey(String field) {
+    if (this.type != null) {
+      throw new BuilderException("Incorrect sequence of builder's methods");
     }
+    this.type = ConstraintType.FK;
+    this.field = field;
+    return this;
+  }
 
-    public ConstraintType getType() {
-        return type;
+
+  /**
+   * Specify referenced table and field for foreign key constraint.
+   *
+   * @param referencedTable the name of referenced table
+   * @param referencedField the name of  referenced field
+   * @return the constraint
+   */
+  public Constraint references(String referencedTable, String referencedField) {
+    if (this.type != ConstraintType.FK) {
+      throw new BuilderException("Constraint type should be FK");
     }
+    this.referencedTable = referencedTable;
+    this.referencedField = referencedField;
+    return this;
+  }
 
-    public String getReferencedTable() {
-        return referencedTable;
+  /**
+   *  Specify reference option for referential <b>on delete</b> action.
+   *
+   * @param referenceOption  reference option, i. e. RESTRICT or CASCADE
+   */
+  public Constraint onDelete(ReferenceOptions referenceOption) {
+    if (this.type != ConstraintType.FK) {
+      throw new BuilderException("Constraint type should be FK");
     }
-
-    public String getReferencedField() {
-        return referencedField;
+    if (this.referencedTable == null) {
+      throw new BuilderException("Referenced table not defined");
     }
+    onDeleteOpt = referenceOption;
+    return this;
+  }
 
-    public ReferenceOptions getOnDeleteOpt() {
-        return onDeleteOpt;
+  /**
+   *  Specify reference option for referential <b>on update</b> action.
+   *
+   * @param referenceOption  reference option, i. e. RESTRICT or CASCADE
+   */
+  public Constraint onUpdate(ReferenceOptions referenceOption) {
+    if (this.type != ConstraintType.FK) {
+      throw new BuilderException("Constraint type should be FK");
     }
-
-    public ReferenceOptions getOnUpdateOpt() {
-        return onUpdateOpt;
+    if (this.referencedTable == null) {
+      throw new BuilderException("Referenced table not defined");
     }
-
-    public static Constraint constraint(String constraintName) {
-        return new Constraint(constraintName);
-    }
-
-
-    public Constraint unique(String field) {
-        if (this.type != null) {
-            throw new BuilderException("Incorrect sequence of builder's methods");
-        }
-        this.type = ConstraintType.PK;
-        this.field = field;
-        return this;
-    }
-
-    public Constraint primaryKey(String field) {
-        if (this.type != null) {
-            throw new BuilderException("Incorrect sequence of builder's methods");
-        }
-        this.type = ConstraintType.UNIQUE;
-        this.field = field;
-        return this;
-    }
-
-    public Constraint foreignKey(String field) {
-        if (this.type != null) {
-            throw new BuilderException("Incorrect sequence of builder's methods");
-        }
-        this.type = ConstraintType.FK;
-        this.field = field;
-        return this;
-    }
-
-
-    public Constraint references(String referencedTable, String referencedField) {
-        if (this.type != ConstraintType.FK) {
-            throw new BuilderException("Constraint type should be FK");
-        }
-        this.referencedTable = referencedTable;
-        this.referencedField = referencedField;
-        return this;
-    }
-
-    public Constraint onDelete(ReferenceOptions referenceOption) {
-        if (this.type != ConstraintType.FK) {
-            throw new BuilderException("Constraint type should be FK");
-        }
-        if (this.referencedTable == null) {
-            throw new BuilderException("Referenced table not defined");
-        }
-        onDeleteOpt = referenceOption;
-        return this;
-    }
-
-    public Constraint onUpdate(ReferenceOptions referenceOption) {
-        if (this.type != ConstraintType.FK) {
-            throw new BuilderException("Constraint type should be FK");
-        }
-        if (this.referencedTable == null) {
-            throw new BuilderException("Referenced table not defined");
-        }
-        onUpdateOpt = referenceOption;
-        return this;
-    }
+    onUpdateOpt = referenceOption;
+    return this;
+  }
 
 
 }

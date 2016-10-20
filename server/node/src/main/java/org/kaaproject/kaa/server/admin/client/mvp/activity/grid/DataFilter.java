@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity.grid;
 
 public interface DataFilter<T> {
-    
-    boolean accept(T value);
+
+  boolean accept(T value);
 
 }

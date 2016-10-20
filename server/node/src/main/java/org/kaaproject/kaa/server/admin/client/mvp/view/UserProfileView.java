@@ -21,14 +21,14 @@ import com.google.gwt.user.client.ui.HasValue;
 
 public interface UserProfileView extends BaseDetailsView {
 
-    HasValue<String> getAuthority();
+  HasValue<String> getAuthority();
 
-    HasValue<String> getFirstName();
+  HasValue<String> getFirstName();
 
-    HasValue<String> getLastName();
+  HasValue<String> getLastName();
 
-    HasValue<String> getEmail();
+  HasValue<String> getEmail();
 
-    HasClickHandlers getChangePasswordButton();
+  HasClickHandlers getChangePasswordButton();
 
 }

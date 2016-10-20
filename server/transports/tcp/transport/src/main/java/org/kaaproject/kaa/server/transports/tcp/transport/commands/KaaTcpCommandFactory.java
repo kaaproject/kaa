@@ -20,16 +20,16 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
 
-public class KaaTcpCommandFactory implements KaaCommandProcessorFactory<MqttFrame, MqttFrame>{
+public class KaaTcpCommandFactory implements KaaCommandProcessorFactory<MqttFrame, MqttFrame> {
 
-    @Override
-    public String getCommandName() {
-        return KaaTcpCommand.KAA_TCP;
-    }
+  @Override
+  public String getCommandName() {
+    return KaaTcpCommand.KAA_TCP;
+  }
 
-    @Override
-    public KaaCommandProcessor<MqttFrame, MqttFrame> createCommandProcessor() {
-        return new KaaTcpCommand();
-    }
+  @Override
+  public KaaCommandProcessor<MqttFrame, MqttFrame> createCommandProcessor() {
+    return new KaaTcpCommand();
+  }
 
 }

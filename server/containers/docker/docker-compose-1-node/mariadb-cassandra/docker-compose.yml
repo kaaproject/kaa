@@ -35,9 +35,12 @@ services:
       - back-tier
     volumes:
       - nosql-data:/data/db
+      - ./../../../../../server/common/nosql/cassandra-dao/src/main/resources/cassandra.cql:/cassandra.cql
+      - ./../../using-compose/cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh
+    command: bash -c "/initKeySpaceCassandra.sh & /docker-entrypoint.sh cassandra -f"
   kaa_0:
     image: kaa-node:0.10.0
-    env_file: ../../using-compose/kaa-example.env
+    env_file: ../kaa-example.env
     environment:
       - SQL_PROVIDER_NAME=mariadb
       - NOSQL_PROVIDER_NAME=cassandra

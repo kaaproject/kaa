@@ -16,80 +16,61 @@
 
 package org.kaaproject.kaa.server.datamigration.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class Configuration implements Serializable {
 
-    private static final long serialVersionUID = -1176562073;
+  private static final long serialVersionUID = -1176562073;
 
-    private byte[] configuration_body;
-    private Integer configuration_schems_version;
-    private Long    id;
-    private Long configuration_schems_id;
+  private byte[] configurationBody;
+  private Integer configurationSchemasVersion;
+  private Long id;
+  private Long configurationSchemasId;
 
-    public Configuration() {}
+  public Configuration() {
+  }
 
-    public Configuration(Configuration value) {
-        this.configuration_body = value.configuration_body;
-        this.configuration_schems_version = value.configuration_schems_version;
-        this.id = value.id;
-        this.configuration_schems_id = value.configuration_schems_id;
-    }
+  /**
+   * Copy constructor.
+   */
+  public Configuration(Configuration configuration) {
+    this.configurationBody = configuration.configurationBody;
+    this.configurationSchemasVersion = configuration.configurationSchemasVersion;
+    this.id = configuration.id;
+    this.configurationSchemasId = configuration.configurationSchemasId;
+  }
 
-    public Configuration(
-            byte[] configurationBody,
-            Integer configurationSchemsVersion,
-            Long id,
-            Long configurationSchemsId
-    ) {
-        this.configuration_body = configurationBody;
-        this.configuration_schems_version = configurationSchemsVersion;
-        this.id = id;
-        this.configuration_schems_id = configurationSchemsId;
-    }
+  /**
+   * Instantiates a new Configuration.
+   */
+  public Configuration(
+      byte[] configurationBody,
+      Integer configurationSchemsVersion,
+      Long id,
+      Long configurationSchemsId
+  ) {
+    this.configurationBody = configurationBody;
+    this.configurationSchemasVersion = configurationSchemsVersion;
+    this.id = id;
+    this.configurationSchemasId = configurationSchemsId;
+  }
 
-    public byte[] getConfiguration_body() {
-        return this.configuration_body;
-    }
 
-    public void setConfiguration_body(byte[] configuration_body) {
-        this.configuration_body = configuration_body;
-    }
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder("configuration.Configuration[");
 
-    public Integer getConfiguration_schems_version() {
-        return this.configuration_schems_version;
-    }
+    sb.append("configurationBody=").append(new String(configurationBody));
+    sb.append(", configurationSchemasVersion=").append(configurationSchemasVersion);
+    sb.append(", id=").append(id);
+    sb.append(", configurationSchemasId=").append(configurationSchemasId);
 
-    public void setConfiguration_schems_version(Integer configuration_schems_version) {
-        this.configuration_schems_version = configuration_schems_version;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getConfiguration_schems_id() {
-        return this.configuration_schems_id;
-    }
-
-    public void setConfiguration_schems_id(Long configuration_schems_id) {
-        this.configuration_schems_id = configuration_schems_id;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("configuration.Configuration[");
-
-        sb.append("configuration_body=").append(new String(configuration_body));
-        sb.append(", configuration_schems_version=").append(configuration_schems_version);
-        sb.append(", id=").append(id);
-        sb.append(", configuration_schems_id=").append(configuration_schems_id);
-
-        sb.append("]");
-        return sb.toString();
-    }
+    sb.append("]");
+    return sb.toString();
+  }
 }

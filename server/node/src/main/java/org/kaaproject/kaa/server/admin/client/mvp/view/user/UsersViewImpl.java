@@ -23,24 +23,24 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class UsersViewImpl extends BaseListViewImpl<UserDto> {
 
-        public UsersViewImpl() {
-            super(true);
-        }
+  public UsersViewImpl() {
+    super(true);
+  }
 
-        @Override
-        protected AbstractGrid<UserDto, String> createGrid() {
-            return new UsersGrid();
-        }
+  @Override
+  protected AbstractGrid<UserDto, String> createGrid() {
+    return new UsersGrid();
+  }
 
-        @Override
-        protected String titleString() {
-            return Utils.constants.users();
-        }
+  @Override
+  protected String titleString() {
+    return Utils.constants.users();
+  }
 
-        @Override
-        protected String addButtonString() {
-            return Utils.constants.addNewUser();
-        }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewUser();
+  }
 
 }
 

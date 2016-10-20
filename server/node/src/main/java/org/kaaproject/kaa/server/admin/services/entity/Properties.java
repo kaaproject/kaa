@@ -26,45 +26,45 @@ import javax.persistence.Table;
 @Table(name = "admin_properties")
 public class Properties {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-    
-    private String fqn;
+  @Id
+  @GeneratedValue
+  private Long id;
 
-    @Lob
-    private byte[] rawConfiguration;
-    
-    public Properties() {
-    }
+  private String fqn;
 
-    public Properties(byte[] rawConfiguration) {
-        super();
-        this.rawConfiguration = rawConfiguration;
-    }
+  @Lob
+  private byte[] rawConfiguration;
 
-    public Long getId() {
-        return id;
-    }
+  public Properties() {
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-    public String getFqn() {
-        return fqn;
-    }
+  public Properties(byte[] rawConfiguration) {
+    super();
+    this.rawConfiguration = rawConfiguration;
+  }
 
-    public void setFqn(String fqn) {
-        this.fqn = fqn;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public byte[] getRawConfiguration() {
-        return rawConfiguration;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setRawConfiguration(byte[] rawConfiguration) {
-        this.rawConfiguration = rawConfiguration;
-    }
-    
+  public String getFqn() {
+    return fqn;
+  }
+
+  public void setFqn(String fqn) {
+    this.fqn = fqn;
+  }
+
+  public byte[] getRawConfiguration() {
+    return rawConfiguration;
+  }
+
+  public void setRawConfiguration(byte[] rawConfiguration) {
+    this.rawConfiguration = rawConfiguration;
+  }
+
 }

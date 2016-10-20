@@ -23,21 +23,21 @@ import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 
 @KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
-public class RestAppenderConfig implements PluginConfig{
+public class RestAppenderConfig implements PluginConfig {
 
-    @Override
-    public String getPluginTypeName() {
-        return "REST";
-    }
+  @Override
+  public String getPluginTypeName() {
+    return "REST";
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.appenders.rest.appender.RestLogAppender";
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.appenders.rest.appender.RestLogAppender";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return RestConfig.getClassSchema();
-    }
+  @Override
+  public Schema getPluginConfigSchema() {
+    return RestConfig.getClassSchema();
+  }
 
 }

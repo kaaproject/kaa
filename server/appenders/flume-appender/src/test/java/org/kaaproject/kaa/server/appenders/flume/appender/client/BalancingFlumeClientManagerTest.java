@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.appenders.flume.appender.client;
 
-import java.util.Arrays;
-
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.FlumeException;
 import org.apache.flume.event.EventBuilder;
@@ -26,56 +24,58 @@ import org.junit.Test;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNode;
 import org.kaaproject.kaa.server.appenders.flume.config.gen.FlumeNodes;
 
+import java.util.Arrays;
+
 public class BalancingFlumeClientManagerTest extends FlumeClientManagerTest<FlumeNodes> {
 
-    @Before
-    public final void before() {
-        flumeNodes = FlumeNodes
-                .newBuilder()
-                .setFlumeNodes(
-                        Arrays.asList(new FlumeNode("localhost", 12121),
-                                new FlumeNode("localhost", 12122))).build();
-        configuration.setHostsBalancing(flumeNodes);
-        configuration.setCallbackThreadPoolSize(2);
-        configuration.setClientsThreadPoolSize(2);
-        configuration.setExecutorThreadPoolSize(2);
-    }
+  @Before
+  public final void before() {
+    flumeNodes = FlumeNodes
+        .newBuilder()
+        .setFlumeNodes(
+            Arrays.asList(new FlumeNode("localhost", 12121),
+                new FlumeNode("localhost", 12122))).build();
+    configuration.setHostsBalancing(flumeNodes);
+    configuration.setCallbackThreadPoolSize(2);
+    configuration.setClientsThreadPoolSize(2);
+    configuration.setExecutorThreadPoolSize(2);
+  }
 
-    @Test
-    public void initFlumeClientWithFlumeAgentTest() throws Exception {
-        flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
-        clientManager = FlumeClientManager.getInstance(configuration);
-        clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
-    }
+  @Test
+  public void initFlumeClientWithFlumeAgentTest() throws Exception {
+    flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
+    clientManager = FlumeClientManager.getInstance(configuration);
+    clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
+  }
 
-    @Test
-    public void initFlumeClientWithFlumeAgentAsyncTest() throws Exception {
-        flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
-        clientManager = FlumeClientManager.getInstance(configuration);
-        clientManager.sendEventToFlumeAsync(EventBuilder.withBody(testEventBody));
-    }
+  @Test
+  public void initFlumeClientWithFlumeAgentAsyncTest() throws Exception {
+    flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
+    clientManager = FlumeClientManager.getInstance(configuration);
+    clientManager.sendEventToFlumeAsync(EventBuilder.withBody(testEventBody));
+  }
 
-    @Test(expected = EventDeliveryException.class)
-    public void initFlumeClientWithFlumeAgentAndEmptyEventTest() throws Exception {
-        flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
-        clientManager = FlumeClientManager.getInstance(configuration);
-        clientManager.sendEventToFlume(null);
-    }
+  @Test(expected = EventDeliveryException.class)
+  public void initFlumeClientWithFlumeAgentAndEmptyEventTest() throws Exception {
+    flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
+    clientManager = FlumeClientManager.getInstance(configuration);
+    clientManager.sendEventToFlume(null);
+  }
 
-    @Test(expected = FlumeException.class)
-    public void initFlumeClientWithFlumeAgentAndOneHostTest() throws Exception {
-        flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
-        flumeNodes = FlumeNodes
-                .newBuilder()
-                .setFlumeNodes(
-                        Arrays.asList(new FlumeNode("localhost", 12121))).build();
-        configuration.setHostsBalancing(flumeNodes);
-        clientManager = FlumeClientManager.getInstance(configuration);
-        clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
-    }
+  @Test(expected = FlumeException.class)
+  public void initFlumeClientWithFlumeAgentAndOneHostTest() throws Exception {
+    flumeSourceRunner.startFlumeSource("agent", "localhost", 12121);
+    flumeNodes = FlumeNodes
+        .newBuilder()
+        .setFlumeNodes(
+            Arrays.asList(new FlumeNode("localhost", 12121))).build();
+    configuration.setHostsBalancing(flumeNodes);
+    clientManager = FlumeClientManager.getInstance(configuration);
+    clientManager.sendEventToFlume(EventBuilder.withBody(testEventBody));
+  }
 
-    @Test(expected = RuntimeException.class)
-    public void currentClientNullTest() {
-        clientManager.init(null);
-    }
+  @Test(expected = RuntimeException.class)
+  public void currentClientNullTest() {
+    clientManager.init(null);
+  }
 }

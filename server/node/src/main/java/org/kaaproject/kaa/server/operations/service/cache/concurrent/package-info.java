@@ -15,6 +15,6 @@
  */
 
 /**
- *  * Provides concurrent cache implementation for operation server
+ * * Provides concurrent cache implementation for operation server
  */
 package org.kaaproject.kaa.server.operations.service.cache.concurrent;

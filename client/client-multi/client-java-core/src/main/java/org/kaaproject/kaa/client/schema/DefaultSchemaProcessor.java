@@ -16,55 +16,54 @@
 
 package org.kaaproject.kaa.client.schema;
 
+import org.apache.avro.Schema;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.avro.Schema;
-
 /**
- * Default implementation of @{link SchemaProcessor} using the avro schema
+ * Default implementation of @{link SchemaProcessor} using the avro schema.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public class DefaultSchemaProcessor implements SchemaProcessor, SchemaObservable {
-    private final List<SchemaUpdatesReceiver> subscribers = new LinkedList<SchemaUpdatesReceiver>();
-    private Schema schema;
+  private final List<SchemaUpdatesReceiver> subscribers = new LinkedList<SchemaUpdatesReceiver>();
+  private Schema schema;
 
-    public DefaultSchemaProcessor() {
+  public DefaultSchemaProcessor() {
 
+  }
+
+  @Override
+  public Schema getSchema() {
+    return schema;
+  }
+
+  @Override
+  public void loadSchema(ByteBuffer buffer) throws IOException {
+    if (buffer != null) {
+      String schemaString = new String(buffer.array(), "UTF-8");
+      schema = new Schema.Parser().parse(schemaString);
+      for (SchemaUpdatesReceiver subscriber : subscribers) {
+        subscriber.onSchemaUpdated(schema);
+      }
     }
+  }
 
-    @Override
-    public Schema getSchema() {
-        return schema;
+  @Override
+  public void subscribeForSchemaUpdates(SchemaUpdatesReceiver receiver) {
+    if (receiver != null && !subscribers.contains(receiver)) {
+      subscribers.add(receiver);
     }
+  }
 
-    @Override
-    public void loadSchema(ByteBuffer buffer) throws IOException {
-        if (buffer != null) {
-            String schemaString = new String(buffer.array(), "UTF-8");
-            schema = new Schema.Parser().parse(schemaString);
-            for (SchemaUpdatesReceiver subscriber : subscribers) {
-                subscriber.onSchemaUpdated(schema);
-            }
-        }
+  @Override
+  public void unsubscribeFromSchemaUpdates(SchemaUpdatesReceiver receiver) {
+    if (receiver != null) {
+      subscribers.remove(receiver);
     }
-
-    @Override
-    public void subscribeForSchemaUpdates(SchemaUpdatesReceiver receiver) {
-        if (receiver != null && !subscribers.contains(receiver)) {
-            subscribers.add(receiver);
-        }
-    }
-
-    @Override
-    public void unsubscribeFromSchemaUpdates(SchemaUpdatesReceiver receiver) {
-        if (receiver != null) {
-            subscribers.remove(receiver);
-        }
-    }
+  }
 
 }

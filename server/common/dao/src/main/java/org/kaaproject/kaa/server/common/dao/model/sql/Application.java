@@ -24,6 +24,10 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TABL
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_TENANT_ID;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -33,184 +37,189 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-
 @Entity
 @Table(name = APPLICATION_TABLE_NAME, uniqueConstraints = {
-@UniqueConstraint(columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME})})
+        @UniqueConstraint(columnNames = {APPLICATION_TENANT_ID, APPLICATION_NAME})})
 public class Application extends GenericModel<ApplicationDto> implements Serializable {
 
-    private static final long serialVersionUID = 3402917989585810543L;
+  private static final long serialVersionUID = 3402917989585810543L;
 
-    @Column(name = APPLICATION_APPLICATION_TOKEN, unique = true)
-    private String applicationToken;
+  @Column(name = APPLICATION_APPLICATION_TOKEN, unique = true)
+  private String applicationToken;
 
-    @Column(name = APPLICATION_NAME, nullable = false)
-    private String name;
+  @Column(name = APPLICATION_NAME, nullable = false)
+  private String name;
 
-    @Column(name = APPLICATION_SEQUENCE_NUMBER)
-    private int sequenceNumber;
+  @Column(name = APPLICATION_SEQUENCE_NUMBER)
+  private int sequenceNumber;
 
-    @ManyToOne
-    @JoinColumn(name = APPLICATION_TENANT_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Tenant tenant;
+  @ManyToOne
+  @JoinColumn(name = APPLICATION_TENANT_ID, nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Tenant tenant;
 
-    @Column(name = APPLICATION_CREDENTIALS_SERVICE_NAME)
-    private String credentialsServiceName;
+  @Column(name = APPLICATION_CREDENTIALS_SERVICE_NAME)
+  private String credentialsServiceName;
 
-    public Application() {
+  public Application() {
+  }
+
+  public Application(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * Create new instance of <code>Application</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
+  public Application(ApplicationDto dto) {
+    if (dto != null) {
+      this.id = getLongId(dto);
+      this.applicationToken = dto.getApplicationToken();
+      this.name = dto.getName();
+      this.sequenceNumber = dto.getSequenceNumber();
+      Long tenantId = getLongId(dto.getTenantId());
+      if (tenantId != null) {
+        this.tenant = new Tenant(tenantId);
+      }
+      this.credentialsServiceName = dto.getCredentialsServiceName();
     }
+  }
 
-    public Application(Long id) {
-        this.id = id;
-    }
+  public String getApplicationToken() {
+    return applicationToken;
+  }
 
-    public Application(ApplicationDto dto) {
-        if (dto != null) {
-            this.id = getLongId(dto);
-            this.applicationToken = dto.getApplicationToken();
-            this.name = dto.getName();
-            this.sequenceNumber = dto.getSequenceNumber();
-            Long tenantId = getLongId(dto.getTenantId());
-            if (tenantId != null) {
-                this.tenant = new Tenant(tenantId);
-            }
-            this.credentialsServiceName = dto.getCredentialsServiceName();
-        }
-    }
+  public void setApplicationToken(String applicationToken) {
+    this.applicationToken = applicationToken;
+  }
 
-    public String getApplicationToken() {
-        return applicationToken;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setApplicationToken(String applicationToken) {
-        this.applicationToken = applicationToken;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public int getSequenceNumber() {
+    return sequenceNumber;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setSequenceNumber(int sequenceNumber) {
+    this.sequenceNumber = sequenceNumber;
+  }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
-    }
+  public Tenant getTenant() {
+    return tenant;
+  }
 
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
+  public void setTenant(Tenant tenant) {
+    this.tenant = tenant;
+  }
 
-    public Tenant getTenant() {
-        return tenant;
-    }
+  public String getCredentialsServiceName() {
+    return credentialsServiceName;
+  }
 
-    public void setTenant(Tenant tenant) {
-        this.tenant = tenant;
-    }
+  public void setCredentialsServiceName(String credentialsServiceName) {
+    this.credentialsServiceName = credentialsServiceName;
+  }
 
-    public String getCredentialsServiceName() {
-        return credentialsServiceName;
-    }
+  public int incrementSequenceNumber() {
+    return ++sequenceNumber;
+  }
 
-    public void setCredentialsServiceName(String credentialsServiceName) {
-        this.credentialsServiceName = credentialsServiceName;
-    }
+  @Override
+  public String toString() {
+    return "Application [id=" + id
+            + ", applicationToken=" + applicationToken
+            + ", name=" + name
+            + ", sequenceNumber=" + sequenceNumber
+            + ", tenant=" + tenant
+            + ", credentialsServiceName=" + credentialsServiceName + "]";
+  }
 
-    public int incrementSequenceNumber() {
-        return ++sequenceNumber;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + sequenceNumber;
+    result = prime * result + ((tenant == null) ? 0 : tenant.hashCode());
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        return "Application [id=" + id + ", applicationToken=" + applicationToken + ", name=" + name + ", sequenceNumber=" + sequenceNumber
-                + ", tenant=" + tenant + ", credentialsServiceName=" + credentialsServiceName + "]";
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Application other = (Application) obj;
+    if (applicationToken == null) {
+      if (other.applicationToken != null) {
+        return false;
+      }
+    } else if (!applicationToken.equals(other.applicationToken)) {
+      return false;
+    }
+    if (id == null) {
+      if (other.id != null) {
+        return false;
+      }
+    } else if (!id.equals(other.id)) {
+      return false;
+    }
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
+    if (sequenceNumber != other.sequenceNumber) {
+      return false;
+    }
+    if (tenant == null) {
+      if (other.tenant != null) {
+        return false;
+      }
+    } else if (!tenant.equals(other.tenant)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((applicationToken == null) ? 0 : applicationToken.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + sequenceNumber;
-        result = prime * result + ((tenant == null) ? 0 : tenant.hashCode());
-        return result;
-    }
+  @Override
+  protected ApplicationDto createDto() {
+    return new ApplicationDto();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Application other = (Application) obj;
-        if (applicationToken == null) {
-            if (other.applicationToken != null) {
-                return false;
-            }
-        } else if (!applicationToken.equals(other.applicationToken)) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (sequenceNumber != other.sequenceNumber) {
-            return false;
-        }
-        if (tenant == null) {
-            if (other.tenant != null) {
-                return false;
-            }
-        } else if (!tenant.equals(other.tenant)) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  protected GenericModel<ApplicationDto> newInstance(Long id) {
+    return new Application(id);
+  }
 
-    @Override
-    protected ApplicationDto createDto() {
-        return new ApplicationDto();
+  @Override
+  public ApplicationDto toDto() {
+    ApplicationDto dto = createDto();
+    dto.setId(getStringId());
+    dto.setApplicationToken(applicationToken);
+    dto.setName(name);
+    dto.setSequenceNumber(sequenceNumber);
+    if (tenant != null) {
+      dto.setTenantId(tenant.getStringId());
     }
-
-    @Override
-    protected GenericModel<ApplicationDto> newInstance(Long id) {
-        return new Application(id);
-    }
-
-    @Override
-    public ApplicationDto toDto() {
-        ApplicationDto dto = createDto();
-        dto.setId(getStringId());
-        dto.setApplicationToken(applicationToken);
-        dto.setName(name);
-        dto.setSequenceNumber(sequenceNumber);
-        if (tenant != null) {
-            dto.setTenantId(tenant.getStringId());
-        }
-        dto.setCredentialsServiceName(credentialsServiceName);
-        return dto;
-    }
+    dto.setCredentialsServiceName(credentialsServiceName);
+    return dto;
+  }
 }

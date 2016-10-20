@@ -16,108 +16,114 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.Serializable;
 
 public abstract class StructureRecordDto<T extends AbstractStructureDto> implements Serializable {
 
-    private static final long serialVersionUID = -1326052725635723124L;
+  private static final long serialVersionUID = -1326052725635723124L;
 
-    protected T activeStructureDto;
-    protected T inactiveStructureDto;
+  protected T activeStructureDto;
+  protected T inactiveStructureDto;
 
-    public StructureRecordDto() {
-    }
+  public StructureRecordDto() {
+  }
 
-    public StructureRecordDto(T activeStructureDto, T inactiveStructureDto) {
-        this.activeStructureDto = activeStructureDto;
-        this.inactiveStructureDto = inactiveStructureDto;
-    }
+  public StructureRecordDto(T activeStructureDto, T inactiveStructureDto) {
+    this.activeStructureDto = activeStructureDto;
+    this.inactiveStructureDto = inactiveStructureDto;
+  }
 
-    public T getActiveStructureDto() {
-        return activeStructureDto;
-    }
-    public void setActiveStructureDto(T activeStructureDto) {
-        this.activeStructureDto = activeStructureDto;
-    }
-    public T getInactiveStructureDto() {
-        return inactiveStructureDto;
-    }
-    public void setInactiveStructureDto(T inactiveStructureDto) {
-        this.inactiveStructureDto = inactiveStructureDto;
-    }
-    
-    @JsonIgnore
-    public boolean isEmpty() {
-        return activeStructureDto == null && inactiveStructureDto == null;
-    }
+  public T getActiveStructureDto() {
+    return activeStructureDto;
+  }
 
-    @JsonIgnore
-    public String getDescription() {
-        return activeStructureDto != null ? activeStructureDto.getDescription() : inactiveStructureDto.getDescription();
-    }
+  public void setActiveStructureDto(T activeStructureDto) {
+    this.activeStructureDto = activeStructureDto;
+  }
 
-    @JsonIgnore
-    public long getEndpointCount() {
-        return activeStructureDto != null ? activeStructureDto.getEndpointCount() : 0;
-    }
+  public T getInactiveStructureDto() {
+    return inactiveStructureDto;
+  }
 
-    @JsonIgnore
-    public boolean hasActive() {
-        return activeStructureDto != null;
-    }
+  public void setInactiveStructureDto(T inactiveStructureDto) {
+    this.inactiveStructureDto = inactiveStructureDto;
+  }
 
-    @JsonIgnore
-    public boolean hasDeprecated() {
-        return activeStructureDto != null && activeStructureDto.getStatus()==UpdateStatus.DEPRECATED;
-    }
+  @JsonIgnore
+  public boolean isEmpty() {
+    return activeStructureDto == null && inactiveStructureDto == null;
+  }
 
-    @JsonIgnore
-    public boolean hasDraft() {
-        return inactiveStructureDto != null;
-    }
+  @JsonIgnore
+  public String getDescription() {
+    return activeStructureDto != null ? activeStructureDto.getDescription() :
+            inactiveStructureDto.getDescription();
+  }
 
-    @JsonIgnore
-    public String getEndpointGroupId() {
-        return activeStructureDto != null ? activeStructureDto.getEndpointGroupId() : inactiveStructureDto.getEndpointGroupId();
-    }
+  @JsonIgnore
+  public long getEndpointCount() {
+    return activeStructureDto != null ? activeStructureDto.getEndpointCount() : 0;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        StructureRecordDto other = (StructureRecordDto) obj;
-        if (activeStructureDto == null) {
-            if (other.activeStructureDto != null) {
-                return false;
-            }
-        } else if (!activeStructureDto.equals(other.activeStructureDto)) {
-            return false;
-        }
-        if (inactiveStructureDto == null) {
-            if (other.inactiveStructureDto != null) {
-                return false;
-            }
-        } else if (!inactiveStructureDto.equals(other.inactiveStructureDto)) {
-            return false;
-        }
-        return true;
-    }
+  @JsonIgnore
+  public boolean hasActive() {
+    return activeStructureDto != null;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((activeStructureDto == null) ? 0 : activeStructureDto.hashCode());
-        result = prime * result + ((inactiveStructureDto == null) ? 0 : inactiveStructureDto.hashCode());
-        return result;
+  @JsonIgnore
+  public boolean hasDeprecated() {
+    return activeStructureDto != null && activeStructureDto.getStatus() == UpdateStatus.DEPRECATED;
+  }
+
+  @JsonIgnore
+  public boolean hasDraft() {
+    return inactiveStructureDto != null;
+  }
+
+  @JsonIgnore
+  public String getEndpointGroupId() {
+    return activeStructureDto != null ? activeStructureDto.getEndpointGroupId() :
+            inactiveStructureDto.getEndpointGroupId();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    StructureRecordDto other = (StructureRecordDto) obj;
+    if (activeStructureDto == null) {
+      if (other.activeStructureDto != null) {
+        return false;
+      }
+    } else if (!activeStructureDto.equals(other.activeStructureDto)) {
+      return false;
+    }
+    if (inactiveStructureDto == null) {
+      if (other.inactiveStructureDto != null) {
+        return false;
+      }
+    } else if (!inactiveStructureDto.equals(other.inactiveStructureDto)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((activeStructureDto == null) ? 0 : activeStructureDto.hashCode());
+    result = prime * result + ((inactiveStructureDto == null) ? 0 :
+                                       inactiveStructureDto.hashCode());
+    return result;
+  }
 }

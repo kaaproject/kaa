@@ -17,65 +17,64 @@
 package org.kaaproject.kaa.server.sync;
 
 public final class ProfileServerSync {
-    private SyncResponseStatus responseStatus;
+  private SyncResponseStatus responseStatus;
 
-    public ProfileServerSync() {
+  public ProfileServerSync() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public ProfileServerSync(SyncResponseStatus responseStatus) {
+    this.responseStatus = responseStatus;
+  }
+
+  /**
+   * Gets the value of the 'responseStatus' field.
+   */
+  public SyncResponseStatus getResponseStatus() {
+    return responseStatus;
+  }
+
+  /**
+   * Sets the value of the 'responseStatus' field.
+   *
+   * @param value the value to set.
+   */
+  public void setResponseStatus(SyncResponseStatus value) {
+    this.responseStatus = value;
+  }
+
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    /**
-     * All-args constructor.
-     */
-    public ProfileServerSync(SyncResponseStatus responseStatus) {
-        this.responseStatus = responseStatus;
+    ProfileServerSync that = (ProfileServerSync) object;
+
+    if (responseStatus != that.responseStatus) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'responseStatus' field.
-     */
-    public SyncResponseStatus getResponseStatus() {
-        return responseStatus;
-    }
+    return true;
+  }
 
-    /**
-     * Sets the value of the 'responseStatus' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setResponseStatus(SyncResponseStatus value) {
-        this.responseStatus = value;
-    }
+  @Override
+  public int hashCode() {
+    return responseStatus != null ? responseStatus.hashCode() : 0;
+  }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        ProfileServerSync that = (ProfileServerSync) o;
-
-        if (responseStatus != that.responseStatus) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return responseStatus != null ? responseStatus.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ProfileServerSync [responseStatus=");
-        builder.append(responseStatus);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ProfileServerSync [responseStatus=");
+    builder.append(responseStatus);
+    builder.append("]");
+    return builder.toString();
+  }
 }

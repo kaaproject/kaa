@@ -20,43 +20,44 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode;
 
 public class CallbacksTest {
 
-    @Test
-    public void multiLogDeliveryCallbackTest() {
-        MultiLogDeliveryCallback callback;
-        ActorSystem system = ActorSystem.create("actorSystem");
-        ActorRef actorRef = system.actorOf(Props.create(TestActor.class));
-        callback = new MultiLogDeliveryCallback(actorRef, 1, 1);
-        Assert.assertNotNull(callback);
-        callback.onSuccess();
-        callback = new MultiLogDeliveryCallback(actorRef, 1, 3);
-        callback.onSuccess();
-        callback.sendSuccessToEndpoint();
-        callback.sendFailureToEndpoint(LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR);
-        callback.onInternalError();
-        callback.onRemoteError();
-        callback.onConnectionError();
-    }
+  @Test
+  public void multiLogDeliveryCallbackTest() {
+    MultiLogDeliveryCallback callback;
+    ActorSystem system = ActorSystem.create("actorSystem");
+    ActorRef actorRef = system.actorOf(Props.create(TestActor.class));
+    callback = new MultiLogDeliveryCallback(actorRef, 1, 1);
+    Assert.assertNotNull(callback);
+    callback.onSuccess();
+    callback = new MultiLogDeliveryCallback(actorRef, 1, 3);
+    callback.onSuccess();
+    callback.sendSuccessToEndpoint();
+    callback.sendFailureToEndpoint(LogDeliveryErrorCode.APPENDER_INTERNAL_ERROR);
+    callback.onInternalError();
+    callback.onRemoteError();
+    callback.onConnectionError();
+  }
 
-    @Test
-    public void singleLogDeliveryCallbackTest() {
-        SingleLogDeliveryCallback callback;
-        ActorSystem system = ActorSystem.create("actorSystem");
-        ActorRef actorRef = system.actorOf(Props.create(TestActor.class));
-        callback = new SingleLogDeliveryCallback(actorRef, 1);
-        Assert.assertNotNull(callback);
-    }
+  @Test
+  public void singleLogDeliveryCallbackTest() {
+    SingleLogDeliveryCallback callback;
+    ActorSystem system = ActorSystem.create("actorSystem");
+    ActorRef actorRef = system.actorOf(Props.create(TestActor.class));
+    callback = new SingleLogDeliveryCallback(actorRef, 1);
+    Assert.assertNotNull(callback);
+  }
 
-    private static class TestActor extends UntypedActor {
-        @Override
-        public void onReceive(Object arg0) throws Exception {
-            unhandled(arg0);
-        }
+  private static class TestActor extends UntypedActor {
+    @Override
+    public void onReceive(Object arg0) throws Exception {
+      unhandled(arg0);
     }
+  }
 
 }

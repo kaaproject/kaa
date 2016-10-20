@@ -16,6 +16,13 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
+
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.LogAppenderDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
@@ -27,57 +34,53 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MAX_LOG_SCHEMA_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_APPENDER_MIN_LOG_SCHEMA_VERSION;
-
 @Repository
-public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender> implements LogAppenderDao<LogAppender> {
+public class HibernateLogAppenderDao extends HibernateAbstractDao<LogAppender>
+        implements LogAppenderDao<LogAppender> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateLogAppenderDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateLogAppenderDao.class);
 
-    @Override
-    protected Class<LogAppender> getEntityClass() {
-        return LogAppender.class;
+  @Override
+  protected Class<LogAppender> getEntityClass() {
+    return LogAppender.class;
+  }
+
+  @Override
+  public List<LogAppender> findByAppId(String appId) {
+    LOG.debug("Searching log appenders by application id [{}]", appId);
+    List<LogAppender> appenders = Collections.emptyList();
+    if (isNotBlank(appId)) {
+      appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
     }
-
-    @Override
-    public List<LogAppender> findByAppId(String appId) {
-        LOG.debug("Searching log appenders by application id [{}]", appId);
-        List<LogAppender> appenders = Collections.emptyList();
-        if (isNotBlank(appId)) {
-            appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(appenders.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", appId, appenders.size());
-        }
-        return appenders;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(appenders.toArray()));
+    } else {
+      LOG.debug("[{}] Search result: {}.", appId, appenders.size());
     }
+    return appenders;
+  }
 
-    @Override
-    public List<LogAppender> findByAppIdAndSchemaVersion(String appId, int schemaVersion) {
-        LOG.debug("Searching log appenders by application id [{}] and schema version [{}]", appId, schemaVersion);
-        List<LogAppender> appenders = Collections.emptyList();
-        if (isNotBlank(appId)) {
-            appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.le(LOG_APPENDER_MIN_LOG_SCHEMA_VERSION, schemaVersion),
-                            Restrictions.ge(LOG_APPENDER_MAX_LOG_SCHEMA_VERSION, schemaVersion))
-            );
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{}] Search result: {}.", appId, schemaVersion, Arrays.toString(appenders.toArray()));
-        } else {
-            LOG.debug("[{},{}] Search result: {}.", appId, schemaVersion, appenders.size());
-        }
-        return appenders;
+  @Override
+  public List<LogAppender> findByAppIdAndSchemaVersion(String appId, int schemaVersion) {
+    LOG.debug("Searching log appenders by application id [{}] and schema version [{}]",
+            appId, schemaVersion);
+    List<LogAppender> appenders = Collections.emptyList();
+    if (isNotBlank(appId)) {
+      appenders = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.and(
+              Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+              Restrictions.le(LOG_APPENDER_MIN_LOG_SCHEMA_VERSION, schemaVersion),
+              Restrictions.ge(LOG_APPENDER_MAX_LOG_SCHEMA_VERSION, schemaVersion))
+      );
     }
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{},{}] Search result: {}.", appId, schemaVersion,
+              Arrays.toString(appenders.toArray()));
+    } else {
+      LOG.debug("[{},{}] Search result: {}.", appId, schemaVersion, appenders.size());
+    }
+    return appenders;
+  }
 
 }

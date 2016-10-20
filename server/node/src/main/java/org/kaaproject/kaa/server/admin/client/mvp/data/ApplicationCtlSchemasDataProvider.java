@@ -18,44 +18,49 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class ApplicationCtlSchemasDataProvider extends AbstractDataProvider<CTLSchemaMetaInfoDto, String>{
+public class ApplicationCtlSchemasDataProvider
+    extends AbstractDataProvider<CtlSchemaMetaInfoDto, String> {
 
-    private String applicationId;
-    
-    public ApplicationCtlSchemasDataProvider(AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid,
-                                    HasErrorMessage hasErrorMessage,
-                                    String applicationId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        addDataDisplay();
+  private String applicationId;
+
+  /**
+   * All-args constructor.
+   */
+  public ApplicationCtlSchemasDataProvider(AbstractGrid<CtlSchemaMetaInfoDto, String> dataGrid,
+                                           HasErrorMessage hasErrorMessage,
+                                           String applicationId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    addDataDisplay();
+  }
+
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    if (!isEmpty(applicationId)) {
+      KaaAdmin.getDataSource().getApplicationLevelCtlSchemas(applicationId,
+          new AsyncCallback<List<CtlSchemaMetaInfoDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              callback.onFailure(caught);
+
+            }
+
+            @Override
+            public void onSuccess(List<CtlSchemaMetaInfoDto> result) {
+              callback.onSuccess(result);
+            }
+          });
     }
-
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        if (!isEmpty(applicationId)) {
-            KaaAdmin.getDataSource().getApplicationLevelCTLSchemas(applicationId, 
-                    new AsyncCallback<List<CTLSchemaMetaInfoDto>>() {
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            callback.onFailure(caught);
-            
-                        }
-                        @Override
-                        public void onSuccess(List<CTLSchemaMetaInfoDto> result) {
-                            callback.onSuccess(result);
-                        }
-                    });
-        }
-    }
+  }
 
 }

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import java.util.Random;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
@@ -25,37 +23,39 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 
+import java.util.Random;
+
 public class EndpointGroupStateTest {
 
-    public static final Random RANDOM = new Random();
-    public static final int LIMIT = 1000000;
+  public static final Random RANDOM = new Random();
+  public static final int LIMIT = 1000000;
 
-    @Test
-    public void EndpointStateTest(){
-        EndpointGroupStateDto state = new EndpointGroupStateDto();
+  @Test
+  public void EndpointStateTest() {
+    EndpointGroupStateDto state = new EndpointGroupStateDto();
 
-        String groupId = String.valueOf(RANDOM.nextInt(LIMIT));
-        String filterId = String.valueOf(RANDOM.nextInt(LIMIT));
-        String configId = String.valueOf(RANDOM.nextInt(LIMIT));
-        state.setConfigurationId(configId);
-        state.setProfileFilterId(filterId);
-        state.setEndpointGroupId(groupId);
+    String groupId = String.valueOf(RANDOM.nextInt(LIMIT));
+    String filterId = String.valueOf(RANDOM.nextInt(LIMIT));
+    String configId = String.valueOf(RANDOM.nextInt(LIMIT));
+    state.setConfigurationId(configId);
+    state.setProfileFilterId(filterId);
+    state.setEndpointGroupId(groupId);
 
-        EndpointGroupState stateOne = new EndpointGroupState(state);
-        EndpointGroupState stateTwo = new EndpointGroupState();
-        stateTwo.setConfigurationId(configId);
-        stateTwo.setProfileFilterId(filterId);
-        stateTwo.setEndpointGroupId(groupId);
-        Assert.assertEquals(stateOne, stateTwo);
-        Assert.assertEquals(stateOne.hashCode(), stateTwo.hashCode());
-        Assert.assertEquals(stateOne.toDto(), stateTwo.toDto());
-        Assert.assertEquals(stateOne.toString(), stateTwo.toString());
-    }
+    EndpointGroupState stateOne = new EndpointGroupState(state);
+    EndpointGroupState stateTwo = new EndpointGroupState();
+    stateTwo.setConfigurationId(configId);
+    stateTwo.setProfileFilterId(filterId);
+    stateTwo.setEndpointGroupId(groupId);
+    Assert.assertEquals(stateOne, stateTwo);
+    Assert.assertEquals(stateOne.hashCode(), stateTwo.hashCode());
+    Assert.assertEquals(stateOne.toDto(), stateTwo.toDto());
+    Assert.assertEquals(stateOne.toString(), stateTwo.toString());
+  }
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(EndpointGroupState.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(EndpointGroupState.class).suppress(Warning.NONFINAL_FIELDS).withRedefinedSuperclass().verify();
+  }
 
 
 }

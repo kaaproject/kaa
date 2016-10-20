@@ -27,53 +27,54 @@ package org.kaaproject.kaa.client.logging;
  */
 public interface LogStorage {
 
-    /**
-     * Persists a log record.
-     *
-     * @param record The {@link LogRecord} object.
-     * @return The {@link BucketInfo} object which contains information about a bucket the log record is added.
-     * @see LogRecord
-     * @see BucketInfo
-     */
-    BucketInfo addLogRecord(LogRecord record);
+  /**
+   * Persists a log record.
+   *
+   * @param record The {@link LogRecord} object.
+   * @return The {@link BucketInfo} object which contains information about a bucket the log record
+   *         is added.
+   * @see LogRecord
+   * @see BucketInfo
+   */
+  BucketInfo addLogRecord(LogRecord record);
 
-    /**
-     * Returns a log storage status.
-     *
-     * @return The {@link LogStorageStatus} object.
-     * @see LogStorageStatus
-     */
-    LogStorageStatus getStatus();
+  /**
+   * Returns a log storage status.
+   *
+   * @return The {@link LogStorageStatus} object.
+   * @see LogStorageStatus
+   */
+  LogStorageStatus getStatus();
 
-    /**
-     * Returns a new log bucket.
-     *
-     * @return The {@link  LogBucket} object or <i>null</i> if there is no logs.
-     * @see LogBucket
-     */
-    LogBucket getNextBucket();
+  /**
+   * Returns a new log bucket.
+   *
+   * @return The {@link  LogBucket} object or <i>null</i> if there is no logs.
+   * @see LogBucket
+   */
+  LogBucket getNextBucket();
 
-    /**
-     * Tells a log storage to remove a log bucket.
-     *
-     * @param bucketId The id of a log bucket.
-     * @see LogBucket
-     * @see BucketInfo
-     */
-    void removeBucket(int bucketId);
+  /**
+   * Tells a log storage to remove a log bucket.
+   *
+   * @param bucketId The id of a log bucket.
+   * @see LogBucket
+   * @see BucketInfo
+   */
+  void removeBucket(int bucketId);
 
-    /**
-     * Tells a log storage to consider a log bucket as unused, i.e. a log bucket will
-     * be accessible again via {@link #getNextBucket()}.
-     *
-     * @param bucketId The id of a log bucket.
-     * @see LogBucket
-     * @see BucketInfo
-     */
-    void rollbackBucket(int bucketId);
+  /**
+   * Tells a log storage to consider a log bucket as unused, i.e. a log bucket will
+   * be accessible again via {@link #getNextBucket()}.
+   *
+   * @param bucketId The id of a log bucket.
+   * @see LogBucket
+   * @see BucketInfo
+   */
+  void rollbackBucket(int bucketId);
 
-    /**
-     * Closes a log storage and releases all used resources (if any).
-     */
-    void close();
+  /**
+   * Closes a log storage and releases all used resources (if any).
+   */
+  void close();
 }

@@ -31,23 +31,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class MongoDBLogAppenderServiceImplTest extends LogAppenderServiceImplTest {
 
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
+  @BeforeClass
+  public static void init() throws Exception {
+    MongoDBTestRunner.setUp();
+  }
 
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
+  @AfterClass
+  public static void after() throws Exception {
+    MongoDBTestRunner.tearDown();
+  }
 
-    @Before
-    public void beforeTest() {
-        super.beforeTest();
-    }
+  @Before
+  public void beforeTest() {
+    super.beforeTest();
+  }
 
-    @After
-    public void afterTest() {
-        super.afterTest();
-    }
+  @After
+  public void afterTest() {
+    super.afterTest();
+  }
 }

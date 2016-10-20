@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
+
+import java.util.List;
 
 /**
  * The Interface NotificationDao.
@@ -28,32 +28,35 @@ import org.kaaproject.kaa.server.common.dao.model.Notification;
  */
 public interface NotificationDao<T extends Notification> extends Dao<T, String> {
 
-    T save(NotificationDto notification);
+  T save(NotificationDto notification);
 
-    /**
-     * Find notifications by topic id.
-     *
-     * @param topicId the topic id
-     * @return the list of notifications
-     */
-    List<T> findNotificationsByTopicId(String topicId);
+  /**
+   * Find notifications by topic id.
+   *
+   * @param topicId the topic id
+   * @return the list of notifications
+   */
+  List<T> findNotificationsByTopicId(String topicId);
 
-    /**
-     * Removes the notifications by topic id.
-     *
-     * @param topicId the topic id
-     */
-    void removeNotificationsByTopicId(String topicId);
+  /**
+   * Removes the notifications by topic id.
+   *
+   * @param topicId the topic id
+   */
+  void removeNotificationsByTopicId(String topicId);
 
-    /**
-     * Find notifications by topic id,
-     * notification schema version and start sequence number.
-     *
-     * @param topicId the topic id
-     * @param seqNum the sequence number
-     * @param sysNfVersion the system notification version
-     * @param userNfVersion the user notification version
-     * @return the list of notifications
-     */
-    List<T> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNum, int sysNfVersion, int userNfVersion);
+  /**
+   * Find notifications by topic id,
+   * notification schema version and start sequence number.
+   *
+   * @param topicId       the topic id
+   * @param seqNum        the sequence number
+   * @param sysNfVersion  the system notification version
+   * @param userNfVersion the user notification version
+   * @return the list of notifications
+   */
+  List<T> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId,
+                                                             int seqNum,
+                                                             int sysNfVersion,
+                                                             int userNfVersion);
 }

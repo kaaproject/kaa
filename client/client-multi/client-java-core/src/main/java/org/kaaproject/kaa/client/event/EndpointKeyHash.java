@@ -18,55 +18,54 @@ package org.kaaproject.kaa.client.event;
 
 /**
  * Represents endpoint key hash returned from OPS after it was successfully attached.
- *
  */
 public class EndpointKeyHash {
 
-    private String keyHash;
+  private String keyHash;
 
-    public EndpointKeyHash(String keyHash) {
-        this.keyHash = keyHash;
-    }
+  public EndpointKeyHash(String keyHash) {
+    this.keyHash = keyHash;
+  }
 
-    public String getKeyHash() {
-        return keyHash;
-    }
+  public String getKeyHash() {
+    return keyHash;
+  }
 
-    public void setKeyHash(String keyHash) {
-        this.keyHash = keyHash;
-    }
-    
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((keyHash == null) ? 0 : keyHash.hashCode());
-        return result;
-    }
+  public void setKeyHash(String keyHash) {
+    this.keyHash = keyHash;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointKeyHash other = (EndpointKeyHash) obj;
-        if (keyHash == null) {
-            if (other.keyHash != null) {
-                return false;
-            }
-        } else if (!keyHash.equals(other.keyHash)) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((keyHash == null) ? 0 : keyHash.hashCode());
+    return result;
+  }
 
-    public String toString() {
-        return keyHash;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    EndpointKeyHash other = (EndpointKeyHash) obj;
+    if (keyHash == null) {
+      if (other.keyHash != null) {
+        return false;
+      }
+    } else if (!keyHash.equals(other.keyHash)) {
+      return false;
+    }
+    return true;
+  }
+
+  public String toString() {
+    return keyHash;
+  }
 }

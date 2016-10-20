@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.common.channels.protocols.kaatcp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.ConnAck;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Disconnect;
@@ -32,118 +28,126 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Kaatcp Framer Class.
- * Used to cut incoming byte stream into MQTT frames, and deliver frames to {@link MqttFramelistener}.
- * Framer Class typically used from {@link MessageFactory} Class.
+ * Kaatcp Framer Class. Used to cut incoming byte stream into MQTT frames, and deliver frames to
+ * {@link MqttFramelistener}. Framer Class typically used from {@link MessageFactory} Class.
  *
  * @author Andrey Panasenko
- *
  */
 public class Framer {
 
-    public static final Logger LOG = LoggerFactory //NOSONAR
-            .getLogger(Framer.class);
+  public static final Logger LOG = LoggerFactory //NOSONAR
+      .getLogger(Framer.class);
 
-    /** Mqtt frame listeners list */
-    private final List<MqttFramelistener> listeners;
+  /**
+   * Mqtt frame listeners list.
+   */
+  private final List<MqttFramelistener> listeners;
 
-    /** Current processing frame */
-    private MqttFrame currentFrame;
-    
-    /**
-     * Default constructor.
-     */
-    public Framer() {
-        listeners = new ArrayList<>();
+  /**
+   * Current processing frame.
+   */
+  private MqttFrame currentFrame;
 
+  /**
+   * Default constructor.
+   */
+  public Framer() {
+    listeners = new ArrayList<>();
+
+  }
+
+  /**
+   * Register Mqtt frame listener.
+   *
+   * @param listener MqttFramelistener
+   */
+  public void registerFrameListener(MqttFramelistener listener) {
+    listeners.add(listener);
+  }
+
+  /**
+   * Process incoming bytes stream.
+   * Assumes that bytes is unprocessed bytes.
+   * In case of previous  pushBytes() eaten not all bytes on next iterations
+   * bytes array should starts from unprocessed bytes.
+   *
+   * @param bytes byte[] to push
+   * @return number of bytes processed from this array.
+   * @throws KaaTcpProtocolException throws in case of protocol errors.
+   */
+  public int pushBytes(byte[] bytes) throws KaaTcpProtocolException {
+    if (LOG.isTraceEnabled()) {
+      if (bytes != null) {
+        LOG.trace("Received bytes: {}", Arrays.toString(bytes));
+      }
     }
+    int used = 0;
 
-    /**
-     * Register Mqtt frame listener.
-     * @param listener MqttFramelistener 
-     */
-    public void registerFrameListener(MqttFramelistener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * Process incoming bytes stream.
-     * Assumes that bytes is unprocessed bytes.
-     * In case of previous  pushBytes() eaten not all bytes on next iterations
-     *  bytes array should starts from unprocessed bytes.
-     * @param bytes byte[] to push
-     * @return number of bytes processed from this array.
-     * @throws KaaTcpProtocolException throws in case of protocol errors.
-     */
-    public int pushBytes(byte[] bytes) throws KaaTcpProtocolException {
-        if(LOG.isTraceEnabled()){
-            if(bytes != null){
-                LOG.trace("Received bytes: {}", Arrays.toString(bytes));
-            }
-        }
-        int used = 0;
-
-        while (bytes.length > used) {
-            if (currentFrame == null) {
-                if ((bytes.length - used) >= 1) { // 1 bytes minimum header length
-                    int intType = bytes[used] & 0xFF;
-                    currentFrame = getFrameByType((byte) (intType >> 4));
-                    ++used;
-                } else {
-                    break;
-                }
-            }
-            used += currentFrame.push(bytes, used);
-            if(currentFrame.decodeComplete()) {
-                callListeners(currentFrame.upgradeFrame());
-                currentFrame = null;
-            }
-        }
-        return used;
-    }
-
-    /**
-     * Notify all listeners on new Frame
-     * @param frame
-     */
-    private void callListeners(MqttFrame frame) {
-        for(MqttFramelistener listener : listeners) {
-            listener.onMqttFrame(frame);
-        }
-    }
-
-    /**
-     * Creates specific Kaatcp message by MessageType
-     * @param type - MessageType of mqttFrame
-     * @return mqttFrame
-     * @throws KaaTcpProtocolException if specified type is unsupported
-     */
-    private MqttFrame getFrameByType(byte type) throws KaaTcpProtocolException {
-        MqttFrame frame = null;
-        if (type == MessageType.CONNACK.getType()) {
-            frame = new ConnAck();
-        } else if (type == MessageType.CONNECT.getType()) {
-            frame = new Connect();
-        } else if (type == MessageType.DISCONNECT.getType()) {
-            frame = new Disconnect();
-        } else if (type == MessageType.KAASYNC.getType()) {
-            frame = new KaaSync();
-        } else if (type == MessageType.PINGREQ.getType()) {
-            frame = new PingRequest();
-        } else if (type == MessageType.PINGRESP.getType()) {
-            frame = new PingResponse();
+    while (bytes.length > used) {
+      if (currentFrame == null) {
+        if ((bytes.length - used) >= 1) { // 1 bytes minimum header length
+          int intType = bytes[used] & 0xFF;
+          currentFrame = getFrameByType((byte) (intType >> 4));
+          ++used;
         } else {
-            throw new KaaTcpProtocolException("Got incorrect messageType format " + type );
+          break;
         }
-
-        return frame;
-    }
-
-    /**
-     * Reset Framer state by dropping currentFrame.
-     */
-    public void flush() {
+      }
+      used += currentFrame.push(bytes, used);
+      if (currentFrame.decodeComplete()) {
+        callListeners(currentFrame.upgradeFrame());
         currentFrame = null;
+      }
     }
+    return used;
+  }
+
+  /**
+   * Notify all listeners on new Frame.
+   */
+  private void callListeners(MqttFrame frame) {
+    for (MqttFramelistener listener : listeners) {
+      listener.onMqttFrame(frame);
+    }
+  }
+
+  /**
+   * Creates specific Kaatcp message by MessageType.
+   *
+   * @param type - MessageType of mqttFrame
+   * @return mqttFrame
+   * @throws KaaTcpProtocolException if specified type is unsupported
+   */
+  private MqttFrame getFrameByType(byte type) throws KaaTcpProtocolException {
+    MqttFrame frame = null;
+    if (type == MessageType.CONNACK.getType()) {
+      frame = new ConnAck();
+    } else if (type == MessageType.CONNECT.getType()) {
+      frame = new Connect();
+    } else if (type == MessageType.DISCONNECT.getType()) {
+      frame = new Disconnect();
+    } else if (type == MessageType.KAASYNC.getType()) {
+      frame = new KaaSync();
+    } else if (type == MessageType.PINGREQ.getType()) {
+      frame = new PingRequest();
+    } else if (type == MessageType.PINGRESP.getType()) {
+      frame = new PingResponse();
+    } else {
+      throw new KaaTcpProtocolException("Got incorrect messageType format " + type);
+    }
+
+    return frame;
+  }
+
+  /**
+   * Reset Framer state by dropping currentFrame.
+   */
+  public void flush() {
+    currentFrame = null;
+  }
 }

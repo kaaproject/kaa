@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.messages;
 
-import java.util.UUID;
-
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.kaaproject.kaa.server.transport.message.AbstractMessage;
@@ -27,58 +25,64 @@ import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 import org.kaaproject.kaa.server.transports.http.transport.commands.AbstractHttpSyncCommand;
 
+import java.util.UUID;
+
 /**
  * The Class NettyCommandAwareMessage.
  */
 public class NettyHttpSyncMessage extends AbstractMessage implements SessionInitMessage {
 
-    private final AbstractHttpSyncCommand command;
+  private final AbstractHttpSyncCommand command;
 
-    public NettyHttpSyncMessage(UUID uuid, Integer platformId, ChannelContext channelContext, ChannelType channelType, AbstractHttpSyncCommand command,
-            MessageBuilder responseConverter, ErrorBuilder errorConverter) {
-        super(uuid, platformId, channelContext, channelType, responseConverter, errorConverter);
-        this.command = command;
-    }
+  public NettyHttpSyncMessage(
+          UUID uuid, Integer platformId, ChannelContext channelContext,
+          ChannelType channelType, AbstractHttpSyncCommand command,
+          MessageBuilder responseConverter, ErrorBuilder errorConverter
+  ) {
+    super(uuid, platformId, channelContext, channelType, responseConverter, errorConverter);
+    this.command = command;
+  }
 
-    /**
-     * Gets the command.
-     *
-     * @return the command
-     */
-    public AbstractHttpSyncCommand getCommand() {
-        return command;
-    }
+  /**
+   * Gets the command.
+   *
+   * @return the command
+   */
+  public AbstractHttpSyncCommand getCommand() {
+    return command;
+  }
 
-    @Override
-    public byte[] getEncodedMessageData() {
-        return getCommand().getRequestData();
-    }
+  @Override
+  public byte[] getEncodedMessageData() {
+    return getCommand().getRequestData();
+  }
 
-    @Override
-    public byte[] getEncodedSessionKey() {
-        return getCommand().getRequestkey();
-    }
+  @Override
+  public byte[] getEncodedSessionKey() {
+    return getCommand().getRequestkey();
+  }
 
-    @Override
-    public byte[] getSessionKeySignature() {
-        return getCommand().getRequestSignature();
-    }
+  @Override
+  public byte[] getSessionKeySignature() {
+    return getCommand().getRequestSignature();
+  }
 
-    @Override
-    public void onSessionCreated(SessionInfo session) {
-        // TODO Auto-generated method stub
-    }
+  @Override
+  public void onSessionCreated(SessionInfo session) {
+    // TODO Auto-generated method stub
+  }
 
-    @Override
-    public int getKeepAlive() {
-        return 0;
-    }
+  @Override
+  public int getKeepAlive() {
+    return 0;
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request#isEncrypted()
-     */
-    @Override
-    public boolean isEncrypted() {
-        return true;
-    }
+  /* (non-Javadoc)
+   * @see
+   * org.kaaproject.kaa.server.operations.service.akka.messages.io.request.Request#isEncrypted()
+   */
+  @Override
+  public boolean isEncrypted() {
+    return true;
+  }
 }

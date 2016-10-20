@@ -25,14 +25,13 @@ import org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService;
  */
 public class CliClient extends CliThriftService.Client {
 
-    /**
-     * Instantiates a new cli client.
-     * 
-     * @param prot
-     *            the Trift Protocol
-     */
-    public CliClient(TProtocol prot) {
-        super(prot, prot);
-    }
+  /**
+   * Instantiates a new cli client.
+   *
+   * @param prot the Trift Protocol
+   */
+  public CliClient(TProtocol prot) {
+    super(prot, prot);
+  }
 
 }

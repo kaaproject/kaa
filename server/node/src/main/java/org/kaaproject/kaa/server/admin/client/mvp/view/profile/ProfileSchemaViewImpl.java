@@ -21,23 +21,23 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ProfileSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
-    public ProfileSchemaViewImpl(boolean create) {
-        super(create);
-    }
+  public ProfileSchemaViewImpl(boolean create) {
+    super(create);
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.addProfileSchema();
-    }
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.addProfileSchema();
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.endpointProfileSchema();
-    }
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.endpointProfileSchema();
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.profileSchemaDetails();
-    }
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.profileSchemaDetails();
+  }
 
 }

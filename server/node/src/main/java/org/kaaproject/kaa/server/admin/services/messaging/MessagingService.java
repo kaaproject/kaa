@@ -18,12 +18,17 @@ package org.kaaproject.kaa.server.admin.services.messaging;
 
 public interface MessagingService {
 
-    public void configureMailSender();
+  void configureMailSender();
 
-    public void sendTempPassword(final String username, final String password, final String email) throws Exception;
+  void sendTempPassword(final String username,
+                        final String password,
+                        final String email)throws Exception;
 
-    public void sendPasswordResetLink(final String passwordResetHash, final String username, final String email);
+  void sendPasswordResetLink(final String passwordResetHash,
+                             final String username,
+                             final String email);
 
-    public void sendPasswordAfterReset(final String username, final String password, final String email);
-
+  void sendPasswordAfterReset(final String username,
+                              final String password,
+                              final String email);
 }

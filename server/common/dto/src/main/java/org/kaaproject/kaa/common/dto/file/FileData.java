@@ -20,37 +20,37 @@ import java.io.Serializable;
 
 public class FileData implements Serializable {
 
-    private static final long serialVersionUID = 3882433108112980451L;
-    
-    private String fileName;
-    private byte[] fileData;
-    private String contentType;
-    
-    public FileData() {
-    }
+  private static final long serialVersionUID = 3882433108112980451L;
 
-    public String getFileName() {
-        return fileName;
-    }
+  private String fileName;
+  private byte[] fileData;
+  private String contentType;
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+  public FileData() {
+  }
 
-    public byte[] getFileData() {
-        return fileData;
-    }
+  public String getFileName() {
+    return fileName;
+  }
 
-    public void setFileData(byte[] fileData) {
-        this.fileData = fileData;
-    }
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-    public String getContentType() {
-        return contentType;
-    }
+  public byte[] getFileData() {
+    return fileData;
+  }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-    
+  public void setFileData(byte[] fileData) {
+    this.fileData = fileData;
+  }
+
+  public String getContentType() {
+    return contentType;
+  }
+
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
+
 }

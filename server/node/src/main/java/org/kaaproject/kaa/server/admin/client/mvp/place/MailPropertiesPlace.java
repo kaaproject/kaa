@@ -16,30 +16,30 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.Prefix;
+
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class MailPropertiesPlace extends AbstractPropertiesPlace {
 
-    public MailPropertiesPlace() {
-    }
+  public MailPropertiesPlace() {
+  }
 
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof MailPropertiesPlace);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.outgoingMail();
+  }
+
+  @Prefix(value = "mailProps")
+  public static class Tokenizer extends AbstractPropertiesPlace.Tokenizer<MailPropertiesPlace> {
     @Override
-    public boolean equals(Object obj) {
-        return obj != null && (obj instanceof MailPropertiesPlace);
+    public MailPropertiesPlace getPlace(String token) {
+      return new MailPropertiesPlace();
     }
-
-    @Prefix(value = "mailProps")
-    public static class Tokenizer extends AbstractPropertiesPlace.Tokenizer<MailPropertiesPlace> {
-        @Override
-        public MailPropertiesPlace getPlace(String token) {
-            return new MailPropertiesPlace();
-        }
-    }
-
-    @Override
-    public String getName() {
-        return Utils.constants.outgoingMail();
-    }
+  }
 }

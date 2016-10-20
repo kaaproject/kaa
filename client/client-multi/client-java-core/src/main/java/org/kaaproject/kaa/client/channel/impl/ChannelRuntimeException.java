@@ -18,26 +18,26 @@ package org.kaaproject.kaa.client.channel.impl;
 
 public class ChannelRuntimeException extends RuntimeException {
 
-    private static final long serialVersionUID = 5796829452648601671L;
+  private static final long serialVersionUID = 5796829452648601671L;
 
-    public ChannelRuntimeException() {
-    }
+  public ChannelRuntimeException() {
+  }
 
-    public ChannelRuntimeException(String message) {
-        super(message);
-    }
+  public ChannelRuntimeException(String message) {
+    super(message);
+  }
 
-    public ChannelRuntimeException(Throwable cause) {
-        super(cause);
-    }
+  public ChannelRuntimeException(Throwable cause) {
+    super(cause);
+  }
 
-    public ChannelRuntimeException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public ChannelRuntimeException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public ChannelRuntimeException(String message, Throwable cause,
-            boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+  public ChannelRuntimeException(String message, Throwable cause,
+                                 boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 
 }

@@ -18,9 +18,6 @@ package org.kaaproject.kaa.server.operations.service.delta;
 
 import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.kaaproject.kaa.common.dto.ChangeDto;
 import org.kaaproject.kaa.common.dto.ChangeType;
@@ -36,90 +33,93 @@ import org.kaaproject.kaa.server.operations.service.filter.FilterService;
 import org.kaaproject.kaa.server.operations.service.profile.ProfileService;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DefaultDeltaServiceTest {
 
-    private static final String DELTA_CALCULATOR_FACTORY = "deltaCalculatorFactory";
-    private static final String PROFILE_BODY = "dummy profile body";
-    private static final int PROFILE_VERSION = 1;
-    private static final int CONF_VERSION = 1;
-    private static final String FILTER_SERVICE = "filterService";
-    private static final RawBinaryDelta DELTA = new TestRawBinaryDelta("delta");
-    private static final String PROFILE_SERVICE = "profileService";
-    private static final String CACHE_SERVICE = "cacheService";
-    private static final EndpointObjectHash PROFILE_HASH = EndpointObjectHash.fromSHA1("profileHash");
-    private static final EndpointObjectHash ENDPOINT_KEY_HASH = EndpointObjectHash.fromSHA1("endpointKey");
-    private static final String TEST_APP = "testApp";
-    private static final EndpointObjectHash CONFIGURATION_HASH = EndpointObjectHash.fromSHA1("configurationHash");
-    private static final String NEW_CONF = "{ \"type\": \"newConf\" }";
-    private static final RawBinaryDelta NEW_CONF_DELTA = new TestRawBinaryDelta("{ \"type\": \"newConf\" }");
+  private static final String DELTA_CALCULATOR_FACTORY = "deltaCalculatorFactory";
+  private static final String PROFILE_BODY = "dummy profile body";
+  private static final int PROFILE_VERSION = 1;
+  private static final int CONF_VERSION = 1;
+  private static final String FILTER_SERVICE = "filterService";
+  private static final RawBinaryDelta DELTA = new TestRawBinaryDelta("delta");
+  private static final String PROFILE_SERVICE = "profileService";
+  private static final String CACHE_SERVICE = "cacheService";
+  private static final EndpointObjectHash PROFILE_HASH = EndpointObjectHash.fromSha1("profileHash");
+  private static final EndpointObjectHash ENDPOINT_KEY_HASH = EndpointObjectHash.fromSha1("endpointKey");
+  private static final String TEST_APP = "testApp";
+  private static final EndpointObjectHash CONFIGURATION_HASH = EndpointObjectHash.fromSha1("configurationHash");
+  private static final String NEW_CONF = "{ \"type\": \"newConf\" }";
+  private static final RawBinaryDelta NEW_CONF_DELTA = new TestRawBinaryDelta("{ \"type\": \"newConf\" }");
 
-    private DeltaService deltaService;
-    private CacheService cacheService;
-    private ProfileService profileService;
-    private FilterService filterService;
-    private DeltaCalculatorFactory deltaCalculatorFactory;
-    private DeltaCalculationAlgorithm deltaCalculator;
+  private DeltaService deltaService;
+  private CacheService cacheService;
+  private ProfileService profileService;
+  private FilterService filterService;
+  private DeltaCalculatorFactory deltaCalculatorFactory;
+  private DeltaCalculationAlgorithm deltaCalculator;
 
-    @Before
-    public void before() {
-        deltaService = new DefaultDeltaService();
-        cacheService = mock(CacheService.class);
-        profileService = mock(ProfileService.class);
-        filterService = mock(FilterService.class);
-        deltaCalculatorFactory = mock(DeltaCalculatorFactory.class);
-        deltaCalculator = mock(DeltaCalculationAlgorithm.class);
+  @Before
+  public void before() {
+    deltaService = new DefaultDeltaService();
+    cacheService = mock(CacheService.class);
+    profileService = mock(ProfileService.class);
+    filterService = mock(FilterService.class);
+    deltaCalculatorFactory = mock(DeltaCalculatorFactory.class);
+    deltaCalculator = mock(DeltaCalculationAlgorithm.class);
 
-        ReflectionTestUtils.setField(deltaService, CACHE_SERVICE, cacheService);
-        ReflectionTestUtils.setField(deltaService, PROFILE_SERVICE, profileService);
-        ReflectionTestUtils.setField(deltaService, FILTER_SERVICE, filterService);
-        ReflectionTestUtils.setField(deltaService, DELTA_CALCULATOR_FACTORY, deltaCalculatorFactory);
+    ReflectionTestUtils.setField(deltaService, CACHE_SERVICE, cacheService);
+    ReflectionTestUtils.setField(deltaService, PROFILE_SERVICE, profileService);
+    ReflectionTestUtils.setField(deltaService, FILTER_SERVICE, filterService);
+    ReflectionTestUtils.setField(deltaService, DELTA_CALCULATOR_FACTORY, deltaCalculatorFactory);
+  }
+
+  private List<EndpointGroupStateDto> createGroupList(EndpointGroupStateDto... groups) {
+    List<EndpointGroupStateDto> result = new ArrayList<EndpointGroupStateDto>();
+    for (EndpointGroupStateDto group : groups) {
+      result.add(group);
     }
+    return result;
+  }
 
-    private List<EndpointGroupStateDto> createGroupList(EndpointGroupStateDto... groups) {
-        List<EndpointGroupStateDto> result = new ArrayList<EndpointGroupStateDto>();
-        for (EndpointGroupStateDto group : groups) {
-            result.add(group);
-        }
-        return result;
+  private List<HistoryDto> createHistoryList(HistoryDto... history) {
+    List<HistoryDto> result = new ArrayList<HistoryDto>();
+    for (HistoryDto group : history) {
+      result.add(group);
     }
+    return result;
+  }
 
-    private List<HistoryDto> createHistoryList(HistoryDto... history) {
-        List<HistoryDto> result = new ArrayList<HistoryDto>();
-        for (HistoryDto group : history) {
-            result.add(group);
-        }
-        return result;
-    }
+  private HistoryDto createHistory(ChangeDto changeDto) {
+    HistoryDto historyDto = new HistoryDto();
+    historyDto.setChange(changeDto);
+    return historyDto;
+  }
 
-    private HistoryDto createHistory(ChangeDto changeDto) {
-        HistoryDto historyDto = new HistoryDto();
-        historyDto.setChange(changeDto);
-        return historyDto;
-    }
+  private ChangeDto createChange(ChangeType changeType, String endpointGroupId, String pfId, int pfVersion,
+                                 String cfId, int cfVersion) {
+    ChangeDto change = new ChangeDto();
+    change.setType(changeType);
+    change.setEndpointGroupId(endpointGroupId);
+    change.setProfileFilterId(pfId);
+    change.setConfigurationId(cfId);
+    change.setCfVersion(cfVersion);
+    return change;
+  }
 
-    private ChangeDto createChange(ChangeType changeType, String endpointGroupId, String pfId, int pfVersion,
-            String cfId, int cfVersion) {
-        ChangeDto change = new ChangeDto();
-        change.setType(changeType);
-        change.setEndpointGroupId(endpointGroupId);
-        change.setProfileFilterId(pfId);
-        change.setConfigurationId(cfId);
-        change.setCfVersion(cfVersion);
-        return change;
-    }
-
-    private EndpointProfileDto createDefaultTestProfile(List<EndpointGroupStateDto> oldGroups) {
-        EndpointProfileDto profile = new EndpointProfileDto();
-        profile.setEndpointKey(ENDPOINT_KEY_HASH.getData());
-        profile.setSequenceNumber(1);
-        profile.setProfileHash(PROFILE_HASH.getData());
-        profile.setConfigurationHash(CONFIGURATION_HASH.getData());
-        profile.setClientProfileVersion(0);
-        profile.setConfigurationVersion(1);
-        profile.setClientProfileBody(PROFILE_BODY);
-        profile.setGroupState(oldGroups);
-        return profile;
-    }
+  private EndpointProfileDto createDefaultTestProfile(List<EndpointGroupStateDto> oldGroups) {
+    EndpointProfileDto profile = new EndpointProfileDto();
+    profile.setEndpointKey(ENDPOINT_KEY_HASH.getData());
+    profile.setSequenceNumber(1);
+    profile.setProfileHash(PROFILE_HASH.getData());
+    profile.setConfigurationHash(CONFIGURATION_HASH.getData());
+    profile.setClientProfileVersion(0);
+    profile.setConfigurationVersion(1);
+    profile.setClientProfileBody(PROFILE_BODY);
+    profile.setGroupState(oldGroups);
+    return profile;
+  }
 
 //    @Test
 //    public void testAppSeqNumberCache() throws GetDeltaException {
@@ -148,7 +148,7 @@ public class DefaultDeltaServiceTest {
 //        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        GetDeltaRequest request = new GetDeltaRequest(TEST_APP, ENDPOINT_KEY_HASH,
-//                EndpointObjectHash.fromSHA1("invalidProfileHash"), null, 41);
+//                EndpointObjectHash.fromSha1("invalidProfileHash"), null, 41);
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
@@ -178,7 +178,7 @@ public class DefaultDeltaServiceTest {
 //        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class)))
-//        .thenReturn(new DeltaCacheEntry(NEW_CONF, DELTA, EndpointObjectHash.fromSHA1("hash")));
+//        .thenReturn(new DeltaCacheEntry(NEW_CONF, DELTA, EndpointObjectHash.fromSha1("hash")));
 //
 //
 //        GetDeltaRequest request = new GetDeltaRequest(TEST_APP, ENDPOINT_KEY_HASH, PROFILE_HASH, CONFIGURATION_HASH, 41);
@@ -186,7 +186,7 @@ public class DefaultDeltaServiceTest {
 //
 //        assertNotNull(response);
 //        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
-//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1("hash"));
+//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSha1("hash"));
 //
 //        assertEquals(GetDeltaResponseType.DELTA, response.getResponseType());
 //        assertEquals(DELTA, response.getDelta());
@@ -212,14 +212,14 @@ public class DefaultDeltaServiceTest {
 //        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class)))
-//                .thenReturn(new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSHA1(NEW_CONF)));
+//                .thenReturn(new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSha1(NEW_CONF)));
 //
 //        GetDeltaRequest request = new GetDeltaRequest(TEST_APP, ENDPOINT_KEY_HASH, PROFILE_HASH, CONFIGURATION_HASH, 41);
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
 //        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
-//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1(NEW_CONF));
+//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSha1(NEW_CONF));
 //
 //        assertEquals(GetDeltaResponseType.DELTA, response.getResponseType());
 //        assertEquals(NEW_CONF_DELTA, response.getDelta());
@@ -246,15 +246,15 @@ public class DefaultDeltaServiceTest {
 //        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class))).thenReturn(
-//                new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSHA1("hash")));
+//                new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSha1("hash")));
 //
 //        GetDeltaRequest request = new GetDeltaRequest(TEST_APP, ENDPOINT_KEY_HASH, PROFILE_HASH,
-//                EndpointObjectHash.fromSHA1("invalidConfigurationHash"), 41);
+//                EndpointObjectHash.fromSha1("invalidConfigurationHash"), 41);
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
 //        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
-//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1("hash"));
+//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSha1("hash"));
 //
 //        assertEquals(GetDeltaResponseType.CONF_RESYNC, response.getResponseType());
 //        assertEquals(NEW_CONF_DELTA, response.getDelta());
@@ -280,15 +280,15 @@ public class DefaultDeltaServiceTest {
 //        when(profileService.getClientProfileBody(ENDPOINT_KEY_HASH)).thenReturn(profile);
 //
 //        when(cacheService.getDelta(Mockito.any(DeltaCacheKey.class), Mockito.any(Computable.class)))
-//        .thenReturn(new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSHA1(NEW_CONF)));
+//        .thenReturn(new DeltaCacheEntry(NEW_CONF, NEW_CONF_DELTA, EndpointObjectHash.fromSha1(NEW_CONF)));
 //
 //        GetDeltaRequest request = new GetDeltaRequest(TEST_APP, ENDPOINT_KEY_HASH, PROFILE_HASH,
-//                EndpointObjectHash.fromSHA1("invalidConfigurationHash"), 41);
+//                EndpointObjectHash.fromSha1("invalidConfigurationHash"), 41);
 //        GetDeltaResponse response = deltaService.getDelta(request);
 //
 //        assertNotNull(response);
 //        verify(profileService, times(1)).getClientProfileBody(ENDPOINT_KEY_HASH);
-//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSHA1(NEW_CONF));
+//        verify(profileService, times(1)).updateProfile(profile, 42, EndpointObjectHash.fromSha1(NEW_CONF));
 //
 //        assertEquals(GetDeltaResponseType.CONF_RESYNC, response.getResponseType());
 //        assertEquals(NEW_CONF_DELTA, response.getDelta());

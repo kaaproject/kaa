@@ -21,40 +21,41 @@ import java.util.List;
 
 /**
  * The interface Log Schema dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface LogSchemaDao<T> extends SqlDao<T> {
 
-    /**
-     * Find all Log Schemas for Application with specific id
-     *
-     * @param applicationId the id of Application
-     * @return List of Log Schemas
-     */
-    List<T> findByApplicationId(String applicationId);
+  /**
+   * Find all Log Schemas for Application with specific id.
+   *
+   * @param applicationId the id of Application
+   * @return List of Log Schemas
+   */
+  List<T> findByApplicationId(String applicationId);
 
-    /**
-     * Find Log Schema by application id and version.
-     *
-     * @param applicationId the application id
-     * @param version the version of profile schema
-     * @return the Log Schema
-     */
-    T findByApplicationIdAndVersion(String applicationId, int version);
+  /**
+   * Find Log Schema by application id and version.
+   *
+   * @param applicationId the application id
+   * @param version       the version of profile schema
+   * @return the Log Schema
+   */
+  T findByApplicationIdAndVersion(String applicationId, int version);
 
-    /**
-     * Remove by application id.
-     *
-     * @param applicationId the application id
-     */
-    void removeByApplicationId(String applicationId);
+  /**
+   * Remove by application id.
+   *
+   * @param applicationId the application id
+   */
+  void removeByApplicationId(String applicationId);
 
-    /**
-     * Find latest log schema by application id.
-     *
-     * @param applicationId the application id
-     * @return the notification schema
-     */
-    T findLatestLogSchemaByAppId(String applicationId);
+  /**
+   * Find latest log schema by application id.
+   *
+   * @param applicationId the application id
+   * @return the notification schema
+   */
+  T findLatestLogSchemaByAppId(String applicationId);
 
 }

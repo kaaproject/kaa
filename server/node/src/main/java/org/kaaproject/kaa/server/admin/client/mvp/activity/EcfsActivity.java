@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -25,39 +28,36 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public class EcfsActivity extends AbstractListActivity<EventClassFamilyDto, EcfsPlace> {
 
-    public EcfsActivity(EcfsPlace place, ClientFactory clientFactory) {
-        super(place, EventClassFamilyDto.class, clientFactory);
-    }
+  public EcfsActivity(EcfsPlace place, ClientFactory clientFactory) {
+    super(place, EventClassFamilyDto.class, clientFactory);
+  }
 
-    @Override
-    protected BaseListView<EventClassFamilyDto> getView() {
-        return clientFactory.getEcfsView();
-    }
+  @Override
+  protected BaseListView<EventClassFamilyDto> getView() {
+    return clientFactory.getEcfsView();
+  }
 
-    @Override
-    protected AbstractDataProvider<EventClassFamilyDto, String> getDataProvider(
-            AbstractGrid<EventClassFamilyDto, String> dataGrid) {
-        return new EcfsDataProvider(dataGrid, listView);
-    }
+  @Override
+  protected AbstractDataProvider<EventClassFamilyDto, String> getDataProvider(
+      AbstractGrid<EventClassFamilyDto, String> dataGrid) {
+    return new EcfsDataProvider(dataGrid, listView);
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new EcfPlace("");
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new EcfPlace("");
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new EcfPlace(id);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new EcfPlace(id);
+  }
 
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        callback.onSuccess((Void)null);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    callback.onSuccess((Void) null);
+  }
 
 }

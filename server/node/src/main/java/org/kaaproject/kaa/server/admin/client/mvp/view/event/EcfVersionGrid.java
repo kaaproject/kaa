@@ -18,28 +18,29 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
 
 import com.google.gwt.user.cellview.client.DataGrid;
+
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class EcfVersionGrid extends BaseCtlSchemasGrid<EventClassDto> {
 
-    public EcfVersionGrid() {
-    }
+  public EcfVersionGrid() {
+  }
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<EventClassDto> table) {
-        float prefWidth = super.constructColumnsImpl(table);
-        prefWidth += constructStringColumn(table,
-                Utils.constants.classType(),
-                new StringValueProvider<EventClassDto>() {
-                    @Override
-                    public String getValue(EventClassDto item) {
-                        return item.getType().toString();
-                    }
-                }, 80);
+  @Override
+  protected float constructColumnsImpl(DataGrid<EventClassDto> table) {
+    float prefWidth = super.constructColumnsImpl(table);
+    prefWidth += constructStringColumn(table,
+        Utils.constants.classType(),
+        new StringValueProvider<EventClassDto>() {
+          @Override
+          public String getValue(EventClassDto item) {
+            return item.getType().toString();
+          }
+        }, 80);
 
-        return prefWidth;
-    }
+    return prefWidth;
+  }
 
 }

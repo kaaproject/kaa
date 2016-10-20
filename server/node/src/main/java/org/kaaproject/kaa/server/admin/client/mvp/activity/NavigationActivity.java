@@ -16,8 +16,13 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.cellview.client.TreeNode;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.web.bindery.event.shared.EventBus;
 
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
@@ -25,129 +30,132 @@ import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
 
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.cellview.client.TreeNode;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.view.client.SelectionChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavigationActivity extends AbstractActivity implements NavigationView.Presenter {
 
-    private final ClientFactory clientFactory;
-    private final NavigationView navigationView;
+  private final ClientFactory clientFactory;
+  private final NavigationView navigationView;
 
-    protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
+  protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
+  private TreePlace pendingPlace;
 
-    public NavigationActivity(ClientFactory clientFactory, EventBus eventBus) {
-        this.clientFactory = clientFactory;
-        this.navigationView = clientFactory.getNavigationView();
-        this.navigationView.setPresenter(this);
-        this.navigationView.setEventBus(eventBus);
+  /**
+   * Instantiates a new NavigationActivity.
+   */
+  public NavigationActivity(ClientFactory clientFactory, EventBus eventBus) {
+    this.clientFactory = clientFactory;
+    this.navigationView = clientFactory.getNavigationView();
+    this.navigationView.setPresenter(this);
+    this.navigationView.setEventBus(eventBus);
+  }
+
+  /**
+   * On place changed.
+   *
+   * @param place the place.
+   */
+  public void onPlaceChanged(TreePlace place) {
+    TreePlace selected = navigationView.getSelectionModel().getSelectedObject();
+    if (!place.equals(selected)) {
+      pendingPlace = place;
+      selectPlace(place);
     }
+  }
 
-    private TreePlace pendingPlace;
+  private void selectPlace(TreePlace place) {
+    TreeNode node = navigationView.getMenuTree().getRootTreeNode();
+    if (openNode(node, place)) {
+      navigationView.getSelectionModel().setSelected(place, true);
+      pendingPlace = null;
+    } else {
+      navigationView.getSelectionModel().clear();
+    }
+  }
 
-    public void onPlaceChanged(TreePlace place) {
-        TreePlace selected = navigationView.getSelectionModel().getSelectedObject();
-        if (!place.equals(selected)) {
-            pendingPlace = place;
-            selectPlace(place);
+  private boolean openNode(TreeNode node, TreePlace place) {
+    int childCount = node.getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      if (node.getChildValue(i).equals(place)) {
+        //node.setChildOpen(i, true, true);
+        return true;
+      } else if (!node.isChildLeaf(i)) {
+        boolean wasOpen = node.isChildOpen(i);
+        TreeNode child = node.setChildOpen(i, true);
+        if (child != null && openNode(child, place)) {
+          return true;
+        } else if (!wasOpen) {
+          node.setChildOpen(i, false);
         }
+      }
     }
+    return false;
+  }
 
-    private void selectPlace(TreePlace place) {
-        TreeNode node = navigationView.getMenuTree().getRootTreeNode();
-        if (openNode(node, place)) {
-            navigationView.getSelectionModel().setSelected(place, true);
-            pendingPlace = null;
-        } else {
-            navigationView.getSelectionModel().clear();
+  private void refreshTree() {
+    TreeNode node = navigationView.getMenuTree().getRootTreeNode();
+    refreshTree(node);
+  }
+
+  private void refreshTree(TreeNode node) {
+    int childCount = node.getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      if (!node.isChildLeaf(i) && node.isChildOpen(i)) {
+        node.setChildOpen(i, false);
+        TreeNode child = node.setChildOpen(i, true);
+        if (child != null) {
+          refreshTree(child);
         }
+      }
     }
+  }
 
-    private boolean openNode(TreeNode node, TreePlace place) {
-        int childCount = node.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            if (node.getChildValue(i).equals(place)) {
-              //node.setChildOpen(i, true, true);
-              return true;
-            } else if (!node.isChildLeaf(i)) {
-                boolean wasOpen = node.isChildOpen(i);
-                TreeNode child = node.setChildOpen(i, true);
-                if (child != null && openNode(child, place)) {
-                    return true;
-                } else if (!wasOpen) {
-                    node.setChildOpen(i, false);
-                }
+  @Override
+  public void start(AcceptsOneWidget containerWidget,
+                    com.google.gwt.event.shared.EventBus eventBus) {
+    containerWidget.setWidget(navigationView.asWidget());
+    registrations.add(navigationView.getSelectionModel().addSelectionChangeHandler(
+        new SelectionChangeEvent.Handler() {
+          @Override
+          public void onSelectionChange(SelectionChangeEvent event) {
+            TreePlace place = navigationView.getSelectionModel().getSelectedObject();
+            if (place != null) {
+              goTo(place);
+
+              TreePlace current = (TreePlace) clientFactory.getPlaceController().getWhere();
+              if (!current.equals(place)) {
+                navigationView.getSelectionModel().setSelected(current, true);
+              }
             }
+          }
         }
-        return false;
-    }
+    ));
+    registrations.add(eventBus.addHandler(DataEvent.getType(), new DataEventHandler() {
 
-    private void refreshTree() {
-        TreeNode node = navigationView.getMenuTree().getRootTreeNode();
-        refreshTree(node);
-    }
-
-    private void refreshTree(TreeNode node) {
-        int childCount = node.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            if (!node.isChildLeaf(i) && node.isChildOpen(i)) {
-                node.setChildOpen(i, false);
-                TreeNode child = node.setChildOpen(i, true);
-                if (child != null) {
-                    refreshTree(child);
-                }
-            }
+      @Override
+      public void onDataChanged(DataEvent event) {
+        if (event.refreshTree()) {
+          refreshTree();
+          if (pendingPlace != null) {
+            selectPlace(pendingPlace);
+          }
         }
+      }
+    }));
+  }
+
+  @Override
+  public void onStop() {
+    for (HandlerRegistration registration : registrations) {
+      registration.removeHandler();
     }
+    registrations.clear();
+  }
 
-    @Override
-    public void start(AcceptsOneWidget containerWidget, com.google.gwt.event.shared.EventBus eventBus) {
-        containerWidget.setWidget(navigationView.asWidget());
-        registrations.add(navigationView.getSelectionModel().addSelectionChangeHandler(
-            new SelectionChangeEvent.Handler() {
-                @Override
-                public void onSelectionChange(SelectionChangeEvent event) {
-                   TreePlace place = navigationView.getSelectionModel().getSelectedObject();
-                   if (place != null) {
-                       goTo(place);
-
-                       TreePlace current = (TreePlace) clientFactory.getPlaceController().getWhere();
-                       if (!current.equals(place)) {
-                           navigationView.getSelectionModel().setSelected(current, true);
-                       }
-                   }
-                }
-            }
-        ));
-        registrations.add(eventBus.addHandler(DataEvent.getType(), new DataEventHandler() {
-
-            @Override
-            public void onDataChanged(DataEvent event) {
-                if (event.refreshTree()) {
-                    refreshTree();
-                    if (pendingPlace != null) {
-                        selectPlace(pendingPlace);
-                    }
-                }
-            }
-        }));
-    }
-
-   @Override
-    public void onStop() {
-        for (HandlerRegistration registration : registrations) {
-          registration.removeHandler();
-        }
-        registrations.clear();
-    }
-
-    @Override
-    public void goTo(Place place) {
-        clientFactory.getPlaceController().goTo(place);
-    }
+  @Override
+  public void goTo(Place place) {
+    clientFactory.getPlaceController().goTo(place);
+  }
 
 }

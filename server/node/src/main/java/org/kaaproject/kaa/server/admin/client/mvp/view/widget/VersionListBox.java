@@ -16,38 +16,41 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.ui.ValueListBox;
+
+import org.kaaproject.kaa.common.dto.VersionDto;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.VersionDto;
-
-import com.google.gwt.text.shared.Renderer;
-import com.google.gwt.user.client.ui.ValueListBox;
-
 public class VersionListBox extends ValueListBox<VersionDto> {
 
-    public VersionListBox() {
-        super(new VersionDtoRenderer());
+  public VersionListBox() {
+    super(new VersionDtoRenderer());
+  }
+
+  /**
+   * Reset.
+   */
+  public void reset() {
+    List<VersionDto> emptyList = Collections.emptyList();
+    setValue(null);
+    setAcceptableValues(emptyList);
+  }
+
+  static class VersionDtoRenderer implements Renderer<VersionDto> {
+
+    @Override
+    public String render(VersionDto object) {
+      return object != null && object.getVersion() > -1 ? object.getVersion() + "" : "";
     }
 
-    public void reset() {
-        List<VersionDto> emptyList = Collections.emptyList();
-        setValue(null);
-        setAcceptableValues(emptyList);
+    @Override
+    public void render(VersionDto object, Appendable appendable)
+        throws IOException {
+      appendable.append(render(object));
     }
-
-    static class VersionDtoRenderer implements Renderer<VersionDto> {
-
-        @Override
-        public String render(VersionDto object) {
-            return object != null && object.getVersion() > -1 ? object.getVersion() + "" : "";
-        }
-
-        @Override
-        public void render(VersionDto object, Appendable appendable)
-                throws IOException {
-            appendable.append(render(object));
-        }
-    }
+  }
 }

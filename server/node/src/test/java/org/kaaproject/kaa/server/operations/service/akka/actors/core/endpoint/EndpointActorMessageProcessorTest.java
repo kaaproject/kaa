@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -27,83 +30,80 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.mockito.Mockito;
 
-import akka.actor.ActorContext;
-import akka.actor.ActorRef;
-
 public class EndpointActorMessageProcessorTest {
 
-    @Test
-    public void noChannelsForEventsTest() {
-        OperationsService osMock = Mockito.mock(OperationsService.class);
-        ActorContext ctxMock = Mockito.mock(ActorContext.class);
-        ActorRef appActorMock = Mockito.mock(ActorRef.class);
-        Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
-        
-        AkkaContext context = Mockito.mock(AkkaContext.class);
-        Mockito.when(context.getOperationsService()).thenReturn(osMock);
+  @Test
+  public void noChannelsForEventsTest() {
+    OperationsService osMock = Mockito.mock(OperationsService.class);
+    ActorContext ctxMock = Mockito.mock(ActorContext.class);
+    ActorRef appActorMock = Mockito.mock(ActorRef.class);
+    Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-                .fromSHA1("key"), "actorKey"));
-        EndpointEventReceiveMessage msg = Mockito.mock(EndpointEventReceiveMessage.class);
+    AkkaContext context = Mockito.mock(AkkaContext.class);
+    Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
-        Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
-        processor.processEndpointEventReceiveMessage(ctxMock, msg);
-        Mockito.verify(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
-    }
+    LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
+        .fromSha1("key"), "actorKey"));
+    EndpointEventReceiveMessage msg = Mockito.mock(EndpointEventReceiveMessage.class);
 
-    @Test
-    public void actorTimeoutTest() {
-        OperationsService osMock = Mockito.mock(OperationsService.class);
-        ActorContext ctxMock = Mockito.mock(ActorContext.class);
-        ActorRef appActorMock = Mockito.mock(ActorRef.class);
-        Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
+    Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
+    processor.processEndpointEventReceiveMessage(ctxMock, msg);
+    Mockito.verify(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
+  }
 
-        AkkaContext context = Mockito.mock(AkkaContext.class);
-        Mockito.when(context.getOperationsService()).thenReturn(osMock);
-        
-        LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-                .fromSHA1("key"), "actorKey"));
-        ActorTimeoutMessage msg = new ActorTimeoutMessage(System.currentTimeMillis());
+  @Test
+  public void actorTimeoutTest() {
+    OperationsService osMock = Mockito.mock(OperationsService.class);
+    ActorContext ctxMock = Mockito.mock(ActorContext.class);
+    ActorRef appActorMock = Mockito.mock(ActorRef.class);
+    Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-        Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
-        processor.processActorTimeoutMessage(ctxMock, msg);
-        Mockito.verify(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
-    }
+    AkkaContext context = Mockito.mock(AkkaContext.class);
+    Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
-    @Test
-    public void actorTimeoutNegativeTest() {
-        OperationsService osMock = Mockito.mock(OperationsService.class);
-        ActorContext ctxMock = Mockito.mock(ActorContext.class);
-        ActorRef appActorMock = Mockito.mock(ActorRef.class);
-        Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
+    LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
+        .fromSha1("key"), "actorKey"));
+    ActorTimeoutMessage msg = new ActorTimeoutMessage(System.currentTimeMillis());
 
-        AkkaContext context = Mockito.mock(AkkaContext.class);
-        Mockito.when(context.getOperationsService()).thenReturn(osMock);
-        
-        LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-                .fromSHA1("key"), "actorKey"));
-        ActorTimeoutMessage msg = new ActorTimeoutMessage(-1);
+    Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
+    processor.processActorTimeoutMessage(ctxMock, msg);
+    Mockito.verify(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
+  }
 
-        Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
-        processor.processActorTimeoutMessage(ctxMock, msg);
-        Mockito.verify(processor, Mockito.never()).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
-    }
+  @Test
+  public void actorTimeoutNegativeTest() {
+    OperationsService osMock = Mockito.mock(OperationsService.class);
+    ActorContext ctxMock = Mockito.mock(ActorContext.class);
+    ActorRef appActorMock = Mockito.mock(ActorRef.class);
+    Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
 
-    @Test
-    public void processDisconnectMessageTest() {
-        OperationsService osMock = Mockito.mock(OperationsService.class);
-        ActorContext ctxMock = Mockito.mock(ActorContext.class);
-        ActorRef appActorMock = Mockito.mock(ActorRef.class);
-        Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
+    AkkaContext context = Mockito.mock(AkkaContext.class);
+    Mockito.when(context.getOperationsService()).thenReturn(osMock);
 
-        AkkaContext context = Mockito.mock(AkkaContext.class);
-        Mockito.when(context.getOperationsService()).thenReturn(osMock);
-        
-        LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
-                .fromSHA1("key"), "actorKey"));
-        ChannelAware msg = Mockito.mock(ChannelAware.class);
+    LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
+        .fromSha1("key"), "actorKey"));
+    ActorTimeoutMessage msg = new ActorTimeoutMessage(-1);
 
-        Assert.assertFalse(processor.processDisconnectMessage(ctxMock, msg));
-    }
+    Mockito.doNothing().when(processor).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
+    processor.processActorTimeoutMessage(ctxMock, msg);
+    Mockito.verify(processor, Mockito.never()).tellParent(Mockito.any(ActorContext.class), Mockito.any(Object.class));
+  }
+
+  @Test
+  public void processDisconnectMessageTest() {
+    OperationsService osMock = Mockito.mock(OperationsService.class);
+    ActorContext ctxMock = Mockito.mock(ActorContext.class);
+    ActorRef appActorMock = Mockito.mock(ActorRef.class);
+    Mockito.when(ctxMock.parent()).thenReturn(appActorMock);
+
+    AkkaContext context = Mockito.mock(AkkaContext.class);
+    Mockito.when(context.getOperationsService()).thenReturn(osMock);
+
+    LocalEndpointActorMessageProcessor processor = Mockito.spy(new LocalEndpointActorMessageProcessor(context, "APP_TOKEN", EndpointObjectHash
+        .fromSha1("key"), "actorKey"));
+    ChannelAware msg = Mockito.mock(ChannelAware.class);
+
+    Assert.assertFalse(processor.processDisconnectMessage(ctxMock, msg));
+  }
 
 }

@@ -18,8 +18,6 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 
-import java.nio.ByteBuffer;
-
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants;
@@ -28,36 +26,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.nio.ByteBuffer;
+
 @Repository(value = "topicListEntryDao")
-public class TopicListEntryCassandraDao extends AbstractCassandraDao<CassandraTopicListEntry, ByteBuffer> implements TopicListEntryDao<CassandraTopicListEntry> {
+public class TopicListEntryCassandraDao
+    extends AbstractCassandraDao<CassandraTopicListEntry, ByteBuffer>
+    implements TopicListEntryDao<CassandraTopicListEntry> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TopicListEntryCassandraDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TopicListEntryCassandraDao.class);
 
-    @Override
-    protected Class<CassandraTopicListEntry> getColumnFamilyClass() {
-        return CassandraTopicListEntry.class;
-    }
+  @Override
+  protected Class<CassandraTopicListEntry> getColumnFamilyClass() {
+    return CassandraTopicListEntry.class;
+  }
 
-    @Override
-    protected String getColumnFamilyName() {
-        return CassandraModelConstants.TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME;
-    }
+  @Override
+  protected String getColumnFamilyName() {
+    return CassandraModelConstants.TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME;
+  }
 
-    @Override
-    public CassandraTopicListEntry save(TopicListEntryDto dto) {
-        LOG.debug("Save topic list entry [{}] ", dto);
-        return save(new CassandraTopicListEntry(dto));
-    }
+  @Override
+  public CassandraTopicListEntry save(TopicListEntryDto dto) {
+    LOG.debug("Save topic list entry [{}] ", dto);
+    return save(new CassandraTopicListEntry(dto));
+  }
 
-    @Override
-    public CassandraTopicListEntry findByHash(byte[] hash) {
-        LOG.debug("Try to find topic list entry by hash [{}] ", hash);
-        return (CassandraTopicListEntry) getMapper().get(getByteBuffer(hash));
-    }
+  @Override
+  public CassandraTopicListEntry findByHash(byte[] hash) {
+    LOG.debug("Try to find topic list entry by hash [{}] ", hash);
+    return (CassandraTopicListEntry) getMapper().get(getByteBuffer(hash));
+  }
 
-    @Override
-    public void removeByHash(byte[] hash) {
-        LOG.debug("Remove topic list entry by hash [{}] ", hash);
-        getMapper().delete(getByteBuffer(hash));
-    }
+  @Override
+  public void removeByHash(byte[] hash) {
+    LOG.debug("Remove topic list entry by hash [{}] ", hash);
+    getMapper().delete(getByteBuffer(hash));
+  }
 }

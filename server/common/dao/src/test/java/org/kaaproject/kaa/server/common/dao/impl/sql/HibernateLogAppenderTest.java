@@ -35,28 +35,28 @@ import java.util.List;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 public class HibernateLogAppenderTest extends HibernateAbstractTest {
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateLogAppenderTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateLogAppenderTest.class);
 
-    @Test
-    public void findByAppIdTest() {
-        LogAppender appender = generateLogAppender(null);
-        Application app = appender.getApplication();
-        List<LogAppender> result = appenderDao.findByAppId(app.getId().toString());
-        System.out.println(result.get(0));
-        Assert.assertEquals(result.size(), 1);
-    }
+  @Test
+  public void findByAppIdTest() {
+    LogAppender appender = generateLogAppender(null);
+    Application app = appender.getApplication();
+    List<LogAppender> result = appenderDao.findByAppId(app.getId().toString());
+    System.out.println(result.get(0));
+    Assert.assertEquals(result.size(), 1);
+  }
 
-    @Test
-    public void findByAppIdBlankIdTest() {
-        List<LogAppender> result = appenderDao.findByAppId("");
-        Assert.assertTrue(result.isEmpty());
-    }
+  @Test
+  public void findByAppIdBlankIdTest() {
+    List<LogAppender> result = appenderDao.findByAppId("");
+    Assert.assertTrue(result.isEmpty());
+  }
 
-    @Test
-    public void findByAppIdAndSchemaVersionBlankIdTest() {
-        LogAppender appender = generateLogAppender(null);
-        List<LogAppender> result = appenderDao.findByAppIdAndSchemaVersion("", appender.getMinLogSchemaVersion());
-        Assert.assertTrue(result.isEmpty());
-    }
+  @Test
+  public void findByAppIdAndSchemaVersionBlankIdTest() {
+    LogAppender appender = generateLogAppender(null);
+    List<LogAppender> result = appenderDao.findByAppIdAndSchemaVersion("", appender.getMinLogSchemaVersion());
+    Assert.assertTrue(result.isEmpty());
+  }
 
 }

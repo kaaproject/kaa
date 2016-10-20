@@ -17,65 +17,64 @@
 package org.kaaproject.kaa.server.sync;
 
 public final class EventSequenceNumberResponse {
-    private int seqNum;
+  private int seqNum;
 
-    public EventSequenceNumberResponse() {
+  public EventSequenceNumberResponse() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public EventSequenceNumberResponse(Integer seqNum) {
+    this.seqNum = seqNum;
+  }
+
+  /**
+   * Gets the value of the 'seqNum' field.
+   */
+  public Integer getSeqNum() {
+    return seqNum;
+  }
+
+  /**
+   * Sets the value of the 'seqNum' field.
+   *
+   * @param value the value to set.
+   */
+  public void setSeqNum(Integer value) {
+    this.seqNum = value;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    /**
-     * All-args constructor.
-     */
-    public EventSequenceNumberResponse(Integer seqNum) {
-        this.seqNum = seqNum;
-    }   
+    EventSequenceNumberResponse that = (EventSequenceNumberResponse) object;
 
-    /**
-     * Gets the value of the 'seqNum' field.
-     */
-    public Integer getSeqNum() {
-        return seqNum;
+    if (seqNum != that.seqNum) {
+      return false;
     }
 
-    /**
-     * Sets the value of the 'seqNum' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setSeqNum(Integer value) {
-        this.seqNum = value;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+  @Override
+  public int hashCode() {
+    return seqNum;
+  }
 
-        EventSequenceNumberResponse that = (EventSequenceNumberResponse) o;
-
-        if (seqNum != that.seqNum) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return seqNum;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EventSequenceNumberResponse [seqNum=");
-        builder.append(seqNum);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EventSequenceNumberResponse [seqNum=");
+    builder.append(seqNum);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

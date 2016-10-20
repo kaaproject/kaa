@@ -16,6 +16,5 @@
 
 /**
  * @author Andrey Panasenko
- *
  */
 package org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners;

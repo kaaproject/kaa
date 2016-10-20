@@ -24,54 +24,54 @@ import java.util.List;
 
 public class MemBucketTest {
 
-    public void addLogRecordTestHelper(int maxSize, int maxRecordCount) {
-        MemBucket bucket = new MemBucket(1, maxSize, maxRecordCount);
+  public void addLogRecordTestHelper(int maxSize, int maxRecordCount) {
+    MemBucket bucket = new MemBucket(1, maxSize, maxRecordCount);
 
-        int curSize = 0;
-        int curRecordCount = 0;
+    int curSize = 0;
+    int curRecordCount = 0;
 
-        LogRecord record = new LogRecord();
+    LogRecord record = new LogRecord();
 
-        while (curSize + record.getSize() <= maxSize && curRecordCount < maxRecordCount) {
-            Assert.assertTrue(bucket.addRecord(record));
-            curRecordCount++;
-            curSize += 3;
-        }
-
-        Assert.assertFalse(bucket.addRecord(record));
+    while (curSize + record.getSize() <= maxSize && curRecordCount < maxRecordCount) {
+      Assert.assertTrue(bucket.addRecord(record));
+      curRecordCount++;
+      curSize += 3;
     }
 
-    @Test
-    public void addLogRecordTest() {
-        addLogRecordTestHelper(10, 2);
-        addLogRecordTestHelper(14, 10);
-        addLogRecordTestHelper(2, 10);
-        addLogRecordTestHelper(10, 1);
+    Assert.assertFalse(bucket.addRecord(record));
+  }
+
+  @Test
+  public void addLogRecordTest() {
+    addLogRecordTestHelper(10, 2);
+    addLogRecordTestHelper(14, 10);
+    addLogRecordTestHelper(2, 10);
+    addLogRecordTestHelper(10, 1);
+  }
+
+  @Test
+  public void shrinkToSizeTest() {
+    MemBucket bucket = new MemBucket(1, 100, 100);
+    addNRecordsToBucket(bucket, 10);
+    List<LogRecord> overSize = bucket.shrinkToSize(10, 4);
+    Assert.assertEquals(3, bucket.getCount());
+    Assert.assertEquals(9, bucket.getSize());
+    Assert.assertEquals(7, overSize.size());
+
+    bucket = new MemBucket(1, 100, 100);
+    addNRecordsToBucket(bucket, 10);
+    overSize = bucket.shrinkToSize(10, 2);
+    Assert.assertEquals(2, bucket.getCount());
+    Assert.assertEquals(6, bucket.getSize());
+    Assert.assertEquals(8, overSize.size());
+
+    overSize = bucket.shrinkToSize(400, 400);
+    Assert.assertEquals(0, overSize.size());
+  }
+
+  private void addNRecordsToBucket(MemBucket bucket, int n) {
+    while (n-- > 0) {
+      bucket.addRecord(new LogRecord());
     }
-
-    @Test
-    public void shrinkToSizeTest() {
-        MemBucket bucket = new MemBucket(1, 100, 100);
-        addNRecordsToBucket(bucket, 10);
-        List<LogRecord> overSize = bucket.shrinkToSize(10, 4);
-        Assert.assertEquals(3, bucket.getCount());
-        Assert.assertEquals(9, bucket.getSize());
-        Assert.assertEquals(7, overSize.size());
-
-        bucket = new MemBucket(1, 100, 100);
-        addNRecordsToBucket(bucket, 10);
-        overSize = bucket.shrinkToSize(10, 2);
-        Assert.assertEquals(2, bucket.getCount());
-        Assert.assertEquals(6, bucket.getSize());
-        Assert.assertEquals(8, overSize.size());
-
-        overSize = bucket.shrinkToSize(400, 400);
-        Assert.assertEquals(0, overSize.size());
-    }
-
-    private void addNRecordsToBucket(MemBucket bucket, int n) {
-        while (n-- > 0) {
-            bucket.addRecord(new LogRecord());
-        }
-    }
+  }
 }

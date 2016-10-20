@@ -16,60 +16,60 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.cellview.client.DataGrid;
+
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.DataGrid;
-
 public class EcfsGrid extends AbstractKaaGrid<EventClassFamilyDto, String> {
 
-    public EcfsGrid(Unit unit) {
-        super(unit, false);
-    }
+  public EcfsGrid(Unit unit) {
+    super(unit, false);
+  }
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<EventClassFamilyDto> table) {
-        float prefWidth = 0;
+  @Override
+  protected float constructColumnsImpl(DataGrid<EventClassFamilyDto> table) {
+    float prefWidth = 0;
 
-        prefWidth += constructStringColumn(table,
-                Utils.constants.name(),
-                new StringValueProvider<EventClassFamilyDto>() {
-                    @Override
-                    public String getValue(EventClassFamilyDto item) {
-                        return item.getName();
-                    }
-                }, 120);
+    prefWidth += constructStringColumn(table,
+        Utils.constants.name(),
+        new StringValueProvider<EventClassFamilyDto>() {
+          @Override
+          public String getValue(EventClassFamilyDto item) {
+            return item.getName();
+          }
+        }, 120);
 
-        prefWidth += constructStringColumn(table,
-                Utils.constants.fqn(),
-                new StringValueProvider<EventClassFamilyDto>() {
-                    @Override
-                    public String getValue(EventClassFamilyDto item) {
-                        return item.getNamespace() + "." + item.getClassName();
-                    }
-                }, 160);
+    prefWidth += constructStringColumn(table,
+        Utils.constants.fqn(),
+        new StringValueProvider<EventClassFamilyDto>() {
+          @Override
+          public String getValue(EventClassFamilyDto item) {
+            return item.getNamespace() + "." + item.getClassName();
+          }
+        }, 160);
 
-        prefWidth += constructStringColumn(table,
-                Utils.constants.author(),
-                new StringValueProvider<EventClassFamilyDto>() {
-                    @Override
-                    public String getValue(EventClassFamilyDto item) {
-                        return item.getCreatedUsername();
-                    }
-                }, 80);
+    prefWidth += constructStringColumn(table,
+        Utils.constants.author(),
+        new StringValueProvider<EventClassFamilyDto>() {
+          @Override
+          public String getValue(EventClassFamilyDto item) {
+            return item.getCreatedUsername();
+          }
+        }, 80);
 
-        prefWidth += constructStringColumn(table,
-                Utils.constants.dateCreated(),
-                new StringValueProvider<EventClassFamilyDto>() {
-                    @Override
-                    public String getValue(EventClassFamilyDto item) {
-                        return Utils.millisecondsToDateString(item.getCreatedTime());
-                    }
-                }, 80);
-        
-        return prefWidth;
-    }
+    prefWidth += constructStringColumn(table,
+        Utils.constants.dateCreated(),
+        new StringValueProvider<EventClassFamilyDto>() {
+          @Override
+          public String getValue(EventClassFamilyDto item) {
+            return Utils.millisecondsToDateString(item.getCreatedTime());
+          }
+        }, 80);
+
+    return prefWidth;
+  }
 
 }

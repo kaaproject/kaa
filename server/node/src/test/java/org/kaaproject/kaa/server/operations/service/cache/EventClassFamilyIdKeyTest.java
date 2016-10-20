@@ -22,9 +22,9 @@ import org.junit.Test;
 
 public class EventClassFamilyIdKeyTest {
 
-    @Test
-    public void testHashCodeAndEquals(){
-        EqualsVerifier.forClass(EventClassFamilyIdKey.class).verify();
-    }
+  @Test
+  public void testHashCodeAndEquals() {
+    EqualsVerifier.forClass(EventClassFamilyIdKey.class).verify();
+  }
 
 }

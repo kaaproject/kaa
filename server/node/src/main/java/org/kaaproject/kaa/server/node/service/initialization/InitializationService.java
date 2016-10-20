@@ -17,15 +17,15 @@
 package org.kaaproject.kaa.server.node.service.initialization;
 
 public interface InitializationService {
-    
-    /**
-     * Start.
-     */
-    void start();
 
-    /**
-     * Stop.
-     */
-    void stop();
+  /**
+   * Start.
+   */
+  void start();
+
+  /**
+   * Stop.
+   */
+  void stop();
 
 }

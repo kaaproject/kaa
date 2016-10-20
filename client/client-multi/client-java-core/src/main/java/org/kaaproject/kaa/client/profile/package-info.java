@@ -91,6 +91,5 @@
  * </pre>
  *
  * @see org.kaaproject.kaa.client.profile.ProfileManager
- *
  */
 package org.kaaproject.kaa.client.profile;

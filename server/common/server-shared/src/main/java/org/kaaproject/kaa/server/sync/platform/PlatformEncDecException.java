@@ -22,14 +22,14 @@ package org.kaaproject.kaa.server.sync.platform;
  */
 public class PlatformEncDecException extends Exception {
 
-    private static final long serialVersionUID = -2530355397172088562L;
+  private static final long serialVersionUID = -2530355397172088562L;
 
-    public PlatformEncDecException(Throwable cause) {
-        super(cause);
-    }
-    
-    public PlatformEncDecException(String cause) {
-        super(cause);
-    }    
+  public PlatformEncDecException(Throwable cause) {
+    super(cause);
+  }
+
+  public PlatformEncDecException(String cause) {
+    super(cause);
+  }
 
 }

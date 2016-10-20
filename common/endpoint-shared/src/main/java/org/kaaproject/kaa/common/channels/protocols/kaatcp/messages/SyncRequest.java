@@ -21,38 +21,40 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolExcepti
 /**
  * SyncRequest Class.
  * Extend Sync and set request flag to true.
- * 
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 public class SyncRequest extends Sync {
 
-    /**
-     * @param avroObject the avro object
-     * @param isZipped   the is zipped
-     * @param isEcrypted the is ecrypted
-     */
-    public SyncRequest(byte[] avroObject, boolean isZipped, boolean isEcrypted) {
-        super(true, avroObject, isZipped, isEcrypted);
-    }
+  /**
+   * Instantiates a new SyncRequest.
+   *
+   * @param avroObject the avro object
+   * @param isZipped   the is zipped
+   * @param isEcrypted the is ecrypted
+   */
+  public SyncRequest(byte[] avroObject, boolean isZipped, boolean isEcrypted) {
+    super(true, avroObject, isZipped, isEcrypted);
+  }
 
-    /**
-     * Constructor used to migrate from KaaSync after Variable Header decode.
-     * @param   old KaaSync object which used to create new
-     * @throws  KaaTcpProtocolException the kaa tcp protocol exception
-     */
-    public SyncRequest(KaaSync old) throws KaaTcpProtocolException {
-        super(old);
-        setRequest(true);
-        decodeAvroObject();
-    }
-    
-    /**
-     * Default constructor.
-     */
-    public SyncRequest() {
-        super();
-        setRequest(true);
-    }
+  /**
+   * Constructor used to migrate from KaaSync after Variable Header decode.
+   *
+   * @param old KaaSync object which used to create new
+   * @throws KaaTcpProtocolException the kaa tcp protocol exception
+   */
+  public SyncRequest(KaaSync old) throws KaaTcpProtocolException {
+    super(old);
+    setRequest(true);
+    decodeAvroObject();
+  }
+
+  /**
+   * Default constructor.
+   */
+  public SyncRequest() {
+    super();
+    setRequest(true);
+  }
 
 }

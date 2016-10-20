@@ -21,10 +21,10 @@ import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 
 public class GenericAvroConverterTest {
 
-    @Test(expected=RuntimeException.class)
-    public void testStaticMethod() throws Exception{
-        GenericAvroConverter.toJson("Expected to fail with this invalid input".getBytes(), BasicEndpointProfile.SCHEMA$.toString());
-    }
-    
-    
+  @Test(expected = RuntimeException.class)
+  public void testStaticMethod() throws Exception {
+    GenericAvroConverter.toJson("Expected to fail with this invalid input".getBytes(), BasicEndpointProfile.SCHEMA$.toString());
+  }
+
+
 }
