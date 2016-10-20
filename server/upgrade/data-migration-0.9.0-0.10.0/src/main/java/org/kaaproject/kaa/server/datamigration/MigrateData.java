@@ -93,6 +93,8 @@ public class MigrateData {
             migrationList.add(new CTLNotificationMigration(conn, options.getHost(), options.getDbName(), options.getNoSQL()));
             migrationList.add(new CTLLogMigration(conn));
 
+            new EndpointSpecificConfigurationMigration(options.getHost(), options.getDbName(), options.getNoSQL()).transform();
+
             CTLAggregation aggregation = new CTLAggregation(conn);
             BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
 

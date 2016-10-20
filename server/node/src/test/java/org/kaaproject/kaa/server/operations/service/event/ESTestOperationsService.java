@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
-import java.security.PublicKey;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -31,6 +28,9 @@ import org.kaaproject.kaa.server.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.UserClientSync;
+
+import java.security.PublicKey;
+import java.util.List;
 
 /**
  * @author Andrey Panasenko
@@ -82,6 +82,12 @@ public class ESTestOperationsService implements OperationsService {
     }
 
     @Override
+    public byte[] fetchEndpointSpecificConfigurationHash(EndpointProfileDto profile) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId) {
         // TODO Auto-generated method stub
         return null;
@@ -100,7 +106,7 @@ public class ESTestOperationsService implements OperationsService {
     }
 
     @Override
-    public SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash) {
+    public SyncContext syncConfigurationHashes(SyncContext context, byte[] ucfHash, byte[] epsConfHash) {
         // TODO Auto-generated method stub
         return null;
     }
