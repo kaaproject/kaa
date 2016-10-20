@@ -5,6 +5,8 @@ permalink: /:path/
 sort_idx: 50
 ---
 
+{% include variables.md %}
+
 ## A
 
 ### Actor
