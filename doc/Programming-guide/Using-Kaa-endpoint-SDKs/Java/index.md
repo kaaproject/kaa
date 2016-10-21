@@ -183,26 +183,24 @@ See the table below for comparison between the desktop and Android clients.
 |`needToCheckClientState`| Returns **true**  | Returns **false** | Set off/on to check feasibility of the transition between the life sycle states.|
 
 
-
-
-## Executor context configuration
-Both `AndroidKaaPlatformContext` and `DesktopKaaPlatformContext` allows You to specify `ExecutorContext`. `ExecutorContext`
-provides implementation and configuration of java `ExecutorService`s which are used to run internal KaaClient tasks.
-Detailed list of required `ExecutorService`s and their responsibilities are described below:
+## ExecutorContext configuration
+Both `AndroidKaaPlatformContext` and `DesktopKaaPlatformContext` allow you to specify `ExecutorContext`.
+The `ExecutorContext` class provides implementation and configuration of the `ExecutorService` class that is used to run internal `KaaClient` tasks.
+Below is the list of `ExecutorService` implementations.
 
 |ExecutorService|Responsibilities|
 |---|---|
-|LifeCycleExecutor|Used for `KaaClient` lifecycle events (Start/Stop/Pause/Resume) handling, processing `KaaClientStateListener` callbacks|
-|ApiExecutor|Used for processing client's calls to server (for example: log record persistence into internal log storage and enqueuing for further forwarding to server)|
-|CallbackExecutor|Used for handling events from server and callback listeners execution (`ConfigurationListener`, `LogDeliveryListener`, `UserAttachCallback`, `AttachEndpointToUserCallback`, `DetachEndpointFromUserCallback`, `OnAttachEndpointOperationCallback`, `OnDetachEndpointOperationCallback`, `NotificationTopicListListener`, `NotificationListener`, `NotificationTopicListListener`, `FindEventListenersCallback`)|
-|ScheduledExecutor|Used for logs forwarding to server, running failover and bootstrap tasks|
+|LifeCycleExecutor|Handles `KaaClient` lifecycle events (Start/Stop/Pause/Resume), processes callbacks from `KaaClientStateListener`.|
+|ApiExecutor|Processes client's calls to server. For example, persistence of log records into internal log storage and enqueuing for further forwarding to server.|
+|CallbackExecutor|Handles events from server and callbacks from listeners: <br />`AttachEndpointToUserCallback`<br />`ConfigurationListener`<br />`DetachEndpointFromUserCallback`<br />`FindEventListenersCallback`<br />`LogDeliveryListener`<br />`NotificationListener`<br />`NotificationTopicListListener`<br />`OnAttachEndpointOperationCallback`<br />`OnDetachEndpointOperationCallback`<br />`UserAttachCallback`|
+|ScheduledExecutor|Handles log forwarding to server, runs failover and bootstrap tasks.|
 
-### Available ExecutorService implementations:
+### Available ExecutorService implementations
 
-- **SimpleExecutorContext** -- provides one `java.util.concurrent.ScheduledExecutorService` for ScheduledExecutor,
- and three separate `java.util.concurrent.ExecutorService`s for LifeCycleExecutor, ApiExecutor, CallbackExecutor.
- Provided  `ExecutorService`s has fixed number of threads in the pool. `SimpleExecutorContext` with one thread for each
- ExecutorService is a default ExecutorContext implementation used by KaaClient. `SimpleExecutorContext` can be configured in the following way:
+**SimpleExecutorContext** --- this implementation provides one `java.util.concurrent.ScheduledExecutorService` for `ScheduledExecutor` and three separate instances of `java.util.concurrent.ExecutorService` for `LifeCycleExecutor`, `ApiExecutor`, and `CallbackExecutor`.
+The `ExecutorService` instances contain fixed number of threads in the pool.
+A `SimpleExecutorContext` with one thread for each  `ExecutorService` is a default `ExecutorContext` implementation used by `KaaClient`.
+To configure `SimpleExecutorContext`, follow the instruction below.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java-ec">Java</a></li>
@@ -233,9 +231,8 @@ KaaClient kaaClient = Kaa.newClient(androidKaaPlatformContext, new SimpleKaaClie
 </div>
 </div>
 
-- **SingleThreadExecutorContext** -- shares single `java.util.concurrent.ScheduledExecutorService` with one thread in pool
- for LifeCycleExecutor, ApiExecutor, CallbackExecutor and ScheduledExecutor.
+**SingleThreadExecutorContext** --- this implementation shares single `java.util.concurrent.ScheduledExecutorService` with one thread in pool for `LifeCycleExecutor`, `ApiExecutor`, `CallbackExecutor`, and `ScheduledExecutor`.
 
->**NOTE:** We do not recommend to run any blocking or long running tasks within listeners passed to `KaaClient`.
->Or, at least, ensure that ExecutorContext is properly configured.
+>**NOTE:** Avoid running any blocking or long running tasks within listeners passed to `KaaClient`.
+>Make sure that `ExecutorContext` is properly configured.
 {:.note}
