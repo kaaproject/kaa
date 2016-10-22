@@ -152,6 +152,32 @@ public class Validator {
     }
 
     /**
+     * This method validates <code>Object</code> object. If object is not null than throw
+     * <code>IncorrectParameterException</code> exception
+     *
+     * @param obj           the obj
+     * @param errorMessage  the error message for exception
+     */
+    public static void validateNull(Object obj, String errorMessage) {
+        if (obj != null) {
+            throw new IncorrectParameterException(errorMessage);
+        }
+    }
+
+    /**
+     * This method validates <code>Object</code> object. If object is null than throw
+     * <code>IncorrectParameterException</code> exception
+     *
+     * @param obj          the obj
+     * @param errorMessage the error message for exception
+     */
+    public static void validateNotNull(Object obj, String errorMessage) {
+        if (obj == null) {
+            throw new IncorrectParameterException(errorMessage);
+        }
+    }
+
+    /**
      * This method validate <code>byte</code> array hash. If hash is invalid than throw
      * <code>IncorrectParameterException</code> exception
      *

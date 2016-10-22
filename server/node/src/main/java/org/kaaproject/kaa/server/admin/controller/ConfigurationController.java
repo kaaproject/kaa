@@ -24,9 +24,11 @@ import io.swagger.annotations.ApiResponses;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
+import org.kaaproject.kaa.server.common.Base64Util;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -279,6 +281,97 @@ public class ConfigurationController extends AbstractAdminController {
                     "body", required = true)
             @RequestBody EndpointUserConfigurationDto endpointUserConfiguration) throws KaaAdminServiceException {
         configurationService.editUserConfiguration(endpointUserConfiguration);
+    }
+
+    /**
+     * Creates or updates endpoint specific configuration by the endpoint key hash
+     *
+     * @param endpointSpecificConfiguration endpoint specific configuration
+     * @throws KaaAdminServiceException the kaa admin service exception
+     */
+    @ApiOperation(value = "Create or update endpoint specific configuration",
+            notes = "Creates or updates endpoint specific configuration. If a configuration for target endpoint does not " +
+                    "exist, then it will be created. If a configuration for target endpoint exists, then it is updated. Only users " +
+                    "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Endpoint specific configuration created"),
+            @ApiResponse(code = 400, message = "Invalid input parameter provided"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
+                    "of the application does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "Specified endpoint does not exist"),
+            @ApiResponse(code = 409, message = "Can't update entity with provided version. Entity already changed"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "endpointSpecificConfiguration", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(
+            @ApiParam(name = "endpointSpecificConfiguration",
+                    value = "endpointSpecificConfigurationDto body. Mandatory fields: endpointKeyHash, configuration. Optional fields: configurationSchemaVersion (currently active endpoint configuration schema version is used by default)",
+                    required = true)
+            @RequestBody EndpointSpecificConfigurationDto endpointSpecificConfiguration) throws KaaAdminServiceException {
+       return configurationService.editEndpointSpecificConfiguration(endpointSpecificConfiguration);
+    }
+
+    /**
+     * Retrieves endpoint specific configuration by the endpoint key hash
+     *
+     * @param endpointKeyHash endpoint key hash
+     * @throws KaaAdminServiceException the kaa admin service exception
+     */
+    @ApiOperation(value = "Retrieve endpoint specific configuration",
+            notes = "Retrieves endpoint specific configuration  by the endpoint key hash. If a configuration for provided endpoint key hash does not " +
+                    "exist, then request is rejected. Only users " +
+                    "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Endpoint specific configuration successfully retrieved"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
+                    "of the application does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "Specified endpoint does not exist"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "endpointSpecificConfiguration/{endpointKeyHash}", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(
+            @PathVariable String endpointKeyHash,
+            @ApiParam(name = "configurationSchemaVersion",
+                    value = "Configuration schema version",
+                    defaultValue = "By default currently active endpoint's configuration schema is used",
+                    required = false)
+            @RequestParam(required = false, value = "configurationSchemaVersion") Integer confSchemaVersion)
+            throws KaaAdminServiceException {
+        return configurationService.findEndpointSpecificConfiguration(Base64Util.decode(endpointKeyHash), confSchemaVersion);
+    }
+
+    /**
+     * Deletes endpoint specific configuration by the endpoint key hash
+     *
+     * @param endpointKeyHash endpoint key hash
+     * @throws KaaAdminServiceException the kaa admin service exception
+     */
+    @ApiOperation(value = "Delete endpoint specific configuration",
+            notes = "Deletes endpoint specific configuration  by the endpoint key hash. If a configuration for provided endpoint key hash does not " +
+                    "exist, then request is rejected. Only users " +
+                    "with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Endpoint specific configuration successfully deleted"),
+            @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID " +
+                    "of the application does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 404, message = "Specified endpoint does not exist"),
+            @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
+    @RequestMapping(value = "endpointSpecificConfiguration/{endpointKeyHash}", method = RequestMethod.DELETE)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteEndpointSpecificConfiguration(
+            @PathVariable String endpointKeyHash,
+            @ApiParam(name = "configurationSchemaVersion",
+                    value = "Configuration schema version",
+                    defaultValue = "By default currently active  endpoint's configuration schema is used",
+                    required = false)
+            @RequestParam(required = false, value = "configurationSchemaVersion") Integer confSchemaVersion)
+            throws KaaAdminServiceException {
+        configurationService.deleteEndpointSpecificConfiguration(Base64Util.decode(endpointKeyHash), confSchemaVersion);
     }
 
     /**

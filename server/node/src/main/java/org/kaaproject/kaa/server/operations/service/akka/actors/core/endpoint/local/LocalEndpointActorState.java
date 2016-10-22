@@ -16,6 +16,14 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
+import org.kaaproject.kaa.common.TransportType;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.AbstractEndpointActorState;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.ChannelMap.ChannelMetaData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,14 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import org.kaaproject.kaa.common.TransportType;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.AbstractEndpointActorState;
-import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.ChannelMap.ChannelMetaData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LocalEndpointActorState extends AbstractEndpointActorState {
     private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActorState.class);
@@ -46,6 +46,8 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
 
     private boolean ucfHashIntialized;
     private byte[] ucfHash;
+    private boolean epsConfigurationInitialized;
+    private byte[] epsConfigurationHash;
 
     public LocalEndpointActorState(String endpointKey, String actorKey) {
         super(endpointKey, actorKey);
@@ -185,6 +187,29 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
 
     public byte[] getUcfHash() {
         return ucfHash;
+    }
+
+    public boolean isEpsConfigurationRequiresInitialization() {
+        if (endpointProfile == null) {
+            return false;
+        }
+        return !epsConfigurationInitialized;
+    }
+
+    public boolean isEpsConfigurationChanged() {
+        if (endpointProfile == null) {
+            return false;
+        }
+        return !Arrays.equals(epsConfigurationHash, endpointProfile.getEpsConfigurationHash());
+    }
+
+    public byte[] getEpsConfigurationHash() {
+        return epsConfigurationHash;
+    }
+
+    public void setEpsConfigurationHash(byte[] epsConfigurationHash) {
+        this.epsConfigurationHash = epsConfigurationHash;
+        this.epsConfigurationInitialized = true;
     }
 
     public List<NotificationDto> filter(List<NotificationDto> notifications) {
