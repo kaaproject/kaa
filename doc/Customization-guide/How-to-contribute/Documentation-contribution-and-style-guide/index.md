@@ -486,3 +486,14 @@ nix-shell doc/shell.nix --run ./test-gh-pages.sh
    Server address: http://127.0.0.1:4000/kaa/
    Server running... press ctrl-c to stop.
    ```
+
+## Release documentation building and publishing
+
+1. Build the documentation for release
+
+   ```bash
+   ./test-gh-pages.sh deploy
+   ```
+It will generate `gh-pages` branch with documentation from all versions(git tags) and with design from latest version(tag).
+
+2. Push the generated branch to `gh-pages` branch of GitHub repository. After pushing site will be available at [YOUR_ACCOUNT.github.io/PROJECT_NAME](https://kaaproject.github.io/kaa).
