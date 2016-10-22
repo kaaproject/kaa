@@ -42,6 +42,14 @@ public interface EventClassFamilyDao<T> extends SqlDao<T> {
     T findByTenantIdAndName(String tenantId, String name);
 
     /**
+     * Find EventClassFamily by ECF version id.
+     *
+     * @param ecfvId id of ECF version
+     * @return EventClassFamily
+     */
+    T findByEcfvId(String ecfvId);
+
+    /**
      * Remove all EventClassFamily objects by tenant id.
      *
      * @param tenantId the tenant id

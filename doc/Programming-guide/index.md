@@ -7,18 +7,24 @@ sort_idx: 20
 
 {% include variables.md %}
 
-The intention of this guide is to introduce Kaa platform programming basics to you.
-You will have to roll up your sleeves with Kaa (at least so we hope), so come prepared.
-In order for the guide to be useful, make sure that you have a development environment set up, including a Kaa server instance.
-We recommend that you use Kaa Sandbox, which is covered in [the Getting Started guide]({{root_url}}Getting-started/), but you can [use a Kaa cluster]({{root_url}}Administration-guide/System-installation/Cluster-setup/) or [a single Kaa node]({{root_url}}Administration-guide/System-installation/Single-node-installation/) instead, if you like.
+This guide describes the basics of [Kaa platform]({{root_urll}}Glossary/#kaa-platform) programming.
+It is intended for users with some programming experience.
+To follow the guide, you will need to set up your development environment.
 
-# Sections overview
+We recommend that you use the [Kaa Sandbox]({{root_urll}}Glossary/#kaa-sandbox) as the easiest and quickest way to test the Kaa platform features.
+Alternatively, you can set up a [Kaa cluster]({{root_urll}}Glossary/#kaa-cluster) or a Kaa single node for the same purpose.
 
-It is best to dive directly into the practice [by creating basic Kaa application]({{root_url}}Programming-guide/Your-first-Kaa-application/).
-You will learn a lot about Kaa during this basic training.
-With fresh new knowledge you could start familiarize with [a system overview of the Kaa platform]({{root_url}}Programming-guide/System-overview/) and then go through [application-level features that our platform provides to you]({{root_url}}Programming-guide/Key-platform-features/).
+To learn how to install the Sandbox, see [Getting started]({{root_urll}}Getting-started/).  
+See also [Cluster setup]({{root_url}}Administration-guide/System-installation/Cluster-setup/) and [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/).
 
-You then can advance your skills and create industrial-level projects by using [client-side SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/) provided in different languages and for different platforms.
-Make sure you do not miss our [REST API documentation]({{root_url}}Programming-guide/Server-REST-APIs/) which provides an overview of a great automation tool.
+## Sections overview
 
-Finally, if anything goes wrong you can always refer to [the troubleshooting section]({{root_url}}Programming-guide/Debugging-and-troubleshooting/) or ask for help in our [community forum](https://groups.google.com/group/kaaproject).
+| Section | Description |
+|-------|----------------|
+| **[Your first Kaa application]({{root_url}}Programming-guide/Your-first-Kaa-application/)** | Learn how to install and configure your Kaa applications. This is the quickest way to get hands-on experience with Kaa applications. |
+| **[Key platform features]({{root_url}}Programming-guide/Key-platform-features/)** | Learn about Kaa key features, such as [endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [logging]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), and others. |
+| **[Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/)** | Advance your skills to create an industrial level IoT project using different programming languages and platforms. |
+| **[Server REST APIs]({{root_url}}Programming-guide/Server-REST-APIs/)** | A detailed list of Kaa REST API operations. |
+
+---
+

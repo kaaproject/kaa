@@ -20,7 +20,28 @@ package org.kaaproject.kaa.server.common.admin;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationDto;
+import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
+import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
+import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
+import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
+import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
+import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
@@ -30,6 +51,7 @@ import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
+import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
@@ -38,6 +60,7 @@ import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -179,7 +202,6 @@ public class AdminClient {
         ResponseEntity<List<TenantDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "tenants", HttpMethod.GET, null, typeRef);
         return entity.getBody();
     }
-
 
     public List<UserDto> getAllTenantAdminsBytenantId(String tenantId){
         ParameterizedTypeReference<List<UserDto>> typeRef = new ParameterizedTypeReference<List<UserDto>>() {
@@ -596,6 +618,13 @@ public class AdminClient {
         return restTemplate.getForObject(restTemplate.getUrl() + "eventClassFamily/" + ecfId, EventClassFamilyDto.class);
     }
 
+    public List<EventClassFamilyVersionDto> getEventClassFamilyVersionsById(String ecfId) {
+        ParameterizedTypeReference<List<EventClassFamilyVersionDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyVersionDto>>() {
+        };
+        ResponseEntity<List<EventClassFamilyVersionDto>> entity = restTemplate.exchange(restTemplate.getUrl() + "eventClassFamilyVersions/" + ecfId, HttpMethod.GET, null, typeRef);
+        return entity.getBody();
+    }
+
     public EventClassFamilyDto getEventClassFamily(String familyName) {
         ParameterizedTypeReference<List<EventClassFamilyDto>> typeRef = new ParameterizedTypeReference<List<EventClassFamilyDto>>() {
         };
@@ -616,11 +645,11 @@ public class AdminClient {
         return entity.getBody();
     }
 
-    public void addEventClassFamilySchema(String eventClassFamilyId, String schemaResource) throws Exception {
+    public void addEventClassFamilyVersion(String eventClassFamilyId, EventClassFamilyVersionDto eventClassFamilyVersion) throws Exception {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("eventClassFamilyId", eventClassFamilyId);
-        params.add("file", getFileResource(schemaResource));
-        restTemplate.postForLocation(restTemplate.getUrl() + "addEventClassFamilySchema", params);
+        params.add("eventClassFamilyVersion", eventClassFamilyVersion);
+        restTemplate.postForLocation(restTemplate.getUrl() + "addEventClassFamilyVersion", params);
     }
 
     public List<EventClassDto> getEventClassesByFamilyIdVersionAndType(String eventClassFamilyId, int version, EventClassType type)
@@ -1047,6 +1076,11 @@ public class AdminClient {
         this.restTemplate.postForLocation(restTemplate.getUrl() + "provisionRegistration", parameters);
     }
 
+    public CredentialsStatus getCredentialsStatus(String applicationToken, String credentialsId) {
+        return this.restTemplate.getForObject(restTemplate.getUrl() + "credentialsStatus?applicationToken={applicationToken}&credentialsId={credentialsId}",
+                CredentialsStatus.class, applicationToken, credentialsId);
+    }
+
     public void revokeCredentials(String applicationToken, String credentialsId) {
         MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
         parameters.add("applicationToken", applicationToken);
@@ -1059,5 +1093,15 @@ public class AdminClient {
         parameters.add("applicationToken", applicationToken);
         parameters.add("credentialsId", credentialsId);
         this.restTemplate.postForLocation(restTemplate.getUrl() + "notifyRevoked", parameters);
+    }
+
+    public EndpointUserConfigurationDto findUserConfigurationByUserId(String externalUId, String appToken, Integer schemaVersion){
+        return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{externalUId}/{appToken}/{schemaVersion}",
+                EndpointUserConfigurationDto.class, externalUId, appToken, schemaVersion);
+    }
+
+    public String findEndpointConfigurationByEndpointKeyHash(String endpointKeyHash){
+        return restTemplate.getForObject(restTemplate.getUrl() + "configuration/{endpointKeyHash}/",
+                String.class, endpointKeyHash);
     }
 }

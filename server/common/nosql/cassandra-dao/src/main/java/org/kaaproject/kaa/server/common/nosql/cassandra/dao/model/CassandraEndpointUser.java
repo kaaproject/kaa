@@ -31,6 +31,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import java.io.Serializable;
 import java.util.List;
 
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 
@@ -45,10 +46,10 @@ public final class CassandraEndpointUser implements EndpointUser, Serializable {
     @Transient
     private static final long serialVersionUID = 3766947955702551264L;
 
-    @PartitionKey(value = 0)
+    @PartitionKey
     @Column(name = EP_USER_EXTERNAL_ID_PROPERTY)
     private String externalId;
-    @PartitionKey(value = 1)
+    @ClusteringColumn
     @Column(name = EP_USER_TENANT_ID_PROPERTY)
     private String tenantId;
 

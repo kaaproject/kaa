@@ -33,7 +33,7 @@
 #include "platform/ext_system_logger.h"
 #include <platform/time.h>
 #include "kaa_platform_common.h"
-#include "platform/ext_key_utils.h"
+#include "platform/ext_encryption_utils.h"
 #include "kaa_tcp_channel.h"
 #include "kaa_context.h"
 #include "kaa_channel_manager.h"
@@ -561,9 +561,8 @@ kaa_error_t kaa_tcp_channel_set_access_point(void *context, kaa_access_point_t *
             goto cleanup;
         }
     }
-
-    return error;
 #endif
+    return error;
 
 cleanup:
     KAA_FREE(channel->access_point.public_key);
@@ -1469,10 +1468,8 @@ static uint32_t get_uint32_t(const uint8_t *buffer)
         return 0;
     }
 
-    uint32_t value = ((uint32_t)buffer[3] << 24)
-            + ((uint32_t)buffer[2] << 16)
-            + ((uint32_t)buffer[1] << 8)
-            + ((uint32_t)buffer[0]);
+    uint32_t value = 0;
+    memcpy(&value, buffer, sizeof(value));
     return KAA_NTOHL(value);
 }
 

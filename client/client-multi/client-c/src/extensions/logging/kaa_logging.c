@@ -22,7 +22,6 @@
 #include <string.h>
 #include <inttypes.h>
 #include <sys/types.h>
-#include <assert.h>
 #include "platform/stdio.h"
 #include "platform/sock.h"
 #include "platform/time.h"

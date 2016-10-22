@@ -15,13 +15,13 @@
 
 #Configure node Kaa services
 if [ "$CONTROL_ENABLED" = "false" ]; then
-  sed -i "s/\(control_server_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
+  sed -i "s/\(control_service_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
 fi
 if [ "$BOOTSTRAP_ENABLED" = "false" ]; then
-  sed -i "s/\(bootstrap_server_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
+  sed -i "s/\(bootstrap_service_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
 fi
 if [ "$OPERATIONS_ENABLED" = "false" ]; then
-  sed -i "s/\(operations_server_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
+  sed -i "s/\(operations_service_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
 fi
 
 #Specify default NoSQL database

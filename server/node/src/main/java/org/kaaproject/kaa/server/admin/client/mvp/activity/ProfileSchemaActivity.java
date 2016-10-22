@@ -32,7 +32,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ProfileSchemaActivity
         extends
-        AbstractBaseCtlSchemaActivity<EndpointProfileSchemaDto, ProfileSchemaViewDto, BaseCtlSchemaView, ProfileSchemaPlace> {
+        AbstractBaseCtlSchemaActivityApplication<EndpointProfileSchemaDto, ProfileSchemaViewDto, BaseCtlSchemaView, ProfileSchemaPlace> {
 
     public ProfileSchemaActivity(ProfileSchemaPlace place,
             ClientFactory clientFactory) {

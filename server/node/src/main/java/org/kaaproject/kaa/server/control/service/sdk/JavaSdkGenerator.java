@@ -124,6 +124,9 @@ public class JavaSdkGenerator extends SdkGenerator {
     private static final String PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileContainer.java.template";
 
 
+    private static final String DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileContainer.java.template";
+
+
     private static final String PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileSerializer.java.template";
 
 
@@ -143,6 +146,9 @@ public class JavaSdkGenerator extends SdkGenerator {
 
 
     private static final String PROFILE_CONTAINER = "ProfileContainer";
+
+
+    private static final String DEFAULT_PROFILE_CONTAINER = "DefaultProfileContainer";
 
 
     private static final String PROFILE_SERIALIZER = "ProfileSerializer";
@@ -257,11 +263,13 @@ public class JavaSdkGenerator extends SdkGenerator {
         Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
 
-        List<Schema> eventFamilySchemas = new LinkedList<>();
-        if (eventFamilies != null && !eventFamilies.isEmpty()) {
-            for (EventFamilyMetadata eventFamily : eventFamilies) {
-                Schema eventFamilySchema = new Schema.Parser().parse(eventFamily.getEcfSchema());
-                eventFamilySchemas.add(eventFamilySchema);
+        List<String> flatEventClassCtlSchemas = new ArrayList<>();
+        eventFamilies.forEach(ecf -> flatEventClassCtlSchemas.addAll(ecf.getRawCtlsSchemas()));
+        List<Schema> eventClassCtlSchemas = new LinkedList<>();
+        if (flatEventClassCtlSchemas != null && !flatEventClassCtlSchemas.isEmpty()) {
+            for (String flatCtlSchema : flatEventClassCtlSchemas) {
+                Schema eventClassCtlSchema = new Schema.Parser().parse(flatCtlSchema);
+                eventClassCtlSchemas.add(eventClassCtlSchema);
             }
         }
 
@@ -270,7 +278,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         schemasToCheck.add(profileSchema);
         schemasToCheck.add(notificationSchema);
         schemasToCheck.add(logSchema);
-        schemasToCheck.addAll(eventFamilySchemas);
+        schemasToCheck.addAll(eventClassCtlSchemas);
 
         Map<String, Schema> uniqueSchemasMap = SchemaUtil.getUniqueSchemasMap(schemasToCheck);
 
@@ -346,6 +354,12 @@ public class JavaSdkGenerator extends SdkGenerator {
         JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(PROFILE_CONTAINER, profileContainerSource);
         javaSources.add(profileContainerClassBean);
 
+        String defaultProfileContainerTemplate = readResource(DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE);
+        String defaultProfileContainerSource = defaultProfileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
+                PROFILE_CLASS_VAR, profileClassName);
+        JavaDynamicBean defaultProfileContainerClassBean = new JavaDynamicBean(DEFAULT_PROFILE_CONTAINER, defaultProfileContainerSource);
+        javaSources.add(defaultProfileContainerClassBean);
+
         String profileSerializerTemplate;
         if (profileSchemaVersion == DEFAULT_PROFILE_SCHEMA_VERSION) {
             profileSerializerTemplate = readResource(DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE);
@@ -403,8 +417,8 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(logCollectorSourceClassBean);
 
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
-            for (Schema eventFamilySchema : eventFamilySchemas) {
-                javaSources.addAll(generateSchemaSources(eventFamilySchema, uniqueSchemasMap));
+            for (Schema ctlSchema : eventClassCtlSchemas) {
+                javaSources.addAll(generateSchemaSources(ctlSchema, uniqueSchemasMap));
             }
             javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
         }

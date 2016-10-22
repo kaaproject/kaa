@@ -309,6 +309,7 @@ permalink: /:path/
 ```
 {% endraw %}
 
+
 * Align code blocks in a list to the first character in a list item to force proper rendering.
 Separate the code block from the list item with an empty line.
 
@@ -324,6 +325,14 @@ Separate the code block from the list item with an empty line.
 {% raw %}
   ```
 [Glossary]({{root_url}}Glossary)
+```
+{% endraw %}
+
+* Refer to files in github repository using `github_url`, e.g., [.gitignore]({{github_url}}.gitignore)
+
+{% raw %}
+  ```
+[.gitignore]({{github_url}}.gitignore)
 ```
 {% endraw %}
 

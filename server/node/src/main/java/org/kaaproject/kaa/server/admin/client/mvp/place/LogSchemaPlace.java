@@ -20,14 +20,14 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 import com.google.gwt.place.shared.Prefix;
 
-public class LogSchemaPlace extends AbstractSchemaPlace {
+public class LogSchemaPlace extends AbstractSchemaPlaceApplication {
 
     public LogSchemaPlace(String applicationId, String schemaId) {
         super(applicationId, schemaId);
     }
 
     @Prefix(value = "logSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<LogSchemaPlace> {
+    public static class Tokenizer extends AbstractSchemaPlaceApplication.Tokenizer<LogSchemaPlace> {
 
         @Override
         protected LogSchemaPlace getPlaceImpl(String applicationId,

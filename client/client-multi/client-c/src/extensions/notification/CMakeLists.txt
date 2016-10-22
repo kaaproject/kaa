@@ -28,4 +28,4 @@ kaa_add_unit_test(NAME test_kaa_notification_manager
     SOURCES
     ${CMAKE_CURRENT_LIST_DIR}/test/test_kaa_notification.c
     DEPENDS
-    kaac ${OPENSSL_LIBRARIES})
+    kaac)

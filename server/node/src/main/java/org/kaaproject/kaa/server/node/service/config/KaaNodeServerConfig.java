@@ -21,14 +21,14 @@ package org.kaaproject.kaa.server.node.service.config;
  */
 public class KaaNodeServerConfig {
     
-    /** Enable control server parameter. */
-    private boolean controlServerEnabled;
+    /** Enable control service parameter. */
+    private boolean controlServiceEnabled;
 
-    /** Enable bootstrap server parameter. */
-    private boolean bootstrapServerEnabled;
+    /** Enable bootstrap service parameter. */
+    private boolean bootstrapServiceEnabled;
     
-    /** Enable operations server parameter. */
-    private boolean operationsServerEnabled;
+    /** Enable operations service parameter. */
+    private boolean operationsServiceEnabled;
 
     /** The thrift host. */
     private String thriftHost;
@@ -42,6 +42,9 @@ public class KaaNodeServerConfig {
     /** The zk host port list. */
     private String zkHostPortList;
 
+    /** Time to connect to ZK. */
+    private int zkWaitConnectionTime;
+
     /** The zk max retry time. */
     private int zkMaxRetryTime;
 
@@ -52,24 +55,24 @@ public class KaaNodeServerConfig {
     private boolean zkIgnoreErrors;
     
     /**
-     * @return true if Control server enabled
+     * @return true if Control service enabled
      */
-    public boolean isControlServerEnabled() {
-        return controlServerEnabled;
+    public boolean isControlServiceEnabled() {
+        return controlServiceEnabled;
     }
 
     /**
      * @return true if Bootstrap server enabled
      */
-    public boolean isBootstrapServerEnabled() {
-        return bootstrapServerEnabled;
+    public boolean isBootstrapServiceEnabled() {
+        return bootstrapServiceEnabled;
     }
 
     /**
      * @return true if Operations server enabled
      */
-    public boolean isOperationsServerEnabled() {
-        return operationsServerEnabled;
+    public boolean isOperationsServiceEnabled() {
+        return operationsServiceEnabled;
     }
 
     /**
@@ -107,6 +110,15 @@ public class KaaNodeServerConfig {
     }
 
     /**
+     * Time to connect to ZK.
+     *
+     * @return the zkWaitConnectionTime
+     */
+    public int getZkWaitConnectionTime() {
+        return zkWaitConnectionTime;
+    }
+
+    /**
      * The zk max retry time.
      * 
      * @return the zkMaxRetryTime
@@ -134,27 +146,27 @@ public class KaaNodeServerConfig {
     }
     
     /**
-     * @param controlServerEnabled
-     *            set flag to enable/disable Control server
+     * @param controlServiceEnabled
+     *            set flag to enable/disable Control service
      */
-    public void setControlServerEnabled(boolean controlServerEnabled) {
-        this.controlServerEnabled = controlServerEnabled;
+    public void setControlServiceEnabled(boolean controlServiceEnabled) {
+        this.controlServiceEnabled = controlServiceEnabled;
     }
 
     /**
-     * @param bootstrapServerEnabled
-     *            set flag to enable/disable Bootstrap server
+     * @param bootstrapServiceEnabled
+     *            set flag to enable/disable Bootstrap service
      */
-    public void setBootstrapServerEnabled(boolean bootstrapServerEnabled) {
-        this.bootstrapServerEnabled = bootstrapServerEnabled;
+    public void setBootstrapServiceEnabled(boolean bootstrapServiceEnabled) {
+        this.bootstrapServiceEnabled = bootstrapServiceEnabled;
     }
 
     /**
-     * @param operationsServerEnabled
+     * @param operationsServiceEnabled
      *            set flag to enable/disable Operations server
      */
-    public void setOperationsServerEnabled(boolean operationsServerEnabled) {
-        this.operationsServerEnabled = operationsServerEnabled;
+    public void setOperationsServiceEnabled(boolean operationsServiceEnabled) {
+        this.operationsServiceEnabled = operationsServiceEnabled;
     }
 
     /**
@@ -187,6 +199,14 @@ public class KaaNodeServerConfig {
      */
     public void setZkHostPortList(String zkHostPortList) {
         this.zkHostPortList = zkHostPortList;
+    }
+
+    /**
+     * @param zkWaitConnectionTime
+     *            the zkWaitConnectionTime to set
+     */
+    public void setZkWaitConnectionTime(int zkWaitConnectionTime) {
+        this.zkWaitConnectionTime = zkWaitConnectionTime;
     }
 
     /**

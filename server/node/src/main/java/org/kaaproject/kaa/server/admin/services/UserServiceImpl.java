@@ -16,9 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.admin.UserProfileUpdateDto;
+import org.kaaproject.kaa.server.admin.services.entity.CreateUserResult;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
@@ -27,7 +29,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.kaaproject.kaa.server.admin.services.util.Utils.checkFieldUniquieness;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
@@ -44,14 +48,19 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     }
 
     @Override
-    public void editUserProfile(UserProfileUpdateDto userProfileUpdateDto)
+    public void editUserProfile(UserProfileUpdateDto userDto)
             throws KaaAdminServiceException {
         try {
-            checkUserProfile(userProfileUpdateDto);
             User user = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
-            user.setFirstName(userProfileUpdateDto.getFirstName());
-            user.setLastName(userProfileUpdateDto.getLastName());
-            user.setMail(userProfileUpdateDto.getMail());
+            if (!isEmpty(userDto.getFirstName())) {
+                user.setFirstName(userDto.getFirstName());
+            }
+            if (!isEmpty(userDto.getLastName())) {
+                user.setLastName(userDto.getLastName());
+            }
+            if (!isEmpty(userDto.getMail())) {
+                user.setMail(userDto.getMail());
+            }
             userFacade.save(user);
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -94,33 +103,67 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
     @Override
     public org.kaaproject.kaa.common.dto.admin.UserDto editUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
             throws KaaAdminServiceException {
-
-        if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
-            checkAuthority(KaaAuthorityDto.KAA_ADMIN);
-        }
-        else {
-            checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
-            if(user.getTenantId()==null){
-                user.setTenantId(getTenantId());
-            }
-        }
         try {
-            if (!isEmpty(user.getId())) {
+
+            boolean createNewUser = (user.getId() == null);
+
+            String tempPassword = null;
+            if (createNewUser)  {
+                if(user.getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+                    checkAuthority(KaaAuthorityDto.KAA_ADMIN);
+                } else {
+                    checkAuthority(KaaAuthorityDto.TENANT_ADMIN);
+                    if (!isEmpty(user.getTenantId())) {
+                        checkTenantId(user.getTenantId());
+                    }
+                }
+
+                checkFieldUniquieness(
+                        user.getMail(),
+                        userFacade.getAll().stream().map(u -> u.getMail()).collect(Collectors.toSet()),
+                        "email"
+                );
+
+                checkFieldUniquieness(
+                        user.getUsername(),
+                        userFacade.getAll().stream().map(u -> u.getUsername()).collect(Collectors.toSet()),
+                        "userName"
+                );
+
+                CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
+                user.setExternalUid(result.getUserId().toString());
+                tempPassword = result.getPassword();
+            } else {
+                User stored = userFacade.findByUserName(user.getUsername());
+
+                user.setExternalUid(String.valueOf(stored.getId()));
+                checkUserId(user.getId());
+
                 UserDto storedUser = controlService.getUser(user.getId());
                 Utils.checkNotNull(storedUser);
-                if(getCurrentUser().getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)){
+                if(!getCurrentUser().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)) {
                     checkTenantId(storedUser.getTenantId());
                 }
             }
+
             Long userId = saveUser(user);
-            UserDto userDto = new UserDto();
+            org.kaaproject.kaa.common.dto.admin.UserDto userDto = new org.kaaproject.kaa.common.dto.admin.UserDto();
             userDto.setId(user.getId());
             userDto.setUsername(user.getUsername());
             userDto.setExternalUid(userId.toString());
-            userDto.setTenantId(user.getTenantId());
+            if (!isEmpty(getTenantId())) {
+                userDto.setTenantId(getTenantId());
+            } else {
+                userDto.setTenantId(user.getTenantId());
+            }
             userDto.setAuthority(user.getAuthority());
-            UserDto savedUser = controlService.editUser(userDto);
-            return toUser(savedUser);
+            org.kaaproject.kaa.common.dto.UserDto savedUser = controlService.editUser(userDto);
+
+            org.kaaproject.kaa.common.dto.admin.UserDto editedUser = toUser(savedUser);
+            if (StringUtils.isNotBlank(tempPassword)) {
+                editedUser.setTempPassword(tempPassword);
+            }
+            return editedUser;
 
         } catch (Exception e) {
             throw Utils.handleException(e);
@@ -159,17 +202,6 @@ public class UserServiceImpl extends AbstractAdminService implements UserService
             throw Utils.handleException(e);
         }
         return tenantAdminList;
-    }
-
-
-    private void checkUserProfile(UserProfileUpdateDto userProfileUpdateDto) throws KaaAdminServiceException {
-        if (isEmpty(userProfileUpdateDto.getFirstName())) {
-            throw new IllegalArgumentException("First name is not valid.");
-        } else if (isEmpty(userProfileUpdateDto.getLastName())) {
-            throw new IllegalArgumentException("Last name is not valid.");
-        } else if (isEmpty(userProfileUpdateDto.getMail())) {
-            throw new IllegalArgumentException("Mail is not valid.");
-        }
     }
 
 }

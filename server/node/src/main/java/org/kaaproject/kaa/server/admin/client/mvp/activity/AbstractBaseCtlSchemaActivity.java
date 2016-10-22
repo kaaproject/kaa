@@ -16,16 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.List;
-
-import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
-import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.place.AbstractSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
+import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel.FormDataLoader;
 import org.kaaproject.kaa.server.admin.client.util.ErrorMessageCustomizer;
@@ -33,46 +27,35 @@ import org.kaaproject.kaa.server.admin.client.util.SchemaErrorMessageCustomizer;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.schema.BaseSchemaViewDto;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto, 
-                                                   T extends BaseSchemaViewDto<S>, 
-                                                   V extends BaseCtlSchemaView, 
-                                                   P extends AbstractSchemaPlace> extends
-                                                   AbstractDetailsActivity<T, V, P> implements ErrorMessageCustomizer, FormDataLoader {
+public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
+        T extends BaseSchemaViewDto<S>,
+        V extends BaseCtlSchemaView,
+        P extends TreePlace>
+        extends AbstractDetailsActivity<T, V, P>
+        implements ErrorMessageCustomizer, FormDataLoader {
 
     private static final ErrorMessageCustomizer schemaErrorMessageCustomizer = new SchemaErrorMessageCustomizer();
-    
-    protected String applicationId;
 
     public AbstractBaseCtlSchemaActivity(P place,
-            ClientFactory clientFactory) {
+                                         ClientFactory clientFactory) {
         super(place, clientFactory);
-        this.applicationId = place.getApplicationId();
     }
 
     protected abstract T newSchema();
-    
-    protected abstract P existingSchemaPlace(String applicationId, String schemaId);
-    
+
+    protected P existingSchemaPlace(String applicationId, String schemaId) {
+        return null;
+    }
+
+    protected P existingSchemaPlaceForEvent(String ecfId, String ecfVersionId, int ecfVersion, String schemaId){
+        return null;
+    }
+
     protected abstract void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback);
-
-    @Override
-    protected String getEntityId(P place) {
-        return place.getSchemaId();
-    }
-
-    @Override
-    protected T newEntity() {
-        T schema = newSchema();
-        schema.setApplicationId(applicationId);
-        return schema;
-    }
 
     @Override
     protected void bind(final EventBus eventBus) {
@@ -82,40 +65,9 @@ public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
         super.bind(eventBus);
     }
 
-    @Override
-    protected void onEntityRetrieved() {
-        if (create) {
-            registrations.add(detailsView.getNewCtlButton().addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    CtlSchemaPlace newCtlPlace = new CtlSchemaPlace("", null, CTLSchemaScopeDto.APPLICATION, place.getApplicationId(), true, true);
-                    newCtlPlace.setSchemaType(getPlaceSchemaType());
-                    newCtlPlace.setPreviousPlace(place);
-                    canceled = true;
-                    goTo(newCtlPlace);
-                }
-            }));
-            KaaAdmin.getDataSource().getAvailableApplicationCTLSchemaReferences(applicationId, 
-                  new BusyAsyncCallback<List<CtlSchemaReferenceDto>>() {
-                      @Override
-                      public void onFailureImpl(Throwable caught) {
-                          Utils.handleException(caught, detailsView);
-                      }
-                      @Override
-                      public void onSuccessImpl(List<CtlSchemaReferenceDto> result) {
-                          detailsView.getCtlSchemaReference().setAcceptableValues(result);
-                          bindDetailsView(true);
-                      }
-              });
-              detailsView.getSchemaForm().setFormDataLoader(this);
-        } else {
-            bindDetailsView(false);
-        }
-    }
-    
     protected abstract SchemaType getPlaceSchemaType();
-    
-    private void bindDetailsView(boolean fireChanged) {
+
+    protected void bindDetailsView(boolean fireChanged) {
         S schema = entity.getSchema();
         String version = schema.getVersion() + "";
         detailsView.getVersion().setValue(version);
@@ -127,26 +79,6 @@ public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
             detailsView.getSchemaForm().setValue(entity.getCtlSchemaForm().getSchema(), fireChanged);
         }
     }
-    
-    @Override
-    protected void doSave(final EventBus eventBus) {
-        onSave();
-
-        editEntity(entity,
-                new BusyAsyncCallback<T>() {
-                    public void onSuccessImpl(T result) {
-                        if (!create) {                            
-                            goTo(existingSchemaPlace(applicationId, result.getId()));
-                        } else if (place.getPreviousPlace() != null) {
-                            goTo(place.getPreviousPlace());
-                        }
-                    }
-
-                    public void onFailureImpl(Throwable caught) {
-                        Utils.handleException(caught, detailsView);
-                    }
-        });
-    }
 
     @Override
     protected void onSave() {
@@ -157,7 +89,7 @@ public abstract class AbstractBaseCtlSchemaActivity<S extends BaseSchemaDto,
             entity.setUseExistingCtlSchema(detailsView.useExistingCtlSchema());
             if (detailsView.useExistingCtlSchema()) {
                 entity.setExistingMetaInfo(detailsView.getCtlSchemaReference().getValue());
-            } 
+            }
         }
     }
 

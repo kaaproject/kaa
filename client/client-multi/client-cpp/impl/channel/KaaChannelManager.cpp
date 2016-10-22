@@ -67,6 +67,11 @@ void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
     }
 }
 
+void KaaChannelManager::onConnected(const EndpointConnectionInfo& connection)
+{
+    context_.getClientStateListener().onConnectionEstablished(connection);
+}
+
 void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
 
     if (isShutdown_) {
@@ -118,7 +123,7 @@ void KaaChannelManager::onBootstrapServerFailed(ITransportConnectionInfoPtr conn
              auto period = decision.getRetryPeriod();
              auto bootstrapTransportId = connectionInfo->getTransportId();
 
-             KAA_LOG_WARN(boost::format("Attempt to reconnect to current Bootstrap server will be made in %d seconds") % period);
+             KAA_LOG_WARN(boost::format("Attempt to reconnect to current Bootstrap service will be made in %d seconds") % period);
 
              retryTimer_.stop();
              retryTimer_.start(period, [this, bootstrapTransportId]
@@ -130,7 +135,7 @@ void KaaChannelManager::onBootstrapServerFailed(ITransportConnectionInfoPtr conn
          case FailoverStrategyAction::USE_NEXT_BOOTSTRAP_SERVER:
          {
              /*
-              * In conjunction with ALL_BOOTSTRAP_SERVERS_NA lead to switching to the first Bootstrap server.
+              * In conjunction with ALL_BOOTSTRAP_SERVERS_NA lead to switching to the first Bootstrap service.
               */
              bool forceFirstBootstrapServer = (KaaFailoverReason::ALL_BOOTSTRAP_SERVERS_NA == reason);
              auto nextBootstrapServer = getNextBootstrapServer(connectionInfo->getTransportId(), forceFirstBootstrapServer);
@@ -138,7 +143,7 @@ void KaaChannelManager::onBootstrapServerFailed(ITransportConnectionInfoPtr conn
              if (nextBootstrapServer) {
                  std::size_t period = decision.getRetryPeriod();
 
-                 KAA_LOG_WARN(boost::format("Attempt to reconnect to %s Bootstrap server will be made in %d seconds")
+                 KAA_LOG_WARN(boost::format("Attempt to reconnect to %s Bootstrap service will be made in %d seconds")
                                                                              % (forceFirstBootstrapServer ? "first" : "next")
                                                                              % period);
 
@@ -148,7 +153,7 @@ void KaaChannelManager::onBootstrapServerFailed(ITransportConnectionInfoPtr conn
                          updateBootstrapServerAndSync(nextBootstrapServer);
                      });
              } else {
-                 KAA_LOG_WARN(boost::format("No Bootstrap servers are accessible for %s. Processing failover...")
+                 KAA_LOG_WARN(boost::format("No Bootstrap services are accessible for %s. Processing failover...")
                                                          % LoggingUtils::toString(connectionInfo->getTransportId()));
 
                  onBootstrapServerFailed(connectionInfo, KaaFailoverReason::ALL_BOOTSTRAP_SERVERS_NA);
@@ -243,10 +248,10 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
             channel->setServer(connectionInfo);
         } else {
             if (channel->getServerType() == ServerType::BOOTSTRAP) {
-                KAA_LOG_WARN(boost::format("Failed to find bootstrap server for channel \"%1%\" %2%")
+                KAA_LOG_WARN(boost::format("Failed to find bootstrap service for channel \"%1%\" %2%")
                             % channel->getId() % LoggingUtils::toString(protocolId));
             } else {
-                KAA_LOG_INFO(boost::format("Failed to find operations server for channel \"%1%\" %2%")
+                KAA_LOG_INFO(boost::format("Failed to find operations service for channel \"%1%\" %2%")
                             % channel->getId() % LoggingUtils::toString(protocolId));
             }
         }

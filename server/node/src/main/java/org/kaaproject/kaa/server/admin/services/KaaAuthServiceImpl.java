@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
+import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.services.entity.Authority;
 import org.kaaproject.kaa.server.admin.services.entity.User;
 import org.kaaproject.kaa.server.admin.services.messaging.MessagingService;
+import org.kaaproject.kaa.server.admin.services.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthService;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
@@ -139,8 +141,14 @@ public class KaaAuthServiceImpl implements KaaAuthService {
     public ResultCode changePassword(String username, String oldPassword,
             String newPassword) throws Exception {
         User userEntity = userFacade.findByUserName(username);
+        boolean firstTimeLogin = userEntity.isTempPassword();
+
         if (userEntity == null) {
             return ResultCode.USER_NOT_FOUND;
+        }
+        if (!firstTimeLogin) {
+            User currentUser = userFacade.findById(Long.valueOf(getCurrentUser().getExternalUid()));
+            if (!currentUser.equals(userEntity)) return ResultCode.PERMISSION_DENIED;
         }
         if (!passwordEncoder.matches(oldPassword, userEntity.getPassword())) {
             return ResultCode.OLD_PASSWORD_MISMATCH;

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.avro.Schema;
@@ -88,7 +89,7 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             } else {
                 uuidFieldSchema = getUuidType();
             }
-            uuidField = new Field(UUID_FIELD, uuidFieldSchema, null, null);;
+            uuidField = new Field(UUID_FIELD, uuidFieldSchema, null, null);
             uuidField.addProp(DISPLAY_NAME_FIELD, UUID_FIELD_DISPLAY_NAME);
             uuidField.addProp(FIELD_ACCESS_FIELD, FIELD_ACCESS_READ_ONLY);
             return uuidField;
@@ -225,14 +226,17 @@ public class SchemaCreatorImpl<T extends KaaSchema> implements SchemaCreator<T> 
             newFields.add(newField);
         }
         if (addressable) {
-            // This record supports partial updates, adding "uuid" field
-            newFields.add(getUuidField());
+            // This record supports partial updates, adding "uuid" field if it is not exists already
+            Optional<Field> uuidOptional = newFields.stream().filter(f -> f.name().equals(UUID_FIELD)).findFirst();
+            if (!uuidOptional.isPresent()) {
+                newFields.add(getUuidField());
+            }
         }
         AvroUtils.copyJsonProperties(root, copySchema);
         copySchema.setFields(newFields);
         if (addressable) {
             // Adding addressable record's name to the storage
-            String fullName = root.getFullName();;
+            String fullName = root.getFullName();
             if (!fullName.equals(rootSchemaName)) {
                 addressableRecords.add(copySchema);
             }

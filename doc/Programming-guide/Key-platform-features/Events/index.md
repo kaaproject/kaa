@@ -11,7 +11,7 @@ sort_idx: 80
 * TOC
 {:toc}
 
-The Kaa Event subsystem enables generation of events on endpoints in near real-time fashion, handling those events on a Kaa server, and dispatching them to other endpoints that belong to the same user (potentially, across different applications). The Kaa event structure is determined by a configurable event class schema.
+The Kaa Event subsystem enables generation of events on endpoints in near real-time fashion, handling those events on a Kaa server, and dispatching them to other endpoints that belong to the same owner (potentially, across different applications). The Kaa event structure is determined by a configurable [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/).
 
 The Kaa Event subsystem provides the following features.
 
@@ -28,148 +28,162 @@ Process of event generation and handling described on the following diagram:
 
 It is the developer's responsibility to design event class schemas and make the client application interpret event data supplied by the endpoint library. The Kaa administrator, in turn, can provision those schemas into the Kaa server and generate the endpoint SDK.
 
-## Event class and event class schema
+## Event class
 
-Each event is based on a particular event class (EC) that is defined by the corresponding event class schema. An EC is uniquely identified by a fully qualified name (FQN) and a tenant. In other words, there can be no two ECs with the same FQN within a single tenant.
+Each event is based on a particular event class (EC) that is defined by the corresponding [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) with the additional attribute classType that supports two values: event and object. Kaa uses the classType attribute to distinguish actual events from objects, which are reusable parts of events. This is useful for avoiding redundant methods in SDK API.
 
-An event class schema format is based on the [Avro schema](http://avro.apache.org/docs/current/spec.html#schemas) with the additional attribute classType that supports two values: event and object. Kaa uses the classType attribute to distinguish actual events from objects, which are reusable parts of events. This is useful for avoiding redundant methods in SDK API.
+The following examples illustrate basic event class CTL schemas.
 
-The following examples illustrate basic event class schemas.
-
-* The simplest definition of an event with the com.company.project.SimpleEvent1 FQN and no data fields
+* The simplest definition of an event with the com.company.project.SimpleEvent1 FQN and no data fields, classType is event.
 
 ```json
-{
-    "namespace": "com.company.project",
-    "type": "record",
-    "classType": "event",
-    "name": "SimpleEvent1",
-    "fields": []
-}
-```
+{  
+    "namespace":"com.company.project",
+    "type":"record",
+    "name":"SimpleEvent1",
+    "fields":[  
 
-* The event definition with the com.company.project.SimpleEvent2 FQN and two data fields (field1 and field2)
-
-```json
-{
-    "namespace": "com.company.project",
-    "type": "record",
-    "classType": "event",
-    "name": "SimpleEvent2",
-    "fields": [
-        { "name": "field1", "type": "int"},
-        { "name": "field2", "type": "string"}
     ]
 }
 ```
 
-* The event definition with the com.company.project.ComplexEvent FQN and two complex fields: com.company.project.SimpleRecordObject and com.company.project.SimpleEnumObject
+* The event definition with the com.company.project.SimpleEvent2 FQN and two data fields (field1 and field2), classType is event.
 
 ```json
-[
-    {
-        "namespace": "com.company.project",
-        "type": "enum",
-        "classType": "object",
-        "name": "SimpleEnumObject",
-        "symbols" : ["ENUM_VALUE_1", "ENUM_VALUE_2", "ENUM_VALUE_3"]
-    },
-    {
-        "namespace": "com.company.project",
-        "type": "record",
-        "classType": "object",
-        "name": "SimpleRecordObject",
-        "fields": [
-            { "name": "field1", "type": "int" },
-            { "name": "field2", "type": "string" }
-        ]
-    },
-    {
-        "namespace": "com.company.project",
-        "type": "record",
-        "classType": "event",
-        "name": "ComplexEvent",
-        "fields": [
-            { "name": "field1", "type": "com.company.project.SimpleEnumObject" },
-            { "name": "field2", "type": "com.company.project.SimpleRecordObject" }
-        ]
-    }
-]
+{  
+    "namespace":"com.company.project",
+    "type":"record",
+    "name":"SimpleEvent2",
+    "fields":[  
+        {  
+            "name":"field1",
+            "type":"int"
+        },
+        {  
+            "name":"field2",
+            "type":"string"
+        }
+    ]
+}
+```
+
+* The event definition with the com.company.project.ComplexEvent (classType is event) FQN and two complex fields (classType of each is object): com.company.project.SimpleRecordObject and com.company.project.SimpleEnumObject.
+
+```json
+{  
+    "namespace":"com.company.project",
+    "type":"record",
+    "name":"ComplexEvent",
+    "fields":[  
+        {  
+            "namespace":"com.company.project",
+            "type":"enum",
+            "name":"SimpleEnumObject",
+            "symbols":[  
+                "ENUM_VALUE_1",
+                "ENUM_VALUE_2",
+                "ENUM_VALUE_3"
+            ]
+        },
+        {  
+            "namespace":"com.company.project",
+            "type":"record",
+            "name":"SimpleRecordObject",
+            "fields":[  
+                {  
+                    "name":"field1",
+                    "type":"int"
+                },
+                {  
+                    "name":"field2",
+                    "type":"string"
+                }
+            ]
+        }
+    ]
+}
 ```
 
 ## Event class families
 
-ECs are grouped into event class families (ECF) by subject areas. ECFs are registered within the Kaa tenant together with the corresponding event class family schemas.
+ECs are grouped into event class families (ECF) by subject areas. ECFs are registered within the Kaa tenant.
+Once the event class family is saved into the Kaa application, the Control server automatically assigns it the version number. The user can define new versions of the ECF, whereas each version may contain different event classes, if necessary. Event class family versions (ECFV) are used to group list of particular ECs which belong to ECF.
+
+The structure is: ECF contains list of ECFVs, each ECFV contain list of ECs. 
 
 An ECF is uniquely identified by its name and/or class name and tenant. In other words, there cannot be two ECFs with the same name or same class name within a single tenant. Although this is quite a strict requirement, it helps prevent naming collisions during the SDK generation.
 
-To simplify the process of EC and ECF setup, Kaa Web UI automatically creates the ECF and corresponding EC entities based on the ECF name, class name and schema.
+An ECFV represents list of ECs. If you need to change the list of ECs then new ECFV must be created.
 
-The following examples illustrate basic event class family schemas.
+Unlike EC, ECF and ECFV doesn't contain any schemas. 
 
-* The schema that contains two events with FQNs com.company.project.family1.SimpleEvent1 and com.company.project.family1.SimpleEvent2
+For example, ECF with FQN com.company.project.family1.Family1 contain list of single ECFV with version 1.
+ECFV com.company.project.family1.Family1 version 1 contains list of two ECs: com.company.project.family1.ComplexEvent1 and com.company.project.family1.ComplexEvent2, with complex field com.company.project.family1.SimpleEnumObject and previously saved object com.company.project.family1.CustomField.
 
-```json
-[
-    {
-        "namespace": "com.company.project.family1",
-        "name": "SimpleEvent1",
-        "type": "record",
-        "classType": "event",
-        "fields": []
-    },
-    {
-        "namespace": "com.company.project.family1",
-        "name": "SimpleEvent2",
-        "type": "record",
-        "classType": "event",
-        "fields": [
-            { "name": "field1", "type": "int" },
-            { "name": "field2", "type": "string" }
-        ]
-    }
-]
-```
-
-* The schema that contains two events (with FQNs com.company.project.family2.ComplexEvent1 and com.company.project.family2.ComplexEvent2) that reuse the same complex field type com.company.project.family2.SimpleObject
+* The event definition com.company.project.family1.ComplexEvent1 with complex field com.company.project.family1.SimpleEnumObject and previously saved CTL schema com.company.project.family1.CustomField (pay attention to declaration, this field is optional, could be null).
 
 ```json
-[
-    {
-        "namespace": "com.company.project.family2",
-        "name": "SimpleObject",
-        "type": "record",
-        "classType": "object",
-        "fields": [
-            { "name": "field1", "type": "int" },
-            { "name": "field2", "type": "string" }
-        ]
-    },
-    {
-        "namespace": "com.company.project.family2",
-        "name": "ComplexEvent1",
-        "type": "record",
-        "classType": "event",
-        "fields": [
-            { "name": "field1", "type": "com.company.project.family2.SimpleObject" },
-            { "name": "field2", "type": "int" }
-        ]
-    },
-    {
-        "namespace": "com.company.project.family2",
-        "name": "ComplexEvent2",
-        "type": "record",
-        "classType": "event",
-        "fields": [
-            { "name": "field1", "type": "com.company.project.family2.SimpleObject" },
-            { "name": "field2", "type": "string" }
-        ]
-    }
-]
+{  
+    "namespace":"com.company.project.family1",
+    "name":"ComplexEvent1",
+    "type":"record",
+    "fields":[  
+        {  
+            "name":"customField",
+            "type":[  
+                "com.company.project.family1.CustomField",
+                "null"
+            ]
+        },
+        {  
+            "namespace":"com.company.project.family1",
+            "type":"enum",
+            "name":"SimpleEnumObject",
+            "symbols":[  
+                "ENUM_VALUE_1",
+                "ENUM_VALUE_2",
+                "ENUM_VALUE_3"
+            ]
+        }
+    ],
+    "dependencies":[  
+        {  
+            "fqn":"ocom.company.project.family1.CustomField",
+            "version":1
+        }
+    ]
+}
 ```
 
-Once the event class family schema is loaded into the Kaa application, the Control server automatically assigns it the version number. The user can define new versions of the ECF schema, whereas each version may contain different event classes, if necessary.
+* The event definition com.company.project.family1.ComplexEvent1 with complex field com.company.project.family1.SimpleEnumObject and two primitive fields.
 
+```json
+{  
+    "namespace":"com.company.project.family1",
+    "name":"ComplexEvent2",
+    "type":"record",
+    "fields":[  
+        {  
+            "namespace":"com.company.project.family1",
+            "type":"enum",
+            "name":"SimpleEnumObject",
+            "symbols":[  
+                "ENUM_VALUE_1",
+                "ENUM_VALUE_2",
+                "ENUM_VALUE_3"
+            ]
+        },
+        {  
+            "name":"field1",
+            "type":"int"
+        },
+        {  
+            "name":"field2",
+            "type":"string"
+        }
+    ]
+}
+```
 
 ## Event family mapping 
 
@@ -186,16 +200,16 @@ By default, the application is mapped to each event of the ECF as both the sourc
 
 ## Event routing
 
-Events can be sent to a single endpoint (unicast traffic) or to all the event sink endpoints of the given user (multicast traffic).
+Events can be sent to a single endpoint (unicast traffic) or to all the event sink endpoints of the given owner (multicast traffic).
 
-In case of a multicast event, the Kaa server relays the event to all endpoints registered as the corresponding EC sinks during the ECF mapping. If the user's endpoints are distributed over multiple Operation servers, the event is sent to all these Operation servers. Until being expired, thew event remains deliverable for the endpoints that were offline at the moment of the event generation.
+In case of a multicast event, the Kaa server relays the event to all endpoints registered as the corresponding EC sinks during the ECF mapping. If the owner's endpoints are distributed over multiple Operation servers, the event is sent to all these Operation servers. Until being expired, thew event remains deliverable for the endpoints that were offline at the moment of the event generation.
 
-In case of a unicast event, the Kaa server delivers the event to the target endpoint only if the endpoint was registered as the corresponding EC sink during the ECF mapping. The EP SDK supplies API to query the list of endpoints currently registered as the EC sinks under the given user.
+In case of a unicast event, the Kaa server delivers the event to the target endpoint only if the endpoint was registered as the corresponding EC sink during the ECF mapping. The EP SDK supplies API to query the list of endpoints currently registered as the EC sinks under the given owner.
 
 
 ## Event exchange scope
 
-To use events between several endpoints, it is required that those endpoints were attached to the same user (in other words, registered with the same user). Kaa provides necessary APIs to attach/detach endpoints to/from users. To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
+To use events between several endpoints, it is required that those endpoints were attached to the same owner (in other words, registered with the same user). Kaa provides necessary APIs to attach/detach endpoints to/from owners. To get the details please visit [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/) page.
 
 
 ## Event sequence number
@@ -248,7 +262,7 @@ EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
 </div><div id="objc1" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -287,7 +301,7 @@ ThermoEventClassFamily& tecf = eventFamilyFactory.getThermoEventClassFamily();
 </div><div id="objc2" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import<Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -367,7 +381,7 @@ kaaClient->findEventListeners(FQNs, std::make_shared<SimpleFetchEventListeners>(
 </div><div id="c3" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/event.h>
+#include <extensions/event/kaa_event.h>
 #include <kaa/platform/ext_event_listeners_callback.h>
  
 const char *fqns[] = { "org.kaaproject.kaa.schema.sample.thermo.ThermostatInfoRequest"
@@ -400,7 +414,7 @@ kaa_error_t error_code = kaa_event_manager_find_event_listeners(kaa_client_get_c
 </div><div id="objc3" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <FindEventListenersDelegate>
  
@@ -471,7 +485,7 @@ thermo_request->destroy(thermo_request);
 </div><div id="objc4" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -520,7 +534,7 @@ tecf.sendEvent(ctc, target);
 </div><div id="c5" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/geb/kaa_thermo_event_class_family.h>
+#include <kaa/gen/kaa_thermo_event_class_family.h>
  
 /* Create and send an event */
 kaa_endpoint_id target_endpoint;
@@ -538,7 +552,7 @@ change_command->destroy(change_command);
 </div><div id="objc5" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import<Kaa/Kaa.h>
+@import Kaa;
  
 ...
  
@@ -628,7 +642,7 @@ eventFamilyFactory.removeEventsBlock(trxId);
 </div><div id="c6" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_event.h>
+#include <extensions/event/kaa_event.h>
 #include <kaa/gen/kaa_thermo_event_class_family.h>
  
 kaa_event_block_id transaction_id;
@@ -663,7 +677,7 @@ change_command->destroy(change_command);
 </div><div id="objc6" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 ...
 // Get instance of EventFamilyFactory
@@ -680,7 +694,6 @@ TransactionId *trxId = [eventFamilyFactory startEventsBlock];
 ChangeDegreeRequest *request = [[ChangeDegreeRequest alloc] init];
 request.degree = [KAAUnion unionWithBranch:KAA_UNION_INT_OR_NULL_BRANCH_0 data:@(-30)];
 [tecf addChangeDegreeRequestToBlock:request withTransactionId:trxId target:@"home_thermostat"];
- 
  
 // Send an event batch
 [eventFamilyFactory submitEventsBlockWithTransactionId:trxId];
@@ -752,7 +765,7 @@ tecf.addEventFamilyListener(eventsListener);
 </div><div id="c7" class="tab-pane fade" markdown="1" >
 
 ```c
-#include <kaa/kaa_event.h>
+#include <extensions/event/kaa_event.h>
 #include <kaa/gen/kaa_thermo_event_class_family.h>
  
 void on_thermo_event_class_family_change_temperature_command(void *context, kaa_thermo_event_class_family_change_temperature_command_t *event, kaa_endpoint_id_p source)
@@ -769,13 +782,16 @@ kaa_error_t error_code = kaa_event_manager_set_kaa_thermo_event_class_family_cha
 </div><div id="objc7" class="tab-pane fade" markdown="1" >
 
 ```objective-c
-#import <Kaa/Kaa.h>
+@import Kaa;
  
 @interface ViewController () <ThermostatEventClassFamilyDelegate>
  
 ...
  
 [self.tecf addDelegate:self];
+ 
+...
+ 
 - (void)onThermostatInfoRequest:(ThermostatInfoRequest *)event fromSource:(NSString *)source {
     // Some code
 }
@@ -794,24 +810,20 @@ kaa_error_t error_code = kaa_event_manager_set_kaa_thermo_event_class_family_cha
 
 ## Kaa Events REST API 
 
-Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#TODO) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
+Visit [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#resource_Events) documentation page for detailed description of the REST API, its purpose, interfaces and features supported.
 
 Admin REST API provides the following actions:
 
-* [Get event class families]({{root_url}}Programming-guide/Server-REST-APIs/#get-event-class-families/#TODO)
-* [Get event class family]({{root_url}}Programming-guide/Server-REST-APIs/#get-event-class-family/#TODO)
-* [Create/Edit event class family]({{root_url}}Programming-guide/Server-REST-APIs/#createedit-event-class-family/#TODO)
-* [Add event class family schema]({{root_url}}Programming-guide/Server-REST-APIs/#add-event-class-family-schema/#TODO)
-* [Get event classes]({{root_url}}Programming-guide/Server-REST-APIs/#get-event-classes/#TODO)
-* [Get application event family maps]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-family-maps/#TODO)
-* [Get application event family maps by application token]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-family-maps-by-application-token/#TODO)
-* [Get application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-family-map/#TODO)
-* [Create/Edit application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#createedit-application-event-family-map/#TODO)
-* [Get vacant event class families]({{root_url}}Programming-guide/Server-REST-APIs/#get-vacant-event-class-families/#TODO)
-* [Get vacant event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#get-vacant-event-class-families-by-application-token/#TODO)
-* [Get application event class families]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-class-families/#TODO)
-* [Get application event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#get-application-event-class-families-by-application-token/#TODO)
-
+* [Add the event class family version]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/addEventClassFamilyVersion)
+* [Create/Edit application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/editApplicationEventFamilyMap)
+* [Get application event family map]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getApplicationEventFamilyMap)
+* [Get application event family maps by application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getApplicationEventFamilyMapsByApplicationToken)
+* [Get event class families]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassFamilies)
+* [Get application event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassFamiliesByApplicationToken)
+* [Create/Edit event class family]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/editEventClassFamily)
+* [Get event class family]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassFamily)
+* [Get event classes]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getEventClassesByFamilyIdVersionAndType)
+* [Get vacant event class families by application token]({{root_url}}Programming-guide/Server-REST-APIs/#!/Events/getVacantEventClassFamiliesByApplicationToken)
 
 ## Kaa Events Admin UI
 
@@ -819,7 +831,7 @@ Admin REST API provides the following actions:
 
 > **NOTE:** this functionality available for Tenant admin
 
-To use the Kaa events feature for one or more applications, the tenant admin should create an event class family (ECF). Each ECF should be described using the Avro format. 
+To use the Kaa events feature for one or more applications, the tenant admin should create an event class family (ECF). 
 
 To create a new ECF, do the following:
 
@@ -827,16 +839,23 @@ To create a new ECF, do the following:
 2. In the **Event class families** window, click **Add ECF**. 
 ![](images/admin_ui/event_class_family/ecf1.png)
 3. In the **Add ECF** window, fill in all the required fields and then click **Add**.  
-**NOTE:** _the namespace and class name values should be unique._
+<br> **NOTE:** _the namespace and class name values should be unique._
 ![](images/admin_ui/event_class_family/ecf2.png)
-4. In the **Event class family** window, add (optionally) an ECF schema by clicking **Add schema** under the **Schemas** table. 
+4. In the **Event class family** window, add (optionally) an ECF version by clicking **Add family version** under the **Versions** table. 
 ![](images/admin_ui/event_class_family/ecf3.png)
-5. In the **Add event class family schema** window, create an ECF schema either by using the **Event class family schema** schema form or by uploading the schema from a file, then click **Add**.
-**NOTE:** _More than one schema can be added to an ECF._
-**NOTE:** _If uploaded from a file, a schema(s) should be written in the Avro format and describe how event classes should be grouped depending on subject areas._
+5. In the **Family version** window, create an ECF version by adding ECs by clicking **Add event class** and after all ECs are set up click button **Save**.
+<br> **NOTE:** _More than one version can be added to an ECF._
 ![](images/admin_ui/event_class_family/ecf4.png)
-A unique version number is assigned to a schema after its creation and then the schema appears as a clickable line in the **Schemas** table. To review the ECF schema details, click the appropriate schema line in the **Schemas** table. Each schema automatically splits into event classes. A full qualifier name, schema and type are shown for each event class in the table with the same name.
+A unique version number is assigned to a family version after its creation and then the family version appears as a clickable line in the **Versions** table. To review the ECF version details, click the appropriate version line in the **Versions** table. Each family version automatically splits into event classes. A name, type, created by, date created and flat representation of corresponding [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) are shown for each event class in the table with the same name.
 ![](images/admin_ui/event_class_family/ecf5.png)
+![](images/admin_ui/event_class_family/ecf6.png)
+6. In the **Add event class** window, fill in all the required fields and then click **Add**. 
+You are able to select existing [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) or create new. 
+To select existing [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) click on **Select fully qualified name of existing type** text field and choose one of available CTL schemas.
+To create new [CTL schema]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/) click **Create new type** and go to p.7.
+![](images/admin_ui/event_class_family/ecf7.png)
+7. In the **Add new type** window, fill in all the required fields and then click **Add** or click **Choose file**. 
+![](images/admin_ui/event_class_family/ecf8.png)
 
 #### Adding event family mappings
 
@@ -854,5 +873,3 @@ To add a new mapping, do the following:
 2. Select an appropriate ECF from the drop-down list and then set appropriate actions for each class of the family.
 
 ![](images/admin_ui/event_family_mapping/efm2.png)
-
-

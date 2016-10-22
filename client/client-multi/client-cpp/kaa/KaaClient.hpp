@@ -37,7 +37,7 @@
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 #include "kaa/log/LogCollector.hpp"
 #include "kaa/context/IExecutorContext.hpp"
-#include "kaa/IKaaClientStateListener.hpp"
+#include "kaa/KaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientProperties.hpp"
 #include "kaa/KaaClientContext.hpp"
@@ -45,9 +45,9 @@
 namespace kaa {
 
 class KaaClient : public IKaaClient,
-                  public std::enable_shared_from_this<IKaaClient> {
+                  public std::enable_shared_from_this<KaaClient> {
 public:
-    KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener);
+    KaaClient(IKaaClientPlatformContextPtr platformContext, KaaClientStateListenerPtr listener);
 
     virtual void start();
     virtual void stop();
@@ -104,6 +104,7 @@ public:
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
     virtual IKaaClientContext&                  getKaaClientContext();
+
 private:
     void init();
 
@@ -165,7 +166,6 @@ private:
     std::unique_ptr<LogCollector>                    logCollector_;
 #endif
 
-    IKaaClientStateListenerPtr                       stateListener_;
     IKaaClientPlatformContextPtr                     platformContext_;
 };
 

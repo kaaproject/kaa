@@ -30,4 +30,4 @@ kaa_add_unit_test(NAME test_kaa_configuration_manager
     ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
     test/kaa_test_external.c
     DEPENDS
-    kaac extension_configuration ${OPENSSL_LIBRARIES})
+    kaac extension_configuration)

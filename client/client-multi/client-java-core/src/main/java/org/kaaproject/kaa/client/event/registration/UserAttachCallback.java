@@ -29,7 +29,7 @@ import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
  */
 public interface UserAttachCallback {
     /**
-     * Called when auth result is retrieved from operations server.
+     * Called when auth result is retrieved from operations service.
      *
      * @param response Result of user attaching
      * @see UserAttachResponse

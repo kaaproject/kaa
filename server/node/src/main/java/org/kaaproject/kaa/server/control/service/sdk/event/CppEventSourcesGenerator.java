@@ -30,50 +30,80 @@ import org.kaaproject.kaa.server.control.service.sdk.compress.TarEntryData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.joining;
+
 
 public class CppEventSourcesGenerator {
 
-    /** The Constant LOG. */
+    /**
+     * The Constant LOG.
+     */
     private static final Logger LOG = LoggerFactory
             .getLogger(CppEventSourcesGenerator.class);
 
-    /** The Constant EVENT_FAMILY_HPP_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_HPP_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_HPP_TEMPLATE = "sdk/cpp/event/EventFamily.hpp.template";
 
-    /** The Constant EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_ADD_SUPPORTED_FQN_TEMPLATE = "sdk/cpp/event/addSupportedEventClassFqns.template";
 
-    /** The Constant EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_ON_GENERIC_EVENT_TEMPLATE = "sdk/cpp/event/eventFamilyOnGenericEvent.template";
 
-    /** The Constant EVENT_FAMILY_NOTIFY_LISTENER_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_NOTIFY_LISTENER_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_NOTIFY_LISTENER_TEMPLATE = "sdk/cpp/event/eventFamilyNotifyListener.template";
 
-    /** The Constant EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_SEND_EVENT_METHODS_TEMPLATE = "sdk/cpp/event/eventFamilySendEventMethods.template";
 
-    /** The Constant EVENT_FAMILY_LISTENER_METHOD_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_LISTENER_METHOD_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_LISTENER_METHOD_TEMPLATE = "sdk/cpp/event/eventFamilyListenerMethod.template";
 
-    /** The Constant EVENT_FAMILY_FACTORY_HPP_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_FACTORY_HPP_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_FACTORY_HPP_TEMPLATE = "sdk/cpp/event/EventFamilyFactory.hpp.template";
 
-    /** The Constant EVENT_FAMILY_LISTENER_METHOD_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_LISTENER_METHOD_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_INCLUDE_HEADERS_TEMPLATE = "sdk/cpp/event/includeEventFamilyHeaders.template";
 
-    /** The Constant EVENT_FAMILY_FACTORY_ADD_EVENT_FAMILY_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_FACTORY_ADD_EVENT_FAMILY_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_FACTORY_ADD_EVENT_FAMILY_TEMPLATE = "sdk/cpp/event/eventFamilyFactoryAddConcreteEventFamily.template";
 
-    /** The Constant EVENT_FAMILY_FACTORY_GET_EVENT_FAMILY_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_FACTORY_GET_EVENT_FAMILY_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_FACTORY_GET_EVENT_FAMILY_TEMPLATE = "sdk/cpp/event/eventFamilyFactoryGetConcreteEventFamily.template";
 
-    /** The Constant AVROGEN_SH_TEMPLATE. */
+    /**
+     * The Constant AVROGEN_SH_TEMPLATE.
+     */
     private static final String AVROGEN_SH_TEMPLATE = "sdk/cpp/event/avrogen.sh_template";
-    
-    /** The Constant AVROGEN_bat_TEMPLATE. */
+
+    /**
+     * The Constant AVROGEN_bat_TEMPLATE.
+     */
     private static final String AVROGEN_BAT_TEMPLATE = "sdk/cpp/event/avrogen.bat_template";
 
-    /** The Constant EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE. */
+    /**
+     * The Constant EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE.
+     */
     private static final String EVENT_FAMILY_FACTORY_SET_CONCRETE_EVENT_FAMILY_NAMES_TEMPLATE = "sdk/cpp/event/eventFamilyFactorySetEventFamilyClassNames.template";
 
     private static final String EVENT_FAMILY_CLASS_NAME_VAR = "\\$\\{event_family_class_name\\}";
@@ -153,7 +183,7 @@ public class CppEventSourcesGenerator {
             factoryGetEventFamilies += eventFamilyFactoryGetEventFamily.replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()) + "\n";
 
             factoryAddEventFamilies += eventFamilyFactoryAddEventFamily.replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName()) + "\n";
-            if (eventFamilyClassList.length()>0) {
+            if (eventFamilyClassList.length() > 0) {
                 eventFamilyClassList += " ";
             }
             eventFamilyClassList += efm.getEcfClassName();
@@ -173,7 +203,7 @@ public class CppEventSourcesGenerator {
                         eventMap.getAction() == ApplicationEventAction.BOTH) {
 
                     if (supportedFqnsList.length() > 0) {
-                        supportedFqnsList +=",";
+                        supportedFqnsList += ",";
                     }
                     supportedFqnsList += "\"" + eventMap.getFqn() + "\"";
                     if (eventFamilyListenersOnGenericEvent.length() > 0) {
@@ -226,13 +256,14 @@ public class CppEventSourcesGenerator {
             TarEntryData tarEntry = new TarEntryData(entry, data);
             eventSources.add(tarEntry);
 
-            String eventFamilySchema = efm.getEcfSchema();
+            String eventCtlSchemas = "[" + efm.getRawCtlsSchemas().stream().collect(joining(",")) + "]";
             String eventFamilySchemaPath = EVENT_FAMILY_SCHEMA_PATH_TEMPLATE.replaceAll(EVENT_FAMILY_CLASS_NAME_VAR, efm.getEcfClassName());
             entry = new TarArchiveEntry(eventFamilySchemaPath);
-            data = eventFamilySchema.getBytes();
+            data = eventCtlSchemas.getBytes();
             entry.setSize(data.length);
             tarEntry = new TarEntryData(entry, data);
             eventSources.add(tarEntry);
+
         }
 
         String eventFamilyFactorySource = eventFamilyFactoryHpp.
@@ -262,7 +293,7 @@ public class CppEventSourcesGenerator {
         entry.setSize(data.length);
         tarEntry = new TarEntryData(entry, data);
         eventSources.add(tarEntry);
-        
+
         return eventSources;
     }
 

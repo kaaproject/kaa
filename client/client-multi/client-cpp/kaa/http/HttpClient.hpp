@@ -35,7 +35,7 @@ public:
         : io_(), sock_(io_), context_(context)
     { }
 
-    virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request);
+    virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request, EndpointConnectionInfo* connection = nullptr);
     virtual void closeConnection();
 
 private:

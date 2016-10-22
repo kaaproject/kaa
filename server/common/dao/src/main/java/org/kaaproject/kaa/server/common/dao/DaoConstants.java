@@ -37,6 +37,7 @@ public class DaoConstants {
     public static final String TOPICS_PROPERTY = "topics";
     public static final String CONFIGURATION_SCHEMA_PROPERTY = "configurationSchema";
     public static final String ECF_PROPERTY = "ecf";
+    public static final String ECFV_PROPERTY = "ecfv";
     public static final String VERSION_PROPERTY = "version";
     public static final String SCHEMA_VERSION_PROPERTY = "schemaVersion";
     public static final String EVENT_CLASS_TYPE_PROPERTY = "type";
@@ -53,6 +54,7 @@ public class DaoConstants {
     public static final String TOPIC_ALIAS = "topic";
     public static final String CONFIGURATION_SCHEMA_ALIAS = "configurationSchema";
     public static final String ECF_ALIAS = "ecf";
+    public static final String ECFV_ALIAS = "ecfv";
 
     public static final String TENANT_REFERENCE = TENANT_ALIAS + "." + ID_PROPERTY;
     public static final String ENDPOINT_PROFILE_SCHEMA_REFERENCE = ENDPOINT_PROFILE_SCHEMA_ALIAS + "." + ID_PROPERTY;
@@ -64,6 +66,7 @@ public class DaoConstants {
     public static final String TOPIC_REFERENCE = TOPIC_ALIAS + "." + ID_PROPERTY;
     public static final String CONFIGURATION_SCHEMA_REFERENCE = CONFIGURATION_SCHEMA_ALIAS + "." + ID_PROPERTY;
     public static final String ECF_REFERENCE = ECF_ALIAS + "." + ID_PROPERTY;
+    public static final String ECFV_REFERENCE = ECFV_ALIAS + "." + ID_PROPERTY;
 
     public static final String OPTIMISTIC_LOCK_PROPERTY = "OPT_LOCK";
 
@@ -89,6 +92,7 @@ public class DaoConstants {
     public static final String CONFIGURATION_ID = "configuration_id";
     public static final String PROFILE_FILTER_ID = "profile_filter_id";
     public static final String EVENT_CLASS_FAMILY_ID = "events_class_family_id";
+    public static final String EVENT_CLASS_FAMILY_VERSION_ID = "events_class_family_versions_id";
     public static final String FQN = "fqn";
     public static final String VERSION = "version";
 
@@ -259,14 +263,13 @@ public class DaoConstants {
     public static final String CHANGE_PROFILE_FILTER_ID = PROFILE_FILTER_ID;
 
     /**
-     * Event schems version constants.
+     * Event class family version constants.
      */
-    public static final String EVENT_SCHEMA_VERSION_TABLE_NAME = "event_schems_versions";
-    public static final String EVENT_SCHEMA_VERSION_SCHEMA = "schems";
-    public static final String EVENT_SCHEMA_VERSION_VERSION = VERSION;
-    public static final String EVENT_SCHEMA_VERSION_CREATED_USERNAME = CREATED_USERNAME;
-    public static final String EVENT_SCHEMA_VERSION_CREATED_TIME = CREATED_TIME;
-    public static final String EVENT_SCHEMA_VERSION_EVENT_CLASS_FAMILY_ID = EVENT_CLASS_FAMILY_ID;
+    public static final String EVENT_CLASS_FAMILY_VERSION_TABLE_NAME = "events_class_family_versions";
+    public static final String EVENT_CLASS_FAMILY_VERSION_VERSION = VERSION;
+    public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME = CREATED_USERNAME;
+    public static final String EVENT_CLASS_FAMILY_VERSION_CREATED_TIME = CREATED_TIME;
+    public static final String EVENT_CLASS_FAMILY_VERSION_EVENT_CLASS_FAMILY_ID = EVENT_CLASS_FAMILY_ID;
 
     /**
      * Event class family constants.
@@ -285,7 +288,7 @@ public class DaoConstants {
      */
     public static final String EVENT_CLASS_TABLE_NAME = "events_class";
     public static final String EVENT_CLASS_TENANT_ID = TENANT_ID;
-    public static final String EVENT_CLASS_EVENT_CLASS_FAMILY_ID = EVENT_CLASS_FAMILY_ID;
+    public static final String EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID = EVENT_CLASS_FAMILY_VERSION_ID;
     public static final String EVENT_CLASS_FQN = FQN;
     public static final String EVENT_CLASS_TYPE = "type";
     public static final String EVENT_CLASS_SCHEMA = "schems";

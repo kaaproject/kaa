@@ -18,6 +18,8 @@
 ### Toolchain setup ###
 #######################
 
+set(CMAKE_SYSTEM_NAME "Generic")
+
 include(CMakeForceCompiler)
 
 set(XTENSA_GCC_COMPILER "xtensa-lx106-elf-gcc${CMAKE_EXECUTABLE_SUFFIX}")

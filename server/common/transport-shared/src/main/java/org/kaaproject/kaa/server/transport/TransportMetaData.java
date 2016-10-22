@@ -17,7 +17,9 @@
 package org.kaaproject.kaa.server.transport;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,15 +38,15 @@ public class TransportMetaData implements Serializable {
 
     private final int minSupportedVersion;
     private final int maxSupportedVersion;
-    private final byte[] defaultConnectionInfo;
-    private final Map<Integer, byte[]> versionSpecificConnectionInfo;
+    private final List<byte[]> defaultConnectionInfoList;
+    private final Map<Integer, List<byte[]>> versionSpecificConnectionInfoList;
 
-    public TransportMetaData(int minSupportedVersion, int maxSupportedVersion, byte[] defaultConnectionInfo) {
+    public TransportMetaData(int minSupportedVersion, int maxSupportedVersion, List<byte[]> defaultConnectionInfoList) {
         super();
         this.minSupportedVersion = minSupportedVersion;
         this.maxSupportedVersion = maxSupportedVersion;
-        this.defaultConnectionInfo = defaultConnectionInfo;
-        this.versionSpecificConnectionInfo = new HashMap<Integer, byte[]>();
+        this.defaultConnectionInfoList = defaultConnectionInfoList;
+        this.versionSpecificConnectionInfoList = new HashMap<>();
     }
 
     /**
@@ -58,8 +60,11 @@ public class TransportMetaData implements Serializable {
      * @param connectionInfo
      *            the connection data
      */
-    public void setConnectionInfo(int version, byte[] connectionInfo) {
-        this.versionSpecificConnectionInfo.put(version, connectionInfo);
+    public void addConnectionInfo(int version, byte[] connectionInfo) {
+        if (!versionSpecificConnectionInfoList.containsKey(version)) {
+            versionSpecificConnectionInfoList.put(version, new ArrayList<>());
+        }
+        versionSpecificConnectionInfoList.get(version).add(connectionInfo);
     }
 
     /**
@@ -69,13 +74,13 @@ public class TransportMetaData implements Serializable {
      * 
      * @param version
      *            the serialized connection info for the specified version
-     * @return serialized connection info for the specified version
+     * @return serialized connection info list for the specified version
      */
-    public byte[] getConnectionInfo(int version) {
-        if (versionSpecificConnectionInfo.containsKey(version)) {
-            return versionSpecificConnectionInfo.get(version);
+    public List<byte[]> getConnectionInfoList(int version) {
+        if (versionSpecificConnectionInfoList.containsKey(version)) {
+            return versionSpecificConnectionInfoList.get(version);
         } else {
-            return defaultConnectionInfo;
+            return defaultConnectionInfoList;
         }
     }
 
@@ -105,7 +110,7 @@ public class TransportMetaData implements Serializable {
         builder.append(", maxSupportedVersion=");
         builder.append(maxSupportedVersion);
         builder.append(", clientConnectionInfo=");
-        builder.append(versionSpecificConnectionInfo);
+        builder.append(versionSpecificConnectionInfoList);
         builder.append("]");
         return builder.toString();
     };

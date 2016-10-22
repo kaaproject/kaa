@@ -21,7 +21,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
+import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.AuthResultDto;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
@@ -127,6 +129,8 @@ public class UserController extends AbstractAdminController {
         ResultCode resultCode = kaaAuthService.changePassword(username, oldPassword, newPassword);
         if (resultCode == ResultCode.USER_NOT_FOUND) {
             throw Utils.handleException(new IllegalArgumentException("User with specified username was not found."));
+        } else if (resultCode == ResultCode.PERMISSION_DENIED) {
+            throw Utils.handleException(new KaaAdminServiceException(ServiceErrorCode.PERMISSION_DENIED));
         } else if (resultCode == ResultCode.OLD_PASSWORD_MISMATCH) {
             throw Utils.handleException(new IllegalArgumentException("Current password is invalid."));
         } else if (resultCode == ResultCode.BAD_PASSWORD_STRENGTH) {
@@ -227,6 +231,7 @@ public class UserController extends AbstractAdminController {
                     "specify the user ID. If a user with the specified ID exists, it will be updated. Only users with the TENANT_ADMIN role can perform " +
                     "this operation.")
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Some of the mandatory fields are not correct or are empty"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
             @ApiResponse(code = 403, message = "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user " +
                     "does not match the Tenant ID of the authenticated user"),
@@ -235,15 +240,9 @@ public class UserController extends AbstractAdminController {
     @ResponseBody
     public UserDto editUser(
             @ApiParam(name = "user", value = "UserDto body. Mandatory fields: username, firstName, lastName, mail, authority", required = true)
-            @RequestBody UserDto user) throws KaaAdminServiceException {
+           @Valid @RequestBody UserDto user) throws KaaAdminServiceException {
         try {
-            CreateUserResult result = userFacade.saveUserDto(user, passwordEncoder);
-            user.setExternalUid(result.getUserId().toString());
-            UserDto userDto = userService.editUser(user);
-            if (StringUtils.isNotBlank(result.getPassword())) {
-                userDto.setTempPassword(result.getPassword());
-            }
-            return userDto;
+            return userService.editUser(user);
         } catch (Exception e) {
             throw Utils.handleException(e);
         }
@@ -273,21 +272,20 @@ public class UserController extends AbstractAdminController {
     }
 
 
-    @ApiOperation(value = "Select tenant admins by tenant id")
+    @ApiOperation(value = "Get tenant admins based on tenant id",
+     notes="Gets the tenant admins by specified tenantId. Only user with KAA_ADMIN role is allowed to perform this operation.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "The specified tenantId is not valid"),
             @ApiResponse(code = 401, message = "The user is not authenticated or invalid credentials were provided"),
-            @ApiResponse(code = 403, message = "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user " +
-                    "does not match the Tenant ID of the authenticated user"),
+            @ApiResponse(code = 403, message = "The authenticated user does not have the required KAA_ADMIN role"),
             @ApiResponse(code = 404, message = "The user with the specified tenantId does not exist"),
             @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
     @RequestMapping(value = "admins/{tenantId}", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
     public List<UserDto> findAllTenantAdminsByTenantId(
+            @ApiParam(name = "tenantId", value = "A unique tenant identifier", required = true)
             @PathVariable String tenantId) throws KaaAdminServiceException {
        return  userService.findAllTenantAdminsByTenantId(tenantId);
     }
-
-
 
 }

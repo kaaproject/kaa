@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class Utils {
 
     /**
@@ -73,6 +76,15 @@ public class Utils {
         }
         return reference;
     }
+
+    public static void checkFieldUniquieness(String field, Set<String> storedEmails,String fieldName) throws KaaAdminServiceException {
+        checkNotNull(field);
+        boolean isAdded = storedEmails.add(field);
+        if (!isAdded) {
+            throw new KaaAdminServiceException(String.format("Entered %s is already used by another user!",fieldName), ServiceErrorCode.INVALID_ARGUMENTS);
+        }
+    }
+
 
     public static AuthUserDto getCurrentUser() throws KaaAdminServiceException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

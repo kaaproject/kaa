@@ -119,16 +119,23 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
 
     public void processEndpointEventReceiveMessage(ActorContext context, EndpointEventReceiveMessage message) {
         EndpointEventDeliveryMessage response;
-        Set<ChannelMetaData> eventChannels = state.getChannelsByType(TransportType.EVENT);
-        if (!eventChannels.isEmpty()) {
-            for (ChannelMetaData eventChannel : eventChannels) {
-                addEventsAndReply(context, eventChannel, message);
+        if (state.isValidForEvents()) {
+            Set<ChannelMetaData> eventChannels = state.getChannelsByType(TransportType.EVENT);
+            if (!eventChannels.isEmpty()) {
+                for (ChannelMetaData eventChannel : eventChannels) {
+                    addEventsAndReply(context, eventChannel, message);
+                }
+                response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.SUCCESS);
+            } else {
+                LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
+                response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
+                state.setUserRegistrationPending(false);
             }
-            response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.SUCCESS);
         } else {
-            LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
+            LOG.debug(
+                    "[{}][{}] Endpoint profile is not valid for receiving events. Either no assigned user or no event families in sdk",
+                    endpointKey, actorKey);
             response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
-            state.setUserRegistrationPending(false);
         }
         tellParent(context, response);
     }

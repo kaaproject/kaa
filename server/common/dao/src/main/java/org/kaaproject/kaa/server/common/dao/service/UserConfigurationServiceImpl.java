@@ -32,6 +32,8 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointUserConfigurationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointUserDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointUser;
 import org.kaaproject.kaa.server.common.dao.model.EndpointUserConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,7 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
 
     private EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao;
 
+    private EndpointUserDao<EndpointUser> endpointUserDao;
 
     @Override
     public EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto userConfig) {
@@ -121,8 +124,35 @@ public class UserConfigurationServiceImpl implements UserConfigurationService {
         endpointUserConfigurationDao.removeByUserIdAndAppTokenAndSchemaVersion(userId, appToken, schemaVersion);
     }
 
+    @Override
+    public EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+            String externalUid,
+                String appToken,
+                Integer schemaVersion,
+                String tenantId) {
+        if(isNotBlank(externalUid)) {
+            EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(externalUid, tenantId);
+            if (endpointUser!=null){
+                return getDto(endpointUserConfigurationDao.findByUserIdAndAppTokenAndSchemaVersion(
+                         endpointUser.getId(),
+                        appToken,
+                        schemaVersion));
+            } else {
+                LOG.warn("Could not find endpoint user by externalUid:", externalUid);
+                throw new IncorrectParameterException("Could not find endpoint user by externalUid");
+            }
+        } else {
+            LOG.warn("external user id could not be null!");
+            throw new IncorrectParameterException("externalUid could not be null!");
+        }
+    }
+
 
     public void setEndpointUserConfigurationDao(EndpointUserConfigurationDao<EndpointUserConfiguration> endpointUserConfigurationDao) {
         this.endpointUserConfigurationDao = endpointUserConfigurationDao;
+    }
+
+    public void setEndpointUserDao(EndpointUserDao<EndpointUser> endpointUserDao) {
+        this.endpointUserDao = endpointUserDao;
     }
 }

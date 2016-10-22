@@ -366,7 +366,7 @@ public class DefaultDeltaService implements DeltaService {
 
                 JsonNode json = new ObjectMapper().readTree(baseData.getRawData());
                 AvroUtils.removeUuids(json);
-                RawData rawData = new RawData(new RawSchema(mergedConfiguration.getV2().getSchema().getRawSchema()), baseData.getRawData());
+                RawData rawData = new RawData(new RawSchema(mergedConfiguration.getV2().getSchema().getRawSchema()), json.toString());
 
                 mergedConfiguration = new Pair<>(baseData, rawData);
             } catch (OverrideException | IOException oe) {

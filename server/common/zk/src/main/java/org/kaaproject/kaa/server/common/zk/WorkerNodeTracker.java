@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
@@ -65,36 +64,25 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
     /**
      * Instantiates a new worker node tracker.
      *
-     * @param zkHostPortList
-     *            the zk host port list
-     * @param retryPolicy
-     *            the retry policy
      */
-    public WorkerNodeTracker(String zkHostPortList, RetryPolicy retryPolicy) {
-        super(zkHostPortList, retryPolicy);
+    public WorkerNodeTracker() {
+        super();
         init();
     }
 
     /**
      * Instantiates a new worker node tracker.
-     *
-     * @param zkHostPortList
-     *            the zk host port list
-     * @param sessionTimeoutMs
-     *            the session timeout
-     * @param connectionTimeoutMs
-     *            the connection timeout
-     * @param retryPolicy
-     *            the retry policy
+     * @param zkClient Zookeeper client
      */
-    public WorkerNodeTracker(String zkHostPortList, int sessionTimeoutMs, int connectionTimeoutMs, RetryPolicy retryPolicy) {
-        super(zkHostPortList, sessionTimeoutMs, connectionTimeoutMs, retryPolicy);
+    public WorkerNodeTracker(CuratorFramework zkClient) {
+        super();
+        this.zkClient = zkClient;
         init();
     }
 
     private void init() {
-        endpointCache = new PathChildrenCache(client, OPERATIONS_SERVER_NODE_PATH, true);
-        bootstrapCache = new PathChildrenCache(client, BOOTSTRAP_SERVER_NODE_PATH, true);
+        endpointCache = new PathChildrenCache(zkClient, OPERATIONS_SERVER_NODE_PATH, true);
+        bootstrapCache = new PathChildrenCache(zkClient, BOOTSTRAP_SERVER_NODE_PATH, true);
         endpointListeners = new CopyOnWriteArrayList<OperationsNodeListener>();
         bootstrapListeners = new CopyOnWriteArrayList<BootstrapNodeListener>();
         operationNodesStartTimes = new HashMap<String, Long>();
@@ -359,13 +347,13 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
         try {
             endpointServerInfo = operationsNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
         } catch (IOException e) {
-            LOG.error("error reading control server info", e);
+            LOG.error("error reading control service info", e);
         }
         return endpointServerInfo;
     }
 
     /**
-     * Extract bootstrap server info.
+     * Extract bootstrap service info.
      *
      * @param currentData
      *            the current data
@@ -376,7 +364,7 @@ public abstract class WorkerNodeTracker extends ControlNodeTracker {
         try {
             bootstrapServerInfo = bootstrapNodeAvroConverter.get().fromByteArray(currentData.getData(), null);
         } catch (IOException e) {
-            LOG.error("error reading control server info", e);
+            LOG.error("error reading control service info", e);
         }
         return bootstrapServerInfo;
     }

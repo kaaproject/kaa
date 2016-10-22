@@ -118,7 +118,7 @@ public abstract class AbstractServerApplication {
         }
 
         LOG.info("{} application stopped.", getName());
-    };
+    }
 
     /**
      * Gets the name of the service.
