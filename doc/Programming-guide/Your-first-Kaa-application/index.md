@@ -936,14 +936,26 @@ This will clean up the mess that can occur when debug logs are enabled.
 To launch your Java application:
 
 <ol>
-	<li>
-		Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
-	</li>
-	<li>
-		Build the application by running the following command from the <b>demo_app</b> directory.
-		<pre>javac -cp *.jar *.java</pre>
-	</li>
-	<li>
+    <li>
+        Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
+    </li>
+    <li>
+        Download the slf4j-simple-1.7.21.jar in the <b>demo_app</b> directory.
+
+        <pre>
+             wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar
+        </pre>
+
+    </li>
+    <li>
+        Build the application by running the following command from the <b>demo_app</b> directory.
+
+        <pre>
+            javac -cp kaa-*.jar *.java
+        </pre>
+
+    </li>
+    <li>
 		Launch the application.
         <br/>
         <br/>
