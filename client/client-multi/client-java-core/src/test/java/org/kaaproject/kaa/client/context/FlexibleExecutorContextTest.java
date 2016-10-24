@@ -28,18 +28,14 @@ public class FlexibleExecutorContextTest {
 
   private FlexibleExecutorContext executorContext;
 
-  private static final int DEFAULT_CORE_POOL_SIZE = 1;
-  private static final int DEFAULT_MAX_POOL_SIZE = FlexibleExecutorContext.getDefaultMaxThreads();
-  private static final int DEFAULT_MAX_THREAD_IDLE_MILLISECONDS = FlexibleExecutorContext.getDefaultMaxThreadIdleMilliseconds();
-
   private static final int CUSTOM_MAX_LIFE_CYCLE_THREADS_IDLE_MILLISECONDS = 40;
   private static final int CUSTOM_MAX_API_THREADS_IDLE_MILLISECONDS = 50;
   private static final int CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS = 60;
 
-  private static final int CUSTOM_LIFE_CYCLE_THREAD_COUNT = 4;
-  private static final int CUSTOM_API_THREAD_COUNT = 5;
-  private static final int CUSTOM_CALLBACK_THREAD_COUNT = 6;
-  private static final int CUSTOM_SCHEDULED_THREAD_COUNT = 7;
+  private static final int CUSTOM_MAX_LIFE_CYCLE_THREADS = 4;
+  private static final int CUSTOM_MAX_API_THREADS = 5;
+  private static final int CUSTOM_MAX_CALLBACK_THREADS = 6;
+  private static final int CUSTOM_MIN_SCHEDULED_THREADS = 7;
 
   @Test
   public void testConstructorWithoutParameters() throws Exception {
@@ -47,144 +43,233 @@ public class FlexibleExecutorContextTest {
     executorContext.init();
 
     ExecutorService executorService;
-    ThreadPoolExecutor threadPoolExecutor;
-    long corePoolSize, maxPoolSize, maxThreadIdleMilliseconds;
+//    ThreadPoolExecutor threadPoolExecutor;
+//    long corePoolSize, maxPoolSize, maxThreadIdleMilliseconds;
+
+//    executorService = executorContext.getLifeCycleExecutor();
+//    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
+//    threadPoolExecutor = (ThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
+//    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
+//    Assert.assertEquals("Wrong life cycle executor core pool size",
+//        FlexibleExecutorContext.DEFAULT_MIN_THREADS, corePoolSize);
+//    Assert.assertEquals("Wrong life cycle executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREADS, maxPoolSize);
+//    Assert.assertEquals("Wrong life cycle executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
+//
+//    executorService = executorContext.getApiExecutor();
+//    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
+//    threadPoolExecutor = (ThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
+//    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
+//    Assert.assertEquals("Wrong api executor core pool size",
+//        FlexibleExecutorContext.DEFAULT_MIN_THREADS, corePoolSize);
+//    Assert.assertEquals("Wrong api executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREADS, maxPoolSize);
+//    Assert.assertEquals("Wrong api executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
+//
+//    executorService = executorContext.getCallbackExecutor();
+//    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
+//    threadPoolExecutor = (ThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
+//    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
+//    Assert.assertEquals("Wrong callback executor core pool size",
+//        FlexibleExecutorContext.DEFAULT_MIN_THREADS, corePoolSize);
+//    Assert.assertEquals("Wrong callback executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREADS, maxPoolSize);
+//    Assert.assertEquals("Wrong callback executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
+//
+//    executorService = executorContext.getScheduledExecutor();
+//    Assert.assertTrue(executorService instanceof ScheduledThreadPoolExecutor);
+//    threadPoolExecutor = (ScheduledThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    Assert.assertEquals("Wrong scheduled executor core pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREADS, corePoolSize);
+
 
     executorService = executorContext.getLifeCycleExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong life cycle executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong life cycle executor maximum pool size", DEFAULT_MAX_POOL_SIZE, maxPoolSize);
-    Assert.assertEquals("Wrong life cycle executor maximum pool size", DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS,
+        "life cycle");
     executorService = executorContext.getApiExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong api executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong api executor maximum pool size", DEFAULT_MAX_POOL_SIZE, maxPoolSize);
-    Assert.assertEquals("Wrong api executor maximum pool size", DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS,
+        "api");
     executorService = executorContext.getCallbackExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong callback executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong callback executor maximum pool size", DEFAULT_MAX_POOL_SIZE, maxPoolSize);
-    Assert.assertEquals("Wrong callback executor maximum pool size", DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS,
+        "callback");
     executorService = executorContext.getScheduledExecutor();
-    Assert.assertTrue(executorService instanceof ScheduledThreadPoolExecutor);
-    threadPoolExecutor = (ScheduledThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    Assert.assertEquals("Wrong scheduled executor core pool size", DEFAULT_MAX_POOL_SIZE, corePoolSize);
+    checkScheduledExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS);
   }
 
   @Test
   public void testConstructorWithAllParameters() throws Exception {
-    executorContext = new FlexibleExecutorContext(CUSTOM_LIFE_CYCLE_THREAD_COUNT, CUSTOM_API_THREAD_COUNT, CUSTOM_CALLBACK_THREAD_COUNT, CUSTOM_SCHEDULED_THREAD_COUNT);
+    executorContext = new FlexibleExecutorContext(
+        CUSTOM_MAX_LIFE_CYCLE_THREADS, CUSTOM_MAX_API_THREADS,
+        CUSTOM_MAX_CALLBACK_THREADS, CUSTOM_MIN_SCHEDULED_THREADS
+    );
     executorContext.init();
 
     ExecutorService executorService;
-    ThreadPoolExecutor threadPoolExecutor;
-    long corePoolSize, maxPoolSize, maxThreadIdleMilliseconds;
+//    ThreadPoolExecutor threadPoolExecutor;
+//    long corePoolSize, maxPoolSize, maxThreadIdleMilliseconds;
+//
+//    executorService = executorContext.getLifeCycleExecutor();
+//    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
+//    threadPoolExecutor = (ThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
+//    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
+//    Assert.assertEquals("Wrong life cycle executor core pool size",
+//        FlexibleExecutorContext.DEFAULT_MIN_THREADS, corePoolSize);
+//    Assert.assertEquals("Wrong life cycle executor maximum pool size",
+//        CUSTOM_MAX_LIFE_CYCLE_THREADS, maxPoolSize);
+//    Assert.assertEquals("Wrong life cycle executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
+//
+//    executorService = executorContext.getApiExecutor();
+//    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
+//    threadPoolExecutor = (ThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
+//    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
+//    Assert.assertEquals("Wrong api executor core pool size",
+//        FlexibleExecutorContext.DEFAULT_MIN_THREADS, corePoolSize);
+//    Assert.assertEquals("Wrong api executor maximum pool size",
+//        CUSTOM_MAX_API_THREADS, maxPoolSize);
+//    Assert.assertEquals("Wrong api executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
+//
+//    executorService = executorContext.getCallbackExecutor();
+//    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
+//    threadPoolExecutor = (ThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
+//    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
+//    Assert.assertEquals("Wrong callback executor core pool size",
+//        FlexibleExecutorContext.DEFAULT_MIN_THREADS, corePoolSize);
+//    Assert.assertEquals("Wrong callback executor maximum pool size",
+//        CUSTOM_MAX_CALLBACK_THREADS, maxPoolSize);
+//    Assert.assertEquals("Wrong callback executor maximum pool size",
+//        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
+//
+//    executorService = executorContext.getScheduledExecutor();
+//    Assert.assertTrue(executorService instanceof ScheduledThreadPoolExecutor);
+//    threadPoolExecutor = (ScheduledThreadPoolExecutor) executorService;
+//    corePoolSize = threadPoolExecutor.getCorePoolSize();
+//    Assert.assertEquals("Wrong scheduled executor core pool size",
+//        CUSTOM_MIN_SCHEDULED_THREADS, corePoolSize);
+
 
     executorService = executorContext.getLifeCycleExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong life cycle executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong life cycle executor maximum pool size", CUSTOM_LIFE_CYCLE_THREAD_COUNT, maxPoolSize);
-    Assert.assertEquals("Wrong life cycle executor maximum pool size", DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        CUSTOM_MAX_LIFE_CYCLE_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS,
+        "life cycle");
     executorService = executorContext.getApiExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong api executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong api executor maximum pool size", CUSTOM_API_THREAD_COUNT, maxPoolSize);
-    Assert.assertEquals("Wrong api executor maximum pool size", DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        CUSTOM_MAX_API_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS,
+        "api");
     executorService = executorContext.getCallbackExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong callback executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong callback executor maximum pool size", CUSTOM_CALLBACK_THREAD_COUNT, maxPoolSize);
-    Assert.assertEquals("Wrong callback executor maximum pool size", DEFAULT_MAX_THREAD_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        CUSTOM_MAX_CALLBACK_THREADS,
+        FlexibleExecutorContext.DEFAULT_MAX_THREAD_IDLE_MILLISECONDS,
+        "callback");
     executorService = executorContext.getScheduledExecutor();
-    Assert.assertTrue(executorService instanceof ScheduledThreadPoolExecutor);
-    threadPoolExecutor = (ScheduledThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    Assert.assertEquals("Wrong scheduled executor core pool size", CUSTOM_SCHEDULED_THREAD_COUNT, corePoolSize);
+    checkScheduledExecutorServices(executorService,
+        CUSTOM_MIN_SCHEDULED_THREADS);
   }
 
   @Test
   public void testConstructorWithBuilder() throws Exception {
     executorContext = new FlexibleExecutorContext.FlexibleExecutorContextBuilder()
-        .setLifeCycleThreadCount(CUSTOM_LIFE_CYCLE_THREAD_COUNT)
+        .setMaxLifeCycleThreads(CUSTOM_MAX_LIFE_CYCLE_THREADS)
         .setMaxLifeCycleThreadsIdleMilliseconds(CUSTOM_MAX_LIFE_CYCLE_THREADS_IDLE_MILLISECONDS)
-        .setApiThreadCount(CUSTOM_API_THREAD_COUNT)
+        .setMaxApiThreads(CUSTOM_MAX_API_THREADS)
         .setMaxApiThreadsIdleMilliseconds(CUSTOM_MAX_API_THREADS_IDLE_MILLISECONDS)
-        .setCallbackThreadCount(CUSTOM_CALLBACK_THREAD_COUNT)
+        .setMaxCallbackThreads(CUSTOM_MAX_CALLBACK_THREADS)
         .setMaxCallbackThreadsIdleMilliseconds(CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS)
-        .setScheduledThreadCount(CUSTOM_SCHEDULED_THREAD_COUNT)
+        .setMinScheduledThreads(CUSTOM_MIN_SCHEDULED_THREADS)
         .build();
     executorContext.init();
 
     ExecutorService executorService;
-    ThreadPoolExecutor threadPoolExecutor;
-    long corePoolSize, maxPoolSize, maxThreadIdleMilliseconds;
 
     executorService = executorContext.getLifeCycleExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong life cycle executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong life cycle executor maximum pool size", CUSTOM_LIFE_CYCLE_THREAD_COUNT, maxPoolSize);
-    Assert.assertEquals("Wrong life cycle executor maximum pool size", CUSTOM_MAX_LIFE_CYCLE_THREADS_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        CUSTOM_MAX_LIFE_CYCLE_THREADS,
+        CUSTOM_MAX_LIFE_CYCLE_THREADS_IDLE_MILLISECONDS,
+        "life cycle");
     executorService = executorContext.getApiExecutor();
-    Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
-    threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong api executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong api executor maximum pool size", CUSTOM_API_THREAD_COUNT, maxPoolSize);
-    Assert.assertEquals("Wrong api executor maximum pool size", CUSTOM_MAX_API_THREADS_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
-
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        CUSTOM_MAX_API_THREADS,
+        CUSTOM_MAX_API_THREADS_IDLE_MILLISECONDS,
+        "api");
     executorService = executorContext.getCallbackExecutor();
+    checkThreadPoolExecutorServices(executorService,
+        FlexibleExecutorContext.DEFAULT_MIN_THREADS,
+        CUSTOM_MAX_CALLBACK_THREADS,
+        CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS,
+        "callback");
+    executorService = executorContext.getScheduledExecutor();
+    checkScheduledExecutorServices(executorService,
+        CUSTOM_MIN_SCHEDULED_THREADS);
+  }
+
+
+  private void checkThreadPoolExecutorServices(ExecutorService executorService,
+                                               int minThreads, int maxThreads,
+                                               int maxIdleMilliseconds,
+                                               String executorName) {
+    ThreadPoolExecutor threadPoolExecutor;
+    int actualMinThreads;
+    int actualMaxThreads;
+    int actualMaxThreadIdleMilliseconds;
     Assert.assertTrue(executorService instanceof ThreadPoolExecutor);
     threadPoolExecutor = (ThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    maxPoolSize = threadPoolExecutor.getMaximumPoolSize();
-    maxThreadIdleMilliseconds = threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
-    Assert.assertEquals("Wrong callback executor core pool size", DEFAULT_CORE_POOL_SIZE, corePoolSize);
-    Assert.assertEquals("Wrong callback executor maximum pool size", CUSTOM_CALLBACK_THREAD_COUNT, maxPoolSize);
-    Assert.assertEquals("Wrong callback executor maximum pool size", CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS, maxThreadIdleMilliseconds);
+    actualMinThreads = threadPoolExecutor.getCorePoolSize();
+    actualMaxThreads = threadPoolExecutor.getMaximumPoolSize();
+    actualMaxThreadIdleMilliseconds = (int) threadPoolExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS);
+    Assert.assertEquals("Wrong " + executorName + " executor core pool size",
+        minThreads, actualMinThreads);
+    Assert.assertEquals("Wrong " + executorName + " executor maximum pool size",
+        maxThreads, actualMaxThreads);
+    Assert.assertEquals("Wrong " + executorName + " executor maximum pool size",
+        maxIdleMilliseconds, actualMaxThreadIdleMilliseconds);
+  }
 
-    executorService = executorContext.getScheduledExecutor();
+  private void checkScheduledExecutorServices(ExecutorService executorService,
+                                              int minThreads) {
+    ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
+    int actualMinThreads;
     Assert.assertTrue(executorService instanceof ScheduledThreadPoolExecutor);
-    threadPoolExecutor = (ScheduledThreadPoolExecutor) executorService;
-    corePoolSize = threadPoolExecutor.getCorePoolSize();
-    Assert.assertEquals("Wrong scheduled executor core pool size", CUSTOM_SCHEDULED_THREAD_COUNT, corePoolSize);
+    scheduledThreadPoolExecutor = (ScheduledThreadPoolExecutor) executorService;
+    actualMinThreads = scheduledThreadPoolExecutor.getCorePoolSize();
+    System.out.println("FlexibleExecutorContextTest.checkScheduledExecutorServices");
+    System.out.println("minThreads = " + minThreads);
+    System.out.println("actualMinThreads = " + actualMinThreads);
+    Assert.assertEquals("Wrong scheduled executor core pool size",
+        minThreads, actualMinThreads);
   }
 
   @Test
