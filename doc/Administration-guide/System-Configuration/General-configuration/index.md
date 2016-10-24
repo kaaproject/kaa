@@ -75,7 +75,7 @@ to change it for development or debug process.
 <br> Maximum redirect probability for existing sessions.
 * *recalculation_period*
 <br> Default: _10_
-<br> Recalculate period in seconds for Operations service [load balancer]({{root_url}}Administration-guide/System-components-overview/#load-balancing-lb) process.
+<br> Recalculate period in seconds for Operations service [load balancing]({{root_url}}Architecture-overview/#active-load-balancing) process.
 * *user_hash_partitions*
 <br> Default: _10_
 <br> Specify consistent-hash partitions count for each server node.
@@ -123,7 +123,7 @@ to change it for development or debug process.
 <br> Layout pattern for the [file log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/).
 * *load_stats_update_frequency*
 <br> Default: _10000_
-<br> Frequency of load status check in milliseconds for the [load balancing]({{root_url}}Administration-guide/System-components-overview/#load-balancing-lb) feature.
+<br> Frequency of load status check in milliseconds for the load balancing feature.
 * *additional_plugins_scan_package*
 <br> Default: _empty_
 <br> Specify additional package to scan kaa plugins configuration. For details look at

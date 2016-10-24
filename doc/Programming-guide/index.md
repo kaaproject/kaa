@@ -7,14 +7,14 @@ sort_idx: 20
 
 {% include variables.md %}
 
-This guide describes the basics of [Kaa platform]({{root_urll}}Glossary/#kaa-platform) programming.
+This guide describes the basics of [Kaa platform]({{root_url}}Glossary/#kaa-platform) programming.
 It is intended for users with some programming experience.
 To follow the guide, you will need to set up your development environment.
 
-We recommend that you use the [Kaa Sandbox]({{root_urll}}Glossary/#kaa-sandbox) as the easiest and quickest way to test the Kaa platform features.
-Alternatively, you can set up a [Kaa cluster]({{root_urll}}Glossary/#kaa-cluster) or a Kaa single node for the same purpose.
+We recommend that you use the [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) as the easiest and quickest way to test the Kaa platform features.
+Alternatively, you can set up a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) or a Kaa single node for the same purpose.
 
-To learn how to install the Sandbox, see [Getting started]({{root_urll}}Getting-started/).  
+To learn how to install the Sandbox, see [Getting started]({{root_url}}Getting-started/).  
 See also [Cluster setup]({{root_url}}Administration-guide/System-installation/Cluster-setup/) and [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/).
 
 ## Sections overview
