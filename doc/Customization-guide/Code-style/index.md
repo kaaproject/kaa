@@ -5,13 +5,18 @@ permalink: /:path/
 sort_idx: 40
 ---
 
+{% include variables.md %}
+
+* TOC
+{:toc}
+
 This guide provides some important conventions on writing clear, readable code and API documentation. It is highly recommended that you refer to the guides mentioned at the bottom of the page to learn more about code style conventions used in Kaa.
 
-### General
+## General
 
-Never spell "Kaa" as "KAA" (except for JIRA tickets like [KAA-1](http://jira.kaaproject.org/browse/KAA-1))
+Never spell "Kaa" as "KAA" (except for [Jira](http://jira.kaaproject.org/browse/KAA/) tickets, e.g.: [KAA-1]).
 
-### Code formatting and naming
+## Code formatting and naming
 
 - For indentation, use four spaces per indent level for most programming languages, and two spaces for markup languages (HTML, XML, etc.).
 - Set maximum line length in your IDE to 160 characters (in Eclipse, go to Java -> Code Style -> Formatter).
@@ -34,7 +39,7 @@ Never spell "Kaa" as "KAA" (except for JIRA tickets like [KAA-1](http://jira.kaa
     LOG.trace("Bootstrap server register in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}" , thriftHost, thriftPort, nettyHost, nettyPort);
 ```
 
-### Code commenting
+## Code commenting
 
 - Place each comment on its own line and before the code that it's describing.
 - Add a meaningful description before each class declaration. You may add author(s) full name(s) as in the following example.
@@ -67,7 +72,7 @@ Never spell "Kaa" as "KAA" (except for JIRA tickets like [KAA-1](http://jira.kaa
 
 - For more information on writing doc comments for the Javadoc tool, see [http://www.oracle.com/technetwork/articles/java/index-137868.html](http://www.oracle.com/technetwork/articles/java/index-137868.html).
 
-### Log levels
+## Log levels
 
 Use the following log levels according to the log purpose.
 
@@ -80,7 +85,7 @@ Use the following log levels according to the log purpose.
 | Debug     | Use to log detailed information according to the logical work flow of the system                              |
 | Trace     | Use to log the most detailed information intended for development and debugging purposes only                 |
 
-### Comprehensive style guides
+## Comprehensive style guides
 
 - For a comprehensive Java code style guide, please refer to [Google Java style guide](https://google.github.io/styleguide/javaguide.html).
 - For a comprehensive C++ code style guide, please refer to [Google C++ style guide](https://google.github.io/styleguide/cppguide.html).

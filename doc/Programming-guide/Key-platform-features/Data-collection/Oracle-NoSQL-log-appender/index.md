@@ -144,7 +144,7 @@ Example result:
 1. Download archive with [Oracle nosql database](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/downloads/index.html)
 and install it to your Kaa server.
 2. Use [following](https://blogs.oracle.com/charlesLamb/entry/oracle_nosql_database_in_5) tutorial for more information about this database.
-3. Create an application using Admin UI or [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs #TODO).
+3. Create an application using Admin UI or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs).
 4. Add custom log schema that will be using for saving logs in database.
 ![Add log schema](attach/nosql-log-appender1.png)
 5. Add Oracle Nosql log appender and define configuration for it.

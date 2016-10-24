@@ -88,6 +88,6 @@ The choice between MongoDB and Apache Cassandra depends solely on your specific 
 
 To install and configure Kaa components on a single Linux node, follow the instructions in [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/).
 
-To learn how to create a Kaa node cluster, see [Cluster setup](Administration-guide/System-installation/Cluster-setup/).
+To learn how to create a Kaa node cluster, see [Cluster setup guide]({{root_url}}Administration-guide/System-installation/Cluster-setup-guide/).
 
 ---
