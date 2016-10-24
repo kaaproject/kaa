@@ -7,21 +7,9 @@ sort_idx: 40
 
 {% include variables.md %}
 
-**Table of Contents**
+* TOC
+{:toc}
 
-- [First registration](#first-registration)
-- [Kaa user types](#kaa-user-types)
-- [Kaa admin](#kaa-admin)
-  - [Managing Tenants](#managing-tenants)
-- [Tenant admin](#tenant-admin)
-  - [Managing applications](#managing-applications)
-  - [Managing Tenant CTL](#managing-tenant-ctl)
-- [Tenant developer](#tenant-developer)
-  - [Managing Application CTL](#managing-application-ctl)
-  - [Managing Tenant CTL](#managing-tenant-ctl-1)
-
-
-This guide explains how to manage develop applications in Kaa Admin UI.
 
 This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the [Installation guide]({{root_url}}Administration-guide/System-installation/) for more info.
 
@@ -92,26 +80,6 @@ To create a new application, do the following:
 
 To edit the application, open the **Application details** window by clicking the application name either on the navigation panel or in the list in the **Applications** window.
 
-## Managing Tenant CTL
-
-The **Tenant CTL** window displays a list of CTs with tenant and system scope. The tenant admin can add new tenant CTs and delete tenant CTs from the system. It has read-only access to the system CTs.
-
-<img src="attach/Tenant%20CTL.png" width="800" height="300">
-
-To display/hide higher scopes of CTs, check/uncheck **Display higher scopes** checkbox.
-To create a new tenant CT, click **Add new type** and then fill in all the required fields. Click **Add** to apply the changes.
-
-<img src="attach/Create%20Tenant%20CTL.png" width="700" height="350">
-
-To view a CT, open the CT details window by clicking the row in the list in the **Tenant CTL** window.
-
-<img src="attach/View%20Tenant%20CTL.png" width="700" height="350">
-
-To view another version of the CT, click on the version drop-down and select the appropriate version.
-To create a new version of the tenant CT of the same FQN, click **Create new version** on the top of CT details.
-To export the CT, click Export and select export method from drop-down. See [CT schema export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export) for available export methods details.
-To delete the tenant CT version, click Delete on the top of the CT details.
-
 # Tenant developer
 
 The tenant developer is a user that creates SDKs based on customer requirements. Tenant developers set the Kaa schemas, group endpoints, and control notification processes.
@@ -124,31 +92,3 @@ To set a private password, click **Settings => Change password**.
 
 **NOTE:** A tenant developer is able to work only with those applications which have been created by his tenant admin. The list of available applications is displayed in the **Applications** window, as well as on the navigation panel under the **Applications** menu.
 
-## Managing Application CTL
-
-The **Application CTL** window displays a list of CTs of the current application, of the current tenant and all CTs with system scope. The tenant developer can add new application CTs and delete application CTs from the system. It has read-only access to the system CTs and to the tenant CTs within **Application CTL** window. Tenant developer is still able to manage tenant CTs within **Tenant CTL** window.
-
-<img src="attach/Application%20CTL.png" width="700" height="400">
-
-To display/hide higher scopes of CTs, check/uncheck **Display higher scopes** checkbox.
-
-To create a new application CT, click **Add new type** and then fill in all the required fields. Click **Add** to apply the changes.
-
-
-<img src="attach/Create%20Application%20CTL.png" width="700" height="400">
-
-To view a CT, open the CT details window by clicking the row in the list in the **Application CTL** window.
-
-<img src="attach/View%20Application%20CTL.png" width="700" height="400">
-
-To view another version of the CT, click on the version drop-down and select the appropriate version.
-
-To create a new version of the application CT of the same FQN, click **Create new version** on the top of CT details.
-To export the CT, click **Export** and select export method from drop-down. See [CT schema export]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-export) for available export methods details.
-To delete the application CT version, click **Delete** on the top of the CT details.
-
-To promote the application CT from application to tenant scope, click **Promote**.
-
-## Managing Tenant CTL
-The **Tenant CTL** window displays a list of CTs with tenant and system scope. The tenant developer can add new tenant CTs and delete tenant CTs from the system. It has read-only access to the system CTs.
-The tenant developer has the same Tenant CTL management capabilities as the tenant admin. See [Managing Tenant CTL](#managing-tenant-ctl) in the Tenant admin section.
