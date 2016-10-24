@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -167,9 +168,6 @@ public class FlexibleExecutorContextTest {
     Assert.assertTrue(executorService instanceof ScheduledThreadPoolExecutor);
     scheduledThreadPoolExecutor = (ScheduledThreadPoolExecutor) executorService;
     actualMinThreads = scheduledThreadPoolExecutor.getCorePoolSize();
-    System.out.println("FlexibleExecutorContextTest.checkScheduledExecutorServices");
-    System.out.println("minThreads = " + minThreads);
-    System.out.println("actualMinThreads = " + actualMinThreads);
     Assert.assertEquals("Wrong scheduled executor core pool size",
         minThreads, actualMinThreads);
   }
@@ -179,10 +177,17 @@ public class FlexibleExecutorContextTest {
     executorContext = new FlexibleExecutorContext();
     executorContext.init();
 
-    ExecutorService executorService = executorContext.getLifeCycleExecutor();
+    ExecutorService lifeCycleExecutor = executorContext.getLifeCycleExecutor();
+    ExecutorService apiExecutor = executorContext.getApiExecutor();
+    ExecutorService callbackExecutor = executorContext.getCallbackExecutor();
+    ScheduledExecutorService scheduledExecutor = executorContext.getScheduledExecutor();
 
     executorContext.stop();
     executorContext.getTimeunit().sleep(executorContext.getTimeout());
-    Assert.assertTrue(executorService.isShutdown());
+
+    Assert.assertTrue(lifeCycleExecutor.isShutdown());
+    Assert.assertTrue(apiExecutor.isShutdown());
+    Assert.assertTrue(callbackExecutor.isShutdown());
+    Assert.assertTrue(scheduledExecutor.isShutdown());
   }
 }
