@@ -69,7 +69,7 @@ public class FlexibleExecutorContext extends AbstractExecutorContext implements 
   /**
    * Constructor for Builder pattern.
    */
-  public FlexibleExecutorContext(FlexibleExecutorContextBuilder builder) {
+  private FlexibleExecutorContext(FlexibleExecutorContextBuilder builder) {
     maxLifeCycleThreads = builder.getMaxLifeCycleThreads();
     maxApiThreads = builder.getMaxApiThreads();
     maxCallbackThreads = builder.getMaxCallbackThreads();
