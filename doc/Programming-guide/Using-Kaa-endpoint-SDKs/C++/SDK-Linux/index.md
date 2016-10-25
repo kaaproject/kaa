@@ -64,7 +64,7 @@ To install, proceed as follows:
 To build the C++ endpoint SDK, do the following:
 
 <!-- TODO: KAA-700 -->
-1. [Generate]({{root_url}}Administration-UI-guide#AdministrationUIguide-GeneratingSDK) the C++ endpoint SDK in Admin UI.
+1. Generate the C++ endpoint SDK using the [Administration UI]({{root_url}}Glossary/#administration-ui).
 2. Download and untar the Kaa C++ SDK archive.
 
    ```
@@ -125,7 +125,6 @@ nix-shell
 ```
 
 Nix will download and compile all SDK dependencies and prepare your environment for development.
-For more details on using Nix in C and C++ SDKs refer to [Nix guide]({{root_url}}Customization-guide/Endpoint-SDKs/C-SDK/Environment-setup/Nix-guide).
 
 ## Minimal example
 This section describes application development with Kaa C++ SDK.
@@ -145,7 +144,7 @@ kaa/
 * `src/KaaDemo.cpp` is the actual application source code.
 * `kaa/` is a directory where the Kaa SDK should be placed.
 <!-- TODO: KAA-700 -->
-Download generated SDK archive from [AdministrationUI](TODO) and unpack it to `kaa/` directory.
+Download generated SDK archive from [Administration UI]({{root_url}}Glossary/#administration-ui) and unpack it to `kaa/` directory.
 
 
 ### Build system overview

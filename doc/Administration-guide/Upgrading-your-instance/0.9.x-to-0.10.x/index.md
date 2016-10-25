@@ -5,6 +5,8 @@ permalink: /:path/
 sort_idx: 10
 ---
 
+{% include variables.md %}
+
 This guide describes how to upgrade your [Kaa server]({{root_url}}Glossary/#kaa-server) from version 0.9.0 to 0.10.0.
 
 >**CAUTION:** The below script was only tested on the official Kaa Sandbox 0.9.0.

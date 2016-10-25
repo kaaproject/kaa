@@ -278,7 +278,7 @@ Before using the Objective-C application code, be sure to complete the following
         sh build.sh compile
 3. Go to xCode and choose a template of the iOS Single View Application.
 Name it "My First Kaa Application", choose Objective-C language and leave all other fields unchanged.
-4. Link the SDK to your project as described in [Objective-C SDK Reference]({{root_url}}client-objective-c/latest/index.html?src=contextnav").
+4. Link the SDK to your project as described in [Objective-C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C/).
 5. Make sure that your application builds successfully.
 6. Replace code in the ViewController.m file with the code from the [Application code](#application-code) section.
 
@@ -995,7 +995,6 @@ Sampled temperature: 28
 Sampled temperature: 28
 ```
 The temperature value is sampled once per second as specified in the configuration schema.
-If you do not get the expected output, see [Debugging and troubleshooting]({{root_url}}Programming-guide/Debugging-and-troubleshooting).
 
 ### Retrieve collected data
 

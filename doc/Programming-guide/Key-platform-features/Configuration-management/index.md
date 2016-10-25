@@ -31,7 +31,7 @@ Once a new configuration schema is provisioned, Kaa generates corresponding deri
 
 If you update your configuration schema, you need to update the [client application]({{root_url}}Glossary/#kaa-client).
 Therefore, to enable the server compatibility with the older clients as the configuration schema evolves, Kaa servers maintain multiple versions of the configuration schema.
-See [CT schema versioning and dependencies]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/##ct-schema-versioning-and-dependencies).
+See [CT schema versioning and dependencies]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-versioning-and-dependencies).
 Configuration data is managed independently for every schema version.
 
 The Kaa [Control service]({{root_url}}Glossary/#control-service) exposes API for loading configuration data into the "all" group.

@@ -45,4 +45,4 @@ If you are willing to contribute to the Kaa code base, or submit sample [applica
 Documentation is a part of the Kaa code base.
 You can find the documentation files in the **doc/** subdirectory of the [main repository](https://github.com/kaaproject/kaa).
 That means that the contribution process is the same for both the source code and documentation.
-See [Documentation contribution and style guide]({{root_url}}Customization-guide/Documentation-contribution-and-style-guide/).
+See [Documentation contribution and style guide]({{root_url}}Customization-guide/How-to-contribute/Documentation-contribution-and-style-guide/).
