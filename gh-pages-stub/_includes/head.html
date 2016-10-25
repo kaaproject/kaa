@@ -107,7 +107,7 @@
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-47512871-7', 'auto');
+  ga('create', '{{site.data.permanent_config.google_analytics_property_id}}', 'auto');
   ga('send', 'pageview');
   </script>
   <!-- google analytics -->
@@ -118,6 +118,5 @@
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ site.baseurl }}/atom.xml">
-
 
 </head>
