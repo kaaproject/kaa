@@ -109,11 +109,13 @@ typedef enum {
     DDLogInfo(@"%@ ConnAck [%i] message received for channel [%@]", TAG, message.returnCode, [self getId]);
     if (message.returnCode != ReturnCodeAccepted) {
         DDLogError(@"%@ Connection for channel [%@] was rejected: %i", TAG, [self getId], message.returnCode);
-        if (message.returnCode == ReturnCodeRefuseBadCredentials) {
-            DDLogInfo(@"%@ Cleaning client state", TAG);
-            [self.state clean];
+        DDLogInfo(@"%@ Cleaning client state", TAG);
+        [self.state clean];
+        if (message.returnCode == ReturnCodeRefuseVerificationFailed) {
+            [self onServerFailedWithFailoverStatus:FailoverStatusEndpointVerificationFailed];
+        } else {
+            [self onServerFailed];
         }
-        [self onServerFailed];
     }
 }
 
