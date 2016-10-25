@@ -29,6 +29,11 @@
 
 #define REQUEST_ID 42
 
+@protocol EndpointAttachDetachDelegate <OnDetachEndpointOperationDelegate, OnAttachEndpointOperationDelegate>
+
+
+@end
+
 #pragma mark - ConcreteUserAttachDelegate
 
 @interface ConcreteUserAttachDelegate : NSObject <UserAttachDelegate>
@@ -108,7 +113,7 @@
     [verifyCount(transport, times(2)) sync];
 }
 
-- (void)testcheckDetachEndpoint {
+- (void)testCheckDetachEndpoint {
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:@""];
     id<UserTransport> transport = mockProtocol(@protocol(UserTransport));
@@ -185,7 +190,7 @@
     EndpointKeyHash *emptyKeyHash1 = [[EndpointKeyHash alloc] initWithKeyHash:nil];
     EndpointKeyHash *emptyKeyHash2 = [[EndpointKeyHash alloc] initWithKeyHash:nil];
     
- //   XCTAssertEqualObjects(emptyKeyHash1, emptyKeyHash2);
+    //   XCTAssertEqualObjects(emptyKeyHash1, emptyKeyHash2);
     XCTAssertEqual([emptyKeyHash1 hash], [emptyKeyHash2 hash]);
     XCTAssertNotEqualObjects(ekh1, emptyKeyHash1);
     XCTAssertNotNil(ekh1);
@@ -228,7 +233,7 @@
     [given([state endpointAccessToken]) willReturn:@""];
     UserDetachNotification *detachedNotification = [[UserDetachNotification alloc] init];
     detachedNotification.endpointAccessToken = @"foo";
-
+    
     id<DetachEndpointFromUserDelegate> delegate = mockProtocol(@protocol(DetachEndpointFromUserDelegate));
     
     DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
@@ -248,11 +253,11 @@
     
     id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
     [given([state endpointAccessToken]) willReturn:endpointAccessToken];
-
+    
     id<KaaChannelManager> channelManager = mockProtocol(@protocol(KaaChannelManager));
     KaaClientProperties *properties = mock([KaaClientProperties class]);
     id<ProfileManager> profileManager = mockProtocol(@protocol(ProfileManager));
-
+    
     id<ProfileTransport> transport = [[DefaultProfileTransport alloc] init];
     [transport setClientState:state];
     [transport setChannelManager:channelManager];
@@ -266,6 +271,29 @@
     
     XCTAssertNotNil(profileRequest);
     XCTAssertTrue(endpointAccessToken == profileRequest.endpointAccessToken.data);
+}
+
+- (void)testCheckAddDetachDelegate {
+    id<KaaClientState> state = mockProtocol(@protocol(KaaClientState));
+    [given([state endpointAccessToken]) willReturn:@""];
+    
+    EndpointDetachResponse *detachResponse1 = [[EndpointDetachResponse alloc] init];
+    detachResponse1.requestId = 0;
+    detachResponse1.result = SYNC_RESPONSE_RESULT_TYPE_SUCCESS;
+    
+    id<EndpointAttachDetachDelegate> delegate = mockProtocol(@protocol(EndpointAttachDetachDelegate));
+    
+    DefaultEndpointRegistrationManager *manager = [[DefaultEndpointRegistrationManager alloc] initWithState:state executorContext:self.executorContext userTransport:nil profileTransport:nil];
+    
+    EndpointKeyHash *emptyKeyHash1 = [[EndpointKeyHash alloc] initWithKeyHash:nil];
+    
+    [manager detachEndpointWithKeyHash:emptyKeyHash1 delegate:delegate];
+    
+    [manager onUpdateWithAttachResponses:nil detachResponses:@[detachResponse1] userResponse:nil userAttachNotification:nil userDetachNotification:nil];
+    
+    [NSThread sleepForTimeInterval:1.f];
+    
+    [verifyCount(delegate, times(1)) onDetachResult:SYNC_RESPONSE_RESULT_TYPE_SUCCESS];
 }
 
 - (UserAttachResponse *)getUserAttachResponse {

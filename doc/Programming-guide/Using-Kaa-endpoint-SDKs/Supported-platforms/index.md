@@ -25,7 +25,7 @@ sort_idx: 60
 
 {% capture obj %}Objective-C{% endcapture %}
 {% capture sdk_obj %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C{% endcapture %}
-{% capture IO %}{{sdk_obj}}/SDK-iOS/{% endcapture %}
+{% capture IO %}{{sdk_obj}}{% endcapture %}
 
 {% capture sdk_java %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Java/{% endcapture %}
 {% capture AJ %}{{sdk_java}}{% endcapture %}

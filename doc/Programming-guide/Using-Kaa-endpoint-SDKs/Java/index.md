@@ -5,10 +5,12 @@ permalink: /:path/
 sort_idx: 40
 ---
 
+{% include variables.md %}
+
 * TOC
 {:toc}
 
-This guide explains how to use Kaa [Java SDK]({{root_url}}Glossary/#enpoint-sdk) for your IoT applications.
+This guide explains how to use Kaa [Java SDK]({{root_url}}Glossary/#endpoint-sdk) for your IoT applications.
 It describes the environment setup, basic API, and provides comparison between desktop and Android versions of the Kaa Java SDK.
 The Kaa Java SDK should be preferred if you want to run your application on different platforms, or if you plan on developing an Android application.
 

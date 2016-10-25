@@ -52,7 +52,7 @@
                                keyHash:(EndpointKeyHash *)keyHash;
 - (void)notifyDetachDelegateWithResult:(SyncResponseResultType)result
                               delegate:(id<OnDetachEndpointOperationDelegate>)delegate;
-- (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId;
+- (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId isAttach:(BOOL)isAttach;
 
 @end
 
@@ -106,7 +106,7 @@
     @synchronized (self.attachEndpointRequests) {
         self.attachEndpointRequests[requestId] = accessToken;
     }
-    [self addDelegate:delegate forRequestId:requestId];
+    [self addDelegate:delegate forRequestId:requestId isAttach:YES];
 }
 
 - (void)detachEndpointWithKeyHash:(EndpointKeyHash *)keyHash delegate:(id<OnDetachEndpointOperationDelegate>)delegate {
@@ -115,15 +115,19 @@
     @synchronized (self.detachEndpointRequests) {
         self.detachEndpointRequests[requestId] = keyHash;
     }
-    [self addDelegate:delegate forRequestId:requestId];
+    [self addDelegate:delegate forRequestId:requestId isAttach:NO];
 }
 
-- (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId  {
-    if (delegate && [delegate conformsToProtocol:@protocol(OnAttachEndpointOperationDelegate)]) {
+- (void)addDelegate:(id)delegate forRequestId:(NSNumber *)requestId isAttach:(BOOL)isAttach  {
+    if (delegate &&
+        [delegate conformsToProtocol:@protocol(OnAttachEndpointOperationDelegate)] &&
+        isAttach) {
         @synchronized (self.endpointAttachDelegates) {
             self.endpointAttachDelegates[requestId] = delegate;
         }
-    } else if (delegate && [delegate conformsToProtocol:@protocol(OnDetachEndpointOperationDelegate)]) {
+    } else if (delegate &&
+               [delegate conformsToProtocol:@protocol(OnDetachEndpointOperationDelegate)] &&
+               !isAttach) {
         @synchronized (self.endpointDetachDelegates) {
             self.endpointDetachDelegates[requestId] = delegate;
         }

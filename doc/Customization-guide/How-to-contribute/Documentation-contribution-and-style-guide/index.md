@@ -15,9 +15,9 @@ The guide contains instructions on how to contribute to Kaa documentation while 
 
 The target audience of this guide is Kaa development team and anyone contributing to Kaa documentation.
 
-# Documentation style guide
+## Documentation style guide
 
-## Markdown formatting
+### Markdown formatting
 * Use [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/) for all documentation.
 * Use pure Markdown without HTML tags when possible.
 * Start every sentence with a new line to make future merging easier.
@@ -48,7 +48,7 @@ Click the **Src** tab in the table below to see the source code used to generate
 |Page    | link | url |
 |------- | ---- | --- |
 | Programming guide |[Programming guide]({{root_url}}Programming-guide/) | {{root_url}}Programming-guide/ |
-| Android SDK |[Android SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/|
+| Java SDK |[Java SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Java/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Java/|
 
 </div><div id="Src" class="tab-pane fade " markdown="1" >
 
@@ -56,21 +56,21 @@ Click the **Src** tab in the table below to see the source code used to generate
 |Page    | link | url |
 |------- | ---- | --- |
 | Programming guide |[Programming guide]({{root_url}}Programming-guide/) | {{root_url}}Programming-guide/ |
-| Android SDK |[Android SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/SDK-integration-instructions/SDK-Android/|
+| Java SDK |[Java SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Java/)|{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Java/|
 ```
 </div></div>
 </li>
 </ul>
 * Refer to the [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for information and examples on how to create tables and other content elements.
 
-## Page layout
+### Page layout
 * Start every page with a section title followed by a _table of contents (TOC)_.
 * TOC represents a list of the page headings and subheadings.
 If your page contains only one heading, TOC is not required.
 * Right below the TOC, include a short introduction explaining the purpose of the page and what the reader can learn from it.
 * As a rule of thumb, the introduction should be 1-10 sentences long, but not more than 5 lines of text.
 
-## Content structure
+### Content structure
 * Keep your titles and headings short and precise, 1-5 words will do.
 * Use simple one-clause sentence structure whenever you can.
 * If you have sentences longer than 25 words, try to break them up or condense them.
@@ -87,7 +87,7 @@ Do not use pictures without descriptions.
 * Provide links to related content within the documentation to help readers get more information.
 * Provide links to auto-generated documentation (API, etc.).
 
-## Style and tone
+### Style and tone
 * Avoid using _please_ in instructions unless some step in the procedure causes inconvenience for the user or represents a workaround for some system limitation.
 * Use _sorry_ only to inform about serious software or hardware problems for the user.
 Don’t use _sorry_ if the problem appeared during normal software operation.
@@ -113,7 +113,7 @@ Keep globalization and cultural considerations in mind.
 * Avoid using non-English words or phrases, such as _ergo_ or _bona fide_, even if you think they are widely used.
 However, there are two exceptions to this rule: _etc._ and _e.g._
 
-## Use of terminology
+### Use of terminology
 * Whenever possible, use common English instead of using terminology.
 Use terminology when you need to be particular and precise about something.
 * Provide term definition on its first mention.
@@ -126,7 +126,7 @@ E.g.: "Administrative UI" is not equal to "Admin UI" unless defined so, "tenant 
 * Do not make a new term if the Glossary contains another term describing the same idea.
 * When creating a new term, make sure it does not already mean something else in the Glossary.
 
-## Grammar
+### Grammar
 * Give preference to present tense over past and future tenses.
 * Give preference to simple verb forms over perfect and continuous forms.
 * Use call-to-action approach instead of simple statements to help user find the information.
@@ -186,7 +186,7 @@ For example, when you write from the user's point of view.
     This application demonstrates Kaa Configuration extension functionality.
     Client application configuration service.
 
-## Text formatting
+### Text formatting
 * Use **bold** for:
   * Technical terms that are not in the Glossary, on their first mention.
   * Titles of windows and dialog boxes.
@@ -209,13 +209,13 @@ Use lowercase unless uppercase is justified (e. g. names of UI elements).
   * Environment variables and error message names.
   * Names of programs and utilities.
 
-## Tables
+### Tables
 * Start every table with at least one introductory sentence or a table title.
 End the introductory sentence with a period, not a colon.
 * Stick to around 800x600 pixels resolution for tables to make them visible on most screens.
 * Include table explanations right after the table.
 
-## Lists
+### Lists
 * Start every list either with a heading or with a sentence followed by a colon.
 * Capitalize the first word of each list entry.
 * End each list entry with a period.
@@ -223,7 +223,7 @@ However, do not use ending punctuation for lists where all entries are three wor
 * Do not end list entries with semicolons or commas.
 * Do not put _and_ before the last list entry.
 
-## Notes, tips, and cautions
+### Notes, tips, and cautions
 * Do not use notes too often as this distracts the user's attention.
 * Try using not more than one note per subheading.
 * If you have two notes of different types put together, always separate them with some text.
@@ -239,7 +239,7 @@ However, do not use ending punctuation for lists where all entries are three wor
 * An _important note_ displays information that is critical the completion of a procedure (unlike the note, which is not critical and is for information only).
 * A _caution_ alerts users of potential risk or damage in case they do not take some action or consider some information.
 
-## Code examples
+### Code examples
 
 * Code example should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
 * When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.).
@@ -289,7 +289,7 @@ function fancyAlert(arg) {
   * Source file names.
   * Numbers when they are used as code.
 
-## Jekyll formatting
+### Jekyll formatting
 * Kaa project uses [Jekyll](https://jekyllrb.com/) to publish the documentation on the web.
 * Include a YAML front matter block with a `layout`, `title` and `permalink` keys at the beginning of each page.
 
@@ -411,16 +411,16 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 </li>
 </ul>
 
-# Documentation contribution
+## Documentation contribution
 
 Kaa documentation is a part of [Kaa source code](https://github.com/kaaproject/kaa) and is located in the doc/ folder.
 For full description of the contribution process, see [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
 Key differences between contributing source code and documentation are:
 
-* Select `Component: Documentation` in the [Jira](http://jira.kaaproject.org/) ticket.
+* Select the **Documentation** component in the [Jira](http://jira.kaaproject.org/) ticket.
 * Generate and check documentation locally.
 
-## Documentation preview
+### Documentation preview
 
 1. Install required software:
   * [Git](https://git-scm.com/)

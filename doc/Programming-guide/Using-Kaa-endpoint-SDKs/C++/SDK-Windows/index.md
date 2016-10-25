@@ -139,7 +139,7 @@ For additional CMake options, see [CMakeLists.txt](https://github.com/kaaproject
 
 ## Demo applications
 
-For minimal example application, refer to the [C++ SDK Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#minimal-example).
+For minimal example application, refer to the [C++ SDK Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#minimal-example).
 
 To build and run a Kaa C++ demo, proceed as follows:
 

@@ -5,11 +5,11 @@ permalink: /:path/
 sort_idx: 30
 ---
 
-* [Introduction](#introduction)
+{% include variables.md %}
 
-## Introduction
-
-The Kaa cluster node is comprised of the [Control](Configuration-Control-service), [Operations](Configuration-Operations-service), and [Bootstrap](Configuration-Bootstrap-service) services. Kaa administrator can enable or disable each of this services individually. In order to do this administrator need to edit corresponding properties in ```/usr/lib/kaa-node/conf/kaa-node.properties``` file.
+The Kaa cluster node is comprised of the [Control]({{root_url}}Glossary/#control-service), [Operations]({{root_url}}Glossary/#operations-service), and [Bootstrap]({{root_url}}Glossary/#bootstrap-service) services.
+Kaa administrator can enable or disable each of this services individually.
+In order to do this administrator need to edit corresponding properties in the /usr/lib/kaa-node/conf/kaa-node.properties file.
 
 
 ``` bash 
