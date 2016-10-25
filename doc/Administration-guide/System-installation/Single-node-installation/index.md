@@ -21,13 +21,14 @@ Kaa Sandbox emulates a single-node Kaa installation which comes already pre-conf
 Kaa supports the following operating system families and provides installation packages for each of them:
 
 * Ubuntu and Debian systems
-* Red Hat/CentOS/Oracle 5 or Red Hat 6 systems
+* Red Hat/CentOS/Oracle systems
 
 >**NOTE:** This guide is verified against:
 >
 > * Ubuntu 14.04 LTS Desktop 64-bit
 > * Ubuntu 16.04 LTS Desktop 64-bit
 > * CentOS 6.7 64-bit
+> * CentOS 7.2 64-bit
 {:.note}
 
 To use Kaa, your system must meet the following minimum requirements:
@@ -56,7 +57,7 @@ Follow the instructions below to install the required third-party components.
 
 <ul class="nav nav-tabs">
 	<li class="active"><a data-toggle="tab" href="#Ubuntu">Ubuntu 14.04/16.04</a></li>
-	<li><a data-toggle="tab" href="#CentOS">CentOS 6.7</a></li>
+	<li><a data-toggle="tab" href="#CentOS">CentOS 6.7/7.2</a></li>
 </ul>
 
 <div class="tab-content"><!---T---><div id="Ubuntu" class="tab-pane fade in active" markdown="1" ><!---U--->
@@ -441,14 +442,14 @@ Download and install JDK rpm.
 
    ```bash
    $ cd /usr/java/jdk1.8.0_60/
-   $ alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_60/bin/java 2
-   $ alternatives --config java
-   There are 3 programs which provide 'java'.
-   Selection   Command
+   $ sudo alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_60/bin/java 2
+   $ sudo alternatives --config java
+   There are 2 programs which provide 'java'.
+   
+     Selection    Command
    -----------------------------------------------
-    1      /usr/lib/jvm/jre-1.7.0-openjdk.x86_64/bin/java
-    2      /usr/lib/jvm/jre-1.6.0-openjdk.x86_64/bin/java
-    3      /usr/java/jdk1.8.0_60/bin/java
+   *  1           /usr/java/jdk1.8.0_60/jre/bin/java
+    + 2           /usr/java/jdk1.8.0_60/bin/java
    ```
 
    Check Java version.
@@ -477,9 +478,19 @@ Kaa requires MariaDB (used by default) or PostgreSQL.
 Add MariaDB YUM repository entry for CentOS.
 Copy and paste it into a file located in the /etc/yum.repos.d/ directory (name the file MariaDB.repo or similar).
 
+<ul>
+	<ul class="nav nav-tabs">
+		<li class="active"><a data-toggle="tab" href="#maria_centos67">CentOS 6.7</a></li>
+		<li><a data-toggle="tab" href="#maria_centos72">CentOS 7.2</a></li>
+	</ul>
+</ul>
+
+<ul>
+	<div class="tab-content"><!---tCent67---><div id="maria_centos67" class="tab-pane fade in active" markdown="1" ><!---Cent6--->
+
 ```bash
 
-# MariaDB 5.5 CentOS repository list - created 2016-04-01 10:22 UTC
+# MariaDB 5.5 CentOS repository list
 # http://mariadb.org/mariadb/repositories/
 [mariadb]
 name = MariaDB
@@ -487,6 +498,22 @@ baseurl = http://yum.mariadb.org/5.5/centos6-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 ```
+
+</div><!---Cent6---><div id="maria_centos72" class="tab-pane fade" markdown="1" ><!---Cent7--->
+
+```bash
+
+# MariaDB 5.5 CentOS repository list
+# http://mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = https://downloads.mariadb.com/MariaDB/mariadb-5.5.53/yum/centos7-amd64/
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+```
+
+</div><!---Cent7---></div><!---tCent67--->
+</ul>
 
 Then, run the following commands.
 
@@ -510,7 +537,7 @@ Check if MariaDB service is running.
 ```bash
 $ sudo netstat -ntlp | grep 3306
 
-tcp    0   0 127.0.0.1:3306     0.0.0.0:*       LISTEN   7386/mysqld
+tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      5476/mysqld 
 ```
 
 For more information, see the [official page](https://mariadb.org/).
@@ -518,24 +545,36 @@ For more information, see the [official page](https://mariadb.org/).
 Connect to the mariadb-server.
 
 ```bash
-$ mysql
+$ mysql -u root -p
 ```
 
 Create a new user for the database.
 
 ```bash
-MariaDB [(none)]> CREATE USER sqladmin@localhost IDENTIFIED BY 'admin';
+CREATE USER 'sqladmin'@'localhost' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON *.* TO 'sqladmin'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;
 ```
 
 Create a Kaa database.
 
 ```bash
-MariaDB [(none)]> CREATE DATABASE kaa
-						CHARACTER SET utf8
-						COLLATE utf8_general_ci;
+CREATE DATABASE kaa
+    CHARACTER SET utf8
+    COLLATE utf8_general_ci;
 ```
 
 </div><!---Mar---><div id="postgre_centos" class="tab-pane fade" markdown="1" ><!---Pos--->
+
+Follow the instructions for your OS.
+
+<ul>
+	<ul class="nav nav-tabs">
+		<li class="active"><a data-toggle="tab" href="#postgre_centos67">CentOS 6.7</a></li>
+		<li><a data-toggle="tab" href="#postgre_centos72">CentOS 7.2</a></li>
+	</ul>
+</ul>
+
+<ul>
+	<div class="tab-content"><!---tCent67---><div id="postgre_centos67" class="tab-pane fade in active" markdown="1" ><!---Cent6--->
 
 Exclude old PostgreSQL from the default repository, append a line `exclude=postgresql*` to the sections **[base]** and **[updates]**.
 
@@ -565,17 +604,10 @@ exclude=postgresql*
 ...
 ```
 
-Install [PostgreSQL 9.4](http://www.postgresql.org/download/) PGDG file for CentOS 6 64-bit.
+Install [PostgreSQL 9.4](http://www.postgresql.org/download/) PGDG file.
 
 ```bash
-$ sudo yum localinstall http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm
-```
-
-List available PostgreSQL installations and install the PostgreSQL server.
-
-```bash
-$ sudo yum list postgres*
-$ sudo yum install postgresql94-server
+$ sudo yum localinstall https://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-3.noarch.rpm
 ```
 
 Initialize the PostgreSQL database.
@@ -629,12 +661,12 @@ Update the pg\_hba.conf file to allow local connections.
 $ sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
 
 remove lines:
-local   all      all                ident
-host   all      all      127.0.0.1/32      ident
+local   all             all                                     peer
+host    all             all             127.0.0.1/32            ident
 
 add lines:
-local   all      all                trust
-host   all      all      127.0.0.1/32      trust
+local   all             all                                     trust
+host    all             all             127.0.0.1/32            trust
 ```
 
 Restart the database.
@@ -646,20 +678,131 @@ Stopping postgresql-9.4 service:            [  OK  ]
 Starting postgresql-9.4 service:            [  OK  ]
 ```
 
+</div><!---Cent6---><div id="postgre_centos72" class="tab-pane fade" markdown="1" ><!---Cent7--->
+
+Exclude old PostgreSQL from the default repository, append a line `exclude=postgresql*` to the sections **[base]** and **[updates]**.
+
+```bash
+$ sudo nano /etc/yum.repos.d/CentOS-Base.repo
+
+...
+
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+exclude=postgresql*
+
+#released updates
+[updates]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+exclude=postgresql*
+
+...
+```
+
+Install [PostgreSQL 9.4](http://www.postgresql.org/download/) PGDG file.
+
+```bash
+$ sudo yum localinstall https://yum.postgresql.org/9.4/redhat/rhel-7.2-x86_64/pgdg-centos94-9.4-3.noarch.rpm
+```
+
+List available PostgreSQL installations and install the PostgreSQL server.
+
+```bash
+$ sudo yum list postgres*
+$ sudo yum install postgresql94-server
+```
+
+Initialize the PostgreSQL database.
+
+```bash
+$ sudo /usr/pgsql-9.4/bin/postgresql94-setup initdb
+Initializing database ... OK
+```
+
+Configure the database to start automatically when OS starts.
+
+```bash
+$ systemctl enable postgresql-9.4
+```
+
+Start the database.
+
+```bash
+$ systemctl start postgresql-9.4
+```
+
+Connect to the postgresql-server using the psql utility.
+
+```bash
+$ sudo -u postgres psql
+```
+
+Specify the password for the postgres user (the default password in the kaa configuration files is "admin").
+
+```bash
+postgres=# \password
+Enter new password: admin
+Enter it again: admin
+```
+
+Create a Kaa database.
+
+```bash
+CREATE DATABASE "kaa"
+	  WITH OWNER "postgres"
+	  ENCODING 'UTF8'
+	  LC_COLLATE = 'en_US.UTF-8'
+	  LC_CTYPE = 'en_US.UTF-8'
+	  TEMPLATE template0;
+```
+
+Update the pg\_hba.conf file to allow local connections.
+
+```bash
+$ sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
+
+remove lines:
+local   all             all                                     peer
+host    all             all             127.0.0.1/32            ident
+
+add lines:
+local   all             all                                     trust
+host    all             all             127.0.0.1/32            trust
+```
+
+Restart the database.
+
+```bash
+$ systemctl restart postgresql-9.4
+
+```
+
+
+</div><!---Cent7---></div><!---tCent67--->
+</ul>
+
 </div><!---Pos---></div><!---tMarPos--->
 </ul>
 
 <ol>
 <li value="4" markdown="1">
-Install [Zookeeper 3.4.7](http://zookeeper.apache.org/doc/r3.4.7/).
+Install [Zookeeper 3.4.9](http://zookeeper.apache.org/doc/r3.4.9/).
 
 Download and extract Zookeeper packages.
 
 ```bash
 $ cd /opt
-$ sudo wget http://www.eu.apache.org/dist/zookeeper/zookeeper-3.4.7/zookeeper-3.4.7.tar.gz
-$ sudo tar zxvf zookeeper-3.4.7.tar.gz
-$ sudo cp zookeeper-3.4.7/conf/zoo_sample.cfg zookeeper-3.4.7/conf/zoo.cfg
+$ sudo wget http://www.eu.apache.org/dist/zookeeper/zookeeper-3.4.9/zookeeper-3.4.9.tar.gz
+$ sudo tar zxvf zookeeper-3.4.9.tar.gz
+$ sudo cp zookeeper-3.4.9/conf/zoo_sample.cfg zookeeper-3.4.9/conf/zoo.cfg
 ```
 
 Create a data directory.
@@ -671,14 +814,30 @@ $ sudo mkdir /var/zookeeper
 Edit the `dataDir` property in the zookeeper configuration file.
 
 ```bash
-$ sudo nano /opt/zookeeper-3.4.7/conf/zoo.cfg
+$ sudo nano /opt/zookeeper-3.4.9/conf/zoo.cfg
 ```
+
+```bash
+... 
+dataDir=/var/zookeeper
+...
+```
+
+<ul>
+	<ul class="nav nav-tabs">
+		<li class="active"><a data-toggle="tab" href="#supervisor_centos67">CentOS 6.7</a></li>
+		<li><a data-toggle="tab" href="#supervisor_centos72">CentOS 7.2</a></li>
+	</ul>
+</ul>
+
+<ul>
+	<div class="tab-content"><!---tCent67---><div id="supervisor_centos67" class="tab-pane fade in active" markdown="1" ><!---Cent6--->
 
 Install the supervisor utility.
 
 ```bash
 $ sudo rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
-$ yum install supervisor
+$ sudo yum install supervisor
 ```
 
 Edit the _/etc/supervisord.conf_ file and add a section about ZooKeeper to it.
@@ -686,7 +845,7 @@ Edit the _/etc/supervisord.conf_ file and add a section about ZooKeeper to it.
 ```bash
 $ sudo nano /etc/supervisord.conf
 [program:zookeeper]
-command=/opt/zookeeper-3.4.7/bin/zkServer.sh start-foreground
+command=/opt/zookeeper-3.4.9/bin/zkServer.sh start-foreground
 autostart=true
 autorestart=true
 startsecs=1
@@ -702,7 +861,7 @@ stderr_logfile_backups=10
 stderr_events_enabled=true
 ```
 
-Configure the database to start automatically when OS starts.
+Configure the supervisor to start automatically when OS starts.
 
 ```bash
 $ sudo chkconfig supervisord on
@@ -728,6 +887,66 @@ Check if Zookeeper service is running.
 $ netstat -ntlp | grep 2181
 tcp    0   0 :::2181         :::*           LISTEN   2132/java
 ```
+
+</div><!---Cent6---><div id="supervisor_centos72" class="tab-pane fade" markdown="1" ><!---Cent7--->
+
+Install the supervisor utility.
+
+```bash
+$ sudo rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8.noarch.rpm
+$ sudo yum install supervisor
+```
+
+Edit the _/etc/supervisord.conf_ file and add a section about ZooKeeper to it.
+
+```bash
+$ sudo nano /etc/supervisord.conf
+[program:zookeeper]
+command=/opt/zookeeper-3.4.9/bin/zkServer.sh start-foreground
+autostart=true
+autorestart=true
+startsecs=1
+startretries=999
+redirect_stderr=false
+stdout_logfile=/var/log/zookeeper-out
+stdout_logfile_maxbytes=10MB
+stdout_logfile_backups=10
+stdout_events_enabled=true
+stderr_logfile=/var/log/zookeeper-err
+stderr_logfile_maxbytes=100MB
+stderr_logfile_backups=10
+stderr_events_enabled=true
+```
+
+Configure the supervisor to start automatically when OS starts.
+
+```bash
+$ systemctl enable supervisord
+```
+
+Start Zookeeper.
+
+```bash
+$ systemctl start supervisord
+```
+
+Check Zookeeper status.
+
+```bash
+$ sudo supervisorctl
+zookeeper                        RUNNING   pid 15546, uptime 0:00:41
+```
+
+Check if Zookeeper service is running.
+
+```bash
+$ sudo netstat -ntlp | grep 2181
+  tcp6       0      0 :::2181                 :::*                    LISTEN      15546/java
+```
+
+</div><!---Cent7---></div><!---tCent67--->
+</ul>
+
 </li>
 </ol>
 
@@ -768,13 +987,14 @@ $ sudo yum install -y mongodb-org
 Start MongoDB.
 
 ```
-$ sudo service mongod startStarting mongod: [ OK ]
+$ sudo service mongod start
+Starting mongod: [ OK ]
 ```
 
 Verify that MongoDB started successfully.
 
 ```bash
-$ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
+$ sudo cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
 2015-09-23T16:39:35.455+0300 [initandlisten] waiting for connections on port 27017
 ```
 
@@ -792,7 +1012,7 @@ Add the DataStax Community yum repository.
 $ sudo nano /etc/yum.repos.d/datastax.repo
 [datastax-ddc]
 name = DataStax Repo for Apache Cassandra
-baseurl = http://rpm.datastax.com/datastax-ddc/3.5
+baseurl = http://rpm.datastax.com/datastax-ddc/3.6
 enabled = 1
 gpgcheck = 0
 ```
@@ -803,7 +1023,7 @@ Install Java Native Access (JNA).
 $ sudo yum install jna
 ```
 
-Install [Cassandra 3.5](http://cassandra.apache.org/download/).
+Install [Cassandra 3.6](http://cassandra.apache.org/download/).
 
 ```bash
 $ sudo yum install datastax-ddc
@@ -833,9 +1053,9 @@ Check Cassandra cql shell.
 ```bash
 $ cqlsh
 Connected to Test Cluster at 127.0.0.1:9042.
-[cqlsh 5.0.1 | Cassandra 3.5 | CQL spec 3.4.0 | Native protocol v4]
+[cqlsh 5.0.1 | Cassandra 3.6.0 | CQL spec 3.4.2 | Native protocol v4]
 Use HELP for help.
-cqlsh>
+cqlsh> 
 ```
 
 </div><!---Cas---></div><!---tMonCas--->
@@ -852,7 +1072,7 @@ In this guide, the pre-built packages are used.
 
 <ul class="nav nav-tabs">
 	<li class="active"><a data-toggle="tab" href="#Ubuntu_">Ubuntu 14.04/16.04</a></li>
-	<li><a data-toggle="tab" href="#CentOS_">CentOS 6.7</a></li>
+	<li><a data-toggle="tab" href="#CentOS_">CentOS 6.7/7.2</a></li>
 </ul>
 
 <div class="tab-content"><div id="Ubuntu_" class="tab-pane fade in active" markdown="1" >
@@ -995,7 +1215,8 @@ transport_public_interface=localhost=YOUR_PUBLIC_INTERFACE
 <ul class="nav nav-tabs">
 	<li class="active"><a data-toggle="tab" href="#Ubuntu14__">Ubuntu 14.04</a></li>
 	<li><a data-toggle="tab" href="#Ubuntu16__">Ubuntu 16.04</a></li>
-	<li><a data-toggle="tab" href="#CentOS__">CentOS 6.7</a></li>
+	<li><a data-toggle="tab" href="#CentOS6__">CentOS 6.7</a></li>
+	<li><a data-toggle="tab" href="#CentOS7__">CentOS 7.2</a></li>
 </ul>
 
 <div class="tab-content"><div id="Ubuntu14__" class="tab-pane fade in active" markdown="1" >
@@ -1030,7 +1251,7 @@ $ sudo service netfilter-persistent start
 $ sudo netfilter-persistent save
 ```
 
-</div><div id="CentOS__" class="tab-pane fade" markdown="1" >
+</div><div id="CentOS6__" class="tab-pane fade" markdown="1" >
 
 Open TCP ports to be used by Administration UI (8080), Bootstrap service (9888, 9889), and Operations service (9997, 9999).
 
@@ -1044,6 +1265,25 @@ $ sudo iptables -I INPUT -p tcp -m tcp --dport 9999 -j ACCEPT
 $ sudo service iptables save
 ```
 
+</div><div id="CentOS7__" class="tab-pane fade" markdown="1" >
+      
+Open TCP ports to be used by Administration UI (8080), Bootstrap service (9888, 9889), and Operations service (9997, 9999).
+
+```bash
+$ systemctl stop firewalld
+$ systemctl mask firewalld 
+$ yum install iptables-services
+$ systemctl enable iptables
+$ systemctl start iptables
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9888 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9889 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9997 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp -m tcp --dport 9999 -j ACCEPT
+$ sudo service iptables save
+```
+      
 </div>
 </div>
 
