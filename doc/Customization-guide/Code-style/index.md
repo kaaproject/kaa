@@ -84,9 +84,3 @@ Use the following log levels according to the log purpose.
 | Warning   |  Use for unexpected or undesirable run time conditions that are not necessarily affecting the program         |
 | Debug     | Use to log detailed information according to the logical work flow of the system                              |
 | Trace     | Use to log the most detailed information intended for development and debugging purposes only                 |
-
-## Comprehensive style guides
-
-- For a comprehensive Java code style guide, please refer to [Google Java style guide](https://google.github.io/styleguide/javaguide.html).
-- For a comprehensive C++ code style guide, please refer to [Google C++ style guide](https://google.github.io/styleguide/cppguide.html).
-- For a comprehensive C code style guide, please refer to [Indian Hill C style guide with modifications](https://www.doc.ic.ac.uk/lab/cplus/cstyle.html).
