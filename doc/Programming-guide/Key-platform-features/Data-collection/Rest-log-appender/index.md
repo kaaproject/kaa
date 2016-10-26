@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Rest log appender
+title: REST log appender
 permalink: /:path/
 nav: /:path/Programming-guide/Key-platform-features/Data-collection/Rest-log-appender
 sort_idx: 90

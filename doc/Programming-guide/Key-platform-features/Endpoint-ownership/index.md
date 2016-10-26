@@ -47,7 +47,7 @@ To add a trustful verifier, use the [server REST API]({{root_url}}Programming-gu
 
 ![trustful verifier](Admin-ui/verifier-trustful.png "trustful verifier")
 
->**CAUTION:** Do not use this owner verifier in production because it may cause security issues.
+>**CAUTION:** Do not use trustful owner verifier in production because it may cause security issues.
 {:.caution}
 
 ### Facebook owner verifier
