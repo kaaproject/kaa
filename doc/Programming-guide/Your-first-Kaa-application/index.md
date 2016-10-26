@@ -96,7 +96,7 @@ The `by_default` parameter defines the default sampling period value which is se
 
 7. Click the **Add** button at the top of the page.
 
->**NOTE:** Alternatively, you can use the [Schema Avro UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#avro-ui-forms) form to create the schema.
+>**NOTE:** Alternatively, you can use the Schema Avro UI form to create the schema.
 {: .note}
 
 To create a configuration schema repeat the same procedure using the configuration-schema.json file.
@@ -117,7 +117,7 @@ The version number will be required later to generate an SDK.
 
 To use the data collection feature, you need to set up a **Log appender**.
 In this example, the MongoDB log appender is used.
-For more information, see [MongoDB log appender]({{root_url}}Administration-guide/Tenants-and-applications-management/#mongodb-log-appender).
+For more information, see [MongoDB log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender).
 
 ## Generate SDK
 
@@ -154,7 +154,7 @@ In the **Generate SDK** window, select the target platform for your SDK and clic
 
 >**NOTE:** In this example, the SDK is generated using the default profile and notification schemas.
 >These schemas are automatically populated after the application is created.
->If necessary, you can overwrite them using the [Administration UI]({{root_url}}Administration-guide/Tenants-and-applications-management/).
+>If necessary, you can overwrite them using the Administration UI.
 {: .note}
 
 ## Sample client application
