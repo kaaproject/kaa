@@ -185,7 +185,7 @@ This way we get object files `.o` and shared object files `.so` that are require
         
     Copy Botan object files `${SDKTARGETSYSROOT}/usr/lib/libbotan*` to `/usr/lib` directory of Edison board.
 
-1. Download C++ SDK.
+1. Download C++ SDK from your [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment).
 1. Compile C++ SDK.
 
         mkdir kaa-cpp

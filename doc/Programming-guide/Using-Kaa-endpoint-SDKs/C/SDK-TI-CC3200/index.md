@@ -115,7 +115,7 @@ For more information, please refer to [the official CC3200 Getting Started Guide
 ## Creating applications based on C SDK
 
 Before creating applications based on the C SDK, you should obtain the C SDK and build a static library from it.
-To do so, generate the C SDK in Admin UI, then extract the archive.
+To do so, generate the C SDK in [Administration UI]({{root_url}}Glossary/#administration-ui), then extract the archive.
 
 ### Building C SDK on Linux
 
