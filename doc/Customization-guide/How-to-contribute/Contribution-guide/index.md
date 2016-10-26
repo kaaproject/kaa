@@ -6,19 +6,15 @@ sort_idx: 30
 ---
 {% include variables.md %}
 
-* TOC
-{:toc}
-
-# Documentation contribution
-
-Kaa documentation is a part of [Kaa source code](https://github.com/kaaproject/kaa) and is located in the doc/ folder.
-For full description of the contribution process, see [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
-Key differences between contributing source code and documentation are:
+Kaa documentation is a part of the [Kaa source code](https://github.com/kaaproject/kaa) and is located in the `doc/` folder.
+For a full description of the contribution process, see [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
+The key differences between contributing source code and documentation are:
 
 * Select `Component: Documentation` in the [Jira](http://jira.kaaproject.org/) ticket.
-* Generate and check documentation locally.
+* Generate and check documentation locally before committing.
+* Be sure to check the [Documentation style guide]({{root_url}}Customization-guide/How-to-contribute/Style-guide/).
 
-## Documentation preview
+## Preview documentation
 
 1. Install required software:
   * [Git](https://git-scm.com/)
@@ -75,8 +71,9 @@ nix-shell doc/shell.nix --run ./test-gh-pages.sh
 </ul>
 
 {: start="2"}
-2. Delete `test-gh-pages-*/` if it exists.
-3. Run `test-gh-pages.sh` script to generate documentation and start development server at [http://localhost:4000/](http://localhost:4000/).
+2. Go to the root directory of your git code branch.
+3. Delete `test-gh-pages-*/` if it exists.
+4. Run `test-gh-pages.sh` script to generate documentation and start development server at [http://localhost:4000/](http://localhost:4000/).
 
    ```bash
    user@host:/kaa$ ./test-gh-pages.sh
