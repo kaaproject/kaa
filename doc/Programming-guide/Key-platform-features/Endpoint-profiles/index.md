@@ -375,7 +375,6 @@ Below is the list of system part properties.
 
 | Property                |Description                                                                        |
 |-------------------------------------------------------------------------------------------------------------|
-
 |Server-side Profile Hash | The server-side profile hash used to validate integrity of endpoint profile state |
 |Server Key Hash          | The hash of the server that was used during the last endpoint request             |
 |SDK token                | The endpoint SDK identifier                                                       |
