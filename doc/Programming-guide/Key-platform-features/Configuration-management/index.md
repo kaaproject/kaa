@@ -694,48 +694,51 @@ Below are examples for different [SDK types]({{root_url}}Glossary/#sdk-type) of 
 <div id="Java-1" class="tab-pane fade in active" markdown="1" >
 
 ```java
-
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
-
-public static void main(String[] args) {
-    // Create the Kaa desktop context for the application.
-    DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
-    
-    // Create a Kaa client and add a listener which displays the Kaa client configuration 
-    // as soon as the Kaa client is started. 
-    kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
-    @Override
-    public void onStarted() {
-        super.onStarted();
-        printConfiguration(kaaClient.getConfiguration());
-    }
-    });
-    
-    // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
-    kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
-    
-    // Add a listener which displays the Kaa client configuration each time it is updated.
-    kaaClient.addConfigurationListener(new ConfigurationListener() {
-    @Override
-    public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
-        printConfiguration(sampleConfiguration);
-    }
-    });
+ 
+public class KaaConfigurationDemo {
+ 
+    public static void main(String[] args) {
+     
+        // Create the Kaa desktop context for the application.
+        DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
         
-    // Start the Kaa client and connect it to the Kaa server.
-    kaaClient.start();
-    ...
-}
+        // Create a Kaa client and add a listener which displays the Kaa client configuration 
+        // as soon as the Kaa client is started. 
+        KaaClient kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
+            @Override
+            public void onStarted() {
+                super.onStarted();
+                printConfiguration(kaaClient.getConfiguration());
+            }
+        }, true);
+        
+        // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
+        kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
+        
+        // Add a listener which displays the Kaa client configuration each time it is updated.
+        kaaClient.addConfigurationListener(new ConfigurationListener() {
+            @Override
+            public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
+                printConfiguration(sampleConfiguration);
+            }
+        });
+            
+        // Start the Kaa client and connect it to the Kaa server.
+        kaaClient.start();
+        ...
+    }
+    
+    private static void printConfiguration(SampleConfiguration sampleConfiguration) {
+        LOG.info("Current configuration: {}", sampleConfiguration);
+    }
 
-private static void printConfiguration(SampleConfiguration sampleConfiguration) {
-    LOG.info("Current configuration: {}", sampleConfiguration);
 }
-
 ```
 
 </div>
