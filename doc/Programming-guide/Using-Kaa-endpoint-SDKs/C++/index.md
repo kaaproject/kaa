@@ -29,7 +29,7 @@ To build a C++ SDK, you need to first install the following third-party dependen
 * SQLite3 (optional)
 
 The installation process may vary depending on the target platform.
-For detailed platform-specific instructions, refer to [Supported platforms]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Supported-platforms/).
+For detailed platform-specific instructions, refer to [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/).
 
 ## Build configuration
 
