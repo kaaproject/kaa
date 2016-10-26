@@ -199,14 +199,14 @@ To access Avro UI, click the **Avro UI** button on the Sandbox main page.
 The **General settings** window allows you to configure the application title and application base URL parameters. These parameters are used for sending email notifications to registered users.
 To customize the general settings, click **Settings => General** settings and fill in the fields as required.
 
-<img src="attach/image2015-5-28%2017-22-54.png" width="700" height="350">
+<img src="attach/general_settings.png" width="700" height="350">
 
 #### Configuring outgoing mail settings
 
 Outgoing mail settings are used to send emails to newly created users with the information about their passwords, as well as for sending other notifications.
 To customize the outgoing mail settings, click **Settings => Outgoing mail settings** and fill in the fields according to your SMTP mail server configuration.
 
-<img src="attach/image2015-5-28%2017-26-57.png" width="600" height="400">
+<img src="attach/mail_settings.png" width="600" height="400">
 
 #### Networking
 
