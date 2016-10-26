@@ -209,6 +209,6 @@ To provision your owner verifier, do the following:
 6. Restart kaa-node service:
 <br/>
 ``` $ sudo service kaa-node restart```
-7. Use [Admin UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#adding-user-verifiers) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) to create/update/delete your owner verifier instances.
+7. Use Admin UI or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) to create/update/delete your owner verifier instances.
 
 ---

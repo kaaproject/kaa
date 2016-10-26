@@ -148,7 +148,7 @@ To send a notification, use the [server REST API]({{root_url}}Programming-guide/
 
 1. Select the topic from the **Notification topics** page of the application and click **Send notification**.
 
-2. On the **Notification details** page, create a notification either by using the **Notification body** [record form]({{root_url}}Administration-guide/Tenants-and-applications-management/#record-form) or by uploading a JSON file.
+2. On the **Notification details** page, create a notification either by using the **Notification body** record form or by uploading a JSON file.
 The data structure of your JSON file must match the corresponding notification schema.
 
 	![Send Notification](images/send_notification.png)

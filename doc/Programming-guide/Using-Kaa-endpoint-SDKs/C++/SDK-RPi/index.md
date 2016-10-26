@@ -110,7 +110,7 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
         cp -r ${INSTALLDIR}/include/botan-1.11/botan/ ${INSTALLDIR}/include
         rm -r ${INSTALLDIR}/include/botan-1.11
 
-7. [Generate C++ SDK]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk).
+7. Download C++ SDK.
 8. Compile C++ SDK.
 
         mkdir kaa-cpp
