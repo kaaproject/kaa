@@ -23,40 +23,40 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
 
 public class PingConnectivityChecker implements ConnectivityChecker {
   public static final Logger LOG = LoggerFactory.getLogger(PingConnectivityChecker.class);
-  private static final String DEFAULT_HOST = "http://www.google.com";
+  private static final String DEFAULT_HOST = "www.google.com";
+  private static final int DEFAULT_PORT = 80;
+  private static final int CONNECTION_TIMEOUT_MS = 3000;
 
-  private final String urlAddress;
+  private final String host;
 
   public PingConnectivityChecker() {
     this(DEFAULT_HOST);
   }
 
-  public PingConnectivityChecker(String urlAddress) {
-    this.urlAddress = urlAddress;
+  public PingConnectivityChecker(String host) {
+    this.host = host;
   }
 
   @Override
   public boolean checkConnectivity() {
-    try {
-      final URL url = new URL(urlAddress);
-      final HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
-      urlConnect.connect();
-      return true;
 
-    } catch (UnknownHostException ex) {
-      LOG.warn(MessageFormat.format("Host {0} is unreachable", urlAddress), ex);
-      return false;
+    try {
+      try (Socket soc = new Socket()) {
+        soc.connect(new InetSocketAddress(host, DEFAULT_PORT), CONNECTION_TIMEOUT_MS);
+      }
+      return true;
     } catch (IOException ex) {
-      LOG.warn(MessageFormat.format("Host {0} is unreachable", urlAddress), ex);
+      LOG.warn(MessageFormat.format("Host {0} is unreachable", host), ex);
       return false;
     }
-
   }
 
 }
