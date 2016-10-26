@@ -83,9 +83,9 @@ For more information, see [geographic regions](http://docs.aws.amazon.com/AWSEC2
 2. At the **Choose an Instance Type** step, choose the appropriate instance type.
 For optimal performance, we recommended that you use at least **m3.large** or more powerful.
 
-3. At the **Configure Instance Details** step, you can customize the settnigs or leave the default values.
+3. At the **Configure Instance Details** step, you can customize the settings or leave the default values.
 
-4. At the **Add Storage** step, add additional volumes as requied.
+4. At the **Add Storage** step, add additional volumes as required.
 The number of instance storage devices available on the machine depends on the instance type.
 EBS volumes are not recommended for database storage.
 

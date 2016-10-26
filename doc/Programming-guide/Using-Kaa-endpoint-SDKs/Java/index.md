@@ -185,7 +185,7 @@ See the table below for comparison between the desktop and Android clients.
 |`createConnectivityChecker`|  Same  |  Same | Checks network connection.|
 |`getExecutorContext`| Same  | Same  | Creates instances of the `ExecutorService` class for SDK internal usage.|
 |`getProperties`| Same  | Same  | Returns `KaaClientProperties` that contains important information about the client SDK.|
-|`needToCheckClientState`| Returns **true**  | Returns **false** | Set off/on to check feasibility of the transition between the life sycle states.|
+|`needToCheckClientState`| Returns **true**  | Returns **false** | Set off/on to check feasibility of the transition between the life cycle states.|
 
 
 ## ExecutorContext configuration

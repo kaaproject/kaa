@@ -658,7 +658,7 @@ To define and apply the resulting configuration update for the endpoint, the [Op
 1. Evaluates the [endpoint group]({{root_url}}Glossary/#endpoint-group) membership according to the [endpoint profile]({{root_url}}Glossary/#endpoint-profile).
 
 2. Merges all configuration data sets assigned to the groups the endpoint belongs to, starting with the one that has the lowest weight (group "all").
-If confilicting field values are found, the field is assigned the value from the group with the highest weight.
+If conflicting field values are found, the field is assigned the value from the group with the highest weight.
 
 >**NOTE:** The `overrideStrategy` field in the configuration schema defines the way in which the arrays are merged.
 >Record UUID fields never change from the values in the lowest weight group they were first found in.
