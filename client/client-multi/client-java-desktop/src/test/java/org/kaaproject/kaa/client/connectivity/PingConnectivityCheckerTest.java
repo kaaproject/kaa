@@ -23,13 +23,13 @@ public class PingConnectivityCheckerTest {
 
   @Test
   public void checkConnectivityToWrongHostTest() {
-    PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("some-wrong-host=with-dashes-in-name");
+    PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("some-wrong-url=");
     Assert.assertFalse(pingConnectivityChecker.checkConnectivity());
   }
 
   @Test
   public void checkConnectivityForLocalHostTest() {
-    PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("localhost");
+    PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("http://google.com");
     Assert.assertTrue(pingConnectivityChecker.checkConnectivity());
   }
 }

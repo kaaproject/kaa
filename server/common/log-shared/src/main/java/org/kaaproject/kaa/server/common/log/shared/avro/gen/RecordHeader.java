@@ -19,6 +19,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
+
 package org.kaaproject.kaa.server.common.log.shared.avro.gen;
 
 @SuppressWarnings("all")
