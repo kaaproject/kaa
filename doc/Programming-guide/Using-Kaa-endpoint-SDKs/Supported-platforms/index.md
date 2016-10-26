@@ -6,6 +6,8 @@ sort_idx: 60
 ---
 {% include variables.md%}
 
+The following table provides platforms that were verified to support at least one type of the Kaa SDK (C, C++, Java, or Objective C). Click **View** in an appropriate cell for the detailed instructions for your target platform and programming language.
+
 {% capture sdk_c %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C{% endcapture %}
 {% capture LC %}{{sdk_c}}/SDK-Linux/{% endcapture %}
 {% capture EC %}{{sdk_c}}/SDK-ESP8266/{% endcapture %}
@@ -31,7 +33,7 @@ sort_idx: 60
 {% capture AJ %}{{sdk_java}}{% endcapture %}
 {% capture DJ %}{{sdk_java}}{% endcapture %}
 {% capture LJ %}{{sdk_java}}{% endcapture %}
-{% capture X %}Supported{% endcapture %}
+{% capture X %}View{% endcapture %}
 
 {% capture TICC3200 %}Texas Instruments CC3200{% endcapture %}
 
