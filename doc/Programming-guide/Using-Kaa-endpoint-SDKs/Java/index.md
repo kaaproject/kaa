@@ -155,7 +155,66 @@ the boolean argument specifies whether to generate public/private key pair autom
 The first argument can be either `DesktopKaaPlatformContext` for Java desktop or `AndroidKaaPlatformContext` for Android applications. 
 In this example, the second argument is the default implementation of `KaaClientStateListener` -- `SimpleKaaClientStateListener`, that is solely used to log the client state changes.
 And last one if set to **false** -- means using existing pre-generated public/private key pair, **true** -- means auto-generating new public/private key pair if absent.
- 
+
+You can configure properties and `ExecutorContext` of `DesktopKaaPlatformContext` with help of it's constructors. `DesktopKaaPlatformContext` uses `FlexibleExecutorContext` implementation of `ExecutorContext` by default. You can change it by calling corresponding constructor with specific `ExecutorContext` implementation.
+
+`FlexibleExecutorContext` has four thread groups, which responsible for life cycle, callbacks, API and scheduling. Each of these groups is implemented as separate thread pool (using ThreadPoolExecutor or its subclass). Each of them has minimum and maximum threads amount and maximum thread idle time. By default minimum threads amount for all these groups is zero, maximum threads amount isn't limited and maximum idle time is 100 milliseconds. You can call corresponding constructor to limit maximum threads amount or idle time (minimum threads amount is always zero). For scheduled thread groups, you can change only it's minimum threads amount. It is recommended to use builder to construct the `FlexibleExecutorContext` instance with custom parameters.
+
+The other ExecutorContext implementation which goes with Kaa is `SimpleExecutorContext`. Its minimum threads amount is 1 for each group. And its maximum threads amount also limited to 1 by default, but can be changed with proper constructor (see example below).
+
+Here some examples for using non-empty constructor and using builder.
+
+<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#not-empty-constructor">DesktopKaaPlatformContext not empty constructor</a></li>
+<li><a data-toggle="tab" href="#builder">FlexibleExecutorContext builder</a></li>
+<li><a data-toggle="tab" href="#simpleExecutorContext">SimpleExecutorContext not empty constructor</a></li>
+</ul>
+
+
+<div class="tab-content">
+<div id="not-empty-constructor" class="tab-pane fade in active" markdown="1">
+
+```java
+KaaClientProperties properties = new KaaClientProperties();
+properties.put(CUSTOM_PROPERTY_NAME, CUSTOM_PROPERTY_VALUE);
+new DesktopKaaPlatformContext(properties,
+	 CUSTOM_MAX_LIFE_CYCLE_THREADS, CUSTOM_MAX_API_THREADS,
+	 CUSTOM_MAX_CALLBACK_THREADS, CUSTOM_MIN_SCHEDULED_THREADS
+ ); // If you have no properties to set, just pass null instead of first constructor's argument
+```
+</div>
+
+<div id="simpleExecutorContext" class="tab-pane fade" markdown="1">
+
+```java
+ExecutorContext executor = new SimpleExecutorContext(
+	 CUSTOM_MAX_LIFE_CYCLE_THREADS, CUSTOM_MAX_API_THREADS,
+	 CUSTOM_MAX_CALLBACK_THREADS, CUSTOM_MIN_SCHEDULED_THREADS
+ );
+
+new DesktopKaaPlatformContext();
+```
+</div>
+
+<div id="builder" class="tab-pane fade" markdown="1">
+
+```java
+ExecutorContext executorContext = new FlexibleExecutorContext.FlexibleExecutorContextBuilder()
+	 .setMaxLifeCycleThreads(CUSTOM_MAX_LIFE_CYCLE_THREADS) // set custom maximum life cycle threads amount
+	 .setMaxLifeCycleThreadsIdleMilliseconds(CUSTOM_MAX_LIFECYCLE_THREADS_IDLE_MILLISECONDS)
+	 // set custom maximum life cycle threads idle time
+	 .setMaxApiThreads(CUSTOM_MAX_API_THREADS) // set custom maximum api threads amount
+	 .setMaxApiThreadsIdleMilliseconds(CUSTOM_MAX_API_THREADS_IDLE_MILLISECONDS) // set custom maximum api threads idle time
+	 .setMaxCallbackThreads(CUSTOM_MAX_CALLBACK_THREADS) // set custom maximum callback threads amount
+	 .setMaxCallbackThreadsIdleMilliseconds(CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS)//set custom maximum callback threads idle time
+	 .setMinScheduledThreads(CUSTOM_MIN_SCHEDULED_THREADS) // set custom minimum scheduled threads amount
+	 .build();
+new DesktopKaaPlatformContext(null, executorContext);
+```
+</div>
+
+</div>
+
 Whenever a new instance of Kaa client is created, the `start()` method is called to start the client operation and communication with the server.
 Starting from this point, you can use any features provided by the [Kaa platform]({{root_url}}Glossary/#kaa-platform), such as [data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), etc., in your application code.
 When you no longer need the client, you can call the `stop()` method to release resources and stop the client communication with the server.
