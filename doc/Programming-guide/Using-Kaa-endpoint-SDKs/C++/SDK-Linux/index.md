@@ -24,7 +24,7 @@ This page describes Kaa C++ SDK build process on Linux system.
 
 Before building the C++ endpoint SDK, install the following components on your machine:
 
-1. Install g++, [CMake](https://cmake.org/download/), [Boost](http://www.boost.org/users/download/) and (optionally) [SQLite3](https://sqlite.org/download.html):
+1. Install g++, [CMake](https://cmake.org/download/), [Boost](http://www.boost.org/users/download/) and [SQLite3](https://sqlite.org/download.html):
 
    ```
    sudo apt-get install g++ cmake libboost1.55-all-dev libsqlite3-0 libsqlite3-dev
@@ -52,12 +52,6 @@ To install, proceed as follows:
    sudo make install
    sudo ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
    ```
-
-6. Install the [SQLite](https://www.sqlite.org/index.html) library by executing the following command:
-
-    ```
-    sudo apt-get install libsqlite3-0 libsqlite3-dev
-    ```
 
 ## Compiling SDK
 
