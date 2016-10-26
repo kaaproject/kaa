@@ -50,6 +50,7 @@ public class PingConnectivityChecker implements ConnectivityChecker {
 
     try {
       try (Socket soc = new Socket()) {
+        // check if we can reach host (ping) thus we test connectivity
         soc.connect(new InetSocketAddress(host, DEFAULT_PORT), CONNECTION_TIMEOUT_MS);
       }
       return true;
