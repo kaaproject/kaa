@@ -7,9 +7,11 @@ sort_idx: 10
 
 {% include variables.md %}
 
-This guide describes how to upgrade your [Kaa server]({{root_url}}Glossary/#kaa-server) from version 0.9.0 to 0.10.0.
+This guide describes how to upgrade your [Kaa server]({{root_url}}Glossary/#kaa-server) from version 0.9.0 to 0.10.x.
 
->**CAUTION:** The below script was only tested on the official Kaa Sandbox 0.9.0.
+>**CAUTION:**
+>
+>The below guide was only tested in a single-node environment with the official Kaa Sandbox 0.9.0 running on Ubuntu Linux.
 >Please read the following disclaimer before running the script.
 >
 >This code is experimental and does not guarantee any particular results or outcomes.
@@ -24,18 +26,18 @@ This guide describes how to upgrade your [Kaa server]({{root_url}}Glossary/#kaa-
 >In no event and under no legal theory, whether in tort (including negligence), contract, or otherwise, unless required by applicable law (such as deliberate and grossly negligent acts) or agreed to in writing, shall any Contributor be liable to You for damages, including any direct, indirect, special, incidental, or consequential damages of any character arising as a result of this License or out of the use or inability to use the Work (including but not limited to damages for loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses), even if such Contributor has been advised of the possibility of such damages.”
 {:.caution}
 
-To update your Kaa server from version 0.9.x to 0.10.x:
+Follow these steps to run the upgrade script:
 
-1. [Download](http://www.kaaproject.org/download-kaa/) the Kaa 0.10.0 Debian package.
-
+1. Go to your Kaa host machine.
 2. Download the [upgradeKaa090to0100.sh](https://github.com/kaaproject/kaa/blob/v0.10.0/server/upgrade/data-migration-0.9.0-0.10.0/upgradeKaa090to0100.sh) and [data-migration_0.9.0-0.10.0.jar](http://repository.kaaproject.org/repository/releases/org/kaaproject/kaa/server/upgrade/data-migration/0.10.0/data-migration_0.9.0-0.10.0.jar) to upgrade the databases.
+3. Download the Kaa 0.10.x debian package at [Download Kaa](http://www.kaaproject.org/download-kaa/) page.
+4. Ensure that the files downloaded in steps 2 and 3 above are located in the same directory.
+5. Execute the command below:
 
-3. Save all downloaded files in the same directory on your Kaa server.
+```bash
+ sudo ./upgradeKaa090to0100.sh
+```
 
-4. Run the following command.
-
-		sudo ./upgradeKaa090to0100.sh
-	
->**IMPORTANT:** During installation of the Debian package, the script may ask you to resolve conflicts in the /usr/lib/kaa-node/conf/ folder.
->Be careful when merging configurations as incorrect server settings can cause malfunction of Kaa server.
+>**IMPORTANT:** During the installation of the Debian package, the script may ask you to resolve conflicts in the /usr/lib/kaa-node/conf/ folder.
+>Be careful when merging configurations as incorrect server settings can cause malfunction of the Kaa server.
 {:.important}
