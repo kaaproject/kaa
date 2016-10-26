@@ -27,7 +27,7 @@ The following diagram shows how events are generated and processed.
 
 ![Event generation and processing](images/general/EventGeneration2.png)
 
-To make the [Kaa client]({{root_url}}Glossary/#kaa-client) iterpret the events data sent from the endpoint library, you need to set up the event class schemas.
+To make the [Kaa client]({{root_url}}Glossary/#kaa-client) interpret the events data sent from the endpoint library, you need to set up the event class schemas.
 The [Kaa administrator]({{root_url}}Glossary/#kaa-administrator) can provision the events schemas on the Kaa server and generate the corresponding endpoint SDK.
 
 ## Event class

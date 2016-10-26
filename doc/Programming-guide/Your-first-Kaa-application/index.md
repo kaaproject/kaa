@@ -11,7 +11,8 @@ sort_idx: 10
 {:toc}
 
 This section discusses the basics of creating Kaa-based applications using the [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
-Main principles of the Kaa platform operation are examplified by a practical case of collecting data from sensor devices.  
+Main principles of the Kaa platform operation are exemplified by a practical case of collecting data from sensor devices.
+
 To learn more about Kaa features, see [Further reading](#further-reading).
 
 ## Prerequisites
@@ -19,7 +20,8 @@ To learn more about Kaa features, see [Further reading](#further-reading).
 To register a new [application]({{root_url}}Glossary/#kaa-application) within a fresh [Kaa server]({{root_url}}Glossary/#kaa-server) installation, you need to create users with the [tenant administrator]({{root_url}}Administration-guide/Tenants-and-applications-management/#tenant-admin) and [tenant developer]({{root_url}}Administration-guide/Tenants-and-applications-management/#tenant-developer) roles.
 Tenant administrator creates new applications in Kaa.
 Tenant developer configures and generates SDKs for those applications.
-It is recommended that you use the Kaa Sandbox that already includes a tenant administrator and a tenant developer.  
+It is recommended that you use the Kaa Sandbox that already includes a tenant administrator and a tenant developer.
+
 To learn how to install the Kaa Sandbox, see [Getting started]({{root_url}}Getting-started/).
 
 ## Application description
@@ -182,7 +184,7 @@ To do this, run the following commands in the terminal.
 
 		sudo apt-get install cmake
 		
-2. Create a direcory named **kaa** and unpack the C SDK archive into it.
+2. Create a directory named **kaa** and unpack the C SDK archive into it.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
 
@@ -1028,7 +1030,7 @@ Change the sample period value click **Save**.
     ![Endpoint groups inside](attach/new_draft_sample_period.png)
 
 5. Activate the draft by clicking the **Activate** button.
-Your client application console will display the follownig messages.
+Your client application console will display the following messages.
 
         Sampled temperature: 32
         Sampled temperature: 26
