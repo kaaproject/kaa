@@ -143,9 +143,7 @@ Below is an example of Maven project POM file:
 
 # Configuration schema
 
-A log appender configuration schema is an Avro compatible schema that defines configuration structure of the log appender. This schema may contain additional
-properties related to the UI form visualization which are described
-[here]({{root_url}}Administration-guide/Tenants-and-applications-management/#avro-schema-parameters).
+A log appender configuration schema is an Avro compatible schema that defines configuration structure of the log appender.
 
 ```json
 {

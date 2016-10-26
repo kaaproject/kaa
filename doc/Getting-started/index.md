@@ -194,11 +194,19 @@ To access Avro UI, click the **Avro UI** button on the Sandbox main page.
 
 ### Advanced Sandbox configuration
 
-#### Outgoing email settings
+#### Configuring general settings
 
-Kaa uses an outgoing email server to send notifications to the users.
-There are no default settings provided for the server.
-To configure the server settings, follow the instructions in [Configuring the outgoing email server settings]({{root_url}}Administration-guide/Tenants-and-applications-management#configuring-outgoing-mail-settings).
+The **General settings** window allows you to configure the application title and application base URL parameters. These parameters are used for sending email notifications to registered users.
+To customize the general settings, click **Settings => General** settings and fill in the fields as required.
+
+<img src="attach/general_settings.png" width="700" height="350">
+
+#### Configuring outgoing mail settings
+
+Outgoing mail settings are used to send emails to newly created users with the information about their passwords, as well as for sending other notifications.
+To customize the outgoing mail settings, click **Settings => Outgoing mail settings** and fill in the fields according to your SMTP mail server configuration.
+
+<img src="attach/mail_settings.png" width="600" height="400">
 
 #### Networking
 
