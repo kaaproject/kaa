@@ -20,11 +20,10 @@ import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 
 public class BaseDataFactory implements KaaDataFactory<BaseSchema, BaseData> {
 
-    @Override
-    public BaseData createData(BaseSchema schema, String data) {
-        return new BaseData(schema, data);
-    }
-
+  @Override
+  public BaseData createData(BaseSchema schema, String data) {
+    return new BaseData(schema, data);
+  }
 
 
 }

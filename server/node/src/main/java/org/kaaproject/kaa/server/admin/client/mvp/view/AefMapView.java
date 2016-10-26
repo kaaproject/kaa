@@ -16,28 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import java.util.List;
+import com.google.gwt.user.client.ui.HasValue;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 
-import com.google.gwt.user.client.ui.HasValue;
+import java.util.List;
 
 public interface AefMapView extends BaseDetailsView {
 
-    HasValue<EcfInfoDto> getEcf();
-    
-    public HasValue<String> getCreatedUsername();
+  HasValue<EcfInfoDto> getEcf();
 
-    public HasValue<String> getCreatedDateTime();
-    
-    void updateEcfs(List<EcfInfoDto> ecfs);
-    
-    HasValue<String> getEcfName();
-    
-    HasValue<String> getEcfVersion();
-    
-    AbstractGrid<ApplicationEventMapDto, String> getEventMapGrid();
-    
+  public HasValue<String> getCreatedUsername();
+
+  public HasValue<String> getCreatedDateTime();
+
+  void updateEcfs(List<EcfInfoDto> ecfs);
+
+  HasValue<String> getEcfName();
+
+  HasValue<String> getEcfVersion();
+
+  AbstractGrid<ApplicationEventMapDto, String> getEventMapGrid();
+
 }

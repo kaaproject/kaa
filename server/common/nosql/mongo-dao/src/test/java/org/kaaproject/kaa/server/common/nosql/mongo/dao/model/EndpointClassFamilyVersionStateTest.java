@@ -25,24 +25,24 @@ import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 
 public class EndpointClassFamilyVersionStateTest {
 
-    @Test
-    public void basicTest() {
-        EventClassFamilyVersionState state = new EventClassFamilyVersionState();
-        state.setEcfId("testID");
-        state.setVersion(42);
+  @Test
+  public void basicTest() {
+    EventClassFamilyVersionState state = new EventClassFamilyVersionState();
+    state.setEcfId("testID");
+    state.setVersion(42);
 
-        EventClassFamilyVersionStateDto dto = state.toDto();
+    EventClassFamilyVersionStateDto dto = state.toDto();
 
-        EventClassFamilyVersionState state2 = new EventClassFamilyVersionState(dto);
+    EventClassFamilyVersionState state2 = new EventClassFamilyVersionState(dto);
 
-        Assert.assertEquals(state.getEcfId(), state2.getEcfId());
-        Assert.assertEquals(state.getVersion(), state2.getVersion());
-    }
+    Assert.assertEquals(state.getEcfId(), state2.getEcfId());
+    Assert.assertEquals(state.getVersion(), state2.getVersion());
+  }
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(EventClassFamilyVersionState.class).suppress(Warning.NONFINAL_FIELDS).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(EventClassFamilyVersionState.class).suppress(Warning.NONFINAL_FIELDS).verify();
+  }
 
 
 }

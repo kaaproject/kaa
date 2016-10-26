@@ -16,11 +16,6 @@
 
 package org.kaaproject.kaa.client.configuration.base;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.annotation.Generated;
-
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.persistence.KaaClientState;
@@ -28,27 +23,36 @@ import org.kaaproject.kaa.schema.base.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Generated("ResyncConfigurationManager.java.template")
-public class ResyncConfigurationManager extends AbstractConfigurationManager implements ConfigurationManager {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(ResyncConfigurationManager.class);
-    
-    public ResyncConfigurationManager(KaaClientProperties properties, KaaClientState state, ExecutorContext executorContext) {
-        super(properties, state, executorContext);
-    }
+import java.io.IOException;
+import java.util.Arrays;
 
-    @Override
-    public Configuration getConfiguration() {
-        try {
-            return deserializer.fromByteArray(getConfigurationData());
-        } catch (IOException e) {
-            LOG.error("Failed to decode configuration data {}, exception catched: {}", Arrays.toString(getConfigurationData()), e);
-            try {
-                return deserializer.fromByteArray(getDefaultConfigurationData());
-            } catch (IOException e1) {
-                LOG.error("Failed to decode default configuration data {}, exception catched: {}", Arrays.toString(getConfigurationData()), e1);
-                return null;
-            }
-        }
+import javax.annotation.Generated;
+
+@Generated("ResyncConfigurationManager.java.template")
+public class ResyncConfigurationManager extends AbstractConfigurationManager
+        implements ConfigurationManager {
+
+  private static final Logger LOG = LoggerFactory.getLogger(ResyncConfigurationManager.class);
+
+  public ResyncConfigurationManager(KaaClientProperties properties, KaaClientState state,
+                                    ExecutorContext executorContext) {
+    super(properties, state, executorContext);
+  }
+
+  @Override
+  public Configuration getConfiguration() {
+    try {
+      return deserializer.fromByteArray(getConfigurationData());
+    } catch (IOException ex) {
+      LOG.error("Failed to decode configuration data {}, exception catched: {}",
+              Arrays.toString(getConfigurationData()), ex);
+      try {
+        return deserializer.fromByteArray(getDefaultConfigurationData());
+      } catch (IOException e1) {
+        LOG.error("Failed to decode default configuration data {}, exception catched: {}",
+                Arrays.toString(getConfigurationData()), e1);
+        return null;
+      }
     }
+  }
 }

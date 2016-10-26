@@ -29,30 +29,30 @@ import org.kaaproject.kaa.server.control.service.sdk.SdkGeneratorFactory;
  */
 public class SdkGeneratorTest {
 
-    private ApplicationEventMapDto makeDto(String fqn, ApplicationEventAction action) {
-        ApplicationEventMapDto dto = new ApplicationEventMapDto();
-        dto.setFqn(fqn);
-        dto.setAction(action);
-        return dto;
-    }
+  private ApplicationEventMapDto makeDto(String fqn, ApplicationEventAction action) {
+    ApplicationEventMapDto dto = new ApplicationEventMapDto();
+    dto.setFqn(fqn);
+    dto.setAction(action);
+    return dto;
+  }
 
-    /**
-     * Test create sdk generator.
-     *
-     * @throws Exception the exception
-     */
-    @SuppressWarnings("static-access")
-    @Test
-    public void testCreateSdkGenerator() throws Exception {
-        SdkGeneratorFactory factory = new SdkGeneratorFactory();
-        SdkGenerator generator = factory.createSdkGenerator(SdkPlatform.JAVA);
-        Assert.assertNotNull(generator);
-        generator = factory.createSdkGenerator(SdkPlatform.CPP);
-        Assert.assertNotNull(generator);
-        generator = factory.createSdkGenerator(SdkPlatform.C);
-        Assert.assertNotNull(generator);
-        generator = factory.createSdkGenerator(SdkPlatform.OBJC);
-        Assert.assertNotNull(generator);
+  /**
+   * Test create sdk generator.
+   *
+   * @throws Exception the exception
+   */
+  @SuppressWarnings("static-access")
+  @Test
+  public void testCreateSdkGenerator() throws Exception {
+    SdkGeneratorFactory factory = new SdkGeneratorFactory();
+    SdkGenerator generator = factory.createSdkGenerator(SdkPlatform.JAVA);
+    Assert.assertNotNull(generator);
+    generator = factory.createSdkGenerator(SdkPlatform.CPP);
+    Assert.assertNotNull(generator);
+    generator = factory.createSdkGenerator(SdkPlatform.C);
+    Assert.assertNotNull(generator);
+    generator = factory.createSdkGenerator(SdkPlatform.OBJC);
+    Assert.assertNotNull(generator);
 //
 //        String profileSchema = "{\"type\":\"record\",\"name\":\"SuperProfile\",\"namespace\":\"org.kaaproject.kaa.common.endpoint.gen.test\",\"fields\":[{\"name\":\"profileBody\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}";
 //
@@ -139,5 +139,5 @@ public class SdkGeneratorTest {
 //        fos.write(sdk.getData());
 //
 //        fos.close();
-    }
+  }
 }

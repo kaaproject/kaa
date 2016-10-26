@@ -17,9 +17,10 @@
 package org.kaaproject.kaa.server.admin.controller;
 
 import io.swagger.annotations.Api;
+
 import org.kaaproject.kaa.server.admin.services.dao.UserFacade;
 import org.kaaproject.kaa.server.admin.services.util.Utils;
-import org.kaaproject.kaa.server.admin.shared.services.AdminUIService;
+import org.kaaproject.kaa.server.admin.shared.services.AdminUiService;
 import org.kaaproject.kaa.server.admin.shared.services.ApplicationService;
 import org.kaaproject.kaa.server.admin.shared.services.ConfigurationService;
 import org.kaaproject.kaa.server.admin.shared.services.CtlService;
@@ -52,144 +53,144 @@ import java.io.IOException;
  * The Class AbstractAdminController.
  */
 @Api(value = "Admin REST API",
-        description = "Provides function for manage Kaa cluster", basePath = "/kaaAdmin/rest")
+    description = "Provides function for manage Kaa cluster", basePath = "/kaaAdmin/rest")
 @Controller
 @RequestMapping("api")
 public abstract class AbstractAdminController {
 
-    /**
-     * The Constant LOG.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminController.class);
 
-    /**
-     * The kaa admin UI service.
-     */
-    @Autowired
-    AdminUIService adminUIService;
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminController.class);
 
-    /**
-     * The kaa application service.
-     */
-    @Autowired
-    ApplicationService applicationService;
+  /**
+   * The kaa admin UI service.
+   */
+  @Autowired
+  AdminUiService adminUiService;
 
-    /**
-     * The kaa configuration service.
-     */
-    @Autowired
-    ConfigurationService configurationService;
+  /**
+   * The kaa application service.
+   */
+  @Autowired
+  ApplicationService applicationService;
 
-    /**
-     * The kaa CTL service.
-     */
-    @Autowired
-    CtlService ctlService;
+  /**
+   * The kaa configuration service.
+   */
+  @Autowired
+  ConfigurationService configurationService;
 
-    /**
-     * The kaa device management service.
-     */
-    @Autowired
-    DeviceManagementService deviceManagementService;
+  /**
+   * The kaa CTL service.
+   */
+  @Autowired
+  CtlService ctlService;
 
-    /**
-     * The kaa event service.
-     */
-    @Autowired
-    EventService eventService;
+  /**
+   * The kaa device management service.
+   */
+  @Autowired
+  DeviceManagementService deviceManagementService;
 
-    /**
-     * The kaa group service.
-     */
-    @Autowired
-    GroupService groupService;
+  /**
+   * The kaa event service.
+   */
+  @Autowired
+  EventService eventService;
 
-    /**
-     * The kaa logging service.
-     */
-    @Autowired
-    LoggingService loggingService;
+  /**
+   * The kaa group service.
+   */
+  @Autowired
+  GroupService groupService;
 
-    /**
-     * The kaa notification service.
-     */
-    @Autowired
-    NotificationService notificationService;
+  /**
+   * The kaa logging service.
+   */
+  @Autowired
+  LoggingService loggingService;
 
-    /**
-     * The kaa profile service.
-     */
-    @Autowired
-    ProfileService profileService;
+  /**
+   * The kaa notification service.
+   */
+  @Autowired
+  NotificationService notificationService;
 
-    /**
-     * The kaa sdk service.
-     */
-    @Autowired
-    SdkService sdkService;
+  /**
+   * The kaa profile service.
+   */
+  @Autowired
+  ProfileService profileService;
 
-    /**
-     * The kaa tenant service.
-     */
-    @Autowired
-    TenantService tenantService;
+  /**
+   * The kaa sdk service.
+   */
+  @Autowired
+  SdkService sdkService;
 
-    /**
-     * The kaa user service.
-     */
-    @Autowired
-    UserService userService;
+  /**
+   * The kaa tenant service.
+   */
+  @Autowired
+  TenantService tenantService;
 
-    /**
-     * The kaa verifier service.
-     */
-    @Autowired
-    VerifierService verifierService;
+  /**
+   * The kaa user service.
+   */
+  @Autowired
+  UserService userService;
 
-    /**
-     * The kaa auth service.
-     */
-    @Autowired
-    KaaAuthService kaaAuthService;
+  /**
+   * The kaa verifier service.
+   */
+  @Autowired
+  VerifierService verifierService;
 
-    /**
-     * The user facade.
-     */
-    @Autowired
-    UserFacade userFacade;
-    /**
-     * The control service.
-     */
-    @Autowired
-    ControlService controlService;
+  /**
+   * The kaa auth service.
+   */
+  @Autowired
+  KaaAuthService kaaAuthService;
 
-    /**
-     * The password encoder.
-     */
-    @Autowired
-    @Qualifier("encoder")
-    PasswordEncoder passwordEncoder;
+  /**
+   * The user facade.
+   */
+  @Autowired
+  UserFacade userFacade;
+  /**
+   * The control service.
+   */
+  @Autowired
+  ControlService controlService;
+
+  /**
+   * The password encoder.
+   */
+  @Autowired
+  @Qualifier("encoder")
+  PasswordEncoder passwordEncoder;
 
 
-    /**
-     * Gets the file content.
-     *
-     * @param file the file
-     * @return the file content
-     * @throws KaaAdminServiceException the kaa admin service exception
-     */
-    protected byte[] getFileContent(MultipartFile file) throws KaaAdminServiceException {
-        if (!file.isEmpty()) {
-            LOG.debug("Uploading file with name '{}'", file.getOriginalFilename());
-            try {
-                return file.getBytes();
-            } catch (IOException e) {
-                throw Utils.handleException(e);
-            }
-        } else {
-            LOG.error("No file found in post request!");
-            throw new KaaAdminServiceException("No file found in post request!", ServiceErrorCode.FILE_NOT_FOUND);
-        }
+  /**
+   * Gets the file content.
+   *
+   * @param file the file
+   * @return the file content
+   * @throws KaaAdminServiceException the kaa admin service exception
+   */
+  protected byte[] getFileContent(MultipartFile file) throws KaaAdminServiceException {
+    if (!file.isEmpty()) {
+      LOG.debug("Uploading file with name '{}'", file.getOriginalFilename());
+      try {
+        return file.getBytes();
+      } catch (IOException ex) {
+        throw Utils.handleException(ex);
+      }
+    } else {
+      LOG.error("No file found in post request!");
+      throw new KaaAdminServiceException(
+          "No file found in post request!",
+          ServiceErrorCode.FILE_NOT_FOUND);
     }
+  }
 
 }

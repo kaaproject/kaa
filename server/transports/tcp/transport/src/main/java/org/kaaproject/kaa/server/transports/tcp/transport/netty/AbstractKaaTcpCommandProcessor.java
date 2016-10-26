@@ -19,55 +19,60 @@ package org.kaaproject.kaa.server.transports.tcp.transport.netty;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 
-public abstract class AbstractKaaTcpCommandProcessor implements KaaCommandProcessor<MqttFrame, MqttFrame> {
+public abstract class AbstractKaaTcpCommandProcessor
+    implements KaaCommandProcessor<MqttFrame, MqttFrame> {
 
-    /** Time of SYNC processing */
-    private long syncTime = 0;
+  /**
+   * Time of SYNC processing.
+   */
+  private long syncTime = 0;
 
-    /** integer representing ID of HTTP request */
-    private int commandId;
+  /**
+   * Integer representing id of HTTP request.
+   */
+  private int commandId;
 
-    private MqttFrame kaaTcpRequest;
-    private MqttFrame kaaTcpResponse;
+  private MqttFrame kaaTcpRequest;
+  private MqttFrame kaaTcpResponse;
 
-    @Override
-    public int getCommandId() {
-        return commandId;
-    }
+  @Override
+  public int getCommandId() {
+    return commandId;
+  }
 
-    @Override
-    public void setCommandId(int commandId) {
-        this.commandId = commandId;
-    }
+  @Override
+  public void setCommandId(int commandId) {
+    this.commandId = commandId;
+  }
 
-    @Override
-    public long getSyncTime() {
-        return syncTime;
-    }
+  @Override
+  public long getSyncTime() {
+    return syncTime;
+  }
 
-    @Override
-    public void setSyncTime(long syncTime) {
-        this.syncTime = syncTime;
-    }
+  @Override
+  public void setSyncTime(long syncTime) {
+    this.syncTime = syncTime;
+  }
 
-    @Override
-    public MqttFrame getResponse() {
-        return kaaTcpResponse;
-    }
+  @Override
+  public MqttFrame getResponse() {
+    return kaaTcpResponse;
+  }
 
-    @Override
-    public void setResponse(MqttFrame response) {
-        this.kaaTcpResponse = response;
-    }
+  @Override
+  public void setResponse(MqttFrame response) {
+    this.kaaTcpResponse = response;
+  }
 
-    @Override
-    public MqttFrame getRequest() {
-        return kaaTcpRequest;
-    }
+  @Override
+  public MqttFrame getRequest() {
+    return kaaTcpRequest;
+  }
 
-    @Override
-    public void setRequest(MqttFrame request) {
-        this.kaaTcpRequest = request;
-    }
+  @Override
+  public void setRequest(MqttFrame request) {
+    this.kaaTcpRequest = request;
+  }
 
 }

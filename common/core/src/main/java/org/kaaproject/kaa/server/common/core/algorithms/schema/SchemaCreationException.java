@@ -18,13 +18,13 @@ package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
 public class SchemaCreationException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public SchemaCreationException(String message) {
-        super(message);
-    }
+  public SchemaCreationException(String message) {
+    super(message);
+  }
 
-    public SchemaCreationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public SchemaCreationException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

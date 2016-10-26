@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import org.kaaproject.kaa.server.common.dao.model.ToDto;
+
 import java.io.Serializable;
 
 import javax.persistence.GeneratedValue;
@@ -23,34 +25,34 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.kaaproject.kaa.server.common.dao.model.ToDto;
-
 @MappedSuperclass
 public abstract class GenericModel<T> implements Serializable, ToDto<T> {
 
-    private static final long serialVersionUID = 8371621337499494435L;
+  private static final long serialVersionUID = 8371621337499494435L;
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.TABLE)
-    protected Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.TABLE)
+  protected Long id;
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public String getStringId() {
-        return id != null ? id.toString() : null;
-    }
+  public String getStringId() {
+    return id != null ? id.toString() : null;
+  }
 
-    public GenericModel<T> newInstance(String id) {
-        return newInstance(ModelUtils.getLongId(id));
-    }
+  public GenericModel<T> newInstance(String id) {
+    return newInstance(ModelUtils.getLongId(id));
+  }
 
-    protected abstract T createDto();
+  protected abstract GenericModel<T> newInstance(Long id);
 
-    protected abstract GenericModel<T> newInstance(Long id);
+  protected abstract T createDto();
+
+
 }

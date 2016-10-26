@@ -20,10 +20,10 @@ package org.kaaproject.kaa.client.channel.connectivity;
  * Interface for a platform-dependent checker of a network connectivity.
  */
 public interface ConnectivityChecker {
-    /**
-     * Check whether network connectivity exists.
-     *
-     * @return True if connection exists, false otherwise.
-     */
-    boolean checkConnectivity();
+  /**
+   * Check whether network connectivity exists.
+   *
+   * @return True if connection exists, false otherwise.
+   */
+  boolean checkConnectivity();
 }

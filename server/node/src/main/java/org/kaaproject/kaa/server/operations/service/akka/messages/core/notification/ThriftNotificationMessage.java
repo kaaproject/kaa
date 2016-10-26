@@ -24,50 +24,54 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
  */
 public class ThriftNotificationMessage {
 
-    /** The notification. */
-    private final Notification notification;
+  /**
+   * The notification.
+   */
+  private final Notification notification;
 
-    /** The app token. */
-    private final String appToken;
+  /**
+   * The app token.
+   */
+  private final String appToken;
 
-    /**
-     * Instantiates a new thrift notification message.
-     *
-     * @param appToken the app token
-     * @param notification the notification
-     */
-    public ThriftNotificationMessage(String appToken, Notification notification) {
-        super();
-        this.appToken = appToken;
-        this.notification = notification;
-    }
+  /**
+   * Instantiates a new thrift notification message.
+   *
+   * @param appToken     the app token
+   * @param notification the notification
+   */
+  public ThriftNotificationMessage(String appToken, Notification notification) {
+    super();
+    this.appToken = appToken;
+    this.notification = notification;
+  }
 
-    /**
-     * Gets the app token.
-     *
-     * @return the app token
-     */
-    public String getAppToken() {
-        return appToken;
-    }
+  /**
+   * Gets the app token.
+   *
+   * @return the app token
+   */
+  public String getAppToken() {
+    return appToken;
+  }
 
-    /**
-     * Gets the notification.
-     *
-     * @return the notification
-     */
-    public Notification getNotification() {
-        return notification;
-    }
+  /**
+   * Gets the notification.
+   *
+   * @return the notification
+   */
+  public Notification getNotification() {
+    return notification;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ThriftNotificationMessage [notification=");
-        builder.append(notification);
-        builder.append(", appToken=");
-        builder.append(appToken);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ThriftNotificationMessage [notification=");
+    builder.append(notification);
+    builder.append(", appToken=");
+    builder.append(appToken);
+    builder.append("]");
+    return builder.toString();
+  }
 }

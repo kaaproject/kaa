@@ -27,113 +27,115 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
 /**
- * NettyHttpServer Class. Used to start Netty server. Config is used to handle
+ * <p>NettyHttpServer Class. Used to start Netty server. Config is used to handle
  * netty server configuration. Usage: netty = new NettyHttpServer(conf);
- * netty.init(); netty.start();
+ * netty.init(); netty.start();</p>
  *
- * To stop Netty: netty.shutdown();
+ * <p>To stop Netty: netty.shutdown();</p>
  *
  * @author Yaroslav Zeygerman
  */
 public abstract class AbstractNettyServer extends Thread {
 
-    public static final AttributeKey<UUID> UUID_KEY = AttributeKey.valueOf("UUID");
+  public static final AttributeKey<UUID> UUID_KEY = AttributeKey.valueOf("UUID");
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractNettyServer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractNettyServer.class);
+  private final String bindAddress;
+  private final int bindPort;
+  private EventLoopGroup bossGroup;
+  private EventLoopGroup workerGroup;
+  private ServerBootstrap btsServer;
+  private Channel bindChannel;
 
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
-    private ServerBootstrap bServer;
-    private Channel bindChannel;
+  /**
+   * NettyHttpServer constructor.
+   *
+   * @param bindAddress bind address
+   * @param port        bind port
+   */
+  public AbstractNettyServer(String bindAddress, int port) {
+    this.bindAddress = bindAddress;
+    this.bindPort = port;
+  }
 
-    private final String bindAddress;
-    private final int bindPort;
+  protected abstract ChannelInitializer<SocketChannel> configureInitializer() throws Exception;
 
-    /**
-     * NettyHttpServer constructor.
-     * 
-     * @param conf
-     *            Config
-     */
-    public AbstractNettyServer(String bindAddress, int port) {
-        this.bindAddress = bindAddress;
-        this.bindPort = port;
+  /**
+   * Netty HTTP server initialization.
+   */
+  public void init() {
+    try {
+      LOG.info("NettyServer Initializing...");
+      bossGroup = new NioEventLoopGroup();
+
+      LOG.debug("NettyServer bossGroup created");
+      workerGroup = new NioEventLoopGroup();
+      LOG.debug("NettyServer workGroup created");
+      btsServer = new ServerBootstrap();
+      LOG.debug("NettyServer ServerBootstrap created");
+      ChannelInitializer<SocketChannel> serverInit = configureInitializer();
+      LOG.debug("NettyServer InitClass instance created");
+
+      LOG.debug("NettyServer InitClass instance init()");
+      btsServer.group(bossGroup, workerGroup)
+          .channel(NioServerSocketChannel.class)
+          .childHandler(serverInit)
+          .option(ChannelOption.SO_REUSEADDR, true);
+      LOG.debug("NettyServer ServerBootstrap group initialized");
+      bindChannel = btsServer.bind(bindAddress, bindPort).sync().channel();
+    } catch (Exception exception) {
+      LOG.error("NettyHttpServer init() failed", exception);
     }
+  }
 
-    protected abstract ChannelInitializer<SocketChannel> configureInitializer() throws Exception;
-
-    /**
-     * Netty HTTP server initialization.
-     */
-    public void init() {
-        try {
-            LOG.info("NettyServer Initializing...");
-            bossGroup = new NioEventLoopGroup();
-
-            LOG.debug("NettyServer bossGroup created");
-            workerGroup = new NioEventLoopGroup();
-            LOG.debug("NettyServer workGroup created");
-            bServer = new ServerBootstrap();
-            LOG.debug("NettyServer ServerBootstrap created");
-            ChannelInitializer<SocketChannel> sInit = configureInitializer();
-            LOG.debug("NettyServer InitClass instance created");
-
-            LOG.debug("NettyServer InitClass instance init()");
-            bServer.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childHandler(sInit)
-                    .option(ChannelOption.SO_REUSEADDR, true);
-            LOG.debug("NettyServer ServerBootstrap group initialized");
-            bindChannel = bServer.bind(bindAddress, bindPort).sync().channel();
-        } catch (Exception e) {
-            LOG.error("NettyHttpServer init() failed", e);
-        }
+  @Override
+  public void run() {
+    LOG.info("NettyHttpServer starting...");
+    try {
+      bindChannel.closeFuture().sync();
+    } catch (InterruptedException exption) {
+      LOG.error("NettyHttpServer error", exption);
+    } finally {
+      shutdown();
+      LOG.info("NettyHttpServer shut down");
     }
+  }
 
-    @Override
-    public void run() {
-        LOG.info("NettyHttpServer starting...");
-        try {
-            bindChannel.closeFuture().sync();
-        } catch (InterruptedException e) {
-            LOG.error("NettyHttpServer error", e);
-        } finally {
-            shutdown();
-            LOG.info("NettyHttpServer shut down");
-        }
+  /**
+   * Netty HTTP server shutdown.
+   */
+  public void shutdown() {
+    LOG.info("NettyHttpServer stopping...");
+    if (bossGroup != null) {
+      try {
+        Future<? extends Object> future = bossGroup.shutdownGracefully(
+            250, 1000, TimeUnit.MILLISECONDS);
+        future.await();
+      } catch (InterruptedException exception) {
+        LOG.trace("NettyHttpServer stopping: bossGroup error", exception);
+      } finally {
+        bossGroup = null;
+        LOG.trace("NettyHttpServer stopping: bossGroup stoped");
+      }
     }
-
-    /**
-     * Netty HTTP server shutdown.
-     */
-    public void shutdown() {
-        LOG.info("NettyHttpServer stopping...");
-        if (bossGroup != null) {
-            try {
-                Future<? extends Object> f = bossGroup.shutdownGracefully(250, 1000, TimeUnit.MILLISECONDS);
-                f.await();
-            } catch (InterruptedException e) {
-                LOG.trace("NettyHttpServer stopping: bossGroup error", e);
-            } finally {
-                bossGroup = null;
-                LOG.trace("NettyHttpServer stopping: bossGroup stoped");
-            }
-        }
-        if (workerGroup != null) {
-            try {
-                Future<? extends Object> f = workerGroup.shutdownGracefully(250, 1000, TimeUnit.MILLISECONDS);
-                f.await();
-            } catch (InterruptedException e) {
-                LOG.trace("NettyHttpServer stopping: workerGroup error", e);
-            } finally {
-                workerGroup = null;
-                LOG.trace("NettyHttpServer stopping: workerGroup stopped");
-            }
-        }
+    if (workerGroup != null) {
+      try {
+        Future<? extends Object> future = workerGroup.shutdownGracefully(
+            250, 1000, TimeUnit.MILLISECONDS);
+        future.await();
+      } catch (InterruptedException exception) {
+        LOG.trace("NettyHttpServer stopping: workerGroup error", exception);
+      } finally {
+        workerGroup = null;
+        LOG.trace("NettyHttpServer stopping: workerGroup stopped");
+      }
     }
+  }
 }

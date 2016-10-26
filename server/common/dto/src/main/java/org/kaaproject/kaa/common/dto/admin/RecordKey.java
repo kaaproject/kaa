@@ -20,101 +20,105 @@ import java.io.Serializable;
 
 public class RecordKey implements Serializable {
 
-    private static final long serialVersionUID = -5453653699078782999L;
+  private static final long serialVersionUID = -5453653699078782999L;
 
-    private String applicationId;
-    private int schemaVersion;
-    private RecordFiles recordFiles;
+  private String applicationId;
+  private int schemaVersion;
+  private RecordFiles recordFiles;
 
-    public RecordKey() {
+  public RecordKey() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public RecordKey(String applicationId, int schemaVersion, RecordFiles recordFiles) {
+    this.applicationId = applicationId;
+    this.schemaVersion = schemaVersion;
+    this.recordFiles = recordFiles;
+  }
+
+  public RecordKey(String applicationId, int logSchemaVersion) {
+    this(applicationId, logSchemaVersion, RecordFiles.LOG_LIBRARY);
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public int getSchemaVersion() {
+    return schemaVersion;
+  }
+
+  public void setSchemaVersion(int schemaVersion) {
+    this.schemaVersion = schemaVersion;
+  }
+
+  public RecordFiles getRecordFiles() {
+    return recordFiles;
+  }
+
+  public void setRecordFiles(RecordFiles recordFiles) {
+    this.recordFiles = recordFiles;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((applicationId == null) ? 0 : applicationId.hashCode());
+    result = prime * result + ((recordFiles == null) ? 0 : recordFiles.hashCode());
+    result = prime * result + schemaVersion;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public RecordKey(String applicationId, int schemaVersion, RecordFiles recordFiles) {
-        this.applicationId = applicationId;
-        this.schemaVersion = schemaVersion;
-        this.recordFiles = recordFiles;
+    if (obj == null) {
+      return false;
     }
-
-    public RecordKey(String applicationId, int logSchemaVersion) {
-        this(applicationId, logSchemaVersion, RecordFiles.LOG_LIBRARY);
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public static enum RecordFiles {
-        CONFIGURATION_BASE_SCHEMA,
-        CONFIGURATION_OVERRIDE_SCHEMA,
-        CONFIGURATION_SCHEMA,
-        NOTIFICATION_SCHEMA,
-        PROFILE_SCHEMA,
-        SERVER_PROFILE_SCHEMA,
-        LOG_SCHEMA,
-        LOG_LIBRARY,
+    RecordKey other = (RecordKey) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
+        return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
     }
-
-    public String getApplicationId() {
-        return applicationId;
+    if (recordFiles != other.recordFiles) {
+      return false;
     }
-
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    if (schemaVersion != other.schemaVersion) {
+      return false;
     }
+    return true;
+  }
 
-    public int getSchemaVersion() {
-        return schemaVersion;
-    }
+  @Override
+  public String toString() {
+    return "RecordKey [applicationId=" + applicationId + ", schemaVersion=" + schemaVersion
+           + ", recordFiles=" + recordFiles + "]";
+  }
 
-    public void setSchemaVersion(int schemaVersion) {
-        this.schemaVersion = schemaVersion;
-    }
-
-    public RecordFiles getRecordFiles() {
-        return recordFiles;
-    }
-
-    public void setRecordFiles(RecordFiles recordFiles) {
-        this.recordFiles = recordFiles;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((applicationId == null) ? 0 : applicationId.hashCode());
-        result = prime * result + ((recordFiles == null) ? 0 : recordFiles.hashCode());
-        result = prime * result + schemaVersion;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        RecordKey other = (RecordKey) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        if (recordFiles != other.recordFiles) {
-            return false;
-        }
-        if (schemaVersion != other.schemaVersion) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "RecordKey [applicationId=" + applicationId + ", schemaVersion=" + schemaVersion + ", recordFiles=" + recordFiles + "]";
-    }
+  public static enum RecordFiles {
+    CONFIGURATION_BASE_SCHEMA,
+    CONFIGURATION_OVERRIDE_SCHEMA,
+    CONFIGURATION_SCHEMA,
+    NOTIFICATION_SCHEMA,
+    PROFILE_SCHEMA,
+    SERVER_PROFILE_SCHEMA,
+    LOG_SCHEMA,
+    LOG_LIBRARY,
+  }
 
 }

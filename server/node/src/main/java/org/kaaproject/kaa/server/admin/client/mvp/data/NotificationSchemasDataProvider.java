@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -24,33 +24,39 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class NotificationSchemasDataProvider extends AbstractDataProvider<NotificationSchemaDto, String>{
+public class NotificationSchemasDataProvider
+    extends AbstractDataProvider<NotificationSchemaDto, String> {
 
-    private String applicationId;
+  private String applicationId;
 
-    public NotificationSchemasDataProvider(AbstractGrid<NotificationSchemaDto, String> dataGrid,
-                                           HasErrorMessage hasErrorMessage,
-                                           String applicationId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        addDataDisplay();
-    }
+  /**
+   * All-args constructor.
+   */
+  public NotificationSchemasDataProvider(AbstractGrid<NotificationSchemaDto, String> dataGrid,
+                                         HasErrorMessage hasErrorMessage,
+                                         String applicationId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    addDataDisplay();
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadNotificationSchemas(applicationId, new AsyncCallback<List<NotificationSchemaDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadNotificationSchemas(
+        applicationId, new AsyncCallback<List<NotificationSchemaDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-            }
-            @Override
-            public void onSuccess(List<NotificationSchemaDto> result) {
-                callback.onSuccess(result);
-            }
+          }
+
+          @Override
+          public void onSuccess(List<NotificationSchemaDto> result) {
+            callback.onSuccess(result);
+          }
         });
-    }
+  }
 
 }

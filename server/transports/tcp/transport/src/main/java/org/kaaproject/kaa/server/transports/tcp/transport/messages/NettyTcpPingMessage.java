@@ -21,8 +21,8 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 public class NettyTcpPingMessage extends SessionPingMessage {
 
-    public NettyTcpPingMessage(SessionInfo session) {
-        super(session);
-    }
+  public NettyTcpPingMessage(SessionInfo session) {
+    super(session);
+  }
 
 }

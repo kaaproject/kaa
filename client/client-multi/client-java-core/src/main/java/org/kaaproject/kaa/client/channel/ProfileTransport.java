@@ -16,57 +16,52 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import java.io.IOException;
-
 import org.kaaproject.kaa.client.KaaClientProperties;
 import org.kaaproject.kaa.client.profile.ProfileManager;
 import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse;
+
+import java.io.IOException;
 
 /**
  * {@link KaaTransport} for the Profile service.
  * Updates the Profile manager state.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface ProfileTransport extends KaaTransport {
 
-    /**
-     * Creates a new Profile update request.
-     *
-     * @return  new Profile update request.
-     * @throws  IOException the io exception
-     * @see     ProfileSyncRequest
-     *
-     */
-    ProfileSyncRequest createProfileRequest() throws IOException;
+  /**
+   * Creates a new Profile update request.
+   *
+   * @return new Profile update request.
+   * @throws IOException the io exception
+   * @see ProfileSyncRequest
+   */
+  ProfileSyncRequest createProfileRequest() throws IOException;
 
-    /**
-     * Updates the state of the Profile manager from the given response.
-     *
-     * @param response the response from the server.
-     * @throws Exception the exception
-     * @see ProfileSyncResponse
-     *
-     */
-    void onProfileResponse(ProfileSyncResponse response) throws Exception ;
+  /**
+   * Updates the state of the Profile manager from the given response.
+   *
+   * @param response the response from the server.
+   * @throws Exception the exception
+   * @see ProfileSyncResponse
+   */
+  void onProfileResponse(ProfileSyncResponse response) throws Exception;
 
-    /**
-     * Sets the given Profile manager.
-     *
-     * @param   manager the Profile manager to be set.
-     * @see     ProfileManager
-     *
-     */
-    void setProfileManager(ProfileManager manager);
+  /**
+   * Sets the given Profile manager.
+   *
+   * @param manager the Profile manager to be set.
+   * @see ProfileManager
+   */
+  void setProfileManager(ProfileManager manager);
 
-    /**
-     * Sets the given client's properties.
-     *
-     * @param properties the client's properties to be set.
-     * @see KaaClientProperties
-     *
-     */
-    void setClientProperties(KaaClientProperties properties);
+  /**
+   * Sets the given client's properties.
+   *
+   * @param properties the client's properties to be set.
+   * @see KaaClientProperties
+   */
+  void setClientProperties(KaaClientProperties properties);
 }

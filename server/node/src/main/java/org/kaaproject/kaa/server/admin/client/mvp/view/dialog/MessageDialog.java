@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
-import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
-import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,70 +27,85 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.dialog.AvroUiDialog;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class MessageDialog extends AvroUiDialog {
 
-    private Button okButton;
-    
-    private Listener listener;
-    
-    public static MessageDialog showMessageDialog(String title, String message) {
-        return showMessageDialog(AlertPanel.Type.INFO, title, message);
-    }
-    
-    public static MessageDialog showMessageDialog(AlertPanel.Type type, String title, String message) {
-        return showMessageDialog(null, type, title, message);
-    }
-    
-    public static MessageDialog showMessageDialog(Listener listener, AlertPanel.Type type, String title, String message) {
-        MessageDialog dialog = new MessageDialog(listener, type, title, message);
-        dialog.center();
-        dialog.show();
-        return dialog;
-    }
-    
-    public MessageDialog(Listener listener, String title, String message) {
-        this(listener, AlertPanel.Type.INFO, title, message);
-    }
+  private Button okButton;
 
-    public MessageDialog(Listener listener, AlertPanel.Type type, String title, String message) {
-        super(false, true);
-        setTitle(title);
-        this.listener = listener;
-        
-        VerticalPanel dialogContents = new VerticalPanel();
-        dialogContents.setSpacing(4);
-        setWidget(dialogContents);
-        
-        AlertPanel messageLabel = new AlertPanel(type);
-        messageLabel.getElement().getStyle().setWhiteSpace(WhiteSpace.PRE_WRAP);
-        messageLabel.getElement().getStyle().setProperty("maxHeight", "400px");
-        messageLabel.getElement().getStyle().setProperty("maxWidth", Window.getClientWidth()*2/3 + "px");
-        messageLabel.getElement().getStyle().setOverflowY(Overflow.AUTO);
-        messageLabel.setMessage(message);
-        dialogContents.add(messageLabel);
-        
-        okButton = new Button(Utils.constants.ok(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                hide();
-            }
-        });
-        
-        addButton(okButton);
-        
-        this.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> event) {
-                if (MessageDialog.this.listener != null) {
-                    MessageDialog.this.listener.onOk();
-                }
-            }
-        });
-    }
-    
-    public interface Listener {
-        
-        public void onOk();
-        
-    }   
+  private Listener listener;
+
+  public MessageDialog(Listener listener, String title, String message) {
+    this(listener, AlertPanel.Type.INFO, title, message);
+  }
+
+  /**
+   * Instantiates a new MessageDialog.
+   */
+  public MessageDialog(Listener listener, AlertPanel.Type type, String title, String message) {
+    super(false, true);
+    setTitle(title);
+    this.listener = listener;
+
+    VerticalPanel dialogContents = new VerticalPanel();
+    dialogContents.setSpacing(4);
+    setWidget(dialogContents);
+
+    AlertPanel messageLabel = new AlertPanel(type);
+    messageLabel.getElement().getStyle().setWhiteSpace(WhiteSpace.PRE_WRAP);
+    messageLabel.getElement().getStyle().setProperty("maxHeight", "400px");
+    messageLabel.getElement().getStyle()
+        .setProperty("maxWidth", Window.getClientWidth() * 2 / 3 + "px");
+    messageLabel.getElement().getStyle().setOverflowY(Overflow.AUTO);
+    messageLabel.setMessage(message);
+    dialogContents.add(messageLabel);
+
+    okButton = new Button(Utils.constants.ok(), new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        hide();
+      }
+    });
+
+    addButton(okButton);
+
+    this.addCloseHandler(new CloseHandler<PopupPanel>() {
+      @Override
+      public void onClose(CloseEvent<PopupPanel> event) {
+        if (MessageDialog.this.listener != null) {
+          MessageDialog.this.listener.onOk();
+        }
+      }
+    });
+  }
+
+  public static MessageDialog showMessageDialog(String title, String message) {
+    return showMessageDialog(AlertPanel.Type.INFO, title, message);
+  }
+
+  public static MessageDialog showMessageDialog(AlertPanel.Type type,
+                                                String title, String message) {
+    return showMessageDialog(null, type, title, message);
+  }
+
+  /**
+   * Show message dialog.
+   */
+  public static MessageDialog showMessageDialog(Listener listener,
+                                                AlertPanel.Type type,
+                                                String title,
+                                                String message) {
+    MessageDialog dialog = new MessageDialog(listener, type, title, message);
+    dialog.center();
+    dialog.show();
+    return dialog;
+  }
+
+  public interface Listener {
+
+    public void onOk();
+
+  }
 }

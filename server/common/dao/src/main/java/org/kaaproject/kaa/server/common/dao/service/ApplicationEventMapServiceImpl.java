@@ -22,10 +22,6 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlI
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
@@ -45,138 +41,155 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Service
 @Transactional
 public class ApplicationEventMapServiceImpl implements ApplicationEventMapService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationEventMapServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ApplicationEventMapServiceImpl.class);
 
-    @Autowired
-    private ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> applicationEventFamilyMapDao;
+  @Autowired
+  private ApplicationEventFamilyMapDao<ApplicationEventFamilyMap> applicationEventFamilyMapDao;
 
-    @Autowired
-    private ApplicationDao<Application> applicationDao;
+  @Autowired
+  private ApplicationDao<Application> applicationDao;
 
-    @Autowired
-    private EventClassFamilyDao<EventClassFamily> eventClassFamilyDao;
+  @Autowired
+  private EventClassFamilyDao<EventClassFamily> eventClassFamilyDao;
 
-    @Override
-    public List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByApplicationId(
-            String applicationId) {
-        List<ApplicationEventFamilyMapDto> eventFamilyMaps;
-        if (isValidSqlId(applicationId)) {
-            LOG.debug("Find application event family maps by applicationId id [{}]", applicationId);
-            eventFamilyMaps = convertDtoList(applicationEventFamilyMapDao.findByApplicationId(applicationId));
-        } else {
-            throw new IncorrectParameterException("Incorrect applicationId id: " + applicationId);
+  @Override
+  public List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByApplicationId(
+      String applicationId) {
+    List<ApplicationEventFamilyMapDto> eventFamilyMaps;
+    if (isValidSqlId(applicationId)) {
+      LOG.debug("Find application event family maps by applicationId id [{}]", applicationId);
+      eventFamilyMaps = convertDtoList(applicationEventFamilyMapDao.findByApplicationId(
+              applicationId));
+    } else {
+      throw new IncorrectParameterException("Incorrect applicationId id: " + applicationId);
+    }
+    return eventFamilyMaps;
+  }
+
+  @Override
+  public List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByIds(List<String> ids) {
+    LOG.debug("Find application event family maps by ids [{}]", ids);
+    List<ApplicationEventFamilyMapDto> eventFamilies = Collections.emptyList();
+    if (ids != null && !ids.isEmpty()) {
+      eventFamilies = convertDtoList(applicationEventFamilyMapDao.findByIds(ids));
+    }
+    return eventFamilies;
+  }
+
+  @Override
+  public List<ApplicationEventFamilyMapDto> findByEcfIdAndVersion(String eventClassFamilyId,
+                                                                  int version) {
+    LOG.debug("Find application event family maps by ecf id [{}] and version",
+            eventClassFamilyId, version);
+    return convertDtoList(applicationEventFamilyMapDao.findByEcfIdAndVersion(
+            eventClassFamilyId, version));
+  }
+
+  @Override
+  public ApplicationEventFamilyMapDto findApplicationEventFamilyMapById(String id) {
+    validateSqlId(id, "Application event family map id is incorrect. "
+                      + "Can't find application event family map by id " + id);
+    return getDto(applicationEventFamilyMapDao.findById(id));
+  }
+
+  @Override
+  public ApplicationEventFamilyMapDto saveApplicationEventFamilyMap(
+      ApplicationEventFamilyMapDto applicationEventFamilyMapDto) {
+    ApplicationEventFamilyMapDto savedApplicationEventFamilyMap = null;
+    if (isValidSqlObject(applicationEventFamilyMapDto)) {
+      if (isValidSqlId(applicationEventFamilyMapDto.getId())) {
+        ApplicationEventFamilyMapDto previousApplicationEventFamilyMapDto =
+                findApplicationEventFamilyMapById(applicationEventFamilyMapDto.getId());
+        if (previousApplicationEventFamilyMapDto != null) {
+          LOG.debug("Can't save application event family map. Update is forbidden.");
+          throw new IncorrectParameterException("Can't save application event family map. "
+                                                + "Update is forbidden.");
         }
-        return eventFamilyMaps;
+      }
+      if (applicationEventFamilyMapDao.validateApplicationEventFamilyMap(
+              applicationEventFamilyMapDto.getApplicationId(),
+              applicationEventFamilyMapDto.getEcfId(),
+              applicationEventFamilyMapDto.getVersion())) {
+        applicationEventFamilyMapDto.setCreatedTime(System.currentTimeMillis());
+        savedApplicationEventFamilyMap = getDto(applicationEventFamilyMapDao
+                .save(new ApplicationEventFamilyMap(applicationEventFamilyMapDto)));
+      } else {
+        LOG.debug("Can't save application event family map. Uniqueness violation.");
+        throw new IncorrectParameterException("Incorrect application event family map. "
+                                              + "Uniqueness violation within the application.");
+      }
     }
+    return savedApplicationEventFamilyMap;
+  }
 
-    @Override
-    public List<ApplicationEventFamilyMapDto> findApplicationEventFamilyMapsByIds(List<String> ids) {
-        LOG.debug("Find application event family maps by ids [{}]", ids);
-        List<ApplicationEventFamilyMapDto> eventFamilies = Collections.emptyList();
-        if (ids != null && !ids.isEmpty()) {
-            eventFamilies = convertDtoList(applicationEventFamilyMapDao.findByIds(ids));
+  @Override
+  public List<EcfInfoDto> findVacantEventClassFamiliesByApplicationId(
+      String applicationId) {
+    List<EcfInfoDto> vacantEcfs = new ArrayList<>();
+    if (isValidSqlId(applicationId)) {
+      ApplicationDto application = getDto(applicationDao.findById(applicationId));
+      if (application != null) {
+        String tenantId = application.getTenantId();
+        List<EventClassFamily> eventClassFamilies = eventClassFamilyDao.findByTenantId(tenantId);
+        List<AefMapInfoDto> aefMaps = findEventClassFamiliesByApplicationId(applicationId);
+        List<EcfInfoDto> occupiedEcfs = new ArrayList<>();
+        for (AefMapInfoDto aefMap : aefMaps) {
+          EcfInfoDto ecf = new EcfInfoDto();
+          ecf.setEcfId(aefMap.getEcfId());
+          ecf.setEcfName(aefMap.getEcfName());
+          ecf.setVersion(aefMap.getVersion());
+          occupiedEcfs.add(ecf);
         }
-        return eventFamilies;
-    }
+        if (eventClassFamilies != null) {
+          for (EventClassFamily eventClassFamily : eventClassFamilies) {
 
-    @Override
-    public List<ApplicationEventFamilyMapDto> findByEcfIdAndVersion(String eventClassFamilyId, int version){
-        LOG.debug("Find application event family maps by ecf id [{}] and version", eventClassFamilyId, version);
-        return convertDtoList(applicationEventFamilyMapDao.findByEcfIdAndVersion(eventClassFamilyId, version));
-    }
-
-    @Override
-    public ApplicationEventFamilyMapDto findApplicationEventFamilyMapById(String id) {
-        validateSqlId(id, "Application event family map id is incorrect. Can't find application event family map by id " + id);
-        return getDto(applicationEventFamilyMapDao.findById(id));
-    }
-
-    @Override
-    public ApplicationEventFamilyMapDto saveApplicationEventFamilyMap(
-            ApplicationEventFamilyMapDto applicationEventFamilyMapDto) {
-        ApplicationEventFamilyMapDto savedApplicationEventFamilyMap = null;
-        if (isValidSqlObject(applicationEventFamilyMapDto)) {
-            if (isValidSqlId(applicationEventFamilyMapDto.getId())) {
-                ApplicationEventFamilyMapDto previousApplicationEventFamilyMapDto = findApplicationEventFamilyMapById(applicationEventFamilyMapDto.getId());
-                if (previousApplicationEventFamilyMapDto != null) {
-                    LOG.debug("Can't save application event family map. Update is forbidden.");
-                    throw new IncorrectParameterException("Can't save application event family map. Update is forbidden.");
+            if (eventClassFamily.getSchemas() != null) {
+              for (EventClassFamilyVersion eventClassFamilyVersion :
+                      eventClassFamily.getSchemas()) {
+                EcfInfoDto ecf = new EcfInfoDto();
+                ecf.setEcfId(String.valueOf(eventClassFamily.getId()));
+                ecf.setEcfName(eventClassFamily.getName());
+                ecf.setVersion(eventClassFamilyVersion.getVersion());
+                if (occupiedEcfs != null && !occupiedEcfs.contains(ecf)) {
+                  vacantEcfs.add(ecf);
                 }
+              }
             }
-            if (applicationEventFamilyMapDao.validateApplicationEventFamilyMap(applicationEventFamilyMapDto.getApplicationId(), applicationEventFamilyMapDto.getEcfId(), applicationEventFamilyMapDto.getVersion())) {
-                applicationEventFamilyMapDto.setCreatedTime(System.currentTimeMillis());
-                savedApplicationEventFamilyMap = getDto(applicationEventFamilyMapDao.save(new ApplicationEventFamilyMap(applicationEventFamilyMapDto)));
-            } else {
-                LOG.debug("Can't save application event family map. Uniqueness violation.");
-                throw new IncorrectParameterException("Incorrect application event family map. Uniqueness violation within the application.");
-            }
+          }
         }
-        return savedApplicationEventFamilyMap;
+      }
+    } else {
+      throw new IncorrectParameterException("Incorrect applicationId id: " + applicationId);
     }
+    return vacantEcfs;
+  }
 
-    @Override
-    public List<EcfInfoDto> findVacantEventClassFamiliesByApplicationId(
-            String applicationId) {
-        List<EcfInfoDto> vacantEcfs = new ArrayList<>();
-        if (isValidSqlId(applicationId)) {
-            ApplicationDto application = getDto(applicationDao.findById(applicationId));
-            if (application != null) {
-                String tenantId = application.getTenantId();
-                List<EventClassFamily> eventClassFamilies = eventClassFamilyDao.findByTenantId(tenantId);
-                List<AefMapInfoDto> aefMaps = findEventClassFamiliesByApplicationId(applicationId);
-                List<EcfInfoDto> occupiedEcfs = new ArrayList<>();
-                for (AefMapInfoDto aefMap : aefMaps) {
-                    EcfInfoDto ecf = new EcfInfoDto();
-                    ecf.setEcfId(aefMap.getEcfId());
-                    ecf.setEcfName(aefMap.getEcfName());
-                    ecf.setVersion(aefMap.getVersion());
-                    occupiedEcfs.add(ecf);
-                }
-                if (eventClassFamilies != null) {
-                    for (EventClassFamily eventClassFamily : eventClassFamilies) {
-
-                        if (eventClassFamily.getSchemas() != null) {
-                            for (EventClassFamilyVersion eventClassFamilyVersion : eventClassFamily.getSchemas()) {
-                                EcfInfoDto ecf = new EcfInfoDto();
-                                ecf.setEcfId(String.valueOf(eventClassFamily.getId()));
-                                ecf.setEcfName(eventClassFamily.getName());
-                                ecf.setVersion(eventClassFamilyVersion.getVersion());
-                                if (occupiedEcfs != null && !occupiedEcfs.contains(ecf)) {
-                                    vacantEcfs.add(ecf);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            throw new IncorrectParameterException("Incorrect applicationId id: " + applicationId);
-        }
-        return vacantEcfs;
+  @Override
+  public List<AefMapInfoDto> findEventClassFamiliesByApplicationId(
+      String applicationId) {
+    List<ApplicationEventFamilyMapDto> eventFamilyMaps =
+            findApplicationEventFamilyMapsByApplicationId(applicationId);
+    List<AefMapInfoDto> aefMaps = new ArrayList<>();
+    if (eventFamilyMaps != null) {
+      for (ApplicationEventFamilyMapDto eventFamilyMap : eventFamilyMaps) {
+        AefMapInfoDto aefMap = new AefMapInfoDto();
+        aefMap.setAefMapId(eventFamilyMap.getId());
+        aefMap.setEcfId(eventFamilyMap.getEcfId());
+        aefMap.setEcfName(eventFamilyMap.getEcfName());
+        aefMap.setVersion(eventFamilyMap.getVersion());
+        aefMaps.add(aefMap);
+      }
     }
-
-    @Override
-    public List<AefMapInfoDto> findEventClassFamiliesByApplicationId(
-            String applicationId) {
-        List<ApplicationEventFamilyMapDto> eventFamilyMaps = findApplicationEventFamilyMapsByApplicationId(applicationId);
-        List<AefMapInfoDto> aefMaps = new ArrayList<>();
-        if (eventFamilyMaps != null) {
-            for (ApplicationEventFamilyMapDto eventFamilyMap : eventFamilyMaps) {
-                AefMapInfoDto aefMap = new AefMapInfoDto();
-                aefMap.setAefMapId(eventFamilyMap.getId());
-                aefMap.setEcfId(eventFamilyMap.getEcfId());
-                aefMap.setEcfName(eventFamilyMap.getEcfName());
-                aefMap.setVersion(eventFamilyMap.getVersion());
-                aefMaps.add(aefMap);
-            }
-        }
-        return aefMaps;
-    }
-
+    return aefMaps;
+  }
 
 
 }

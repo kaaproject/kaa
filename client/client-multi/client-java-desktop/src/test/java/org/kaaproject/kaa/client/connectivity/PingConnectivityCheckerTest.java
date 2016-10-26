@@ -21,15 +21,15 @@ import org.junit.Test;
 
 public class PingConnectivityCheckerTest {
 
-    @Test
-    public void checkConnectivityToWrongHostTest() {
-        PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("some-wrong-host=with-dashes-in-name");
-        Assert.assertFalse(pingConnectivityChecker.checkConnectivity());
-    }
+  @Test
+  public void checkConnectivityToWrongHostTest() {
+    PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("some-wrong-host=with-dashes-in-name");
+    Assert.assertFalse(pingConnectivityChecker.checkConnectivity());
+  }
 
-    @Test
-    public void checkConnectivityForLocalHostTest() {
-        PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("localhost");
-        Assert.assertTrue(pingConnectivityChecker.checkConnectivity());
-    }
+  @Test
+  public void checkConnectivityForLocalHostTest() {
+    PingConnectivityChecker pingConnectivityChecker = new PingConnectivityChecker("localhost");
+    Assert.assertTrue(pingConnectivityChecker.checkConnectivity());
+  }
 }

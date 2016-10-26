@@ -18,8 +18,8 @@ package org.kaaproject.kaa.client.event.registration;
 
 public class UserVerifierConstants {
 
-    static final String DEFAULT_USER_VERIFIER_TOKEN = null;
+  static final String DEFAULT_USER_VERIFIER_TOKEN = null;
 
-    private UserVerifierConstants() {
-    }
+  private UserVerifierConstants() {
+  }
 }

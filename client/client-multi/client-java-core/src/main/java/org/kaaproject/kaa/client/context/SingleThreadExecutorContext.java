@@ -16,55 +16,56 @@
 
 package org.kaaproject.kaa.client.context;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class SingleThreadExecutorContext extends AbstractExecutorContext implements
+        ExecutorContext {
+  private static final Logger LOG = LoggerFactory.getLogger(SingleThreadExecutorContext.class);
 
-public class SingleThreadExecutorContext extends AbstractExecutorContext implements ExecutorContext {
-    private static final Logger LOG = LoggerFactory.getLogger(SingleThreadExecutorContext.class);
+  private ScheduledExecutorService singleThreadExecutor;
 
-    private ScheduledExecutorService singleThreadExecutor;
+  public SingleThreadExecutorContext() {
+    super();
+  }
 
-    public SingleThreadExecutorContext() {
-        super();
-    }
+  @Override
+  public void init() {
+    LOG.debug("Creating executor service");
+    singleThreadExecutor = Executors.newSingleThreadScheduledExecutor();
+    LOG.debug("Created executor service");
+  }
 
-    @Override
-    public void init() {
-        LOG.debug("Creating executor service");
-        singleThreadExecutor = Executors.newSingleThreadScheduledExecutor();
-        LOG.debug("Created executor service");
-    }
+  @Override
+  public void stop() {
+    shutdownExecutor(singleThreadExecutor);
+  }
 
-    @Override
-    public void stop() {
-        shutdownExecutor(singleThreadExecutor);
-    }
+  @Override
+  public ExecutorService getLifeCycleExecutor() {
+    return getSingleThreadExecutor();
+  }
 
-    @Override
-    public ExecutorService getLifeCycleExecutor() {
-        return getSingleThreadExecutor();
-    }
+  @Override
+  public ExecutorService getApiExecutor() {
+    return getSingleThreadExecutor();
+  }
 
-    @Override
-    public ExecutorService getApiExecutor() {
-        return getSingleThreadExecutor();
-    }
+  @Override
+  public ExecutorService getCallbackExecutor() {
+    return getSingleThreadExecutor();
+  }
 
-    @Override
-    public ExecutorService getCallbackExecutor() {
-        return getSingleThreadExecutor();
-    }
-    
-    @Override
-    public ScheduledExecutorService getScheduledExecutor() {
-        return getSingleThreadExecutor();
-    }
+  @Override
+  public ScheduledExecutorService getScheduledExecutor() {
+    return getSingleThreadExecutor();
+  }
 
-    private ScheduledExecutorService getSingleThreadExecutor() {
-        return singleThreadExecutor;
-    }
+  private ScheduledExecutorService getSingleThreadExecutor() {
+    return singleThreadExecutor;
+  }
 }

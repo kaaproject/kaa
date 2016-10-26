@@ -19,8 +19,8 @@ package org.kaaproject.kaa.server.admin.client.mvp.view;
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
 
-public interface BaseRecordView<T extends AbstractStructureDto,V> extends BaseDetailsView {
+public interface BaseRecordView<T extends AbstractStructureDto, V> extends BaseDetailsView {
 
-    public AbstractRecordPanel<T,V> getRecordPanel();
+  public AbstractRecordPanel<T, V> getRecordPanel();
 
 }

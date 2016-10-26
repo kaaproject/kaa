@@ -18,6 +18,6 @@ package org.kaaproject.kaa.server.operations.service.akka;
 
 public interface AkkaStatusListener {
 
-    void onStatusUpdate(AkkaServiceStatus status);
-    
+  void onStatusUpdate(AkkaServiceStatus status);
+
 }

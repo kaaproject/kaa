@@ -20,14 +20,13 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 /**
  * An abstract class that identifies a session disconnect message.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public abstract class SessionDisconnectMessage extends SessionControlMessage {
 
-    public SessionDisconnectMessage(SessionInfo session) {
-        super(session);
-    }
+  public SessionDisconnectMessage(SessionInfo session) {
+    super(session);
+  }
 
 }

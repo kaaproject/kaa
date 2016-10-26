@@ -16,68 +16,70 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.logs;
 
-import java.util.List;
+import akka.actor.ActorRef;
 
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 
-import akka.actor.ActorRef;
+import java.util.List;
 
 /**
  * The Class LogEventPackMessage.
  */
 public class LogEventPackMessage {
 
-    private final int requestId;
+  private final int requestId;
 
-    private final ActorRef originator;
+  private final ActorRef originator;
 
-    /** Log Event Pack. */
-    private final BaseLogEventPack logEventPack;
+  /**
+   * Log Event Pack.
+   */
+  private final BaseLogEventPack logEventPack;
 
-    /**
-     * Instantiates a new log event pack message.
-     *
-     * @param requestId     the request id
-     * @param originator    the originator
-     * @param logEventPack  the log event pack
-     */
-    public LogEventPackMessage(int requestId, ActorRef originator, BaseLogEventPack logEventPack) {
-        this.requestId = requestId;
-        this.originator = originator;
-        this.logEventPack = logEventPack;
-    }
+  /**
+   * Instantiates a new log event pack message.
+   *
+   * @param requestId    the request id
+   * @param originator   the originator
+   * @param logEventPack the log event pack
+   */
+  public LogEventPackMessage(int requestId, ActorRef originator, BaseLogEventPack logEventPack) {
+    this.requestId = requestId;
+    this.originator = originator;
+    this.logEventPack = logEventPack;
+  }
 
-    public int getRequestId() {
-        return requestId;
-    }
+  public int getRequestId() {
+    return requestId;
+  }
 
-    public ActorRef getOriginator() {
-        return originator;
-    }
+  public ActorRef getOriginator() {
+    return originator;
+  }
 
-    public BaseLogEventPack getLogEventPack() {
-        return logEventPack;
-    }
+  public BaseLogEventPack getLogEventPack() {
+    return logEventPack;
+  }
 
-    public String getEndpointKey() {
-        return logEventPack.getEndpointKey();
-    }
+  public String getEndpointKey() {
+    return logEventPack.getEndpointKey();
+  }
 
-    public long getDateCreated() {
-        return logEventPack.getDateCreated();
-    }
+  public long getDateCreated() {
+    return logEventPack.getDateCreated();
+  }
 
-    public int getLogSchemaVersion() {
-        return logEventPack.getLogSchemaVersion();
-    }
+  public int getLogSchemaVersion() {
+    return logEventPack.getLogSchemaVersion();
+  }
 
-    public List<LogEvent> getEvents() {
-        return logEventPack.getEvents();
-    }
+  public List<LogEvent> getEvents() {
+    return logEventPack.getEvents();
+  }
 
-    public LogSchema getLogSchema() {
-        return logEventPack.getLogSchema();
-    }
+  public LogSchema getLogSchema() {
+    return logEventPack.getLogSchema();
+  }
 }

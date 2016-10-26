@@ -28,49 +28,53 @@ import org.springframework.expression.TypedValue;
  */
 public class GenericRecordPropertyAccessor implements PropertyAccessor {
 
-    /* (non-Javadoc)
-     * @see org.springframework.expression.PropertyAccessor#getSpecificTargetClasses()
-     */
-    @Override
-    public Class<?>[] getSpecificTargetClasses() {
-        return new Class<?>[] { GenericRecord.class };
-    }
+  /* (non-Javadoc)
+   * @see org.springframework.expression.PropertyAccessor#getSpecificTargetClasses()
+   */
+  @Override
+  public Class<?>[] getSpecificTargetClasses() {
+    return new Class<?>[]{GenericRecord.class};
+  }
 
-    /* (non-Javadoc)
-     * @see org.springframework.expression.PropertyAccessor#canRead(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String)
-     */
-    @Override
-    public boolean canRead(EvaluationContext context, Object target, String name)
-            throws AccessException {
-        GenericRecord record = (GenericRecord) target;
-        return record.getSchema().getField(name) != null;
-    }
+  /* (non-Javadoc)
+   * @see org.springframework.expression.PropertyAccessor#canRead(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String)
+   */
+  @Override
+  public boolean canRead(EvaluationContext context, Object target, String name)
+      throws AccessException {
+    GenericRecord record = (GenericRecord) target;
+    return record.getSchema().getField(name) != null;
+  }
 
-    /* (non-Javadoc)
-     * @see org.springframework.expression.PropertyAccessor#read(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String)
-     */
-    @Override
-    public TypedValue read(EvaluationContext context, Object target, String name)
-            throws AccessException {
-        GenericRecord record = (GenericRecord) target;
-        return new TypedValue(record.get(name));
-    }
+  /* (non-Javadoc)
+   * @see org.springframework.expression.PropertyAccessor#read(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String)
+   */
+  @Override
+  public TypedValue read(EvaluationContext context, Object target, String name)
+      throws AccessException {
+    GenericRecord record = (GenericRecord) target;
+    return new TypedValue(record.get(name));
+  }
 
-    /* (non-Javadoc)
-     * @see org.springframework.expression.PropertyAccessor#canWrite(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String)
-     */
-    @Override
-    public boolean canWrite(EvaluationContext context, Object target,
-            String name) throws AccessException {
-        return false;
-    }
+  /* (non-Javadoc)
+   * @see org.springframework.expression.PropertyAccessor#canWrite(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String)
+   */
+  @Override
+  public boolean canWrite(EvaluationContext context, Object target,
+                          String name) throws AccessException {
+    return false;
+  }
 
-    /* (non-Javadoc)
-     * @see org.springframework.expression.PropertyAccessor#write(org.springframework.expression.EvaluationContext, java.lang.Object, java.lang.String, java.lang.Object)
-     */
-    @Override
-    public void write(EvaluationContext context, Object target, String name,
-            Object newValue) throws AccessException {
-        throw new UnsupportedOperationException("Write is not supported");
-    }
+  /* (non-Javadoc)
+   * @see org.springframework.expression.PropertyAccessor#write(org.springframework
+   * .expression.EvaluationContext, java.lang.Object, java.lang.String, java.lang.Object)
+   */
+  @Override
+  public void write(EvaluationContext context, Object target, String name,
+                    Object newValue) throws AccessException {
+    throw new UnsupportedOperationException("Write is not supported");
+  }
 }

@@ -33,79 +33,84 @@ import javax.tools.ToolProvider;
  */
 public class JavaDynamicCompiler {
 
-    /** The compiler. */
-    private JavaCompiler compiler;
-    
-    /** The java dynamic manager. */
-    private JavaDynamicManager javaDynamicManager;
-    
-    /** The diagnostics. */
-    private DiagnosticCollector<JavaFileObject> diagnostics;
-    
-    private List<String> optionList;
+  /**
+   * The compiler.
+   */
+  private JavaCompiler compiler;
 
-    /**
-     * Instantiates a new java dynamic compiler.
-     *
-     */
-    public JavaDynamicCompiler() {
-        optionList = new ArrayList<>();
-        optionList.add("-g:source");
-    }
-    
-    /**
-     * Inits the.
-     *
-     */
-    public void init() {
-        compiler = getCompiler();
-        if (compiler == null) {
-            throw new JavaDynamicException("Compiler not found");
-        }
+  /**
+   * The java dynamic manager.
+   */
+  private JavaDynamicManager javaDynamicManager;
 
-        diagnostics = new DiagnosticCollector<JavaFileObject>();
+  /**
+   * The diagnostics.
+   */
+  private DiagnosticCollector<JavaFileObject> diagnostics;
 
-        StandardJavaFileManager standardFileManager = compiler
-                .getStandardFileManager(diagnostics, null, null);
-        javaDynamicManager = new JavaDynamicManager(standardFileManager);
-    }
-    
-    /**
-     * Gets the compiler.
-     *
-     * @return the compiler
-     */
-    public JavaCompiler getCompiler() {
-        return ToolProvider.getSystemJavaCompiler();
+  private List<String> optionList;
+
+  /**
+   * Instantiates a new java dynamic compiler.
+   */
+  public JavaDynamicCompiler() {
+    optionList = new ArrayList<>();
+    optionList.add("-g:source");
+  }
+
+  /**
+   * Inits the.
+   */
+  public void init() {
+    compiler = getCompiler();
+    if (compiler == null) {
+      throw new JavaDynamicException("Compiler not found");
     }
 
-    /**
-     * Compile.
-     *
-     * @param sources the sources
-     * @param additionalOptions the additional options
-     * @return the collection of java dynamic beans
-     */
-    public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources, String... additionalOptions) {
-        try {
-            List<String> options = optionList;
-            if (additionalOptions.length > 0) {
-                List<String> newOptions = new ArrayList<>();
-                newOptions.addAll(optionList);
-                newOptions.addAll(Arrays.asList(additionalOptions));
-                options = newOptions;
-            }
-            CompilationTask task = compiler.getTask(null, javaDynamicManager,
-                    diagnostics, options, null, sources);
-            boolean result = task.call();
-            if (!result) {
-                throw new JavaDynamicException("The compilation failed",
-                        diagnostics);
-            }
-            
-            return javaDynamicManager.getCompiledObjects();
-        } catch (Exception exception) {
-            throw new JavaDynamicException(exception, diagnostics);
-        }
+    diagnostics = new DiagnosticCollector<JavaFileObject>();
+
+    StandardJavaFileManager standardFileManager = compiler
+        .getStandardFileManager(diagnostics, null, null);
+    javaDynamicManager = new JavaDynamicManager(standardFileManager);
+  }
+
+  /**
+   * Gets the compiler.
+   *
+   * @return the compiler
+   */
+  public JavaCompiler getCompiler() {
+    return ToolProvider.getSystemJavaCompiler();
+  }
+
+  /**
+   * Compile.
+   *
+   * @param sources           the sources
+   * @param additionalOptions the additional options
+   * @return the collection of java dynamic beans
+   */
+  public synchronized Collection<JavaDynamicBean> compile(List<JavaDynamicBean> sources,
+                                                          String... additionalOptions) {
+    try {
+      List<String> options = optionList;
+      if (additionalOptions.length > 0) {
+        List<String> newOptions = new ArrayList<>();
+        newOptions.addAll(optionList);
+        newOptions.addAll(Arrays.asList(additionalOptions));
+        options = newOptions;
+      }
+      CompilationTask task = compiler.getTask(null, javaDynamicManager,
+          diagnostics, options, null, sources);
+      boolean result = task.call();
+      if (!result) {
+        throw new JavaDynamicException("The compilation failed",
+            diagnostics);
+      }
+
+      return javaDynamicManager.getCompiledObjects();
+    } catch (Exception exception) {
+      throw new JavaDynamicException(exception, diagnostics);
     }
+  }
 }

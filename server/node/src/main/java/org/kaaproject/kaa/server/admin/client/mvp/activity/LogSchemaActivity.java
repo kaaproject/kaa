@@ -16,76 +16,77 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
 import org.kaaproject.kaa.server.admin.client.mvp.place.LogSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.LogSchemaViewDto;
-import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
 
 public class LogSchemaActivity
-        extends
-        AbstractBaseCtlSchemaActivityApplication<LogSchemaDto, LogSchemaViewDto, BaseCtlSchemaView, LogSchemaPlace> {
+    extends
+    AbstractBaseCtlSchemaActivityApplication<LogSchemaDto, LogSchemaViewDto,
+        BaseCtlSchemaView, LogSchemaPlace> {
 
-    public LogSchemaActivity(LogSchemaPlace place,
-            ClientFactory clientFactory) {
-        super(place, clientFactory);
-    }
+  public LogSchemaActivity(LogSchemaPlace place,
+                           ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
 
-    @Override
-    protected LogSchemaViewDto newSchema() {
-        return new LogSchemaViewDto();
-    }
+  @Override
+  protected LogSchemaViewDto newSchema() {
+    return new LogSchemaViewDto();
+  }
 
-    @Override
-    protected BaseCtlSchemaView getView(boolean create) {
-        if (create) {
-            return clientFactory.getCreateLogSchemaView();
-        } else {
-            return clientFactory.getLogSchemaView();
-        }
+  @Override
+  protected BaseCtlSchemaView getView(boolean create) {
+    if (create) {
+      return clientFactory.getCreateLogSchemaView();
+    } else {
+      return clientFactory.getLogSchemaView();
     }
+  }
 
-    @Override
-    protected void getEntity(String id, AsyncCallback<LogSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().getLogSchemaView(id, callback);
-    }
+  @Override
+  protected void getEntity(String id, AsyncCallback<LogSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().getLogSchemaView(id, callback);
+  }
 
-    @Override
-    protected void editEntity(LogSchemaViewDto entity, AsyncCallback<LogSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().saveLogSchemaView(entity, callback);
-    }
+  @Override
+  protected void editEntity(LogSchemaViewDto entity, AsyncCallback<LogSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().saveLogSchemaView(entity, callback);
+  }
 
-    @Override
-    protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null,
-                null,
-                applicationId,
-                ConverterType.FORM_AVRO_CONVERTER,
-                callback);
-    }
+  @Override
+  protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null,
+        null,
+        applicationId,
+        ConverterType.FORM_AVRO_CONVERTER,
+        callback);
+  }
 
-    @Override
-    public void loadFormData(String fileItemName,
-                             AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
-    }
+  @Override
+  public void loadFormData(String fileItemName,
+                           AsyncCallback<RecordField> callback) {
+    KaaAdmin.getDataSource().generateSimpleSchemaForm(fileItemName, callback);
+  }
 
-    @Override
-    protected LogSchemaPlace existingSchemaPlace(String applicationId, String schemaId) {
-        return new LogSchemaPlace(applicationId, schemaId);
-    }
+  @Override
+  protected LogSchemaPlace existingSchemaPlace(String applicationId, String schemaId) {
+    return new LogSchemaPlace(applicationId, schemaId);
+  }
 
-    @Override
-    protected SchemaType getPlaceSchemaType() {
-        return SchemaType.LOG_SCHEMA ;
-    }
+  @Override
+  protected SchemaType getPlaceSchemaType() {
+    return SchemaType.LOG_SCHEMA;
+  }
 
 
 }

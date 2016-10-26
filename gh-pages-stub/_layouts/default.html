@@ -4,14 +4,13 @@
   {% include head.html %}
 
   <body>
-   
-   <div class="row row-full row-offcanvas row-offcanvas-left">   
+  <div class="row row-full row-offcanvas row-offcanvas-left">   
     {% include sidebar.html %}
     <div class="column col-sm-10 col-xs-11" id="main">
-    <div id="split-bar">
-	<div id="split-bar-dots">. . .</div>
-    </div>
-    <div id="page-content-wrapper">
+      <div id="split-bar">
+        <div id="split-bar-dots">. . .</div>
+      </div>
+      <div id="page-content-wrapper">
         <div class="container-fluid">
           <div class="row row-full content">
             {% if page.no_version_test %}
@@ -22,10 +21,9 @@
             {% endif %}
             {{ content }}  
           </div>        
-         </div>   
- 	</div>
- 	<div class="column footer">
-	    <p><a href="http://www.cybervisiontech.com/" class="">Copyright © 2014-{{ site.time | date: '%Y' }}, CyberVision, Inc.</a></p>
-	</div>
+        </div>   
+ 	    </div> 
+      {% include footer.html %}
+    </div>
   </body>
 </html>

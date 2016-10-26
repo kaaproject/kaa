@@ -27,92 +27,69 @@ import java.util.Arrays;
  * @author ashvayka
  */
 public class RegisterProfileRequest {
-    /** The application token. */
-    private final String appToken;
 
-    /** The endpoint key. */
-    private final byte[] endpointKey;
+  private final String appToken;
 
-    /** The profile. */
-    private final byte[] profile;
 
-    /** The sdk token. */
-    private final String sdkToken;
+  private final byte[] endpointKey;
 
-    private final String accessToken;
 
-    /**
-     * Instantiates a new register profile request.
-     *
-     * @param appToken          the app token
-     * @param endpointKey       the endpoint key
-     * @param sdkToken          the sdk token
-     * @param profile           the profile body
-     */
-    public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken, byte[] profile) {
-        this(appToken, endpointKey, sdkToken, profile, null);
-    }
+  private final byte[] profile;
 
-    /**
-     * Instantiates a new register profile request.
-     *
-     * @param appToken           the app token
-     * @param endpointKey        the endpoint key
-     * @param sdkToken           the sdk token
-     * @param profile            the profile body
-     * @param accessToken        the access token
-     */
-    public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken, byte[] profile, String accessToken) {
-        super();
-        this.appToken = appToken;
-        this.endpointKey = Arrays.copyOf(endpointKey, endpointKey.length);
-        this.sdkToken = sdkToken;
-        this.profile = Arrays.copyOf(profile, profile.length);
-        this.accessToken = accessToken;
-    }
+  private final String sdkToken;
 
-    /**
-     * Gets the endpoint key.
-     *
-     * @return the endpoint key
-     */
-    public byte[] getEndpointKey() {
-        return Arrays.copyOf(endpointKey, endpointKey.length);
-    }
+  private final String accessToken;
 
-    /**
-     * Gets the profile.
-     *
-     * @return the profile
-     */
-    public byte[] getProfile() {
-        return Arrays.copyOf(profile, profile.length);
-    }
+  /**
+   * Instantiates a new register profile request.
+   *
+   * @param appToken    the app token
+   * @param endpointKey the endpoint key
+   * @param sdkToken    the sdk token
+   * @param profile     the profile body
+   */
+  public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken,
+                                byte[] profile) {
+    this(appToken, endpointKey, sdkToken, profile, null);
+  }
 
-    /**
-     * Gets the application token.
-     *
-     * @return the application token
-     */
-    public String getAppToken() {
-        return appToken;
-    }
+  /**
+   * Instantiates a new register profile request.
+   *
+   * @param appToken    the app token
+   * @param endpointKey the endpoint key
+   * @param sdkToken    the sdk token
+   * @param profile     the profile body
+   * @param accessToken the access token
+   */
+  public RegisterProfileRequest(String appToken, byte[] endpointKey, String sdkToken,
+                                byte[] profile, String accessToken) {
+    super();
+    this.appToken = appToken;
+    this.endpointKey = Arrays.copyOf(endpointKey, endpointKey.length);
+    this.sdkToken = sdkToken;
+    this.profile = Arrays.copyOf(profile, profile.length);
+    this.accessToken = accessToken;
+  }
 
-    /**
-     * Gets the sdk token.
-     *
-     * @return the sdk token
-     */
-    public String getSdkToken() {
-        return sdkToken;
-    }
 
-    /**
-     * Gets the endpoint access token.
-     *
-     * @return the endpoint access token
-     */
-    public String getAccessToken() {
-        return accessToken;
-    }
+  public byte[] getEndpointKey() {
+    return Arrays.copyOf(endpointKey, endpointKey.length);
+  }
+
+  public byte[] getProfile() {
+    return Arrays.copyOf(profile, profile.length);
+  }
+
+  public String getAppToken() {
+    return appToken;
+  }
+
+  public String getSdkToken() {
+    return sdkToken;
+  }
+
+  public String getAccessToken() {
+    return accessToken;
+  }
 }

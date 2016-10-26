@@ -16,15 +16,16 @@
 
 package org.kaaproject.kaa.server.appenders.file.appender;
 
-import java.io.Closeable;
-import java.nio.file.Path;
-
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
 
-public interface FileSystemLogger extends Closeable{
+import java.io.Closeable;
+import java.nio.file.Path;
 
-    void init(LogAppenderDto appenderDto, FileConfig config, Path filePath);
-    void append(String event);
-    
+public interface FileSystemLogger extends Closeable {
+
+  void init(LogAppenderDto appenderDto, FileConfig config, Path filePath);
+
+  void append(String event);
+
 }

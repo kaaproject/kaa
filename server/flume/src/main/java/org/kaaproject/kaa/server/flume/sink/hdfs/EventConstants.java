@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
 public interface EventConstants {
 
-    public static final String APPLICATION_TOKEN_HEADER = "flume.application.token";
-    public static final String SCHEMA_VERSION_HEADER = "flume.schema.version";
-    
-    public static final String AVRO_SCHEMA_LITERAL_HEADER = "flume.avro.schema.literal";
+  String APPLICATION_TOKEN_HEADER = "flume.application.token";
+  String SCHEMA_VERSION_HEADER = "flume.schema.version";
+  String AVRO_SCHEMA_LITERAL_HEADER = "flume.avro.schema.literal";
 
 }

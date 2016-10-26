@@ -20,148 +20,160 @@ import java.io.Serializable;
 
 public class ProfileVersionPairDto implements Serializable, Comparable<ProfileVersionPairDto> {
 
-    private static final long serialVersionUID = -7073061086587077053L;
+  private static final long serialVersionUID = -7073061086587077053L;
 
-    private String endpointProfileSchemaid;
-    private Integer endpointProfileSchemaVersion;
-    private String serverProfileSchemaid;
-    private Integer serverProfileSchemaVersion;
+  private String endpointProfileSchemaid;
+  private Integer endpointProfileSchemaVersion;
+  private String serverProfileSchemaid;
+  private Integer serverProfileSchemaVersion;
 
-    public ProfileVersionPairDto() {
+  public ProfileVersionPairDto() {
+  }
+
+  public ProfileVersionPairDto(Integer endpointProfileSchemaVersion,
+                               String endpointProfileSchemaid) {
+    this.endpointProfileSchemaid = endpointProfileSchemaid;
+    this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+  }
+
+  public ProfileVersionPairDto(String serverProfileSchemaid, Integer serverProfileSchemaVersion) {
+    this.serverProfileSchemaid = serverProfileSchemaid;
+    this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public ProfileVersionPairDto(String endpointProfileSchemaid, Integer endpointProfileSchemaVersion,
+                               String serverProfileSchemaid,
+                               Integer serverProfileSchemaVersion) {
+    this.endpointProfileSchemaid = endpointProfileSchemaid;
+    this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+    this.serverProfileSchemaid = serverProfileSchemaid;
+    this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+  }
+
+  public String getEndpointProfileSchemaid() {
+    return endpointProfileSchemaid;
+  }
+
+  public void setEndpointProfileSchemaid(String endpointProfileSchemaid) {
+    this.endpointProfileSchemaid = endpointProfileSchemaid;
+  }
+
+  public Integer getEndpointProfileSchemaVersion() {
+    return endpointProfileSchemaVersion;
+  }
+
+  public void setEndpointProfileSchemaVersion(Integer endpointProfileSchemaVersion) {
+    this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+  }
+
+  public String getServerProfileSchemaid() {
+    return serverProfileSchemaid;
+  }
+
+  public void setServerProfileSchemaid(String serverProfileSchemaid) {
+    this.serverProfileSchemaid = serverProfileSchemaid;
+  }
+
+  public Integer getServerProfileSchemaVersion() {
+    return serverProfileSchemaVersion;
+  }
+
+  public void setServerProfileSchemaVersion(Integer serverProfileSchemaVersion) {
+    this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 :
+                                       endpointProfileSchemaVersion.hashCode());
+    result = prime * result + ((endpointProfileSchemaid == null) ? 0 :
+                                       endpointProfileSchemaid.hashCode());
+    result = prime * result + ((serverProfileSchemaVersion == null) ? 0 :
+                                       serverProfileSchemaVersion.hashCode());
+    result = prime * result + ((serverProfileSchemaid == null) ? 0 :
+                                       serverProfileSchemaid.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public ProfileVersionPairDto(Integer endpointProfileSchemaVersion, String endpointProfileSchemaid) {
-        this.endpointProfileSchemaid = endpointProfileSchemaid;
-        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
+    if (obj == null) {
+      return false;
     }
-
-    public ProfileVersionPairDto(String serverProfileSchemaid, Integer serverProfileSchemaVersion) {
-        this.serverProfileSchemaid = serverProfileSchemaid;
-        this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public ProfileVersionPairDto(String endpointProfileSchemaid, Integer endpointProfileSchemaVersion, String serverProfileSchemaid,
-            Integer serverProfileSchemaVersion) {
-        this.endpointProfileSchemaid = endpointProfileSchemaid;
-        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
-        this.serverProfileSchemaid = serverProfileSchemaid;
-        this.serverProfileSchemaVersion = serverProfileSchemaVersion;
+    ProfileVersionPairDto other = (ProfileVersionPairDto) obj;
+    if (endpointProfileSchemaVersion == null) {
+      if (other.endpointProfileSchemaVersion != null) {
+        return false;
+      }
+    } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
+      return false;
     }
-
-    public String getEndpointProfileSchemaid() {
-        return endpointProfileSchemaid;
+    if (endpointProfileSchemaid == null) {
+      if (other.endpointProfileSchemaid != null) {
+        return false;
+      }
+    } else if (!endpointProfileSchemaid.equals(other.endpointProfileSchemaid)) {
+      return false;
     }
-
-    public void setEndpointProfileSchemaid(String endpointProfileSchemaid) {
-        this.endpointProfileSchemaid = endpointProfileSchemaid;
+    if (serverProfileSchemaVersion == null) {
+      if (other.serverProfileSchemaVersion != null) {
+        return false;
+      }
+    } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
+      return false;
     }
-
-    public Integer getEndpointProfileSchemaVersion() {
-        return endpointProfileSchemaVersion;
+    if (serverProfileSchemaid == null) {
+      if (other.serverProfileSchemaid != null) {
+        return false;
+      }
+    } else if (!serverProfileSchemaid.equals(other.serverProfileSchemaid)) {
+      return false;
     }
+    return true;
+  }
 
-    public void setEndpointProfileSchemaVersion(Integer endpointProfileSchemaVersion) {
-        this.endpointProfileSchemaVersion = endpointProfileSchemaVersion;
-    }
+  @Override
+  public String toString() {
+    return "ProfileVersionPairDto [endpointProfileSchemaid=" + endpointProfileSchemaid
+           + ", endpointProfileSchemaVersion="
+        + endpointProfileSchemaVersion + ", serverProfileSchemaid=" + serverProfileSchemaid
+           + ", serverProfileSchemaVersion="
+        + serverProfileSchemaVersion + "]";
+  }
 
-    public String getServerProfileSchemaid() {
-        return serverProfileSchemaid;
+  @Override
+  public int compareTo(ProfileVersionPairDto obj) {
+    if (this.getEndpointProfileSchemaid() != null && obj.getEndpointProfileSchemaid() == null) {
+      return 1;
+    } else if (this.getEndpointProfileSchemaid() == null
+               && obj.getEndpointProfileSchemaid() != null) {
+      return -1;
     }
-
-    public void setServerProfileSchemaid(String serverProfileSchemaid) {
-        this.serverProfileSchemaid = serverProfileSchemaid;
+    if (this.getEndpointProfileSchemaid() != null && obj.getEndpointProfileSchemaid() != null) {
+      if (this.getEndpointProfileSchemaVersion() != obj.getEndpointProfileSchemaVersion()) {
+        return this.getEndpointProfileSchemaVersion() - obj.getEndpointProfileSchemaVersion();
+      }
     }
-
-    public Integer getServerProfileSchemaVersion() {
-        return serverProfileSchemaVersion;
+    if (this.getServerProfileSchemaid() != null && obj.getServerProfileSchemaid() == null) {
+      return 1;
+    } else if (this.getServerProfileSchemaid() == null && obj.getServerProfileSchemaid() != null) {
+      return -1;
+    } else if (this.getServerProfileSchemaid() != null && obj.getServerProfileSchemaid() != null) {
+      return this.getServerProfileSchemaVersion() - obj.getServerProfileSchemaVersion();
+    } else {
+      return 0;
     }
-
-    public void setServerProfileSchemaVersion(Integer serverProfileSchemaVersion) {
-        this.serverProfileSchemaVersion = serverProfileSchemaVersion;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((endpointProfileSchemaVersion == null) ? 0 : endpointProfileSchemaVersion.hashCode());
-        result = prime * result + ((endpointProfileSchemaid == null) ? 0 : endpointProfileSchemaid.hashCode());
-        result = prime * result + ((serverProfileSchemaVersion == null) ? 0 : serverProfileSchemaVersion.hashCode());
-        result = prime * result + ((serverProfileSchemaid == null) ? 0 : serverProfileSchemaid.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ProfileVersionPairDto other = (ProfileVersionPairDto) obj;
-        if (endpointProfileSchemaVersion == null) {
-            if (other.endpointProfileSchemaVersion != null) {
-                return false;
-            }
-        } else if (!endpointProfileSchemaVersion.equals(other.endpointProfileSchemaVersion)) {
-            return false;
-        }
-        if (endpointProfileSchemaid == null) {
-            if (other.endpointProfileSchemaid != null) {
-                return false;
-            }
-        } else if (!endpointProfileSchemaid.equals(other.endpointProfileSchemaid)) {
-            return false;
-        }
-        if (serverProfileSchemaVersion == null) {
-            if (other.serverProfileSchemaVersion != null) {
-                return false;
-            }
-        } else if (!serverProfileSchemaVersion.equals(other.serverProfileSchemaVersion)) {
-            return false;
-        }
-        if (serverProfileSchemaid == null) {
-            if (other.serverProfileSchemaid != null) {
-                return false;
-            }
-        } else if (!serverProfileSchemaid.equals(other.serverProfileSchemaid)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "ProfileVersionPairDto [endpointProfileSchemaid=" + endpointProfileSchemaid + ", endpointProfileSchemaVersion="
-                + endpointProfileSchemaVersion + ", serverProfileSchemaid=" + serverProfileSchemaid + ", serverProfileSchemaVersion="
-                + serverProfileSchemaVersion + "]";
-    }
-
-    @Override
-    public int compareTo(ProfileVersionPairDto o) {
-        if (this.getEndpointProfileSchemaid() != null && o.getEndpointProfileSchemaid() == null) {
-            return 1;
-        } else if (this.getEndpointProfileSchemaid() == null && o.getEndpointProfileSchemaid() != null) {
-            return -1;
-        }
-        if (this.getEndpointProfileSchemaid() != null && o.getEndpointProfileSchemaid() != null) {
-            if (this.getEndpointProfileSchemaVersion() != o.getEndpointProfileSchemaVersion()) {
-                return this.getEndpointProfileSchemaVersion() - o.getEndpointProfileSchemaVersion();
-            }
-        }
-        if (this.getServerProfileSchemaid() != null && o.getServerProfileSchemaid() == null) {
-            return 1;
-        } else if (this.getServerProfileSchemaid() == null && o.getServerProfileSchemaid() != null) {
-            return -1;
-        } else if (this.getServerProfileSchemaid() != null && o.getServerProfileSchemaid() != null) {
-            return this.getServerProfileSchemaVersion() - o.getServerProfileSchemaVersion();
-        } else {
-            return 0;
-        }
-    }
+  }
 
 }

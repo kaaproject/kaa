@@ -16,116 +16,116 @@
 
 package org.kaaproject.kaa.common.avro;
 
-import java.util.Collections;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.generic.GenericFixed;
 import org.apache.avro.generic.GenericRecord;
+
+import java.util.Collections;
 
 /**
  * Class containing algorithms for canonization Avro data.
  */
 public class AvroDataCanonizationUtils {
 
-    private static final String UUIDT = "org.kaaproject.configuration.uuidT";
-    private static final AvroDataComparator COMPARATOR = new AvroDataComparator();
+  private static final String UUIDT = "org.kaaproject.configuration.uuidT";
+  private static final AvroDataComparator COMPARATOR = new AvroDataComparator();
 
-    private AvroDataCanonizationUtils() {
+  private AvroDataCanonizationUtils() {
+  }
+
+  /**
+   * Performs canonization of records in array if they are present.
+   *
+   * @param baseArray the array to be canonized.
+   */
+  private static void canonizeArray(GenericArray baseArray) {
+    for (Object obj : baseArray) {
+      if (obj instanceof GenericRecord) {
+        canonizeRecord((GenericRecord) obj);
+      } else if (obj instanceof GenericArray) {
+        canonizeArray((GenericArray) obj);
+      }
     }
+  }
 
-    /**
-     * Performs canonization of records in array if they are present.
-     *
-     * @param     baseArray the array to be canonized.
-     */
-    private static void canonizeArray(GenericArray baseArray) {
-        for (Object obj : baseArray) {
+  /**
+   * Check if the field contains UUID and returns value which should be on its place.
+   *
+   * @param uuidField   GenericFixed field which is supposed to contain UUID.
+   * @param fieldSchema Schema of given field.
+   * @return null if field is assumed as an UUID or field without changes otherwise
+   */
+  private static GenericFixed clearUuid(GenericFixed uuidField, Schema.Field fieldSchema) {
+    if (fieldSchema.schema().getType() == Schema.Type.UNION) {
+      for (Schema unionedSchema : fieldSchema.schema().getTypes()) {
+        if (unionedSchema.getFullName().equalsIgnoreCase(UUIDT)) {
+          return null;
+        }
+      }
+    } else {
+      if (uuidField.getSchema().getFullName().equalsIgnoreCase(UUIDT)) {
+        return null;
+      }
+    }
+    return uuidField;
+  }
+
+  /**
+   * Recursively removes UUIDs from the record.
+   *
+   * @param baseRecord The record containing UUID fields.
+   */
+  public static void removeUuid(GenericRecord baseRecord) {
+    Schema recordSchema = baseRecord.getSchema();
+    for (Schema.Field fieldSchema : recordSchema.getFields()) {
+      if (baseRecord.get(fieldSchema.name()) != null) {
+        Object field = baseRecord.get(fieldSchema.name());
+        if (field instanceof GenericFixed) {
+          baseRecord.put(fieldSchema.name(), clearUuid((GenericFixed) field, fieldSchema));
+        } else if (field instanceof GenericRecord) {
+          removeUuid((GenericRecord) field);
+        } else if (field instanceof GenericArray) {
+          GenericArray arrayField = (GenericArray) field;
+          for (Object obj : arrayField) {
             if (obj instanceof GenericRecord) {
-                canonizeRecord((GenericRecord)obj);
-            } else if (obj instanceof GenericArray) {
-                canonizeArray((GenericArray)obj);
+              removeUuid((GenericRecord) obj);
             }
+          }
         }
+      }
     }
+  }
 
-    /**
-     * Check if the field contains UUID and returns value which should be on its place.
-     *
-     * @param     uuidField    GenericFixed field which is supposed to contain UUID.
-     * @param     fieldSchema    Schema of given field.
-     * @return    null if field is assumed as an UUID or field without changes otherwise
-     */
-    private static GenericFixed clearUuid(GenericFixed uuidField, Schema.Field fieldSchema) {
-        if (fieldSchema.schema().getType() == Schema.Type.UNION) {
-            for (Schema unionedSchema : fieldSchema.schema().getTypes()) {
-                if  (unionedSchema.getFullName().equalsIgnoreCase(UUIDT)) {
-                    return null;
-                }
+  /**
+   * Performs canonization of the given record.
+   *
+   * @param baseRecord The record to be canonized.
+   */
+  public static void canonizeRecord(GenericRecord baseRecord) {
+    Schema recordSchema = baseRecord.getSchema();
+
+    for (Schema.Field fieldSchema : recordSchema.getFields()) {
+      if (baseRecord.get(fieldSchema.name()) != null) {
+        Object field = baseRecord.get(fieldSchema.name());
+        if (field instanceof GenericArray) {
+          if (fieldSchema.schema().getType() == Schema.Type.UNION) {
+            for (Schema unoinedSchema : fieldSchema.schema().getTypes()) {
+              if (unoinedSchema.getType() == Schema.Type.ARRAY) {
+                COMPARATOR.setSchema(unoinedSchema.getElementType());
+                break;
+              }
             }
-        } else {
-            if (uuidField.getSchema().getFullName().equalsIgnoreCase(UUIDT)) {
-                return null;
-            }
+          } else {
+            COMPARATOR.setSchema(fieldSchema.schema().getElementType());
+          }
+          GenericArray arrayField = (GenericArray) baseRecord.get(fieldSchema.name());
+          canonizeArray(arrayField);
+          Collections.sort(arrayField, COMPARATOR);
+        } else if (field instanceof GenericRecord) {
+          canonizeRecord((GenericRecord) field);
         }
-        return uuidField;
+      }
     }
-
-    /**
-     * Recursively removes UUIDs from the record.
-     *
-     * @param     baseRecord The record containing UUID fields.
-     */
-    public static void removeUuid(GenericRecord baseRecord) {
-        Schema recordSchema = baseRecord.getSchema();
-        for (Schema.Field fieldSchema : recordSchema.getFields()) {
-            if (baseRecord.get(fieldSchema.name()) != null) {
-                Object field = baseRecord.get(fieldSchema.name());
-                if (field instanceof GenericFixed) {
-                    baseRecord.put(fieldSchema.name(), clearUuid((GenericFixed) field, fieldSchema));
-                } else if (field instanceof GenericRecord) {
-                    removeUuid((GenericRecord) field);
-                } else if (field instanceof GenericArray) {
-                    GenericArray arrayField = (GenericArray) field;
-                    for (Object obj : arrayField) {
-                        if (obj instanceof GenericRecord) {
-                            removeUuid((GenericRecord) obj);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Performs canonization of the given record.
-     *
-     * @param     baseRecord The record to be canonized.
-     */
-    public static void canonizeRecord(GenericRecord baseRecord) {
-        Schema recordSchema = baseRecord.getSchema();
-
-        for (Schema.Field fieldSchema : recordSchema.getFields()) {
-            if (baseRecord.get(fieldSchema.name()) != null) {
-                Object field = baseRecord.get(fieldSchema.name());
-                if (field instanceof GenericArray) {
-                    if (fieldSchema.schema().getType() == Schema.Type.UNION) {
-                        for (Schema unoinedSchema : fieldSchema.schema().getTypes()) {
-                            if  (unoinedSchema.getType() == Schema.Type.ARRAY) {
-                                COMPARATOR.setSchema(unoinedSchema.getElementType());
-                                break;
-                            }
-                        }
-                    } else {
-                        COMPARATOR.setSchema(fieldSchema.schema().getElementType());
-                    }
-                    GenericArray arrayField = (GenericArray) baseRecord.get(fieldSchema.name());
-                    canonizeArray(arrayField);
-                    Collections.sort(arrayField, COMPARATOR);
-                } else if (field instanceof GenericRecord) {
-                    canonizeRecord((GenericRecord)field);
-                }
-            }
-        }
-    }
+  }
 }

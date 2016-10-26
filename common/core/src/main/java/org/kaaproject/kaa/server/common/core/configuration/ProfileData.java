@@ -20,10 +20,10 @@ import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 
 public class ProfileData extends AbstractKaaData<DataSchema> {
 
-    private static final long serialVersionUID = -149116092748606760L;
+  private static final long serialVersionUID = -149116092748606760L;
 
-    public ProfileData(DataSchema schema, String data) {
-        super(schema, data);
-    }
+  public ProfileData(DataSchema schema, String data) {
+    super(schema, data);
+  }
 
 }

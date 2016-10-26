@@ -16,36 +16,36 @@
 
 package org.kaaproject.kaa.server.operations.service.metrics;
 
+import org.springframework.stereotype.Component;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
-
-import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultSystemMonitoringInfo implements SystemMonitoringInfo {
 
-    private static final int MB = 1024 * 1024;
+  private static final int MB = 1024 * 1024;
 
-    @Override
-    public double getLoadAverage() {
-        return ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage();
-    }
+  @Override
+  public double getLoadAverage() {
+    return ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage();
+  }
 
-    @Override
-    public long getHeapMemoryUsage() {
-        MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-        return heapMemoryUsage.getUsed() / MB;
+  @Override
+  public long getHeapMemoryUsage() {
+    MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+    return heapMemoryUsage.getUsed() / MB;
 
-    }
+  }
 
-    @Override
-    public long getNonHeapMemoryUsage() {
-        MemoryUsage nonHeapMemoryUsage = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
-        return nonHeapMemoryUsage.getUsed() / MB;
-    }
+  @Override
+  public long getNonHeapMemoryUsage() {
+    MemoryUsage nonHeapMemoryUsage = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
+    return nonHeapMemoryUsage.getUsed() / MB;
+  }
 
-    @Override
-    public int getLiveThreadCount() {
-        return ManagementFactory.getThreadMXBean().getThreadCount();
-    }
+  @Override
+  public int getLiveThreadCount() {
+    return ManagementFactory.getThreadMXBean().getThreadCount();
+  }
 }

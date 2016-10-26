@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.client.configuration.base;
 
-import javax.annotation.Generated;
-
 import org.kaaproject.kaa.schema.base.Configuration;
+
+import javax.annotation.Generated;
 
 /**
  * Interface for the configuration manager.<br>
@@ -28,18 +28,17 @@ import org.kaaproject.kaa.schema.base.Configuration;
  * Configuration manager can be used to fetch current configuration at any time.
  * If there were no configuration updates, default configuration will be returned.
  * Default configuration is built-in to the sdk. <br>
- * 
+ *
  * @author Yaroslav Zeygerman
  * @author Andrew Shvayka
- * 
  */
 @Generated("ConfigurationManager.java.template")
 public interface ConfigurationManager extends GenericConfigurationManager {
 
-    /**
-     * Always returns latest configuration
-     * 
-     * @return configuration
-     */
-    Configuration getConfiguration();
+  /**
+   * Always returns latest configuration.
+   *
+   * @return configuration
+   */
+  Configuration getConfiguration();
 }

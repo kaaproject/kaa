@@ -20,34 +20,37 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Tena
 
 public class RouteMessage<T extends EntityClusterAddress> implements TenantAwareMessage {
 
-    private final T address;
-    private final RouteOperation operation;
+  private final T address;
+  private final RouteOperation operation;
 
-    public RouteMessage(T address, RouteOperation operation) {
-        super();
-        this.address = address;
-        this.operation = operation;
-    }
+  /**
+   * All-args constructor.
+   */
+  public RouteMessage(T address, RouteOperation operation) {
+    super();
+    this.address = address;
+    this.operation = operation;
+  }
 
-    public T getAddress() {
-        return address;
-    }
+  public T getAddress() {
+    return address;
+  }
 
-    public RouteOperation getOperation() {
-        return operation;
-    }
+  public RouteOperation getOperation() {
+    return operation;
+  }
 
-    @Override
-    public String getTenantId() {
-        return address.getTenantId();
-    }
+  @Override
+  public String getTenantId() {
+    return address.getTenantId();
+  }
 
-    public String getAppToken() {
-        return address.getAppToken();
-    }
+  public String getAppToken() {
+    return address.getAppToken();
+  }
 
-    @Override
-    public String toString() {
-        return "RouteMessage [address=" + address + ", operation=" + operation + "]";
-    }
+  @Override
+  public String toString() {
+    return "RouteMessage [address=" + address + ", operation=" + operation + "]";
+  }
 }

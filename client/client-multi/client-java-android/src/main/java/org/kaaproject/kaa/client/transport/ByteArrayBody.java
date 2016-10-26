@@ -16,54 +16,57 @@
 
 package org.kaaproject.kaa.client.transport;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class ByteArrayBody extends AbstractContentBody {
 
-    private final byte[] data;
-    
-    private final String filename;
-    
-    public ByteArrayBody(final byte[] data, final String mimeType, final String filename) {
-        super(mimeType);
-        if (data == null) {
-            throw new IllegalArgumentException("byte[] data may not be null");
-        }
-        this.data = data;
-        this.filename = filename;
-    }
-    
-    public ByteArrayBody(final byte[] data, final String filename) {
-        this(data, "application/octet-stream", filename);
-    }
-    
-    @Override
-    public String getFilename() {
-        return filename;
-    }
+  private final byte[] data;
 
-    @Override
-    public String getCharset() {
-        return null;
-    }
+  private final String filename;
 
-    @Override
-    public String getTransferEncoding() {
-        return MIME.ENC_BINARY;
+  /**
+   * All-args constructor.
+   */
+  public ByteArrayBody(final byte[] data, final String mimeType, final String filename) {
+    super(mimeType);
+    if (data == null) {
+      throw new IllegalArgumentException("byte[] data may not be null");
     }
+    this.data = data;
+    this.filename = filename;
+  }
 
-    @Override
-    public long getContentLength() {
-        return data.length;
-    }
+  public ByteArrayBody(final byte[] data, final String filename) {
+    this(data, "application/octet-stream", filename);
+  }
 
-    @Override
-    public void writeTo(OutputStream out) throws IOException {
-        out.write(data);
-    }
+  @Override
+  public String getFilename() {
+    return filename;
+  }
+
+  @Override
+  public String getCharset() {
+    return null;
+  }
+
+  @Override
+  public String getTransferEncoding() {
+    return MIME.ENC_BINARY;
+  }
+
+  @Override
+  public long getContentLength() {
+    return data.length;
+  }
+
+  @Override
+  public void writeTo(OutputStream out) throws IOException {
+    out.write(data);
+  }
 
 }

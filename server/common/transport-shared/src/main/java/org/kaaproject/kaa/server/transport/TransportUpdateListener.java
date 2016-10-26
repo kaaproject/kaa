@@ -16,21 +16,22 @@
 
 package org.kaaproject.kaa.server.transport;
 
-import java.util.List;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+
+import java.util.List;
 
 /**
  * Represents listener to transport state updates.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public interface TransportUpdateListener {
 
-    /**
-     * Notify about the initialized transports.
-     * @param msList a list of the initialized transport meta data
-     */
-    void onTransportsStarted(List<TransportMetaData> mdList);
+  /**
+   * Notify about the initialized transports.
+   *
+   * @param mdList a list of the initialized transport meta data
+   */
+  void onTransportsStarted(List<TransportMetaData> mdList);
 
 }

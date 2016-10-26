@@ -16,63 +16,67 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-import java.util.List;
+import akka.actor.ActorRef;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 
-import akka.actor.ActorRef;
+import java.util.List;
 
 /**
- * Represents intent of endpoint to connect to local user actor
- * 
- * @author Andrew Shvayka
+ * Represents intent of endpoint to connect to local user actor.
  *
+ * @author Andrew Shvayka
  */
 public class EndpointUserConnectMessage extends EndpointAwareMessage implements UserAwareMessage {
 
-    private final String userId;
-    private final List<EventClassFamilyVersion> ecfVersions;
-    private final int cfVersion;
-    private final byte[] ucfHash;
+  private final String userId;
+  private final List<EventClassFamilyVersion> ecfVersions;
+  private final int cfVersion;
+  private final byte[] ucfHash;
 
-    public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey, List<EventClassFamilyVersion> ecfVersions,
-            int cfVersion, byte[] ucfHash, String applicationToken, ActorRef originator) {
-        super(applicationToken, endpointKey, originator);
-        this.userId = userId;
-        this.ecfVersions = ecfVersions;
-        this.cfVersion = cfVersion;
-        this.ucfHash = ucfHash;
-    }
+  /**
+   * All-args constructor.
+   */
+  public EndpointUserConnectMessage(String userId, EndpointObjectHash endpointKey,
+                                    List<EventClassFamilyVersion> ecfVersions,
+                                    int cfVersion, byte[] ucfHash, String applicationToken,
+                                    ActorRef originator) {
+    super(applicationToken, endpointKey, originator);
+    this.userId = userId;
+    this.ecfVersions = ecfVersions;
+    this.cfVersion = cfVersion;
+    this.ucfHash = ucfHash;
+  }
 
-    public List<EventClassFamilyVersion> getEcfVersions() {
-        return ecfVersions;
-    }
+  public List<EventClassFamilyVersion> getEcfVersions() {
+    return ecfVersions;
+  }
 
-    @Override
-    public String getUserId() {
-        return userId;
-    }
+  @Override
+  public String getUserId() {
+    return userId;
+  }
 
-    public int getCfVersion() {
-        return cfVersion;
-    }
+  public int getCfVersion() {
+    return cfVersion;
+  }
 
-    public byte[] getUcfHash() {
-        return ucfHash;
-    }
+  public byte[] getUcfHash() {
+    return ucfHash;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointUserConnectMessage [userId=");
-        builder.append(userId);
-        builder.append(", ecfVersions=");
-        builder.append(ecfVersions);
-        builder.append(", cfVersion=");
-        builder.append(cfVersion);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointUserConnectMessage [userId=");
+    builder.append(userId);
+    builder.append(", ecfVersions=");
+    builder.append(ecfVersions);
+    builder.append(", cfVersion=");
+    builder.append(cfVersion);
+    builder.append("]");
+    return builder.toString();
+  }
 }

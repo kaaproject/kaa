@@ -16,66 +16,70 @@
 
 package org.kaaproject.kaa.server.appenders.couchbase.appender;
 
-import java.io.Serializable;
-import java.util.Map;
+import com.couchbase.client.java.document.json.JsonObject;
 
+import com.couchbase.client.java.repository.annotation.Field;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.couchbase.core.mapping.Document;
-import org.springframework.data.couchbase.core.mapping.Field;
 
-import com.couchbase.client.java.document.json.JsonObject;
+import java.io.Serializable;
+import java.util.Map;
 
 @Document
 public final class LogEvent implements Serializable {
 
-    private static final long serialVersionUID = 5621981297013754001L;
+  private static final long serialVersionUID = 5621981297013754001L;
 
-    @Id
-    private String id;
-    
-    @Field
-    private RecordHeader header;
-    
-    @Field
-    private Map<String, Object> event;
+  @Id
+  private String id;
 
-    public LogEvent() {}
+  @Field
+  private RecordHeader header;
 
-    public LogEvent(RecordHeader header, LogEventDto dto) {
-        this.id = dto.getId();
-        this.header = header;
-        this.event = JsonObject.fromJson(dto.getEvent()).toMap();
-    }
+  @Field
+  private Map<String, Object> event;
 
-    public String getId() {
-        return id;
-    }
+  public LogEvent() {
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  /**
+   * All-args constructor.
+   */
+  public LogEvent(RecordHeader header, LogEventDto dto) {
+    this.id = dto.getId();
+    this.header = header;
+    this.event = JsonObject.fromJson(dto.getEvent()).toMap();
+  }
 
-    public Map<String, Object>  getEvent() {
-        return event;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setEvent(Map<String, Object>  event) {
-        this.event = event;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public RecordHeader getHeader() {
-        return header;
-    }
+  public Map<String, Object> getEvent() {
+    return event;
+  }
 
-    public void setHeader(RecordHeader header) {
-        this.header = header;
-    }
+  public void setEvent(Map<String, Object> event) {
+    this.event = event;
+  }
 
-    @Override
-    public String toString() {
-        return "LogEvent [id=" + id + ", header=" + header + ", event=" + event + "]";
-    }
+  public RecordHeader getHeader() {
+    return header;
+  }
+
+  public void setHeader(RecordHeader header) {
+    this.header = header;
+  }
+
+  @Override
+  public String toString() {
+    return "LogEvent [id=" + id + ", header=" + header + ", event=" + event + "]";
+  }
 
 }

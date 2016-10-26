@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.client.persistence;
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,46 +25,44 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import android.content.Context;
-
 public class AndroidInternalPersistentStorage implements PersistentStorage {
 
-    private Context context;
-    
-    public AndroidInternalPersistentStorage(Context context) {
-        this.context = context;
-    }
-    
-    @Override
-    public InputStream openForRead(String path) throws IOException {
-        File f = new File(context.getFilesDir(), path);
-        return new FileInputStream(f);
-    }
+  private Context context;
 
-    @Override
-    public OutputStream openForWrite(String path) throws IOException {
-        File f = new File(context.getFilesDir(), path);
-        if (f.getParentFile() != null && !f.getParentFile().exists()) {
-            f.getParentFile().mkdirs();
-        }
-        return new FileOutputStream(f);
-    }
+  public AndroidInternalPersistentStorage(Context context) {
+    this.context = context;
+  }
 
-    @Override
-    public boolean renameTo(String oldPath, String newPath) throws IOException {
-        File src = new File(context.getFilesDir(), oldPath);
-        File dst = new File(context.getFilesDir(), newPath);
-        return src.renameTo(dst);
-    }
+  @Override
+  public InputStream openForRead(String path) throws IOException {
+    File file = new File(context.getFilesDir(), path);
+    return new FileInputStream(file);
+  }
 
-    @Override
-    public boolean exists(String path) {
-        return new File(context.getFilesDir(), path).exists();
+  @Override
+  public OutputStream openForWrite(String path) throws IOException {
+    File file = new File(context.getFilesDir(), path);
+    if (file.getParentFile() != null && !file.getParentFile().exists()) {
+      file.getParentFile().mkdirs();
     }
+    return new FileOutputStream(file);
+  }
 
-    @Override
-    public void delete(String path) throws IOException {
-        new File(context.getFilesDir(), path).delete();
-    }
+  @Override
+  public boolean renameTo(String oldPath, String newPath) throws IOException {
+    File src = new File(context.getFilesDir(), oldPath);
+    File dst = new File(context.getFilesDir(), newPath);
+    return src.renameTo(dst);
+  }
+
+  @Override
+  public boolean exists(String path) {
+    return new File(context.getFilesDir(), path).exists();
+  }
+
+  @Override
+  public void delete(String path) throws IOException {
+    new File(context.getFilesDir(), path).delete();
+  }
 
 }

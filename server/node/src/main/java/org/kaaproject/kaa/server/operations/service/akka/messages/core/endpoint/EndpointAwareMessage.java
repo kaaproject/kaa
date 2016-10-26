@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
-import java.util.Random;
-import java.util.UUID;
+import akka.actor.ActorRef;
 
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
-import akka.actor.ActorRef;
+import java.util.Random;
+import java.util.UUID;
 
 
 /**
@@ -29,118 +29,113 @@ import akka.actor.ActorRef;
  */
 public class EndpointAwareMessage {
 
-    private final UUID uuid;
-
-    /** The app token. */
-    private final String appToken;
-
-    /** The key. */
-    private final EndpointObjectHash key;
-
-    /** The originator. */
-    private final ActorRef originator;
-    
-    private final static ThreadLocal<Random> state = new ThreadLocal<Random>() { //NOSONAR
-        protected Random initialValue() {
-            return new Random();
-        }
-    };
-
-    /**
-     * Instantiates a new endpoint aware message.
-     *
-     * @param appToken
-     *            the app token
-     * @param key
-     *            the key
-     * @param originator
-     *            the originator
-     */
-    public EndpointAwareMessage(String appToken, EndpointObjectHash key, ActorRef originator) {
-        this(new UUID(state.get().nextLong(), state.get().nextLong()), appToken, key, originator);
+  private static final ThreadLocal<Random> state = new ThreadLocal<Random>() { //NOSONAR
+    protected Random initialValue() {
+      return new Random();
     }
+  };
+  private final UUID uuid;
+  /**
+   * The app token.
+   */
+  private final String appToken;
+  /**
+   * The key.
+   */
+  private final EndpointObjectHash key;
+  /**
+   * The originator.
+   */
+  private final ActorRef originator;
 
-    /**
-     * Instantiates a new endpoint aware message.
-     *
-     * @param uuid
-     *            the uuid
-     * @param appToken
-     *            the app token
-     * @param key
-     *            the key
-     * @param originator
-     *            the originator
-     */
-    protected EndpointAwareMessage(UUID uuid, String appToken, EndpointObjectHash key, ActorRef originator) {
-        super();
-        this.uuid = uuid;
-        this.appToken = appToken;
-        this.key = key;
-        this.originator = originator;
+  /**
+   * Instantiates a new endpoint aware message.
+   *
+   * @param appToken   the app token
+   * @param key        the key
+   * @param originator the originator
+   */
+  public EndpointAwareMessage(String appToken, EndpointObjectHash key, ActorRef originator) {
+    this(new UUID(state.get().nextLong(), state.get().nextLong()), appToken, key, originator);
+  }
+
+  /**
+   * Instantiates a new endpoint aware message.
+   *
+   * @param uuid       the uuid
+   * @param appToken   the app token
+   * @param key        the key
+   * @param originator the originator
+   */
+  protected EndpointAwareMessage(UUID uuid, String appToken, EndpointObjectHash key,
+                                 ActorRef originator) {
+    super();
+    this.uuid = uuid;
+    this.appToken = appToken;
+    this.key = key;
+    this.originator = originator;
+  }
+
+
+  public UUID getUuid() {
+    return uuid;
+  }
+
+  /**
+   * Gets the app token.
+   *
+   * @return the app token
+   */
+  public String getAppToken() {
+    return appToken;
+  }
+
+  /**
+   * Gets the key.
+   *
+   * @return the key
+   */
+  public EndpointObjectHash getKey() {
+    return key;
+  }
+
+  /**
+   * Gets the originator.
+   *
+   * @return the originator
+   */
+  public ActorRef getOriginator() {
+    return originator;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-
-
-    public UUID getUuid() {
-        return uuid;
+    if (obj == null) {
+      return false;
     }
-
-    /**
-     * Gets the app token.
-     *
-     * @return the app token
-     */
-    public String getAppToken() {
-        return appToken;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    /**
-     * Gets the key.
-     *
-     * @return the key
-     */
-    public EndpointObjectHash getKey() {
-        return key;
+    EndpointAwareMessage other = (EndpointAwareMessage) obj;
+    if (uuid == null) {
+      if (other.uuid != null) {
+        return false;
+      }
+    } else if (!uuid.equals(other.uuid)) {
+      return false;
     }
-
-    /**
-     * Gets the originator.
-     *
-     * @return the originator
-     */
-    public ActorRef getOriginator() {
-        return originator;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointAwareMessage other = (EndpointAwareMessage) obj;
-        if (uuid == null) {
-            if (other.uuid != null) {
-                return false;
-            }
-        } else if (!uuid.equals(other.uuid)) {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 
 }

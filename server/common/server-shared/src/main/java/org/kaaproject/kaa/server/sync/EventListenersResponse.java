@@ -19,103 +19,100 @@ package org.kaaproject.kaa.server.sync;
 import java.util.List;
 
 public final class EventListenersResponse {
-    private int requestId;
-    private List<String> listeners;
-    private SyncStatus result;
+  private int requestId;
+  private List<String> listeners;
+  private SyncStatus result;
 
-    public EventListenersResponse() {
+  public EventListenersResponse() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public EventListenersResponse(int requestId, List<String> listeners,
+                                SyncStatus result) {
+    this.requestId = requestId;
+    this.listeners = listeners;
+    this.result = result;
+  }
+
+  /**
+   * Gets the value of the 'requestId' field.
+   */
+  public int getRequestId() {
+    return requestId;
+  }
+
+  /**
+   * Sets the value of the 'requestId' field.
+   *
+   * @param value the value to set.
+   */
+  public void setRequestId(int value) {
+    this.requestId = value;
+  }
+
+  /**
+   * Gets the value of the 'listeners' field.
+   */
+  public List<String> getListeners() {
+    return listeners;
+  }
+
+  /**
+   * Sets the value of the 'listeners' field.
+   *
+   * @param value the value to set.
+   */
+  public void setListeners(List<String> value) {
+    this.listeners = value;
+  }
+
+  /**
+   * Gets the value of the 'result' field.
+   */
+  public SyncStatus getResult() {
+    return result;
+  }
+
+  /**
+   * Sets the value of the 'result' field.
+   *
+   * @param value the value to set.
+   */
+  public void setResult(SyncStatus value) {
+    this.result = value;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    /**
-     * All-args constructor.
-     */
-    public EventListenersResponse(int requestId, List<String> listeners,
-            SyncStatus result) {
-        this.requestId = requestId;
-        this.listeners = listeners;
-        this.result = result;
+    EventListenersResponse that = (EventListenersResponse) object;
+
+    if (requestId != that.requestId) {
+      return false;
+    }
+    if (listeners != null ? !listeners.equals(that.listeners) : that.listeners != null) {
+      return false;
+    }
+    if (result != that.result) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'requestId' field.
-     */
-    public int getRequestId() {
-        return requestId;
-    }
+    return true;
+  }
 
-    /**
-     * Sets the value of the 'requestId' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setRequestId(int value) {
-        this.requestId = value;
-    }
-
-    /**
-     * Gets the value of the 'listeners' field.
-     */
-    public List<String> getListeners() {
-        return listeners;
-    }
-
-    /**
-     * Sets the value of the 'listeners' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setListeners(List<String> value) {
-        this.listeners = value;
-    }
-
-    /**
-     * Gets the value of the 'result' field.
-     */
-    public SyncStatus getResult() {
-        return result;
-    }
-
-    /**
-     * Sets the value of the 'result' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setResult(SyncStatus value) {
-        this.result = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        EventListenersResponse that = (EventListenersResponse) o;
-
-        if (requestId != that.requestId) {
-            return false;
-        }
-        if (listeners != null ? !listeners.equals(that.listeners) : that.listeners != null) {
-            return false;
-        }
-        if (result != that.result) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result1 = requestId;
-        result1 = 31 * result1 + (listeners != null ? listeners.hashCode() : 0);
-        result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
-        return result1;
-    }
+  @Override
+  public int hashCode() {
+    int result1 = requestId;
+    result1 = 31 * result1 + (listeners != null ? listeners.hashCode() : 0);
+    result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
+    return result1;
+  }
 }

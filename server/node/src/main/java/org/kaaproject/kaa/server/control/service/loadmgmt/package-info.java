@@ -24,6 +24,5 @@
  * 6. Set redirection rules to specific Operations servers.
  *
  * @author Andrey Panasenko apanasenko@cybervisiontech.com
- *
  */
 package org.kaaproject.kaa.server.control.service.loadmgmt;

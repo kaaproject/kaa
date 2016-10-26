@@ -36,28 +36,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class NotificationMongoDaoTest extends AbstractTest {
 
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
+  @BeforeClass
+  public static void init() throws Exception {
+    MongoDBTestRunner.setUp();
+  }
 
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
+  @AfterClass
+  public static void after() throws Exception {
+    MongoDBTestRunner.tearDown();
+  }
 
-    @After
-    public void afterTest() {
-        MongoDataLoader.clearDBData();
-    }
+  @After
+  public void afterTest() {
+    MongoDataLoader.clearDBData();
+  }
 
-    @Test
-    public void testRemoveById() {
-        NotificationDto notification = generateNotificationsDto(null, null, 1, null).get(0);
-        Assert.assertNotNull(notification.getId());
-        notificationDao.removeById(notification.getId());
-        Notification found = notificationDao.findById(notification.getId());
-        Assert.assertNull(found);
-    }
+  @Test
+  public void testRemoveById() {
+    NotificationDto notification = generateNotificationsDto(null, null, 1, null).get(0);
+    Assert.assertNotNull(notification.getId());
+    notificationDao.removeById(notification.getId());
+    Notification found = notificationDao.findById(notification.getId());
+    Assert.assertNull(found);
+  }
 
 }

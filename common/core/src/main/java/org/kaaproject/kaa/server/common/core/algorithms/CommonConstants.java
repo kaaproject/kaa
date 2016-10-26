@@ -18,81 +18,133 @@ package org.kaaproject.kaa.server.common.core.algorithms;
 
 public interface CommonConstants { //NOSONAR
 
-    /** The Constant NAME_FIELD. */
-    static final String NAME_FIELD = "name";
+  /**
+   * The Constant NAME_FIELD.
+   */
+  static final String NAME_FIELD = "name";
 
-    /** The Constant NAMESPACE_FIELD. */
-    static final String NAMESPACE_FIELD = "namespace";
-    
-    /** The Constant DISPLAY_NAME_FIELD. */
-    static final String DISPLAY_NAME_FIELD = "displayName";
-    
-    /** The Constant FIELD_ACCESS_FIELD. */
-    static final String FIELD_ACCESS_FIELD = "fieldAccess";
-    
-    /** The Constant FIELD_ACCESS_READ_ONLY. */
-    static final String FIELD_ACCESS_READ_ONLY = "read_only";
+  /**
+   * The Constant NAMESPACE_FIELD.
+   */
+  static final String NAMESPACE_FIELD = "namespace";
 
-    /** The Constant UUID_FIELD. */
-    static final String UUID_FIELD = "__uuid";
-    
-    /** The Constant UUID_FIELD_DISPLAY_NAME. */
-    static final String UUID_FIELD_DISPLAY_NAME = "Record Id";
+  /**
+   * The Constant DISPLAY_NAME_FIELD.
+   */
+  static final String DISPLAY_NAME_FIELD = "displayName";
 
-    /** The Constant UUID_FIELD. */
-    static final String UUID_TYPE = "uuidT";
+  /**
+   * The Constant FIELD_ACCESS_FIELD.
+   */
+  static final String FIELD_ACCESS_FIELD = "fieldAccess";
 
-    /** The Constant UUID_SIZE. */
-    static final int UUID_SIZE = 16;
+  /**
+   * The Constant FIELD_ACCESS_READ_ONLY.
+   */
+  static final String FIELD_ACCESS_READ_ONLY = "read_only";
 
-    /** The Constant TYPE_FIELD. */
-    static final String TYPE_FIELD = "type";
+  /**
+   * The Constant UUID_FIELD.
+   */
+  static final String UUID_FIELD = "__uuid";
 
-    /** The Constant UNCHANGED. */
-    static final String UNCHANGED = "unchanged";
+  /**
+   * The Constant UUID_FIELD_DISPLAY_NAME.
+   */
+  static final String UUID_FIELD_DISPLAY_NAME = "Record Id";
 
-    /** The Constant RESET. */
-    static final String RESET = "reset";
+  /**
+   * The Constant UUID_FIELD.
+   */
+  static final String UUID_TYPE = "uuidT";
 
-    /** The Constant FIELDS_FIELD. */
-    static final String FIELDS_FIELD = "fields";
+  /**
+   * The Constant UUID_SIZE.
+   */
+  static final int UUID_SIZE = 16;
 
-    /** The Constant ITEMS_FIELD. */
-    static final String ITEMS_FIELD = "items";
+  /**
+   * The Constant TYPE_FIELD.
+   */
+  static final String TYPE_FIELD = "type";
 
-    /** The Constant ARRAY_FIELD. */
-    static final String ARRAY_FIELD_VALUE = "array";
+  /**
+   * The Constant UNCHANGED.
+   */
+  static final String UNCHANGED = "unchanged";
 
-    /** The Constant UUID_SCHEMA_SPACE. */
-    static final String KAA_NAMESPACE = "org.kaaproject.configuration";
+  /**
+   * The Constant RESET.
+   */
+  static final String RESET = "reset";
 
-    /** The Constant ENUM_FIELD_VALUE. */
-    static final String ENUM_FIELD_VALUE = "enum";
+  /**
+   * The Constant FIELDS_FIELD.
+   */
+  static final String FIELDS_FIELD = "fields";
 
-    /** The Constant SYMBOLS_FIELD. */
-    static final String SYMBOLS_FIELD = "symbols";
+  /**
+   * The Constant ITEMS_FIELD.
+   */
+  static final String ITEMS_FIELD = "items";
 
-    /** The Constant RECORD_FIELD_VALUE. */
-    static final String RECORD_FIELD_VALUE = "record";
+  /**
+   * The Constant ARRAY_FIELD.
+   */
+  static final String ARRAY_FIELD_VALUE = "array";
 
-    /** The Constant MAP_FIELD_VALUE. */
-    static final String MAP_FIELD_VALUE = "map";
+  /**
+   * The Constant UUID_SCHEMA_SPACE.
+   */
+  static final String KAA_NAMESPACE = "org.kaaproject.configuration";
 
-    /** The Constant FIXED_FIELD_VALUE. */
-    static final String FIXED_FIELD_VALUE = "fixed";
+  /**
+   * The Constant ENUM_FIELD_VALUE.
+   */
+  static final String ENUM_FIELD_VALUE = "enum";
 
-    /** The Constant NULL_FIELD_VALUE. */
-    static final String NULL_FIELD_VALUE = "null";
+  /**
+   * The Constant SYMBOLS_FIELD.
+   */
+  static final String SYMBOLS_FIELD = "symbols";
 
-    /** The Constant BYTES_FIELD_VALUE. */
-    static final String BYTES_FIELD_VALUE = "bytes";
+  /**
+   * The Constant RECORD_FIELD_VALUE.
+   */
+  static final String RECORD_FIELD_VALUE = "record";
 
-    /** The Constant BY_DEFAULT_FIELD. */
-    static final String BY_DEFAULT_FIELD = "by_default";
+  /**
+   * The Constant MAP_FIELD_VALUE.
+   */
+  static final String MAP_FIELD_VALUE = "map";
 
-    /** The Constant SIZE_FIELD. */
-    static final String SIZE_FIELD = "size";
+  /**
+   * The Constant FIXED_FIELD_VALUE.
+   */
+  static final String FIXED_FIELD_VALUE = "fixed";
 
-    /** The Constant DELTA. */
-    static final String DELTA = "delta";
+  /**
+   * The Constant NULL_FIELD_VALUE.
+   */
+  static final String NULL_FIELD_VALUE = "null";
+
+  /**
+   * The Constant BYTES_FIELD_VALUE.
+   */
+  static final String BYTES_FIELD_VALUE = "bytes";
+
+  /**
+   * The Constant BY_DEFAULT_FIELD.
+   */
+  static final String BY_DEFAULT_FIELD = "by_default";
+
+  /**
+   * The Constant SIZE_FIELD.
+   */
+  static final String SIZE_FIELD = "size";
+
+  /**
+   * The Constant DELTA.
+   */
+  static final String DELTA = "delta";
 }

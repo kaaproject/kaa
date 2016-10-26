@@ -17,26 +17,27 @@
 package org.kaaproject.kaa.server.sync.bootstrap;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
 
 public class GeneralBootstrapTest {
-    @Test
-    public void bootstrapClientSyncEqualsHashCodeTest() {
-        EqualsVerifier.forClass(BootstrapClientSync.class).verify();
-    }
+  @Test
+  public void bootstrapClientSyncEqualsHashCodeTest() {
+    EqualsVerifier.forClass(BootstrapClientSync.class).verify();
+  }
 
-    @Test
-    public void bootstrapServerSyncEqualsHashCodeTest() {
-        EqualsVerifier.forClass(BootstrapServerSync.class).verify();
-    }
+  @Test
+  public void bootstrapServerSyncEqualsHashCodeTest() {
+    EqualsVerifier.forClass(BootstrapServerSync.class).verify();
+  }
 
-    @Test
-    public void protocolConnectionDataEqualsHashCodeTest() {
-        EqualsVerifier.forClass(ProtocolConnectionData.class).verify();
-    }
+  @Test
+  public void protocolConnectionDataEqualsHashCodeTest() {
+    EqualsVerifier.forClass(ProtocolConnectionData.class).verify();
+  }
 
-    @Test
-    public void protocolVersionIdEqualsHashCodeTest() {
-        EqualsVerifier.forClass(ProtocolVersionId.class).verify();
-    }
+  @Test
+  public void protocolVersionIdEqualsHashCodeTest() {
+    EqualsVerifier.forClass(ProtocolVersionId.class).verify();
+  }
 }

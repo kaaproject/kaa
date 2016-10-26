@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.place.shared.PlaceTokenizer;
+import com.google.gwt.place.shared.Prefix;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.view.client.HasData;
+import com.google.web.bindery.event.shared.EventBus;
 
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -25,104 +28,102 @@ import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.gwt.place.shared.Prefix;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsersPlace extends TreePlace {
 
-    private UserPlaceDataProvider dataProvider;
+  private UserPlaceDataProvider dataProvider;
 
-    public UsersPlace() {
+  public UsersPlace() {
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof UsersPlace);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.users();
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return false;
+  }
+
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    if (dataProvider == null) {
+      dataProvider = new UserPlaceDataProvider(eventBus);
+    }
+    return dataProvider;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return null;
+  }
+
+  @Prefix(value = "users")
+  public static class Tokenizer implements PlaceTokenizer<UsersPlace> {
+
+    @Override
+    public UsersPlace getPlace(String token) {
+      return new UsersPlace();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj != null && (obj instanceof UsersPlace);
+    public String getToken(UsersPlace place) {
+      PlaceParams.clear();
+      return PlaceParams.generateToken();
+    }
+  }
+
+  class UserPlaceDataProvider extends TreePlaceDataProvider implements DataEventHandler {
+
+    UserPlaceDataProvider(EventBus eventBus) {
+      eventBus.addHandler(DataEvent.getType(), this);
     }
 
-    @Prefix(value = "users")
-    public static class Tokenizer implements PlaceTokenizer<UsersPlace> {
+    @Override
+    public void onDataChanged(DataEvent event) {
+      if (event.checkClass(UserDto.class)) {
+        refresh();
+      }
+    }
+
+    @Override
+    protected void loadData(
+        final LoadCallback callback,
+        final HasData<TreePlace> display) {
+      KaaAdmin.getDataSource().loadUsers(new AsyncCallback<List<UserDto>>() {
+        @Override
+        public void onFailure(Throwable caught) {
+          callback.onFailure(caught);
+
+        }
 
         @Override
-        public UsersPlace getPlace(String token) {
-            return new UsersPlace();
-        }
+        public void onSuccess(List<UserDto> result) {
 
-        @Override
-        public String getToken(UsersPlace place) {
-            PlaceParams.clear();
-            return PlaceParams.generateToken();
+          callback.onSuccess(toPlaces(result), display);
         }
+      });
     }
 
-    @Override
-    public String getName() {
-        return Utils.constants.users();
+    private List<TreePlace> toPlaces(List<UserDto> users) {
+      List<TreePlace> result = new ArrayList<TreePlace>();
+      for (UserDto user : users) {
+        UserPlace place = new UserPlace(user.getId());
+        place.setUserName(user.getUsername());
+        result.add(place);
+      }
+      return result;
     }
 
-    @Override
-    public boolean isLeaf() {
-        return false;
-    }
 
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        if (dataProvider == null) {
-            dataProvider = new UserPlaceDataProvider(eventBus);
-        }
-        return dataProvider;
-    }
-
-    class UserPlaceDataProvider extends TreePlaceDataProvider implements DataEventHandler {
-
-        UserPlaceDataProvider(EventBus eventBus) {
-            eventBus.addHandler(DataEvent.getType(), this);
-        }
-
-        @Override
-        public void onDataChanged(DataEvent event) {
-            if (event.checkClass(UserDto.class)) {
-                refresh();
-            }
-        }
-
-        @Override
-        protected void loadData(
-                final LoadCallback callback,
-                final HasData<TreePlace> display) {
-            KaaAdmin.getDataSource().loadUsers(new AsyncCallback<List<UserDto>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
-
-                }
-                @Override
-                public void onSuccess(List<UserDto> result) {
-
-                    callback.onSuccess(toPlaces(result), display);
-                }
-            });
-        }
-
-        private List<TreePlace> toPlaces(List<UserDto> users) {
-            List<TreePlace> result = new ArrayList<TreePlace>();
-            for (UserDto user : users) {
-                UserPlace place = new UserPlace(user.getId());
-                place.setUserName(user.getUsername());
-                result.add(place);
-            }
-            return result;
-        }
-
-
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return null;
-    }
+  }
 
 }

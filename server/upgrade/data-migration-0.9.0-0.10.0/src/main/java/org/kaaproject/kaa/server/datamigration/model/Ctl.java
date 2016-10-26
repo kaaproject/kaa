@@ -17,53 +17,63 @@
 package org.kaaproject.kaa.server.datamigration.model;
 
 public class Ctl {
-    private final Long id;
-    private final CtlMetaInfo metaInfo;
-    private final String defaultRecord;
-    private boolean existInDb;
+  private final Long id;
+  private final CtlMetaInfo metaInfo;
+  private final String defaultRecord;
+  private boolean existInDb;
 
-    public Ctl(Long id, CtlMetaInfo metaInfo, String defaultRecord) {
-        this.id = id;
-        this.metaInfo = metaInfo;
-        this.defaultRecord = defaultRecord;
+  /**
+   * Instantiates a new Ctl.
+   *
+   */
+  public Ctl(Long id, CtlMetaInfo metaInfo, String defaultRecord) {
+    this.id = id;
+    this.metaInfo = metaInfo;
+    this.defaultRecord = defaultRecord;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Ctl ctl = (Ctl) o;
-
-        if (!metaInfo.equals(ctl.metaInfo)) return false;
-        return defaultRecord.equals(ctl.defaultRecord);
-
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
     }
 
-    @Override
-    public int hashCode() {
-        int result = metaInfo.hashCode();
-        result = 31 * result + defaultRecord.hashCode();
-        return result;
-    }
+    Ctl ctl = (Ctl) obj;
 
-    public Long getId() {
-        return id;
+    if (!metaInfo.equals(ctl.metaInfo)) {
+      return false;
     }
+    return defaultRecord.equals(ctl.defaultRecord);
+  }
 
-    public CtlMetaInfo getMetaInfo() {
-        return metaInfo;
-    }
+  @Override
+  public int hashCode() {
+    int result = metaInfo.hashCode();
+    result = 31 * result + defaultRecord.hashCode();
+    return result;
+  }
 
-    public String getDefaultRecord() {
-        return defaultRecord;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public boolean isExistInDb() {
-        return existInDb;
-    }
+  public CtlMetaInfo getMetaInfo() {
+    return metaInfo;
+  }
 
-    public void setExistInDb(boolean existInDb) {
-        this.existInDb = existInDb;
-    }
+  public String getDefaultRecord() {
+    return defaultRecord;
+  }
+
+  public boolean isExistInDb() {
+    return existInDb;
+  }
+
+  public void setExistInDb(boolean existInDb) {
+    this.existInDb = existInDb;
+  }
 }

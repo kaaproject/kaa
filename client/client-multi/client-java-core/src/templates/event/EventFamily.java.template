@@ -43,7 +43,7 @@ public class ${event_family_class_name} implements EventFamily {
     }
 
     @Override
-    public Set<String> getSupportedEventFQNs() {
+    public Set<String> getSupportedEventFqns() {
         Set<String> result = new HashSet<>();
 
         ${add_supported_event_class_fqns}

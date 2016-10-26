@@ -16,31 +16,32 @@
 
 package org.kaaproject.kaa.server.transport;
 
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 /**
  * Stores common properties for all transports. Majority of these properties are
  * related to the runtime environment or specific to the host.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public class TransportProperties extends Properties {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -3398931583634951967L;
+  private static final long serialVersionUID = -3398931583634951967L;
 
-    private static final String FILTER_PREFIX = "transport_";
+  private static final String FILTER_PREFIX = "transport_";
 
-    public TransportProperties(Properties source) {
-        super();
-        for (Entry<Object, Object> entry : source.entrySet()) {
-            if (entry.getKey().toString().startsWith(FILTER_PREFIX)) {
-                this.put(entry.getKey(), entry.getValue());
-            }
-        }
+  /**
+   * Create new instance of <code>TransportProperties</code>.
+   *
+   * @param source is <code>Properties</code> instance, add all it's values to current instance
+   */
+  public TransportProperties(Properties source) {
+    super();
+    for (Entry<Object, Object> entry : source.entrySet()) {
+      if (entry.getKey().toString().startsWith(FILTER_PREFIX)) {
+        this.put(entry.getKey(), entry.getValue());
+      }
     }
+  }
 }

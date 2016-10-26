@@ -23,24 +23,24 @@ import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
 
 @KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
-public class FileSystemAppenderConfig implements PluginConfig{
+public class FileSystemAppenderConfig implements PluginConfig {
 
-    public FileSystemAppenderConfig() {
-    }
-    
-    @Override
-    public String getPluginTypeName() {
-        return "File";
-    }
+  public FileSystemAppenderConfig() {
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender";
-    }
+  @Override
+  public String getPluginTypeName() {
+    return "File";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return FileConfig.getClassSchema();
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.appenders.file.appender.FileSystemLogAppender";
+  }
+
+  @Override
+  public Schema getPluginConfigSchema() {
+    return FileConfig.getClassSchema();
+  }
 
 }

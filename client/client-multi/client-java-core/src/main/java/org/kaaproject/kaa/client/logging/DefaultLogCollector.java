@@ -16,51 +16,51 @@
 
 package org.kaaproject.kaa.client.logging;
 
-import java.io.IOException;
-
-import javax.annotation.Generated;
-
-import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.channel.KaaChannelManager;
 import org.kaaproject.kaa.client.channel.LogTransport;
+import org.kaaproject.kaa.client.channel.failover.FailoverManager;
 import org.kaaproject.kaa.client.context.ExecutorContext;
 import org.kaaproject.kaa.client.logging.future.RecordFuture;
 import org.kaaproject.kaa.schema.base.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
+import javax.annotation.Generated;
+
 /**
- * Reference implementation of @see LogCollector
+ * Reference implementation of @see LogCollector.
  *
  * @author Andrew Shvayka
  */
 @Generated("DefaultLogCollector.java.template")
 public class DefaultLogCollector extends AbstractLogCollector {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollector.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultLogCollector.class);
 
-    public DefaultLogCollector(LogTransport transport, ExecutorContext executorContext,
-                               KaaChannelManager channelManager, FailoverManager failoverManager) {
-        super(transport, executorContext, channelManager, failoverManager);
-    }
+  public DefaultLogCollector(LogTransport transport, ExecutorContext executorContext,
+                             KaaChannelManager channelManager, FailoverManager failoverManager) {
+    super(transport, executorContext, channelManager, failoverManager);
+  }
 
-    @Override
-    public RecordFuture addLogRecord(final Log record) {
-        final RecordFuture future = new RecordFuture();
-        executorContext.getApiExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    BucketInfo bucketInfo = storage.addLogRecord(new LogRecord(record));
-                    bucketInfoMap.put(bucketInfo.getBucketId(), bucketInfo);
-                    addDeliveryFuture(bucketInfo, future);
-                } catch (IOException e) {
-                    LOG.warn("Can't serialize log record {}, exception catched: {}", record, e);
-                }
+  @Override
+  public RecordFuture addLogRecord(final Log record) {
+    final RecordFuture future = new RecordFuture();
+    executorContext.getApiExecutor().execute(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          BucketInfo bucketInfo = storage.addLogRecord(new LogRecord(record));
+          bucketInfoMap.put(bucketInfo.getBucketId(), bucketInfo);
+          addDeliveryFuture(bucketInfo, future);
+        } catch (IOException ex) {
+          LOG.warn("Can't serialize log record {}, exception catched: {}", record, ex);
+        }
 
-                uploadIfNeeded();
-            }
-        });
+        uploadIfNeeded();
+      }
+    });
 
-        return future;
-    }
+    return future;
+  }
 }

@@ -16,69 +16,63 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
+
+import java.util.List;
 
 /**
  * The interface for SdkProfile service.
  */
 public interface SdkProfileService {
 
-    /**
-     * Save sdk properties. If sdk properties object has id, then sdk key will
-     * be updated, otherwise if there is no other sdk key object with the same
-     * token, it will be inserted as a new sdk key object, if there is, nothing
-     * will be saved, existent object will be returned
-     *
-     * @param sdkPropertiesDto the sdk properties dto
-     * @return the saved application dto object
-     */
-    SdkProfileDto saveSdkProfile(SdkProfileDto sdkPropertiesDto);
+  /**
+   * Save sdk properties. If sdk properties object has id, then sdk key will
+   * be updated, otherwise if there is no other sdk key object with the same
+   * token, it will be inserted as a new sdk key object, if there is, nothing
+   * will be saved, existent object will be returned
+   *
+   * @param sdkPropertiesDto the sdk properties dto
+   * @return the saved application dto object
+   */
+  SdkProfileDto saveSdkProfile(SdkProfileDto sdkPropertiesDto);
 
-    /**
-     * Returns an SDK profile by its identifier.
-     *
-     * @param id An SDK profile identifier
-     *
-     * @return An SDK profile with the given identifier
-     */
-    SdkProfileDto findSdkProfileById(String id);
+  /**
+   * Returns an SDK profile by its identifier.
+   *
+   * @param id An SDK profile identifier
+   * @return An SDK profile with the given identifier
+   */
+  SdkProfileDto findSdkProfileById(String id);
 
-    /**
-     * Returns an SDK profile by its token.
-     *
-     * @param token An SDK profile token
-     *
-     * @return An SDK profile with the given token
-     */
-    SdkProfileDto findSdkProfileByToken(String token);
+  /**
+   * Returns an SDK profile by its token.
+   *
+   * @param token An SDK profile token
+   * @return An SDK profile with the given token
+   */
+  SdkProfileDto findSdkProfileByToken(String token);
 
-    /**
-     * Returns a list of SDK profiles for an application with the given
-     * identifier.
-     *
-     * @param applicationId An application identifier
-     *
-     * @return A list of SDK profiles for an application with the given
-     *         identifier
-     */
-    List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId);
+  /**
+   * Returns a list of SDK profiles for an application with the given
+   * identifier.
+   *
+   * @param applicationId An application identifier
+   * @return A list of SDK profiles for an application with the given identifier
+   */
+  List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId);
 
-    /**
-     * Removes an SDK profile from the database by its identifier.
-     *
-     * @param id The identifier of the SDK profile to remove
-     */
-    void removeSdkProfileById(String id);
+  /**
+   * Removes an SDK profile from the database by its identifier.
+   *
+   * @param id The identifier of the SDK profile to remove
+   */
+  void removeSdkProfileById(String id);
 
-    /**
-     * Checks whether an SDK profile is used by at least one endpoint.
-     *
-     * @param token The token of the SDK profile to check
-     *
-     * @return <code>true</code> if the SDK profile is used, <code>false</code>
-     *         otherwise
-     */
-    boolean isSdkProfileUsed(String token);
+  /**
+   * Checks whether an SDK profile is used by at least one endpoint.
+   *
+   * @param token The token of the SDK profile to check
+   * @return <code>true</code> if the SDK profile is used, <code>false</code> otherwise
+   */
+  boolean isSdkProfileUsed(String token);
 }

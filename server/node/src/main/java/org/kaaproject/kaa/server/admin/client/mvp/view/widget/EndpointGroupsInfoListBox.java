@@ -18,6 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ValueListBox;
+
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 
 import java.io.IOException;
@@ -26,26 +27,29 @@ import java.util.List;
 
 public class EndpointGroupsInfoListBox extends ValueListBox<EndpointGroupDto> {
 
-    public EndpointGroupsInfoListBox() {
-        super(new EndpointGroupInfoRender());
+  public EndpointGroupsInfoListBox() {
+    super(new EndpointGroupInfoRender());
+  }
+
+  /**
+   * Reset.
+   */
+  public void reset() {
+    List<EndpointGroupDto> emptyList = Collections.emptyList();
+    setValue(null);
+    setAcceptableValues(emptyList);
+  }
+
+  static class EndpointGroupInfoRender implements Renderer<EndpointGroupDto> {
+
+    @Override
+    public String render(EndpointGroupDto dto) {
+      return dto != null ? (dto.getName()) : "";
     }
 
-    public void reset() {
-        List<EndpointGroupDto> emptyList = Collections.emptyList();
-        setValue(null);
-        setAcceptableValues(emptyList);
+    @Override
+    public void render(EndpointGroupDto dto, Appendable appendable) throws IOException {
+      appendable.append(render(dto));
     }
-
-    static class EndpointGroupInfoRender implements Renderer<EndpointGroupDto> {
-
-        @Override
-        public String render(EndpointGroupDto dto) {
-            return dto !=null ? (dto.getName()) : "";
-        }
-
-        @Override
-        public void render(EndpointGroupDto dto, Appendable appendable) throws IOException {
-            appendable.append(render(dto));
-        }
-    }
+  }
 }

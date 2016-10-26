@@ -16,27 +16,32 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import java.util.List;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ValueListBox;
 
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.MultiValueListBox;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.ValueListBox;
+import java.util.List;
 
 public interface AddSdkProfileView extends BaseDetailsView {
 
-    HasValue<String> getName();
+  HasValue<String> getName();
 
-    ValueListBox<VersionDto> getConfigurationSchemaVersion();
-    ValueListBox<VersionDto> getProfileSchemaVersion();
-    ValueListBox<VersionDto> getNotificationSchemaVersion();
-    ValueListBox<VersionDto> getLogSchemaVersion();
-    MultiValueListBox<AefMapInfoDto> getSelectedAefMaps();
-    ValueListBox<UserVerifierDto> getDefaultUserVerifier();
+  ValueListBox<VersionDto> getConfigurationSchemaVersion();
 
-    void setAefMaps(List<AefMapInfoDto> aefMaps);
+  ValueListBox<VersionDto> getProfileSchemaVersion();
+
+  ValueListBox<VersionDto> getNotificationSchemaVersion();
+
+  ValueListBox<VersionDto> getLogSchemaVersion();
+
+  MultiValueListBox<AefMapInfoDto> getSelectedAefMaps();
+
+  ValueListBox<UserVerifierDto> getDefaultUserVerifier();
+
+  void setAefMaps(List<AefMapInfoDto> aefMaps);
 
 }

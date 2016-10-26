@@ -16,51 +16,53 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.properties;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
-import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
-import org.kaaproject.avro.ui.shared.RecordField;
-
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 
-public abstract class BasePropertiesViewImpl extends BaseDetailsViewImpl implements BasePropertiesView, ValueChangeHandler<RecordField> {
+import org.kaaproject.avro.ui.gwt.client.widget.AvroWidgetsConfig;
+import org.kaaproject.avro.ui.gwt.client.widget.RecordFieldWidget;
+import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    private RecordFieldWidget configuration;
-    
-    public BasePropertiesViewImpl(boolean create) {
-        super(create);
-    }
+public abstract class BasePropertiesViewImpl
+    extends BaseDetailsViewImpl
+    implements BasePropertiesView, ValueChangeHandler<RecordField> {
 
-    @Override
-    protected void initDetailsTable() {
-        getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
-        configuration = new RecordFieldWidget(new AvroWidgetsConfig.Builder().createConfig());
-        configuration.addValueChangeHandler(this);
-        getFooter().add(configuration);
-    }
+  private RecordFieldWidget configuration;
 
-    @Override
-    protected void resetImpl() {
-        configuration.setValue(null);
-    }
+  public BasePropertiesViewImpl(boolean create) {
+    super(create);
+  }
 
-    @Override
-    protected boolean validate() {
-        return configuration.validate();
-    }
-    
-    @Override
-    public HasValue<RecordField> getConfiguration() {
-        return configuration;
-    }
+  @Override
+  protected void initDetailsTable() {
+    getFooter().addStyleName(Utils.kaaAdminStyle.bAppContentDetailsTable());
+    configuration = new RecordFieldWidget(new AvroWidgetsConfig.Builder().createConfig());
+    configuration.addValueChangeHandler(this);
+    getFooter().add(configuration);
+  }
 
-    @Override
-    public void onValueChange(ValueChangeEvent<RecordField> event) {
-        fireChanged();
-    }
+  @Override
+  protected void resetImpl() {
+    configuration.setValue(null);
+  }
+
+  @Override
+  protected boolean validate() {
+    return configuration.validate();
+  }
+
+  @Override
+  public HasValue<RecordField> getConfiguration() {
+    return configuration;
+  }
+
+  @Override
+  public void onValueChange(ValueChangeEvent<RecordField> event) {
+    fireChanged();
+  }
 
 }

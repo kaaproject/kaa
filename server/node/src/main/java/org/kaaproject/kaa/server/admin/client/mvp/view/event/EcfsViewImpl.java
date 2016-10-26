@@ -16,32 +16,32 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
+import com.google.gwt.dom.client.Style.Unit;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
-
 public class EcfsViewImpl extends BaseListViewImpl<EventClassFamilyDto> {
 
-        public EcfsViewImpl() {
-            super(true);
-        }
+  public EcfsViewImpl() {
+    super(true);
+  }
 
-        @Override
-        protected AbstractGrid<EventClassFamilyDto, String> createGrid() {
-            return new EcfsGrid(Unit.PX);
-        }
+  @Override
+  protected AbstractGrid<EventClassFamilyDto, String> createGrid() {
+    return new EcfsGrid(Unit.PX);
+  }
 
-        @Override
-        protected String titleString() {
-            return Utils.constants.ecfs();
-        }
+  @Override
+  protected String titleString() {
+    return Utils.constants.ecfs();
+  }
 
-        @Override
-        protected String addButtonString() {
-            return Utils.constants.addNewEcf();
-        }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewEcf();
+  }
 }
 

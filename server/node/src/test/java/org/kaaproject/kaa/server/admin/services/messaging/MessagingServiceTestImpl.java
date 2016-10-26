@@ -21,26 +21,26 @@ import org.slf4j.LoggerFactory;
 
 public class MessagingServiceTestImpl implements MessagingService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MessagingServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MessagingServiceImpl.class);
 
-    @Override
-    public void configureMailSender() {
-        LOG.info("[TEST]: Configure Mail Sender.");
-    }
+  @Override
+  public void configureMailSender() {
+    LOG.info("[TEST]: Configure Mail Sender.");
+  }
 
-    @Override
-    public void sendTempPassword(String username, String password, String email) throws Exception {
-        LOG.info("[TEST]: Invoked sendTempPassword: [username: {}, password: {}, email: {}]", username, password, email);
-    }
+  @Override
+  public void sendTempPassword(String username, String password, String email) throws Exception {
+    LOG.info("[TEST]: Invoked sendTempPassword: [username: {}, password: {}, email: {}]", username, password, email);
+  }
 
-    @Override
-    public void sendPasswordResetLink(String passwordResetHash, String username, String email) {
-        LOG.info("[TEST]: Invoked sendPasswordResetLink: [passwordResetHash: {}, username: {}, email: {}]",
-                passwordResetHash, username, email);
-    }
+  @Override
+  public void sendPasswordResetLink(String passwordResetHash, String username, String email) {
+    LOG.info("[TEST]: Invoked sendPasswordResetLink: [passwordResetHash: {}, username: {}, email: {}]",
+        passwordResetHash, username, email);
+  }
 
-    @Override
-    public void sendPasswordAfterReset(String username, String password, String email) {
-        LOG.info("[TEST]: Invoked sendPasswordAfterReset: [username: {}, password: {}, email: {}]", username, password, email);
-    }
+  @Override
+  public void sendPasswordAfterReset(String username, String password, String email) {
+    LOG.info("[TEST]: Invoked sendPasswordAfterReset: [username: {}, password: {}, email: {}]", username, password, email);
+  }
 }

@@ -19,61 +19,63 @@ package org.kaaproject.kaa.client.channel;
 /**
  * Immutable class to represent transport ID. Holds references to transport
  * protocol id and transport protocol version
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public final class TransportProtocolId {
 
-    private final int id;
-    private final int version;
+  private final int id;
+  private final int version;
 
-    public TransportProtocolId(int protocolId, int protocolVersion) {
-        super();
-        this.id = protocolId;
-        this.version = protocolVersion;
-    }
+  /**
+   * All-args constructor.
+   */
+  public TransportProtocolId(int protocolId, int protocolVersion) {
+    super();
+    this.id = protocolId;
+    this.version = protocolVersion;
+  }
 
-    public int getProtocolId() {
-        return id;
-    }
+  public int getProtocolId() {
+    return id;
+  }
 
-    public int getProtocolVersion() {
-        return version;
-    }
+  public int getProtocolVersion() {
+    return version;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + id;
-        result = prime * result + version;
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + id;
+    result = prime * result + version;
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        TransportProtocolId other = (TransportProtocolId) obj;
-        if (id != other.id) {
-            return false;
-        }
-        if (version != other.version) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    TransportProtocolId other = (TransportProtocolId) obj;
+    if (id != other.id) {
+      return false;
+    }
+    if (version != other.version) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        return "TransportProtocolId [id=" + id + ", version=" + version + "]";
-    }
+  @Override
+  public String toString() {
+    return "TransportProtocolId [id=" + id + ", version=" + version + "]";
+  }
 }

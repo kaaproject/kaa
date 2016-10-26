@@ -16,51 +16,49 @@
 
 package org.kaaproject.kaa.client.context;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public abstract class AbstractExecutorContext implements ExecutorContext {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractExecutorContext.class);
+  protected static final int DEFAULT_TIMEOUT = 5;
+  protected static final TimeUnit DEFAULT_TIMEUNIT = TimeUnit.SECONDS;
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractExecutorContext.class);
+  private final int timeout;
+  private final TimeUnit timeunit;
 
-    protected static final int DEFAULT_TIMEOUT = 5;
-    protected static final TimeUnit DEFAULT_TIMEUNIT = TimeUnit.SECONDS;
+  protected AbstractExecutorContext() {
+    this(DEFAULT_TIMEOUT, DEFAULT_TIMEUNIT);
+  }
 
-    private final int timeout;
-    private final TimeUnit timeunit;
+  protected AbstractExecutorContext(int timeout, TimeUnit timeunit) {
+    super();
+    this.timeout = timeout;
+    this.timeunit = timeunit;
+  }
 
-    protected AbstractExecutorContext() {
-        this(DEFAULT_TIMEOUT, DEFAULT_TIMEUNIT);
+  protected int getTimeout() {
+    return timeout;
+  }
+
+  protected TimeUnit getTimeunit() {
+    return timeunit;
+  }
+
+  protected void shutdownExecutor(ExecutorService executor) {
+    if (executor == null) {
+      LOG.warn("Can't shutdown empty executor");
+      return;
     }
-
-    protected AbstractExecutorContext(int timeout, TimeUnit timeunit) {
-        super();
-        this.timeout = timeout;
-        this.timeunit = timeunit;
+    LOG.debug("Shutdown executor service");
+    executor.shutdown();
+    LOG.debug("Waiting for executor service to shutdown for {} {}", getTimeout(), getTimeunit());
+    try {
+      executor.awaitTermination(getTimeout(), getTimeunit());
+    } catch (InterruptedException ex) {
+      LOG.warn("Interrupted while waiting for executor to shutdown", ex);
     }
-
-    protected int getTimeout() {
-        return timeout;
-    }
-
-    protected TimeUnit getTimeunit() {
-        return timeunit;
-    }
-
-    protected void shutdownExecutor(ExecutorService executor) {
-        if (executor == null) {
-            LOG.warn("Can't shutdown empty executor");
-            return;
-        }
-        LOG.debug("Shutdown executor service");
-        executor.shutdown();
-        LOG.debug("Waiting for executor service to shutdown for {} {}", getTimeout(), getTimeunit());
-        try {
-            executor.awaitTermination(getTimeout(), getTimeunit());
-        } catch (InterruptedException e) {
-            LOG.warn("Interrupted while waiting for executor to shutdown", e);
-        }
-    }
+  }
 }

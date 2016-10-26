@@ -20,41 +20,42 @@ import java.util.List;
 
 /**
  * The interface Profile schema dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface ProfileSchemaDao<T> extends SqlDao<T> {
 
-    /**
-     * Find profile schemas by application id.
-     *
-     * @param applicationId the application id
-     * @return the list of profile schemas
-     */
-    List<T> findByApplicationId(String applicationId);
+  /**
+   * Find profile schemas by application id.
+   *
+   * @param applicationId the application id
+   * @return the list of profile schemas
+   */
+  List<T> findByApplicationId(String applicationId);
 
-    /**
-     * Find profile schema by application id and version.
-     *
-     * @param applicationId the application id
-     * @param version the version of profile schema
-     * @return the profile schema
-     */
-    T findByAppIdAndVersion(String applicationId, int version);
+  /**
+   * Find profile schema by application id and version.
+   *
+   * @param applicationId the application id
+   * @param version       the version of profile schema
+   * @return the profile schema
+   */
+  T findByAppIdAndVersion(String applicationId, int version);
 
-    /**
-     * Find latest profile schema by application id.
-     *
-     * @param applicationId the application id
-     * @return the profile schema
-     */
-    T findLatestByAppId(String applicationId);
+  /**
+   * Find latest profile schema by application id.
+   *
+   * @param applicationId the application id
+   * @return the profile schema
+   */
+  T findLatestByAppId(String applicationId);
 
-    /**
-     * Find vacant profile schemas.
-     *
-     * @param applicationId the application id
-     * @param usedSchemaIds the used schema ids
-     * @return the list of profile schemas
-     */
-    List<T> findVacantSchemas(String applicationId, List<String> usedSchemaIds);
+  /**
+   * Find vacant profile schemas.
+   *
+   * @param applicationId the application id
+   * @param usedSchemaIds the used schema ids
+   * @return the list of profile schemas
+   */
+  List<T> findVacantSchemas(String applicationId, List<String> usedSchemaIds);
 }

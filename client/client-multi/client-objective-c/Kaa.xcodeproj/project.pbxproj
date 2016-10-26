@@ -11,6 +11,9 @@
 		391A91A31BBE604C00DBA851 /* EndPointObjectHashTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 391A91A21BBE604C00DBA851 /* EndPointObjectHashTest.m */; };
 		7B9A9A021D8BEFD40090D528 /* NSData+CommonCrypto.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9A9A001D8BEFD40090D528 /* NSData+CommonCrypto.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B9A9A031D8BEFD40090D528 /* NSData+CommonCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B9A9A011D8BEFD40090D528 /* NSData+CommonCrypto.m */; };
+		62466A951D6C9E75009C94BC /* NSDate+Timestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 62466A931D6C9E75009C94BC /* NSDate+Timestamp.h */; };
+		62466A961D6C9E75009C94BC /* NSDate+Timestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = 62466A941D6C9E75009C94BC /* NSDate+Timestamp.m */; };
+		62F2F91E1D8C2D46001A4343 /* LogDeliveryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 62F2F91D1D8C2D46001A4343 /* LogDeliveryTest.m */; };
 		B843B49E1BE67F950060519D /* TestsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B843B49D1BE67F950060519D /* TestsHelper.m */; };
 		B85B18F51C92E9CA002467B1 /* AbstractLogCollectorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */; };
 		B8C10A151BC2BBBF001A2236 /* KaaClientPropertiesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = B8C10A131BC2BBBF001A2236 /* KaaClientPropertiesTest.m */; };
@@ -362,6 +365,9 @@
 		4CAC4D1133C2E2FBC990B5AC /* Pods-libKaa.a.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-libKaa.a.debug.xcconfig"; path = "Pods/Target Support Files/Pods-libKaa.a/Pods-libKaa.a.debug.xcconfig"; sourceTree = "<group>"; };
 		7B9A9A001D8BEFD40090D528 /* NSData+CommonCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+CommonCrypto.h"; sourceTree = "<group>"; };
 		7B9A9A011D8BEFD40090D528 /* NSData+CommonCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+CommonCrypto.m"; sourceTree = "<group>"; };
+		62466A931D6C9E75009C94BC /* NSDate+Timestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Timestamp.h"; sourceTree = "<group>"; };
+		62466A941D6C9E75009C94BC /* NSDate+Timestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Timestamp.m"; sourceTree = "<group>"; };
+		62F2F91D1D8C2D46001A4343 /* LogDeliveryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LogDeliveryTest.m; path = delivery/LogDeliveryTest.m; sourceTree = "<group>"; };
 		82D20E3FF13591EBE78EEF11 /* Pods-Kaa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kaa.release.xcconfig"; path = "Pods/Target Support Files/Pods-Kaa/Pods-Kaa.release.xcconfig"; sourceTree = "<group>"; };
 		ACAA02F0BC14427987EC4DE4 /* Pods-Kaa.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kaa.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kaa/Pods-Kaa.debug.xcconfig"; sourceTree = "<group>"; };
 		B0EF18F15697D1F651B3AED4 /* libPods-KaaTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-KaaTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -738,6 +744,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		62F2F91B1D8C2C98001A4343 /* delivery */ = {
+			isa = PBXGroup;
+			children = (
+				62F2F91D1D8C2D46001A4343 /* LogDeliveryTest.m */,
+			);
+			name = delivery;
+			sourceTree = "<group>";
+		};
 		B8082F1B1CA965AD008FDE7B /* sqlite */ = {
 			isa = PBXGroup;
 			children = (
@@ -1321,6 +1335,8 @@
 				B836A15A1C48EA2400376A6B /* TimeCommons.m */,
 				B8CCBF711C467B2E00C26F0B /* UUID.h */,
 				B8CCBF721C467B2E00C26F0B /* UUID.m */,
+				62466A931D6C9E75009C94BC /* NSDate+Timestamp.h */,
+				62466A941D6C9E75009C94BC /* NSDate+Timestamp.m */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1397,6 +1413,7 @@
 		B8CCC0341C467EAB00C26F0B /* logging */ = {
 			isa = PBXGroup;
 			children = (
+				62F2F91B1D8C2C98001A4343 /* delivery */,
 				B8EE47A91CA7251D008F996A /* storage */,
 				B8CCC0391C467EAB00C26F0B /* strategies */,
 				B85B18F41C92E9CA002467B1 /* AbstractLogCollectorTests.m */,
@@ -1557,6 +1574,7 @@
 				C5AAD8971CB7DE6F0046AA91 /* EventFamilyFactory.h in Headers */,
 				C5AAD8981CB7DE6F0046AA91 /* EventGen.h in Headers */,
 				C5AAD8991CB7DE6F0046AA91 /* LogGen.h in Headers */,
+				62466A951D6C9E75009C94BC /* NSDate+Timestamp.h in Headers */,
 				C5AAD89A1CB7DE6F0046AA91 /* NotificationGen.h in Headers */,
 				C5AAD89B1CB7DE6F0046AA91 /* ProfileGen.h in Headers */,
 				C5AAD89C1CB7DE6F0046AA91 /* AvroBased.h in Headers */,
@@ -1893,6 +1911,7 @@
 				C5BB84441CBD3ED600DBC739 /* FailoverStrategyTests.m in Sources */,
 				B8CCC0581C467EAB00C26F0B /* DefaultRedirectionTransportTest.m in Sources */,
 				B8CCC06D1C467EAB00C26F0B /* AbstractHttpClientTest.m in Sources */,
+				62F2F91E1D8C2D46001A4343 /* LogDeliveryTest.m in Sources */,
 				B8CCC0491C467EAB00C26F0B /* AvroUtilsTests.m in Sources */,
 				B8CCC0661C467EAB00C26F0B /* RecordCountWithTimeLimitLogUploadStrategyTest.m in Sources */,
 				B8CCC0481C467EAB00C26F0B /* AvroBytesConverterTests.m in Sources */,
@@ -2002,6 +2021,7 @@
 				C5AAD9801CB7E1B10046AA91 /* TransportProtocolId.m in Sources */,
 				C5AAD9811CB7E1B10046AA91 /* TransportProtocolIdHolder.m in Sources */,
 				C5AAD9821CB7E1B10046AA91 /* EndpointObjectHash.m in Sources */,
+				62466A961D6C9E75009C94BC /* NSDate+Timestamp.m in Sources */,
 				C5AAD9831CB7E1B10046AA91 /* SimpleConfigurationStorage.m in Sources */,
 				C5AAD9841CB7E1B10046AA91 /* AbstractConfigurationManager.m in Sources */,
 				C5AAD9851CB7E1B10046AA91 /* ConfigurationDeserializer.m in Sources */,

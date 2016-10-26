@@ -16,8 +16,17 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_TIME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_VERSION;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,143 +34,146 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_VERSION;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_VERSION_CREATED_TIME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
 @Entity
 @Table(name = EVENT_CLASS_FAMILY_VERSION_TABLE_NAME)
 public class EventClassFamilyVersion extends GenericModel<EventClassFamilyVersionDto> {
 
-    private static final long serialVersionUID = -7490111487256831990L;
+  private static final long serialVersionUID = -7490111487256831990L;
+  @Column(name = EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME)
+  protected String createdUsername;
+  @Column(name = EVENT_CLASS_FAMILY_VERSION_CREATED_TIME)
+  protected long createdTime;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecfv")
+  private List<EventClass> records;
+  @Column(name = EVENT_CLASS_FAMILY_VERSION_VERSION)
+  private int version;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ecfv")
-    private List<EventClass> records;
+  public EventClassFamilyVersion() {
+  }
 
-    @Column(name = EVENT_CLASS_FAMILY_VERSION_VERSION)
-    private int version;
+  /**
+   * Instantiates the EventClassFamilyVersion.
+   */
+  public EventClassFamilyVersion(EventClassFamilyVersionDto dto) {
+    this.id = getLongId(dto.getId());
+    this.version = dto.getVersion();
+    this.createdUsername = dto.getCreatedUsername();
+    this.createdTime = dto.getCreatedTime();
 
-    @Column(name = EVENT_CLASS_FAMILY_VERSION_CREATED_USERNAME)
-    protected String createdUsername;
+    if (dto.getRecords() != null) {
+      this.records = new ArrayList<>(dto.getRecords().size());
+      for (EventClassDto record : dto.getRecords()) {
+        this.records.add(new EventClass(record));
+      }
+    }
+  }
 
-    @Column(name = EVENT_CLASS_FAMILY_VERSION_CREATED_TIME)
-    protected long createdTime;
+  public EventClassFamilyVersion(Long id) {
+    this.id = id;
+  }
 
-    public EventClassFamilyVersion() {
+  public List<EventClass> getRecords() {
+    return records;
+  }
+
+  public void setRecords(List<EventClass> records) {
+    this.records = records;
+  }
+
+  public int getVersion() {
+    return version;
+  }
+
+  public void setVersion(int version) {
+    this.version = version;
+  }
+
+  public String getCreatedUsername() {
+    return createdUsername;
+  }
+
+  public void setCreatedUsername(String createdUsername) {
+    this.createdUsername = createdUsername;
+  }
+
+  public long getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(long createdTime) {
+    this.createdTime = createdTime;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
 
-    public EventClassFamilyVersion(EventClassFamilyVersionDto dto) {
-        this.id = getLongId(dto.getId());
-        this.version = dto.getVersion();
-        this.createdUsername = dto.getCreatedUsername();
-        this.createdTime = dto.getCreatedTime();
-
-        if (dto.getRecords() != null) {
-            this.records = new ArrayList<>(dto.getRecords().size());
-            for (EventClassDto record : dto.getRecords()) {
-                this.records.add(new EventClass(record));
-            }
-        }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
     }
 
-    public EventClassFamilyVersion(Long id) {
-        this.id = id;
+    EventClassFamilyVersion that = (EventClassFamilyVersion) obj;
+
+    if (createdTime != that.createdTime) {
+      return false;
     }
 
-    public List<EventClass> getRecords() {
-        return records;
+    if (version != that.version) {
+      return false;
     }
 
-    public void setRecords(List<EventClass> records) {
-        this.records = records;
+    if (createdUsername != null
+        ? !createdUsername.equals(that.createdUsername)
+        : that.createdUsername != null) {
+      return false;
+    }
+    return !(records != null ? !records.equals(that.records) : that.records != null);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = records != null ? records.hashCode() : 0;
+    result = 31 * result + version;
+    result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
+    result = 31 * result + (int) (createdTime ^ (createdTime >>> 32));
+    return result;
+  }
+
+  @Override
+  protected EventClassFamilyVersionDto createDto() {
+    return new EventClassFamilyVersionDto();
+  }
+
+  @Override
+  protected GenericModel<EventClassFamilyVersionDto> newInstance(Long id) {
+    return new EventClassFamilyVersion(id);
+  }
+
+  @Override
+  public EventClassFamilyVersionDto toDto() {
+    EventClassFamilyVersionDto dto = createDto();
+    dto.setId(getStringId());
+    dto.setVersion(version);
+    dto.setCreatedUsername(createdUsername);
+    dto.setCreatedTime(createdTime);
+
+    if (records != null) {
+      List<EventClassDto> recordsDto = new ArrayList<>(records.size());
+      for (EventClass record : records) {
+        recordsDto.add(record.toDto());
+      }
+      dto.setRecords(recordsDto);
     }
 
-    public int getVersion() {
-        return version;
-    }
+    return dto;
+  }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public String getCreatedUsername() {
-        return createdUsername;
-    }
-
-    public void setCreatedUsername(String createdUsername) {
-        this.createdUsername = createdUsername;
-    }
-
-    public long getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        EventClassFamilyVersion that = (EventClassFamilyVersion) o;
-
-        if (createdTime != that.createdTime) return false;
-        if (version != that.version) return false;
-        if (createdUsername != null ? !createdUsername.equals(that.createdUsername) : that.createdUsername != null)
-            return false;
-        if (records != null ? !records.equals(that.records) : that.records != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = records != null ? records.hashCode() : 0;
-        result = 31 * result + version;
-        result = 31 * result + (createdUsername != null ? createdUsername.hashCode() : 0);
-        result = 31 * result + (int) (createdTime ^ (createdTime >>> 32));
-        return result;
-    }
-
-    @Override
-    protected EventClassFamilyVersionDto createDto() {
-        return new EventClassFamilyVersionDto();
-    }
-
-    @Override
-    protected GenericModel<EventClassFamilyVersionDto> newInstance(Long id) {
-        return new EventClassFamilyVersion(id);
-    }
-
-    @Override
-    public EventClassFamilyVersionDto toDto() {
-        EventClassFamilyVersionDto dto = createDto();
-        dto.setId(getStringId());
-        dto.setVersion(version);
-        dto.setCreatedUsername(createdUsername);
-        dto.setCreatedTime(createdTime);
-
-        if (records != null) {
-            List<EventClassDto> recordsDto = new ArrayList<>(records.size());
-            for (EventClass record : records) {
-                recordsDto.add(record.toDto());
-            }
-            dto.setRecords(recordsDto);
-        }
-
-        return dto;
-    }
-
-    @Override
-    public String toString() {
-        return "EventClassFamilyVersion [version=" + version + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime
-                + ", id=" + id + "]";
-    }
+  @Override
+  public String toString() {
+    return "EventClassFamilyVersion [version=" + version + ", createdUsername="
+        + createdUsername + ", createdTime=" + createdTime
+        + ", id=" + id + "]";
+  }
 }

@@ -19,49 +19,50 @@ package org.kaaproject.kaa.client.logging;
 import java.util.List;
 
 /**
- * <p>The helper class which is used to transfer logs from {@link LogStorage} to {@link LogCollector}.</p>
+ * <p>The helper class which is used to transfer logs from {@link LogStorage} to {@link
+ * LogCollector}.</p>
  *
  * <p><b>Note:</b>The id should be unique across all available log buckets.</p>
  */
 public class LogBucket {
-    /**
-     * The unique id of a log bucket.
-     */
-    private final int id;
+  /**
+   * The unique id of a log bucket.
+   */
+  private final int id;
 
-    /**
-     * Log records.
-     */
-    private final List<LogRecord> logRecords;
+  /**
+   * Log records.
+   */
+  private final List<LogRecord> logRecords;
 
-    /**
-     * Constructs {@link LogBucket} object.
-     *
-     * @param id      The unique log bucket id.
-     * @param records Log records.
-     */
-    public LogBucket(int id, List<LogRecord> records) {
-        this.id = id;
-        this.logRecords = records;
-    }
+  /**
+   * Constructs {@link LogBucket} object.
+   *
+   * @param id      The unique log bucket id.
+   * @param records Log records.
+   */
+  public LogBucket(int id, List<LogRecord> records) {
+    this.id = id;
+    this.logRecords = records;
+  }
 
-    /**
-     * <p>Returns a log bucket id.</p>
-     *
-     * <p>A log bucket id should be unique across all available buckets.</p>
-     *
-     * @return The log bucket id.
-     */
-    public int getBucketId() {
-        return id;
-    }
+  /**
+   * <p>Returns a log bucket id.</p>
+   *
+   * <p>A log bucket id should be unique across all available buckets.</p>
+   *
+   * @return The log bucket id.
+   */
+  public int getBucketId() {
+    return id;
+  }
 
-    /**
-     * Retrieves log records of the bucket.
-     *
-     * @return The list of log records.
-     */
-    List<LogRecord> getRecords() {
-        return logRecords;
-    }
+  /**
+   * Retrieves log records of the bucket.
+   *
+   * @return The list of log records.
+   */
+  List<LogRecord> getRecords() {
+    return logRecords;
+  }
 }

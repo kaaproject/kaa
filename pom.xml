@@ -31,11 +31,13 @@ Copyright 2014-2016 CyberVision, Inc.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
         <avro-ui.version>0.2.1</avro-ui.version>
-
+        <lombok.version>1.16.10</lombok.version>
         <akka.version>2.4.1</akka.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
-        <spring.data.version>Fowler-RELEASE</spring.data.version>
+        <spring.data.mongodb.version>1.9.4.RELEASE</spring.data.mongodb.version>
+        <spring.data.couchbase.version>2.1.4.RELEASE</spring.data.couchbase.version>
+
         <spring.retry.version>1.1.2.RELEASE</spring.retry.version>
         <ehcache.version>2.8.1</ehcache.version>
         <ehcache-spring.version>1.2.0</ehcache-spring.version>
@@ -95,7 +97,10 @@ Copyright 2014-2016 CyberVision, Inc.
         <metrics.version>3.1.0</metrics.version>
 
         <findbugs.version>2.5.2</findbugs.version>
-        <checkstyle.version>2.9.1</checkstyle.version>
+        <checkstyle.version>2.12</checkstyle.version>
+        <checkstyle.tools.version>7.0</checkstyle.tools.version>
+        <checkstyle.exclusions>**/gen/**, ^target/generated-sources, **/org/kaaproject/kaa/schema/**,
+            **/org/kaaproject/kaa/common/dto/ctl/**, **/org/kaaproject/kaa/server/common/Version.java</checkstyle.exclusions>
         <rat.version>0.10</rat.version>
         <javassist.version>3.18.1-GA</javassist.version>
         <signpost-core.version>1.2.1.2</signpost-core.version>
@@ -531,6 +536,33 @@ Copyright 2014-2016 CyberVision, Inc.
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.tools.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <excludes>${checkstyle.exclusions}</excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
                 <version>${rat.version}</version>
@@ -907,20 +939,18 @@ Copyright 2014-2016 CyberVision, Inc.
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-releasetrain</artifactId>
-                <version>${spring.data.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <artifactId>spring-data-mongodb</artifactId>
+                <version>${spring.data.mongodb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-couchbase</artifactId>
+                <version>${spring.data.couchbase.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.retry</groupId>
                 <artifactId>spring-retry</artifactId>
                 <version>${spring.retry.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.couchbase.client</groupId>
-                <artifactId>java-client</artifactId>
-                <version>${couchbase.client.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1304,6 +1334,11 @@ Copyright 2014-2016 CyberVision, Inc.
                 <version>${netty.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
@@ -1346,23 +1381,6 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <reporting>
         <plugins>
-            <plugin>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle.version}</version>
-                <configuration>
-                    <configLocation>${main.dir}/checkstyle.xml</configLocation>
-                    <propertyExpansion>config_loc=${main.dir}</propertyExpansion>
-                    <enableRulesSummary>false</enableRulesSummary>
-                    <excludes>**/gen/**</excludes>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>checkstyle</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
             <!-- Requires setting 'export MAVEN_OPTS="-Xmx512m" ' -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.topic;
 
+import org.kaaproject.kaa.common.dto.NotificationDto;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.kaaproject.kaa.common.dto.NotificationDto;
 
 
 /**
@@ -28,64 +28,69 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
  */
 public class NotificationMessage {
 
-    /** The notifications. */
-    private final List<NotificationDto> notifications;
-    
-    /** The unicast notification id. */
-    private final String unicastNotificationId;
-    
-    /**
-     * From notifications.
-     *
-     * @param notifications the notifications
-     * @return the notification message
-     */
-    public static NotificationMessage fromNotifications(List<NotificationDto> notifications) {
-        return new NotificationMessage(notifications, null);
-    }    
-    
-    /**
-     * From unicast id.
-     *
-     * @param unicastNotificationId the unicast notification id
-     * @return the notification message
-     */
-    public static NotificationMessage fromUnicastId(String unicastNotificationId) {
-        return new NotificationMessage(new ArrayList<NotificationDto>(), unicastNotificationId);
-    }
-    
-    /**
-     * Instantiates a new notification message.
-     *
-     * @param notifications the notifications
-     * @param unicastNotificationId the unicast notification id
-     */
-    private NotificationMessage(List<NotificationDto> notifications, String unicastNotificationId) {
-        super();
-        this.notifications = Collections.unmodifiableList(notifications);
-        this.unicastNotificationId = unicastNotificationId;
-    }    
+  /**
+   * The notifications.
+   */
+  private final List<NotificationDto> notifications;
 
-    /**
-     * Gets the notifications.
-     *
-     * @return the notifications
-     */
-    public List<NotificationDto> getNotifications() {
-        return notifications;
-    }
+  /**
+   * The unicast notification id.
+   */
+  private final String unicastNotificationId;
 
-    /**
-     * Gets the unicast notification id.
-     *
-     * @return the unicast notification id
-     */
-    public String getUnicastNotificationId() {
-        return unicastNotificationId;
-    }
+  /**
+   * Instantiates a new notification message.
+   *
+   * @param notifications         the notifications
+   * @param unicastNotificationId the unicast notification id
+   */
+  private NotificationMessage(List<NotificationDto> notifications, String unicastNotificationId) {
+    super();
+    this.notifications = Collections.unmodifiableList(notifications);
+    this.unicastNotificationId = unicastNotificationId;
+  }
 
-    @Override
-    public String toString() {
-        return "NotificationMessage [notifications=" + notifications + ", unicastNotificationId=" + unicastNotificationId + "]";
-    }
+  /**
+   * From notifications.
+   *
+   * @param notifications the notifications
+   * @return the notification message
+   */
+  public static NotificationMessage fromNotifications(List<NotificationDto> notifications) {
+    return new NotificationMessage(notifications, null);
+  }
+
+  /**
+   * From unicast id.
+   *
+   * @param unicastNotificationId the unicast notification id
+   * @return the notification message
+   */
+  public static NotificationMessage fromUnicastId(String unicastNotificationId) {
+    return new NotificationMessage(new ArrayList<NotificationDto>(), unicastNotificationId);
+  }
+
+  /**
+   * Gets the notifications.
+   *
+   * @return the notifications
+   */
+  public List<NotificationDto> getNotifications() {
+    return notifications;
+  }
+
+  /**
+   * Gets the unicast notification id.
+   *
+   * @return the unicast notification id
+   */
+  public String getUnicastNotificationId() {
+    return unicastNotificationId;
+  }
+
+  @Override
+  public String toString() {
+    return "NotificationMessage [notifications=" + notifications + ", unicastNotificationId="
+           + unicastNotificationId + "]";
+  }
 }

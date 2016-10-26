@@ -18,54 +18,54 @@ package org.kaaproject.kaa.client.profile;
 
 import static org.mockito.Mockito.mock;
 
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.ProfileTransport;
 import org.kaaproject.kaa.schema.system.EmptyData;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+
 public class DefaultProfileManagerTest {
 
-    @Test
-    public void testProfileManagerIsInitialized() {
-        ProfileTransport transport = mock(ProfileTransport.class);
-        DefaultProfileManager profileManager = new DefaultProfileManager(transport);
+  @Test
+  public void testProfileManagerIsInitialized() {
+    ProfileTransport transport = mock(ProfileTransport.class);
+    DefaultProfileManager profileManager = new DefaultProfileManager(transport);
 
-        ProfileSerializer profileSerializer = new ProfileSerializer();
+    ProfileSerializer profileSerializer = new ProfileSerializer();
 
-        if (profileSerializer.isDefault()) {
-            Assert.assertTrue(profileManager.isInitialized());
-        } else {
-            Assert.assertFalse(profileManager.isInitialized());
+    if (profileSerializer.isDefault()) {
+      Assert.assertTrue(profileManager.isInitialized());
+    } else {
+      Assert.assertFalse(profileManager.isInitialized());
 
-            profileManager.setProfileContainer(new ProfileContainer() {
-                @Override
-                public EmptyData getProfile() {
-                    return new EmptyData();
-                }
-            });
-
-            Assert.assertTrue(profileManager.isInitialized());
+      profileManager.setProfileContainer(new ProfileContainer() {
+        @Override
+        public EmptyData getProfile() {
+          return new EmptyData();
         }
+      });
+
+      Assert.assertTrue(profileManager.isInitialized());
     }
+  }
 
-    @Test
-    public void testProfileManager() throws IOException {
-        ProfileTransport transport = mock(ProfileTransport.class);
+  @Test
+  public void testProfileManager() throws IOException {
+    ProfileTransport transport = mock(ProfileTransport.class);
 
-        DefaultProfileManager profileManager = new DefaultProfileManager(transport);
-        profileManager.setProfileContainer(new ProfileContainer() {
+    DefaultProfileManager profileManager = new DefaultProfileManager(transport);
+    profileManager.setProfileContainer(new ProfileContainer() {
 
-            @Override
-            public EmptyData getProfile() {
-                return new EmptyData();
-            }
-        });
-        Assert.assertNotNull(profileManager.getSerializedProfile());
-        profileManager.updateProfile();
-        Mockito.verify(transport).sync();
-    }
+      @Override
+      public EmptyData getProfile() {
+        return new EmptyData();
+      }
+    });
+    Assert.assertNotNull(profileManager.getSerializedProfile());
+    profileManager.updateProfile();
+    Mockito.verify(transport).sync();
+  }
 
 }

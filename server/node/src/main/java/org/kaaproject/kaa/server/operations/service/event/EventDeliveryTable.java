@@ -21,51 +21,69 @@ import java.util.Map;
 
 public class EventDeliveryTable {
 
-    private static enum DeliveryState {
-        PENDING, 
-        DELIVERED
-    }
+  Map<EndpointEvent, Map<RouteTableAddress, DeliveryState>> data;
 
-    Map<EndpointEvent, Map<RouteTableAddress, DeliveryState>> data;
+  public EventDeliveryTable() {
+    super();
+    this.data = new HashMap<>();
+  }
 
-    public EventDeliveryTable() {
-        super();
-        this.data = new HashMap<>();
+  /**
+   * Register new delivery attempt.
+   *
+   * @param event the event to delivery
+   * @param addresses the destination of event
+   */
+  public void registerDeliveryAttempt(EndpointEvent event, RouteTableAddress... addresses) {
+    Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
+    if (attempts == null) {
+      attempts = new HashMap<>();
+      data.put(event, attempts);
     }
+    for (RouteTableAddress address : addresses) {
+      attempts.put(address, DeliveryState.PENDING);
+    }
+  }
 
-    public void registerDeliveryAttempt(EndpointEvent event, RouteTableAddress... addresses){
-        Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
-        if(attempts == null){
-            attempts = new HashMap<>();
-            data.put(event, attempts);
-        }
-        for(RouteTableAddress address : addresses){
-            attempts.put(address, DeliveryState.PENDING);
-        }
-    }
+  public boolean isDeliveryStarted(EndpointEvent event, RouteTableAddress address) {
+    Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
+    return attempts != null && attempts.containsKey(address);
+  }
 
-    public boolean isDeliveryStarted(EndpointEvent event, RouteTableAddress address){
-        Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
-        return attempts != null && attempts.containsKey(address);
-    }
+  public boolean clear(EndpointEvent event) {
+    return data.remove(event) != null;
+  }
 
-    public boolean clear(EndpointEvent event) {
-        return data.remove(event) != null;
+  /**
+   * Register success delivery attempt.
+   *
+   * @param event the event to delivery
+   * @param address the destination of event
+   */
+  public void registerDeliverySuccess(EndpointEvent event, RouteTableAddress address) {
+    Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
+    if (attempts == null) {
+      attempts = new HashMap<>();
+      data.put(event, attempts);
     }
+    attempts.put(address, DeliveryState.DELIVERED);
+  }
 
-    public void registerDeliverySuccess(EndpointEvent event, RouteTableAddress address) {
-        Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
-        if(attempts == null){
-            attempts = new HashMap<>();
-            data.put(event, attempts);
-        }
-        attempts.put(address, DeliveryState.DELIVERED);
+  /**
+   * Register fail delivery attempt.
+   *
+   * @param event the event to delivery
+   * @param address the destination of event
+   */
+  public void registerDeliveryFailure(EndpointEvent event, RouteTableAddress address) {
+    Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
+    if (attempts != null) {
+      attempts.remove(address);
     }
+  }
 
-    public void registerDeliveryFailure(EndpointEvent event, RouteTableAddress address) {
-        Map<RouteTableAddress, DeliveryState> attempts = data.get(event);
-        if(attempts != null){
-            attempts.remove(address);
-        }
-    }
+  private static enum DeliveryState {
+    PENDING,
+    DELIVERED
+  }
 }

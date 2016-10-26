@@ -18,14 +18,20 @@ package org.kaaproject.kaa.common.dto;
 
 
 public enum UpdateStatus {
-    DEPRECATED, ACTIVE, INACTIVE;
+  DEPRECATED, ACTIVE, INACTIVE;
 
-    public static UpdateStatus statusFromString(String stringStatus) {
-        for (UpdateStatus status : UpdateStatus.values()) {
-            if (status.name().equalsIgnoreCase(stringStatus)) {
-                return status;
-            }
-        }
-        return null;
+  /**
+   * Parses a update status from a string value.
+   *
+   * @param stringStatus update status string value
+   * @return             update status
+   */
+  public static UpdateStatus statusFromString(String stringStatus) {
+    for (UpdateStatus status : UpdateStatus.values()) {
+      if (status.name().equalsIgnoreCase(stringStatus)) {
+        return status;
+      }
     }
+    return null;
+  }
 }

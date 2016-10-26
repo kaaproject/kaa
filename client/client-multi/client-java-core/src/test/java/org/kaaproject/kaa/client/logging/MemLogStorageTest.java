@@ -19,9 +19,9 @@ package org.kaaproject.kaa.client.logging;
 import org.kaaproject.kaa.client.logging.memory.MemLogStorage;
 
 public class MemLogStorageTest extends AbstractLogStorageTest {
-    @Override
-    protected Object getStorage(long bucketSize, int recordCount) {
-        return new MemLogStorage(bucketSize, recordCount);
-    }
+  @Override
+  protected Object getStorage(long bucketSize, int recordCount) {
+    return new MemLogStorage(bucketSize, recordCount);
+  }
 
 }

@@ -16,7 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import org.kaaproject.avro.ui.converter.SchemaFormAvroConverter;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -28,67 +29,64 @@ import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ProfileSchemaViewDto;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+public class ProfileSchemaActivity extends AbstractBaseCtlSchemaActivityApplication
+    <EndpointProfileSchemaDto, ProfileSchemaViewDto, BaseCtlSchemaView, ProfileSchemaPlace> {
 
-public class ProfileSchemaActivity
-        extends
-        AbstractBaseCtlSchemaActivityApplication<EndpointProfileSchemaDto, ProfileSchemaViewDto, BaseCtlSchemaView, ProfileSchemaPlace> {
+  public ProfileSchemaActivity(ProfileSchemaPlace place,
+                               ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
 
-    public ProfileSchemaActivity(ProfileSchemaPlace place,
-            ClientFactory clientFactory) {
-        super(place, clientFactory);
+  @Override
+  protected ProfileSchemaViewDto newSchema() {
+    return new ProfileSchemaViewDto();
+  }
+
+  @Override
+  protected BaseCtlSchemaView getView(boolean create) {
+    if (create) {
+      return clientFactory.getCreateProfileSchemaView();
+    } else {
+      return clientFactory.getProfileSchemaView();
     }
+  }
 
-    @Override
-    protected ProfileSchemaViewDto newSchema() {
-        return new ProfileSchemaViewDto();
-    }
+  @Override
+  protected void getEntity(String id,
+                           AsyncCallback<ProfileSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().getProfileSchemaView(id, callback);
+  }
 
-    @Override
-    protected BaseCtlSchemaView getView(boolean create) {
-        if (create) {
-            return clientFactory.getCreateProfileSchemaView();
-        } else {
-            return clientFactory.getProfileSchemaView();
-        }
-    }
+  @Override
+  protected void editEntity(ProfileSchemaViewDto entity,
+                            AsyncCallback<ProfileSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().saveProfileSchemaView(entity, callback);
+  }
 
-    @Override
-    protected void getEntity(String id,
-            AsyncCallback<ProfileSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().getProfileSchemaView(id, callback);
-    }
+  @Override
+  protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null,
+        null,
+        applicationId,
+        ConverterType.FORM_AVRO_CONVERTER,
+        callback);
+  }
 
-    @Override
-    protected void editEntity(ProfileSchemaViewDto entity,
-            AsyncCallback<ProfileSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().saveProfileSchemaView(entity, callback);
-    }
+  @Override
+  public void loadFormData(String fileItemName,
+                           AsyncCallback<RecordField> callback) {
+    KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
+  }
 
-    @Override
-    protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, 
-                null,  
-                applicationId,
-                ConverterType.FORM_AVRO_CONVERTER,
-                callback);
-    }
+  @Override
+  protected ProfileSchemaPlace existingSchemaPlace(
+      String applicationId, String schemaId) {
+    return new ProfileSchemaPlace(applicationId, schemaId);
+  }
 
-    @Override
-    public void loadFormData(String fileItemName,
-            AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
-    }
-
-    @Override
-    protected ProfileSchemaPlace existingSchemaPlace(
-            String applicationId, String schemaId) {
-        return new ProfileSchemaPlace(applicationId, schemaId);
-    }
-
-    @Override
-    protected SchemaType getPlaceSchemaType() {
-        return SchemaType.ENDPOINT_PROFILE;
-    }
+  @Override
+  protected SchemaType getPlaceSchemaType() {
+    return SchemaType.ENDPOINT_PROFILE;
+  }
 
 }

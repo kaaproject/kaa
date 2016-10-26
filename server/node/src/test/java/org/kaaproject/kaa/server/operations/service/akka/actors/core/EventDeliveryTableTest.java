@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import java.nio.ByteBuffer;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -26,33 +24,34 @@ import org.kaaproject.kaa.server.operations.service.event.EventDeliveryTable;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableAddress;
 import org.kaaproject.kaa.server.sync.Event;
 
+import java.nio.ByteBuffer;
+
 public class EventDeliveryTableTest {
 
-    @Test
-    public void testEventDeliveryTable(){
-        EventDeliveryTable table = new EventDeliveryTable();
-        EndpointEvent event = new EndpointEvent(EndpointObjectHash.fromSHA1("sender"), new Event(1, "eventClassFQN", ByteBuffer.wrap(new byte[3]), "sender", "target"));
-        RouteTableAddress routeAddress = new RouteTableAddress(EndpointObjectHash.fromSHA1("target"), "applicationToken");
-        RouteTableAddress routeAddress2 = new RouteTableAddress(EndpointObjectHash.fromSHA1("target2"), "applicationToken");
+  @Test
+  public void testEventDeliveryTable() {
+    EventDeliveryTable table = new EventDeliveryTable();
+    EndpointEvent event = new EndpointEvent(EndpointObjectHash.fromSha1("sender"), new Event(1, "eventClassFQN", ByteBuffer.wrap(new byte[3]), "sender", "target"));
+    RouteTableAddress routeAddress = new RouteTableAddress(EndpointObjectHash.fromSha1("target"), "applicationToken");
+    RouteTableAddress routeAddress2 = new RouteTableAddress(EndpointObjectHash.fromSha1("target2"), "applicationToken");
 
-        Assert.assertFalse(table.clear(event));
-        table.registerDeliveryAttempt(event, routeAddress);
+    Assert.assertFalse(table.clear(event));
+    table.registerDeliveryAttempt(event, routeAddress);
 
-        Assert.assertTrue(table.isDeliveryStarted(event, routeAddress));
-        Assert.assertFalse(table.isDeliveryStarted(event, routeAddress2));
+    Assert.assertTrue(table.isDeliveryStarted(event, routeAddress));
+    Assert.assertFalse(table.isDeliveryStarted(event, routeAddress2));
 
-        table.registerDeliveryFailure(event, routeAddress);
-        Assert.assertFalse(table.isDeliveryStarted(event, routeAddress));
+    table.registerDeliveryFailure(event, routeAddress);
+    Assert.assertFalse(table.isDeliveryStarted(event, routeAddress));
 
-        table.registerDeliveryAttempt(event, routeAddress2);
-        table.registerDeliverySuccess(event, routeAddress2);
-        table.registerDeliverySuccess(event, routeAddress);
+    table.registerDeliveryAttempt(event, routeAddress2);
+    table.registerDeliverySuccess(event, routeAddress2);
+    table.registerDeliverySuccess(event, routeAddress);
 
-        Assert.assertTrue(table.isDeliveryStarted(event, routeAddress));
-        Assert.assertTrue(table.isDeliveryStarted(event, routeAddress2));
+    Assert.assertTrue(table.isDeliveryStarted(event, routeAddress));
+    Assert.assertTrue(table.isDeliveryStarted(event, routeAddress2));
 
 
-
-    }
+  }
 
 }

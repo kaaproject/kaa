@@ -20,46 +20,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum KaaAuthorityDto {
-    
-    KAA_ADMIN("kaaAdmin"),
-    TENANT_ADMIN("tenantAdmin"),
-    TENANT_DEVELOPER("tenantDeveloper"),
-    TENANT_USER("tenantUser");
-    
-    String key;
 
-    KaaAuthorityDto(String key) {
-        this.key = key;
-    }
+  KAA_ADMIN("kaaAdmin"),
+  TENANT_ADMIN("tenantAdmin"),
+  TENANT_DEVELOPER("tenantDeveloper"),
+  TENANT_USER("tenantUser");
 
-    public String getResourceKey() {
-        return key;
-    }
-    
-    public static KaaAuthorityDto parse(String value) {
-        KaaAuthorityDto authority = null;
-        if (value != null && value.length() != 0) {
-            for (KaaAuthorityDto current : KaaAuthorityDto.values()) {
-                if (current.name().equalsIgnoreCase(value)) {
-                    authority = current;
-                    break;
-                }
-            }
+  String key;
+
+  KaaAuthorityDto(String key) {
+    this.key = key;
+  }
+
+  /**
+   * Parses the KaaAuthorityDto from a string.
+   *
+   * @param value string value
+   * @return      KaaAuthorityDto
+   */
+  public static KaaAuthorityDto parse(String value) {
+    KaaAuthorityDto authority = null;
+    if (value != null && value.length() != 0) {
+      for (KaaAuthorityDto current : KaaAuthorityDto.values()) {
+        if (current.name().equalsIgnoreCase(value)) {
+          authority = current;
+          break;
         }
-        return authority;
+      }
     }
+    return authority;
+  }
 
-    public static List<KaaAuthorityDto> parseList(String... values) {
-        List<KaaAuthorityDto> authorities = null;
-        if (values != null && values.length != 0) {
-            authorities = new ArrayList<>(values.length);
-            for (String value : values) {
-                KaaAuthorityDto authority = parse(value);
-                if (authority != null) {
-                    authorities.add(authority);
-                }
-            }
+  /**
+   * Parses KaaAuthorityDtos from strins.
+   *
+   * @param values string values
+   * @return       KaaAuthorityDtos
+   */
+  public static List<KaaAuthorityDto> parseList(String... values) {
+    List<KaaAuthorityDto> authorities = null;
+    if (values != null && values.length != 0) {
+      authorities = new ArrayList<>(values.length);
+      for (String value : values) {
+        KaaAuthorityDto authority = parse(value);
+        if (authority != null) {
+          authorities.add(authority);
         }
-        return authorities;
+      }
     }
+    return authorities;
+  }
+
+  public String getResourceKey() {
+    return key;
+  }
 }

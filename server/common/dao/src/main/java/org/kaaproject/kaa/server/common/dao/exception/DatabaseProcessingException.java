@@ -18,13 +18,13 @@ package org.kaaproject.kaa.server.common.dao.exception;
 
 public class DatabaseProcessingException extends RuntimeException {
 
-    private static final long serialVersionUID = -8831450820365135073L;
+  private static final long serialVersionUID = -8831450820365135073L;
 
-    public DatabaseProcessingException(String message) {
-        super(message);
-    }
+  public DatabaseProcessingException(String message) {
+    super(message);
+  }
 
-    public DatabaseProcessingException(Exception ex) {
-        super(ex);
-    }
+  public DatabaseProcessingException(Exception ex) {
+    super(ex);
+  }
 }

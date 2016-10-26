@@ -28,37 +28,40 @@ import org.kaaproject.kaa.server.operations.service.cache.TopicListCacheEntry;
  */
 public interface NotificationDeltaService {
 
-    /**
-     * Gets the notification delta.
-     *
-     * @param request the request
-     * @return the notification delta
-     */
-    GetNotificationResponse getNotificationDelta(GetNotificationRequest request);
+  /**
+   * Gets the notification delta.
+   *
+   * @param request the request
+   * @return the notification delta
+   */
+  GetNotificationResponse getNotificationDelta(GetNotificationRequest request);
 
-    /**
-     * Find notification by id.
-     *
-     * @param notificationId the notification id
-     * @return the notification dto
-     */
-    NotificationDto findNotificationById(String notificationId);
+  /**
+   * Find notification by id.
+   *
+   * @param notificationId the notification id
+   * @return the notification dto
+   */
+  NotificationDto findNotificationById(String notificationId);
 
-    /**
-     * Find unicast notification by id.
-     *
-     * @param unicastNotificationId the unicast notification id
-     * @return the notification dto
-     */
-    NotificationDto findUnicastNotificationById(String unicastNotificationId);
+  /**
+   * Find unicast notification by id.
+   *
+   * @param unicastNotificationId the unicast notification id
+   * @return the notification dto
+   */
+  NotificationDto findUnicastNotificationById(String unicastNotificationId);
 
-    /**
-     * Calculate topic list hash for given profile
-     * @param appToken - application token
-     * @param endpointId - endpoint id
-     * @param profile - endpoint profile
-     * @return topic list cache entry
-     */
-    TopicListCacheEntry getTopicListHash(String appToken, String endpointId, EndpointProfileDto profile);
+  /**
+   * Calculate topic list hash for given profile.
+   *
+   * @param appToken   - application token
+   * @param endpointId - endpoint id
+   * @param profile    - endpoint profile
+   * @return topic list cache entry
+   */
+  TopicListCacheEntry getTopicListHash(String appToken,
+                                       String endpointId,
+                                       EndpointProfileDto profile);
 
 }

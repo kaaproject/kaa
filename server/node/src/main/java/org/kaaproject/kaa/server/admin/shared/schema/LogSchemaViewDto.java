@@ -19,21 +19,21 @@ package org.kaaproject.kaa.server.admin.shared.schema;
 
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
-public class LogSchemaViewDto extends BaseSchemaViewDto<LogSchemaDto>{
+public class LogSchemaViewDto extends BaseSchemaViewDto<LogSchemaDto> {
 
-    private static final long serialVersionUID = -5289268279407697144L;
+  private static final long serialVersionUID = -5289268279407697144L;
 
-    public LogSchemaViewDto() {
-        super();
-    }
+  public LogSchemaViewDto() {
+    super();
+  }
 
-    public LogSchemaViewDto(LogSchemaDto schema,
-                                     CtlSchemaFormDto ctlSchemaForm) {
-        super(schema, ctlSchemaForm);
-    }
+  public LogSchemaViewDto(LogSchemaDto schema,
+                          CtlSchemaFormDto ctlSchemaForm) {
+    super(schema, ctlSchemaForm);
+  }
 
-    @Override
-    protected LogSchemaDto createEmptySchema() {
-        return new LogSchemaDto();
-    }
+  @Override
+  protected LogSchemaDto createEmptySchema() {
+    return new LogSchemaDto();
+  }
 }

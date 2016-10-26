@@ -19,25 +19,22 @@ package org.kaaproject.kaa.client.schema;
 /**
  * Sends notifications with new schema object
  *
- * @author Yaroslav Zeygerman
- *
+ * @author Yaroslav Zeygerman.
  */
 public interface SchemaObservable {
 
-    /**
-     * Subscribes new receiver for schema updates
-     *
-     * @param receiver receiver to get schema updates
-     *
-     */
-    void subscribeForSchemaUpdates(SchemaUpdatesReceiver receiver);
+  /**
+   * Subscribes new receiver for schema updates.
+   *
+   * @param receiver receiver to get schema updates
+   */
+  void subscribeForSchemaUpdates(SchemaUpdatesReceiver receiver);
 
-    /**
-     * Unsubscribes receiver from schema updates
-     *
-     * @param receiver receiver to be unsubscribed from schema updates
-     *
-     */
-    void unsubscribeFromSchemaUpdates(SchemaUpdatesReceiver receiver);
+  /**
+   * Unsubscribes receiver from schema updates.
+   *
+   * @param receiver receiver to be unsubscribed from schema updates
+   */
+  void unsubscribeFromSchemaUpdates(SchemaUpdatesReceiver receiver);
 
 }

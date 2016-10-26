@@ -23,67 +23,68 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogDeliveryErrorCode
  */
 public class LogDeliveryMessage {
 
-    /** The request id. */
-    private final Integer requestId;
+  /**
+   * The request id.
+   */
+  private final Integer requestId;
 
-    /** The success. */
-    private final boolean success;
+  /**
+   * The success.
+   */
+  private final boolean success;
 
-    /** The error code. */
-    private final LogDeliveryErrorCode errorCode;
+  /**
+   * The error code.
+   */
+  private final LogDeliveryErrorCode errorCode;
 
-    /**
-     * Instantiates a new log event delivery message.
-     *
-     * @param requestId
-     *            the request id
-     * @param success
-     *            the success
-     */
-    public LogDeliveryMessage(Integer requestId, boolean success) {
-        this(requestId, success, null);
-    }
+  /**
+   * Instantiates a new log event delivery message.
+   *
+   * @param requestId the request id
+   * @param success   the success
+   */
+  public LogDeliveryMessage(Integer requestId, boolean success) {
+    this(requestId, success, null);
+  }
 
-    /**
-     * Instantiates a new log event delivery message.
-     *
-     * @param requestId
-     *            the request id
-     * @param success
-     *            the success
-     * @param errorCode
-     *            the error code
-     */
-    public LogDeliveryMessage(Integer requestId, boolean success, LogDeliveryErrorCode errorCode) {
-        this.requestId = requestId;
-        this.success = success;
-        this.errorCode = errorCode;
-    }
+  /**
+   * Instantiates a new log event delivery message.
+   *
+   * @param requestId the request id
+   * @param success   the success
+   * @param errorCode the error code
+   */
+  public LogDeliveryMessage(Integer requestId, boolean success, LogDeliveryErrorCode errorCode) {
+    this.requestId = requestId;
+    this.success = success;
+    this.errorCode = errorCode;
+  }
 
-    /**
-     * Gets the request id.
-     *
-     * @return the request id
-     */
-    public Integer getRequestId() {
-        return requestId;
-    }
+  /**
+   * Gets the request id.
+   *
+   * @return the request id
+   */
+  public Integer getRequestId() {
+    return requestId;
+  }
 
-    /**
-     * Checks if is success.
-     *
-     * @return true, if is success
-     */
-    public boolean isSuccess() {
-        return success;
-    }
+  /**
+   * Checks if is success.
+   *
+   * @return true, if is success
+   */
+  public boolean isSuccess() {
+    return success;
+  }
 
-    /**
-     * Gets the error code.
-     *
-     * @return the error code
-     */
-    public LogDeliveryErrorCode getErrorCode() {
-        return errorCode;
-    }
+  /**
+   * Gets the error code.
+   *
+   * @return the error code
+   */
+  public LogDeliveryErrorCode getErrorCode() {
+    return errorCode;
+  }
 }

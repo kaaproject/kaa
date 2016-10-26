@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.transport;
 
-import java.security.PublicKey;
-import java.util.Properties;
-
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
 import org.kaaproject.kaa.server.operations.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.transport.AbstractTransportService;
@@ -27,49 +24,53 @@ import org.kaaproject.kaa.server.transport.message.MessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.PublicKey;
+import java.util.Properties;
+
 /**
- * Default implementation of {@link OperationsTransportService} that extends {@link AbstractTransportService}.
- * 
- * @author Andrew Shvayka
+ * Default implementation of {@link OperationsTransportService} that extends {@link
+ * AbstractTransportService}.
  *
+ * @author Andrew Shvayka
  */
 @Service
-public class OperationsTransportService extends AbstractTransportService implements TransportService {
+public class OperationsTransportService extends AbstractTransportService
+        implements TransportService {
 
-    private static final String TRANSPORT_CONFIG_PREFIX = "operations";
-    
-    @Autowired
-    private AkkaService akkaService;
-    
-    @Autowired
-    private KeyStoreService operationsKeyStoreService;
+  private static final String TRANSPORT_CONFIG_PREFIX = "operations";
+
+  @Autowired
+  private AkkaService akkaService;
+
+  @Autowired
+  private KeyStoreService operationsKeyStoreService;
 
 
-    @Autowired
-    private Properties properties;
+  @Autowired
+  private Properties properties;
 
-    public OperationsTransportService() {
-        super();
-    }
+  public OperationsTransportService() {
+    super();
+  }
 
-    @Override
-    protected String getTransportConfigPrefix() {
-        return TRANSPORT_CONFIG_PREFIX;
-    }
+  @Override
+  protected String getTransportConfigPrefix() {
+    return TRANSPORT_CONFIG_PREFIX;
+  }
 
-    @Override
-    protected MessageHandler getMessageHandler(){
-        return akkaService;
-    }
+  @Override
+  protected MessageHandler getMessageHandler() {
+    return akkaService;
+  }
 
-    @Override
-    protected Properties getServiceProperties() {
-        return properties;
-    }
+  @Override
+  protected Properties getServiceProperties() {
+    return properties;
+  }
 
-    @Override
-    protected PublicKey getPublicKey() {
-        return operationsKeyStoreService.getPublicKey();
-    }
+  @Override
+  protected PublicKey getPublicKey() {
+    return operationsKeyStoreService.getPublicKey();
+  }
 
 }

@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.transports.http.transport.commands;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessor;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
 
@@ -38,20 +38,20 @@ import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class SyncCommandFactory implements KaaCommandProcessorFactory<HttpRequest, HttpResponse>{
+public class SyncCommandFactory implements KaaCommandProcessorFactory<HttpRequest, HttpResponse> {
 
-    @Override
-    public String getCommandName() {
-        return CommonEPConstans.SYNC_COMMAND;
-    }
+  @Override
+  public String getCommandName() {
+    return CommonEpConstans.SYNC_COMMAND;
+  }
 
-    @Override
-    public KaaCommandProcessor<HttpRequest, HttpResponse> createCommandProcessor() {
-        return setupCommand(new SyncCommand());
-    }
+  @Override
+  public KaaCommandProcessor<HttpRequest, HttpResponse> createCommandProcessor() {
+    return setupCommand(new SyncCommand());
+  }
 
-    protected SyncCommand setupCommand(SyncCommand command) {
-        return command;
-    }
+  protected SyncCommand setupCommand(SyncCommand command) {
+    return command;
+  }
 
 }

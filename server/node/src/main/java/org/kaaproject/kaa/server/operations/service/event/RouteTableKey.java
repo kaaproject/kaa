@@ -19,78 +19,81 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.io.Serializable;
 
 
-public final class RouteTableKey implements Serializable{
+public final class RouteTableKey implements Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 3363397161525196106L;
+  private static final long serialVersionUID = 3363397161525196106L;
 
 
-    private final String appToken;
-    private final EventClassFamilyVersion ecfVersion;
+  private final String appToken;
+  private final EventClassFamilyVersion ecfVersion;
 
-    public RouteTableKey(String appToken, EventClassFamilyVersion ecfVersion) {
-        super();
-        this.appToken = appToken;
-        this.ecfVersion = ecfVersion;
+  /**
+   * Create new instance of <code>RouteTableKey</code>.
+   *
+   * @param appToken the app token
+   * @param ecfVersion the ecf version
+   */
+  public RouteTableKey(String appToken, EventClassFamilyVersion ecfVersion) {
+    super();
+    this.appToken = appToken;
+    this.ecfVersion = ecfVersion;
+  }
+
+  public String getAppToken() {
+    return appToken;
+  }
+
+  public EventClassFamilyVersion getEcfVersion() {
+    return ecfVersion;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((appToken == null) ? 0 : appToken.hashCode());
+    result = prime * result + ((ecfVersion == null) ? 0 : ecfVersion.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getAppToken() {
-        return appToken;
+    if (obj == null) {
+      return false;
     }
-
-    public EventClassFamilyVersion getEcfVersion() {
-        return ecfVersion;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((appToken == null) ? 0 : appToken.hashCode());
-        result = prime * result + ((ecfVersion == null) ? 0 : ecfVersion.hashCode());
-        return result;
+    RouteTableKey other = (RouteTableKey) obj;
+    if (appToken == null) {
+      if (other.appToken != null) {
+        return false;
+      }
+    } else if (!appToken.equals(other.appToken)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        RouteTableKey other = (RouteTableKey) obj;
-        if (appToken == null) {
-            if (other.appToken != null) {
-                return false;
-            }
-        } else if (!appToken.equals(other.appToken)) {
-            return false;
-        }
-        if (ecfVersion == null) {
-            if (other.ecfVersion != null) {
-                return false;
-            }
-        } else if (!ecfVersion.equals(other.ecfVersion)) {
-            return false;
-        }
-        return true;
+    if (ecfVersion == null) {
+      if (other.ecfVersion != null) {
+        return false;
+      }
+    } else if (!ecfVersion.equals(other.ecfVersion)) {
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RouteKey [appToken=");
-        builder.append(appToken);
-        builder.append(", ecfVersion=");
-        builder.append(ecfVersion);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("RouteKey [appToken=");
+    builder.append(appToken);
+    builder.append(", ecfVersion=");
+    builder.append(ecfVersion);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

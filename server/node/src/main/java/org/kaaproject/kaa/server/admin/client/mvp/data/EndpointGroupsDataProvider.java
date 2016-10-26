@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
@@ -24,33 +24,38 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGroupDto, String>{
+public class EndpointGroupsDataProvider extends AbstractDataProvider<EndpointGroupDto, String> {
 
-    private String applicationId;
+  private String applicationId;
 
-    public EndpointGroupsDataProvider(AbstractGrid<EndpointGroupDto, String> dataGrid,
-                                      HasErrorMessage hasErrorMessage,
-                                      String applicationId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        addDataDisplay();
-    }
+  /**
+   * All-args constructor.
+   */
+  public EndpointGroupsDataProvider(AbstractGrid<EndpointGroupDto, String> dataGrid,
+                                    HasErrorMessage hasErrorMessage,
+                                    String applicationId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    addDataDisplay();
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadEndpointGroups(applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadEndpointGroups(
+        applicationId, new AsyncCallback<List<EndpointGroupDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-            }
-            @Override
-            public void onSuccess(List<EndpointGroupDto> result) {
-                callback.onSuccess(result);
-            }
+          }
+
+          @Override
+          public void onSuccess(List<EndpointGroupDto> result) {
+            callback.onSuccess(result);
+          }
         });
-    }
+  }
 
 }

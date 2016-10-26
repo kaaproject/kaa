@@ -16,115 +16,115 @@
 
 package org.kaaproject.kaa.common.dto.event;
 
-import java.io.Serializable;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.kaaproject.kaa.common.dto.HasId;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.io.Serializable;
+import java.util.List;
 
 @JsonIgnoreProperties({"schemaForm"})
 public class EventClassFamilyVersionDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = -6565622945148633465L;
+  private static final long serialVersionUID = -6565622945148633465L;
 
-    private String id;
-    private List<EventClassDto> records;
-    private int version;
-    private String createdUsername;
-    private long createdTime;
+  private String id;
+  private List<EventClassDto> records;
+  private int version;
+  private String createdUsername;
+  private long createdTime;
 
-    @Override
-    public String getId() {
-        return id;
-    }
+  @Override
+  public String getId() {
+    return id;
+  }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public List<EventClassDto> getRecords() {
-        return records;
-    }
+  public List<EventClassDto> getRecords() {
+    return records;
+  }
 
-    public void setRecords(List<EventClassDto> records) {
-        this.records = records;
-    }
+  public void setRecords(List<EventClassDto> records) {
+    this.records = records;
+  }
 
-    public int getVersion() {
-        return version;
-    }
-    
-    public void setVersion(int version) {
-        this.version = version;
-    }
+  public int getVersion() {
+    return version;
+  }
 
-    public String getCreatedUsername() {
-        return createdUsername;
-    }
+  public void setVersion(int version) {
+    this.version = version;
+  }
 
-    public void setCreatedUsername(String createdUsername) {
-        this.createdUsername = createdUsername;
-    }
+  public String getCreatedUsername() {
+    return createdUsername;
+  }
 
-    public long getCreatedTime() {
-        return createdTime;
-    }
+  public void setCreatedUsername(String createdUsername) {
+    this.createdUsername = createdUsername;
+  }
 
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
-    }
+  public long getCreatedTime() {
+    return createdTime;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
-        result = prime * result
-                + ((createdUsername == null) ? 0 : createdUsername.hashCode());
-        result = prime * result + version;
-        result = prime * result + ((records == null) ? 0 : records.hashCode());
-        return result;
-    }
+  public void setCreatedTime(long createdTime) {
+    this.createdTime = createdTime;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClassFamilyVersionDto other = (EventClassFamilyVersionDto) obj;
-        if (createdTime != other.createdTime) {
-            return false;
-        }
-        if (createdUsername == null) {
-            if (other.createdUsername != null) {
-                return false;
-            }
-        } else if (!createdUsername.equals(other.createdUsername)) {
-            return false;
-        }
-        if (records == null) {
-            if (other.records != null) {
-                return false;
-            }
-        } else if (!records.equals(other.records)) {
-            return false;
-        }
-        return version == other.version;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (int) (createdTime ^ (createdTime >>> 32));
+    result = prime * result
+        + ((createdUsername == null) ? 0 : createdUsername.hashCode());
+    result = prime * result + version;
+    result = prime * result + ((records == null) ? 0 : records.hashCode());
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        return "EventClassFamilyVersionDto [version="
-                + version + ", createdUsername=" + createdUsername
-                + ", createdTime=" + createdTime + "]";
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-    
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    EventClassFamilyVersionDto other = (EventClassFamilyVersionDto) obj;
+    if (createdTime != other.createdTime) {
+      return false;
+    }
+    if (createdUsername == null) {
+      if (other.createdUsername != null) {
+        return false;
+      }
+    } else if (!createdUsername.equals(other.createdUsername)) {
+      return false;
+    }
+    if (records == null) {
+      if (other.records != null) {
+        return false;
+      }
+    } else if (!records.equals(other.records)) {
+      return false;
+    }
+    return version == other.version;
+  }
+
+  @Override
+  public String toString() {
+    return "EventClassFamilyVersionDto [version="
+        + version + ", createdUsername=" + createdUsername
+        + ", createdTime=" + createdTime + "]";
+  }
+
 }

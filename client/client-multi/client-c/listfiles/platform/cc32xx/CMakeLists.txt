@@ -65,6 +65,6 @@ set_property(TARGET simplelink_nonos PROPERTY IMPORTED_LOCATION ${CC32XX_SDK}/si
 
 add_definitions(-DCC32XX_PLATFORM)
 
-set(KAA_THIRDPARTY_LIBRARIES driver simplelink_nonos)
+set(KAA_THIRDPARTY_LIBRARIES ${KAA_THIRDPARTY_LIBRARIES} driver simplelink_nonos)
 
 set(KAA_BUILD_STATIC_ONLY 1)

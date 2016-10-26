@@ -20,59 +20,59 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 
 public abstract class AbstractKaaData<T extends KaaSchema> implements KaaData<T> {
 
-    private static final long serialVersionUID = -2634202801757181444L;
+  private static final long serialVersionUID = -2634202801757181444L;
 
-    protected final T schema;
-    protected final String data;
+  protected final T schema;
+  protected final String data;
 
-    public AbstractKaaData(T schema, String data){
-        this.schema = schema;
-        this.data = data;
+  public AbstractKaaData(T schema, String data) {
+    this.schema = schema;
+    this.data = data;
+  }
+
+  @Override
+  public T getSchema() {
+    return schema;
+  }
+
+  @Override
+  public String getRawData() {
+    return data;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((data == null) ? 0 : data.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Override
-    public T getSchema(){
-        return schema;
+    if (obj == null) {
+      return false;
     }
-
-    @Override
-    public String getRawData() {
-        return data;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        return result;
+    AbstractKaaData<T> other = (AbstractKaaData<T>) obj;
+    if (data == null) {
+      if (other.data != null) {
+        return false;
+      }
+    } else if (!data.equals(other.data)) {
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractKaaData<T> other = (AbstractKaaData<T>) obj;
-        if (data == null) {
-            if (other.data != null) {
-                return false;
-            }
-        } else if (!data.equals(other.data)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractKaaData [data=" + data + "]";
-    }
+  @Override
+  public String toString() {
+    return "AbstractKaaData [data=" + data + "]";
+  }
 
 }

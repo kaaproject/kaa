@@ -25,31 +25,27 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
  * Updates the Bootstrap manager state.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface BootstrapTransport extends KaaTransport {
 
-    /**
-     * Creates new Resolve request.
-     *
-     * @return Resovle request.
-     *
-     */
-    SyncRequest createResolveRequest();
+  /**
+   * Creates new Resolve request.
+   *
+   * @return Resovle request.
+   */
+  SyncRequest createResolveRequest();
 
-    /**
-     * Updates the state of the Bootstrap manager according the given response.
-     *
-     * @param servers response from Bootstrap server.
-     * 
-     */
-    void onResolveResponse(SyncResponse servers);
+  /**
+   * Updates the state of the Bootstrap manager according the given response.
+   *
+   * @param servers response from Bootstrap server.
+   */
+  void onResolveResponse(SyncResponse servers);
 
-    /**
-     * Sets the given Bootstrap manager.
-     *
-     * @param manager the Bootstrap manager to be set.
-     *
-     */
-    void setBootstrapManager(BootstrapManager manager);
+  /**
+   * Sets the given Bootstrap manager.
+   *
+   * @param manager the Bootstrap manager to be set.
+   */
+  void setBootstrapManager(BootstrapManager manager);
 }

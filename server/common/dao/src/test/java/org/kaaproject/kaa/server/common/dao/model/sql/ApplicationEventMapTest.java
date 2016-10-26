@@ -21,8 +21,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
 public class ApplicationEventMapTest {
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(ApplicationEventMap.class).usingGetClass().verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(ApplicationEventMap.class).usingGetClass().verify();
+  }
 }

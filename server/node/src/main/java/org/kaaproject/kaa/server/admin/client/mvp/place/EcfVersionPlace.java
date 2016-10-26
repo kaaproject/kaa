@@ -18,81 +18,86 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
+
 import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
 
 import java.util.List;
 
 public class EcfVersionPlace extends SchemasPlaceEvent {
 
-    public EcfVersionPlace(String ecfId, String ecfVersionId, int ecfVersion) {
-        super(ecfId, ecfVersionId, ecfVersion);
+  public EcfVersionPlace(String ecfId, String ecfVersionId, int ecfVersion) {
+    super(ecfId, ecfVersionId, ecfVersion);
+  }
+
+  public EcfVersionPlace(String ecfId, String ecfVersionId,
+                         int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
+    super(ecfId, ecfVersionId, ecfVersion, eventClassViewDtoList);
+  }
+
+  public int getEcfVersion() {
+    return ecfVersion;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public EcfVersionPlace(String ecfId, String ecfVersionId, int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
-        super(ecfId, ecfVersionId, ecfVersion, eventClassViewDtoList);
+    if (obj == null) {
+      return false;
     }
-
-    public int getEcfVersion() {
-        return ecfVersion;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
+    EcfVersionPlace other = (EcfVersionPlace) obj;
+    if (ecfId == null) {
+      if (other.ecfId != null) {
+        return false;
+      }
+    } else if (!ecfId.equals(other.ecfId)) {
+      return false;
+    }
+    if (ecfVersion != other.ecfVersion) {
+      return false;
+    }
+    return true;
+  }
 
-    @Prefix(value = "ecfVersion")
-    public static class Tokenizer implements PlaceTokenizer<EcfVersionPlace>, PlaceConstants {
+  @Override
+  public String getName() {
+    return "";
+  }
 
-        @Override
-        public EcfVersionPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new EcfVersionPlace(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID), PlaceParams.getIntParam(ECF_VERSION));
-        }
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
 
-        @Override
-        public String getToken(EcfVersionPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(ECF_ID, place.getEcfId());
-            PlaceParams.putParam(ECF_VERSION_ID, place.getEcfVersionId());
-            PlaceParams.putIntParam(ECF_VERSION, place.getEcfVersion());
-            return PlaceParams.generateToken();
-        }
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new EcfPlace(ecfId);
+  }
+
+  @Prefix(value = "ecfVersion")
+  public static class Tokenizer implements PlaceTokenizer<EcfVersionPlace>, PlaceConstants {
+
+    @Override
+    public EcfVersionPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new EcfVersionPlace(
+          PlaceParams.getParam(ECF_ID),
+          PlaceParams.getParam(ECF_VERSION_ID),
+          PlaceParams.getIntParam(ECF_VERSION));
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EcfVersionPlace other = (EcfVersionPlace) obj;
-        if (ecfId == null) {
-            if (other.ecfId != null) {
-                return false;
-            }
-        } else if (!ecfId.equals(other.ecfId)) {
-            return false;
-        }
-        if (ecfVersion != other.ecfVersion) {
-            return false;
-        }
-        return true;
+    public String getToken(EcfVersionPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(ECF_ID, place.getEcfId());
+      PlaceParams.putParam(ECF_VERSION_ID, place.getEcfVersionId());
+      PlaceParams.putIntParam(ECF_VERSION, place.getEcfVersion());
+      return PlaceParams.generateToken();
     }
-
-    @Override
-    public String getName() {
-        return "";
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new EcfPlace(ecfId);
-    }
+  }
 
 }

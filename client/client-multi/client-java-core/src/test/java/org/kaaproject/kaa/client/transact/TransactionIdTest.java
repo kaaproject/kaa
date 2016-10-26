@@ -17,11 +17,12 @@
 package org.kaaproject.kaa.client.transact;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
 
 public class TransactionIdTest {
-    @Test
-    public void testEqualsAndHashCode() {
-        EqualsVerifier.forClass(TransactionId.class).verify();
-    }
+  @Test
+  public void testEqualsAndHashCode() {
+    EqualsVerifier.forClass(TransactionId.class).verify();
+  }
 }

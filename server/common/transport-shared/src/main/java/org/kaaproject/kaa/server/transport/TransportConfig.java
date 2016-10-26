@@ -20,48 +20,47 @@ import org.apache.avro.Schema;
 
 /**
  * Represents configuration of particular {@link Transport}.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public interface TransportConfig {
 
-    /**
-     * Returns the transport id. The transport id must be unique.
-     * 
-     * @return the transport id
-     */
-    int getId();
+  /**
+   * Returns the transport id. The transport id must be unique.
+   *
+   * @return the transport id
+   */
+  int getId();
 
-    /**
-     * Returns the transport name. There is no strict rule for this
-     * name to be unique.
-     * 
-     * @return the transport name
-     */
-    String getName();
+  /**
+   * Returns the transport name. There is no strict rule for this
+   * name to be unique.
+   *
+   * @return the transport name
+   */
+  String getName();
 
-    /**
-     * Returns the class name of the {@link Transport} implementation..
-     * 
-     * @return the class name of the {@link Transport} implementation
-     */
-    String getTransportClass();
+  /**
+   * Returns the class name of the {@link Transport} implementation..
+   *
+   * @return the class name of the {@link Transport} implementation
+   */
+  String getTransportClass();
 
-    /**
-     * Returns the avro schema of the {@link Transport} configuration.
-     * 
-     * @return the avro schema of the {@link Transport} configuration
-     */
-    Schema getConfigSchema();
+  /**
+   * Returns the avro schema of the {@link Transport} configuration.
+   *
+   * @return the avro schema of the {@link Transport} configuration
+   */
+  Schema getConfigSchema();
 
-    /**
-     * Returns the configuration file name. This configuration file may
-     * be used by {@link TransportService} to initialize and configure
-     * the corresponding {@link Transport}
-     * 
-     * @return the configuration file name
-     */
-    String getConfigFileName();
+  /**
+   * Returns the configuration file name. This configuration file may
+   * be used by {@link TransportService} to initialize and configure
+   * the corresponding {@link Transport}
+   *
+   * @return the configuration file name
+   */
+  String getConfigFileName();
 
 }

@@ -24,34 +24,34 @@ import org.kaaproject.kaa.server.appenders.file.config.gen.FileConfig;
  */
 public interface FileSystemLogEventService {
 
-    /**
-     * Create Directory with specific path
-     *
-     * @param path the path to directory
-     */
-    void createDirectory(String path);
+  /**
+   * Create Directory with specific path.
+   *
+   * @param path the path to directory
+   */
+  void createDirectory(String path);
 
-    /**
-     * Create log user and log group and give them permissions to access
-     *  logs of application with specific id
-     *
-     * @param applicationId the application id
-     * @param config the File log appender config
-     * @param path the path to logs directory
-     */
-    public void createUserAndGroup(LogAppenderDto appender, FileConfig config, String path);
+  /**
+   * Create log user and log group and give them permissions to access
+   * logs of application with specific id.
+   *
+   * @param appender      the appender
+   * @param config        the File log appender config
+   * @param path          the path to logs directory
+   */
+  public void createUserAndGroup(LogAppenderDto appender, FileConfig config, String path);
 
-    /**
-     * Remove all objects from directory.
-     *
-     * @param path the path to directory
-     */
-    void removeAll(String path);
+  /**
+   * Remove all objects from directory.
+   *
+   * @param path the path to directory
+   */
+  void removeAll(String path);
 
-    /**
-     * Create root log directory on kaa server.
-     *
-     * @param logsRootPath the path to root log directory
-     */
-    void createRootLogDirCommand(String logsRootPath);
+  /**
+   * Create root log directory on kaa server.
+   *
+   * @param logsRootPath the path to root log directory
+   */
+  void createRootLogDirCommand(String logsRootPath);
 }

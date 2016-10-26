@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
+
+import java.util.List;
 
 /**
  * The Interface EndpointNotificationDao.
@@ -28,33 +28,33 @@ import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
  */
 public interface EndpointNotificationDao<T extends EndpointNotification> extends Dao<T, String> {
 
-    /**
-     * Save notification object
-     *
-     * @param dto the notification object
-     * @return saved notification object
-     */
-    T save(EndpointNotificationDto dto);
+  /**
+   * Save notification object.
+   *
+   * @param dto the notification object
+   * @return saved notification object
+   */
+  T save(EndpointNotificationDto dto);
 
-    /**
-     * Find notifications by key hash.
-     *
-     * @param keyHash the endpoint key hash
-     * @return the list of endpoint notifications
-     */
-    List<T> findNotificationsByKeyHash(byte[] keyHash);
+  /**
+   * Find notifications by key hash.
+   *
+   * @param keyHash the endpoint key hash
+   * @return the list of endpoint notifications
+   */
+  List<T> findNotificationsByKeyHash(byte[] keyHash);
 
-    /**
-     * Removes the notifications by key hash.
-     *
-     * @param keyHash the endpoint key hash
-     */
-    void removeNotificationsByKeyHash(byte[] keyHash);
+  /**
+   * Removes the notifications by key hash.
+   *
+   * @param keyHash the endpoint key hash
+   */
+  void removeNotificationsByKeyHash(byte[] keyHash);
 
-    /**
-     * Removes the endpoint notifications by application id.
-     *
-     * @param appId the application id
-     */
-    void removeNotificationsByAppId(String appId);
+  /**
+   * Removes the endpoint notifications by application id.
+   *
+   * @param appId the application id
+   */
+  void removeNotificationsByAppId(String appId);
 }

@@ -16,121 +16,107 @@
 
 package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 
+import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 
-/**
- * The Class OperationsServerLoadHistory
- *
- * @author Andrey Panasenko
- */
 public class OperationsServerLoadHistory {
-    private final List<OperationsServerLoad> history;
-    private long maxHistoryTimeLive = 600*1000;
+  private final List<OperationsServerLoad> history;
+  private long maxHistoryTimeLive = 600 * 1000;
 
-    /**
-     * The Class OperationsServerLoad.
-     */
-    public class OperationsServerLoad {
-        private final long time;
-        private LoadInfo loadInfo;
+  public OperationsServerLoadHistory(long maxHistoryTimeLiv) {
+    setMaxHistoryTimeLive(maxHistoryTimeLiv);
+    history = new CopyOnWriteArrayList<OperationsServerLoad>();
+  }
 
-        protected OperationsServerLoad(LoadInfo load) {
-            time = System.currentTimeMillis();
-            this.loadInfo = load;
-        }
+  /**
+   * Adds the Operations server load to the history.
+   *
+   * @param load the load
+   */
+  public void addOpsServerLoad(LoadInfo load) {
+    removeOldHistory();
+    history.add(new OperationsServerLoad(load));
+  }
 
-        /**
-         * Gets the time.
-         *
-         * @return the time
-         */
-        public long getTime() {
-            return time;
-        }
 
-        /**
-         * Gets the registered users count.
-         *
-         * @return the registeredUsersCount
-         */
-        public LoadInfo getLoadInfo() {
-            return loadInfo;
-        }
+  public final List<OperationsServerLoad> getHistory() {
+    return history;
+  }
 
-        /**
-         * Sets the registered users count.
-         *
-         * @param loadInfo the load info to set
-         */
-        public void setLoadInfo(LoadInfo loadInfo) {
-            this.loadInfo = loadInfo;
-        }
+  /**
+   * Removes the old history.
+   */
+  private void removeOldHistory() {
+    long current = System.currentTimeMillis();
+    List<OperationsServerLoad> toDelete = new LinkedList<>();
+    for (OperationsServerLoad snap : history) {
+      if ((current - snap.getTime()) > maxHistoryTimeLive) {
+        //Remove record.
+        toDelete.add(snap);
+      }
+    }
+    if (!toDelete.isEmpty()) {
+      for (OperationsServerLoad snap : toDelete) {
+        history.remove(snap);
+      }
+      toDelete.clear();
     }
 
-    public OperationsServerLoadHistory(long maxHistoryTimeLiv) {
-        setMaxHistoryTimeLive(maxHistoryTimeLiv);
-        history = new CopyOnWriteArrayList<OperationsServerLoad>();
+  }
+
+  /**
+   * Gets the max history time live.
+   *
+   * @return the maxHistoryTimeLive
+   */
+  public long getMaxHistoryTimeLive() {
+    return maxHistoryTimeLive;
+  }
+
+  /**
+   * Sets the max history time live.
+   *
+   * @param maxHistoryTimeLive the maxHistoryTimeLive to set
+   */
+  public void setMaxHistoryTimeLive(long maxHistoryTimeLive) {
+    this.maxHistoryTimeLive = maxHistoryTimeLive;
+  }
+
+
+  public class OperationsServerLoad {
+    private final long time;
+    private LoadInfo loadInfo;
+
+    protected OperationsServerLoad(LoadInfo load) {
+      time = System.currentTimeMillis();
+      this.loadInfo = load;
+    }
+
+
+    public long getTime() {
+      return time;
     }
 
     /**
-     * Adds the Operations server load to the history
+     * Gets the registered users count.
      *
-     * @param load the load
+     * @return the registeredUsersCount
      */
-    public void addOpsServerLoad(LoadInfo load) {
-        removeOldHistory();
-        history.add(new OperationsServerLoad(load));
+    public LoadInfo getLoadInfo() {
+      return loadInfo;
     }
 
     /**
-     * Gets the history.
+     * Sets the registered users count.
      *
-     * @return the history
+     * @param loadInfo the load info to set
      */
-    public final List<OperationsServerLoad> getHistory() {
-        return history;
+    public void setLoadInfo(LoadInfo loadInfo) {
+      this.loadInfo = loadInfo;
     }
-
-    /**
-     * Removes the old history.
-     */
-    private void removeOldHistory() {
-        long current = System.currentTimeMillis();
-        List<OperationsServerLoad> toDelete = new LinkedList<OperationsServerLoad>();
-        for(OperationsServerLoad snap : history) {
-            if ((current - snap.getTime()) > maxHistoryTimeLive) {
-                //Remove record.
-                toDelete.add(snap);
-            }
-        }
-        if (!toDelete.isEmpty()) {
-            for(OperationsServerLoad snap : toDelete) {
-                history.remove(snap);
-            }
-            toDelete.clear();
-        }
-
-    }
-
-    /**
-     * Gets the max history time live.
-     *
-     * @return the maxHistoryTimeLive
-     */
-    public long getMaxHistoryTimeLive() {
-        return maxHistoryTimeLive;
-    }
-
-    /**
-     * Sets the max history time live.
-     *
-     * @param maxHistoryTimeLive the maxHistoryTimeLive to set
-     */
-    public void setMaxHistoryTimeLive(long maxHistoryTimeLive) {
-        this.maxHistoryTimeLive = maxHistoryTimeLive;
-    }
+  }
 }

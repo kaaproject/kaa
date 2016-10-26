@@ -22,48 +22,49 @@ import java.util.List;
 
 /**
  * The interface Application dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface ApplicationDao<T> extends SqlDao<T> {
 
-    /**
-     * Find applications by  tenant id.
-     *
-     * @param tenantId the tenant id
-     * @return the list of applications
-     */
-    List<T> findByTenantId(String tenantId);
+  /**
+   * Find applications by  tenant id.
+   *
+   * @param tenantId the tenant id
+   * @return the list of applications
+   */
+  List<T> findByTenantId(String tenantId);
 
-    /**
-     * Find applications by application token.
-     *
-     * @param token the token
-     * @return the application object
-     */
-    T findByApplicationToken(String token);
+  /**
+   * Find applications by application token.
+   *
+   * @param token the token
+   * @return the application object
+   */
+  T findByApplicationToken(String token);
 
-    /**
-     * Find applications by name and tenant id.
-     *
-     * @param name the name of application
-     * @param tenantId the tenant id
-     * @return the application object
-     */
-    T findByNameAndTenantId(String name, String tenantId);
+  /**
+   * Find applications by name and tenant id.
+   *
+   * @param name     the name of application
+   * @param tenantId the tenant id
+   * @return the application object
+   */
+  T findByNameAndTenantId(String name, String tenantId);
 
-    /**
-     * Remove application by application token.
-     *
-     * @param applicationToken the application token
-     */
-    void removeByApplicationToken(String applicationToken);
+  /**
+   * Remove application by application token.
+   *
+   * @param applicationToken the application token
+   */
+  void removeByApplicationToken(String applicationToken);
 
-    /**
-     * Gets next sequence number.
-     *
-     * @param id the application id
-     * @return the next sequence number
-     */
-    T getNextSeqNumber(String id);
+  /**
+   * Gets next sequence number.
+   *
+   * @param id the application id
+   * @return the next sequence number
+   */
+  T getNextSeqNumber(String id);
 
 }

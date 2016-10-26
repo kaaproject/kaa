@@ -279,7 +279,8 @@ EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
 #include <kaa/event/gen/EventFamilyFactory.hpp>
  
 ...
-EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
+
+kaa::EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
 ```
 
 </div><div id="objc1" class="tab-pane fade" markdown="1" >
@@ -318,7 +319,8 @@ ThermoEventClassFamily tecf = eventFamilyFactory.getThermoEventClassFamily();
 #include <kaa/event/gen/ThermoEventClassFamily.hpp>
  
 ...
-ThermoEventClassFamily& tecf = eventFamilyFactory.getThermoEventClassFamily();
+ 
+kaa::ThermostatEventClassFamily& tecf = eventFamilyFactory.getThermostatEventClassFamily();
 ```
 
 </div><div id="objc2" class="tab-pane fade" markdown="1" >
@@ -378,10 +380,9 @@ kaaClient.findEventListeners(FQNs, new FindEventListenersCallback() {
 #include <memory>
 #include <string>
 #include <vector>
- 
 #include <kaa/event/IFetchEventListeners.hpp>
  
-class SimpleFetchEventListeners : public IFetchEventListeners {
+class SimpleFetchEventListeners : public kaa::IFetchEventListeners {
 public:
     virtual void onEventListenersReceived(const std::vector<std::string>& eventListeners)
     {
@@ -395,6 +396,7 @@ public:
 };
  
 ...
+ 
 std::list<std::string> FQNs = {"org.kaaproject.kaa.schema.sample.thermo.ThermostatInfoRequest"
                               ,"org.kaaproject.kaa.schema.sample.thermo.ChangeTemperatureCommand"};
  
@@ -481,11 +483,14 @@ tecf.sendEventToAll(new ThermostatInfoRequest());
 </div><div id="cpp4" class="tab-pane fade" markdown="1" >
 
 ```c++
-#include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
+#include <kaa/event/gen/ThermostatEventClassFamilyGen.hpp>
  
 ...
-nsThermoEventClassFamily::ThermostatInfoRequest thermoRequest;
+ 
+nsThermostatEventClassFamily::ThermostatInfoRequest thermoRequest;
 tecf.sendEventToAll(thermoRequest);
+
+
 ```
 
 </div><div id="c4" class="tab-pane fade" markdown="1" >
@@ -544,10 +549,11 @@ tecf.sendEvent(ctc, target);
 </div><div id="cpp5" class="tab-pane fade" markdown="1" >
 
 ```c++
-#include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
+#include <kaa/event/gen/ThermostatEventClassFamilyGen.hpp>
  
 ...
-nsThermoEventClassFamily::ChangeTemperatureCommand ctc;
+ 
+nsThermostatEventClassFamily::ChangeTemperatureCommand ctc;
 ctc.temperature = -30;
  
 // Assume the target variable is one of the received in the findEventListeners method
@@ -636,30 +642,29 @@ eventFamilyFactory.removeEventsBlock(trxId);
 #include <kaa/event/gen/ThermoEventClassFamily.hpp>
 #include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
  
-using namespace kaa;
+...
  
 // Get an instance of EventFamilyFactory
-EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
-ThermoEventClassFamily& tecf = eventFamilyFactory.getThermoEventClassFamily();
+kaa::EventFamilyFactory& eventFamilyFactory = kaaClient->getEventFamilyFactory();
+kaa::ThermostatEventClassFamily& tecf = eventFamilyFactory.getThermostatEventClassFamily();
  
 // Register a new event block and get a unique block id
-TransactionIdPtr trxId = eventFamilyFactory.startEventsBlock();
+kaa::TransactionIdPtr trxId = eventFamilyFactory.startEventsBlock();
  
 // Add events to the block
 // Adding a broadcasted event to the block
-nsThermoEventClassFamily::ThermostatInfoRequest thermoRequest;
+nsThermostatEventClassFamily::ThermostatInfoRequest thermoRequest;
 tecf.addEventToBlock(trxId, thermoRequest);
 // Adding a targeted event to the block
-nsThermoEventClassFamily::ChangeTemperatureCommand ctc;
+nsThermostatEventClassFamily::ChangeTemperatureCommand ctc;
 ctc.temperature = -30;
 tecf.addEventToBlock(trxId, ctc, "home_thermostat");
- 
  
 // Send an event batch
 eventFamilyFactory.submitEventsBlock(trxId);
  
 // Or cancel an event batch
-eventFamilyFactory.removeEventsBlock(trxId); 
+eventFamilyFactory.removeEventsBlock(trxId);  
 ```
 
 </div><div id="c6" class="tab-pane fade" markdown="1" >
@@ -763,25 +768,29 @@ tecf.addListener(new ThermoEventClassFamily.Listener() {
 </div><div id="cpp7" class="tab-pane fade" markdown="1" >
 
 ```c++
-#include <kaa/event/gen/ThermoEventClassFamilyGen.hpp>
+#include <kaa/event/gen/ThermostatEventClassFamilyGen.hpp>
+#include <kaa/event/gen/ThermostatEventClassFamily.hpp> 
+#include <kaa/event/gen/EventFamilyFactory.hpp>
  
-class SimpleThermoEventClassFamilyListener: public ThermoEventClassFamily::ThermoEventClassFamilyListener {
+class SimpleThermostatEventClassFamilyListener: public kaa::ThermostatEventClassFamily::ThermostatEventClassFamilyListener {
 public:
-    virtual void onEvent(const nsThermoEventClassFamily :: ThermostatInfoRequest& event, const std::string& source) 
+    virtual void onEvent(const nsThermostatEventClassFamily :: ThermostatInfoRequest& event, const std::string& source) 
     {
         // Some code
     }
-    virtual void onEvent(const nsThermoEventClassFamily :: ThermostatInfoResponse& event, const std::string& source) 
+    virtual void onEvent(const nsThermostatEventClassFamily :: ThermostatInfoResponse& event, const std::string& source) 
     {
         // Some code
     }
-    virtual void onEvent(const nsThermoEventClassFamily :: ChangeTemperatureCommand& event, const std::string& source) 
+    virtual void onEvent(const nsThermostatEventClassFamily :: ChangeTemperatureCommand& event, const std::string& source) 
     {
         // Some code
     }
 };
+ 
 ...
-SimpleThermoEventClassFamilyListener eventsListener;
+ 
+SimpleThermostatEventClassFamilyListener eventsListener;
 tecf.addEventFamilyListener(eventsListener);
 ```
 

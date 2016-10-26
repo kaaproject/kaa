@@ -16,34 +16,34 @@
 
 package org.kaaproject.kaa.server.admin.shared.properties;
 
-import java.io.Serializable;
-
-import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.common.dto.HasId;
+
+import java.io.Serializable;
 
 public class PropertiesDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = 8961974348857075717L;
-    
-    private String id;
-    private RecordField configuration;
+  private static final long serialVersionUID = 8961974348857075717L;
 
-    @Override
-    public String getId() {
-        return id;
-    }
+  private String id;
+  private RecordField configuration;
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    public RecordField getConfiguration() {
-        return configuration;
-    }
+  @Override
+  public String getId() {
+    return id;
+  }
 
-    public void setConfiguration(RecordField configuration) {
-        this.configuration = configuration;
-    }
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public RecordField getConfiguration() {
+    return configuration;
+  }
+
+  public void setConfiguration(RecordField configuration) {
+    this.configuration = configuration;
+  }
 
 }

@@ -47,7 +47,7 @@ To add a trustful verifier, use the [server REST API]({{root_url}}Programming-gu
 
 ![trustful verifier](Admin-ui/verifier-trustful.png "trustful verifier")
 
->**CAUTION:** Do not use this owner verifier in production because it may cause security issues.
+>**CAUTION:** Do not use trustful owner verifier in production because it may cause security issues.
 {:.caution}
 
 ### Facebook owner verifier
@@ -188,7 +188,7 @@ To create a Twitter owner verifier, use the [server REST API]({{root_url}}Progra
 ### Custom owner verifier
 
 You can implement a custom plug-in verifier.
-To do this, follow the instructions in [Creating custom owner verifier]({{root_url}}Customization-guide/Kaa-Server/Development-environment-setup/#creating-custom-user-verifier).
+To do this, follow the instructions in [Creating custom owner verifier]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/).
 
 
 ## Using the endpoint access token
@@ -216,7 +216,7 @@ The process flows as follows:
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus">C++</a></li>
+  <li><a data-toggle="tab" href="#Cpp">C++</a></li>
   <li><a data-toggle="tab" href="#C">C</a></li>
   <li><a data-toggle="tab" href="#Objective-C">Objective-C</a></li>
 </ul>
@@ -233,22 +233,19 @@ import org.kaaproject.kaa.client.event.registration.UserAuthResultListener;
 * Creates owner attach request using default verifier. Default verifier is selected during SDK generation.
 * If there was no default verifier selected this method will throw runtime exception.
 */
-
-kaaClient.attachUser("userExternalId", "userAccessToken", new UserAttachCallback()
-{
+ 
+kaaClient.attachUser("userExternalId", "userAccessToken", new UserAttachCallback() {
     @Override
     public void onAttachResult(UserAttachResponse response) {
         System.out.println("Attach response" + response.getResult());
     }
 });
-
-
-
+ 
+ 
 /**
 * Creates owner attach request using specified verifier.
 */
-kaaClient.attachUser("userVerifierToken", "userExternalId", "userAccessToken", new UserAttachCallback()
-{
+kaaClient.attachUser("userVerifierToken", "userExternalId", "userAccessToken", new UserAttachCallback() {
     @Override
     public void onAttachResult(UserAttachResponse response) {
         System.out.println("Attach response" + response.getResult());
@@ -257,25 +254,22 @@ kaaClient.attachUser("userVerifierToken", "userExternalId", "userAccessToken", n
 ```
 
 </div>
-<div id="C_plus_plus" class="tab-pane fade" markdown="1" >
+<div id="Cpp" class="tab-pane fade" markdown="1" >
 
 ```c++
 #include <memory>
 #include <iostream>
- 
 #include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+#include <kaa/event/registration/IUserAttachCallback.hpp>
  
-using namespace kaa;
- 
-class SimpleUserAttachCallback : public IUserAttachCallback {
+class SimpleUserAttachCallback : public kaa::IUserAttachCallback {
 public:
     virtual void onAttachSuccess()
     {
         std::cout << "Endpoint is attached to a user" << std::endl;
     }
  
-    virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    virtual void onAttachFailed(kaa::UserAttachErrorCode errorCode, const std::string& reason)
     {
         std::cout << "Failed to attach endpoint to a user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
     }
@@ -284,13 +278,12 @@ public:
 ...
   
 // Create an endpoint instance
-auto kaaClient = Kaa::newClient();
- 
+auto kaaClient = kaa::Kaa::newClient();
 // Start an endpoint
 kaaClient->start();
- 
 // Try to attach an endpoint to a user
 kaaClient->attachUser("userExternalId", "userAccessToken", std::make_shared<SimpleUserAttachCallback>());
+
 ```
 
 </div>
@@ -369,67 +362,45 @@ Below are examples of assisted attachment.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-1">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus-1">C++</a></li>
+  <li><a data-toggle="tab" href="#Cpp-1">C++</a></li>
   <li><a data-toggle="tab" href="#C-1">C</a></li>
   <li><a data-toggle="tab" href="#Objective-C-1">Objective-C</a></li>
 </ul>
 
 <div class="tab-content">
 <div id="Java-1" class="tab-pane fade in active" markdown="1" >
+**An endpoint that can't attach itself independently:**
 
 ```java
 
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.KaaDesktop;
-
+ 
 public class Preparation {
+ 
     public static void main(String[] args) {
-        KaaClient kaaClientWithoutOwner = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
-            @Override
-            public void onStarted() {
-                System.out.println("Kaa client started");
-            }
-
-            @Override
-            public void onStopped() {
-                System.out.println("Kaa client stopped");
-            }
-        }, true);
+        KaaClient kaaClientWithoutOwner = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(), true);
 
         kaaClientWithoutOwner.start();
         kaaClientWithoutOwner.setEndpointAccessToken("endpointAccessToken");
     }
 }
+```
 
+**An assist endpoint:**
+
+```java
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.KaaDesktop;
 import org.kaaproject.kaa.client.event.registration.OnAttachEndpointOperationCallback;
-
+ 
 public class AssistedAttachment {
     public static void main(String[] args) {
-        KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener() {
-            @Override
-            public void onStarted() {
-                System.out.println("Kaa client started");
-            }
-
-            @Override
-            public void onStopped() {
-                System.out.println("Kaa client stopped");
-            }
-        }, true);
-
-        /**
-         * Updates with new endpoint attach request
-         *
-         * @param   endpointAccessToken Access token of the endpoint being attached
-         * @param   resultListener      Listener to notify about result of the endpoint attaching
-         *
-         */
-        //kaaClient represents endpoint which already attached to owner
-        //endpoint with endpointAccessToken will be attached to the same owner
-        kaaClient.attachEndpoint("endpointAccessToken", new OnAttachEndpointOperationCallback()
-        {
+        KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(), true);
+ 
+        //the entity kaaClient represents endpoint which already attached to owner.
+        //the endpoint with access token endpointAccessToken will be attached to the same owner.
+        kaaClient.attachEndpoint("endpointAccessToken", new OnAttachEndpointOperationCallback() {
             @Override
             public void onAttach(SyncResponseResultType result, EndpointKeyHash resultContext) {
                 if (result.equals(SyncResponseResultType.SUCCESS)) {
@@ -440,44 +411,40 @@ public class AssistedAttachment {
                 }
             }
         });
+        
     }
 }
 
 ```
 
 </div>
-<div id="C_plus_plus-1" class="tab-pane fade" markdown="1" >
+<div id="Cpp-1" class="tab-pane fade" markdown="1" >
 
 ```c++
 #include <memory>
 #include <iostream>
- 
 #include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+#include <kaa/event/registration/IAttachEndpointCallback.hpp>
  
-using namespace kaa;
- 
-class SimpleEndpointAttachCallback : public IAttachEndpointCallback {
+class SimpleEndpointAttachCallback : public kaa::IAttachEndpointCallback {
 public:
-    virtual void onAttachSuccess()
+    virtual void onAttachSuccess(const std::string& endpointKeyHash)
     {
-        std::cout << "Endpoint is attached to a user" << std::endl;
+        std::cout << "Endpoint is attached to a user, key hash:" << endpointKeyHash << std::endl;
     }
- 
-    virtual void onAttachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    
+    virtual void onAttachFailed()
     {
-        std::cout << "Failed to attach endpoint to a user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
+        std::cout << "Failed to attach endpoint to a user" << std::endl;
     }
 };
  
 ...
   
 // Create an endpoint instance
-auto kaaClient = Kaa::newClient();
- 
+auto kaaClient = kaa::Kaa::newClient();
 // Start an endpoint
 kaaClient->start();
- 
 // Try to attach an endpoint to a user
 kaaClient->attachEndpoint("endpointAccessToken", std::make_shared<SimpleEndpointAttachCallback>());
 ```
@@ -540,7 +507,7 @@ Below are examples of assisted detachment.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-2">Java</a></li>
-  <li><a data-toggle="tab" href="#C_plus_plus-2">C++</a></li>
+  <li><a data-toggle="tab" href="#Cpp-2">C++</a></li>
   <li><a data-toggle="tab" href="#C-2">C</a></li>
   <li><a data-toggle="tab" href="#Objective-C-2">Objective-C</a></li>
 </ul>
@@ -552,7 +519,7 @@ Below are examples of assisted detachment.
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.KaaDesktop;
 import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCallback;
-
+ 
 /**
 * Updates with new endpoint detach request
 *
@@ -560,9 +527,8 @@ import org.kaaproject.kaa.client.event.registration.OnDetachEndpointOperationCal
 * @param   resultListener Listener to notify about result of the enpoint attaching
 *
 */
-
-kaaClient.detachEndpoint("endpointKeyHash", new OnDetachEndpointOperationCallback()
-{
+ 
+kaaClient.detachEndpoint("endpointKeyHash", new OnDetachEndpointOperationCallback() {
     @Override
     public void onDetach(SyncResponseResultType result) {
         //
@@ -571,39 +537,35 @@ kaaClient.detachEndpoint("endpointKeyHash", new OnDetachEndpointOperationCallbac
 ```
 
 </div>
-<div id="C_plus_plus-2" class="tab-pane fade" markdown="1" >
+<div id="Cpp-2" class="tab-pane fade" markdown="1" >
 
 ```c++
 #include <memory>
 #include <iostream>
- 
 #include <kaa/Kaa.hpp>
-#include <kaa/event/registration/SimpleUserAttachCallback.hpp>
+#include <kaa/event/registration/IDetachEndpointCallback.hpp>
  
-using namespace kaa;
- 
-class SimpleEndpointDetachCallback : public IDetachEndpointCallback {
+class SimpleEndpointDetachCallback : public kaa::IDetachEndpointCallback {
 public:
     virtual void onDetachSuccess()
     {
         std::cout << "Endpoint is attached to a user" << std::endl;
     }
  
-    virtual void onDetachFailed(UserAttachErrorCode errorCode, const std::string& reason)
+    virtual void onDetachFailed()
     {
-        std::cout << "Failed to detach endpoint from user: error code " << errorCode << ", reason '" << reason << "'" << std::endl;
+        std::cout << "Failed to detach endpoint from user" << std::endl;
     }
 };
+  
+...
+ 
+// Create an endpoint instance
+auto kaaClient = kaa::Kaa::newClient();
  
 ...
-  
-// Create an endpoint instance
-auto kaaClient = Kaa::newClient();
  
-// Start an endpoint
-kaaClient->start();
- 
-// Try to attach an endpoint to a user
+// Try to detach an endpoint from a user 
 kaaClient->detachEndpoint("endpointKeyHash", std::make_shared<SimpleEndpointDetachCallback>());
 ```
 

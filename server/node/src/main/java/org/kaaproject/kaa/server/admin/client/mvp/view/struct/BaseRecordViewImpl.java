@@ -16,63 +16,67 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseRecordView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseDetailsViewImpl;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+public abstract class BaseRecordViewImpl<T extends AbstractStructureDto, V>
+    extends BaseDetailsViewImpl
+    implements BaseRecordView<T, V>, ValueChangeHandler<VersionDto> {
 
-public abstract class BaseRecordViewImpl<T extends AbstractStructureDto,V> extends BaseDetailsViewImpl 
-                        implements BaseRecordView<T,V>, ValueChangeHandler<VersionDto>  {
+  protected AbstractRecordPanel<T, V> recordPanel;
 
-    protected AbstractRecordPanel<T,V> recordPanel;
+  /**
+   * Instantiates a new BaseRecordViewImpl.
+   */
+  public BaseRecordViewImpl(boolean create) {
+    super(create);
+    getSaveButtonWidget().setVisible(false);
+    getCancelButtonWidget().setVisible(false);
+    getBackButtonPanelWidget().setVisible(true);
+  }
 
-    public BaseRecordViewImpl(boolean create) {
-        super(create);
-        getSaveButtonWidget().setVisible(false);
-        getCancelButtonWidget().setVisible(false);
-        getBackButtonPanelWidget().setVisible(true);
-    }
+  @Override
+  protected void initDetailsTable() {
 
-    @Override
-    protected void initDetailsTable() {
+    detailsTable.getColumnFormatter().setWidth(0, "200px");
+    detailsTable.getColumnFormatter().setWidth(1, "500px");
 
-        detailsTable.getColumnFormatter().setWidth(0, "200px");
-        detailsTable.getColumnFormatter().setWidth(1, "500px");
-        
-        int row = initDetailsTableImpl();
+    int row = initDetailsTableImpl();
 
-        recordPanel = createRecordPanel();
-        detailsTable.setWidget(++row, 0, recordPanel);
-        detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+    recordPanel = createRecordPanel();
+    detailsTable.setWidget(++row, 0, recordPanel);
+    detailsTable.getFlexCellFormatter().setColSpan(row, 0, 2);
 
-    }
-    
-    @Override
-    public void onValueChange(ValueChangeEvent<VersionDto> event) {
-        recordPanel.fireSchemaSelected();
-    }
-    
-    protected abstract int initDetailsTableImpl();
+  }
 
-    protected abstract AbstractRecordPanel<T,V> createRecordPanel();
+  @Override
+  public void onValueChange(ValueChangeEvent<VersionDto> event) {
+    recordPanel.fireSchemaSelected();
+  }
 
-    @Override
-    protected void resetImpl() {
-        recordPanel.reset();
-    }
+  protected abstract int initDetailsTableImpl();
 
-    @Override
-    protected boolean validate() {
-        return false;
-    }
+  protected abstract AbstractRecordPanel<T, V> createRecordPanel();
 
-    @Override
-    public AbstractRecordPanel<T,V> getRecordPanel() {
-        return recordPanel;
-    }
+  @Override
+  protected void resetImpl() {
+    recordPanel.reset();
+  }
+
+  @Override
+  protected boolean validate() {
+    return false;
+  }
+
+  @Override
+  public AbstractRecordPanel<T, V> getRecordPanel() {
+    return recordPanel;
+  }
 
 
 }

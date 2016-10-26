@@ -18,13 +18,13 @@ package org.kaaproject.kaa.server.common.dao.schema;
 
 public class EventSchemaException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public EventSchemaException(String message) {
-        super(message);
-    }
+  public EventSchemaException(String message) {
+    super(message);
+  }
 
-    public EventSchemaException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public EventSchemaException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

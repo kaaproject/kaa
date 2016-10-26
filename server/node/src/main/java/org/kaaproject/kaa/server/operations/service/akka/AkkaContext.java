@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
 import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -34,149 +37,139 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-
 @Component
 public class AkkaContext {
 
-    private static final String GLOBAL_ENDPOINT_ACTOR_TIMEOUT = "global_endpoint_actor_timeout";
-    
-    private static final String LOCAL_ENDPOINT_ACTOR_TIMEOUT = "local_endpoint_actor_timeout";
-    
-    private static final String ENDPOINT_EVENT_TIMEOUT = "endpoint_event_timeout";
+  private static final String GLOBAL_ENDPOINT_ACTOR_TIMEOUT = "global_endpoint_actor_timeout";
 
-    private static final String IO_WORKER_COUNT_PROP_NAME = "io_worker_count";
+  private static final String LOCAL_ENDPOINT_ACTOR_TIMEOUT = "local_endpoint_actor_timeout";
 
-    private static final String AKKA_CONF_FILE_NAME = "akka.conf";
+  private static final String ENDPOINT_EVENT_TIMEOUT = "endpoint_event_timeout";
 
-    @Autowired
-    private ClusterService clusterService;
-    
-    /** The cache service. */
-    @Autowired
-    private CacheService cacheService;
+  private static final String IO_WORKER_COUNT_PROP_NAME = "io_worker_count";
 
-    /** The cache service. */
-    @Autowired
-    private KeyStoreService operationsKeyStoreService;
+  private static final String AKKA_CONF_FILE_NAME = "akka.conf";
+  private final Config config;
+  @Autowired
+  private ClusterService clusterService;
+  /**
+   * The cache service.
+   */
+  @Autowired
+  private CacheService cacheService;
+  /**
+   * The cache service.
+   */
+  @Autowired
+  private KeyStoreService operationsKeyStoreService;
+  /**
+   * The operations service.
+   */
+  @Autowired
+  private OperationsService operationsService;
+  /**
+   * The notification delta service.
+   */
+  @Autowired
+  private NotificationDeltaService notificationDeltaService;
+  @Autowired
+  private ApplicationService applicationService;
+  @Autowired
+  private EventService eventService;
+  @Autowired
+  private MetricsService metricsService;
+  @Autowired
+  private LogAppenderService logAppenderService;
+  @Autowired
+  private EndpointUserService endpointUserService;
+  @Autowired
+  @Qualifier("rootCredentialsServiceLocator")
+  private CredentialsServiceLocator credentialsServiceLocator;
+  @Autowired
+  private RegistrationService registrationService;
+  @Autowired
+  private CtlService ctlService;
+  @Value("#{properties[support_unencrypted_connection]}")
+  private Boolean supportUnencryptedConnection;
 
-    /** The operations service. */
-    @Autowired
-    private OperationsService operationsService;
+  public AkkaContext() {
+    config = ConfigFactory.parseResources(AKKA_CONF_FILE_NAME).withFallback(ConfigFactory.load());
+  }
 
-    /** The notification delta service. */
-    @Autowired
-    private NotificationDeltaService notificationDeltaService;
+  public Config getConfig() {
+    return config;
+  }
 
-    @Autowired
-    private ApplicationService applicationService;
+  public int getIoWorkerCount() {
+    return config.getInt(IO_WORKER_COUNT_PROP_NAME);
+  }
 
-    @Autowired
-    private EventService eventService;
+  public long getGlobalEndpointTimeout() {
+    return config.getLong(GLOBAL_ENDPOINT_ACTOR_TIMEOUT);
+  }
 
-    @Autowired
-    private MetricsService metricsService;
+  public long getLocalEndpointTimeout() {
+    return config.getLong(LOCAL_ENDPOINT_ACTOR_TIMEOUT);
+  }
 
-    @Autowired
-    private LogAppenderService logAppenderService;
-    
-    @Autowired
-    private EndpointUserService endpointUserService;
-    
-    @Autowired
-    @Qualifier("rootCredentialsServiceLocator")
-    private CredentialsServiceLocator credentialsServiceLocator;
-    
-    @Autowired
-    private RegistrationService registrationService; 
-    
-    @Autowired
-    private CTLService ctlService;
-    
-    @Value("#{properties[support_unencrypted_connection]}")
-    private Boolean supportUnencryptedConnection;
-    
-    private final Config config;
-    
-    public AkkaContext() {
-        config = ConfigFactory.parseResources(AKKA_CONF_FILE_NAME).withFallback(ConfigFactory.load());
-    }
-    
-    public Config getConfig(){
-        return config;
-    }
+  public long getEventTimeout() {
+    return config.getLong(ENDPOINT_EVENT_TIMEOUT);
+  }
 
-    public int getIOWorkerCount(){
-        return config.getInt(IO_WORKER_COUNT_PROP_NAME);
-    }
+  public ClusterService getClusterService() {
+    return clusterService;
+  }
 
-    public long getGlobalEndpointTimeout() {
-        return config.getLong(GLOBAL_ENDPOINT_ACTOR_TIMEOUT);
-    }
-    
-    public long getLocalEndpointTimeout() {
-        return config.getLong(LOCAL_ENDPOINT_ACTOR_TIMEOUT);
-    }
+  public CacheService getCacheService() {
+    return cacheService;
+  }
 
-    public long getEventTimeout() {
-        return config.getLong(ENDPOINT_EVENT_TIMEOUT);
-    }
-    
-    public ClusterService getClusterService() {
-        return clusterService;
-    }
+  public KeyStoreService getKeyStoreService() {
+    return operationsKeyStoreService;
+  }
 
-    public CacheService getCacheService() {
-        return cacheService;
-    }
+  public OperationsService getOperationsService() {
+    return operationsService;
+  }
 
-    public KeyStoreService getKeyStoreService() {
-        return operationsKeyStoreService;
-    }
+  public NotificationDeltaService getNotificationDeltaService() {
+    return notificationDeltaService;
+  }
 
-    public OperationsService getOperationsService() {
-        return operationsService;
-    }
+  public ApplicationService getApplicationService() {
+    return applicationService;
+  }
 
-    public NotificationDeltaService getNotificationDeltaService() {
-        return notificationDeltaService;
-    }
+  public EventService getEventService() {
+    return eventService;
+  }
 
-    public ApplicationService getApplicationService() {
-        return applicationService;
-    }
+  public MetricsService getMetricsService() {
+    return metricsService;
+  }
 
-    public EventService getEventService() {
-        return eventService;
-    }
+  public LogAppenderService getLogAppenderService() {
+    return logAppenderService;
+  }
 
-    public MetricsService getMetricsService() {
-        return metricsService;
-    }
+  public EndpointUserService getEndpointUserService() {
+    return endpointUserService;
+  }
 
-    public LogAppenderService getLogAppenderService() {
-        return logAppenderService;
-    }
+  public CtlService getCtlService() {
+    return ctlService;
+  }
 
-    public EndpointUserService getEndpointUserService() {
-        return endpointUserService;
-    }
+  public Boolean getSupportUnencryptedConnection() {
+    return supportUnencryptedConnection;
+  }
 
-    public CTLService getCtlService() {
-        return ctlService;
-    }
+  public CredentialsServiceLocator getCredentialsServiceLocator() {
+    return credentialsServiceLocator;
+  }
 
-    public Boolean getSupportUnencryptedConnection() {
-        return supportUnencryptedConnection;
-    }
-
-    public CredentialsServiceLocator getCredentialsServiceLocator() {
-        return credentialsServiceLocator;
-    }
-
-    public RegistrationService getRegistrationService() {
-        return registrationService;
-    }
+  public RegistrationService getRegistrationService() {
+    return registrationService;
+  }
 
 }

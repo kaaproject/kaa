@@ -25,11 +25,11 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.util.Attribute;
 
-import java.util.UUID;
-
 import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 /**
  * DefaultServerInitializer Class. Used to initialize Netty Server.
@@ -37,49 +37,48 @@ import org.slf4j.LoggerFactory;
  * @author Andrey Panasenko
  */
 public abstract class DefaultHttpServerInitializer extends ChannelInitializer<SocketChannel> {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpServerInitializer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpServerInitializer.class);
 
-    /**
-     * DefaultServerInitializer constructor.
-     */
-    public DefaultHttpServerInitializer() {
-        super();
-    }
+  /**
+   * DefaultServerInitializer constructor.
+   */
+  public DefaultHttpServerInitializer() {
+    super();
+  }
 
-    /**
-     * init() method for necessary initializations.
-     * 
-     * @throws Exception
-     *             - initialization exceptions
-     */
-    public void init() throws Exception { // NOSONAR
-        LOG.info("Default Server Initializer Init() started");
-    }
+  /**
+   * init() method for necessary initializations.
+   *
+   * @throws Exception - initialization exceptions
+   */
+  public void init() throws Exception { // NOSONAR
+    LOG.info("Default Server Initializer Init() started");
+  }
 
-    @Override
-    protected void initChannel(SocketChannel ch) throws Exception {
-        final ChannelPipeline p = ch.pipeline();
+  @Override
+  protected void initChannel(SocketChannel ch) throws Exception {
+    final ChannelPipeline p = ch.pipeline();
 
-        final UUID uuid = UUID.randomUUID();
+    final UUID uuid = UUID.randomUUID();
 
-        LOG.info("DefaultServerInitializer Initializing Channel {} connection from {}:{}", uuid,
-                ch.remoteAddress().getAddress().toString(), ch.remoteAddress().getPort());
+    LOG.info("DefaultServerInitializer Initializing Channel {} connection from {}:{}", uuid,
+        ch.remoteAddress().getAddress().toString(), ch.remoteAddress().getPort());
 
-        Attribute<UUID> uuidAttr = ch.attr(AbstractNettyServer.UUID_KEY);
-        uuidAttr.set(uuid);
+    Attribute<UUID> uuidAttr = ch.attr(AbstractNettyServer.UUID_KEY);
+    uuidAttr.set(uuid);
 
-        p.addLast("httpDecoder", new HttpRequestDecoder());
-        p.addLast("httpAggregator", new HttpObjectAggregator(getClientMaxBodySize()));
-        p.addLast("httpDecoderAux", getRequestDecoder());
-        p.addLast("httpEncoder", new HttpResponseEncoder());
-        p.addLast("httpEncoderAux", new ResponseEncoder());
-        p.addLast("handler", getMainHandler(uuid));
-        p.addLast("httpExceptionHandler", new DefaultExceptionHandler());
-    }
+    p.addLast("httpDecoder", new HttpRequestDecoder());
+    p.addLast("httpAggregator", new HttpObjectAggregator(getClientMaxBodySize()));
+    p.addLast("httpDecoderAux", getRequestDecoder());
+    p.addLast("httpEncoder", new HttpResponseEncoder());
+    p.addLast("httpEncoderAux", new ResponseEncoder());
+    p.addLast("handler", getMainHandler(uuid));
+    p.addLast("httpExceptionHandler", new DefaultExceptionHandler());
+  }
 
-    protected abstract int getClientMaxBodySize();
+  protected abstract int getClientMaxBodySize();
 
-    protected abstract ChannelHandler getRequestDecoder();
-    
-    protected abstract ChannelHandler getMainHandler(UUID uuid);
+  protected abstract ChannelHandler getRequestDecoder();
+
+  protected abstract ChannelHandler getMainHandler(UUID uuid);
 }

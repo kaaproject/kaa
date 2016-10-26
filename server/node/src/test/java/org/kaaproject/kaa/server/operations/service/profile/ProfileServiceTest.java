@@ -18,9 +18,6 @@ package org.kaaproject.kaa.server.operations.service.profile;
 
 import static org.mockito.Mockito.mock;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
@@ -33,48 +30,55 @@ import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class ProfileServiceTest {
 
-    /** The endpoint service. */
-    private EndpointService endpointService;
+  /**
+   * The endpoint service.
+   */
+  private EndpointService endpointService;
 
-    /** The cache service. */
-    private CacheService cacheService;
+  /**
+   * The cache service.
+   */
+  private CacheService cacheService;
 
-    private DefaultProfileService testService;
+  private DefaultProfileService testService;
 
-    @Before
-    public void before() {
-        testService = new DefaultProfileService();
-        endpointService = mock(EndpointService.class);
-        cacheService = mock(CacheService.class);
+  @Before
+  public void before() {
+    testService = new DefaultProfileService();
+    endpointService = mock(EndpointService.class);
+    cacheService = mock(CacheService.class);
 
-        ReflectionTestUtils.setField(testService, "endpointService", endpointService);
-        ReflectionTestUtils.setField(testService, "cacheService", cacheService);
+    ReflectionTestUtils.setField(testService, "endpointService", endpointService);
+    ReflectionTestUtils.setField(testService, "cacheService", cacheService);
 
-    }
+  }
 
-    @Test
-    public void testPopulateVersionStates() {
-        EndpointProfileDto dtoMock = Mockito.mock(EndpointProfileDto.class);
+  @Test
+  public void testPopulateVersionStates() {
+    EndpointProfileDto dtoMock = Mockito.mock(EndpointProfileDto.class);
 
-        SdkProfileDto sdkProperties = new SdkProfileDto(null, 1, 2, 3, 4, Collections.EMPTY_LIST, null, null,
-                null, null, null);
+    SdkProfileDto sdkProperties = new SdkProfileDto(null, 1, 2, 3, 4, Collections.EMPTY_LIST, null, null,
+        null, null, null);
 
-        ApplicationEventFamilyMapDto applicationEventFamilyMap = new ApplicationEventFamilyMapDto();
-        applicationEventFamilyMap.setVersion(7);
-        applicationEventFamilyMap.setEcfName("ecf1");
-        Mockito.when(cacheService.getApplicationEventFamilyMapsByIds(sdkProperties.getAefMapIds())).
-                thenReturn(Arrays.asList(applicationEventFamilyMap));
+    ApplicationEventFamilyMapDto applicationEventFamilyMap = new ApplicationEventFamilyMapDto();
+    applicationEventFamilyMap.setVersion(7);
+    applicationEventFamilyMap.setEcfName("ecf1");
+    Mockito.when(cacheService.getApplicationEventFamilyMapsByIds(sdkProperties.getAefMapIds())).
+        thenReturn(Arrays.asList(applicationEventFamilyMap));
 
-        EventClassFamilyIdKey key = new EventClassFamilyIdKey("tenantId", "ecf1");
-        Mockito.when(cacheService.getEventClassFamilyIdByName(key)).thenReturn("ecf1Id");
+    EventClassFamilyIdKey key = new EventClassFamilyIdKey("tenantId", "ecf1");
+    Mockito.when(cacheService.getEventClassFamilyIdByName(key)).thenReturn("ecf1Id");
 
-        testService.populateVersionStates("tenantId", dtoMock, sdkProperties);
+    testService.populateVersionStates("tenantId", dtoMock, sdkProperties);
 
-        EventClassFamilyVersionStateDto ecfVersionStateDto = new EventClassFamilyVersionStateDto();
-        ecfVersionStateDto.setEcfId("ecf1Id");
-        ecfVersionStateDto.setVersion(7);
-        Mockito.verify(dtoMock).setEcfVersionStates(Collections.singletonList(ecfVersionStateDto));
-    }
+    EventClassFamilyVersionStateDto ecfVersionStateDto = new EventClassFamilyVersionStateDto();
+    ecfVersionStateDto.setEcfId("ecf1Id");
+    ecfVersionStateDto.setVersion(7);
+    Mockito.verify(dtoMock).setEcfVersionStates(Collections.singletonList(ecfVersionStateDto));
+  }
 }

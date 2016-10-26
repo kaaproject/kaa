@@ -16,38 +16,39 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
-
 import akka.actor.ActorRef;
 
-public class EndpointUserConfigurationUpdateMessage extends EndpointAwareMessage implements TenantAwareMessage {
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
 
-    private final EndpointUserConfigurationUpdate update;
+public class EndpointUserConfigurationUpdateMessage extends EndpointAwareMessage
+        implements TenantAwareMessage {
 
-    public EndpointUserConfigurationUpdateMessage(EndpointUserConfigurationUpdate update) {
-        super(update.getApplicationToken(), update.getKey(), ActorRef.noSender());
-        this.update = update;
-    }
+  private final EndpointUserConfigurationUpdate update;
 
-    @Override
-    public String getTenantId() {
-        return update.getTenantId();
-    }
+  public EndpointUserConfigurationUpdateMessage(EndpointUserConfigurationUpdate update) {
+    super(update.getApplicationToken(), update.getKey(), ActorRef.noSender());
+    this.update = update;
+  }
 
-    public String getUserId() {
-        return update.getUserId();
-    }
+  @Override
+  public String getTenantId() {
+    return update.getTenantId();
+  }
 
-    public EndpointUserConfigurationUpdate getUserConfigurationUpdate() {
-        return update;
-    }
+  public String getUserId() {
+    return update.getUserId();
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointStateUpdateMessage [update=");
-        builder.append(update);
-        builder.append("]");
-        return builder.toString();
-    }
+  public EndpointUserConfigurationUpdate getUserConfigurationUpdate() {
+    return update;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointStateUpdateMessage [update=");
+    builder.append(update);
+    builder.append("]");
+    return builder.toString();
+  }
 }

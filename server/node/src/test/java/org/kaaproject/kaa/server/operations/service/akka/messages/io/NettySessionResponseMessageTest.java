@@ -29,21 +29,21 @@ import java.util.UUID;
 
 public class NettySessionResponseMessageTest {
 
-    @Test
-    public void testNettySessionResponseMessage() {
-        UUID uuid = UUID.randomUUID();
-        ChannelContext channelContext = new NettyChannelContext(null);
-        ErrorBuilder errorBuilder = new ErrorBuilder() {
-            @Override
-            public Object[] build(Exception e) {
-                return new Object[0];
-            }
-        };
-        SessionInfo sessionInfo = new SessionInfo(uuid, 1, channelContext, ChannelType.SYNC, null, null, null, null, 1, true);
-        NettySessionResponseMessage responseMessage = new NettySessionResponseMessage(sessionInfo, null, null, null, errorBuilder);
-        Assert.assertEquals(uuid, responseMessage.getChannelUuid());
-        Assert.assertEquals(errorBuilder, responseMessage.getErrorBuilder());
-        Assert.assertEquals(ChannelType.SYNC, responseMessage.getChannelType());
-        Assert.assertEquals(channelContext, responseMessage.getChannelContext());
-    }
+  @Test
+  public void testNettySessionResponseMessage() {
+    UUID uuid = UUID.randomUUID();
+    ChannelContext channelContext = new NettyChannelContext(null);
+    ErrorBuilder errorBuilder = new ErrorBuilder() {
+      @Override
+      public Object[] build(Exception exception) {
+        return new Object[0];
+      }
+    };
+    SessionInfo sessionInfo = new SessionInfo(uuid, 1, channelContext, ChannelType.SYNC, null, null, null, null, 1, true);
+    NettySessionResponseMessage responseMessage = new NettySessionResponseMessage(sessionInfo, null, null, null, errorBuilder);
+    Assert.assertEquals(uuid, responseMessage.getChannelUuid());
+    Assert.assertEquals(errorBuilder, responseMessage.getErrorBuilder());
+    Assert.assertEquals(ChannelType.SYNC, responseMessage.getChannelType());
+    Assert.assertEquals(channelContext, responseMessage.getChannelContext());
+  }
 }

@@ -37,9 +37,9 @@ std::shared_ptr<LogSyncRequest> LoggingTransport::createLogSyncRequest()
     return logProcessor_.getLogUploadRequest();
 }
 
-void LoggingTransport::onLogSyncResponse(const LogSyncResponse& response)
+void LoggingTransport::onLogSyncResponse(const LogSyncResponse& response, std::size_t deliveryTime)
 {
-    logProcessor_.onLogUploadResponse(response);
+    logProcessor_.onLogUploadResponse(response, deliveryTime);
 }
 
 }  // namespace kaa
