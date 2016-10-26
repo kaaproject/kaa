@@ -154,8 +154,8 @@ hr {
 }
 
 #sidebar {
-    padding:0px;
-	/* padding-top:15px; */
+  padding: 0px;
+  overflow: hidden;
 }
 
 #split-bar {
@@ -187,7 +187,7 @@ hr {
 	#split-bar{
 		display: none;
 	}
-	.row-offcanvas-left.active #sidebar.sidebar-offcanvas { 
+	.row-offcanvas-left.active #sidebar.sidebar-offcanvas {
 		width: 33% !important;
 	}
 	.row-offcanvas-left.active #search {
@@ -238,26 +238,30 @@ hr {
 #sidebar .nav > li> .li-5 {padding-left:55px;}
 
 #sidebar .nav > .sidebar-header{
-    /* background-color:#444444; */
-    color:#f7ad41;
+  color:#f7ad41;
+}
+
+#sidebar .sidebar-navigation-container {
+  overflow: auto;
+  position: absolute;
+  top: 287px; /* 139(kaa logo height) + 148(title+version height) */
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#sidebar .sidebar-navigation-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+#sidebar .sidebar-navigation-container::-webkit-scrollbar-thumb {
+  background: gray;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
 .logo {
   display:block;
-
   background-color:#ffffff;
-  /*color:#3B5999;
-  height:28px;
-  width:28px;
-  margin:9px;
-  margin-right:2px;
-  margin-left:15px;
-  font-size:20px;
-  font-weight:700;
-  text-align:center;
-  text-decoration:none;
-  text-shadow:0 0 1px;
-  border-radius:2px;*/
 }
 
 
