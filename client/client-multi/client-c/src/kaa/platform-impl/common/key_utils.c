@@ -34,8 +34,8 @@
 
 #include <kaa_rsa_key_gen.h>
 
-#define KAA_PRIVATE_KEY_STORAGE "private.key"
-#define KAA_PUBLIC_KEY_STORAGE "public.key"
+#define KAA_PRIVATE_KEY_STORAGE "key.private"
+#define KAA_PUBLIC_KEY_STORAGE "key.public"
 
 #define KAA_RSA_PUBLIC_KEY_LENGTH_MAX  294
 #define KAA_SHA1_PUB_LEN               20
