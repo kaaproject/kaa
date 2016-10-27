@@ -16,7 +16,7 @@ If you decided to go with a full-scale Kaa and not Kaa Sandbox, make sure you ha
 | **[Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/)** | Allows you to collect data records (logs) from endpoints, store them in specific data processing systems, or submit to immediate stream analysis. 
 | **[Devices provisioning and registration]({{root_url}}Programming-guide/Key-platform-features/Devices-provisioning-and-registration/)** | Enables secure authentication and registration of endpoints within a Kaa cluster.
 | **[Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups/)** | Allows you to aggregate endpoints into groups and then apply other Kaa features to entire endpoint groups.
-| **[Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/)** | Allows you to define which users can have access to specific endpoints.
-| **[Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/)** | Allows you to provide endpoints with specific attributes, which can be then used as filters for creating endpoint groups. 
-| **[Events]({{root_url}}Programming-guide/Key-platform-features/Events/)** | Allows you to create custom events and make endpoints send them to some other(s) whenever a predefined condition is met. 
+| **[Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/)** | Allows you to associate owners with specific endpoints.
+| **[Endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/)** | Allows you to provide endpoints with specific attributes, which can be then used for filtering endpoints and aggregating them into endpoint groups. 
+| **[Events]({{root_url}}Programming-guide/Key-platform-features/Events/)** | Allows you to create custom events and make endpoints send them to each other. 
 | **[Notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/)** | Allows you to deliver messages and calls for action to endpoints.
