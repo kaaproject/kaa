@@ -18,9 +18,8 @@ This guide describes some tools which can be used to ensure proper style and for
 1. Go to **File>Settings>IDE Settings>plugins**.
 2. Click **Browse repositories**.
 3. Type *Checkstyle-idea* and install the plugin.
-4. Download the [configuration for the Google coding conventions](https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml).
-5. Go to **File>Settings>IDE Settings>CheckStyle**.
-6. Add the configuration file (`checkstyle.xml`) from the root of the Kaa project.
+4. Go to **File>Settings>IDE Settings>CheckStyle**.
+5. Add the configuration file (`checkstyle.xml`) from the root of the Kaa project.
 
 Plugin configuration:
 
