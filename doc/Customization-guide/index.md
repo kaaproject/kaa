@@ -5,6 +5,8 @@ permalink: /:path/
 sort_idx: 40
 ---
 
+{% include variables.md %}
+
 This guide describes the basics of customizing and extending the [Kaa platform]({{root_url}}Glossary/#kaa-platform).
 It is intended for users, already intimately familiar with the Kaa platform, it's [features]({{root_url}}Programming-guide/Key-platform-features/) and [architecture]({{root_url}}Architecture-overview/), and who have extensive programming experience.
 
