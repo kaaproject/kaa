@@ -217,7 +217,7 @@ test_docs() {
 if [ x"deploy" = x"$1" ]; then
   deploy_docs
 elif [ -d doc ]; then
-  test_docs
+  test_docs "$@"
 else
   echo "Nothing to do"
 fi
