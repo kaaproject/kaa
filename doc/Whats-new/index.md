@@ -37,8 +37,8 @@ For this purpose, new REST API and new functions in Admin UI are now available.
 
 # Other highlights
 
-* Improved user management ([KAA-1256](http://jira.kaaproject.org/browse/KAA-1256), [KAA-1153](http://jira.kaaproject.org/browse/KAA-1153), [KAA-581](http://jira.kaaproject.org/browse/KAA-581)) - tenants and tenant users (tenant admins and tenant developers) are now independent entities, which allows having multiple tenant users under one tenant. 
-REST API for user management was significantly revorked and improved, including an ability for a tenant admin to remove tenant users.
+* Improved user management ([KAA-1256](http://jira.kaaproject.org/browse/KAA-1256), [KAA-1153](http://jira.kaaproject.org/browse/KAA-1153), [KAA-581](http://jira.kaaproject.org/browse/KAA-581)) - tenants and tenant users (tenant users are tenant admins and tenant developers) are now independent entities, which allows having multiple tenant users under one tenant. 
+REST API for user management was significantly reworked and improved, including an ability for a tenant admin to remove tenant users.
 
 * Secure KaaTCP channel for the C SDK ([KAA-635](http://jira.kaaproject.org/browse/KAA-635)) - the KaaTCP transport channel now supports encryption for the C SDK.
 
