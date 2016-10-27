@@ -20,6 +20,7 @@ gh_pages=gh-pages
 DOCS_ROOT=docs
 GENERATED_DIR=doc
 NEW_GENERATED_DIR=autogen-docs
+SERVER_NAME=${SERVER_NAME:-origin}
 
 # Color printing settings
 COLOR_RED='\033[0;31m'
@@ -45,7 +46,7 @@ echo_orange () {
 update_subtree () {
   if [ x"$gh_pages" = x"$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)" ]; then
     if [ -d "$1" ]; then
-      git subtree merge --prefix="$1" "$2" -m "$3"
+      git merge -Xsubtree="$1" -Xtheirs "$2" -m "$3"
       echo "merged $2 in $1"
     else
       git subtree add --prefix="$1" "$2" -m "$3"
@@ -159,12 +160,12 @@ update_jekyll_structure() {
   branch_available=$(git branch --list $gh_pages)
   GH_PAGES_STUB=$(git subtree split --prefix=gh-pages-stub/)
   if [ x"" =  x"$branch_available" ]; then
-    git checkout "origin/$gh_pages" -b "$gh_pages"
+    git checkout "${SERVER_NAME}/$gh_pages" -b "$gh_pages"
   else
     git checkout "$gh_pages"
   fi
   echo_green "Merging gh-pages-stub from $1"
-  git merge "$GH_PAGES_STUB" -m "Merged jekyll files"
+  git merge -Xtheirs "$GH_PAGES_STUB" -m "Merged jekyll files"
 }
 
 # Deploy . Main purpose of this script is to create dir structure where jekyll files is in root dir
