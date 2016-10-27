@@ -49,3 +49,5 @@ REST API for user management was significantly reworked and improved, including 
 ## Important information
 
 To upgrade your Kaa instance from version 0.9 to 0.10, refer to [0.9.x to 0.10.x guide]({{root_url}}Administration-guide/Upgrading-your-instance/0.9.x-to-0.10.x/).
+
+---
