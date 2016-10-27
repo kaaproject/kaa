@@ -52,8 +52,6 @@ The Kaa IoT platform supports Multi-tenant architecture. It allows _Kaa admin_ t
 Unlike _Kaa admin_, entities _Tenant Admin_ and _Tenant Developer_ can be visible only in the scope of single Tenant.
 For more information about Multitenancy, check related description on [wiki]( https://en.wikipedia.org/wiki/Multitenancy ).
 
-To learn how to manage _Tenants_ and _Tenant Admins_, check: [Users management]({{root_url}}Administration-guide/Users-management)
-
 # Tenant admin
 
 The _tenant admin_ is a Kaa user who is responsible for managing applications, users and event class families.
