@@ -935,25 +935,23 @@ This will clean up the mess that can occur when debug logs are enabled.
 
 To launch your Java application:
 
-<ol>
-	<li>
-		Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
-	</li>
-	<li>
-		Build the application by running the following command from the <b>demo_app</b> directory.
-		<pre>javac -cp *.jar *.java</pre>
-	</li>
-	<li>
-		Launch the application.
-        <br/>
-        <br/>
-		<b>Unix-based OS</b>
-		<pre>java -cp '.:./*' FirstKaaDemo</pre>
-        <br/>
-		<b>Windows OS</b>
-		<pre>java -cp '.;.\*' FirstKaaDemo</pre>
-	</li>
-</ol>
+    
+1.  Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
+    
+2.  Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) to the <b>demo_app</b> directory.
+    In Linux terminal you can just go to the <b>demo_app</b> directory and run the command:
+    <pre>wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar</pre>
+
+3.  Build the application by running the following command from the <b>demo_app</b> directory.
+    <pre>javac -cp kaa-*.jar *.java</pre>
+
+4.  Launch the application.
+    <br/>
+    <b>Unix-based OS</b>
+    <pre>java -cp '.:./*' FirstKaaDemo</pre>
+    <br/>
+    <b>Windows OS</b>
+    <pre>java -cp '.;.\*' FirstKaaDemo</pre>
 
 </div>
 
