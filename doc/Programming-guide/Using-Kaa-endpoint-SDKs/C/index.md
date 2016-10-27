@@ -64,6 +64,12 @@ During compilation, Kaa C SDK and the derived applications might require:
  - A compiler for the chosen taget platform, such as `arm-none-eabi` for bare metal ARM targets.
  - Vendor SDK, e.g. TI SDK for the CC3200 processor.
 
+### Build in Nix shell
+[Nix](https://nixos.org/nix) is a package manager which is used to manage Kaa C and C++ SDKs build environment for CI purposes.
+You can use it to build Kaa C SDK quickly.
+
+For more details on using Nix in C and C++ SDKs refer to [Nix guide]({{root_url}}Customization-guide/Nix-guide/).
+
 ### Build configuration
 
 Build configuration is performed on the Makefile file generation stage.

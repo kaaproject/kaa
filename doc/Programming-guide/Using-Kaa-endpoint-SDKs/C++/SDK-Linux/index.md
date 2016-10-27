@@ -110,7 +110,7 @@ If you want to build the endpoint SDK quickly or build and run Kaa C/C++ demo ap
 **NOTE:**
 If you would like to run a compiled binary on some other host, you should have all third-party libraries like boost, etc. preinstalled.
 
-### Build in nix shell
+### Build in Nix shell
 [Nix](https://nixos.org/nix) is a package manager which is used to manage Kaa C and C++ SDKs build environment for CI purposes. You can use it to build Kaa C++ SDK quickly.
 Just install Nix on your system and execute the following command from the [root directory](https://github.com/kaaproject/kaa/tree/master/client/client-multi/client-cpp) of Kaa C++ SDK:
 
@@ -119,6 +119,7 @@ nix-shell
 ```
 
 Nix will download and compile all SDK dependencies and prepare your environment for development.
+For more details on using Nix in C and C++ SDKs refer to [Nix guide]({{root_url}}Customization-guide/Nix-guide/).
 
 ## Minimal example
 This section describes application development with Kaa C++ SDK.
