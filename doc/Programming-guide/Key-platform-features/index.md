@@ -5,8 +5,8 @@ permalink: /:path/
 sort_idx: 30
 ---
 
-This guide describes all major features of Kaa and how to effectively use them in IoT applications. 
-If you have decided to go with a full-scale Kaa and not Kaa Sandbox, make sure you properly set up and configured your Kaa instance as described in [Administration guide]({{root_url}}Administration-guide/). 
+This guide describes major features of Kaa and how to effectively use them in IoT applications. 
+If you decided to go with a full-scale Kaa and not Kaa Sandbox, make sure you have properly set up and configured your Kaa instance as described in [Administration guide]({{root_url}}Administration-guide/) before getting into programming. 
 
 | Feature | Description |
 |-------|----------------|
