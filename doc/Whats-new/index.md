@@ -14,7 +14,7 @@ The Kaa 0.10.0 Avocado Archipelago is now available for [download](http://www.ka
 The Kaa 0.10.0 release implements a large number of new features.
 Here we describe the major ones, while the full list of stories and fixed bugs can be found at [Kaa 0.10.0 release notes](https://github.com/kaaproject/kaa/releases/tag/v0.10.0).
 
-# Key features
+## Key features
 
 * CTL in Kaa extensions ([KAA-1142](http://jira.kaaproject.org/browse/KAA-1142)) - Common Type Library was implemented across all major Kaa modules (configuration, data collection, notifications, and events). 
 This will allow developers to use and manage Kaa data schemas in a consistent, unified way across all types of Kaa applications. 
@@ -35,7 +35,7 @@ For this purpose, new REST API and new functions in Admin UI are now available.
 
 * QNX 6.5.0 support by C++ SDK ([KAA-1392](http://jira.kaaproject.org/browse/KAA-1392)) - the latest version of QNX platform is now supported by the Kaa C++ SDK.
 
-# Other highlights
+## Other highlights
 
 * Improved user management ([KAA-1256](http://jira.kaaproject.org/browse/KAA-1256), [KAA-1153](http://jira.kaaproject.org/browse/KAA-1153), [KAA-581](http://jira.kaaproject.org/browse/KAA-581)) - tenants and tenant users (tenant users are tenant admins and tenant developers) are now independent entities, which allows having multiple tenant users under one tenant. 
 REST API for user management was significantly reworked and improved, including an ability for a tenant admin to remove tenant users.
@@ -46,6 +46,6 @@ REST API for user management was significantly reworked and improved, including 
 
 * Switching between strategies to persist and retrieve endpoint authentication keys in Kaa SDKs ([KAA-1190](http://jira.kaaproject.org/browse/KAA-1190)) - a developer can now choose between two strategies for persisting and retrieving endpoint authentication keys in Kaa SDKs, that is between the pre-shared keys strategy and the runtime generated keys strategy.
 
-# Important information
+## Important information
 
 To upgrade your Kaa instance from version 0.9 to 0.10, refer to [0.9.x to 0.10.x guide]({{root_url}}Administration-guide/Upgrading-your-instance/0.9.x-to-0.10.x/).
