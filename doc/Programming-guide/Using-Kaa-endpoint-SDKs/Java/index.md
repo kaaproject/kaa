@@ -156,13 +156,23 @@ The first argument can be either `DesktopKaaPlatformContext` for Java desktop or
 In this example, the second argument is the default implementation of `KaaClientStateListener` -- `SimpleKaaClientStateListener`, that is solely used to log the client state changes.
 And last one if set to **false** -- means using existing pre-generated public/private key pair, **true** -- means auto-generating new public/private key pair if absent.
 
-You can configure properties and `ExecutorContext` of `DesktopKaaPlatformContext` with help of it's constructors. `DesktopKaaPlatformContext` uses `FlexibleExecutorContext` implementation of `ExecutorContext` by default. You can change it by calling corresponding constructor with specific `ExecutorContext` implementation.
+You can configure properties and `ExecutorContext` of `DesktopKaaPlatformContext` with help of its constructors. 
+`DesktopKaaPlatformContext` uses `FlexibleExecutorContext` implementation of `ExecutorContext` by default. 
+You can change it by calling corresponding the constructor with a specific `ExecutorContext` implementation.
 
-`FlexibleExecutorContext` has four thread groups, which responsible for life cycle, callbacks, API and scheduling. Each of these groups is implemented as separate thread pool (using ThreadPoolExecutor or its subclass). Each of them has minimum and maximum threads amount and maximum thread idle time. By default minimum threads amount for all these groups is zero, maximum threads amount is almost not limited (it set to `Integer.MAX_VALUE`) and maximum idle time is 100 milliseconds. You can call corresponding constructor to limit maximum threads amount or idle time (minimum threads amount is always zero). For scheduled thread groups, you can change only it's minimum threads amount. It is recommended to use builder to construct the `FlexibleExecutorContext` instance with custom parameters.
+`FlexibleExecutorContext` has four thread groups, responsible for life cycle, callbacks, API, and scheduling. 
+Each of these groups is implemented as separate thread pool (using ThreadPoolExecutor or its subclass). 
+Each of them has minimum and maximum threads amount and maximum thread idle time. 
+By default minimum threads amount for all these groups is zero, maximum threads amount is almost not limited (it set to `Integer.MAX_VALUE`) and maximum idle time is 100 milliseconds. 
+You can call the corresponding constructor to limit maximum threads amount or idle time (minimum threads amount is always zero). 
+For scheduled thread groups, you can change only it's minimum threads amount. 
+It is recommended to use the builder to construct the `FlexibleExecutorContext` instance with custom parameters.
 
-The other ExecutorContext implementation which goes with Kaa is `SimpleExecutorContext`. Its minimum threads amount is 1 for each group. And its maximum threads amount also limited to 1 by default, but can be changed with proper constructor (see example below).
+The other ExecutorContext implementation which goes with Kaa is `SimpleExecutorContext`. 
+Its minimum threads amount is 1 for each group. 
+And its maximum threads amount also limited to 1 by default but can be changed with proper constructor (see example below).
 
-Here some examples for using non-empty constructor and using builder.
+Here some examples for using a non-empty constructor and using builder.
 
 <ul class="nav nav-tabs">
 <li class="active"><a data-toggle="tab" href="#not-empty-constructor">DesktopKaaPlatformContext</a></li>
