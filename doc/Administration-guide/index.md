@@ -13,10 +13,5 @@ It provides instructions on how to set up a [Kaa instance]({{root_url}}Glossary/
 | Section | Description |
 |-------|----------------|
 | **[System installation]({{root_url}}Administration-guide/System-installation/)** | Learn how to install [Kaa platform]({{root_url}}Glossary/#kaa-platform) on a [single Linux node]({{root_url}}Administration-guide/System-installation/Single-node-installation/) or a [cluster of Linux nodes]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
-| **[System configuration]({{root_url}}Administration-guide/System-Configuration/)** | Configure your Kaa deployment in line with the requirements of your Kaa-based solution.
-| **[Tenants and applications management]({{root_url}}Administration-guide/Tenants-and-applications-management/)** and **[Users management]({{root_url}}Administration-guide/Users-management/)** | Manage users, tenants, and applications in your Kaa instance.
+| **[Tenants and applications management]({{root_url}}Administration-guide/Tenants-and-applications-management/)** | Manage tenants and applications in your Kaa instance.
 | **[Upgrading your instance]({{root_url}}Administration-guide/Upgrading-your-instance/)** | Instructions on how to to upgrade your Kaa platform.
-
-
-
-
