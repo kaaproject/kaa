@@ -11,7 +11,8 @@ In order to save developers' time, allow users concentrate on important business
 An endpoint SDK is a library that provides communication, data marshaling, persistence, and other functions available in Kaa for a specific [SDK type]({{root_url}}Glossary/#sdk-type).
 Each SDK type is designed to be embedded into your [client application]({{root_url}}Glossary/#kaa-client) and works in conjunction with [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) that serves as a cloud-based middleware for a particular IoT solution.
 
-The following table provides platforms that were verified to support at least one type of the Kaa SDK (C, C++, Java, or Objective C). Click in an appropriate cell for the detailed instructions for your target platform and programming language.
+The following table provides platforms that were verified to support at least one type of the Kaa SDK.
+Click in an appropriate cell for the detailed instructions for your target platform and programming language.
 
 {% capture sdk_c %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C{% endcapture %}
 {% capture LC %}{{sdk_c}}/SDK-Linux/{% endcapture %}
