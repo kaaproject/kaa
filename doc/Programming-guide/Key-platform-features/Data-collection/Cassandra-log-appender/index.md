@@ -65,7 +65,7 @@ Key clustering is configured by **Clustering** section, by adding column names a
 
 >**NOTE:**  
 > Cassandra driver settings can be specified in log appender configuration. Consult the official 
-[documentation](http://docs.datastax.com/en/developer/java-driver/3.0/java-driver/whatsNew2.html?local=true&nav=toc) for reference.
+[documentation](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html) for reference.
 
 An example configuration that matches to previously introduced Avro schema is as below:
 
