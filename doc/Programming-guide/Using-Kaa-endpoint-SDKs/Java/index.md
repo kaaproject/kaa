@@ -12,7 +12,9 @@ sort_idx: 40
 
 This guide explains how to use Kaa [Java SDK]({{root_url}}Glossary/#endpoint-sdk) for your IoT applications.
 It describes the environment setup, basic API, and provides comparison between desktop and Android versions of the Kaa Java SDK.
-The Kaa Java SDK should be preferred if you want to run your application on different platforms, or if you plan on developing an Android application.
+The Kaa Java SDK should be preferred if you want to run your application on a variety of comparatively powerful platforms, or if you plan on developing an Android application.
+
+You can find auto-generated docs for Core Kaa Java SDK [here]({{site.baseurl}}/autogen-docs/client-java-core/{{version}}/) with desktop flavor covered [here]({{site.baseurl}}/autogen-docs/client-java-android/{{version}}/), and Android [here]({{site.baseurl}}/autogen-docs/client-java-android/{{version}}/).
 
 ## Prerequisites
 
