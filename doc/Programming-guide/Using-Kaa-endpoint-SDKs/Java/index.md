@@ -158,16 +158,16 @@ And last one if set to **false** -- means using existing pre-generated public/pr
 
 You can configure properties and `ExecutorContext` of `DesktopKaaPlatformContext` with help of it's constructors. `DesktopKaaPlatformContext` uses `FlexibleExecutorContext` implementation of `ExecutorContext` by default. You can change it by calling corresponding constructor with specific `ExecutorContext` implementation.
 
-`FlexibleExecutorContext` has four thread groups, which responsible for life cycle, callbacks, API and scheduling. Each of these groups is implemented as separate thread pool (using ThreadPoolExecutor or its subclass). Each of them has minimum and maximum threads amount and maximum thread idle time. By default minimum threads amount for all these groups is zero, maximum threads amount isn't limited and maximum idle time is 100 milliseconds. You can call corresponding constructor to limit maximum threads amount or idle time (minimum threads amount is always zero). For scheduled thread groups, you can change only it's minimum threads amount. It is recommended to use builder to construct the `FlexibleExecutorContext` instance with custom parameters.
+`FlexibleExecutorContext` has four thread groups, which responsible for life cycle, callbacks, API and scheduling. Each of these groups is implemented as separate thread pool (using ThreadPoolExecutor or its subclass). Each of them has minimum and maximum threads amount and maximum thread idle time. By default minimum threads amount for all these groups is zero, maximum threads amount is almost not limited (it set to `Integer.MAX_VALUE`) and maximum idle time is 100 milliseconds. You can call corresponding constructor to limit maximum threads amount or idle time (minimum threads amount is always zero). For scheduled thread groups, you can change only it's minimum threads amount. It is recommended to use builder to construct the `FlexibleExecutorContext` instance with custom parameters.
 
 The other ExecutorContext implementation which goes with Kaa is `SimpleExecutorContext`. Its minimum threads amount is 1 for each group. And its maximum threads amount also limited to 1 by default, but can be changed with proper constructor (see example below).
 
 Here some examples for using non-empty constructor and using builder.
 
 <ul class="nav nav-tabs">
-<li class="active"><a data-toggle="tab" href="#not-empty-constructor">DesktopKaaPlatformContext not empty constructor</a></li>
+<li class="active"><a data-toggle="tab" href="#not-empty-constructor">DesktopKaaPlatformContext</a></li>
 <li><a data-toggle="tab" href="#builder">FlexibleExecutorContext builder</a></li>
-<li><a data-toggle="tab" href="#simpleExecutorContext">SimpleExecutorContext not empty constructor</a></li>
+<li><a data-toggle="tab" href="#simpleExecutorContext">SimpleExecutorContext</a></li>
 </ul>
 
 
@@ -177,10 +177,12 @@ Here some examples for using non-empty constructor and using builder.
 ```java
 KaaClientProperties properties = new KaaClientProperties();
 properties.put(CUSTOM_PROPERTY_NAME, CUSTOM_PROPERTY_VALUE);
-new DesktopKaaPlatformContext(properties,
+DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext(properties,
 	 CUSTOM_MAX_LIFE_CYCLE_THREADS, CUSTOM_MAX_API_THREADS,
 	 CUSTOM_MAX_CALLBACK_THREADS, CUSTOM_MIN_SCHEDULED_THREADS
  ); // If you have no properties to set, just pass null instead of first constructor's argument
+ 
+KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener());
 ```
 </div>
 
@@ -192,7 +194,8 @@ ExecutorContext executor = new SimpleExecutorContext(
 	 CUSTOM_MAX_CALLBACK_THREADS, CUSTOM_MIN_SCHEDULED_THREADS
  );
 
-new DesktopKaaPlatformContext();
+DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext(null, executor);
+KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener());
 ```
 </div>
 
@@ -209,7 +212,9 @@ ExecutorContext executorContext = new FlexibleExecutorContext.FlexibleExecutorCo
 	 .setMaxCallbackThreadsIdleMilliseconds(CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS)//set custom maximum callback threads idle time
 	 .setMinScheduledThreads(CUSTOM_MIN_SCHEDULED_THREADS) // set custom minimum scheduled threads amount
 	 .build();
-new DesktopKaaPlatformContext(null, executorContext);
+	 
+DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext(null, executorContext);
+KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener());
 ```
 </div>
 
