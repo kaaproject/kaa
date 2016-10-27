@@ -29,7 +29,7 @@ This guide describes how to upgrade your [Kaa server]({{root_url}}Glossary/#kaa-
 Follow these steps to run the upgrade script:
 
 1. Go to your Kaa host machine.
-2. Download the [upgradeKaa081to090.sh](https://github.com/kaaproject/kaa/blob/release-0.10/server/upgrade/data-migration-0.8.1-0.9.0/upgradeKaa081to090.sh), [upgradeMongo081to090KaaVersion.js](https://github.com/kaaproject/kaa/blob/release-0.10/server/upgrade/data-migration-0.8.1-0.9.0/upgradeMongo081to090KaaVersion.js), and [upgradePostgresql081to090kaaVersion.sql](https://github.com/kaaproject/kaa/blob/release-0.10/server/upgrade/data-migration-0.8.1-0.9.0/upgradePostgresql081to090kaaVersion.sql) files.
+2. Download the [upgradeKaa081to090.sh]({{github_url_raw}}server/upgrade/data-migration-0.8.1-0.9.0/upgradeKaa081to090.sh), [upgradeMongo081to090KaaVersion.js]({{github_url_raw}}server/upgrade/data-migration-0.8.1-0.9.0/upgradeMongo081to090KaaVersion.js), and [upgradePostgresql081to090kaaVersion.sql]({{github_url_raw}}server/upgrade/data-migration-0.8.1-0.9.0/upgradePostgresql081to090kaaVersion.sql) files.
 3. Download the Kaa 0.9.0 debian package at [Download Kaa](http://www.kaaproject.org/download-kaa/) page.
 4. Ensure that the files downloaded in steps 2 and 3 above are located in the same directory.
 5. Execute the command below:

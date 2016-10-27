@@ -112,7 +112,7 @@ If you would like to run a compiled binary on some other host, you should have a
 
 ### Build in nix shell
 [Nix](https://nixos.org/nix) is a package manager which is used to manage Kaa C and C++ SDKs build environment for CI purposes. You can use it to build Kaa C++ SDK quickly.
-Just install Nix on your system and execute the following command from the [root directory](https://github.com/kaaproject/kaa/tree/master/client/client-multi/client-cpp) of Kaa C++ SDK:
+Just install Nix on your system and execute the following command from the [root directory]({{github_url}}client/client-multi/client-cpp) of Kaa C++ SDK:
 
 ```
 nix-shell

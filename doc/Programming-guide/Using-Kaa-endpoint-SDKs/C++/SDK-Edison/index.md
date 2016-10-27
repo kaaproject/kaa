@@ -162,8 +162,8 @@ This way we get object files `.o` and shared object files `.so` that are require
         mkdir -p avro/target
         tar -xvzf avro-cpp-1.7.5.tar.gz -C ./avro/target
         cd ./avro/target/avro-cpp-1.7.5
-        wget https://github.com/kaaproject/kaa/raw/master/client/client-multi/client-cpp/toolchains/edison.cmake
-        wget https://raw.githubusercontent.com/kaaproject/kaa/967970ec57fb0a62c23ffe573385bf0d0299d977/client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
+        wget {{github_url_raw}}client/client-multi/client-cpp/toolchains/edison.cmake
+        wget {{github_url_raw}}client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
         patch < avro-cpp-disable-tests.patch
         mkdir build && cd build
         source /opt/poky-edison/1.6/environment-setup-core2-32-poky-linux

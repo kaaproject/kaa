@@ -135,7 +135,7 @@ and run the following commands:
    ```
 
 
-For additional CMake options, see [CMakeLists.txt](https://github.com/kaaproject/kaa/blob/master/client/client-multi/client-cpp/CMakeLists.txt) file located in the C++ SDK root.
+For additional CMake options, see [CMakeLists.txt]({{github_url}}client/client-multi/client-cpp/CMakeLists.txt) file located in the C++ SDK root.
 
 ## Demo applications
 
