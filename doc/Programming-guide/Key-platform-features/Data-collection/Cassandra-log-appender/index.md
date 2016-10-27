@@ -39,7 +39,7 @@ The following example illustrates how to create the Cassandra log appender via A
 ## Configuration
 
 The Cassandra log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/cassandra-appender/src/main/avro/cassandra-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/cassandra-appender/src/main/avro/cassandra-appender-config.avsc) Avro schema.
 
 * **Cassandra nodes** - list of Cassandra hosts.
 * **Authentication credentials** - credentials used to authenticate on Cassandra cluster.

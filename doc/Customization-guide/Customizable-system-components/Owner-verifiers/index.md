@@ -21,7 +21,7 @@ To implement a custom owner verifier, you need to complete the following steps.
 3. Develop the owner verifier descriptor.
 4. Provision the owner verifier.
 
-We recommend that you use one of the [existing owner verifier implementations](https://github.com/kaaproject/kaa/tree/master/server/verifiers) as a reference.
+We recommend that you use one of the [existing owner verifier implementations]({{github_url}}server/verifiers) as a reference.
 
 ## Configuration schema
 
@@ -198,7 +198,7 @@ The following code example illustrates the implementation of a owner verifier de
 
 To provision your owner verifier, do the following:
 
-1. Create maven project. You can use this [pom](https://github.com/kaaproject/kaa/blob/master/server/verifiers/trustful-verifier/pom.xml) as an example. 
+1. Create maven project. You can use this [pom]({{github_url}}server/verifiers/trustful-verifier/pom.xml) as an example. 
 2. Create similar classes as defined above and put them in appropriate packages.
 3. Add your verification logic to methods of `CustomOwnerVerifier` and build your project using next command: 
 <br/>

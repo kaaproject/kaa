@@ -78,7 +78,7 @@ Here is an example of a custom implementation of Credentials service:
 
 <ol>
 <li markdown="1">
-Create a class that implements all methods of [CredentialsService interface](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java).
+Create a class that implements all methods of [CredentialsService interface]({{github_url}}server/node/src/main/java/org/kaaproject/kaa/server/node/service/credentials/CredentialsService.java).
 
 ```java
 

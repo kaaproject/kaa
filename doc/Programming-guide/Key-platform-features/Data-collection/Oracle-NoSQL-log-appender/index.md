@@ -52,7 +52,7 @@ The following example illustrates how to create the Oracle NoSQL log appender vi
 ## Configuration
 
 The Oracle NoSQL log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/oracle-nosql-appender/src/main/avro/oracle-nosql-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/oracle-nosql-appender/src/main/avro/oracle-nosql-appender-config.avsc) Avro schema.
 
 An example configuration that matches to previously introduced Avro schema is as below:
 

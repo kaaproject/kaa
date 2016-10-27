@@ -88,7 +88,7 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
         tar -xvzf avro-cpp-1.7.5.tar.gz -C ./avro/target
         cd ./avro/target/avro-cpp-1.7.5
 
-        wget https://raw.githubusercontent.com/kaaproject/kaa/967970ec57fb0a62c23ffe573385bf0d0299d977/client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
+        wget {{github_url_raw}}client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
         patch < avro-cpp-disable-tests.patch
         mkdir build && cd build
         cmake -DCMAKE_INSTALL_PREFIX:PATH="${SYSROOT}" -DCMAKE_CXX_COMPILER="${CROSS}"g++ -DCMAKE_FIND_ROOT_PATH="${SYSROOT}" ..

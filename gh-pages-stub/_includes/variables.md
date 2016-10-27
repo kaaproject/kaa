@@ -21,3 +21,9 @@
 {% else %}
 	{% capture github_url %}{{site.data.permanent_config.github_url}}/tree/{{version}}/{% endcapture %}
 {% endif %}
+{% assign github_url_raw = "" %}
+{% if version == "current" %}
+    {% assign github_url_raw = site.data.permanent_config.github_url_raw_latest %}
+{% else %}
+    {% capture github_url_raw %}{{site.data.permanent_config.github_url_raw}}/{{version}}/{% endcapture %}
+{% endif %}
