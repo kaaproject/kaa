@@ -14,11 +14,11 @@ To implement a custom log appender, you need to complete the following steps:
 
 1. Design and compile a configuration schema.
 2. Implement the log appender based on
-[AbstractLogAppender](https://github.com/kaaproject/kaa/blob/master/server/common/log-shared/src/main/java/org/kaaproject/kaa/server/common/log/shared/appender/AbstractLogAppender.java).
+[AbstractLogAppender]({{github_url}}server/common/log-shared/src/main/java/org/kaaproject/kaa/server/common/log/shared/appender/AbstractLogAppender.java).
 3. Develop the log appender descriptor.
 4. Provision the log appender.
 
-We recommend that you use one of the existing [log appender implementations](https://github.com/kaaproject/kaa/tree/master/server/appenders) as a reference.
+We recommend that you use one of the existing [log appender implementations]({{github_url}}server/appenders) as a reference.
 
 # Example Maven Project structure
 

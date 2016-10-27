@@ -280,7 +280,7 @@ This Avro schema is obtained via [Admin REST API]({{root_url}}Programming-guide/
 ## Configuration
 
 The Flume log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/flume-appender/src/main/avro/flume-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/flume-appender/src/main/avro/flume-appender-config.avsc) Avro schema.
 
 |name                   |description                                        |
 |-----------------------|---------------------------------------------------|

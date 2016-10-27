@@ -36,7 +36,7 @@ The following example illustrates how to create the Kafka log appender for the C
 ## Configuration
 
 The Kafka log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/kafka-appender/src/main/avro/kafka-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/kafka-appender/src/main/avro/kafka-appender-config.avsc) Avro schema.
 
 ## Fields description
 

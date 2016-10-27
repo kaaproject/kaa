@@ -336,6 +336,14 @@ Separate the code block from the list item with an empty line.
 ```
 {% endraw %}
 
+* Refer to raw files in github repository using `github_url_raw`, e.g., [README.md]({{github_url_raw}}README.md)
+
+{% raw %}
+  ```
+[README.md]({{github_url_raw}}README.md)
+```
+{% endraw %}
+
 * Use tabs to describe same instructions/code examples for different platforms/languages.
 Click the **Src** tab to see the source code used to generate the tabs.
 <ul>

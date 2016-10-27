@@ -38,7 +38,7 @@ The following example illustrates how to create the REST log appender via Admin 
 ## Configuration
 
 The Admin REST log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc) Avro schema.
 
 Parameters for defining REST log appender:
 

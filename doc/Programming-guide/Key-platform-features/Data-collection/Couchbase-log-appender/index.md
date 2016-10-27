@@ -44,7 +44,7 @@ The following example illustrates how to create the Couchbase log appender via A
 ## Configuration
 
 The Couchbase log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/couchbase-appender/src/main/avro/couchbase-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/couchbase-appender/src/main/avro/couchbase-appender-config.avsc) Avro schema.
 
 An example configuration that matches to previously introduced Avro schema is as below:
 
