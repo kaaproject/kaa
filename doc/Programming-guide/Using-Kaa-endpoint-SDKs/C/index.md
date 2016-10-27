@@ -25,6 +25,8 @@ This makes Kaa C SDK a perfect choice even for use with low-power and low-cost m
 
 You don't need any operating system to use C SDK, so you can use it in bare metal systems.
 
+You can find auto-generated docs for Kaa C SDK [here]({{site.baseurl}}/autogen-docs/client-c/{{version}}/).
+
 ## Main components
 
 Kaa C SDK comprises the following functional parts:
