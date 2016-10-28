@@ -10,7 +10,7 @@ sort_idx: 40
 * TOC
 {:toc}
 
-This guide explains how to use Kaa [Java SDK]({{root_url}}Glossary/#endpoint-sdk) for your IoT applications.
+This guide explains how to start using the Kaa [Java SDK]({{root_url}}Glossary/#endpoint-sdk) for your IoT applications.
 It describes the environment setup, basic API, and provides comparison between desktop and Android versions of the Kaa Java SDK.
 The Kaa Java SDK should be preferred if you want to run your application on a variety of comparatively powerful platforms, or if you plan on developing an Android application.
 
@@ -18,19 +18,17 @@ You can find auto-generated docs for Core Kaa Java SDK [here]({{site.baseurl}}/a
 
 ## Prerequisites
 
-To follow this guide, you will need:
-
-- A text editor or IDE
-- JDK version 1.7 or newer
+- Your favorite text editor or IDE
+- JDK 1.7 or higher
 
 ## Environment setup
 
 To set up your Java SDK environment:
 
-1. [Generate endpoint SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk) for your Java platform.
+1. [Generate endpoint SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk) for target platform 'Java'.
 
 2. Add the generated .jar file to the classpath by using appropriate build tools.
-For example, you can create the a **lib** folder and put the generated .jar file in it.
+For example, you can create the **lib** folder and put there the generated .jar file.
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a data-toggle="tab" href="#maven-sdk">Maven</a></li>
@@ -119,14 +117,13 @@ compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2'
 </div>
 </ul>
 
-When you finish setting up the configurations, you can start writing your application.
-
+After completing the configurations, you can start writing your application.
 
 ## Basic API overview
 
-First, you need to create an instance of `KaaClient`.
-Kaa SDK provides you with the `Kaa` class factory to be used for creating new instances of [Kaa client]({{root_url}}Glossary/#kaa-client).
-See the code example below.
+First, you have to create an instance of `KaaClient`.
+The Kaa SDK provides you with the `Kaa` class factory, which should be used for creating new instances of the [Kaa client]({{root_url}}Glossary/#kaa-client).
+See the following code example.
 
 
 <ul class="nav nav-tabs">
@@ -151,12 +148,12 @@ KaaClient client = Kaa.newClient(new AndroidKaaPlatformContext(), new SimpleKaaC
 </div>
 </div>
 
-The `newClient()` static method receives three mandatory arguments -- the platform-specific context, the implementation of the client state listener interface and
-the boolean argument specifies whether to generate public/private key pair automatically.
-                         
-The first argument can be either `DesktopKaaPlatformContext` for Java desktop or `AndroidKaaPlatformContext` for Android applications. 
-In this example, the second argument is the default implementation of `KaaClientStateListener` -- `SimpleKaaClientStateListener`, that is solely used to log the client state changes.
-And last one if set to **false** -- means using existing pre-generated public/private key pair, **true** -- means auto-generating new public/private key pair if absent.
+The `newClient()` static method receives three mandatory arguments -- the platform-specific context, the implementation of the client state listener interface and the boolean argument that specifies whether to generate a public/private key pair automatically.
+
+The first argument can be either `DesktopKaaPlatformContext` for Java desktop or `AndroidKaaPlatformContext` for Android applications.
+In this example, the second argument is the default implementation of `KaaClientStateListener` -- `SimpleKaaClientStateListener`, which is solely used to log the client state changes.
+As to the third argument: when it is set to **false**, an existing pre-generated public/private key pair is used; when **true**, a new public/private key pair is auto-generated if there is none.
+
 
 You can configure properties and `ExecutorContext` of `DesktopKaaPlatformContext` with help of its constructors. 
 `DesktopKaaPlatformContext` uses `FlexibleExecutorContext` implementation of `ExecutorContext` by default. 
@@ -232,26 +229,26 @@ KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientS
 
 </div>
 
-Whenever a new instance of Kaa client is created, the `start()` method is called to start the client operation and communication with the server.
+Whenever a new instance of the Kaa client is created, the `start()` method is invoked to start the client operation and communication with the server.
 Starting from this point, you can use any features provided by the [Kaa platform]({{root_url}}Glossary/#kaa-platform), such as [data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), etc., in your application code.
 When you no longer need the client, you can call the `stop()` method to release resources and stop the client communication with the server.
 
 
 ## Client state
 
-When Kaa client starts for the first time, it generates a private/public key pair and saves those keys in the key.private and key.public files accordingly.
+When the Kaa client starts for the first time, it generates a private/public key pair and saves those keys in the key.private and key.public files accordingly.
 These keys are used to maintain secure communication with the server.
-Kaa client also creates the state.properties file that is used to persist the parameters that handle the client state during its communication with the server.
+The Kaa client also creates the state.properties file that is used to persist the parameters that handle the client state during its communication with the server.
 
-In case with Java desktop application, all these files are created by default in the working directory.
-However, you can specify a different folder using `KaaClientProperties`.
-To do this, set the path to the new folder using the `setWorkingDirectory()` method and then pass the client properties instance as an argument of the `DesktopKaaPlatformContext` constructor.
+In the case of a Java desktop application, all these files are created by default in the working directory.
+However, you can specify a different folder by using `KaaClientProperties`.
+For that purpose, set the path to the new folder by using the `setWorkingDirectory()` method and then pass the client properties instance as an argument for the `DesktopKaaPlatformContext` constructor.
 
 
 ## Platform comparison
 
 The only difference between the Android client and the Java desktop client is the implementation of the `KaaPlatformContext` class.
-See the table below for comparison between the desktop and Android clients.
+The following table illustrates key differences between them.
 
 |Method|Desktop|Android| Description |
 |---|---|---|
@@ -266,22 +263,22 @@ See the table below for comparison between the desktop and Android clients.
 
 ## ExecutorContext configuration
 Both `AndroidKaaPlatformContext` and `DesktopKaaPlatformContext` allow you to specify `ExecutorContext`.
-The `ExecutorContext` class provides implementation and configuration of the `ExecutorService` class that is used to run internal `KaaClient` tasks.
-Below is the list of `ExecutorService` implementations.
+The `ExecutorContext` class provides implementation and configuration of the `ExecutorService` class, which is used to run internal `KaaClient` tasks.
+The following table provides `ExecutorService` implementations.
 
 |ExecutorService|Responsibilities|
 |---|---|
 |LifeCycleExecutor|Handles `KaaClient` lifecycle events (Start/Stop/Pause/Resume), processes callbacks from `KaaClientStateListener`.|
-|ApiExecutor|Processes client's calls to server. For example, persistence of log records into internal log storage and enqueuing for further forwarding to server.|
-|CallbackExecutor|Handles events from server and callbacks from listeners: <br />`AttachEndpointToUserCallback`<br />`ConfigurationListener`<br />`DetachEndpointFromUserCallback`<br />`FindEventListenersCallback`<br />`LogDeliveryListener`<br />`NotificationListener`<br />`NotificationTopicListListener`<br />`OnAttachEndpointOperationCallback`<br />`OnDetachEndpointOperationCallback`<br />`UserAttachCallback`|
-|ScheduledExecutor|Handles log forwarding to server, runs failover and bootstrap tasks.|
+|ApiExecutor|Processes the client's calls to the server. One example is persisting log records into an internal log storage and enqueuing them for further forwarding to the server.|
+|CallbackExecutor|Handles events from the server and callbacks from listeners: <br />`AttachEndpointToUserCallback`<br />`ConfigurationListener`<br />`DetachEndpointFromUserCallback`<br />`FindEventListenersCallback`<br />`LogDeliveryListener`<br />`NotificationListener`<br />`NotificationTopicListListener`<br />`OnAttachEndpointOperationCallback`<br />`OnDetachEndpointOperationCallback`<br />`UserAttachCallback`|
+|ScheduledExecutor|Handles log forwarding to the server, runs failover and bootstrap tasks.|
 
 ### Available ExecutorService implementations
 
 **SimpleExecutorContext** --- this implementation provides one `java.util.concurrent.ScheduledExecutorService` for `ScheduledExecutor` and three separate instances of `java.util.concurrent.ExecutorService` for `LifeCycleExecutor`, `ApiExecutor`, and `CallbackExecutor`.
-The `ExecutorService` instances contain fixed number of threads in the pool.
-A `SimpleExecutorContext` with one thread for each  `ExecutorService` is a default `ExecutorContext` implementation used by `KaaClient`.
-To configure `SimpleExecutorContext`, follow the instruction below.
+The `ExecutorService` instances contain a fixed number of threads in the pool.
+`SimpleExecutorContext` with one thread for each  `ExecutorService` is a default `ExecutorContext` implementation used by `KaaClient`.
+To configure `SimpleExecutorContext`, use the following instruction.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#java-ec">Java</a></li>
@@ -312,7 +309,7 @@ KaaClient kaaClient = Kaa.newClient(androidKaaPlatformContext, new SimpleKaaClie
 </div>
 </div>
 
-**SingleThreadExecutorContext** --- this implementation shares single `java.util.concurrent.ScheduledExecutorService` with one thread in pool for `LifeCycleExecutor`, `ApiExecutor`, `CallbackExecutor`, and `ScheduledExecutor`.
+**SingleThreadExecutorContext** --- this implementation shares single `java.util.concurrent.ScheduledExecutorService` with one thread in the pool for `LifeCycleExecutor`, `ApiExecutor`, `CallbackExecutor`, and `ScheduledExecutor`.
 
 >**NOTE:** Avoid running any blocking or long running tasks within listeners passed to `KaaClient`.
 >Make sure that `ExecutorContext` is properly configured.
