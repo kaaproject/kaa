@@ -52,7 +52,7 @@ Below is the list of the target platforms for which Kaa C SDK already has an imp
     - [UDOO]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-UDOO/)
     - [Raspberry PI]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-RPi/)
     - [Beaglebone]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Beaglebone/)
-    - [QNX Neutrino]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-QNX-Neutrino-RTOS/)
+    - [QNX Neutrino]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-QNX-Neutrino/)
     - Windows (cygwin)
 - [ESP8266]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-ESP8266/)
 - [CC3200]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-TI-CC3200/)

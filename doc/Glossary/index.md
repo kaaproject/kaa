@@ -191,4 +191,3 @@ sort_idx: 50
 
 ### Transport
 >A component that implements communication between [Kaa clients]({{root_url}}Glossary/#kaa-client) and [Kaa server]({{root_url}}Glossary/#kaa-server).  
->See [Transport configuration]({{root_url}}Administration-guide/System-Configuration/Transport-configuration) documentation section.
