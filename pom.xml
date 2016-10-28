@@ -1436,7 +1436,7 @@ Copyright 2014-2016 CyberVision, Inc.
             <url>http://repository.kaaproject.org/repository/internal/</url>
         </repository>
         <repository>
-            <id>repository.kaaproject.shapshots</id>
+            <id>repository.kaaproject.snapshots</id>
             <url>http://repository.kaaproject.org/repository/snapshots/</url>
         </repository>
     </repositories>
