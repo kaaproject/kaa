@@ -16,6 +16,10 @@ For a quick start, Kaa offers a set of out-of-the-box enterprise-grade IoT featu
 The platform features include device management, data collection, configuration management, messaging, and more.
 See [Key platform features]({{root_url}}Programming-guide/Key-platform-features/) section for details.
 
+>**NOTE:**
+>If you are looking for documentation for Kaa versions prior to 0.10.0, please follow [this link](http://docs.kaaproject.org/display/KAA/Kaa+IoT+Platform+Home).
+{: .note}
+
 
 # Getting started
 For a quick start with the Kaa IoT platform, check out [Getting started]({{root_url}}Getting-started/) guide.
@@ -25,7 +29,6 @@ Once you have your instance of Kaa up and running, [Your first Kaa application](
 You can choose among several implementations of the [Kaa Endpoint SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/) in different languages for your client applications.
 
 Kaa platform architecture is covered in the [Architecture overview]({{root_url}}Architecture-overview/).
-
 
 # Getting help
 If you face some troubles with the Kaa platform check out [Troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting/) first and if you can't find the solution we welcome you to post your questions at the [StackOverflow](http://stackoverflow.com/questions/tagged/kaa).
