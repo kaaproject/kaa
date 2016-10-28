@@ -29,7 +29,7 @@ This guide describes how to upgrade your [Kaa server]({{root_url}}Glossary/#kaa-
 Follow these steps to run the upgrade script:
 
 1. Go to your Kaa host machine.
-2. Download the [upgradeKaa090to0100.sh]({{github_url_raw}}server/upgrade/data-migration-0.9.0-0.10.0/upgradeKaa090to0100.sh) and [data-migration_0.9.0-0.10.0.jar](http://repository.kaaproject.org/repository/releases/org/kaaproject/kaa/server/upgrade/data-migration/0.10.0/data-migration_0.9.0-0.10.0.jar) to upgrade the databases.
+2. Download the [upgradeKaa090to0100.sh]({{github_url_raw}}server/upgrade/data-migration-0.9.0-0.10.0/src/main/resources/scripts/upgradeKaa090to0100.sh) and [data-migration_0.9.0-0.10.0.jar](http://repository.kaaproject.org/repository/releases/org/kaaproject/kaa/server/upgrade/data-migration/0.10.0/data-migration_0.9.0-0.10.0.jar) to upgrade the databases.
 3. Download the Kaa 0.10.x debian package at [Download Kaa](http://www.kaaproject.org/download-kaa/) page.
 4. Ensure that the files downloaded in steps 2 and 3 above are located in the same directory.
 5. Execute the command below:
