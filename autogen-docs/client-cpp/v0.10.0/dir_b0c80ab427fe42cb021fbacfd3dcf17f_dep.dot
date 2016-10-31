@@ -1,0 +1,19 @@
+digraph "/home/architec/Documents/kaa/client/client-multi/client-cpp/kaa/common" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_75b6f1d67d5c17ff0dffa26ba3b659cd {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_75b6f1d67d5c17ff0dffa26ba3b659cd.html"]
+  subgraph clusterdir_b0c80ab427fe42cb021fbacfd3dcf17f {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_b0c80ab427fe42cb021fbacfd3dcf17f.html"];
+    dir_b0c80ab427fe42cb021fbacfd3dcf17f [shape=plaintext label="common"];
+    dir_ff34a2b452caae8d5f8fa60bcc1b34bb [shape=box label="exception" color="black" fillcolor="white" style="filled" URL="dir_ff34a2b452caae8d5f8fa60bcc1b34bb.html"];
+  }
+  }
+  dir_299b845540048631ea1956559c291a97 [shape=box label="transport" URL="dir_299b845540048631ea1956559c291a97.html"];
+  dir_299b845540048631ea1956559c291a97->dir_ff34a2b452caae8d5f8fa60bcc1b34bb [headlabel="1", labeldistance=1.5 headhref="dir_000031_000013.html"];
+  dir_299b845540048631ea1956559c291a97->dir_b0c80ab427fe42cb021fbacfd3dcf17f [headlabel="1", labeldistance=1.5 headhref="dir_000031_000012.html"];
+  dir_ff34a2b452caae8d5f8fa60bcc1b34bb->dir_299b845540048631ea1956559c291a97 [headlabel="1", labeldistance=1.5 headhref="dir_000013_000031.html"];
+  dir_b0c80ab427fe42cb021fbacfd3dcf17f->dir_ff34a2b452caae8d5f8fa60bcc1b34bb [headlabel="1", labeldistance=1.5 headhref="dir_000012_000013.html"];
+}

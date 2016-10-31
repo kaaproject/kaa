@@ -1,0 +1,12 @@
+digraph "/home/architec/Documents/kaa/client/client-multi/client-cpp/kaa/channel/transport" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_17250af2586d2de36ee322c8fd958f75 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="channel" fontname="FreeSans", fontsize="10", URL="dir_17250af2586d2de36ee322c8fd958f75.html"]
+  dir_0ac5256243521dc4d74bf66d80e5360d [shape=box, label="transport", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_0ac5256243521dc4d74bf66d80e5360d.html"];
+  }
+  dir_b0c80ab427fe42cb021fbacfd3dcf17f [shape=box label="common" color="red" URL="dir_b0c80ab427fe42cb021fbacfd3dcf17f.html"];
+  dir_0ac5256243521dc4d74bf66d80e5360d->dir_b0c80ab427fe42cb021fbacfd3dcf17f [headlabel="1", labeldistance=1.5 headhref="dir_000011_000012.html"];
+}

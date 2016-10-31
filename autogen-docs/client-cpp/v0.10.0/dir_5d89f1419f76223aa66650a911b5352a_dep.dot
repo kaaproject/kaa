@@ -1,0 +1,10 @@
+digraph "/home/architec/Documents/kaa/client/client-multi/client-cpp/kaa/failover" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_75b6f1d67d5c17ff0dffa26ba3b659cd {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_75b6f1d67d5c17ff0dffa26ba3b659cd.html"]
+  dir_5d89f1419f76223aa66650a911b5352a [shape=box, label="failover", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_5d89f1419f76223aa66650a911b5352a.html"];
+  }
+}

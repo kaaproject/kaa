@@ -3,11 +3,11 @@
   _sort_idx: 1000
   level: 1
   subitems:
-    Welcome-Home:
+    Welcome:
       _sort_idx: 5
       subitems: {}
-      text: Welcome / Home
-      url: "/docs/v0.10.0/Welcome-Home/"
+      text: Welcome
+      url: "/docs/v0.10.0/Welcome/"
     Getting-started:
       _sort_idx: 10
       subitems: {}
@@ -98,7 +98,7 @@
                 Rest-log-appender:
                   _sort_idx: 90
                   subitems: {}
-                  text: Rest log appender
+                  text: REST log appender
                   url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/"
               text: Data collection
               url: "/docs/v0.10.0/Programming-guide/Key-platform-features/Data-collection/"
@@ -215,11 +215,6 @@
               subitems: {}
               text: Java
               url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/Java/"
-            Supported-platforms:
-              _sort_idx: 60
-              subitems: {}
-              text: Supported platforms
-              url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/Supported-platforms/"
           text: Using Kaa endpoint SDKs
           url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/"
         Server-REST-APIs:
@@ -233,11 +228,6 @@
       _sort_idx: 30
       level: 2
       subitems:
-        System-components-overview:
-          _sort_idx: 10
-          subitems: {}
-          text: System components overview
-          url: "/docs/v0.10.0/Administration-guide/System-components-overview/"
         System-installation:
           _sort_idx: 20
           level: 3
@@ -245,7 +235,7 @@
             Single-node-installation:
               _sort_idx: 20
               subitems: {}
-              text: Single node installation guide
+              text: Single node installation
               url: "/docs/v0.10.0/Administration-guide/System-installation/Single-node-installation/"
             Cluster-setup:
               _sort_idx: 30
@@ -258,39 +248,18 @@
                   url: "/docs/v0.10.0/Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/"
               text: Cluster setup guide
               url: "/docs/v0.10.0/Administration-guide/System-installation/Cluster-setup/"
+            Docker-deployment:
+              _sort_idx: 40
+              subitems: {}
+              text: Docker deployment
+              url: "/docs/v0.10.0/Administration-guide/System-installation/Docker-deployment/"
           text: System installation
           url: "/docs/v0.10.0/Administration-guide/System-installation/"
-        System-Configuration:
-          _sort_idx: 30
-          level: 3
-          subitems:
-            General-configuration:
-              _sort_idx: 10
-              subitems: {}
-              text: General configuration
-              url: "/docs/v0.10.0/Administration-guide/System-Configuration/General-configuration/"
-            Transport-configuration:
-              _sort_idx: 30
-              subitems: {}
-              text: Transport configuration
-              url: "/docs/v0.10.0/Administration-guide/System-Configuration/Transport-configuration/"
-            Database-configuration:
-              _sort_idx: 220
-              subitems: {}
-              text: Database configuration
-              url: "/docs/v0.10.0/Administration-guide/System-Configuration/Database-configuration/"
-          text: System configuration
-          url: "/docs/v0.10.0/Administration-guide/System-Configuration/"
         Tenants-and-applications-management:
           _sort_idx: 40
           subitems: {}
           text: Tenants and applications management
           url: "/docs/v0.10.0/Administration-guide/Tenants-and-applications-management/"
-        Users-management:
-          _sort_idx: 50
-          subitems: {}
-          text: Users management
-          url: "/docs/v0.10.0/Administration-guide/Users-management/"
         Upgrading-your-instance:
           _sort_idx: 60
           level: 3
@@ -369,13 +338,23 @@
               subitems: {}
               text: Git flow
               url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Git-flow/"
-            Documentation-contribution-and-style-guide:
+            Contribution-guide:
               _sort_idx: 30
               subitems: {}
-              text: Documentation contribution and style guide
-              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Documentation-contribution-and-style-guide/"
+              text: Documentation contribution guide
+              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Contribution-guide/"
+            Style-guide:
+              _sort_idx: 30
+              subitems: {}
+              text: Documentation style guide
+              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Style-guide/"
           text: How to contribute
           url: "/docs/v0.10.0/Customization-guide/How-to-contribute/"
+        Nix-guide:
+          _sort_idx: 70
+          subitems: {}
+          text: Nix guide
+          url: "/docs/v0.10.0/Customization-guide/Nix-guide/"
       text: Customization guide
       url: "/docs/v0.10.0/Customization-guide/"
     Glossary:

@@ -1,4 +1,4 @@
 var files =
 [
-    [ "Projects", "dir_7a6499598ddcfcabe96e224cb4a6d834.html", "dir_7a6499598ddcfcabe96e224cb4a6d834" ]
+    [ "architec", "dir_2150195d451dfb7ab3179b83015fdb72.html", "dir_2150195d451dfb7ab3179b83015fdb72" ]
 ];

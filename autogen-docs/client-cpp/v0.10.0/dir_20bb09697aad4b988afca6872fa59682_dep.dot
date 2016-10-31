@@ -1,0 +1,14 @@
+digraph "/home/architec/Documents/kaa" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_6bb50fe93c5fcc376d3eb832f9e9f0ad {
+    graph [ bgcolor="#ddddee", pencolor="black", label="Documents" fontname="FreeSans", fontsize="10", URL="dir_6bb50fe93c5fcc376d3eb832f9e9f0ad.html"]
+  subgraph clusterdir_20bb09697aad4b988afca6872fa59682 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_20bb09697aad4b988afca6872fa59682.html"];
+    dir_20bb09697aad4b988afca6872fa59682 [shape=plaintext label="kaa"];
+    dir_89696606e77ebc152aa750cc3ee3591b [shape=box label="client" color="red" fillcolor="white" style="filled" URL="dir_89696606e77ebc152aa750cc3ee3591b.html"];
+  }
+  }
+}

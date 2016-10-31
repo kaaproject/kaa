@@ -18,7 +18,7 @@ For example, a notification can cause a [Kaa client]({{root_url}}/#kaa-client) t
 
 To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
 After that, you need to create a tenant with tenant admin, and an application.
-To do this, you can use the server REST API ([tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [tenant admin]({{root_url}}/Programming-guide/Server-REST-APIs/#!/User/editUser), [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application)) or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
+To do this, you can use the server REST API ([tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [tenant admin]({{root_url}}/Programming-guide/Server-REST-APIs/#!/User/editUser), [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application)).
 
 It is strongly recommended that you first read the [Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) sections before you proceed.
 
@@ -148,7 +148,7 @@ To send a notification, use the [server REST API]({{root_url}}Programming-guide/
 
 1. Select the topic from the **Notification topics** page of the application and click **Send notification**.
 
-2. On the **Notification details** page, create a notification either by using the **Notification body** [record form]({{root_url}}Administration-guide/Tenants-and-applications-management/#record-form) or by uploading a JSON file.
+2. On the **Notification details** page, create a notification either by using the **Notification body** record form or by uploading a JSON file.
 The data structure of your JSON file must match the corresponding notification schema.
 
 	![Send Notification](images/send_notification.png)
@@ -212,18 +212,19 @@ Below are code examples of how to get a list of available topics:
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
-...
-    KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext())
-    // Start Kaa client
-    kaaClient.start()
-...
  
-    List<Topic> topics = kaaClient.getTopics();
- 
-    for (Topic topic : topics) {
-        System.out.printf("Id: %s, name: %s, type: %s"
-                , topic.getId(), topic.getName(), topic.getSubscriptionType());
-    }
+...
+KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(), true)
+// Start Kaa client
+kaaClient.start()
+...
+
+List<Topic> topics = kaaClient.getTopics();
+
+for (Topic topic : topics) {
+    System.out.printf("Id: %s, name: %s, type: %s"
+            , topic.getId(), topic.getName(), topic.getSubscriptionType());
+}
 ```
 
 </div><div id="C_plus_plus-9" class="tab-pane fade" markdown="1" >
@@ -459,6 +460,7 @@ import org.kaaproject.kaa.client.KaaDesktop;
 import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+ 
 ...
 // Add listener
 kaaClient.addTopicListListener(new NotificationTopicListListener() {
@@ -469,6 +471,7 @@ kaaClient.addTopicListListener(new NotificationTopicListListener() {
             topic.getId(), topic.getName(), topic.getSubscriptionType());
     }
 }});
+ 
 ...
 // Remove listener
 kaaClient.removeTopicListListener(someOtherTopicUpdateListener);
@@ -561,6 +564,7 @@ To accommodate for simultaneous change of several subscription topics, consider 
 
 ```java
 import org.kaaproject.kaa.client.notification.NotificationManager;
+ 
 ...
 // Do subscription changes with parameter forceSync set to false
 kaaClient.subscribeToTopics(Arrays.asList("iOS 8 notifications", "another_optional_topic_id"), false);
@@ -648,6 +652,7 @@ As a result, the listener will receive notifications from all topics (all mandat
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.schema.sample.notification.ExampleNotification;
+ 
 ...
 public class BasicNotificationListener implements NotificationListener {
  
@@ -754,6 +759,7 @@ To receive notifications on some specific topic (either mandatory or optional), 
 ```java
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.schema.sample.notification.Notification;
+ 
 ...
 BasicNotificationListener specificListener = new BasicNotificationListener();
 // Add listener

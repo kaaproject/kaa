@@ -1,0 +1,11 @@
+digraph "/home/architec" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_2150195d451dfb7ab3179b83015fdb72 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_2150195d451dfb7ab3179b83015fdb72.html"];
+    dir_2150195d451dfb7ab3179b83015fdb72 [shape=plaintext label="architec"];
+    dir_6bb50fe93c5fcc376d3eb832f9e9f0ad [shape=box label="Documents" color="red" fillcolor="white" style="filled" URL="dir_6bb50fe93c5fcc376d3eb832f9e9f0ad.html"];
+  }
+}

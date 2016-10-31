@@ -1,7 +1,7 @@
 var searchData=
 [
   ['serialize',['serialize',['../structkaa__union__t.html#a48c982907899d66f4b14894b9511cecb',1,'kaa_union_t']]],
-  ['server_5fsync',['server_sync',['../structkaa__extension.html#a131b98bcb6edabcf2d14e6f6ed163db3',1,'kaa_extension']]],
+  ['server_5fsync',['server_sync',['../structkaa__extension.html#a1dff940f00c24bd036b2359a6858aeb4',1,'kaa_extension']]],
   ['services',['services',['../structkaa__serialize__info__t.html#adb374669c19408681ebeb83eb180e30c',1,'kaa_serialize_info_t']]],
   ['services_5fcount',['services_count',['../structkaa__serialize__info__t.html#a1efe27714506f0795dd1e228c313ed8c',1,'kaa_serialize_info_t']]],
   ['session_5fkey',['session_key',['../structkaatcp__connect__t.html#a2bb70fc347acde9094b2b36ec83686e6',1,'kaatcp_connect_t']]],

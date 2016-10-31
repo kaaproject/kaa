@@ -184,4 +184,4 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
 
         Hello, I am a Kaa Application!
 
-The full source codes could be found [here](https://github.com/kaaproject/kaa/pull/772/commits/9fae5d8a522b307bbe9f783f69604f2701ca60cc).
+The full source codes could be found [here]({{github_url}}client/client-multi/client-c/examples/my-kaa-application).
