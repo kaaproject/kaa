@@ -2,7 +2,7 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "Kaa Admin REST API",
-    "version" : "0.11.0-SNAPSHOT",
+    "version" : "0.10.0",
     "title" : "Admin REST API"
   },
   "host" : "localhost:8080",
@@ -98,7 +98,7 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Delete CTL schema",
         "description" : "Deletes a CTL schema. Only authorized users are allowed to perform this operation.",
-        "operationId" : "deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken",
+        "operationId" : "deleteCtlSchemaByFqnVersionTenantIdAndApplicationToken",
         "parameters" : [ {
           "name" : "fqn",
           "in" : "query",
@@ -146,7 +146,7 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Export CTL schema",
         "description" : "Exports a CTL schema and, depending on the export method specified, all of its dependencies. Only authorized users are allowed to perform this operation.",
-        "operationId" : "exportCTLSchemaByAppToken",
+        "operationId" : "exportCtlSchemaByAppToken",
         "parameters" : [ {
           "name" : "fqn",
           "in" : "query",
@@ -197,7 +197,7 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Get application CTL schemas",
         "description" : "Returns a list of available CTL schemas metadata for an application. The current user must have one of the following roles: TENANT_DEVELOPER or TENANT_USER.",
-        "operationId" : "getApplicationLevelCTLSchemasByAppToken",
+        "operationId" : "getApplicationLevelCtlSchemasByAppToken",
         "parameters" : [ {
           "name" : "applicationToken",
           "in" : "path",
@@ -211,7 +211,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+                "$ref" : "#/definitions/CtlSchemaMetaInfoDto"
               }
             }
           },
@@ -270,7 +270,7 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Get CTL schema",
         "description" : "Returns a CTL schema. Only authorized users are allowed to perform this operation.",
-        "operationId" : "getCTLSchemaByFqnVersionTenantIdAndApplicationToken",
+        "operationId" : "getCtlSchemaByFqnVersionTenantIdAndApplicationToken",
         "parameters" : [ {
           "name" : "fqn",
           "in" : "query",
@@ -324,7 +324,7 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Get CTL schema by it's id",
         "description" : "Returns a CTL schema. Only authorized users are allowed to perform this operation.",
-        "operationId" : "getCTLSchemaById",
+        "operationId" : "getCtlSchemaById",
         "parameters" : [ {
           "name" : "id",
           "in" : "query",
@@ -359,14 +359,14 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Get system CTL schemas",
         "description" : "Returns a list of available system CTL schemas metadata. Only authorized users are allowed to perform this operation.",
-        "operationId" : "getSystemLevelCTLSchemas",
+        "operationId" : "getSystemLevelCtlSchemas",
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+                "$ref" : "#/definitions/CtlSchemaMetaInfoDto"
               }
             }
           },
@@ -384,14 +384,14 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Get tenant CTL schemas",
         "description" : "Returns a list of available CTL schemas metadata for current tenant. The current user must have one of the following roles: TENANT_ADMIN, TENANT_DEVELOPER or TENANT_USER.",
-        "operationId" : "getTenantLevelCTLSchemas",
+        "operationId" : "getTenantLevelCtlSchemas",
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+                "$ref" : "#/definitions/CtlSchemaMetaInfoDto"
               }
             }
           },
@@ -427,7 +427,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+              "$ref" : "#/definitions/CtlSchemaMetaInfoDto"
             }
           },
           "401" : {
@@ -447,7 +447,7 @@
         "tags" : [ "Common Type Library" ],
         "summary" : "Create CTL schema",
         "description" : "Creates a CTL schema with application token. Only authorized users are allowed to perform this operation.",
-        "operationId" : "saveCTLSchemaWithAppToken",
+        "operationId" : "saveCtlSchemaWithAppToken",
         "parameters" : [ {
           "name" : "body",
           "in" : "query",
@@ -1538,7 +1538,7 @@
       "post" : {
         "tags" : [ "Logging" ],
         "summary" : "Delete log appender",
-        "description" : "Deletes a log appender by log appender ID. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "description" : "Deletes a log appender by log appender ID.Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
         "operationId" : "deleteLogAppender",
         "parameters" : [ {
           "name" : "logAppenderId",
@@ -1802,10 +1802,10 @@
             "description" : "The user is not authenticated or invalid credentials were provided"
           },
           "403" : {
-            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+            "description" : "The authenticateduser does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
           },
           "404" : {
-            "description" : "An endpoint group with the specified endpointGroupId does not exist"
+            "description" : "An endpoint group withthe specified endpointGroupId does not exist"
           },
           "500" : {
             "description" : "An unexpected error occurred on the server side"
@@ -2647,7 +2647,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "profileFilter",
-          "description" : "ProfileFilterDto body. Mandatory fields: applicationId, body, either endpointProfileSchemaId or serverProfileSchemaId or both of them",
+          "description" : "ProfileFilterDto body. Mandatory fields: applicationId,body, either endpointProfileSchemaId or serverProfileSchemaId or both of them",
           "required" : true,
           "schema" : {
             "$ref" : "#/definitions/ProfileFilterDto"
@@ -3398,7 +3398,7 @@
       "get" : {
         "tags" : [ "Profiling" ],
         "summary" : "Get server-side endpoint profile schemas",
-        "description" : "Returns the server-side endpoint profile schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. A users can only request schemas for applications associated with the same user.",
+        "description" : "Returns the server-side endpoint profile schemas for an application. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to request this information. A users can only request schemasfor applications associated with the same user.",
         "operationId" : "getServerProfileSchemasByApplicationToken",
         "parameters" : [ {
           "name" : "applicationToken",
@@ -3421,7 +3421,7 @@
             "description" : "The user is not authenticated or invalid credentials were provided"
           },
           "403" : {
-            "description" : "The authenticated user does not have the required role (TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
+            "description" : "The authenticated user does not have the required role(TENANT_DEVELOPER or TENANT_USER) or the Tenant ID of the application does not match the Tenant ID of the authenticated user"
           },
           "404" : {
             "description" : "Application with the specified applicationToken does not exist"
@@ -3538,7 +3538,7 @@
       "post" : {
         "tags" : [ "Notifications" ],
         "summary" : "Create/Edit topic",
-        "description" : "Creates or edits a topic. To create topic you do not need to specify the topic ID. To edit the topic specify the topic ID. If a topic with the specified ID exists, it will be updated. Only users with theTENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "description" : "Creates or edits a topic. To create topic you do not need to specify the topic ID. To edit the topic specify the topic ID. If a topic with the specified ID exists, it will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
         "operationId" : "editTopic",
         "parameters" : [ {
           "in" : "body",
@@ -3814,7 +3814,7 @@
       "post" : {
         "tags" : [ "Configuration" ],
         "summary" : "Create/Edit user configuration",
-        "description" : "Creates or updates a configuration for the specific user under the application. TIf a configuration with the specified user ID does not exist, then it will be created. If a configuration with the specified user ID exists, the configuration will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
+        "description" : "Creates or updates a configuration for the specific user under the application. If a configuration with the specified user ID does not exist, then it will be created. If a configuration with the specified user ID exists, the configuration will be updated. Only users with the TENANT_DEVELOPER or TENANT_USER role are allowed to perform this operation.",
         "operationId" : "editUserConfiguration",
         "parameters" : [ {
           "in" : "body",
@@ -4327,7 +4327,7 @@
           "type" : "string"
         },
         "metaInfo" : {
-          "$ref" : "#/definitions/CTLSchemaMetaInfoDto"
+          "$ref" : "#/definitions/CtlSchemaMetaInfoDto"
         },
         "version" : {
           "type" : "integer",
@@ -4351,30 +4351,6 @@
           "uniqueItems" : true,
           "items" : {
             "$ref" : "#/definitions/CTLSchemaDto"
-          }
-        }
-      }
-    },
-    "CTLSchemaMetaInfoDto" : {
-      "type" : "object",
-      "properties" : {
-        "id" : {
-          "type" : "string"
-        },
-        "fqn" : {
-          "type" : "string"
-        },
-        "tenantId" : {
-          "type" : "string"
-        },
-        "applicationId" : {
-          "type" : "string"
-        },
-        "versions" : {
-          "type" : "array",
-          "items" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         }
       }
@@ -4524,6 +4500,30 @@
         },
         "credentialsId" : {
           "type" : "string"
+        }
+      }
+    },
+    "CtlSchemaMetaInfoDto" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "fqn" : {
+          "type" : "string"
+        },
+        "tenantId" : {
+          "type" : "string"
+        },
+        "applicationId" : {
+          "type" : "string"
+        },
+        "versions" : {
+          "type" : "array",
+          "items" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
         }
       }
     },
