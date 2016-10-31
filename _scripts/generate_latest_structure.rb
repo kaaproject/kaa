@@ -28,7 +28,7 @@ redirect_to: $LATEST
 ---
 eos
 
-FileUtils.rm_f(LATEST_DIR)
+FileUtils.rm_rf(LATEST_DIR)
 FileUtils.cp_r("#{DOCS_ROOT}/#{LATEST_VERSION}/", LATEST_DIR)
 Dir.glob("#{LATEST_DIR}/**/index.md").each { |file_name|
 	File.truncate(file_name,0)
