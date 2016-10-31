@@ -31,7 +31,7 @@ Once a new configuration schema is provisioned, Kaa generates corresponding deri
 
 If you update your configuration schema, you need to update the [client application]({{root_url}}Glossary/#kaa-client).
 Therefore, to enable the server compatibility with the older clients as the configuration schema evolves, Kaa servers maintain multiple versions of the configuration schema.
-See [CT schema versioning and dependencies]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/##ct-schema-versioning-and-dependencies).
+See [CT schema versioning and dependencies]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#ct-schema-versioning-and-dependencies).
 Configuration data is managed independently for every schema version.
 
 The Kaa [Control service]({{root_url}}Glossary/#control-service) exposes API for loading configuration data into the "all" group.
@@ -658,7 +658,7 @@ To define and apply the resulting configuration update for the endpoint, the [Op
 1. Evaluates the [endpoint group]({{root_url}}Glossary/#endpoint-group) membership according to the [endpoint profile]({{root_url}}Glossary/#endpoint-profile).
 
 2. Merges all configuration data sets assigned to the groups the endpoint belongs to, starting with the one that has the lowest weight (group "all").
-If confilicting field values are found, the field is assigned the value from the group with the highest weight.
+If conflicting field values are found, the field is assigned the value from the group with the highest weight.
 
 >**NOTE:** The `overrideStrategy` field in the configuration schema defines the way in which the arrays are merged.
 >Record UUID fields never change from the values in the lowest weight group they were first found in.
@@ -694,48 +694,51 @@ Below are examples for different [SDK types]({{root_url}}Glossary/#sdk-type) of 
 <div id="Java-1" class="tab-pane fade in active" markdown="1" >
 
 ```java
-
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.configuration.base.ConfigurationListener;
 import org.kaaproject.kaa.client.configuration.base.SimpleConfigurationStorage;
-
-public static void main(String[] args) {
-    // Create the Kaa desktop context for the application.
-    DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
-    
-    // Create a Kaa client and add a listener which displays the Kaa client configuration 
-    // as soon as the Kaa client is started. 
-    kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
-    @Override
-    public void onStarted() {
-        super.onStarted();
-        printConfiguration(kaaClient.getConfiguration());
-    }
-    });
-    
-    // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
-    kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
-    
-    // Add a listener which displays the Kaa client configuration each time it is updated.
-    kaaClient.addConfigurationListener(new ConfigurationListener() {
-    @Override
-    public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
-        printConfiguration(sampleConfiguration);
-    }
-    });
+ 
+public class KaaConfigurationDemo {
+ 
+    public static void main(String[] args) {
+     
+        // Create the Kaa desktop context for the application.
+        DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
         
-    // Start the Kaa client and connect it to the Kaa server.
-    kaaClient.start();
-    ...
-}
+        // Create a Kaa client and add a listener which displays the Kaa client configuration 
+        // as soon as the Kaa client is started. 
+        KaaClient kaaClient = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener() {
+            @Override
+            public void onStarted() {
+                super.onStarted();
+                printConfiguration(kaaClient.getConfiguration());
+            }
+        }, true);
+        
+        // Persist configuration in a local storage to avoid downloading it each time the Kaa client is started.
+        kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
+        
+        // Add a listener which displays the Kaa client configuration each time it is updated.
+        kaaClient.addConfigurationListener(new ConfigurationListener() {
+            @Override
+            public void onConfigurationUpdate(SampleConfiguration sampleConfiguration) {
+                printConfiguration(sampleConfiguration);
+            }
+        });
+            
+        // Start the Kaa client and connect it to the Kaa server.
+        kaaClient.start();
+        ...
+    }
+    
+    private static void printConfiguration(SampleConfiguration sampleConfiguration) {
+        LOG.info("Current configuration: {}", sampleConfiguration);
+    }
 
-private static void printConfiguration(SampleConfiguration sampleConfiguration) {
-    LOG.info("Current configuration: {}", sampleConfiguration);
 }
-
 ```
 
 </div>

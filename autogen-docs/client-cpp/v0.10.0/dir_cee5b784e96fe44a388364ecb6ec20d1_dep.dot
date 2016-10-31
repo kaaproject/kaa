@@ -1,0 +1,10 @@
+digraph "/home/architec/Documents/kaa/client/client-multi/client-cpp/kaa/configuration/storage" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_81ac9319020762c4acbc631d2ec9cf14 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="configuration" fontname="FreeSans", fontsize="10", URL="dir_81ac9319020762c4acbc631d2ec9cf14.html"]
+  dir_cee5b784e96fe44a388364ecb6ec20d1 [shape=box, label="storage", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_cee5b784e96fe44a388364ecb6ec20d1.html"];
+  }
+}

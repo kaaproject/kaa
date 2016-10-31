@@ -7,12 +7,14 @@ var events_page =
     ] ],
     [ "References", "events_page.html#References", null ],
     [ "User registration", "user_page.html", [
-      [ "Description", "user_page.html#Description", [
+      [ "Description", "user_page.html#Description", null ],
+      [ "Usage", "user_page.html#Usage", [
         [ "Checking attachment status", "user_page.html#check_attachement", null ],
         [ "Attaching current endpoint", "user_page.html#attach_current", null ],
         [ "Attaching other endpoint", "user_page.html#attach_other", null ],
         [ "Detaching endpoint", "user_page.html#detach_any", null ],
         [ "Setting callbacks for attach/detach notifications", "user_page.html#callbacks", null ]
-      ] ]
+      ] ],
+      [ "References", "user_page.html#References", null ]
     ] ]
 ];

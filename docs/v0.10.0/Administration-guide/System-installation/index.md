@@ -5,32 +5,22 @@ permalink: /:path/
 sort_idx: 20
 ---
 
+{% include variables.md %}
+
 * TOC
 {:toc}
 
-## Introduction
+This section provides an overview of the [Kaa platform]({{root_url}}Glossary/#kaa-platform) installation process.
 
-This guide provides an overview of Kaa platform installation.
+## Prerequisites
 
-## System requirements
-
-To use Kaa, your system must meet the following minimum system requirements:
+Below are the minimum system requirements for a [Kaa deployment]({{root_url}}Glossary/#kaa-instance-kaa-deployment):
 
    * 64-bit OS
-   
-   for single kaa-node service with all third party components (SQL, NoSQL, Zookeeper, etc.) deployed remotely
-   
-   * 256 Mb RAM
-   
-   for kaa-node with all third party components deployed on the same node
-   
-   * 4 Gb RAM
-
-## Supported OS
+   * 256 Mb RAM if third-party components (SQL, NoSQL, Zookeeper, etc.) are deployed remotely.
+   * 4 Gb RAM if third-party components are deployed on the same node.
 
 Kaa supports the following operating system families and provides installation packages for each of them.
-
-The following operating systems are supported:
 
    * CentOS 6
    * Red Hat Enterprise Linux (RHEL) 6
@@ -39,9 +29,14 @@ The following operating systems are supported:
    * Ubuntu 14.04
    * Ubuntu 16.04
 
-Please note that the instructions from this guide were tested on Ubuntu 14.04, Ubuntu 16.04 and Centos 6.7. Instructions for other OS may have minor differences.
+>**NOTE:** This guide is verified against:
+>
+> * Ubuntu 14.04 LTS Desktop 64-bit
+> * Ubuntu 16.04 LTS Desktop 64-bit
+> * CentOS 6.7 64-bit
+{:.note}
 
-## Software Requirements
+The following software components are required:
 
    * yum (for RHEL or CentOS)
    * rpm (for RHEL, CentOS, or SLES)
@@ -51,52 +46,48 @@ Please note that the instructions from this guide were tested on Ubuntu 14.04, U
    * unzip
    * tar
 
-## Third party components
+## Third-party components
 
-Kaa requires the following third party components to be installed and configured.
+Kaa requires the following third-party components to be installed and configured.
 
-* [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html). Kaa has been tested on JDK 8
-* [PostgreSQL 9.4](http://www.postgresql.org/download/) or [MariaDB 5.5](https://mariadb.org/download/). Kaa has been tested on the latest production release of PostgreSQL and MariaDB.
-* [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.5/). Kaa requires ZooKeeper for coordination of server components.
+* [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+* [PostgreSQL 9.4](http://www.postgresql.org/download/) or [MariaDB 5.5](https://mariadb.org/download/).
+* [Zookeeper 3.4.5](http://zookeeper.apache.org/doc/r3.4.5/).
 
-Kaa also requires [MongoDB 2.6.9](http://www.mongodb.org/downloads) or [Cassandra 3.5](http://cassandra.apache.org/download/) as a NoSQL database. 
-The installation steps for third-party components are provided in the following section.
+Kaa has been tested on the latest production release of MariaDB and PostgreSQL.
+
+Kaa also requires [MongoDB 2.6.9](http://www.mongodb.org/downloads) or [Cassandra 3.5](http://cassandra.apache.org/download/) as a NoSQL database.
 
 ### Zookeeper
 
-Apache ZooKeeper enables highly reliable distributed coordination of Kaa cluster nodes. Each Kaa node pushes information about connection parameters, 
-enabled services and corresponding services load. Other Kaa nodes use this information in order to get list of their neighbors and communicate with them. 
-Control service uses information about existing Bootstrap services and their connection parameters during SDK generation.
+Apache ZooKeeper enables highly reliable coordination of distributed nodes in a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
+A Kaa node continuously pushes information about its connection parameters, enabled services, and their load.
+Other Kaa nodes use this information to obtain a list of their siblings and communicate with them.
+The [Control service]({{root_url}}Glossary/#control-service) uses information about available [Bootstrap services]({{root_url}}Glossary/#bootstrap-service) and their connection parameters during the [SDK]({{root_url}}Glossary/#endpoint-sdk) generation.
 
 ### SQL database
 
-SQL database instance is used to store metadata about tenants, applications, endpoint groups, etc. 
-This information is shared between endpoints, thus it's volume does not scale and it can be efficiently stored in modern SQL databases. 
-To support high availability of Kaa cluster, SQL database should be also deployed in cluster mode.
+An SQL database instance is used to store metadata about [tenants]({{root_url}}Glossary/#tenant), [applications]({{root_url}}Glossary/#kaa-application), [endpoint groups]({{root_url}}Glossary/#endpoint-group), etc.
+This information is shared between [endpoints]({{root_url}}Glossary/#endpoint-ep), therefore its volume does not scale up and can be efficiently stored in modern SQL databases.
+To support high availability of the Kaa cluster, an SQL database should be also deployed in the cluster mode.
 
-Kaa supports two SQL databases at the moment: PostgresSQL and MariaDB. If you plan to use kaa in a single node instance we recommend you to use 
-PostgreSQL and MariaDB for multi node cluster because of better clusterization capabilities of MariaDB.
+Kaa supports two SQL databases at the moment: PostgresSQL and MariaDB.
+If you plan to use Kaa in as a [single node]({{root_url}}Administration-guide/System-installation/Single-node-installation/) instance, PostgreSQL is recommended.
+For a multi-node cluster, it is recommended that you use MariaDB because it provides better clusterization capabilities.
 
 ### NoSQL database
 
-NoSQL database instance is used to store information about endpoint profiles, notifications, configurations, etc. The volume of this information scales 
-linearly with amount of endpoints that are managed using particular Kaa cluster instance. 
-NoSQL database nodes can be co-located with Kaa nodes on the same physical or virtual machines. 
-Kaa supports Apache Cassandra and MongoDB as a NoSQL database at the moment. 
-The choose between MongoDB and Apache Cassandra depends only on your specific data analysis needs.
+A NoSQL database instance is used to store information about [endpoint profiles]({{root_url}}Glossary/#endpoint-profile), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [configurations]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/), etc.
+The volume of this information scales linearly with the number of endpoints managed by a particular Kaa cluster instance.
+NoSQL database nodes can be co-located with Kaa nodes on the same physical or virtual machines.
+
+Kaa supports Apache Cassandra and MongoDB as a NoSQL database at the moment.
+The choice between MongoDB and Apache Cassandra depends solely on your specific data analysis needs.
 
 ## Installing Kaa
 
-Kaa platform provides you several options for kaa-node server installation, for more detail on how to install your Kaa server please refer to next sections.
+To install and configure Kaa components on a single Linux node, follow the instructions in [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/).
 
-### Single node installation
+To learn how to create a Kaa node cluster, see [Cluster setup guide]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
 
-If you need to install and configure Kaa components on a single Linux node refer to [Single node installation](Single-node-installation) documentation page.
-
-### Node cluster setup
-
-To learn how to create kaa-node cluster refer to [Node cluster setup](Cluster-setup) documentation page.
-
-## Troubleshooting
-
-Common issues covered in this [guide](../Troubleshooting).
+---

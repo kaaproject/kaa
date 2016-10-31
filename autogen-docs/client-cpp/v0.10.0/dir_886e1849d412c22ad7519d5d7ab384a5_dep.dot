@@ -1,0 +1,12 @@
+digraph "/home/architec/Documents/kaa/client/client-multi/client-cpp/kaa/kaatcp" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_75b6f1d67d5c17ff0dffa26ba3b659cd {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_75b6f1d67d5c17ff0dffa26ba3b659cd.html"]
+  dir_886e1849d412c22ad7519d5d7ab384a5 [shape=box, label="kaatcp", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_886e1849d412c22ad7519d5d7ab384a5.html"];
+  }
+  dir_b0c80ab427fe42cb021fbacfd3dcf17f [shape=box label="common" color="red" URL="dir_b0c80ab427fe42cb021fbacfd3dcf17f.html"];
+  dir_886e1849d412c22ad7519d5d7ab384a5->dir_b0c80ab427fe42cb021fbacfd3dcf17f [headlabel="2", labeldistance=1.5 headhref="dir_000022_000012.html"];
+}

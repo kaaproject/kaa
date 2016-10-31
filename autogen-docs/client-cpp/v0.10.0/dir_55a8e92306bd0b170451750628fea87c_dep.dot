@@ -1,0 +1,10 @@
+digraph "/home/architec/Documents/kaa/client/client-multi/client-cpp/kaa/channel/connectivity" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_17250af2586d2de36ee322c8fd958f75 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="channel" fontname="FreeSans", fontsize="10", URL="dir_17250af2586d2de36ee322c8fd958f75.html"]
+  dir_55a8e92306bd0b170451750628fea87c [shape=box, label="connectivity", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_55a8e92306bd0b170451750628fea87c.html"];
+  }
+}

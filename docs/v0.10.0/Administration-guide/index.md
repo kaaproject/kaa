@@ -7,19 +7,11 @@ sort_idx: 30
 
 {% include variables.md %}
 
-The intention of this guide is to cover Kaa platform administrative tasks.
+This guide describes typical tasks performed by a [Kaa administrator]({{root_url}}Glossary/#kaa-administrator).
+It provides instructions on how to set up a [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment), create, configure, and effectively manage basic Kaa entities.
 
-# Sections overview
-
-This guide provide the overview of [key system components]({{root_url}}Administration-guide/System-components-overview/) from the administration point of
-view. Helps with planning your deployment, provides an overview of
-[Kaa platform installation]({{root_url}}Administration-guide/System-installation/) on a
-[single Linux node]({{root_url}}Administration-guide/System-installation/Single-node-installation/) or
-[cluster of Linux nodes]({{root_url}}Administration-guide/System-installation/Cluster-setup/). After installation
-[system configuration]() guide helps to tune Kaa based on your requirements.
-[Tenants and applications management]({{root_url}}Administration-guide/Tenants-and-applications-management/) with
-[Users management]({{root_url}}Administration-guide/Users-management/) guides explains how to manage tenants, applications and users in Kaa Admin UI.
-[Upgrading your instance]({{root_url}}Administration-guide/Upgrading-your-instance/) helps migrate to the new Kaa platform version.
-[Troubleshooting]({{root_url}}Administration-guide/Troubleshooting/) explains how to resolve some common issues while using Kaa as well as how to report issues
-to the Kaa Crew for getting help.
-
+| Section | Description |
+|-------|----------------|
+| **[System installation]({{root_url}}Administration-guide/System-installation/)** | Learn how to install [Kaa platform]({{root_url}}Glossary/#kaa-platform) on a [single Linux node]({{root_url}}Administration-guide/System-installation/Single-node-installation/) or a [cluster of Linux nodes]({{root_url}}Administration-guide/System-installation/Cluster-setup/).
+| **[Tenants and applications management]({{root_url}}Administration-guide/Tenants-and-applications-management/)** | Manage tenants and applications in your Kaa instance.
+| **[Upgrading your instance]({{root_url}}Administration-guide/Upgrading-your-instance/)** | Instructions on how to to upgrade your Kaa platform.

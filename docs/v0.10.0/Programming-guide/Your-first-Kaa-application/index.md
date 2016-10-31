@@ -11,7 +11,8 @@ sort_idx: 10
 {:toc}
 
 This section discusses the basics of creating Kaa-based applications using the [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
-Main principles of the Kaa platform operation are examplified by a practical case of collecting data from sensor devices.  
+Main principles of the Kaa platform operation are exemplified by a practical case of collecting data from sensor devices.
+
 To learn more about Kaa features, see [Further reading](#further-reading).
 
 ## Prerequisites
@@ -19,7 +20,8 @@ To learn more about Kaa features, see [Further reading](#further-reading).
 To register a new [application]({{root_url}}Glossary/#kaa-application) within a fresh [Kaa server]({{root_url}}Glossary/#kaa-server) installation, you need to create users with the [tenant administrator]({{root_url}}Administration-guide/Tenants-and-applications-management/#tenant-admin) and [tenant developer]({{root_url}}Administration-guide/Tenants-and-applications-management/#tenant-developer) roles.
 Tenant administrator creates new applications in Kaa.
 Tenant developer configures and generates SDKs for those applications.
-It is recommended that you use the Kaa Sandbox that already includes a tenant administrator and a tenant developer.  
+It is recommended that you use the Kaa Sandbox that already includes a tenant administrator and a tenant developer.
+
 To learn how to install the Kaa Sandbox, see [Getting started]({{root_url}}Getting-started/).
 
 ## Application description
@@ -96,7 +98,7 @@ The `by_default` parameter defines the default sampling period value which is se
 
 7. Click the **Add** button at the top of the page.
 
->**NOTE:** Alternatively, you can use the [Schema Avro UI]({{root_url}}Administration-guide/Tenants-and-applications-management/#avro-ui-forms) form to create the schema.
+>**NOTE:** Alternatively, you can use the Schema Avro UI form to create the schema.
 {: .note}
 
 To create a configuration schema repeat the same procedure using the configuration-schema.json file.
@@ -117,7 +119,7 @@ The version number will be required later to generate an SDK.
 
 To use the data collection feature, you need to set up a **Log appender**.
 In this example, the MongoDB log appender is used.
-For more information, see [MongoDB log appender]({{root_url}}Administration-guide/Tenants-and-applications-management/#mongodb-log-appender).
+For more information, see [MongoDB log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender).
 
 ## Generate SDK
 
@@ -154,7 +156,7 @@ In the **Generate SDK** window, select the target platform for your SDK and clic
 
 >**NOTE:** In this example, the SDK is generated using the default profile and notification schemas.
 >These schemas are automatically populated after the application is created.
->If necessary, you can overwrite them using the [Administration UI]({{root_url}}Administration-guide/Tenants-and-applications-management/).
+>If necessary, you can overwrite them using the Administration UI.
 {: .note}
 
 ## Sample client application
@@ -182,11 +184,11 @@ To do this, run the following commands in the terminal.
 
 		sudo apt-get install cmake
 		
-2. Create a direcory named **kaa** and unpack the C SDK archive it.
+2. Create a directory named **kaa** and unpack the C SDK archive into it.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
 
-		cmake_minimum_required(VERSION 2.8.8)
+		cmake_minimum_required(VERSION 2.8.12)
 		project(kaa-application C)
 		
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
@@ -224,7 +226,7 @@ Before using the C++ application code, be sure to complete the following steps:
 
 1. Install the required libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites).
 
-2. Create a **kaa** directory and unpack the C++ SDK in it.
+2. Create a **kaa** directory and unpack the C++ SDK into it.
 
 3. In the application directory, create a CMakeLists.txt file with the following contents.
 
@@ -278,7 +280,7 @@ Before using the Objective-C application code, be sure to complete the following
         sh build.sh compile
 3. Go to xCode and choose a template of the iOS Single View Application.
 Name it "My First Kaa Application", choose Objective-C language and leave all other fields unchanged.
-4. Link the SDK to your project as described in [Objective-C SDK Reference]({{root_url}}client-objective-c/latest/index.html?src=contextnav").
+4. Link the SDK to your project as described in [Objective-C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C/).
 5. Make sure that your application builds successfully.
 6. Replace code in the ViewController.m file with the code from the [Application code](#application-code) section.
 
@@ -307,16 +309,15 @@ Click the appropriate tab to see a code example for the application that sends t
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-
-#include <kaa/kaa.h>
-#include <kaa/platform/kaa_client.h>
-#include <kaa/kaa_error.h>
-#include <kaa/kaa_configuration_manager.h>
-#include <kaa/kaa_logging.h>
-#include <kaa/gen/kaa_logging_gen.h>
-#include <kaa/platform/kaa_client.h>
+#include <kaa.h>
+#include <platform/kaa_client.h>
+#include <kaa_error.h>
+#include <kaa_configuration_manager.h>
+#include <kaa_logging.h>
+#include <gen/kaa_logging_gen.h>
+#include <platform/kaa_client.h>
 #include <utilities/kaa_log.h>
-#include <kaa/platform-impl/common/ext_log_upload_strategies.h>
+#include <platform-impl/common/ext_log_upload_strategies.h>
 
 static int32_t sample_period;
 static time_t  last_sample_time;
@@ -366,7 +367,6 @@ int main(void)
     srand(time(NULL));
 
     /* Prepare Kaa client. */
-
     kaa_client_t *kaa_client = NULL;
     kaa_error_t error = kaa_client_create(&kaa_client, NULL);
     if (error) {
@@ -374,7 +374,6 @@ int main(void)
     }
 
     /* Configure notification manager. */
-
     kaa_configuration_root_receiver_t receiver = {
         .context = NULL,
         .on_configuration_updated = on_configuration_updated
@@ -389,14 +388,14 @@ int main(void)
     }
 
     /* Obtain default configuration shipped within SDK. */
-
     const kaa_root_configuration_t *dflt = kaa_configuration_manager_get_configuration(
         kaa_client_get_context(kaa_client)->configuration_manager);
 
     printf("Default sample period: %i seconds\n", dflt->sample_period);
 
+    sample_period = dflt->sample_period;
+    
     /* Configure data collection. */
-
     void *log_storage_context         = NULL;
     void *log_upload_strategy_context = NULL;
 
@@ -437,23 +436,23 @@ int main(void)
     if (error) {
         return EXIT_FAILURE;
     }
+    
 
     /* Start Kaa SDK's main loop. example_callback is called once per second. */
-
     error = kaa_client_start(kaa_client, example_callback, kaa_client, 1);
 
     /* Should get here only after Kaa stops. */
-
     kaa_client_destroy(kaa_client);
-
+    
     if (error) {
         return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
 }
-
 ```
+>**NOTE:** Use the links to the [code]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/kaa_demo.c) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/CMakeLists.txt) files of the example.
+{:.note}
 
 </div>
 
@@ -598,37 +597,36 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
+ 
 /**
  * Class implement functionality for First Kaa application. Application send temperature data
  * from the Kaa endpoint with required configured sampling period
  */
 public class FirstKaaDemo {
-
+ 
     private static final long DEFAULT_START_DELAY = 1000L;
-
+ 
     private static final Logger LOG = LoggerFactory.getLogger(FirstKaaDemo.class);
-
+ 
     private static KaaClient kaaClient;
-
+ 
     private static ScheduledFuture<?> scheduledFuture;
     private static ScheduledExecutorService scheduledExecutorService;
-
+ 
     public static void main(String[] args) {
         LOG.info(FirstKaaDemo.class.getSimpleName() + " app starting!");
-
+ 
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
-        /*
-         * Create the Kaa desktop context for the application.
-         */
+   
+        //Create the Kaa desktop context for the application.
         DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext();
-
+ 
         /*
          * Create a Kaa client and add a listener which displays the Kaa client
          * configuration as soon as the Kaa client is started.
          */
         kaaClient = Kaa.newClient(desktopKaaPlatformContext, new FirstKaaClientStateListener(), true);
-
+ 
         /*
          *  Used by log collector on each adding of the new log record in order to check whether to send logs to server.
          *  Start log upload when there is at least one record in storage.
@@ -636,13 +634,13 @@ public class FirstKaaDemo {
         RecordCountLogUploadStrategy strategy = new RecordCountLogUploadStrategy(1);
         strategy.setMaxParallelUploads(1);
         kaaClient.setLogUploadStrategy(strategy);
-
+ 
         /*
          * Persist configuration in a local storage to avoid downloading it each
          * time the Kaa client is started.
          */
         kaaClient.setConfigurationStorage(new SimpleConfigurationStorage(desktopKaaPlatformContext, "saved_config.cfg"));
-
+ 
         kaaClient.addConfigurationListener(new ConfigurationListener() {
             @Override
             public void onConfigurationUpdate(Configuration configuration) {
@@ -650,12 +648,10 @@ public class FirstKaaDemo {
                 onChangedConfiguration(TimeUnit.SECONDS.toMillis(configuration.getSamplePeriod()));
             }
         });
-
-        /*
-         * Start the Kaa client and connect it to the Kaa server.
-         */
+  
+        //Start the Kaa client and connect it to the Kaa server.
         kaaClient.start();
-
+ 
         LOG.info("--= Press any key to exit =--");
         try {
             System.in.read();
@@ -667,7 +663,7 @@ public class FirstKaaDemo {
         scheduledExecutorService.shutdown();
         kaaClient.stop();
     }
-
+ 
     /*
      * Method, that emulate getting temperature from real sensor.
      * Retrieves random temperature.
@@ -675,14 +671,14 @@ public class FirstKaaDemo {
     private static int getTemperatureRand() {
         return new Random().nextInt(10) + 25;
     }
-
+ 
     private static void onKaaStarted(long time) {
         if (time <= 0) {
             LOG.error("Wrong time is used. Please, check your configuration!");
             kaaClient.stop();
             System.exit(0);
         }
-
+ 
         scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
                 new Runnable() {
                     @Override
@@ -694,13 +690,13 @@ public class FirstKaaDemo {
                     }
                 }, 0, time, TimeUnit.MILLISECONDS);
     }
-
+ 
     private static void onChangedConfiguration(long time) {
         if (time == 0) {
             time = DEFAULT_START_DELAY;
         }
         scheduledFuture.cancel(false);
-
+ 
         scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(
                 new Runnable() {
 
@@ -713,9 +709,9 @@ public class FirstKaaDemo {
                     }
                 }, 0, time, TimeUnit.MILLISECONDS);
     }
-
+ 
     private static class FirstKaaClientStateListener extends SimpleKaaClientStateListener {
-
+ 
         @Override
         public void onStarted() {
             super.onStarted();
@@ -727,7 +723,7 @@ public class FirstKaaDemo {
             onKaaStarted(TimeUnit.SECONDS.toMillis(configuration.getSamplePeriod()));
 
         }
-
+ 
         @Override
         public void onStopped() {
             super.onStopped();
@@ -939,36 +935,23 @@ This will clean up the mess that can occur when debug logs are enabled.
 
 To launch your Java application:
 
-<ol>
-	<li>
-		Save the application code into FirstKaaDemo.java file located in the **demo_app** directory.
-	</li>
-	<li>
-		Build the application by running the following command from the **demo_app** directory.
-		
-		<pre>
-			javac -cp *.jar *.java
-		</pre>
-		
-	</li>
-	<li>
-		Launch the application.
-		
-		<br />
-		<br />
-		<b>Unix-based OS</b>
-		<pre>
-			java -cp '.:./*' FirstKaaDemo
-		</pre>
-		
-		<br />
-		<br />
-		<b>Windows OS</b>
-		<pre>
-			java -cp '.;.\*' FirstKaaDemo
-		</pre>
-	</li>
-</ol>
+    
+1.  Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
+    
+2.  Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) to the <b>demo_app</b> directory.
+    In Linux terminal you can just go to the <b>demo_app</b> directory and run the command:
+    <pre>wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar</pre>
+
+3.  Build the application by running the following command from the <b>demo_app</b> directory.
+    <pre>javac -cp kaa-*.jar *.java</pre>
+
+4.  Launch the application.
+    <br/>
+    <b>Unix-based OS</b>
+    <pre>java -cp '.:./*' FirstKaaDemo</pre>
+    <br/>
+    <b>Windows OS</b>
+    <pre>java -cp '.;.\*' FirstKaaDemo</pre>
 
 </div>
 
@@ -998,7 +981,6 @@ Sampled temperature: 28
 Sampled temperature: 28
 ```
 The temperature value is sampled once per second as specified in the configuration schema.
-If you do not get the expected output, see [Debugging and troubleshooting]({{root_url}}Programming-guide/Debugging-and-troubleshooting).
 
 ### Retrieve collected data
 
@@ -1046,7 +1028,7 @@ Change the sample period value click **Save**.
     ![Endpoint groups inside](attach/new_draft_sample_period.png)
 
 5. Activate the draft by clicking the **Activate** button.
-Your client application console will display the follownig messages.
+Your client application console will display the following messages.
 
         Sampled temperature: 32
         Sampled temperature: 26
@@ -1059,7 +1041,7 @@ Your client application console will display the follownig messages.
         Sampled temperature: 34
         Sampled temperature: 25
 
-    This means that the sampling period has been successfully modified.
+This means that the sampling period has been successfully modified.
 
 
 ## Further reading

@@ -1,0 +1,23 @@
+digraph "/home/architec/Documents/kaa/client/client-multi/client-cpp/kaa/configuration" {
+  bgcolor=transparent;
+  compound=true
+  node [ fontsize="10", fontname="FreeSans"];
+  edge [ labelfontsize="10", labelfontname="FreeSans"];
+  subgraph clusterdir_75b6f1d67d5c17ff0dffa26ba3b659cd {
+    graph [ bgcolor="#ddddee", pencolor="black", label="kaa" fontname="FreeSans", fontsize="10", URL="dir_75b6f1d67d5c17ff0dffa26ba3b659cd.html"]
+  subgraph clusterdir_81ac9319020762c4acbc631d2ec9cf14 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_81ac9319020762c4acbc631d2ec9cf14.html"];
+    dir_81ac9319020762c4acbc631d2ec9cf14 [shape=plaintext label="configuration"];
+    dir_141f5d13ecfe841b4df2acbc427690b2 [shape=box label="manager" color="black" fillcolor="white" style="filled" URL="dir_141f5d13ecfe841b4df2acbc427690b2.html"];
+    dir_cee5b784e96fe44a388364ecb6ec20d1 [shape=box label="storage" color="black" fillcolor="white" style="filled" URL="dir_cee5b784e96fe44a388364ecb6ec20d1.html"];
+  }
+  }
+  dir_ada473ca2917e7727b7e2ba93f1a7e35 [shape=box label="observer" URL="dir_ada473ca2917e7727b7e2ba93f1a7e35.html"];
+  dir_17250af2586d2de36ee322c8fd958f75 [shape=box label="channel" color="red" URL="dir_17250af2586d2de36ee322c8fd958f75.html"];
+  dir_b0c80ab427fe42cb021fbacfd3dcf17f [shape=box label="common" color="red" URL="dir_b0c80ab427fe42cb021fbacfd3dcf17f.html"];
+  dir_81ac9319020762c4acbc631d2ec9cf14->dir_17250af2586d2de36ee322c8fd958f75 [headlabel="2", labeldistance=1.5 headhref="dir_000014_000008.html"];
+  dir_81ac9319020762c4acbc631d2ec9cf14->dir_b0c80ab427fe42cb021fbacfd3dcf17f [headlabel="1", labeldistance=1.5 headhref="dir_000014_000012.html"];
+  dir_17250af2586d2de36ee322c8fd958f75->dir_b0c80ab427fe42cb021fbacfd3dcf17f [headlabel="8", labeldistance=1.5 headhref="dir_000008_000012.html"];
+  dir_141f5d13ecfe841b4df2acbc427690b2->dir_ada473ca2917e7727b7e2ba93f1a7e35 [headlabel="1", labeldistance=1.5 headhref="dir_000015_000027.html"];
+  dir_141f5d13ecfe841b4df2acbc427690b2->dir_cee5b784e96fe44a388364ecb6ec20d1 [headlabel="1", labeldistance=1.5 headhref="dir_000015_000016.html"];
+}

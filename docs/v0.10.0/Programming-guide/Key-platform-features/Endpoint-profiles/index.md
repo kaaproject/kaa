@@ -165,8 +165,8 @@ Profile profile;
 // Desktop Kaa client initialization
 public void init() {
     // Create instance of desktop Kaa client for Kaa SDK
-    KaaClient client = Kaa.newClient(new DesktopKaaPlatformContext(),
-            new SimpleKaaClientStateListener());
+    KaaClient client = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(), true);
+    
     // Sample profile
     profile = new Profile("id", OS.Linux, "3.17", "0.0.1-SNAPSHOT");
     // Simple implementation of ProfileContainer interface that is provided by the SDK
@@ -176,6 +176,7 @@ public void init() {
             return profile;
         }
     });
+  
     // Starts Kaa
     client.start();
     // Update to profile variable
@@ -374,7 +375,6 @@ Below is the list of system part properties.
 
 | Property                |Description                                                                        |
 |-------------------------------------------------------------------------------------------------------------|
-
 |Server-side Profile Hash | The server-side profile hash used to validate integrity of endpoint profile state |
 |Server Key Hash          | The hash of the server that was used during the last endpoint request             |
 |SDK token                | The endpoint SDK identifier                                                       |

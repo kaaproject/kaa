@@ -22,7 +22,7 @@ var index =
       ] ]
     ] ],
     [ "Configuration", "configuration_page.html", [
-      [ "Usage examples", "configuration_page.html#usage", [
+      [ "Usage", "configuration_page.html#usage", [
         [ "Retrieving current configuration", "configuration_page.html#retrieve_current_config", null ],
         [ "Subscribing for configuration updates", "configuration_page.html#subscribe_for_updates", null ],
         [ "Working with configuration objects", "configuration_page.html#builtin_types", null ],
@@ -32,6 +32,12 @@ var index =
     ] ],
     [ "Event subsystem", "events_page.html", "events_page" ],
     [ "Logging", "logging_page.html", [
+      [ "Usage", "logging_page.html#usage", [
+        [ "Using default implementations", "logging_page.html#default_impl", null ],
+        [ "Creating custom log storage", "logging_page.html#custom_storage", null ],
+        [ "Creating custom log upload strategy", "logging_page.html#custom_strategy", null ],
+        [ "Creating custom log collector configuration holder", "logging_page.html#custom_configuration", null ]
+      ] ],
       [ "See also", "logging_page.html#references", null ]
     ] ]
 ];

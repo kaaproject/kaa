@@ -342,12 +342,10 @@ To invoke CMake, proceed as follows:
             -DCMAKE_TOOLCHAIN_FILE=../libs/kaa/toolchains/esp8266.cmake \
             -DKAA_PLATFORM=esp8266 \
             -DCMAKE_BUILD_TYPE=MinSizeRel \
-            -DKAA_WITH_EXTENSION_CONFIGURATION=OFF \
-            -DKAA_WITH_EXTENSION_EVENT=OFF \
-            -DKAA_WITH_EXTENSION_NOTIFICATION=OFF \
-            -DKAA_WITH_EXTENSION_LOGGING=OFF \
-            -DKAA_WITH_EXTENSION_USER=OFF \
-            -DKAA_WITH_EXTENSION_PROFILE=OFF \
+            -DWITH_EXTENSION_CONFIGURATION=OFF \
+            -DWITH_EXTENSION_EVENT=OFF \
+            -DWITH_EXTENSION_NOTIFICATION=OFF \
+            -DWITH_EXTENSION_LOGGING=OFF \
             -DKAA_MAX_LOG_LEVEL=3
         make
 

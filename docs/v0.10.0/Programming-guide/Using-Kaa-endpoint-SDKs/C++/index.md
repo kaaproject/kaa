@@ -10,15 +10,14 @@ sort_idx: 20
 * TOC
 {:toc}
 
-The [Kaa C++ SDK]({{root_url}}Glossary/#endpoint-sdk) allows deploying Kaa [endpoints]({{root_url}}Glossary/#endpoint-ep) across [different platforms]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Supported-platforms/).
-Basically, it enables the IoT functionality on any platform that provides the C++ runtime.
-
-## Field of application
+The [Kaa C++ SDK]({{root_url}}Glossary/#endpoint-sdk) allows easily implementing Kaa [clients]({{root_url}}Glossary/#kaa-client) on platforms that provide the C++ runtime.
 
 The Kaa C++ SDK is a good choice for major operating systems and high-end embedded platforms.
 It is very effective for building high-performance gateways and endpoints of your IoT infrastructure.
 
 In case you need to run Kaa endpoints on bare metal hardware, consider using [the C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C).
+
+You can find auto-generated docs for Kaa C++ SDK [here]({{site.baseurl}}/autogen-docs/client-cpp/{{version}}/).
 
 ## Environment setup
 
@@ -30,7 +29,7 @@ To build a C++ SDK, you need to first install the following third-party dependen
 * SQLite3 (optional)
 
 The installation process may vary depending on the target platform.
-For platform-specific instructions, see the corresponding subsections.
+For detailed platform-specific instructions, refer to [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/).
 
 ## Build configuration
 
