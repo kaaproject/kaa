@@ -267,6 +267,8 @@ public class UserController extends AbstractAdminController {
           message = "The authenticated user does not have the required "
               + "TENANT_ADMIN role or the Tenant ID of the editing user "
               + "does not match the Tenant ID of the authenticated user"),
+      @ApiResponse(code = 404,
+              message = "The user does not exist"),
       @ApiResponse(code = 500, message = "An unexpected error occurred on the server side")})
   @RequestMapping(value = "user", method = RequestMethod.POST)
   @ResponseBody
