@@ -24,7 +24,7 @@ This page describes Kaa C++ SDK build process on Linux system.
 
 Before building the C++ endpoint SDK, install the following components on your machine:
 
-1. Install g++, [CMake](https://cmake.org/download/), [Boost](http://www.boost.org/users/download/) and (optionally) [SQLite3](https://sqlite.org/download.html):
+1. Install g++, [CMake](https://cmake.org/download/), [Boost](http://www.boost.org/users/download/) and [SQLite3](https://sqlite.org/download.html):
 
    ```
    sudo apt-get install g++ cmake libboost1.55-all-dev libsqlite3-0 libsqlite3-dev
@@ -53,18 +53,12 @@ To install, proceed as follows:
    sudo ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
    ```
 
-6. Install the [SQLite](https://www.sqlite.org/index.html) library by executing the following command:
-
-    ```
-    sudo apt-get install libsqlite3-0 libsqlite3-dev
-    ```
-
 ## Compiling SDK
 
 To build the C++ endpoint SDK, do the following:
 
 <!-- TODO: KAA-700 -->
-1. [Generate]({{root_url}}Administration-UI-guide#AdministrationUIguide-GeneratingSDK) the C++ endpoint SDK in Admin UI.
+1. Generate the C++ endpoint SDK using the [Administration UI]({{root_url}}Glossary/#administration-ui).
 2. Download and untar the Kaa C++ SDK archive.
 
    ```
@@ -116,16 +110,16 @@ If you want to build the endpoint SDK quickly or build and run Kaa C/C++ demo ap
 **NOTE:**
 If you would like to run a compiled binary on some other host, you should have all third-party libraries like boost, etc. preinstalled.
 
-### Build in nix shell
+### Build in Nix shell
 [Nix](https://nixos.org/nix) is a package manager which is used to manage Kaa C and C++ SDKs build environment for CI purposes. You can use it to build Kaa C++ SDK quickly.
-Just install Nix on your system and execute the following command from the [root directory](https://github.com/kaaproject/kaa/tree/master/client/client-multi/client-cpp) of Kaa C++ SDK:
+Just install Nix on your system and execute the following command from the [root directory]({{github_url}}client/client-multi/client-cpp) of Kaa C++ SDK:
 
 ```
 nix-shell
 ```
 
 Nix will download and compile all SDK dependencies and prepare your environment for development.
-For more details on using Nix in C and C++ SDKs refer to [Nix guide]({{root_url}}Customization-guide/Endpoint-SDKs/C-SDK/Environment-setup/Nix-guide).
+For more details on using Nix in C and C++ SDKs refer to [Nix guide]({{root_url}}Customization-guide/Nix-guide/).
 
 ## Minimal example
 This section describes application development with Kaa C++ SDK.
@@ -145,7 +139,7 @@ kaa/
 * `src/KaaDemo.cpp` is the actual application source code.
 * `kaa/` is a directory where the Kaa SDK should be placed.
 <!-- TODO: KAA-700 -->
-Download generated SDK archive from [AdministrationUI](TODO) and unpack it to `kaa/` directory.
+Download generated SDK archive from [Administration UI]({{root_url}}Glossary/#administration-ui) and unpack it to `kaa/` directory.
 
 
 ### Build system overview

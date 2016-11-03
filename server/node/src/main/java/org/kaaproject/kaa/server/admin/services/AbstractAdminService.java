@@ -367,7 +367,7 @@ public abstract class AbstractAdminService implements InitializingBean {
   void editUserFacadeUser(org.kaaproject.kaa.common.dto.admin.UserDto user)
       throws KaaAdminServiceException, ControlServiceException {
     User storedUserOld = userFacade.findByUserName(user.getUsername());
-
+    Utils.checkNotNull(storedUserOld);
     user.setExternalUid(String.valueOf(storedUserOld.getId()));
     UserDto storedUserNew = controlService.getUser(user.getId());
     Utils.checkNotNull(storedUserNew);

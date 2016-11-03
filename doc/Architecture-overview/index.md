@@ -121,8 +121,8 @@ The algorithm takes the server load data (connected endpoints count, load averag
 Then, the overloaded nodes are instructed to redirect to a different node some of endpoints that request connection.
 
 A similar approach can be used to take some load off a node by means of a scheduled service, or to gradually migrate the cluster across the physical or virtual machines.
-To do that, you need to set up a custom load balancing strategy by implementing the [Rebalancer](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/Rebalancer.java) interface.
-See the default [implementation](https://github.com/kaaproject/kaa/blob/master/server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/EndpointCountRebalancer.java) for more details.
+To do that, you need to set up a custom load balancing strategy by implementing the [Rebalancer]({{github_url}}server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/Rebalancer.java) interface.
+See the default [implementation]({{github_url}}server/node/src/main/java/org/kaaproject/kaa/server/control/service/loadmgmt/dynamicmgmt/EndpointCountRebalancer.java) for more details.
 
 #### REST API requests
 

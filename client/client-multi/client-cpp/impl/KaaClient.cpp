@@ -550,6 +550,7 @@ const KeyPair& KaaClient::getClientKeyPair()
 void KaaClient::setEndpointAccessToken(const std::string& token)
 {
     status_->setEndpointAccessToken(token);
+    profileManager_->updateProfile();
 }
 
 std::string KaaClient::refreshEndpointAccessToken()

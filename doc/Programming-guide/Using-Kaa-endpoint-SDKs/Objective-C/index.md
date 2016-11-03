@@ -114,6 +114,8 @@ self.kaaClient = [KaaClientFactory clientWithContext:[[DefaultKaaPlatformContext
 
 Kaa Objective-C SDK is now successfully embedded into your project.
 
+You can find auto-generated docs for Kaa Objective C SDK [here]({{site.baseurl}}/autogen-docs/client-objective-c/{{version}}/).
+
 ## Logging
 
 Kaa Objective-C endpoint SDK uses [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) framework for logging.

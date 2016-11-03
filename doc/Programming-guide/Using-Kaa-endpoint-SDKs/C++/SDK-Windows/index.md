@@ -135,11 +135,11 @@ and run the following commands:
    ```
 
 
-For additional CMake options, see [CMakeLists.txt](https://github.com/kaaproject/kaa/blob/master/client/client-multi/client-cpp/CMakeLists.txt) file located in the C++ SDK root.
+For additional CMake options, see [CMakeLists.txt]({{github_url}}client/client-multi/client-cpp/CMakeLists.txt) file located in the C++ SDK root.
 
 ## Demo applications
 
-For minimal example application, refer to the [C++ SDK Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#minimal-example).
+For minimal example application, refer to the [C++ SDK Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#minimal-example).
 
 To build and run a Kaa C++ demo, proceed as follows:
 

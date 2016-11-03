@@ -37,7 +37,7 @@ The following example illustrates how to create the MongoDB log appender via Adm
 ## Configuration
 
 The MongoDB log appender configuration must match to
- [this](https://github.com/kaaproject/kaa/blob/master/server/appenders/mongo-appender/src/main/avro/mongodb-appender-config.avsc) Avro schema.
+ [this]({{github_url}}server/appenders/mongo-appender/src/main/avro/mongodb-appender-config.avsc) Avro schema.
 
 Fields of avro schema:
 

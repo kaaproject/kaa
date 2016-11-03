@@ -16,7 +16,9 @@ The guide explains how to cross-compile applications for [QNX Neutrino RTOS 6.6]
 
 All steps described here were tested on::
 
+<!--
 - **Host OS:** **TODO:** [KAA-1241](http://jira.kaaproject.org/browse/KAA-1241) retest this guide against Ubuntu 14.04 LTS 64-bit and Kaa C SDK v.0.10.0.
+-->
 - **Target OS:** QNX Neutrino RTOS 6.6.
 
 ## Installing QNX Software Development Platform

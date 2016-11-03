@@ -59,8 +59,6 @@ First of all in **server/containers/docker/docker-compose-1-node/kaa-example.env
 
 **TRANSPORT_PUBLIC_INTERFACE** 
 
-For mode details use [public host/ports configuration]({{root_url}}Administration-guide/System-Configuration/General-configuration/#public-hostports-configuration) page.
-
 For getting your public host just run
 
 for **Linux** or **Mac OS**:

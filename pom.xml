@@ -20,7 +20,7 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>0.10.0</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -1436,7 +1436,7 @@ Copyright 2014-2016 CyberVision, Inc.
             <url>http://repository.kaaproject.org/repository/internal/</url>
         </repository>
         <repository>
-            <id>repository.kaaproject.shapshots</id>
+            <id>repository.kaaproject.snapshots</id>
             <url>http://repository.kaaproject.org/repository/snapshots/</url>
         </repository>
     </repositories>

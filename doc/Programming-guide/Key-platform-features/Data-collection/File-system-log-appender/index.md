@@ -40,7 +40,7 @@ The following example illustrates how to create the file system log appender via
 ## Configuration
 
 The file system log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
 
 Parameters for defining file system log appender:
 
