@@ -248,6 +248,18 @@ cmake_minimum_required(VERSION 3.0.2)
 project(kaa_demo C)
 ```
 
+Next, set configuration CMake variables which will be used by Kaa SDK during build configuration.
+Here we disable all SDK features, since we don't use them in scope of this example application:
+
+```CMake
+set(KAA_WITH_EXTENSION_CONFIGURATION OFF)
+set(KAA_WITH_EXTENSION_EVENT OFF)
+set(KAA_WITH_EXTENSION_NOTIFICATION OFF)
+set(KAA_WITH_EXTENSION_LOGGING OFF)
+set(KAA_WITH_EXTENSION_USER OFF)
+set(KAA_WITH_EXTENSION_PROFILE OFF)
+```
+
 We also add Kaa SDK subdirectory, so that we can build it together with the application.
 
 ```CMake
@@ -342,10 +354,6 @@ To invoke CMake, proceed as follows:
             -DCMAKE_TOOLCHAIN_FILE=../kaa/toolchains/esp8266.cmake \
             -DKAA_PLATFORM=esp8266 \
             -DCMAKE_BUILD_TYPE=MinSizeRel \
-            -DWITH_EXTENSION_CONFIGURATION=OFF \
-            -DWITH_EXTENSION_EVENT=OFF \
-            -DWITH_EXTENSION_NOTIFICATION=OFF \
-            -DWITH_EXTENSION_LOGGING=OFF \
             -DKAA_MAX_LOG_LEVEL=3
         make
 
