@@ -24,32 +24,31 @@
 # * BOTAN_INCLUDE_DIR The include directories for libbotan.
 
 message("\nLooking for Botan C++ headers and libraries")
-
-set(BOTAN_VERSION_NAME botan-1.11) 
+set(BOTAN_VERSION_CODE botan-1.11)  
 set(BOTAN_LIB libbotan-1.11) 
 
 if(NOT WIN32)
     include(FindPkgConfig)
     if(PKG_CONFIG_FOUND)
-        pkg_check_modules(BOTAN ${BOTAN_VERSION_NAME})
+        pkg_check_modules(BOTAN ${BOTAN_VERSION_CODE})
     endif(PKG_CONFIG_FOUND)
 endif(NOT WIN32)
 
 # find the include files
 find_path(BOTAN_INCLUDE_DIR
-    ${BOTAN_VERSION_NAME}/botan/version.h
+    botan/version.h
     HINTS
     ${CMAKE_FIND_ROOT_PATH}/include
     ${BOTAN_INCLUDE_DIRS})
 
 # locate the library
 if(WIN32)
-    set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_VERSION_NAME})
+    set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_VERSION_CODE})
 else(WIN32)
     if(Botan_USE_STATIC_LIBS)
         set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_LIB}.a)
     else(Botan_USE_STATIC_LIBS)
-        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_VERSION_NAME})
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_VERSION_CODE})
     endif(Botan_USE_STATIC_LIBS)
 endif(WIN32)
 
@@ -61,7 +60,7 @@ find_library(BOTAN_LIBRARY
     ${BOTAN_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
-
+message(STATUS "Include directory: ${BOTAN_INCLUDE_DIR}")
 # handle the QUIETLY and REQUIRED arguments and set BOTAN_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(Botan
