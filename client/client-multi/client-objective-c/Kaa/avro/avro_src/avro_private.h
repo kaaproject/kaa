@@ -22,7 +22,7 @@ extern "C" {
 
 #include <errno.h>
 
-#include "avro/platform.h"
+#include "platform.h"
 
 #ifdef HAVE_CONFIG_H
 /* This is only true for now in the autotools build */

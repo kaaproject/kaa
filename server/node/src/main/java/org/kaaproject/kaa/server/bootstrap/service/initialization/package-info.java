@@ -15,6 +15,6 @@
  */
 
 /**
- * Provides implementation of bootstrap server initialization
+ * Provides implementation of bootstrap service initialization
  */
 package org.kaaproject.kaa.server.bootstrap.service.initialization;

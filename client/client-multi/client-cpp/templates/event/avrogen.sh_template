@@ -31,5 +31,3 @@ for FAMILY in $EVENT_CLASS_FAMILY_LIST
 do
     avrogencpp -i avro/event/"$FAMILY".avsc -o kaa/event/gen/"$FAMILY"Gen.hpp -n ns"$FAMILY"
 done
-
-

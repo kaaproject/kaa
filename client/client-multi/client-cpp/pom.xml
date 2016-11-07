@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.9.0</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-cpp</artifactId>
@@ -68,19 +68,22 @@
                 <version>${rat.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/*.template</exclude>
-                        <exclude>**/gcovr.log</exclude>
-                        <exclude>**/gcovr-report.xml</exclude>
-                        <exclude>**/unittest_result.xml</exclude>
-                        <exclude>**/test/resources/test_kaa_status.file</exclude>
-                        <exclude>**/build/**</exclude>
-                        <exclude>**/gcovr</exclude>
-                        <exclude>**/*.json</exclude>
-                        <exclude>**/.cproject</exclude>
-                        <exclude>**/kaa_status.file</exclude>
-                        <exclude>**/FindSqlite3.cmake</exclude>
-                        <exclude>**/artik.cmake</exclude>
-                    </excludes>
+                        <exclude>templates/**/*.template</exclude>
+                        <exclude>gcovr.log</exclude>
+                        <exclude>gcovr-report.xml</exclude>
+                        <exclude>test/resources/test_kaa_status.file</exclude>
+                        <exclude>build/**</exclude>
+                        <exclude>gcovr</exclude>
+                        <exclude>test/resources/*.json</exclude>
+                        <exclude>Modules/FindSqlite3.cmake</exclude>
+                        <exclude>tools/avro-cpp-disable-tests.patch</exclude>
+                        <exclude>toolchains/*.cmake</exclude>
+                        <exclude>avro/configuration.avsc</exclude>
+                        <exclude>avro/endpoint.avsc</exclude>
+                        <exclude>avro/log.avsc</exclude>
+                        <exclude>avro/notification.avsc</exclude>
+                        <exclude>avro/profile.avsc</exclude>
+                </excludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -99,6 +102,7 @@
                             <excludes>
                                 <exclude>Modules/FindAvro.cmake</exclude>
                                 <exclude>Modules/FindSqlite3.cmake</exclude>
+                                <exclude>tools/avro-cpp-disable-tests.patch</exclude>
                                 <exclude>templates/event/addSupportedEventClassFqns.template</exclude>
                                 <exclude>templates/event/eventFamilyFactoryAddConcreteEventFamily.template</exclude>
                                 <exclude>templates/event/eventFamilyFactoryGetConcreteEventFamily.template</exclude>
@@ -130,7 +134,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>/usr/local/bin/avrogencpp</executable>
+                                    <executable>avrogencpp</executable>
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                         <argument>-i</argument>

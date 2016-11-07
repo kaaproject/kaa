@@ -20,7 +20,9 @@ public interface PlaceConstants {
 
     public static final String USER_ID = "usrId";
     public static final String ECF_ID = "ecfId";
+    public static final String ECF_VERSION_ID = "ecfVersionId";
     public static final String VERSION = "ver";
+    public static final String ECF_VERSION = "ecfVersion";
     public static final String TENANT_ID = "tenId";
     public static final String APPLICATION_ID = "appId";
     public static final String SCHEMA_ID = "schemaId";

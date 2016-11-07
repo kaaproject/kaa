@@ -23,11 +23,11 @@ import org.junit.extensions.cpsuite.ClasspathSuite.ClassnameFilters;
 import org.junit.runner.RunWith;
 
 @RunWith(ClasspathSuite.class)
-@ClassnameFilters({"org.kaaproject.kaa.server.common.dao.service.Cassandra.*Test", 
-                   "org.kaaproject.kaa.server.common.nosql.cassandra.dao.*Test"})
+@ClassnameFilters({"org.kaaproject.kaa.server.common.dao.service.Cassandra.*Test",
+        "org.kaaproject.kaa.server.common.nosql.cassandra.dao.*Test"})
 public class CassandraTestSuite {
 
     @ClassRule
-    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false), "cassandra-test.yaml", 20000l);
+    public static CustomCassandraCQLUnit cassandraUnit = new CustomCassandraCQLUnit(new ClassPathCQLDataSet("cassandra.cql", false, false), "cassandra-test.yaml", 4 * 60000L);
 
 }

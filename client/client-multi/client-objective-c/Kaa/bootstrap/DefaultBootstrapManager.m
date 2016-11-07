@@ -122,7 +122,7 @@
         [self.mappedIterators removeAllObjects];
         
         if (!self.operationsServerList || [self.operationsServerList count] == 0) {
-            DDLogVerbose(@"%@ Received empty operations server list", TAG);
+            DDLogVerbose(@"%@ Received empty operations service list", TAG);
             [self resolveFailoverStatus:FailoverStatusNoOperationsServersReceived];
             return;
         }
@@ -197,14 +197,14 @@
                     [weakSelf receiveOperationsServerList];
                 }
                 @catch (NSException *ex) {
-                    DDLogError(@"%@ Error while receiving operations server list: %@, reason: %@", TAG, ex.name, ex.reason);
+                    DDLogError(@"%@ Error while receiving operations service list: %@, reason: %@", TAG, ex.name, ex.reason);
                 }
             });
         }
             break;
         case FailoverActionUseNextBootstrap:
         {
-            DDLogWarn(@"%@ Trying to switch to the next bootstrap server as to failover strategy decision", TAG);
+            DDLogWarn(@"%@ Trying to switch to the next bootstrap service as to failover strategy decision", TAG);
             id<TransportConnectionInfo> connectionInfo = [self.channelManager getActiveServerForType:TRANSPORT_TYPE_BOOTSTRAP];
             [self.failoverManager onServerFailedWithConnectionInfo:connectionInfo failoverStatus:status];
             __weak typeof(self)weakSelf = self;
@@ -214,7 +214,7 @@
                     [weakSelf receiveOperationsServerList];
                 }
                 @catch (NSException *ex) {
-                    DDLogError(@"%@ Error while receiving operations server list: %@ reason: %@", TAG, ex.name, ex.reason);
+                    DDLogError(@"%@ Error while receiving operations service list: %@ reason: %@", TAG, ex.name, ex.reason);
                 }
             });
         }

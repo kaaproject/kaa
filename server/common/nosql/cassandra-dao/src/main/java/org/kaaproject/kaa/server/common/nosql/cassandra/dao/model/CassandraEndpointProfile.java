@@ -16,6 +16,22 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.FrozenValue;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
+import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
+
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.util.List;
+
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertDtoToModelList;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.convertECFVersionDtoToModelList;
@@ -28,6 +44,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ECF_VERSION_STATE_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_ENDPOINT_ID_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EPS_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_EP_KEY_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_GROUP_STATE_PROPERTY;
@@ -48,23 +65,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_CONFIG_HASH_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USER_NOTIFICATION_VERSION_PROPERTY;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-import java.util.List;
-
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
-import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
-import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
-import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
-
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.FrozenValue;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_USE_RAW_SCHEMA;
 
 @Table(name = EP_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointProfile implements EndpointProfile, Serializable {
@@ -102,6 +103,8 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     private ByteBuffer configurationHash;
     @Column(name = EP_USER_CONFIG_HASH_PROPERTY)
     private ByteBuffer userConfigurationHash;
+    @Column(name = EP_EPS_CONFIG_HASH_PROPERTY)
+    private ByteBuffer epsConfigurationHash;
     @Column(name = EP_CONFIGURATION_VERSION_PROPERTY)
     private int configurationVersion;
     @Column(name = EP_NOTIFICATION_VERSION_PROPERTY)
@@ -126,7 +129,11 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     @Column(name = EP_SDK_TOKEN_PROPERTY)
     private String sdkToken;
     @Column(name = EP_SERVER_PROFILE_PROPERTY)
-    private String serverProfile;    
+    private String serverProfile;
+
+    @Column(name = EP_USE_RAW_SCHEMA)
+    private Boolean useConfigurationRawSchema;
+
     @Column(name = OPT_LOCK)
     private Long version;
 
@@ -160,7 +167,9 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         this.serverHash = dto.getServerHash();
         this.sdkToken = dto.getSdkToken();
         this.serverProfile = dto.getServerProfileBody();
+        this.useConfigurationRawSchema = dto.isUseConfigurationRawSchema();
         this.version = dto.getVersion();
+        this.epsConfigurationHash = getByteBuffer(dto.getEpsConfigurationHash());
     }
 
     public void setId(String id) {
@@ -266,6 +275,14 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
 
     public void setUserConfigurationHash(ByteBuffer userConfigurationHash) {
         this.userConfigurationHash = userConfigurationHash;
+    }
+
+    public ByteBuffer getEpsConfigurationHash() {
+        return epsConfigurationHash;
+    }
+
+    public void setEpsConfigurationHash(ByteBuffer epsConfigurationHash) {
+        this.epsConfigurationHash = epsConfigurationHash;
     }
 
     public int getConfigurationVersion() {
@@ -376,7 +393,15 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
-    
+
+    public Boolean getUseConfigurationRawSchema() {
+        return useConfigurationRawSchema;
+    }
+
+    public void setUseConfigurationRawSchema(Boolean useConfigurationRawSchema) {
+        this.useConfigurationRawSchema = useConfigurationRawSchema;
+    }
+
     @Override
     public Long getVersion() {
         return version;
@@ -415,11 +440,16 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null) return false;
         if (userConfigurationHash != null ? !userConfigurationHash.equals(that.userConfigurationHash) : that.userConfigurationHash != null)
             return false;
+        if (epsConfigurationHash != null ? !epsConfigurationHash.equals(that.epsConfigurationHash) : that.epsConfigurationHash != null)
+            return false;
         if (subscriptions != null ? !subscriptions.equals(that.subscriptions) : that.subscriptions != null) return false;
         if (topicHash != null ? !topicHash.equals(that.topicHash) : that.topicHash != null) return false;
         if (ecfVersionStates != null ? !ecfVersionStates.equals(that.ecfVersionStates) : that.ecfVersionStates != null) return false;
         if (serverHash != null ? !serverHash.equals(that.serverHash) : that.serverHash != null) return false;
         if (sdkToken != null ? !sdkToken.equals(that.sdkToken) : that.sdkToken != null) return false;
+        if (useConfigurationRawSchema != null ? !useConfigurationRawSchema.equals(that.useConfigurationRawSchema) : that.useConfigurationRawSchema != null) {
+            return false;
+        }
         return serverProfile != null ? serverProfile.equals(that.serverProfile) : that.serverProfile == null;
 
     }
@@ -440,6 +470,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + serverProfileVersion;
         result = 31 * result + (configurationHash != null ? configurationHash.hashCode() : 0);
         result = 31 * result + (userConfigurationHash != null ? userConfigurationHash.hashCode() : 0);
+        result = 31 * result + (epsConfigurationHash != null ? epsConfigurationHash.hashCode() : 0);
         result = 31 * result + configurationVersion;
         result = 31 * result + notificationVersion;
         result = 31 * result + (subscriptions != null ? subscriptions.hashCode() : 0);
@@ -450,6 +481,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         result = 31 * result + (ecfVersionStates != null ? ecfVersionStates.hashCode() : 0);
         result = 31 * result + (serverHash != null ? serverHash.hashCode() : 0);
         result = 31 * result + (sdkToken != null ? sdkToken.hashCode() : 0);
+        result = 31 * result + (useConfigurationRawSchema != null ? useConfigurationRawSchema.hashCode() : 0);
         result = 31 * result + (serverProfile != null ? serverProfile.hashCode() : 0);
         return result;
     }
@@ -471,6 +503,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", serverProfileVersion=" + serverProfileVersion +
                 ", configurationHash=" + configurationHash +
                 ", userConfigurationHash=" + userConfigurationHash +
+                ", epsConfigurationHash=" + epsConfigurationHash +
                 ", configurationVersion=" + configurationVersion +
                 ", notificationVersion=" + notificationVersion +
                 ", subscriptions=" + subscriptions +
@@ -482,6 +515,7 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
                 ", ecfVersionStates=" + ecfVersionStates +
                 ", serverHash='" + serverHash + '\'' +
                 ", sdkToken='" + sdkToken + '\'' +
+                ", useRawSchema=" + useConfigurationRawSchema +
                 ", serverProfile='" + serverProfile + '\'' +
                 '}';
     }
@@ -515,7 +549,9 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
         dto.setServerHash(serverHash);
         dto.setSdkToken(sdkToken);
         dto.setServerProfileBody(serverProfile);
+        dto.setUseConfigurationRawSchema(useConfigurationRawSchema);
         dto.setVersion(version);
+        dto.setEpsConfigurationHash(getBytes(epsConfigurationHash));
         return dto;
     }
 }

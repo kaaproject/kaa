@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.9.0</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -27,7 +27,7 @@
 
     <name>Kaa Node</name>
     <url>http://kaaproject.org</url>
-    
+
     <repositories>
         <repository>
             <id>twttr.com</id>
@@ -112,11 +112,11 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>verifier-shared</artifactId>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.common</groupId>
             <artifactId>core</artifactId>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.client</groupId>
             <artifactId>client-java-core</artifactId>
@@ -156,12 +156,12 @@
             <artifactId>core</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>admin-rest-client</artifactId>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -198,7 +198,7 @@
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <version>2.6.1</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
@@ -232,6 +232,11 @@
             <artifactId>akka-slf4j_2.11</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_2.11</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
         </dependency>
@@ -260,10 +265,14 @@
             <artifactId>metrics-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -272,12 +281,10 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
@@ -295,12 +302,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
@@ -345,7 +352,7 @@
             <groupId>org.kaaproject.kaa.server.verifiers</groupId>
             <artifactId>twitter-verifier</artifactId>
             <scope>runtime</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-servlet</artifactId>
@@ -403,11 +410,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>net.iharder</groupId>
             <artifactId>base64</artifactId>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -443,8 +450,8 @@
             <groupId>org.kaaproject.avro-ui</groupId>
             <artifactId>converter</artifactId>
             <version>${avro-ui.version}</version>
-        </dependency>        
-        
+        </dependency>
+
         <!-- Embedded Jetty server -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -483,8 +490,8 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>        
-            
+            </plugin>
+
             <!-- Gwt webapp configuration -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -542,8 +549,8 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>            
-            
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -567,7 +574,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.7</version>
@@ -589,14 +596,14 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>                          
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
-                    </excludes> 
+                    </excludes>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
@@ -605,7 +612,7 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>          
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -619,14 +626,14 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/classes/admin-web</outputDirectory>
-                            <resources>          
+                            <resources>
                                 <resource>
                                     <directory>src/main/admin-web</directory>
                                     <filtering>false</filtering>
                                 </resource>
-                            </resources>      
+                            </resources>
                         </configuration>
-                    </execution>      
+                    </execution>
                     <execution>
                         <id>copy-conf</id>
                         <phase>process-resources</phase>
@@ -635,7 +642,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/conf</outputDirectory>
-                            <resources>          
+                            <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>
                                     <filtering>false</filtering>
@@ -652,6 +659,8 @@
                                         <include>common-dao-sql-context.xml</include>
                                         <include>sql-dao.properties</include>
                                         <include>nosql-dao.properties</include>
+                                        <include>maria-dao.properties.template</include>
+                                        <include>postgre-dao.properties.template</include>
                                     </includes>
                                 </resource>
                                 <resource>
@@ -660,9 +669,9 @@
                                     <includes>
                                         <include>common-dao-cassandra-context.xml</include>
                                         <include>common-dao-cassandra.properties</include>
-                                        <include>cassandra.cql</include>                                        
+                                        <include>cassandra.cql</include>
                                     </includes>
-                                </resource>           
+                                </resource>
                                 <resource>
                                     <directory>../common/nosql/mongo-dao/src/main/resources</directory>
                                     <filtering>false</filtering>
@@ -670,7 +679,7 @@
                                         <include>common-dao-mongodb-context.xml</include>
                                         <include>common-dao-mongodb.properties</include>
                                     </includes>
-                                </resource>                      
+                                </resource>
                                 <resource>
                                     <directory>../../common/endpoint-shared/src/main/avro</directory>
                                     <filtering>false</filtering>
@@ -679,8 +688,8 @@
                                         <include>default_configuration_schema.avsc</include>
                                         <include>default_notification_schema.avsc</include>
                                     </includes>
-                                </resource>                                                               
-                            </resources>      
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                     <execution>
@@ -741,7 +750,7 @@
                         <targetPath>${project.build.directory}</targetPath>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -895,94 +904,94 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <delete dir="${project.build.directory}/tmp_deb_control" />
-                                <delete dir="${project.build.directory}/tmp_rpm_control" />
-                                <delete dir="${project.build.directory}/tmp_sh" />
-                                <mkdir dir="${project.build.directory}/tmp_deb_control" />
-                                <mkdir dir="${project.build.directory}/tmp_rpm_control" />
-                                <mkdir dir="${project.build.directory}/tmp_sh" />
+                                <delete dir="${project.build.directory}/tmp_deb_control"/>
+                                <delete dir="${project.build.directory}/tmp_rpm_control"/>
+                                <delete dir="${project.build.directory}/tmp_sh"/>
+                                <mkdir dir="${project.build.directory}/tmp_deb_control"/>
+                                <mkdir dir="${project.build.directory}/tmp_rpm_control"/>
+                                <mkdir dir="${project.build.directory}/tmp_sh"/>
                                 <copy todir="${project.build.directory}/tmp_deb_control"
-                                    overwrite="true" flatten="true">
-                                    <fileset dir="${project.basedir}/src/deb/control" />
+                                      overwrite="true" flatten="true">
+                                    <fileset dir="${project.basedir}/src/deb/control"/>
                                 </copy>
                                 <copy todir="${project.build.directory}/tmp_rpm_control"
-                                    overwrite="true" flatten="true">
-                                    <fileset dir="${project.basedir}/src/rpm/control" />
+                                      overwrite="true" flatten="true">
+                                    <fileset dir="${project.basedir}/src/rpm/control"/>
                                 </copy>
                                 <copy todir="${project.build.directory}/tmp_sh" overwrite="true">
-                                    <fileset dir="${project.basedir}/src/sh" />
+                                    <fileset dir="${project.basedir}/src/sh"/>
                                 </copy>
                                 <replace file="${project.build.directory}/tmp_deb_control/control"
-                                    token="#serverdesc#" value="${script.server.desc}" />
+                                         token="#serverdesc#" value="${script.server.desc}"/>
                                 <replace file="${project.build.directory}/tmp_deb_control/postinst"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <replace file="${project.build.directory}/tmp_deb_control/postrm"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <replace file="${project.build.directory}/tmp_deb_control/preinst"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <replace file="${project.build.directory}/tmp_deb_control/prerm"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <replace file="${project.build.directory}/tmp_rpm_control/preinst"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <replace file="${project.build.directory}/tmp_rpm_control/postinst"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <replace file="${project.build.directory}/tmp_rpm_control/postrm"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <replace file="${project.build.directory}/tmp_rpm_control/prerm"
-                                    token="#servername#" value="${script.server.name}" />
+                                         token="#servername#" value="${script.server.name}"/>
                                 <move file="${project.build.directory}/tmp_sh/bin/kaa-server"
-                                    tofile="${project.build.directory}/tmp_sh/bin/${script.server.name}"
-                                    overwrite="true" />
+                                      tofile="${project.build.directory}/tmp_sh/bin/${script.server.name}"
+                                      overwrite="true"/>
                                 <move file="${project.build.directory}/tmp_sh/bin/kaa-server.default"
-                                    tofile="${project.build.directory}/tmp_sh/bin/${script.server.name}.default"
-                                    overwrite="true" />
+                                      tofile="${project.build.directory}/tmp_sh/bin/${script.server.name}.default"
+                                      overwrite="true"/>
                                 <move
-                                    file="${project.build.directory}/tmp_sh/init.d/deb/kaa-server.init.d"
-                                    tofile="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
-                                    overwrite="true" />
+                                        file="${project.build.directory}/tmp_sh/init.d/deb/kaa-server.init.d"
+                                        tofile="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                        overwrite="true"/>
                                 <move
-                                    file="${project.build.directory}/tmp_sh/init.d/rpm/kaa-server.init.d"
-                                    tofile="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
-                                    overwrite="true" />
+                                        file="${project.build.directory}/tmp_sh/init.d/rpm/kaa-server.init.d"
+                                        tofile="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                        overwrite="true"/>
 
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
-                                    token="#servername#" value="${script.server.name}" />
+                                        file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
+                                        token="#servername#" value="${script.server.name}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
-                                    token="#serverdesc#" value="${script.server.desc}" />
+                                        file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
+                                        token="#serverdesc#" value="${script.server.desc}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
-                                    token="#servermainclass#" value="${server.mainclass}" />
+                                        file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
+                                        token="#servermainclass#" value="${server.mainclass}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
-                                    token="#serverconfname#" value="${server.confname}" />
+                                        file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
+                                        token="#serverconfname#" value="${server.confname}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
-                                    token="#additionalcommands#"
-                                    value="${script.server.additional.commands}" />
+                                        file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
+                                        token="#additionalcommands#"
+                                        value="${script.server.additional.commands}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
-                                    token="#jmxport#" value="7091" />
+                                        file="${project.build.directory}/tmp_sh/bin/${script.server.name}"
+                                        token="#jmxport#" value="7091"/>
 
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
-                                    token="#servername#" value="${script.server.name}" />
+                                        file="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                        token="#servername#" value="${script.server.name}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
-                                    token="#javaopts#" value="${script.java.options}"  />
+                                        file="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                        token="#javaopts#" value="${script.java.options}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
-                                    token="#serverdesc#" value="${script.server.desc}" />
+                                        file="${project.build.directory}/tmp_sh/init.d/deb/${script.server.name}.init.d"
+                                        token="#serverdesc#" value="${script.server.desc}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
-                                    token="#servername#" value="${script.server.name}" />
+                                        file="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                        token="#servername#" value="${script.server.name}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
-                                    token="#serverdesc#" value="${script.server.desc}" />
+                                        file="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                        token="#serverdesc#" value="${script.server.desc}"/>
                                 <replace
-                                    file="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
-                                    token="#javaopts#" value="${script.java.options}"  />
+                                        file="${project.build.directory}/tmp_sh/init.d/rpm/${script.server.name}.init.d"
+                                        token="#javaopts#" value="${script.java.options}"/>
                             </tasks>
                         </configuration>
                     </execution>
@@ -1083,53 +1092,79 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>${swagger-maven-plugin.version}</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <!--info tag is required in plugin bun unused in doc view -->
+                            <info>
+                                <title>Admin REST API</title>
+                                <version>${project.version}</version>
+                                <description>Kaa Admin REST API</description>
+                            </info>
+                            <springmvc>true</springmvc>
+                            <locations>org.kaaproject.kaa.server.admin.controller</locations>
+                            <schemes>http,https</schemes>
+                            <host>localhost:8080</host>
+                            <basePath>/kaaAdmin/rest</basePath>
+                            <swaggerApiReader>com.github.kongchen.swagger.docgen.reader.SpringMvcApiReader</swaggerApiReader>
+                            <swaggerDirectory>doc/Programming-guide/Server-REST-APIs</swaggerDirectory>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
-        	<plugins>
-        		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        		<plugin>
-        			<groupId>org.eclipse.m2e</groupId>
-        			<artifactId>lifecycle-mapping</artifactId>
-        			<version>1.0.0</version>
-        			<configuration>
-        				<lifecycleMappingMetadata>
-        					<pluginExecutions>
-        						<pluginExecution>
-        							<pluginExecutionFilter>
-        								<groupId>
-        									org.codehaus.mojo
-        								</groupId>
-        								<artifactId>
-        									build-helper-maven-plugin
-        								</artifactId>
-        								<versionRange>
-        									[1.9.1,)
-        								</versionRange>
-        								<goals>
-        									<goal>add-source</goal>
-        								</goals>
-        							</pluginExecutionFilter>
-        							<action>
-        								<ignore></ignore>
-        							</action>
-        						</pluginExecution>
-        					</pluginExecutions>
-        				</lifecycleMappingMetadata>
-        			</configuration>
-        		</plugin>
-        	</plugins>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            build-helper-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.9.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>add-source</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
 
     <profiles>
         <profile>
             <id>mariadb-dao</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.mariadb.jdbc</groupId>
-                    <artifactId>mariadb-java-client</artifactId>
-                </dependency>
-            </dependencies>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -1159,12 +1194,6 @@
         </profile>
         <profile>
             <id>postgresql-dao</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.postgresql</groupId>
-                    <artifactId>postgresql</artifactId>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -1198,8 +1227,8 @@
                         <artifactId>gwt-maven-plugin</artifactId>
                         <version>${gwt.version}</version>
                         <executions>
-                    <execution>
-                            <id>generateAsync</id>
+                            <execution>
+                                <id>generateAsync</id>
                                 <goals>
                                     <goal>generateAsync</goal>
                                 </goals>
@@ -1233,7 +1262,7 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>    
+        </profile>
         <profile>
             <id>jenkins</id>
             <build>
@@ -1249,7 +1278,7 @@
                                 <targetPath>${project.build.directory}</targetPath>
                             </systemPropertyVariables>
                         </configuration>
-                    </plugin>            
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
@@ -1381,22 +1410,6 @@
             </build>
         </profile>
         <profile>
-            <id>cdap</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.kaaproject.kaa.server.appenders</groupId>
-                    <artifactId>cdap-appender</artifactId>
-                    <version>${project.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpcore</artifactId>
-                    <version>4.3.1</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>oracle-nosql</id>
             <dependencies>
                 <dependency>
@@ -1439,6 +1452,6 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
-        </profile>        
+        </profile>
     </profiles>
 </project>

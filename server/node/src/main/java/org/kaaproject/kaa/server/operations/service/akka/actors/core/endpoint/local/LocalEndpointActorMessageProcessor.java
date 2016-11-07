@@ -16,18 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
+import akka.actor.ActorContext;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
@@ -37,6 +26,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -93,9 +83,19 @@ import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.ActorContext;
 import scala.concurrent.duration.Duration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMessageProcessor<LocalEndpointActorState> {
 
@@ -119,16 +119,23 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
 
     public void processEndpointEventReceiveMessage(ActorContext context, EndpointEventReceiveMessage message) {
         EndpointEventDeliveryMessage response;
-        Set<ChannelMetaData> eventChannels = state.getChannelsByType(TransportType.EVENT);
-        if (!eventChannels.isEmpty()) {
-            for (ChannelMetaData eventChannel : eventChannels) {
-                addEventsAndReply(context, eventChannel, message);
+        if (state.isValidForEvents()) {
+            Set<ChannelMetaData> eventChannels = state.getChannelsByType(TransportType.EVENT);
+            if (!eventChannels.isEmpty()) {
+                for (ChannelMetaData eventChannel : eventChannels) {
+                    addEventsAndReply(context, eventChannel, message);
+                }
+                response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.SUCCESS);
+            } else {
+                LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
+                response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
+                state.setUserRegistrationPending(false);
             }
-            response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.SUCCESS);
         } else {
-            LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
+            LOG.debug(
+                    "[{}][{}] Endpoint profile is not valid for receiving events. Either no assigned user or no event families in sdk",
+                    endpointKey, actorKey);
             response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
-            state.setUserRegistrationPending(false);
         }
         tellParent(context, response);
     }
@@ -142,7 +149,7 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
     public void processUserConfigurationUpdate(ActorContext context, EndpointUserConfigurationUpdateMessage message) {
         if (message.getUserConfigurationUpdate() != null) {
             state.setUcfHash(message.getUserConfigurationUpdate().getHash());
-            syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
+            refreshConfiguration(context);
         }
     }
 
@@ -155,7 +162,22 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
             processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
         } else if (thriftMsg instanceof ThriftEndpointDeregistrationMessage) {
             processEndpointDeregistrationMessage(context, (ThriftEndpointDeregistrationMessage) thriftMsg);
+        } else if (thriftMsg instanceof ThriftEndpointConfigurationRefreshMessage) {
+            processEndpointSpecificConfigurationChanged(context);
         }
+    }
+
+    private void processEndpointSpecificConfigurationChanged(ActorContext context) {
+        if (state.getProfile() == null) {
+            state.setProfile(operationsService.refreshServerEndpointProfile(key));
+        }
+        EndpointProfileDto profile = state.getProfile();
+        state.setEpsConfigurationHash(operationsService.fetchEndpointSpecificConfigurationHash(profile));
+        refreshConfiguration(context);
+    }
+
+    private void refreshConfiguration(ActorContext context) {
+        syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
     }
 
     private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
@@ -280,33 +302,39 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
             LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointKey);
             return SyncContext.failure(request.getRequestId());
         }
+        EndpointProfileDto profile = state.getProfile();
         SyncContext context = new SyncContext(new ServerSync());
-        context.setEndpointProfile(state.getProfile());
+        context.setEndpointProfile(profile);
         context.setRequestId(request.getRequestId());
         context.setStatus(SyncStatus.SUCCESS);
         context.setEndpointKey(endpointKey);
         context.setRequestHash(request.hashCode());
         context.setMetaData(request.getClientSyncMetaData());
 
+
         LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
 
         context = operationsService.syncClientProfile(context, request.getProfileSync());
+        context = operationsService.syncUseConfigurationRawSchema(context, request.isUseConfigurationRawSchema());
 
         if (context.getStatus() != SyncStatus.SUCCESS) {
             return context;
         }
         if (state.isUcfHashRequiresIntialization()) {
-            byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
+            byte[] hash = operationsService.fetchUcfHash(appToken, profile);
             LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}", endpointKey, context.getRequestHash(),
                     Arrays.toString(hash));
             state.setUcfHash(hash);
+        }
+        if (state.isEpsConfigurationRequiresInitialization()) {
+            state.setEpsConfigurationHash(operationsService.fetchEndpointSpecificConfigurationHash(profile));
         }
 
         context = operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
         context = operationsService.processEventListenerRequests(context, request.getEventSync());
 
-        if (state.isUserConfigurationUpdatePending()) {
-            context = operationsService.syncUserConfigurationHash(context, state.getUcfHash());
+        if (state.isUserConfigurationUpdatePending() || state.isEpsConfigurationChanged()) {
+            context = operationsService.syncConfigurationHashes(context, state.getUcfHash(), state.getEpsConfigurationHash());
         }
 
         context = operationsService.syncConfiguration(context, request.getConfigurationSync());
@@ -324,6 +352,7 @@ public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMes
             ClientSync newRequest = new ClientSync();
             newRequest.setRequestId(originalRequest.getRequestId());
             newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
+            newRequest.setUseConfigurationRawSchema(originalRequest.isUseConfigurationRawSchema());
             if (cfUpdate && originalRequest.getConfigurationSync() != null) {
                 newRequest.setForceConfigurationSync(true);
                 newRequest.setConfigurationSync(originalRequest.getConfigurationSync());

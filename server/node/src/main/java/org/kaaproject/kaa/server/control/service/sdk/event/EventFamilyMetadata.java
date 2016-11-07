@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.control.service.sdk.event;
 import java.util.List;
 
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
 
 public class EventFamilyMetadata {
 
@@ -26,8 +27,17 @@ public class EventFamilyMetadata {
     private String ecfNamespace;
     private String ecfClassName;
     private int version;
-    private String ecfSchema;
+    private List<EventClassDto> records;
+    private List<String> rawCtlsSchemas;
     private List<ApplicationEventMapDto> eventMaps;
+
+    public List<String> getRawCtlsSchemas() {
+        return rawCtlsSchemas;
+    }
+
+    public void setRawCtlsSchemas(List<String> rawCtlsSchemas) {
+        this.rawCtlsSchemas = rawCtlsSchemas;
+    }
     
     public String getEcfName() {
         return ecfName;
@@ -61,14 +71,6 @@ public class EventFamilyMetadata {
         this.version = version;
     }
     
-    public String getEcfSchema() {
-        return ecfSchema;
-    }
-    
-    public void setEcfSchema(String ecfSchema) {
-        this.ecfSchema = ecfSchema;
-    }
-    
     public List<ApplicationEventMapDto> getEventMaps() {
         return eventMaps;
     }
@@ -76,5 +78,12 @@ public class EventFamilyMetadata {
     public void setEventMaps(List<ApplicationEventMapDto> eventMaps) {
         this.eventMaps = eventMaps;
     }
-    
+
+    public List<EventClassDto> getRecords() {
+        return records;
+    }
+
+    public void setRecords(List<EventClassDto> records) {
+        this.records = records;
+    }
 }

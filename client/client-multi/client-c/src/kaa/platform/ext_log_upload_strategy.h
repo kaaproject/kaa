@@ -24,7 +24,7 @@
 #ifndef EXT_LOG_UPLOAD_STRATEGY_H_
 #define EXT_LOG_UPLOAD_STRATEGY_H_
 
-#include "../platform/ext_log_storage.h"
+#include "platform/ext_log_storage.h"
 
 #ifdef __cplusplus
 extern "C" {

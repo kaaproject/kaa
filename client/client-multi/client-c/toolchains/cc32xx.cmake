@@ -21,43 +21,34 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(ARM_GCC_COMPILER "arm-none-eabi-gcc${CMAKE_EXECUTABLE_SUFFIX}")
 
 # Find toolchain path
-
-if (NOT DEFINED ENV{CC32XX_TOOLCHAIN_PATH})
+if (NOT DEFINED CC32XX_TOOLCHAIN_PATH)
   # Check if GCC is reachable.
-  find_path(TOOLCHAIN_PATH bin/${ARM_GCC_COMPILER})
+  find_path(CC32XX_TOOLCHAIN_PATH bin/${ARM_GCC_COMPILER})
 
-  if (NOT TOOLCHAIN_PATH)
+  if (NOT CC32XX_TOOLCHAIN_PATH)
     # Set default path.
-    set(TOOLCHAIN_PATH "/opt/kaa/gcc-arm-none-eabi")
+    set(CC32XX_TOOLCHAIN_PATH "/opt/kaa/gcc-arm-none-eabi")
     message(STATUS "GCC not found, default path will be used")
   endif ()
-else ()
-  set(TOOLCHAIN_PATH "$ENV{CC32XX_TOOLCHAIN_PATH}")
-  message(STATUS "Toolchain path is provided: ${TOOLCHAIN_PATH}")
 endif ()
 
 # Find CC32XX SDK
-
-if (NOT DEFINED ENV{CC32XX_SDK})
+if (NOT DEFINED CC32XX_SDK)
   set(CC32XX_SDK "/opt/kaa/cc3200-sdk")
   message(STATUS "Default SDK location will be used")
-else ()
-  set(CC32XX_SDK "$ENV{CC32XX_SDK}")
-  message(STATUS "SDK path is provided: ${CC32XX_SDK}")
 endif ()
 
 message(STATUS "CC32XX SDK path: ${CC32XX_SDK}")
-message(STATUS "Toolchain path: ${TOOLCHAIN_PATH}")
+message(STATUS "Toolchain path: ${CC32XX_TOOLCHAIN_PATH}")
 
 # Specify target's environment
-set(CMAKE_FIND_ROOT_PATH "${TOOLCHAIN_PATH}/arm-none-eabi/")
+set(CMAKE_FIND_ROOT_PATH "${CC32XX_TOOLCHAIN_PATH}/arm-none-eabi/")
 
-set(CMAKE_C_COMPILER   "${TOOLCHAIN_PATH}/bin/arm-none-eabi-gcc${CMAKE_EXECUTABLE_SUFFIX}")
-set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH}/bin/arm-none-eabi-g++${CMAKE_EXECUTABLE_SUFFIX}")
-set(CMAKE_C_LINKER     "${TOOLCHAIN_PATH}/bin/arm-none-eabi-ld${CMAKE_EXECUTABLE_SUFFIX}")
-set(CMAKE_CXX_LINKER   "${TOOLCHAIN_PATH}/bin/arm-none-eabi-ld${CMAKE_EXECUTABLE_SUFFIX}")
+set(CMAKE_C_COMPILER   "${CC32XX_TOOLCHAIN_PATH}/bin/arm-none-eabi-gcc${CMAKE_EXECUTABLE_SUFFIX}")
+set(CMAKE_CXX_COMPILER "${CC32XX_TOOLCHAIN_PATH}/bin/arm-none-eabi-g++${CMAKE_EXECUTABLE_SUFFIX}")
+set(CMAKE_CXX_LINKER   "${CC32XX_TOOLCHAIN_PATH}/bin/arm-none-eabi-ld${CMAKE_EXECUTABLE_SUFFIX}")
 set(CMAKE_OBJCOPY
-        "${TOOLCHAIN_PATH}/bin/arm-none-eabi-objcopy${CMAKE_EXECUTABLE_SUFFIX}"
+        "${CC32XX_TOOLCHAIN_PATH}/bin/arm-none-eabi-objcopy${CMAKE_EXECUTABLE_SUFFIX}"
         CACHE STRING "Objcopy" FORCE)
 
 CMAKE_FORCE_C_COMPILER(${CMAKE_C_COMPILER} GNU)
@@ -68,16 +59,17 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mthumb -mcpu=cortex-m4 -ffunction-sections \
- -fdata-sections -MD -O0 " CACHE STRING "C flags" FORCE)
+set(CMAKE_C_FLAGS
+        "${CMAKE_C_FLAGS} -mthumb -mcpu=cortex-m4 -ffunction-sections -fdata-sections -MD -O0 "
+        CACHE STRING "C flags" FORCE)
 
-set(CC32XX_SDK "${CC32XX_SDK}" CACHE STRING "SDK location" FORCE)
+set(CC32XX_SDK "${CC32XX_SDK}" CACHE STRING "CC32XX SDK location" FORCE)
 
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)    # remove -rdynamic
 set(CMAKE_EXE_LINK_DYNAMIC_C_FLAGS)       # remove -Wl,-Bdynamic
 
 set(CMAKE_C_LINK_EXECUTABLE
-        "${CMAKE_C_LINKER} --entry ResetISR --gc-sections -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+    "<CMAKE_C_COMPILER> -Wl,--entry=ResetISR,--gc-sections -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 
 # These includes placed here intentionally. Include dirs must be moved to
 # the target-level support modules when such will be ready.

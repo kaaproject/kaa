@@ -17,15 +17,15 @@
 package org.kaaproject.kaa.server.common.dao;
 
 
-import java.util.Collection;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.ChangeConfigurationNotification;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The interface Configuration service.
@@ -191,6 +191,15 @@ public interface ConfigurationService {
      * @return the configuration schema dto
      */
     ConfigurationSchemaDto saveConfSchema(ConfigurationSchemaDto configurationSchema);
+
+    /**
+     * Validate configuration according to override configuration schema.
+     *
+     * @param appId             application ID
+     * @param schemaVersion     configuration schema version
+     * @param configurationBody configuration to validate
+     */
+    String normalizeAccordingToOverrideConfigurationSchema(String appId, int schemaVersion, String configurationBody);
 
     /**
      * Find configuration schema by id.

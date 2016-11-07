@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global;
 
-import java.util.function.BiConsumer;
-
+import akka.actor.ActorContext;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -35,7 +35,7 @@ import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import akka.actor.ActorContext;
+import java.util.function.BiConsumer;
 
 public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMessageProcessor<GlobalEndpointActorState> {
 
@@ -86,6 +86,8 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
             processServerProfileUpdateMsg(context, (ThriftServerProfileUpdateMessage) thriftMsg);
         } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
             processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
+        } else if (thriftMsg instanceof ThriftEndpointConfigurationRefreshMessage) {
+            processEndpointConfigurationRefreshMsg(context, (ThriftEndpointConfigurationRefreshMessage) thriftMsg);
         }
     }
 
@@ -93,17 +95,19 @@ public class GlobalEndpointActorMessageProcessor extends AbstractEndpointActorMe
         operationsService.syncServerProfile(appToken, endpointKey, key); 
         ThriftServerProfileUpdateMessage localMsg = new ThriftServerProfileUpdateMessage(thriftMsg);
         localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
-        dispatchMsg(context, localMsg, (nodeId, msg) -> {
-            clusterService.sendServerProfileUpdateMessage(nodeId, msg);
-        });
+        dispatchMsg(context, localMsg, clusterService::sendServerProfileUpdateMessage);
     }
 
     private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
         ThriftUnicastNotificationMessage localMsg = new ThriftUnicastNotificationMessage(thriftMsg);
         localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
-        dispatchMsg(context, localMsg, (nodeId, msg) -> {
-            clusterService.sendUnicastNotificationMessage(nodeId, msg);
-        });
+        dispatchMsg(context, localMsg, clusterService::sendUnicastNotificationMessage);
+    }
+
+    private void processEndpointConfigurationRefreshMsg(ActorContext context, ThriftEndpointConfigurationRefreshMessage thriftMsg) {
+        ThriftEndpointConfigurationRefreshMessage localMsg = new ThriftEndpointConfigurationRefreshMessage(thriftMsg);
+        localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
+        dispatchMsg(context, localMsg, clusterService::sendEndpointConfigurationRefreshMessage);
     }
 
     private <T> void dispatchMsg(ActorContext context, T localMsg, BiConsumer<String, T> f) {

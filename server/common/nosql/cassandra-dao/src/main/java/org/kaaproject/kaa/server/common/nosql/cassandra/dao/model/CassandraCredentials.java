@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model;
 
+import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
@@ -43,9 +44,10 @@ public class CassandraCredentials implements Credentials, Serializable {
     @Transient
     private static final long serialVersionUID = 5814711856025319827L;
 
+    @PartitionKey
     @Column(name = CREDENTIALS_APPLICATION_ID_PROPERTY)
     private String applicationId;
-    @PartitionKey
+    @ClusteringColumn
     @Column(name = CREDENTIALS_ID_PROPERTY)
     private String id;
     @Column(name = CREDENTIALS_BODY_PROPERTY)

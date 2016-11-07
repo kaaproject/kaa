@@ -18,7 +18,7 @@
 
 #include "kaa/KaaClient.hpp"
 
-#include "kaa/channel/connectivity/IPConnectivityChecker.hpp"
+#include "kaa/channel/connectivity/PingConnectivityChecker.hpp"
 #include "kaa/bootstrap/BootstrapManager.hpp"
 #include "kaa/KaaDefaults.hpp"
 
@@ -38,22 +38,18 @@
 
 #include "kaa/logging/Log.hpp"
 #include "kaa/context/SimpleExecutorContext.hpp"
-#include "kaa/DummyKaaClientStateListener.hpp"
 #include "kaa/KaaClientProperties.hpp"
 #include "kaa/logging/DefaultLogger.hpp"
 
 namespace kaa {
 
-KaaClient::KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener)
-    : logger_(new DefaultLogger(context->getProperties().getClientId(), context->getProperties().getLogFileName())),
-      context_(context->getProperties(), *logger_, context->getExecutorContext()),
+KaaClient::KaaClient(IKaaClientPlatformContextPtr platformContext, KaaClientStateListenerPtr listener)
+    : logger_(new DefaultLogger(platformContext->getProperties().getClientId(), platformContext->getProperties().getLogFileName())),
+      context_(platformContext->getProperties(), *logger_, platformContext->getExecutorContext(), nullptr,
+               (listener == nullptr) ? std::make_shared<KaaClientStateListener>() : listener),
       status_(new ClientStatus(context_)),
-      platformContext_(context), stateListener_(listener)
+      platformContext_(platformContext)
 {
-    if (!stateListener_) {
-        stateListener_ = std::make_shared<DummyKaaClientStateListener>();
-    }
-
     init();
 }
 
@@ -66,7 +62,7 @@ void KaaClient::init()
     context_.setStatus(status_);
     bootstrapManager_.reset(new BootstrapManager(context_, this));
     channelManager_.reset(new KaaChannelManager(*bootstrapManager_, getBootstrapServers(), context_, this));
-    failoverStrategy_.reset(new DefaultFailoverStrategy);
+    failoverStrategy_.reset(new DefaultFailoverStrategy(context_));
     channelManager_->setFailoverStrategy(failoverStrategy_);
     profileManager_.reset(new ProfileManager(context_));
 
@@ -103,6 +99,8 @@ void KaaClient::start()
 
     checkReadiness();
 
+    KAA_LOG_TRACE("Kaa client starting");
+
     /*
      * NOTE: Initialization of an executor context should be the first.
      */
@@ -115,9 +113,12 @@ void KaaClient::start()
                 configurationManager_->init();
 #endif
                 bootstrapManager_->receiveOperationsServerList();
-                stateListener_->onStarted();
+                context_.getClientStateListener().onStarted();
+
+                KAA_LOG_INFO("Kaa client started");
             } catch (std::exception& e) {
-                stateListener_->onStartFailure(KaaException(e));
+                KAA_LOG_ERROR(boost::format("Caught exception on start: %s") % e.what());
+                context_.getClientStateListener().onStartFailure(KaaException(e));
             }
         });
 
@@ -129,6 +130,8 @@ void KaaClient::stop()
     checkClientStateNot(State::CREATED, "Kaa client is not started");
     checkClientStateNot(State::STOPPED, "Kaa client is already stopped");
 
+    KAA_LOG_TRACE("Kaa client stopping...");
+
     /*
      * To prevent a race condition between stopping a client when it is already destroyed,
      * pass a reference to this client to a 'stop' task.
@@ -139,9 +142,12 @@ void KaaClient::stop()
             try {
                 channelManager_->shutdown();
                 status_->save();
-                stateListener_->onStopped();
+                context_.getClientStateListener().onStopped();
+
+                KAA_LOG_INFO("Kaa client stopped");
             } catch (std::exception& e) {
-                stateListener_->onStopFailure(KaaException(e));
+                KAA_LOG_ERROR(boost::format("Caught exception on stop: %s") % e.what());
+                context_.getClientStateListener().onStopFailure(KaaException(e));
             }
         });
 
@@ -153,14 +159,19 @@ void KaaClient::pause()
 {
     checkClientState(State::STARTED, "Kaa client is not started");
 
+    KAA_LOG_TRACE("Kaa client pausing");
+
     context_.getExecutorContext().getLifeCycleExecutor().add([this]
         {
             try {
                 status_->save();
                 channelManager_->pause();
-                stateListener_->onPaused();
+                context_.getClientStateListener().onPaused();
+
+                KAA_LOG_INFO("Kaa client paused");
             } catch (std::exception& e) {
-                stateListener_->onPauseFailure(KaaException(e));
+                KAA_LOG_ERROR(boost::format("Caught exception on pause: %s") % e.what());
+                context_.getClientStateListener().onPauseFailure(KaaException(e));
             }
         });
 
@@ -171,13 +182,18 @@ void KaaClient::resume()
 {
     checkClientState(State::PAUSED, "Kaa client isn't paused");
 
+    KAA_LOG_TRACE("Kaa client resuming");
+
     context_.getExecutorContext().getLifeCycleExecutor().add([this]
         {
             try {
                 channelManager_->resume();
-                stateListener_->onResumed();
+                context_.getClientStateListener().onResumed();
+
+                KAA_LOG_INFO("Kaa client resumed");
             } catch (std::exception& e) {
-                stateListener_->onResumeFailure(KaaException(e));
+                KAA_LOG_ERROR(boost::format("Caught exception on resume: %s") % e.what());
+                context_.getClientStateListener().onResumeFailure(KaaException(e));
             }
         });
 
@@ -257,23 +273,21 @@ void KaaClient::initKaaTransport()
     notificationManager_->setTransport(std::dynamic_pointer_cast<NotificationTransport, INotificationTransport>(notificationTransport));
 #endif
 #ifdef KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL
-    bootstrapChannel_.reset(new DefaultBootstrapChannel(channelManager_.get(), *clientKeys_, context_));
+    bootstrapChannel_.reset(new DefaultBootstrapChannel(*channelManager_, *clientKeys_, context_));
     bootstrapChannel_->setDemultiplexer(syncProcessor_.get());
     bootstrapChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default bootstrap channel: %1%") % bootstrapChannel_.get());
     channelManager_->addChannel(bootstrapChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_TCP_CHANNEL
-    opsTcpChannel_.reset(new DefaultOperationTcpChannel(channelManager_.get(), *clientKeys_, context_, this));
+    opsTcpChannel_.reset(new DefaultOperationTcpChannel(*channelManager_, *clientKeys_, context_));
     opsTcpChannel_->setDemultiplexer(syncProcessor_.get());
     opsTcpChannel_->setMultiplexer(syncProcessor_.get());
     KAA_LOG_INFO(boost::format("Going to set default operations Kaa TCP channel: %1%") % opsTcpChannel_.get());
     channelManager_->addChannel(opsTcpChannel_.get());
 #endif
 #ifdef KAA_DEFAULT_CONNECTIVITY_CHECKER
-    ConnectivityCheckerPtr connectivityChecker(new IPConnectivityChecker(
-            *static_cast<KaaChannelManager*>(channelManager_.get())));
-    channelManager_->setConnectivityChecker(connectivityChecker);
+    channelManager_->setConnectivityChecker(std::make_shared<PingConnectivityChecker>());
 #endif
 }
 
@@ -297,15 +311,20 @@ void KaaClient::initClientKeys()
     }
 
     if (regenerate) {
+#ifdef KAA_RUNTIME_KEY_GENERATION
         clientKeys_.reset(new KeyPair(utils.generateKeyPair(2048)));
         utils.saveKeyPair(*clientKeys_, publicKeyLocation, privateKeyLocation);
+#else
+        KAA_LOG_ERROR("KAA_RUNTIME_KEY_GENERATION is disabled. Generate keys and put them to the working directory.");
+        throw KaaException("Keys are missing.");
+#endif
     }
 
     EndpointObjectHash publicKeyHash(clientKeys_->getPublicKey().data(), clientKeys_->getPublicKey().size());
     auto digest = publicKeyHash.getHashDigest();
-    publicKeyHash_ = Botan::base64_encode(digest.data(), digest.size());
+    std::string endpointKeyHash = Botan::base64_encode(digest.data(), digest.size());
 
-    status_->setEndpointKeyHash(publicKeyHash_);
+    status_->setEndpointKeyHash(endpointKeyHash);
     status_->save();
 
 }
@@ -538,9 +557,14 @@ std::string KaaClient::refreshEndpointAccessToken()
     return status_->refreshEndpointAccessToken();
 }
 
-std::string KaaClient::getEndpointAccessToken()
+std::string KaaClient::getEndpointAccessToken() const
 {
     return status_->getEndpointAccessToken();
+}
+
+std::string KaaClient::getEndpointKeyHash() const
+{
+    return status_->getEndpointKeyHash();
 }
 
 RecordFuture KaaClient::addLogRecord(const KaaUserLogRecord& record)

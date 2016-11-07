@@ -32,6 +32,7 @@ import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
 import org.kaaproject.kaa.server.common.server.CommandFactory;
 import org.kaaproject.kaa.server.common.server.KaaCommandProcessorFactory;
 import org.kaaproject.kaa.server.transport.AbstractKaaTransport;
+import org.kaaproject.kaa.server.transport.RangeExpressionParser;
 import org.kaaproject.kaa.server.transport.SpecificTransportContext;
 import org.kaaproject.kaa.server.transport.TransportLifecycleException;
 import org.kaaproject.kaa.server.transport.http.config.gen.AvroHttpConfig;
@@ -113,16 +114,22 @@ public class HttpTransport extends AbstractKaaTransport<AvroHttpConfig> {
     }
 
     @Override
-    protected ByteBuffer getSerializedConnectionInfo() {
-        byte[] interfaceData = toUTF8Bytes(context.getConfiguration().getPublicInterface());
-        byte[] publicKeyData = context.getServerKey().getEncoded();
-        ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
-        buf.putInt(publicKeyData.length);
-        buf.put(publicKeyData);
-        buf.putInt(interfaceData.length);
-        buf.put(interfaceData);
-        buf.putInt(context.getConfiguration().getPublicPort());
-        return buf;
+    protected List<byte[]> getSerializedConnectionInfoList() {
+        List<byte[]> connectionInfoList = new ArrayList<>();
+        RangeExpressionParser rangeExpressionParser = new RangeExpressionParser();
+        List<Integer> publicPorts = rangeExpressionParser.getNumbersFromRanges(context.getConfiguration().getPublicPorts());
+        for (int publicPort : publicPorts) {
+            byte[] interfaceData = toUTF8Bytes(context.getConfiguration().getPublicInterface());
+            byte[] publicKeyData = context.getServerKey().getEncoded();
+            ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
+            buf.putInt(publicKeyData.length);
+            buf.put(publicKeyData);
+            buf.putInt(interfaceData.length);
+            buf.put(interfaceData);
+            buf.putInt(publicPort);
+            connectionInfoList.add(buf.array());
+        }
+        return connectionInfoList;
     }
 
     @Override

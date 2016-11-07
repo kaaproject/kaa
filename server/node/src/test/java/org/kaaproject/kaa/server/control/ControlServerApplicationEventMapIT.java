@@ -27,7 +27,7 @@ import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.springframework.web.client.ResourceAccessException;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 
 /**
  * The Class ControlServerApplicationEventMapIT.
@@ -61,32 +61,6 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     }
 
     /**
-     * Test get application event family maps by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetApplicationEventFamilyMapsByApplicationId() throws Exception {
-        List<ApplicationEventFamilyMapDto> applicationEventFamilyMaps  = new ArrayList<ApplicationEventFamilyMapDto>(10);
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        for (int i=0;i<10;i++) {
-            ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), (i+1));
-            applicationEventFamilyMaps.add(applicationEventFamilyMap);
-        }
-        
-        Collections.sort(applicationEventFamilyMaps, new IdComparator());
-        
-        loginTenantDeveloper(tenantDeveloperUser);
-        
-        List<ApplicationEventFamilyMapDto> storedApplicationEventFamilyMaps = client.getApplicationEventFamilyMapsByApplicationId(application.getId());
-
-        Collections.sort(storedApplicationEventFamilyMaps, new IdComparator());
-        
-        Assert.assertEquals(applicationEventFamilyMaps, storedApplicationEventFamilyMaps);
-    }
-
-    /**
      * Test get application event family maps by application token.
      *
      * @throws Exception the exception
@@ -97,7 +71,8 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
         ApplicationDto application = createApplication(tenantAdminDto);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
         for (int i=0;i<10;i++) {
-            ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), (i+1));
+            ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap(
+                    application.getApplicationToken(), eventClassFamily.getId(), (i+1));
             applicationEventFamilyMaps.add(applicationEventFamilyMap);
         }
 
@@ -130,35 +105,6 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     }
 
     /**
-     * Test get vacant event class families by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetVacantEventClassFamiliesByApplicationId() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
-        
-        loginTenantDeveloper(tenantDeveloperUser);
-        List<EcfInfoDto> vacantEcfs = client.getVacantEventClassFamiliesByApplicationId(application.getId());
-        Assert.assertNotNull(vacantEcfs);
-        Assert.assertEquals(0, vacantEcfs.size());
-        
-        loginTenantAdmin(tenantAdminUser);
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
-        
-        loginTenantDeveloper(tenantDeveloperUser);        
-        vacantEcfs = client.getVacantEventClassFamiliesByApplicationId(application.getId());
-        Assert.assertNotNull(vacantEcfs);
-        Assert.assertEquals(1, vacantEcfs.size());
-        Assert.assertNotNull(vacantEcfs.get(0));
-        Assert.assertEquals(eventClassFamily.getId(), vacantEcfs.get(0).getEcfId());
-        Assert.assertEquals(eventClassFamily.getName(), vacantEcfs.get(0).getEcfName());
-        Assert.assertEquals(2, vacantEcfs.get(0).getVersion());
-    }
-
-    /**
      * Test get vacant event class families by application token.
      *
      * @throws Exception the exception
@@ -167,15 +113,15 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     public void testGetVacantEventClassFamiliesByApplicationToken() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
-
+        createApplicationEventFamilyMap(application.getApplicationToken(), eventClassFamily.getId(), 1);
         loginTenantDeveloper(tenantDeveloperUser);
         List<EcfInfoDto> vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
         Assert.assertNotNull(vacantEcfs);
         Assert.assertEquals(0, vacantEcfs.size());
 
         loginTenantAdmin(tenantAdminUser);
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
+        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdminDto.getTenantId());
+        client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
 
         loginTenantDeveloper(tenantDeveloperUser);
         vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
@@ -188,28 +134,6 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     }
 
     /**
-     * Test get event class families by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetEventClassFamiliesByApplicationId() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
-        
-        loginTenantDeveloper(tenantDeveloperUser);
-        
-        List<AefMapInfoDto> applicationEcfs = client.getEventClassFamiliesByApplicationId(application.getId());
-        Assert.assertNotNull(applicationEcfs);
-        Assert.assertEquals(1, applicationEcfs.size());
-        Assert.assertNotNull(applicationEcfs.get(0));
-        Assert.assertEquals(eventClassFamily.getId(), applicationEcfs.get(0).getEcfId());
-        Assert.assertEquals(eventClassFamily.getName(), applicationEcfs.get(0).getEcfName());
-        Assert.assertEquals(1, applicationEcfs.get(0).getVersion());
-    }
-
-    /**
      * Test get event class families by application token.
      *
      * @throws Exception the exception
@@ -218,7 +142,7 @@ public class ControlServerApplicationEventMapIT extends AbstractTestControlServe
     public void testGetEventClassFamiliesByApplicationToken() throws Exception {
         ApplicationDto application = createApplication(tenantAdminDto);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
+        createApplicationEventFamilyMap(application.getApplicationToken(), eventClassFamily.getId(), 1);
 
         loginTenantDeveloper(tenantDeveloperUser);
 

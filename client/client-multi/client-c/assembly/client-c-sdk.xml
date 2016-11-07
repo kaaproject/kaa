@@ -44,6 +44,10 @@
             <outputDirectory>Modules</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/thirdparty</directory>
+            <outputDirectory>thirdparty</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}/tools</directory>
             <outputDirectory>tools</outputDirectory>
         </fileSet>

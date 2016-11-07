@@ -20,14 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.avro.Schema;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 
 /**
  * The Class ControlServerEventClassFamilyIT.
@@ -41,7 +40,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     protected boolean createTenantAdminNeeded() {
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see org.kaaproject.kaa.server.control.AbstractTestControlServer#createTenantDeveloperNeeded()
      */
@@ -49,7 +48,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     protected boolean createTenantDeveloperNeeded() {
         return false;
     }
-    
+
     /**
      * Test create event class family.
      *
@@ -60,7 +59,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
         EventClassFamilyDto eventClassFamily = createEventClassFamily();
         Assert.assertFalse(strIsEmpty(eventClassFamily.getId()));
     }
-    
+
     /**
      * Test get event class family.
      *
@@ -69,13 +68,13 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     @Test
     public void testGetEventClassFamily() throws Exception {
         EventClassFamilyDto eventClassFamily = createEventClassFamily();
-        
+
         EventClassFamilyDto storedEventClassFamily = client.getEventClassFamilyById(eventClassFamily.getId());
-        
+
         Assert.assertNotNull(storedEventClassFamily);
         assertEventClassFamiliesEquals(eventClassFamily, storedEventClassFamily);
     }
-    
+
     /**
      * Test get event class families by tenant id.
      *
@@ -83,28 +82,28 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testGetEventClassFamiliesByTenantId() throws Exception {
-        List<EventClassFamilyDto> eventClassFamilies  = new ArrayList<EventClassFamilyDto>(10);
-        TenantUserDto tenant = createTenant(tenantAdminUser);
+        List<EventClassFamilyDto> eventClassFamilies = new ArrayList<>(10);
+        UserDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
-        for (int i=0;i<10;i++) {
-            EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId(), ""+i);
+        for (int i = 0; i < 10; i++) {
+            EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId(), "" + i);
             eventClassFamilies.add(eventClassFamily);
         }
-        
+
         Collections.sort(eventClassFamilies, new IdComparator());
-        
+
         List<EventClassFamilyDto> storedEventClassFamilies = client.getEventClassFamilies();
 
         Collections.sort(storedEventClassFamilies, new IdComparator());
-        
+
         Assert.assertEquals(eventClassFamilies.size(), storedEventClassFamilies.size());
-        for (int i=0;i<eventClassFamilies.size();i++) {
+        for (int i = 0; i < eventClassFamilies.size(); i++) {
             EventClassFamilyDto eventClassFamily = eventClassFamilies.get(i);
             EventClassFamilyDto storedEventClassFamily = storedEventClassFamilies.get(i);
             assertEventClassFamiliesEquals(eventClassFamily, storedEventClassFamily);
         }
     }
-    
+
     /**
      * Test update event class family.
      *
@@ -113,15 +112,12 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
     @Test
     public void testUpdateEventClassFamily() throws Exception {
         EventClassFamilyDto eventClassFamily = createEventClassFamily();
-        
         eventClassFamily.setName(generateString(EVENT_CLASS_FAMILY));
-        
         EventClassFamilyDto updatedEventClassFamily = client
                 .editEventClassFamily(eventClassFamily);
-        
         assertEventClassFamiliesEquals(updatedEventClassFamily, eventClassFamily);
     }
-    
+
     /**
      * Test get event classes by family id version and type.
      *
@@ -129,17 +125,21 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testGetEventClassesByFamilyIdVersionAndType() throws Exception {
-        EventClassFamilyDto eventClassFamily = createEventClassFamily();
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
+        UserDto tenant = createTenantAdmin(tenantAdminUser);
+        loginTenantAdmin(tenantAdminUser);
+        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId());
+        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenant.getId());
+        client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
         List<EventClassDto> eventClasses = client.getEventClassesByFamilyIdVersionAndType(eventClassFamily.getId(), 1, EventClassType.EVENT);
         Assert.assertNotNull(eventClasses);
-        Assert.assertEquals(4, eventClasses.size());
+        Assert.assertEquals(1, eventClasses.size());
+        eventClassFamilyVersion = client.getEventClassFamilyVersionsById(eventClassFamily.getId()).get(0);
         for (EventClassDto eventClass : eventClasses) {
-            Assert.assertEquals(eventClassFamily.getId(), eventClass.getEcfId());
+            Assert.assertEquals(eventClassFamilyVersion.getId(), eventClass.getEcfvId());
             Assert.assertEquals(1, eventClass.getVersion());
         }
     }
-    
+
     /**
      * Test duplicate event class family name.
      *
@@ -147,7 +147,7 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testDuplicateEventClassFamilyName() throws Exception {
-        TenantUserDto tenant = createTenant(tenantAdminUser);
+        org.kaaproject.kaa.common.dto.admin.UserDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
         EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId());
         final EventClassFamilyDto secondEventClassFamily = createEventClassFamily(tenant.getId(), "test");
@@ -156,43 +156,40 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
             @Override
             public void executeRestCall() throws Exception {
                 client.editEventClassFamily(secondEventClassFamily);
-                
+
             }
         });
     }
-    
+
     /**
      * Test add event class family schema.
      *
      * @throws Exception the exception
      */
     @Test
-    public void testAddEventClassFamilySchema() throws Exception {
-        EventClassFamilyDto eventClassFamily = createEventClassFamily();
-        Schema expectedSchema = new Schema.Parser().parse(getResourceAsString(TEST_EVENT_CLASS_FAMILY_SCHEMA));
-
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
-        EventClassFamilyDto storedEventClassFamily = client.getEventClassFamilyById(eventClassFamily.getId());
-        List<EventSchemaVersionDto> schemas = storedEventClassFamily.getSchemas();
+    public void testAddEventClassFamilyVersion() throws Exception {
+        UserDto tenantAdmin = createTenantAdmin(tenantAdminUser);
+        loginTenantAdmin(tenantAdminUser);
+        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenantAdmin.getTenantId());
+        EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdmin.getTenantId());
+        client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
+        List<EventClassFamilyVersionDto> schemas = eventClassService.findEventClassFamilyVersionsByEcfId(eventClassFamily.getId());
         Assert.assertNotNull(schemas);
         Assert.assertEquals(1, schemas.size());
-        EventSchemaVersionDto eventSchema = schemas.get(0);
+        EventClassFamilyVersionDto eventSchema = schemas.get(0);
         Assert.assertNotNull(eventSchema);
         Assert.assertEquals(1, eventSchema.getVersion());
-        
-        Assert.assertEquals(expectedSchema, new Schema.Parser().parse(eventSchema.getSchema()));
-        
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
-        storedEventClassFamily = client.getEventClassFamilyById(eventClassFamily.getId());
-        schemas = storedEventClassFamily.getSchemas();
+
+        eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdmin.getTenantId());
+        client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
+        schemas = eventClassService.findEventClassFamilyVersionsByEcfId(eventClassFamily.getId());
         Assert.assertNotNull(schemas);
         Assert.assertEquals(2, schemas.size());
         eventSchema = schemas.get(1);
         Assert.assertNotNull(eventSchema);
         Assert.assertEquals(2, eventSchema.getVersion());
-        Assert.assertEquals(expectedSchema, new Schema.Parser().parse(eventSchema.getSchema()));
     }
-    
+
     /**
      * Test duplicate event class family fqns.
      *
@@ -200,23 +197,24 @@ public class ControlServerEventClassFamilyIT extends AbstractTestControlServer {
      */
     @Test
     public void testDuplicateEventClassFamilyFqns() throws Exception {
-        TenantUserDto tenant = createTenant(tenantAdminUser);
+        org.kaaproject.kaa.common.dto.admin.UserDto tenant = createTenantAdmin(tenantAdminUser);
         loginTenantAdmin(tenantAdminUser);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getId());
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
-        final EventClassFamilyDto secondEventClassFamily = createEventClassFamily(tenant.getId(), "test");
+        EventClassFamilyDto eventClassFamily = createEventClassFamily(tenant.getTenantId());
+        final EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenant.getTenantId());
+        loginTenantAdmin(tenantAdminUser);
+        client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
         checkBadRequest(new TestRestCall() {
             @Override
             public void executeRestCall() throws Exception {
-                client.addEventClassFamilySchema(secondEventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
+                createEventClassFamily(tenant.getTenantId());
             }
         });
     }
-    
+
     /**
      * Assert event class families equals.
      *
-     * @param eventClassFamily the event class family
+     * @param eventClassFamily       the event class family
      * @param storedEventClassFamily the stored event class family
      */
     private void assertEventClassFamiliesEquals(EventClassFamilyDto eventClassFamily, EventClassFamilyDto storedEventClassFamily) {

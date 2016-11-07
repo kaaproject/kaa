@@ -145,6 +145,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
             for (LogDeliveryStatus response : logSyncResponse.getDeliveryStatuses()) {
                 final int requestId = response.getRequestId();
                 final BucketInfo bucketInfo = bucketInfoMap.get(requestId);
+                final long arriveTime = System.currentTimeMillis();
                 if (bucketInfo != null) {
                     bucketInfoMap.remove(requestId);
                     if (response.getResult() == SyncResponseResultType.SUCCESS) {
@@ -162,7 +163,7 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
                         executorContext.getCallbackExecutor().execute(new Runnable() {
                             @Override
                             public void run() {
-                                notifyDeliveryFuturesOnSuccess(bucketInfo);
+                                notifyDeliveryFuturesOnSuccess(bucketInfo, arriveTime);
                             }
                         });
                     } else {
@@ -345,13 +346,13 @@ public abstract class AbstractLogCollector implements LogCollector, LogProcessor
         }
     }
 
-    protected void notifyDeliveryFuturesOnSuccess(BucketInfo info) {
+    protected void notifyDeliveryFuturesOnSuccess(BucketInfo info, Long arriveTime) {
         synchronized (deliveryFuturesMap) {
             List<RecordFuture> deliveryFutures = deliveryFuturesMap.get(info.getBucketId());
             if (deliveryFutures != null) {
                 for (RecordFuture future : deliveryFutures) {
                     RecordInfo recordInfo = new RecordInfo(info);
-                    future.setValue(recordInfo);
+                    future.setValue(recordInfo, arriveTime);
                 }
 
                 deliveryFuturesMap.remove(info.getBucketId());

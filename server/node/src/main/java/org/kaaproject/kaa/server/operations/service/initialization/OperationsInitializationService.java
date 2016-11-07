@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.curator.framework.CuratorFramework;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
@@ -80,7 +80,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
     @Autowired
     private CacheService cacheService;
     
-    /** The operations server config. */
+    /** The operations service config. */
     @Autowired
     private OperationsServerConfig operationsServerConfig;
 
@@ -93,6 +93,9 @@ public class OperationsInitializationService extends AbstractInitializationServi
     
     @Autowired
     private LoadBalancingService loadBalancingService;
+
+    @Autowired
+    private CuratorFramework zkClient;
 
     /**
      * OperationsServerConfig getter
@@ -192,8 +195,7 @@ public class OperationsInitializationService extends AbstractInitializationServi
         nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
         nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX, 1.0));
         nodeInfo.setTransports(new ArrayList<TransportMetaData>());
-        operationsNode = new OperationsNode(nodeInfo, getNodeConfig().getZkHostPortList(), new RetryUntilElapsed(getNodeConfig()
-                .getZkMaxRetryTime(), getNodeConfig().getZkSleepTime()));
+        operationsNode = new OperationsNode(nodeInfo, zkClient);
         try {
             operationsNode.start();
             eventService.setZkNode(operationsNode);

@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.cache;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * The Class DeltaCacheKey is used to model key of cache entry for delta
@@ -31,90 +31,59 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  */
 public final class DeltaCacheKey implements Serializable {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The app id. */
     private final AppVersionKey appConfigVersionKey;
 
-    /** The endpoint groups. */
     private final List<EndpointGroupStateDto> endpointGroups;
 
-    /** The endpoint conf hash. */
-    private final EndpointObjectHash endpointConfHash;
+    private final EndpointObjectHash confHash;
 
-    /** Supports only resync delta encoded using base schema */
+    // indicates that client want to receive resync based on base schema
     private final boolean resyncOnly;
 
-    /** The user conf hash. */
-    private final EndpointObjectHash userConfHash;
+    private final boolean useConfigurationRawSchema;
 
-    /**
-     * Instantiates a new delta cache key.
-     *
-     * @param appConfigVersionKey
-     *            the app config version key
-     * @param endpointGroups
-     *            the endpoint groups
-     * @param userConfHash
-     *            the user conf hash
-     * @param endpointConfHash
-     *            the endpoint conf hash
-     */
+    private final EndpointObjectHash userConfHash;
+    private final EndpointObjectHash epsConfHash;
+
+
     public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash userConfHash,
-            EndpointObjectHash endpointConfHash) {
-        this(appConfigVersionKey, endpointGroups, userConfHash, endpointConfHash, false);
+                         EndpointObjectHash epsConfHash, EndpointObjectHash confHash) {
+        this(appConfigVersionKey, endpointGroups, userConfHash, epsConfHash, confHash, true, false);
     }
 
-    /**
-     * Instantiates a new delta cache key.
-     *
-     * @param appConfigVersionKey
-     *            the app config version key
-     * @param endpointGroups
-     *            the endpoint groups
-     * @param userConfHash
-     *            the user conf hash
-     * @param endpointConfHash
-     *            the endpoint conf hash
-     * @param resyncOnly
-     *            indicates that client want to receive resync based on base
-     *            schema
-     */
+    public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups, EndpointObjectHash userConfHash,
+                         EndpointObjectHash epsConfHash, EndpointObjectHash confHash, boolean useConfigurationRawSchema) {
+        this(appConfigVersionKey, endpointGroups, userConfHash, epsConfHash, confHash, useConfigurationRawSchema, false);
+    }
+
     public DeltaCacheKey(AppVersionKey appConfigVersionKey, List<EndpointGroupStateDto> endpointGroups,
-            EndpointObjectHash userConfHash, EndpointObjectHash endpointConfHash, boolean resyncOnly) {
+                         EndpointObjectHash userConfHash, EndpointObjectHash epsConfHash, EndpointObjectHash confHash,
+                         boolean useConfigurationRawSchema, boolean resyncOnly) {
         this.appConfigVersionKey = appConfigVersionKey;
         this.userConfHash = userConfHash;
         this.endpointGroups = endpointGroups;
-        this.endpointConfHash = endpointConfHash;
+        this.confHash = confHash;
+        this.useConfigurationRawSchema = useConfigurationRawSchema;
         this.resyncOnly = resyncOnly;
+        this.epsConfHash = epsConfHash;
+
     }
 
-    /**
-     * Gets the app config version key.
-     *
-     * @return the app config version key
-     */
+
     public AppVersionKey getAppConfigVersionKey() {
         return appConfigVersionKey;
     }
 
-    /**
-     * Gets the endpoint groups.
-     *
-     * @return the endpoint groups
-     */
+
     public List<EndpointGroupStateDto> getEndpointGroups() {
         return endpointGroups;
     }
 
-    /**
-     * Gets the endpoint conf hash.
-     *
-     * @return the endpoint conf hash
-     */
-    public EndpointObjectHash getEndpointConfHash() {
-        return endpointConfHash;
+
+    public EndpointObjectHash getConfHash() {
+        return confHash;
     }
 
     /**
@@ -127,71 +96,45 @@ public final class DeltaCacheKey implements Serializable {
         return resyncOnly;
     }
 
-    /**
-     * Gets the user id.
-     *
-     * @return the user id
-     */
+    public boolean isUseConfigurationRawSchema() {
+        return useConfigurationRawSchema;
+    }
+
     public EndpointObjectHash getUserConfHash() {
         return userConfHash;
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((appConfigVersionKey == null) ? 0 : appConfigVersionKey.hashCode());
-        result = prime * result + ((endpointConfHash == null) ? 0 : endpointConfHash.hashCode());
-        result = prime * result + ((endpointGroups == null) ? 0 : endpointGroups.hashCode());
-        result = prime * result + (resyncOnly ? 1231 : 1237);
-        result = prime * result + ((userConfHash == null) ? 0 : userConfHash.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DeltaCacheKey that = (DeltaCacheKey) o;
+
+        if (resyncOnly != that.resyncOnly) return false;
+        if (useConfigurationRawSchema != that.useConfigurationRawSchema) return false;
+        if (appConfigVersionKey != null ? !appConfigVersionKey.equals(that.appConfigVersionKey) : that.appConfigVersionKey != null)
+            return false;
+        if (endpointGroups != null ? !endpointGroups.equals(that.endpointGroups) : that.endpointGroups != null)
+            return false;
+        if (confHash != null ? !confHash.equals(that.confHash) : that.confHash != null)
+            return false;
+        if (epsConfHash != null ? !epsConfHash.equals(that.epsConfHash) : that.epsConfHash != null)
+            return false;
+        return userConfHash != null ? userConfHash.equals(that.userConfHash) : that.userConfHash == null;
+
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DeltaCacheKey other = (DeltaCacheKey) obj;
-        if (appConfigVersionKey == null) {
-            if (other.appConfigVersionKey != null) {
-                return false;
-            }
-        } else if (!appConfigVersionKey.equals(other.appConfigVersionKey)) {
-            return false;
-        }
-        if (endpointConfHash == null) {
-            if (other.endpointConfHash != null) {
-                return false;
-            }
-        } else if (!endpointConfHash.equals(other.endpointConfHash)) {
-            return false;
-        }
-        if (endpointGroups == null) {
-            if (other.endpointGroups != null) {
-                return false;
-            }
-        } else if (!endpointGroups.equals(other.endpointGroups)) {
-            return false;
-        }
-        if (resyncOnly != other.resyncOnly) {
-            return false;
-        }
-        if (userConfHash == null) {
-            if (other.userConfHash != null) {
-                return false;
-            }
-        } else if (!userConfHash.equals(other.userConfHash)) {
-            return false;
-        }
-        return true;
+    public int hashCode() {
+        int result = appConfigVersionKey != null ? appConfigVersionKey.hashCode() : 0;
+        result = 31 * result + (endpointGroups != null ? endpointGroups.hashCode() : 0);
+        result = 31 * result + (confHash != null ? confHash.hashCode() : 0);
+        result = 31 * result + (resyncOnly ? 1 : 0);
+        result = 31 * result + (useConfigurationRawSchema ? 1 : 0);
+        result = 31 * result + (userConfHash != null ? userConfHash.hashCode() : 0);
+        result = 31 * result + (epsConfHash != null ? epsConfHash.hashCode() : 0);
+        return result;
     }
 
     @Override
@@ -201,12 +144,16 @@ public final class DeltaCacheKey implements Serializable {
         builder.append(appConfigVersionKey);
         builder.append(", endpointGroups=");
         builder.append(endpointGroups);
-        builder.append(", endpointConfHash=");
-        builder.append(endpointConfHash);
+        builder.append(", confHash=");
+        builder.append(confHash);
         builder.append(", resyncOnly=");
         builder.append(resyncOnly);
+        builder.append(", useRawSchema=");
+        builder.append(useConfigurationRawSchema);
         builder.append(", userConfHash=");
         builder.append(userConfHash);
+        builder.append(", epsConfHash=");
+        builder.append(epsConfHash);
         builder.append("]");
         return builder.toString();
     }

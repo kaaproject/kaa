@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,7 +39,6 @@ import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
-import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.model.sql.Application;
 import org.kaaproject.kaa.server.common.dao.model.sql.ApplicationEventFamilyMap;
@@ -52,7 +52,7 @@ import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClass;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
-import org.kaaproject.kaa.server.common.dao.model.sql.EventSchemaVersion;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamilyVersion;
 import org.kaaproject.kaa.server.common.dao.model.sql.History;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogAppender;
 import org.kaaproject.kaa.server.common.dao.model.sql.LogSchema;
@@ -160,18 +160,21 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             if (app == null) {
                 app = generateApplication(null);
             }
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, 1, app.getTenant(), null);
             ConfigurationSchema schema;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schema = new ConfigurationSchema();
                 schema.setApplication(app);
-                schema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
+                schema.setCreatedUsername("Test User");
+                schema.setCtlSchema(ctlSchema);
                 schema.setVersion(i + 1);
+                schema.setName("Test Name");
                 schema = configurationSchemaDao.save(schema);
                 Assert.assertNotNull(schema);
                 schemas.add(schema);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Can't generate configuration schemas {}", e);
             Assert.fail("Can't generate configuration schemas." + e.getMessage());
         }
@@ -258,29 +261,30 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return ctlSchema;
     }
 
-    protected List<NotificationSchema> generateNotificationSchema(Application app, int count, NotificationTypeDto type) {
+    protected List<NotificationSchema> generateNotificationSchema(Application app, int ctlVersion, int count, NotificationTypeDto type) {
         List<NotificationSchema> schemas = Collections.emptyList();
         try {
             if (app == null) {
                 app = generateApplication(null);
             }
-            NotificationSchema notificationSchema;
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, app.getTenant(), null);
+            NotificationSchema schemaDto;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
-                notificationSchema = new NotificationSchema();
-                notificationSchema.setApplication(app);
-                notificationSchema.setSchema(readSchemaFileAsString("dao/schema/testDataSchema.json"));
-                notificationSchema.setCreatedUsername("Test User");
-                notificationSchema.setVersion(i + 1);
-                notificationSchema.setName("Test Name");
-                notificationSchema.setType(type == null ? NotificationTypeDto.SYSTEM : type);
-                notificationSchema = notificationSchemaDao.save(notificationSchema);
-                Assert.assertNotNull(notificationSchema);
-                schemas.add(notificationSchema);
+                schemaDto = new NotificationSchema();
+                schemaDto.setApplication(app);
+                schemaDto.setCreatedUsername("Test User");
+                schemaDto.setCtlSchema(ctlSchema);
+                schemaDto.setVersion(i + 1);
+                schemaDto.setName("Test Name");
+                schemaDto.setType(type);
+                schemaDto = notificationSchemaDao.save(schemaDto);
+                Assert.assertNotNull(schemaDto);
+                schemas.add(schemaDto);
             }
-        } catch (IOException e) {
-            LOG.error("Can't generate notification schema {}", e);
-            Assert.fail("Can't generate notification schema." + e.getMessage());
+        } catch (Exception e) {
+            LOG.error("Can't generate profile schema {}", e);
+            Assert.fail("Can't generate profile schema." + e.getMessage());
         }
         return schemas;
     }
@@ -375,7 +379,6 @@ public abstract class HibernateAbstractTest extends AbstractTest {
     }
 
     protected List<EventClassFamily> generateEventClassFamily(Tenant tenant, int count) {
-        int eventSchemaVersionsCount = 2;
         if (tenant == null) {
             tenant = generateTenant();
         }
@@ -390,21 +393,36 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             eventClassFamily.setDescription("Test Description");
             eventClassFamily.setName("Test Name" + RANDOM.nextInt());
             eventClassFamily.setNamespace("Test Namespace");
-            List<EventSchemaVersion> eventSchemaVersions = new ArrayList<>(eventSchemaVersionsCount);
-            for (int j = 0; j < eventSchemaVersionsCount; j++) {
-                EventSchemaVersion eventSchemaVersion = new EventSchemaVersion();
-                eventSchemaVersion.setCreatedTime(new Date().getTime());
-                eventSchemaVersion.setCreatedUsername("Test Username");
-                eventSchemaVersion.setSchema("Test Schema" + RANDOM.nextInt());
-                eventSchemaVersion.setVersion(1);
-                eventSchemaVersions.add(eventSchemaVersion);
-            }
-            eventClassFamily.setSchemas(eventSchemaVersions);
             eventClassFamily = eventClassFamilyDao.save(eventClassFamily);
             Assert.assertNotNull(eventClassFamily);
             eventClassFamilies.add(eventClassFamily);
         }
         return eventClassFamilies;
+    }
+
+    protected List<EventClassFamilyVersion> generateEventClassFamilyVersion(EventClassFamily eventClassFamily, int ecfvCount, int ecCount) {
+        List<EventClassFamilyVersion> ecfvList = new ArrayList<>(ecfvCount);
+        for (int i = 0; i < ecfvCount; i++) {
+           EventClassFamilyVersion ecfv = new EventClassFamilyVersion();
+            List<EventClass> ecList = new ArrayList<>();
+            for (int j = 0; j < ecCount; j++) {
+                EventClass ec = new EventClass();
+                ec.setTenant(eventClassFamily.getTenant());
+
+                Optional<CTLSchema> ctlMaxVersion = ctlSchemaDao.find().stream()
+                        .max((ctl1, ctl2) -> Integer.compare(ctl1.getVersion(), ctl2.getVersion()));
+                int version = ctlMaxVersion.isPresent() ? (ctlMaxVersion.get().getVersion() + 1) : 1;
+
+                ec.setCtlSchema(generateCTLSchema(DEFAULT_FQN, version, eventClassFamily.getTenant(), CTLSchemaScopeDto.TENANT));
+                ec.setEcfv(ecfv);
+                ec.setFqn("Test FQN" + RANDOM.nextInt());
+                ec.setType(EventClassType.EVENT);
+                ecList.add(ec);
+            }
+            ecfv.setRecords(ecList);
+            ecfvList.add(ecfv);
+        }
+        return ecfvList;
     }
 
     protected List<EventClass> generateEventClass(Tenant tenant, EventClassFamily eventClassFamily, int count) {
@@ -415,21 +433,11 @@ public abstract class HibernateAbstractTest extends AbstractTest {
             eventClassFamily = generateEventClassFamily(tenant, 1).get(0);
         }
 
-        EventClass eventClass;
-        List<EventClass> eventClasses = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            eventClass = new EventClass();
-            eventClass.setTenant(tenant);
-            eventClass.setEcf(eventClassFamily);
-            eventClass.setFqn("Test FQN" + RANDOM.nextInt());
-            eventClass.setSchema("Test Schema" + RANDOM.nextInt());
-            eventClass.setType(EventClassType.EVENT);
-            eventClass.setVersion(1);
-            eventClass = eventClassDao.save(eventClass);
-            Assert.assertNotNull(eventClass);
-            eventClasses.add(eventClass);
-        }
-        return eventClasses;
+        List<EventClassFamilyVersion> ecfvList = generateEventClassFamilyVersion(eventClassFamily, 1, count);
+        eventClassFamily.setSchemas(ecfvList);
+        eventClassFamily = eventClassFamilyDao.save(eventClassFamily);
+        List<EventClass> storedECs = eventClassFamily.getSchemas().get(0).getRecords();
+        return storedECs;
     }
 
     protected List<ApplicationEventFamilyMap> generateApplicationEventFamilyMap(Tenant tenant, Application application,
@@ -473,25 +481,26 @@ public abstract class HibernateAbstractTest extends AbstractTest {
         return applicationEventFamilyMaps;
     }
 
-    protected List<LogSchema> generateLogSchema(Tenant tenant, Application application, int count) {
+    protected List<LogSchema> generateLogSchema(Tenant tenant, int ctlVersion, Application application, int count) {
         List<LogSchema> schemas = Collections.emptyList();
         try {
             if (application == null) {
                 application = generateApplication(tenant);
             }
+            CTLSchema ctlSchema = generateCTLSchema(DEFAULT_FQN, ctlVersion, application.getTenant(), null);
             LogSchema schema;
             schemas = new ArrayList<>(count);
             for (int i = 0; i < count; i++) {
                 schema = new LogSchema();
                 schema.setApplication(application);
-                schema.setSchema(new KaaSchemaFactoryImpl().createDataSchema(readSchemaFileAsString("dao/schema/testDataSchema.json")).getRawSchema());
+                schema.setCtlSchema(ctlSchema);
                 schema.setCreatedUsername("Test User");
                 schema.setName("Test Name");
                 schema = logSchemaDao.save(schema);
                 Assert.assertNotNull(schema);
                 schemas.add(schema);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Can't generate log schemas {}", e);
             Assert.fail("Can't generate log schemas.");
         }

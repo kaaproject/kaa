@@ -22,9 +22,9 @@ import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -108,22 +108,35 @@ public class MongoDaoUtil {
         if (profileBody == null) {
             return null;
         }
-        Set<String> keySet = profileBody.keySet();
-        DBObject modifiedNode = new BasicDBObject();
-        if (keySet != null) {
-            for (String key : keySet) {
-                Object value = profileBody.get(key);
-                for(char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
-                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
-                }
+        if (profileBody instanceof BasicDBList) {
+            BasicDBList dbList = (BasicDBList)profileBody;
+            BasicDBList modifiedList = new BasicDBList();
+            for (Object value : dbList) {
                 if(value instanceof DBObject) {
-                    modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
+                    modifiedList.add(encodeReservedCharacteres((DBObject) value));
                 } else {
-                    modifiedNode.put(key, value);
+                    modifiedList.add(value);
                 }
             }
+            return modifiedList;
+        } else {
+            Set<String> keySet = profileBody.keySet();
+            DBObject modifiedNode = new BasicDBObject();
+            if (keySet != null) {
+                for (String key : keySet) {
+                    Object value = profileBody.get(key);
+                    for (char symbolToReplace : RESERVED_CHARACTERS.keySet()) {
+                        key = key.replace(symbolToReplace, RESERVED_CHARACTERS.get(symbolToReplace));
+                    }
+                    if (value instanceof DBObject) {
+                        modifiedNode.put(key, encodeReservedCharacteres((DBObject) value));
+                    } else {
+                        modifiedNode.put(key, value);
+                    }
+                }
+            }
+            return modifiedNode;
         }
-        return modifiedNode;
     }
 
     /**
@@ -131,25 +144,39 @@ public class MongoDaoUtil {
      * @param profileBody the profileBody
      * @return decoded DBObject
      */
-    public static String decodeReservedCharacteres(DBObject profileBody) {
+    public static DBObject decodeReservedCharacteres(DBObject profileBody) {
+
         if (profileBody == null) {
-            return "";
+            return null;
         }
-        Set<String> keySet = profileBody.keySet();
-        DBObject modifiedNode = new BasicDBObject();
-        if (keySet != null) {
-            for (String key : keySet) {
-                Object value = profileBody.get(key);
-                for(char symbolToReplace : RESERVED_CHARACTERS.values()) {
-                    key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
-                }
-                if(value instanceof DBObject) {
-                    modifiedNode.put(key, (DBObject) JSON.parse(decodeReservedCharacteres((DBObject) value)));
+        if (profileBody instanceof BasicDBList) {
+            BasicDBList dbList = (BasicDBList) profileBody;
+            BasicDBList modifiedList = new BasicDBList();
+            for (Object value : dbList) {
+                if (value instanceof DBObject) {
+                    modifiedList.add(decodeReservedCharacteres((DBObject) value));
                 } else {
-                    modifiedNode.put(key, value);
+                    modifiedList.add(value);
                 }
             }
+            return modifiedList;
+        } else {
+            Set<String> keySet = profileBody.keySet();
+            DBObject modifiedNode = new BasicDBObject();
+            if (keySet != null) {
+                for (String key : keySet) {
+                    Object value = profileBody.get(key);
+                    for (char symbolToReplace : RESERVED_CHARACTERS.values()) {
+                        key = key.replace(symbolToReplace, RESERVED_CHARACTERS.inverse().get(symbolToReplace));
+                    }
+                    if (value instanceof DBObject) {
+                        modifiedNode.put(key, decodeReservedCharacteres((DBObject) value));
+                    } else {
+                        modifiedNode.put(key, value);
+                    }
+                }
+            }
+            return modifiedNode;
         }
-        return modifiedNode != null ? modifiedNode.toString() : "";
     }
 }

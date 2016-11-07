@@ -25,8 +25,19 @@ import com.google.gwt.user.cellview.client.DataGrid;
 
 public class UsersGrid extends AbstractKaaGrid<UserDto, String> {
 
+    private boolean showRole;
+
     public UsersGrid() {
-        super(Unit.PX, false);
+        this(false, false);
+    }
+
+    public UsersGrid(boolean showRole) {
+        this(showRole, false);
+    }
+
+    public UsersGrid(boolean showRole, boolean embeded) {
+        super(Unit.PX, true, embeded);
+        this.showRole=showRole;
     }
 
     @Override
@@ -51,14 +62,16 @@ public class UsersGrid extends AbstractKaaGrid<UserDto, String> {
                     }
                 }, 160);
 
-        prefWidth += constructStringColumn(table,
-                Utils.constants.role(),
-                new StringValueProvider<UserDto>() {
-                    @Override
-                    public String getValue(UserDto item) {
-                        return Utils.constants.getString(item.getAuthority().getResourceKey());
-                    }
-                }, 160);
+        if(showRole) {
+            prefWidth += constructStringColumn(table,
+                    Utils.constants.role(),
+                    new StringValueProvider<UserDto>() {
+                        @Override
+                        public String getValue(UserDto item) {
+                            return Utils.constants.getString(item.getAuthority().getResourceKey());
+                        }
+                    }, 160);
+        }
 
         return prefWidth;
     }

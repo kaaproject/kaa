@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
@@ -34,17 +34,11 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> implements EndpointProfilesView {
 
     private static final int DEFAULT_PAGE_SIZE = 10;
-
-    interface EndpointProfilesUiBinder extends UiBinder<Widget, EndpointProfilesViewImpl> { }
-    private static EndpointProfilesUiBinder uiBinder = GWT.create(EndpointProfilesUiBinder.class);
-
-    @UiField public HorizontalPanel filterPanel;
 
     private EndpointGroupsInfoListBox listBox;
     private TextBox endpointKeyHash;
@@ -57,13 +51,11 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
     public EndpointProfilesViewImpl() {
         super(false);
 
-        int column = 0;
-        FlexTable flexTable = new FlexTable();
-        flexTable.setStyleName(Utils.avroUiStyle.fieldWidget());
+        supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        supportPanel.setWidth("1000px");
 
         resetButton = new Button(Utils.constants.reset());
-        flexTable.setWidget(0, column, resetButton);
-        flexTable.getFlexCellFormatter().setVerticalAlignment(0, column++, HasVerticalAlignment.ALIGN_MIDDLE);
+        supportPanel.add(resetButton);
 
         endpointGroupButton = new RadioButton("filter", Utils.constants.endpointGroup());
         listBox = new EndpointGroupsInfoListBox();
@@ -73,7 +65,7 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
         groupPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
         groupPanel.add(endpointGroupButton);
         groupPanel.add(listBox);
-        flexTable.setWidget(0, column++, groupPanel);
+        supportPanel.add(groupPanel);
 
         HorizontalPanel keyHashPanel = new HorizontalPanel();
         keyHashPanel.setSpacing(15);
@@ -86,20 +78,13 @@ public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDt
         keyHashPanel.add(endpointKeyHashButton);
         keyHashPanel.add(endpointKeyHash);
         keyHashPanel.add(findButton);
-        flexTable.setWidget(0, column, keyHashPanel);
-
-        filterPanel.add(flexTable);
+        supportPanel.add(keyHashPanel);
         
         endpointGroupButton.setValue(true);
     }
-    
-    @Override
-    protected Widget createAndBindUi() {
-        return uiBinder.createAndBindUi(this);
-    }
 
     @Override
-    public ValueListBox<EndpointGroupDto> getEndpointGroupsInfo() {
+    public EndpointGroupsInfoListBox getEndpointGroupsInfo() {
         return listBox;
     }
 

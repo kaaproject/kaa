@@ -87,6 +87,7 @@ public class CassandraModelConstants {
     public static final String EP_APP_ID_PROPERTY = APPLICATION_ID_PROPERTY;
     public static final String EP_CONFIG_HASH_PROPERTY = CONFIGURATION_HASH_PROPERTY;
     public static final String EP_USER_CONFIG_HASH_PROPERTY = USER_CONFIGURATION_HASH_PROPERTY;
+    public static final String EP_EPS_CONFIG_HASH_PROPERTY = "eps_cf_hash";
     public static final String EP_ACCESS_TOKEN_PROPERTY = ACCESS_TOKEN_PROPERTY;
     public static final String EP_ENDPOINT_ID_PROPERTY = "ep_id";
     public static final String EP_EP_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
@@ -109,6 +110,7 @@ public class CassandraModelConstants {
     public static final String EP_ECF_VERSION_STATE_PROPERTY = "ecf_ver_state";
     public static final String EP_SERVER_HASH_PROPERTY = "server_hash";
     public static final String EP_SDK_TOKEN_PROPERTY = SDK_TOKEN_PROPERTY;
+    public static final String EP_USE_RAW_SCHEMA = "use_raw_schema";
     public static final String EP_SERVER_PROFILE_PROPERTY = "srv_pf";
 
     /**
@@ -213,6 +215,14 @@ public class CassandraModelConstants {
     public static final String EP_REGISTRATIONS_BY_ENDPOINT_ID_COLUMN_FAMILY_NAME = "creds_id_ep_registration";
     public static final String EP_REGISTRATION_BY_ENDPOINT_ID_CREDENTIALS_ID_PROPERTY = EP_REGISTRATION_CREDENTIALS_ID_PROPERTY;
     public static final String EP_REGISTRATION_BY_ENDPOINT_ID_ENDPOINT_ID_PROPERTY = EP_REGISTRATION_ENDPOINT_ID_PROPERTY;
+
+    /**
+     * {@link org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointSpecificConfiguration}
+     */
+    public static final String EPS_CONFIGURATION_COLUMN_FAMILY_NAME = "ep_specific_conf";
+    public static final String EPS_CONFIGURATION_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
+    public static final String EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY = EP_CONFIGURATION_VERSION_PROPERTY;
+    public static final String EPS_CONFIGURATION_CONFIGURATION_BODY_PROPERTY = BODY_PROPERTY;
 
     /**
      * Cassandra Credentials constants

@@ -36,7 +36,7 @@ public class HibernateLogSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     public void findByApplicationIdTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
+        LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
         Assert.assertNotNull(logSchema);
         List<LogSchema> schemaList = logSchemaDao.findByApplicationId(logSchema.getApplication().getStringId());
         Assert.assertNotNull(schemaList);
@@ -51,7 +51,7 @@ public class HibernateLogSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     public void findByAppIdAndVersionTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
+        LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
         Assert.assertNotNull(logSchema);
         LogSchema found = logSchemaDao.findByApplicationIdAndVersion(logSchema.getApplication().getStringId(), logSchema.getVersion());
         Assert.assertEquals(logSchema, found);
@@ -59,7 +59,7 @@ public class HibernateLogSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     public void removeByApplicationIdTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
+        LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
         Assert.assertNotNull(logSchema);
         logSchemaDao.removeByApplicationId(logSchema.getApplication().getStringId());
         LogSchema schema = logSchemaDao.findById(logSchema.getStringId());
@@ -68,7 +68,7 @@ public class HibernateLogSchemaDaoTest extends HibernateAbstractTest {
 
     @Test
     public void removeByIdTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
+        LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
         Assert.assertNotNull(logSchema);
         logSchemaDao.removeById(logSchema.getStringId());
         LogSchema schema = logSchemaDao.findById(logSchema.getStringId());

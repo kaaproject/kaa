@@ -25,10 +25,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
@@ -42,15 +39,17 @@ import org.kaaproject.kaa.avro.avrogen.TypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang.StringUtils.join;
+
 public abstract class Compiler {
     private static final String DIRECTION_PROP = "direction";
 
-    /** The Constant LOG. */
+
     private static final Logger LOG = LoggerFactory.getLogger(Compiler.class);
 
     private final String generatedSourceName;
 
-    private Schema schema;
+    private List<Schema> schemas = new ArrayList<>();
 
     protected VelocityEngine engine;
 
@@ -59,16 +58,19 @@ public abstract class Compiler {
 
     protected String namespacePrefix;
 
-    protected final Map<Schema, GenerationContext> schemaQueue;
+    protected final Map<Schema, GenerationContext> schemaGenerationQueue;
+    // list of schemas that should be skipped during generation
+    protected Set<Schema> generatedSchemas = new HashSet<>();
+
 
     private void initVelocityEngine() {
         engine = new VelocityEngine();
 
         engine.addProperty("resource.loader", "class, file");
         engine.addProperty("class.resource.loader.class",
-                                   "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+                "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         engine.addProperty("file.resource.loader.class",
-                                   "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+                "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
         engine.addProperty("file.resource.loader.path", "/, .");
         engine.setProperty("runtime.references.strict", true);
         engine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
@@ -77,26 +79,36 @@ public abstract class Compiler {
     private Compiler(String sourceName) throws KaaGeneratorException {
         this.namespacePrefix = "kaa";
         this.generatedSourceName = sourceName;
-        this.schemaQueue = new LinkedHashMap<>();
+        this.schemaGenerationQueue = new LinkedHashMap<>();
         initVelocityEngine();
     }
 
-    public Compiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS)
-            throws KaaGeneratorException
-    {
+    public Compiler(Schema schema, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
         this(sourceName);
-
-        this.schema = schema;
+        this.schemas.add(schema);
         this.headerWriter = new PrintWriter(hdrS);
         this.sourceWriter = new PrintWriter(srcS);
-
         prepareTemplates(false);
+    }
+
+    public Compiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS) throws KaaGeneratorException {
+        this(sourceName);
+        this.schemas.addAll(schemas);
+        this.headerWriter = new PrintWriter(hdrS);
+        this.sourceWriter = new PrintWriter(srcS);
+        prepareTemplates(false);
+    }
+
+
+    public Compiler(List<Schema> schemas, String sourceName, OutputStream hdrS, OutputStream srcS, Set<Schema> generatedSchemas) throws KaaGeneratorException {
+        this(schemas, sourceName, hdrS, srcS);
+        this.generatedSchemas = new HashSet<>(generatedSchemas);
     }
 
     public Compiler(String schemaPath, String outputPath, String sourceName) throws KaaGeneratorException {
         this(sourceName);
         try {
-            this.schema = new Schema.Parser().parse(new File(schemaPath));
+            this.schemas.add(new Schema.Parser().parse(new File(schemaPath)));
 
             prepareTemplates(true);
 
@@ -120,9 +132,13 @@ public abstract class Compiler {
     }
 
     protected abstract String headerTemplateGen();
+
     protected abstract String sourceTemplateGen();
+
     protected abstract String headerTemplate();
+
     protected abstract String sourceTemplate();
+
     protected abstract String getSourceExtension();
 
     private void prepareTemplates(boolean toFile) throws KaaGeneratorException {
@@ -162,21 +178,26 @@ public abstract class Compiler {
         srcOs.close();
     }
 
-    public void generate() throws KaaGeneratorException {
-        try {
-            System.out.println("Processing schema: " + schema);
 
-            if (schema.getType() == Type.UNION) {
-                for (Schema s : schema.getTypes()) {
-                    filterSchemas(s, null);
+    public Set<Schema> generate() throws KaaGeneratorException {
+        try {
+            LOG.debug("Processing schemas: [" + join(schemas, ", ") + "]");
+            for (Schema schema : schemas) {
+
+                if (schema.getType() == Type.UNION) {
+                    for (Schema s : schema.getTypes()) {
+                        addAllSchemasToQueue(s, null);
+                    }
+                } else {
+                    addAllSchemasToQueue(schema, null);
                 }
-            } else {
-                filterSchemas(schema, null);
             }
+
 
             doGenerate();
 
-            System.out.println("Sources were successfully generated");
+            LOG.debug("Sources were successfully generated");
+            return schemaGenerationQueue.keySet();
         } catch (Exception e) {
             LOG.error("Failed to generate C sources: ", e);
             throw new KaaGeneratorException("Failed to generate sources: " + e.toString());
@@ -186,8 +207,12 @@ public abstract class Compiler {
         }
     }
 
-    private void filterSchemas(Schema schema, GenerationContext context) {
-        GenerationContext existingContext = schemaQueue.get(schema);
+    /**
+     * Recursively add all unique dependencies of a passed schema and the one to generation queue,
+     * that used to generate sources.
+     */
+    private void addAllSchemasToQueue(Schema schema, GenerationContext context) {
+        GenerationContext existingContext = schemaGenerationQueue.get(schema);
 
         if (existingContext != null) {
             existingContext.updateDirection(context);
@@ -195,27 +220,27 @@ public abstract class Compiler {
         }
 
         switch (schema.getType()) {
-        case RECORD:
-            for (Field f : schema.getFields()) {
-                filterSchemas(f.schema(), new GenerationContext(
-                        schema.getName(), f.name(), schema.getProp(DIRECTION_PROP)));
-            }
-            schemaQueue.put(schema, null);
-            break;
-        case UNION:
-            for (Schema branchSchema : schema.getTypes()) {
-                filterSchemas(branchSchema, context);
-            }
-            schemaQueue.put(schema, context);
-            break;
-        case ARRAY:
-            filterSchemas(schema.getElementType(), context);
-            break;
-        case ENUM:
-            schemaQueue.put(schema, null);
-            break;
-        default:
-            break;
+            case RECORD:
+                for (Field f : schema.getFields()) {
+                    addAllSchemasToQueue(f.schema(), new GenerationContext(
+                            schema.getName(), f.name(), schema.getProp(DIRECTION_PROP)));
+                }
+                schemaGenerationQueue.put(schema, null);
+                break;
+            case UNION:
+                for (Schema branchSchema : schema.getTypes()) {
+                    addAllSchemasToQueue(branchSchema, context);
+                }
+                schemaGenerationQueue.put(schema, context);
+                break;
+            case ARRAY:
+                addAllSchemasToQueue(schema.getElementType(), context);
+                break;
+            case ENUM:
+                schemaGenerationQueue.put(schema, null);
+                break;
+            default:
+                break;
         }
     }
 
@@ -264,6 +289,5 @@ public abstract class Compiler {
     public void setNamespacePrefix(String namespacePrefix) {
         this.namespacePrefix = namespacePrefix;
     }
-
 
 }

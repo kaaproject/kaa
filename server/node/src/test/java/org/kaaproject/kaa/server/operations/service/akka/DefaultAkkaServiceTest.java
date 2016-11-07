@@ -16,7 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.nio.ByteBuffer;
@@ -33,6 +37,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import akka.actor.ActorContext;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.UntypedActor;
+import akka.testkit.JavaTestKit;
+import akka.testkit.TestActorRef;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -89,6 +100,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsService;
@@ -97,10 +109,13 @@ import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.LocalEndpointActorMessageProcessor;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ThriftEndpointActorMsg;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
 import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
@@ -141,6 +156,7 @@ import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.message.SessionAwareMessage;
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -249,10 +265,10 @@ public class DefaultAkkaServiceTest {
         Mockito.when(operationsKeyStoreService.getPublicKey()).thenReturn(serverPair.getPublic());
         Mockito.when(operationsKeyStoreService.getPrivateKey()).thenReturn(serverPair.getPrivate());
         Mockito.when(metricsService.createMeter(Mockito.anyString(), Mockito.anyString())).thenReturn(Mockito.mock(MeterClient.class));
-        
+
         Mockito.when(credentialsServiceLocator.getCredentialsService(Mockito.anyString())).thenReturn(credentialsService);
-        Mockito.when(credentialsService.lookupCredentials(Mockito.anyString())).thenReturn(Optional.ofNullable((CredentialsDto)null));
-        
+        Mockito.when(credentialsService.lookupCredentials(Mockito.anyString())).thenReturn(Optional.ofNullable((CredentialsDto) null));
+
         registerPublicKey(clientPair.getPublic());
         registerPublicKey(targetPair.getPublic());
 
@@ -339,8 +355,8 @@ public class DefaultAkkaServiceTest {
         when(eventService.isMainUserNode(Mockito.anyString())).thenReturn(true);
 
         when(clusterService.getNodeId()).thenReturn(LOCAL_NODE_ID);
-        when(clusterService.getEntityNode(Mockito.any(byte[].class))).thenReturn(LOCAL_NODE_ID);
-        when(clusterService.getEntityNode(Mockito.any(EndpointObjectHash.class))).thenReturn(LOCAL_NODE_ID);
+        when(clusterService.getEntityNode(any(byte[].class))).thenReturn(LOCAL_NODE_ID);
+        when(clusterService.getEntityNode(any(EndpointObjectHash.class))).thenReturn(LOCAL_NODE_ID);
     }
 
     private void registerPublicKey(PublicKey publicKey) throws EndpointRegistrationServiceException {
@@ -450,7 +466,7 @@ public class DefaultAkkaServiceTest {
         Mockito.when(message.getSessionKeySignature()).thenReturn("dummy".getBytes());
         Mockito.when(message.isEncrypted()).thenReturn(true);
         akkaService.process(message);
-        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).build(Mockito.any(Exception.class));
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).build(any(Exception.class));
     }
 
     @Test
@@ -467,7 +483,7 @@ public class DefaultAkkaServiceTest {
         Mockito.when(message.getEncodedMessageData()).thenReturn("dummy".getBytes());
         Mockito.when(message.isEncrypted()).thenReturn(true);
         akkaService.process(message);
-        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).build(Mockito.any(Exception.class));
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).build(any(Exception.class));
     }
 
     @Test
@@ -528,10 +544,10 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     @Test
@@ -562,10 +578,10 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     @Test
@@ -594,10 +610,10 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     @Test
@@ -630,9 +646,9 @@ public class DefaultAkkaServiceTest {
         akkaService.process(message1);
         akkaService.process(message2);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeast(2)).build(Mockito.any(byte[].class), Mockito.any(boolean.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT * 10).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeast(2)).build(any(byte[].class), any(boolean.class));
     }
 
     @Test
@@ -660,23 +676,25 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     private void whenSync(SyncContext response) throws GetDeltaException {
-        Mockito.when(operationsService.syncClientProfile(Mockito.any(SyncContext.class), Mockito.any(ProfileClientSync.class)))
+        Mockito.when(operationsService.syncClientProfile(any(SyncContext.class), any(ProfileClientSync.class)))
                 .thenReturn(response);
         Mockito.when(
-                operationsService.processEndpointAttachDetachRequests(Mockito.any(SyncContext.class), Mockito.any(UserClientSync.class)))
+                operationsService.processEndpointAttachDetachRequests(any(SyncContext.class), any(UserClientSync.class)))
                 .thenReturn(response);
-        Mockito.when(operationsService.processEventListenerRequests(Mockito.any(SyncContext.class), Mockito.any(EventClientSync.class)))
+        Mockito.when(operationsService.processEventListenerRequests(any(SyncContext.class), any(EventClientSync.class)))
                 .thenReturn(response);
-        Mockito.when(operationsService.syncConfiguration(Mockito.any(SyncContext.class), Mockito.any(ConfigurationClientSync.class)))
+        Mockito.when(operationsService.syncConfiguration(any(SyncContext.class), any(ConfigurationClientSync.class)))
                 .thenReturn(response);
-        Mockito.when(operationsService.syncNotification(Mockito.any(SyncContext.class), Mockito.any(NotificationClientSync.class)))
+        Mockito.when(operationsService.syncNotification(any(SyncContext.class), any(NotificationClientSync.class)))
+                .thenReturn(response);
+        Mockito.when(operationsService.syncUseConfigurationRawSchema(any(SyncContext.class), Matchers.anyBoolean()))
                 .thenReturn(response);
     }
 
@@ -692,6 +710,8 @@ public class DefaultAkkaServiceTest {
         Mockito.when(operationsService.processEventListenerRequests(response, request.getEventSync())).thenReturn(response);
         Mockito.when(operationsService.syncConfiguration(response, request.getConfigurationSync())).thenReturn(response);
         Mockito.when(operationsService.syncNotification(response, request.getNotificationSync())).thenReturn(response);
+
+        Mockito.when(operationsService.syncUseConfigurationRawSchema(response, request.isUseConfigurationRawSchema())).thenReturn(response);
     }
 
     @Test
@@ -720,8 +740,8 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
         whenSync(deltaResponse);
@@ -730,8 +750,8 @@ public class DefaultAkkaServiceTest {
         thriftNotification.setAppId(APP_ID);
         akkaService.onNotification(thriftNotification);
 
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     @Test
@@ -755,8 +775,8 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         Mockito.when(operationsService.updateSyncResponse(noDeltaResponse.getResponse(), new ArrayList<NotificationDto>(),
                 UNICAST_NOTIFICATION_ID)).thenReturn(noDeltaResponse.getResponse());
@@ -771,8 +791,8 @@ public class DefaultAkkaServiceTest {
 
         Mockito.verify(operationsService, Mockito.timeout(10 * TIMEOUT / 2).atLeastOnce()).updateSyncResponse(noDeltaResponse.getResponse(),
                 new ArrayList<NotificationDto>(), UNICAST_NOTIFICATION_ID);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
 
     }
 
@@ -808,12 +828,12 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce())
                 .updateSyncResponse(noDeltaResponseWithTopicState.getResponse(), Collections.singletonList(topicNotification), null);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     @Test
@@ -849,12 +869,12 @@ public class DefaultAkkaServiceTest {
         thriftNotification.setNotificationId(UNICAST_NOTIFICATION_ID);
         akkaService.onNotification(thriftNotification);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
         Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce())
                 .updateSyncResponse(noDeltaResponseWithTopicState.getResponse(), Collections.singletonList(topicNotification), null);
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     @Test
@@ -882,8 +902,8 @@ public class DefaultAkkaServiceTest {
         response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
 
         Thread.sleep(TIMEOUT / 2);
-        Mockito.verify(operationsService, Mockito.never()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.never()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] encodedData = crypt.encodeData(responseConverter.toByteArray(response));
@@ -967,8 +987,8 @@ public class DefaultAkkaServiceTest {
         response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
 
         Thread.sleep(TIMEOUT / 2);
-        Mockito.verify(operationsService, Mockito.never()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.never()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
         byte[] encodedData = crypt.encodeData(responseConverter.toByteArray(response));
@@ -1002,8 +1022,8 @@ public class DefaultAkkaServiceTest {
         response.setStatus(SyncResponseResultType.REDIRECT);
         response.setRedirectSyncResponse(new RedirectSyncResponse("testDNS".hashCode()));
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT / 2).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
     }
 
     @Test
@@ -1082,8 +1102,8 @@ public class DefaultAkkaServiceTest {
         akkaService.process(sourceMessage);
 
         // sourceRequest
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         MessageEncoderDecoder targetCrypt = new MessageEncoderDecoder(targetPair.getPrivate(), targetPair.getPublic(),
                 serverPair.getPublic());
@@ -1092,8 +1112,8 @@ public class DefaultAkkaServiceTest {
         akkaService.process(targetMessage);
 
         // targetRequest
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         SyncResponse eventResponse = new SyncResponse();
         eventResponse.setRequestId(REQUEST_ID);
@@ -1107,6 +1127,47 @@ public class DefaultAkkaServiceTest {
 
         Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(encodedData, true);
     }
+
+    @Test
+    public void testEndpointNotAttachedEvent() throws Exception {
+        AkkaContext context = mock(AkkaContext.class);
+        ActorContext actorCtxMock = mock(ActorContext.class);
+        ActorRef actorMock = spy(ActorRef.class);
+
+        ActorSystem system = ActorSystem.create();
+        try {
+            final Props props = Props.create(TestActor.class);
+            final TestActorRef<TestActor> parentMock = TestActorRef.create(system, props, "testA");
+
+            when(actorCtxMock.self()).thenReturn(actorMock);
+            when(actorCtxMock.parent()).thenReturn(parentMock);
+            EndpointEventReceiveMessage msg = mock(EndpointEventReceiveMessage.class);
+            LocalEndpointActorMessageProcessor processor = spy(new LocalEndpointActorMessageProcessor(
+                    context, APP_TOKEN, EndpointObjectHash.fromSHA1(clientPublicKeyHash.array()), "ACTOR_TOKEN"
+            ));
+            processor.processEndpointEventReceiveMessage(actorCtxMock, msg);
+            Assert.assertEquals(
+                    EndpointEventDeliveryMessage.EventDeliveryStatus.FAILURE,
+                    ((EndpointEventDeliveryMessage) parentMock.underlyingActor().getMsg()).getStatus());
+
+        } finally {
+            JavaTestKit.shutdownActorSystem(system);
+        }
+    }
+
+    private static class TestActor extends UntypedActor {
+        private Object msg;
+
+        @Override
+        public void onReceive(Object msg) throws Exception {
+            this.msg = (Object) msg;
+        }
+
+        public Object getMsg() {
+            return msg;
+        }
+    }
+
 
     @Test
     public void testEndpointEventSeqNumberBasic() throws Exception {
@@ -1155,8 +1216,8 @@ public class DefaultAkkaServiceTest {
         akkaService.process(sourceMessage);
 
         // sourceRequest
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         SyncResponse eventResponse = new SyncResponse();
         eventResponse.setRequestId(REQUEST_ID);
@@ -1216,8 +1277,8 @@ public class DefaultAkkaServiceTest {
                 targetRequest, responseBuilder, errorBuilder, targetCrypt);
         akkaService.process(targetMessage);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         org.kaaproject.kaa.server.sync.Event event = new org.kaaproject.kaa.server.sync.Event(0, FQN1, ByteBuffer.wrap(new byte[0]), null,
                 null);
@@ -1289,8 +1350,8 @@ public class DefaultAkkaServiceTest {
 
         akkaService.process(sourceMessage);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         UserRouteInfo userRouteInfo = new UserRouteInfo(TENANT_ID, USER_ID, SERVER2, RouteOperation.ADD);
         akkaService.getListener().onUserRouteInfo(userRouteInfo);
@@ -1302,7 +1363,7 @@ public class DefaultAkkaServiceTest {
         TimeUnit.SECONDS.sleep(2);
         akkaService.getListener().onRouteInfo(routeInfo);
 
-        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendEvent(Mockito.any(RemoteEndpointEvent.class));
+        Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendEvent(any(RemoteEndpointEvent.class));
     }
 
     @Test
@@ -1326,7 +1387,7 @@ public class DefaultAkkaServiceTest {
 
         LogAppender mockAppender = Mockito.mock(LogAppender.class);
         Mockito.when(logAppenderService.getApplicationAppenders(APP_ID)).thenReturn(Collections.singletonList(mockAppender));
-        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto()));
+        Mockito.when(logAppenderService.getLogSchema(Mockito.anyString(), Mockito.anyInt())).thenReturn(new LogSchema(new LogSchemaDto(), ""));
         EndpointProfileSchemaDto profileSchemaDto = new EndpointProfileSchemaDto();
         profileSchemaDto.setId("1");
         profileSchemaDto.setCtlSchemaId("22");
@@ -1360,15 +1421,15 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
         Mockito.verify(logAppenderService, Mockito.timeout(TIMEOUT).atLeastOnce()).getLogSchema(APP_ID, 44);
 
-        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(Mockito.any(BaseLogEventPack.class),
-                Mockito.any(LogDeliveryCallback.class));
+        Mockito.verify(mockAppender, Mockito.timeout(TIMEOUT).atLeastOnce()).doAppend(any(BaseLogEventPack.class),
+                any(LogDeliveryCallback.class));
 
-        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(byte[].class),
-                Mockito.any(boolean.class));
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
     }
 
     @Test
@@ -1415,8 +1476,8 @@ public class DefaultAkkaServiceTest {
 
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
         Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
 
         UserRouteInfo userRouteInfo = new UserRouteInfo(TENANT_ID, USER_ID, SERVER2, RouteOperation.ADD);
@@ -1503,8 +1564,8 @@ public class DefaultAkkaServiceTest {
 
         akkaService.process(targetMessage);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
         Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
 
         EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
@@ -1545,8 +1606,8 @@ public class DefaultAkkaServiceTest {
                 sourceRequest, sourceResponseBuilder, sourceErrorBuilder);
         akkaService.process(sourceMessage);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         SyncResponse targetSyncResponse = new SyncResponse();
         targetSyncResponse.setRequestId(REQUEST_ID);
@@ -1607,8 +1668,8 @@ public class DefaultAkkaServiceTest {
                 targetRequest, targetResponseBuilder, targetErrorBuilder, targetCrypt);
         akkaService.process(targetMessage);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
         Mockito.verify(eventService, Mockito.timeout(TIMEOUT).atLeastOnce()).sendUserRouteInfo(new UserRouteInfo(TENANT_ID, USER_ID));
 
         EndpointProfileDto sourceProfileMock = Mockito.mock(EndpointProfileDto.class);
@@ -1647,8 +1708,8 @@ public class DefaultAkkaServiceTest {
                 sourceRequest, sourceResponseBuilder, sourceErrorBuilder);
         akkaService.process(sourceMessage);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
         SyncResponse targetSyncResponse = new SyncResponse();
         targetSyncResponse.setRequestId(REQUEST_ID);
         targetSyncResponse.setStatus(SyncResponseResultType.SUCCESS);
@@ -1702,7 +1763,7 @@ public class DefaultAkkaServiceTest {
     // Mockito.timeout(TIMEOUT*100).atLeastOnce())
     // .refreshServerEndpointProfile(EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
     // }
-    
+
     //TODO: Implement tests that cover endpoint verification logic.
 
     @Test
@@ -1725,7 +1786,6 @@ public class DefaultAkkaServiceTest {
 
         MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
         ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
-        
         Mockito.when(registrationService.findEndpointRegistrationByCredentialsId(Mockito.anyString())).thenReturn(Optional.ofNullable((EndpointRegistrationDto)null));
 
         SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC, channelContextMock, request, responseBuilder,
@@ -1733,7 +1793,7 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointVerificationException.class));
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(EndpointVerificationException.class));
     }
     
     @Test
@@ -1765,7 +1825,7 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointVerificationException.class));
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(EndpointVerificationException.class));
     }
     
     @Test
@@ -1797,7 +1857,7 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointVerificationException.class));
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(EndpointVerificationException.class));
     }
     
     @Test
@@ -1826,22 +1886,66 @@ public class DefaultAkkaServiceTest {
         Assert.assertNotNull(akkaService.getActorSystem());
         akkaService.process(message);
 
-        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(Mockito.any(SyncContext.class),
-                Mockito.any(ProfileClientSync.class));
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
 
         Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
         whenSync(deltaResponse);
 
         EndpointAddress address = new EndpointAddress(applicationDto.getTenantId(), applicationDto.getApplicationToken(),
                 EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
-        ActorClassifier classifier =  ActorClassifier.APPLICATION;
-        
+        ActorClassifier classifier = ActorClassifier.APPLICATION;
+
         clusterServiceListener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftEndpointDeregistrationMessage>(
                 address, classifier, new ThriftEndpointDeregistrationMessage()));
 
-        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(Mockito.any(EndpointRevocationException.class));
+        Mockito.verify(errorBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(EndpointRevocationException.class));
     }
-    
+
+    @Test
+    public void testEndpointConfigurationRefresh() throws Exception {
+        ChannelContext channelContextMock = Mockito.mock(ChannelContext.class);
+        EndpointProfileDto profileDto = new EndpointProfileDto();
+        SyncRequest request = new SyncRequest();
+        request.setRequestId(REQUEST_ID);
+        SyncRequestMetaData md = buildSyncRequestMetaData();
+        request.setSyncRequestMetaData(md);
+
+        ConfigurationSyncRequest csRequest = new ConfigurationSyncRequest();
+        csRequest.setConfigurationHash(ByteBuffer.wrap("hash".getBytes()));
+        request.setConfigurationSyncRequest(csRequest);
+
+        Mockito.when(cacheService.getEndpointKey(EndpointObjectHash.fromBytes(clientPublicKeyHash.array())))
+                .thenReturn(clientPair.getPublic());
+        whenSync(noDeltaResponse);
+
+        MessageBuilder responseBuilder = Mockito.mock(MessageBuilder.class);
+        ErrorBuilder errorBuilder = Mockito.mock(ErrorBuilder.class);
+
+        SessionInitMessage message = toSignedRequest(UUID.randomUUID(), ChannelType.SYNC_WITH_TIMEOUT, channelContextMock, request,
+                responseBuilder, errorBuilder);
+        Assert.assertNotNull(akkaService.getActorSystem());
+        akkaService.process(message);
+        Mockito.verify(operationsService, Mockito.timeout(TIMEOUT).atLeastOnce()).syncClientProfile(any(SyncContext.class),
+                any(ProfileClientSync.class));
+
+        byte[] epsConfHash = "hash2".getBytes();
+        whenSync(deltaResponse);
+        Mockito.when(applicationService.findAppById(APP_ID)).thenReturn(applicationDto);
+        Mockito.when(operationsService.fetchEndpointSpecificConfigurationHash(any(EndpointProfileDto.class))).thenReturn(epsConfHash);
+        Mockito.when(operationsService.refreshServerEndpointProfile(any(EndpointObjectHash.class))).thenReturn(profileDto);
+        EndpointAddress address = new EndpointAddress(applicationDto.getTenantId(), applicationDto.getApplicationToken(),
+                EndpointObjectHash.fromBytes(clientPublicKeyHash.array()));
+        ActorClassifier classifier = ActorClassifier.GLOBAL;
+
+        ThriftEndpointConfigurationRefreshMessage msg = new ThriftEndpointConfigurationRefreshMessage(null, null);
+        clusterServiceListener.onEndpointActorMsg(new ThriftEndpointActorMsg<ThriftEndpointConfigurationRefreshMessage>(address, classifier, msg));
+
+        Mockito.verify(responseBuilder, Mockito.timeout(TIMEOUT).atLeastOnce()).build(any(byte[].class),
+                any(boolean.class));
+        Mockito.verify(operationsService).syncConfigurationHashes(any(SyncContext.class), isNull(byte[].class), eq(epsConfHash));
+    }
+
     private SyncRequestMetaData buildSyncRequestMetaData() {
         return buildSyncRequestMetaData(clientPublicKeyHash);
     }

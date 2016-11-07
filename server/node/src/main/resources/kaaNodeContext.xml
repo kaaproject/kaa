@@ -23,6 +23,7 @@
     xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
     xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:task="http://www.springframework.org/schema/task" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:cache="http://www.springframework.org/schema/cache"
     xsi:schemaLocation="
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -31,9 +32,11 @@
             http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
             http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+            http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
 
     <aop:aspectj-autoproxy />
+    <cache:annotation-driven />
     <context:component-scan base-package="org.kaaproject.kaa.server.node, org.kaaproject.kaa.server.control, org.kaaproject.kaa.server.bootstrap, org.kaaproject.kaa.server.operations" />
 
     <import resource="classpath:common-dao-context.xml" />
@@ -44,16 +47,31 @@
     <!-- Node configuration from properties file -->
 
     <bean id="kaaNodeServerConfig" class="org.kaaproject.kaa.server.node.service.config.KaaNodeServerConfig">
-        <property name="controlServerEnabled" value="#{properties[control_server_enabled]}" />
-        <property name="bootstrapServerEnabled" value="#{properties[bootstrap_server_enabled]}" />
-        <property name="operationsServerEnabled" value="#{properties[operations_server_enabled]}" />
+        <property name="controlServiceEnabled" value="#{properties[control_service_enabled]}" />
+        <property name="bootstrapServiceEnabled" value="#{properties[bootstrap_service_enabled]}" />
+        <property name="operationsServiceEnabled" value="#{properties[operations_service_enabled]}" />
         <property name="thriftHost" value="#{properties[thrift_host]}" />
         <property name="thriftPort" value="#{properties[thrift_port]}" />
         <property name="zkEnabled" value="#{properties[zk_enabled]}" />
         <property name="zkHostPortList" value="#{properties[zk_host_port_list]}" />
+        <property name="zkWaitConnectionTime" value="#{properties[zk_wait_connection_time]}" />
         <property name="zkMaxRetryTime" value="#{properties[zk_max_retry_time]}" />
         <property name="zkSleepTime" value="#{properties[zk_sleep_time]}" />
         <property name="zkIgnoreErrors" value="#{properties[zk_ignore_errors]}" />
+    </bean>
+
+    <!--Zookeeper client configuration-->
+
+    <bean id="zkRetryPolicy" class="org.apache.curator.retry.RetryUntilElapsed">
+        <constructor-arg name="maxElapsedTimeMs" value="#{properties[zk_max_retry_time]}"/>
+        <constructor-arg name="sleepMsBetweenRetries" value="#{properties[zk_sleep_time]}"/>
+    </bean>
+
+    <bean id="zkClient" class="org.apache.curator.framework.CuratorFrameworkFactory" factory-method="newClient">
+        <constructor-arg name="connectString" value="#{properties[zk_host_port_list]}"/>
+        <constructor-arg name="sessionTimeoutMs" value="60000"/>
+        <constructor-arg name="connectionTimeoutMs" value="3000"/>
+        <constructor-arg name="retryPolicy" ref="zkRetryPolicy"/>
     </bean>
 
     <!-- Kaa Node Service -->

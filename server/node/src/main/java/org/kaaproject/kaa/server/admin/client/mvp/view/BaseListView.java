@@ -32,6 +32,7 @@ public interface BaseListView<T extends HasId> extends IsWidget, HasErrorMessage
     HasClickHandlers getBackButton();
 
     void setBackEnabled(boolean enabled);
+    void setAddButtonEnabled(boolean enabled);
 
     MultiSelectionModel<T> getSelectionModel();
     AbstractGrid<T,String> getListWidget();

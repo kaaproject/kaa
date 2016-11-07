@@ -14,14 +14,14 @@
 # limitations under the License.
 
 #Configure node Kaa services
-if [ "$CONTROL_ENABLED" == "false" ]; then
-  sed -i "s/\(control_server_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
+if [ "$CONTROL_ENABLED" = "false" ]; then
+  sed -i "s/\(control_service_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
 fi
-if [ "$BOOTSTRAP_ENABLED" == "false" ]; then
-  sed -i "s/\(bootstrap_server_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
+if [ "$BOOTSTRAP_ENABLED" = "false" ]; then
+  sed -i "s/\(bootstrap_service_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
 fi
-if [ "$OPERATIONS_ENABLED" == "false" ]; then
-  sed -i "s/\(operations_server_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
+if [ "$OPERATIONS_ENABLED" = "false" ]; then
+  sed -i "s/\(operations_service_enabled *= *\).*/\1false/" /usr/lib/kaa-node/conf/kaa-node.properties
 fi
 
 #Specify default NoSQL database
@@ -38,9 +38,6 @@ fi
 [ "$CASSANDRA_HOSTS" ] && sed -i "s/\(node_list *= *\).*/\1$CASSANDRA_HOSTS/" /usr/lib/kaa-node/conf/common-dao-cassandra.properties;
 [ "$MONGODB_HOSTS" ] && sed -i "s/\(servers *= *\).*/\1$MONGODB_HOSTS/" /usr/lib/kaa-node/conf/common-dao-mongodb.properties;
 
-HOSTNAME=`ip route get 8.8.8.8 | awk '{print $NF; exit}'`
+HOSTNAME=$(ip route get 8.8.8.8 | awk '{print $NF; exit}')
 sed -i "s/\(thrift_host *= *\).*/\1$HOSTNAME/" /usr/lib/kaa-node/conf/kaa-node.properties
 sed -i "s/\(transport_public_interface *= *\).*/\1$HOSTNAME/" /usr/lib/kaa-node/conf/kaa-node.properties
-
-
-

@@ -85,12 +85,16 @@ public class EndpointServiceImpl implements EndpointService {
 
     @Autowired
     private EndpointGroupDao<EndpointGroup> endpointGroupDao;
+
     @Autowired
     private HistoryService historyService;
+
     @Autowired
     private ServerProfileService serverProfileService;
+
     @Autowired
     private CTLService ctlService;
+
     @Autowired
     private TopicDao<Topic> topicDao;
 
@@ -264,7 +268,15 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public void removeEndpointProfileByKeyHash(byte[] endpointProfileKeyHash) {
         validateHash(endpointProfileKeyHash, "Can't remove endpoint profile by key hash. Invalid key hash " + endpointProfileKeyHash);
-        endpointProfileDao.removeByKeyHash(endpointProfileKeyHash);
+        EndpointProfile endpointProfile = endpointProfileDao.findByKeyHash(endpointProfileKeyHash);
+        if(endpointProfile != null){
+            if (isValidId(endpointProfile.getEndpointUserId())) {
+                detachEndpointFromUser(getDto(endpointProfile));
+            }
+            endpointProfileDao.removeByKeyHash(endpointProfileKeyHash);
+        } else {
+            throw new DatabaseProcessingException("Endpoint profile is not present in db.");
+        }
     }
 
     @Override
@@ -326,6 +338,10 @@ public class EndpointServiceImpl implements EndpointService {
             endpointIds = new ArrayList<>();
             endpointUser.setEndpointIds(endpointIds);
         }
+        else if (endpointIds != null && endpointIds.contains(profile.getId())) {
+            LOG.warn("Endpoint is already assigned to current user {}.", profile.getEndpointUserId());
+            return profile;
+        }
         endpointIds.add(profile.getId());
         endpointUser = endpointUserDao.save(endpointUser);
         profile.setEndpointUserId(endpointUser.getId());
@@ -355,8 +371,8 @@ public class EndpointServiceImpl implements EndpointService {
                     LOG.debug("Attach endpoint profile with id {} to endpoint user with id {} ", endpoint.getId(), endpointUser.getId());
                     List<String> endpointIds = endpointUser.getEndpointIds();
                     if (endpointIds != null && endpointIds.contains(endpoint.getId())) {
-                        LOG.warn("Endpoint is already assigned to current user {}. Unassign it first!.", endpoint.getEndpointUserId());
-                        throw new DatabaseProcessingException("Endpoint is already assigned to current user.");
+                        LOG.warn("Endpoint is already assigned to current user {}.", endpoint.getEndpointUserId());
+                        return getDto(endpoint);
                     }
                     if (endpointIds == null) {
                         endpointIds = new ArrayList<>();

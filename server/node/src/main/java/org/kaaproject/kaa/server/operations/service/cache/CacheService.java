@@ -35,6 +35,8 @@ import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.structure.Pair;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
@@ -159,7 +161,7 @@ public interface CacheService {
      * @param worker the worker
      * @return the merged configuration
      */
-    BaseData getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, BaseData> worker);
+    Pair<BaseData, RawData> getMergedConfiguration(List<EndpointGroupStateDto> egsList, Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> worker);
 
     /**
      * Sets the merged configuration.
@@ -255,6 +257,15 @@ public interface CacheService {
      * @return cached endpoint key
      */
     PublicKey putEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
+
+    /**
+     *
+     * Remove key from hash
+     *
+     * @param hash the hash
+     * @param endpointKey the endpoint key
+     */
+    void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey);
 
     /**
      * Setter for test purpose only.

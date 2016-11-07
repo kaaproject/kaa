@@ -13,122 +13,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 # -*- mode: cmake; -*-
 # - Try to find libbotan include dirs and libraries
 # Usage of this module as follows:
+#   find_package(Botan)
 # This file defines:
 # * BOTAN_FOUND if protoc was found
 # * BOTAN_LIBRARY The lib to link to (currently only a static unix lib, not
-# portable) 
-# * BOTAN_INCLUDE The include directories for libbotan.
+# portable)
+# * BOTAN_INCLUDE_DIR The include directories for libbotan.
 
-message(STATUS "FindBotan check")
-IF (NOT WIN32)
-  include(FindPkgConfig)
-  if ( PKG_CONFIG_FOUND )
+message("\nLooking for Botan C++ headers and libraries")
 
-     pkg_check_modules (PC_BOTAN botan-1.11)
-
-     set(BOTAN_DEFINITIONS ${PC_BOTAN_CFLAGS_OTHER})
-  endif(PKG_CONFIG_FOUND)
-endif (NOT WIN32)
-
-#
-# set defaults
-SET(_botan_HOME "/usr/local")
-SET(_botan_INCLUDE_SEARCH_DIRS
-  ${CMAKE_INCLUDE_PATH}
-  /usr/local/include
-  /usr/include
-  )
-
-SET(_botan_LIBRARIES_SEARCH_DIRS
-  ${CMAKE_LIBRARY_PATH}
-  /usr/local/lib
-  /usr/lib
-  )
-
-##
-if( "${BOTAN_ROOT}" STREQUAL "")
-  if("" MATCHES "$ENV{BOTAN_ROOT}")
-    message(STATUS "BOTAN_ROOT env is not set, setting it to /usr/local")
-    set (BOTAN_ROOT ${_botan_HOME})
-  else("" MATCHES "$ENV{BOTAN_ROOT}")
-    set (BOTAN_ROOT "$ENV{BOTAN_ROOT}")
-  endif("" MATCHES "$ENV{BOTAN_ROOT}")
-else( "${BOTAN_ROOT}" STREQUAL "")
-  message(STATUS "BOTAN_ROOT is not empty: \"${BOTAN_ROOT}\"")
-endif( "${BOTAN_ROOT}" STREQUAL "")
-##
-
-message(STATUS "Looking for botan in ${BOTAN_ROOT}")
-
-IF( NOT ${BOTAN_ROOT} STREQUAL "" )
-    SET(_botan_INCLUDE_SEARCH_DIRS 
-        ${BOTAN_ROOT}/include
-        ${_botan_INCLUDE_SEARCH_DIRS}
-    )
-    SET(_botan_LIBRARIES_SEARCH_DIRS 
-        ${BOTAN_ROOT}
-        ${BOTAN_ROOT}/lib
-        ${_botan_LIBRARIES_SEARCH_DIRS}
-    )    
-    SET(_botan_HOME ${BOTAN_ROOT})
-ENDIF( NOT ${BOTAN_ROOT} STREQUAL "" )
-
-IF( NOT $ENV{BOTAN_INCLUDEDIR} STREQUAL "" )
-  SET(_botan_INCLUDE_SEARCH_DIRS $ENV{BOTAN_INCLUDEDIR} ${_botan_INCLUDE_SEARCH_DIRS})
-ENDIF( NOT $ENV{BOTAN_INCLUDEDIR} STREQUAL "" )
-
-IF( NOT $ENV{BOTAN_LIBRARYDIR} STREQUAL "" )
-  SET(_botan_LIBRARIES_SEARCH_DIRS $ENV{BOTAN_LIBRARYDIR} ${_botan_LIBRARIES_SEARCH_DIRS})
-ENDIF( NOT $ENV{BOTAN_LIBRARYDIR} STREQUAL "" )
-
-IF( BOTAN_ROOT )
-  SET(_botan_INCLUDE_SEARCH_DIRS ${BOTAN_ROOT}/include ${_botan_INCLUDE_SEARCH_DIRS})
-  SET(_botan_LIBRARIES_SEARCH_DIRS ${BOTAN_ROOT}/lib ${_botan_LIBRARIES_SEARCH_DIRS})
-  SET(_botan_HOME ${BOTAN_ROOT})
-ENDIF( BOTAN_ROOT )
+if(NOT WIN32)
+    include(FindPkgConfig)
+    if(PKG_CONFIG_FOUND)
+        pkg_check_modules(BOTAN botan-1.11)
+    endif(PKG_CONFIG_FOUND)
+endif(NOT WIN32)
 
 # find the include files
-FIND_PATH(BOTAN_INCLUDE_DIR botan/version.h
-   HINTS
-     ${_botan_INCLUDE_SEARCH_DIRS}
-     ${PC_BOTAN_INCLUDEDIR}
-     ${PC_BOTAN_INCLUDE_DIRS}
-    ${CMAKE_INCLUDE_PATH}
-)
+find_path(BOTAN_INCLUDE_DIR
+    botan/version.h
+    HINTS
+    ${CMAKE_FIND_ROOT_PATH}/include
+    ${BOTAN_INCLUDE_DIRS})
 
 # locate the library
-IF(WIN32)
-  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.lib botan.lib)
-ELSE(WIN32)
-  SET(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.so libbotan-1.11.so)
-ENDIF(WIN32)
-FIND_LIBRARY(BOTAN_LIBRARY NAMES ${BOTAN_LIBRARY_NAMES}
-  HINTS
-    ${_botan_LIBRARIES_SEARCH_DIRS}
-    ${PC_BOTAN_LIBDIR}
-    ${PC_BOTAN_LIBRARY_DIRS}
+if(WIN32)
+    set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan)
+else(WIN32)
+    if(Botan_USE_STATIC_LIBS)
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.a libbotan-1.11.a)
+    else(Botan_USE_STATIC_LIBS)
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
+    endif(Botan_USE_STATIC_LIBS)
+endif(WIN32)
+
+find_library(BOTAN_LIBRARY
+    NAMES
+    ${BOTAN_LIBRARY_NAMES}
+    PATHS
+    ${CMAKE_FIND_ROOT_PATH}/lib
+    ${BOTAN_LIBRARY_DIRS})
+
+include(FindPackageHandleStandardArgs)
+
+# handle the QUIETLY and REQUIRED arguments and set BOTAN_FOUND to TRUE
+# if all listed variables are TRUE
+find_package_handle_standard_args(Botan
+    DEFAULT_MSG
+    BOTAN_LIBRARY
+    BOTAN_INCLUDE_DIR
 )
 
-# if the include and the program are found then we have it
-IF(BOTAN_INCLUDE_DIR AND BOTAN_LIBRARY) 
-  SET(BOTAN_FOUND "YES")
-ENDIF(BOTAN_INCLUDE_DIR AND BOTAN_LIBRARY)
+if(NOT WIN32 AND NOT APPLE)
+    list(APPEND BOTAN_LIBRARY "-lrt")
+endif(NOT WIN32 AND NOT APPLE)
 
-if( NOT WIN32 AND NOT APPLE)
-  list(APPEND BOTAN_LIBRARY "-lrt")
-endif( NOT WIN32 AND NOT APPLE)
+mark_as_advanced(BOTAN_FOUND
+    BOTAN_LIBRARY
+    BOTAN_INCLUDE_DIR)
 
-MARK_AS_ADVANCED(
-  BOTAN_FOUND
-  BOTAN_LIBRARY
-  BOTAN_INCLUDE_DIR
-)
-
-if (BOTAN_FOUND)
-    message (STATUS "Include directory: ${BOTAN_INCLUDE_DIR}")
-    message (STATUS "Library: ${BOTAN_LIBRARY}")
-endif ()
+if(BOTAN_FOUND)
+    message(STATUS "Include directory: ${BOTAN_INCLUDE_DIR}")
+    message(STATUS "Library: ${BOTAN_LIBRARY}")
+endif()

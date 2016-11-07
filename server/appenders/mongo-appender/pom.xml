@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.server</groupId>
-        <version>0.9.0</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>appenders</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server.appenders</groupId>
@@ -89,6 +89,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kaaproject.kaa.server.common.nosql</groupId>
+            <artifactId>mongo-dao</artifactId>
         </dependency>
     </dependencies>
 

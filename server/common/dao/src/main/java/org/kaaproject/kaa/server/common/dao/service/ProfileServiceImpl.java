@@ -16,28 +16,24 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
+import java.text.ParseException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.kaaproject.kaa.common.dto.ChangeDto;
-import org.kaaproject.kaa.common.dto.ChangeNotificationDto;
-import org.kaaproject.kaa.common.dto.ChangeProfileFilterNotification;
-import org.kaaproject.kaa.common.dto.ChangeType;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
-import org.kaaproject.kaa.common.dto.ProfileVersionPairDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.avro.ui.shared.Base64Utils;
+import org.kaaproject.kaa.common.dto.*;
+import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointGroupDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileFilterDao;
 import org.kaaproject.kaa.server.common.dao.impl.ProfileSchemaDao;
+import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointGroup;
 import org.kaaproject.kaa.server.common.dao.model.sql.EndpointProfileSchema;
 import org.kaaproject.kaa.server.common.dao.model.sql.ProfileFilter;
@@ -79,6 +75,14 @@ public class ProfileServiceImpl implements ProfileService {
     private HistoryService historyService;
     @Autowired
     private ServerProfileService serverProfileService;
+    @Autowired
+    private EndpointService endpointService;
+
+    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
+
+    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
+        this.endpointProfileDao = endpointProfileDao;
+    }
 
     @Override
     public List<EndpointProfileSchemaDto> findProfileSchemasByAppId(String applicationId) {
@@ -198,8 +202,9 @@ public class ProfileServiceImpl implements ProfileService {
             }
         }
         if (record.isEmpty()) {
-            LOG.debug("Can't find related profile filter record for endpoint schema {}, server schema {} and group {}.", endpointProfileSchemaId, endpointGroupId);
-            throw new IncorrectParameterException("Profile filter record not found, endpointProfileSchemaId: " + endpointProfileSchemaId
+            LOG.debug("Can't find related profile filter record for endpoint schema {}, server schema {} and group {}.", endpointProfileSchemaId,
+                    serverProfileSchemaId, endpointGroupId);
+            throw new NotFoundException("Profile filter record not found, endpointProfileSchemaId: " + endpointProfileSchemaId
                     + ", serverProfileSchemaId: " + serverProfileSchemaId + " endpointGroupId: " + endpointGroupId);
         }
         return record;
@@ -427,6 +432,14 @@ public class ProfileServiceImpl implements ProfileService {
         validateId(groupId, "Can't find profile filter. Invalid group id: " + groupId);
         return getDto(profileFilterDao.findLatestFilter(endpointProfileSchemaId, serverProfileSchemaId, groupId));
     }
+
+    @Override
+    public EndpointProfileDto findEndpointProfileByEndpointKeyHash(String endpointKeyHash) {
+        byte[] hash= Base64.decodeBase64(endpointKeyHash);
+            EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(hash);
+        return endpointProfile;
+    }
+
 
     private HistoryDto addHistory(ProfileFilterDto dto, ChangeType type) {
         LOG.debug("Add history information about profile filter update with change type {} ", type);

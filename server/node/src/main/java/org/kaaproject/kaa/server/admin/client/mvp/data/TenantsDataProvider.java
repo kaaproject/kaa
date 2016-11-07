@@ -19,30 +19,30 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 import java.util.List;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TenantsDataProvider extends AbstractDataProvider<TenantUserDto, String>{
+public class TenantsDataProvider extends AbstractDataProvider<TenantDto, String>{
 
-    public TenantsDataProvider(AbstractGrid<TenantUserDto, String> dataGrid,
+    public TenantsDataProvider(AbstractGrid<TenantDto, String> dataGrid,
                                HasErrorMessage hasErrorMessage) {
         super(dataGrid, hasErrorMessage);
     }
 
     @Override
     protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadTenants(new AsyncCallback<List<TenantUserDto>>() {
+        KaaAdmin.getDataSource().loadTenants(new AsyncCallback<List<TenantDto>>() {
             @Override
             public void onFailure(Throwable caught) {
                 callback.onFailure(caught);
 
             }
             @Override
-            public void onSuccess(List<TenantUserDto> result) {
+            public void onSuccess(List<TenantDto> result) {
                 callback.onSuccess(result);
             }
         });

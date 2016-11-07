@@ -16,17 +16,16 @@
 
 set(KAA_SOURCE_FILES
         ${KAA_SOURCE_FILES}
-        ${KAA_SRC_FOLDER}/platform-impl/posix/posix_kaa_client.c
+        ${KAA_SRC_FOLDER}/platform-impl/posix/kaa_client.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_failover_strategy.c
         ${KAA_SRC_FOLDER}/platform-impl/common/sha.c
-        ${KAA_SRC_FOLDER}/platform-impl/common/sha1.c
         ${KAA_SRC_FOLDER}/platform-impl/cc32xx/logger.c
-        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_file_utils.c
-        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_key_utils.c
-        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_status.c
-        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_configuration_persistence.c
-        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_time.c
-        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_reboot.c
+        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/file_utils.c
+        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/status.c
+        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/configuration_persistence.c
+        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/time.c
+        ${KAA_SRC_FOLDER}/platform-impl/cc32xx/reboot.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/key_utils.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_storage_memory.c
         ${KAA_SRC_FOLDER}/platform-impl/common/ext_log_upload_strategies.c
         )
@@ -36,7 +35,7 @@ if(NOT KAA_WITHOUT_TCP_CHANNEL)
             ${KAA_SOURCE_FILES}
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_parser.c
             ${KAA_SRC_FOLDER}/kaa_protocols/kaa_tcp/kaatcp_request.c
-            ${KAA_SRC_FOLDER}/platform-impl/cc32xx/cc32xx_tcp_utils.c
+            ${KAA_SRC_FOLDER}/platform-impl/cc32xx/tcp_utils.c
             ${KAA_SRC_FOLDER}/platform-impl/common/kaa_tcp_channel.c
             )
 endif()
@@ -55,7 +54,7 @@ set(CC32XX_INCDIRS ${CC32XX_SDK}/inc
         ${CC32XX_SDK}/example/common
         )
 
-set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${CC32XX_INCDIRS})
+    set(KAA_INCLUDE_PATHS ${KAA_INCLUDE_PATHS} ${CC32XX_INCDIRS} ${KAA_SRC_FOLDER}/platform-impl/cc32xx)
 
 
 add_library(driver STATIC IMPORTED)
@@ -69,9 +68,3 @@ add_definitions(-DCC32XX_PLATFORM)
 set(KAA_THIRDPARTY_LIBRARIES driver simplelink_nonos)
 
 set(KAA_BUILD_STATIC_ONLY 1)
-
-set(CC32XX_RSA_KEY ${CMAKE_CURRENT_BINARY_DIR}/cc32xx_rsa_key.h)
-
-execute_process(COMMAND rm ${CC32XX_RSA_KEY})
-execute_process(COMMAND java -jar ${KAA_SDK_DIR}/tools/pub_key_generator.jar ${CC32XX_RSA_KEY})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})

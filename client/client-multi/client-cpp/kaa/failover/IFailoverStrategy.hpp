@@ -18,56 +18,16 @@
 #define IFAILOVERSTRATEGY_HPP_
 
 #include <memory>
-#include <cstdint>
+
+#include "kaa/failover/FailoverCommon.hpp"
 
 namespace kaa {
 
-enum class KaaFailoverReason {
-    BOOTSTRAP_SERVERS_NA = 0,   /*!< No accessible bootstrap servers. */
-    NO_OPERATION_SERVERS_RECEIVED,
-    OPERATION_SERVERS_NA,
-    CURRENT_BOOTSTRAP_SERVER_NA,
-    NO_CONNECTIVITY,
-    ENDPOINT_NOT_REGISTERED,
-    CREDENTIALS_REVOKED,
-};
-
-enum class FailoverStrategyAction {
-    NOOP = 0,                   /*!< Nothing to be done. */
-    RETRY,                      /*!< Initiate log upload. */
-    USE_NEXT_BOOTSTRAP,
-    USE_NEXT_OPERATIONS,
-    STOP_CLIENT,
-};
-
-class FailoverStrategyDecision {
-
-public:
-	FailoverStrategyDecision(const FailoverStrategyAction& action, const std::int32_t& retryPeriod)
-        : action_(action), retryPeriod_(retryPeriod) {}
-
-	FailoverStrategyDecision(const FailoverStrategyAction& action)
-        : action_(action), retryPeriod_(0) {}
-
-	FailoverStrategyAction getAction() const {
-            return action_;
-        }
-
-        std::size_t getRetryPeriod() const {
-            return retryPeriod_;
-        }
-
-private:
-	FailoverStrategyAction action_;
-	std::size_t retryPeriod_;
-};
-
 class IFailoverStrategy {
 public:
+    virtual FailoverStrategyDecision onFailover(KaaFailoverReason failover) = 0;
 
-	virtual FailoverStrategyDecision onFailover(KaaFailoverReason failover) = 0;
-
-	virtual ~IFailoverStrategy() {}
+    virtual ~IFailoverStrategy() {}
 
 };
 

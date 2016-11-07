@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 /**
- * @brief Kaa channel manager structure.
+ * Kaa channel manager structure.
  */
 #ifndef KAA_CHANNEL_MANAGER_T
 # define KAA_CHANNEL_MANAGER_T
@@ -45,15 +45,15 @@ typedef struct kaa_channel_manager_t    kaa_channel_manager_t;
 
 
 /**
- * @brief Calculates the unique id for the transport channel implementations.
+ * Calculates the unique id for the transport channel implementations.
  *
  * @param[in]       channel       Interface of the transport channel implementations.
  * @param[in,out]   channel_id    Pointer to calculated channel id.
  *
  * @return                        Error code.
  */
-kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t *channel
-                                             , uint32_t *channel_id);
+kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t *channel,
+        uint32_t *channel_id);
 
 /**
  * @brief Adds user-defined transport channel implementation as a sync request
@@ -72,18 +72,19 @@ kaa_error_t kaa_transport_channel_id_calculate(kaa_transport_channel_interface_t
  *
  * @return                        Error code.
  */
-kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *self
-                                                    , kaa_transport_channel_interface_t *channel
-                                                    , uint32_t *channel_id);
+kaa_error_t kaa_channel_manager_add_transport_channel(kaa_channel_manager_t *self,
+        kaa_transport_channel_interface_t *channel,
+        uint32_t *channel_id);
 
 /**
- * @brief Gets transport channel associated with the service.
+ * Gets transport channel associated with the service.
+ *
  * @param[in] self          Channel manager.
  * @param[in] service_type  Type of service with associated channel.
  * @return                  Channel, if found. NULL if not found.
  */
 kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa_channel_manager_t *self,
-                                                                             kaa_extension_id service_type);
+        kaa_extension_id service_type);
 
 
 /**
@@ -98,8 +99,52 @@ kaa_transport_channel_interface_t *kaa_channel_manager_get_transport_channel(kaa
  *
  * @return                    Error code.
  */
-kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *self
-                                                       , uint32_t channel_id);
+kaa_error_t kaa_channel_manager_remove_transport_channel(kaa_channel_manager_t *self,
+        uint32_t channel_id);
+
+
+
+/**
+ * Specifies authorization failure reason.
+ *
+ */
+typedef enum {
+    KAA_AUTH_STATUS_UNKNOWN, /**< Authorization failed for unknown reason. */
+    KAA_AUTH_STATUS_BAD_CREDENTIALS, /**< Authorization failed because credentials are invalid. */
+    KAA_AUTH_STATUS_VERIFICATION_FAILED, /**< Authorization failed because of verification failure. */
+} kaa_auth_failure_reason;
+
+
+
+/**
+ * Processes authorization failure.
+ *
+ * @param[in]  reason           Authorization failure reason.
+ * @param[in]  context          Handler context.
+ */
+typedef void (*kaa_auth_failure_fn)(kaa_auth_failure_reason reason, void *context);
+
+
+
+/**
+ * Specify authorization failure handler
+ *
+ * @param[in]   self            Channel manager.
+ * @param[in]   handler         Authorization failure handler.
+ * @param[in]   context         Handler context.
+ */
+void kaa_channel_manager_set_auth_failure_handler(kaa_channel_manager_t *self,
+        kaa_auth_failure_fn handler, void *context);
+
+
+/**
+ * Processes authorization failure if valid handler exists.
+ *
+ * @param[in]   self            Channel manager.
+ * @param[in]   reason          Authorization failure reason.
+ */
+void kaa_channel_manager_process_auth_failure(kaa_channel_manager_t *self,
+        kaa_auth_failure_reason reason);
 
 #ifdef __cplusplus
 }      /* extern "C" */

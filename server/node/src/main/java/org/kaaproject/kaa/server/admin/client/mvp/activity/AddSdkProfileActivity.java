@@ -150,18 +150,6 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
         entity.setLogSchemaVersion(detailsView.getLogSchemaVersion().
                 getValue().getVersion());
 
-        List<String> aefMapIds = new ArrayList<>();
-        List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();
-        if (aefMaps != null) {
-            for (AefMapInfoDto aefMap : aefMaps) {
-                aefMapIds.add(aefMap.getAefMapId());
-            }
-        }
-        entity.setAefMapIds(aefMapIds);
-        if (detailsView.getDefaultUserVerifier().getValue() != null) {
-            entity.setDefaultVerifierToken(detailsView.getDefaultUserVerifier()
-                    .getValue().getVerifierToken());
-        }
     }
 
     @Override
@@ -177,24 +165,49 @@ public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto
     protected void doSave(final EventBus eventBus) {
         onSave();
 
-        if (!entity.getAefMapIds().isEmpty() && entity.getDefaultVerifierToken() == null) {
-            detailsView.setErrorMessage(Utils.constants.specifyVerifier());
-        } else {
+        final List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();
 
-            KaaAdmin.getDataSource().addSdkProfile(entity, new BusyAsyncCallback<SdkProfileDto>() {
+        final SdkProfileDto sdkProfileDto = entity;
 
-                @Override
-                public void onSuccessImpl(SdkProfileDto result) {
-                    detailsView.reset();
-                    AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
+
+        KaaAdmin.getDataSource().validateECFListInSdkProfile(aefMaps, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Utils.handleException(caught, detailsView);
+            }
+
+            @Override
+            public void onSuccess(Void aVoid) {
+                List<String> aefMapIds = new ArrayList<>();
+                if (aefMaps != null) {
+                    for (AefMapInfoDto aefMap : aefMaps) {
+                        aefMapIds.add(aefMap.getAefMapId());
+                    }
                 }
-
-                @Override
-                public void onFailureImpl(Throwable caught) {
-                    Utils.handleException(caught, detailsView);
+                sdkProfileDto.setAefMapIds(aefMapIds);
+                if (detailsView.getDefaultUserVerifier().getValue() != null) {
+                    sdkProfileDto.setDefaultVerifierToken(detailsView.getDefaultUserVerifier()
+                            .getValue().getVerifierToken());
                 }
-            });
-        }
+                entity = sdkProfileDto;
+                if (!sdkProfileDto.getAefMapIds().isEmpty() && sdkProfileDto.getDefaultVerifierToken() == null) {
+                    detailsView.setErrorMessage(Utils.constants.specifyVerifier());
+                } else {
+                    KaaAdmin.getDataSource().addSdkProfile(sdkProfileDto, new BusyAsyncCallback<SdkProfileDto>() {
+                        @Override
+                        public void onSuccessImpl(SdkProfileDto result) {
+                            detailsView.reset();
+                            AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
+                        }
+
+                        @Override
+                        public void onFailureImpl(Throwable caught) {
+                            Utils.handleException(caught, detailsView);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override

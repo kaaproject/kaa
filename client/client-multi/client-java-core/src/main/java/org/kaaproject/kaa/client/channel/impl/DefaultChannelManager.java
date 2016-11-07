@@ -145,14 +145,14 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             } else {
                 if (lastServers != null && lastServers.isEmpty()) {
                     if (channel.getServerType() == ServerType.BOOTSTRAP) {
-                        LOG.warn("Failed to find bootstrap server for channel [{}] type {}", channel.getId(),
+                        LOG.warn("Failed to find bootstrap service for channel [{}] type {}", channel.getId(),
                                 channel.getTransportProtocolId());
                     } else {
-                        LOG.info("Failed to find operations server for channel [{}] type {}", channel.getId(),
+                        LOG.info("Failed to find operations service for channel [{}] type {}", channel.getId(),
                                 channel.getTransportProtocolId());
                     }
                 } else {
-                    LOG.debug("list of servers is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
+                    LOG.debug("list of services is empty for channel [{}] type {}", channel.getId(), channel.getTransportProtocolId());
                 }
             }
         }
@@ -270,7 +270,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
             return;
         }
         if (newServer.getServerType() == ServerType.OPERATIONS) {
-            LOG.info("Adding new operations server: {}", newServer);
+            LOG.info("Adding new operations service: {}", newServer);
             lastServers.put(newServer.getTransportId(), newServer);
         }
 
@@ -297,7 +297,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
         if (server.getServerType() == ServerType.BOOTSTRAP) {
             final TransportConnectionInfo nextConnectionInfo = getNextBootstrapServer(server);
             if (nextConnectionInfo != null) {
-                LOG.trace("Using next bootstrap server");
+                LOG.trace("Using next bootstrap service");
                 FailoverDecision decision = failoverManager.onFailover(FailoverStatus.CURRENT_BOOTSTRAP_SERVER_NA);
                 switch (decision.getAction()) {
                     case NOOP:
@@ -305,7 +305,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         break;
                     case RETRY:
                         long retryPeriod = decision.getRetryPeriod();
-                        LOG.warn("Attempt to reconnect to the current bootstrap server will be made in {} ms, " +
+                        LOG.warn("Attempt to reconnect to the current bootstrap service will be made in {} ms, " +
                                 "according to failover strategy decision", retryPeriod);
                         executorContext.getScheduledExecutor().schedule(new Runnable() {
                             @Override
@@ -316,7 +316,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         break;
                     case USE_NEXT_BOOTSTRAP:
                         retryPeriod = decision.getRetryPeriod();
-                        LOG.warn("Attempt to connect to the next bootstrap server will be made in {} ms, " +
+                        LOG.warn("Attempt to connect to the next bootstrap service will be made in {} ms, " +
                                     "according to failover strategy decision", retryPeriod);
                         executorContext.getScheduledExecutor().schedule(new Runnable() {
                             @Override
@@ -333,7 +333,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         break;
                 }
             } else {
-                LOG.trace("Can't find next bootstrap server");
+                LOG.trace("Can't find next bootstrap service");
                 FailoverDecision decision = failoverManager.onFailover(status);
                 switch (decision.getAction()) {
                     case NOOP:
@@ -341,7 +341,7 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         break;
                     case RETRY:
                         long retryPeriod = decision.getRetryPeriod();
-                        LOG.warn("Attempt to reconnect to first bootstrap server will be made in {} ms, " +
+                        LOG.warn("Attempt to reconnect to first bootstrap service will be made in {} ms, " +
                                  "according to failover strategy decision", retryPeriod);
                         executorContext.getScheduledExecutor().schedule(new Runnable() {
                             @Override
@@ -537,7 +537,11 @@ public class DefaultChannelManager implements KaaInternalChannelManager {
                         channel.sync(task.getTypes());
                     }
                 } catch (InterruptedException e) {
-                    LOG.debug("[{}] Worker is interrupted", channel.getId(), e);
+                    if (stop) {
+                        LOG.debug("[{}] Worker is interrupted.", channel.getId());
+                    } else {
+                        LOG.warn("[{}] Worker is interrupted.", channel.getId(), e);
+                    }
                 }
             }
             LOG.debug("[{}] Worker stopped", channel.getId());

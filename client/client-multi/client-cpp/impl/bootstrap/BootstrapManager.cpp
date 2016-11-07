@@ -30,7 +30,8 @@
 
 namespace kaa {
 
-void BootstrapManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
+void BootstrapManager::setFailoverStrategy(IFailoverStrategyPtr strategy)
+{
     failoverStrategy_ = strategy;
 }
 
@@ -56,55 +57,66 @@ BootstrapManager::OperationsServers BootstrapManager::getOPSByAccessPointId(std:
     return servers;
 }
 
-void BootstrapManager::useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason reason)
+void BootstrapManager::onOperationsServerFailed(const TransportProtocolId& protocolId, KaaFailoverReason reason)
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
     auto lastServerIt = lastOperationsServers_.find(protocolId);
     auto serverIt = operationServers_.find(protocolId);
 
-    if (lastServerIt != lastOperationsServers_.end() && serverIt != operationServers_.end()) {
-        OperationsServers::iterator nextOperationIterator = (lastServerIt->second)+1;
-        if (nextOperationIterator != serverIt->second.end()) {
-            KAA_LOG_INFO(boost::format("New server [%1%] will be user for %2%")
-                                       % (*nextOperationIterator)->getAccessPointId()
-                                       % LoggingUtils::TransportProtocolIdToString(protocolId));
+    if (lastServerIt == lastOperationsServers_.end() || serverIt == operationServers_.end()) {
+        throw KaaException("There are no available services at the time");
+    }
 
-            lastOperationsServers_[protocolId] = nextOperationIterator;
+    FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
+    switch (decision.getAction()) {
+        case FailoverStrategyAction::NOOP:
+            KAA_LOG_WARN(boost::format("No decision for '%s' failover") % LoggingUtils::toString(reason));
+            break;
+        case FailoverStrategyAction::RETRY_CURRENT_SERVER:
+        {
+            std::size_t period = decision.getRetryPeriod();
 
-            if (channelManager_ != nullptr) {
-                channelManager_->onTransportConnectionInfoUpdated(*(nextOperationIterator));
-            } else {
-                KAA_LOG_ERROR("Can not process server change. Channel manager was not specified");
-            }
-        } else {
-            KAA_LOG_WARN(boost::format("Failed to find server for channel %1%.")
-                         % LoggingUtils::TransportProtocolIdToString(protocolId));
+            KAA_LOG_WARN(boost::format("Attempt to reconnect to current Operations service will be made in %1% seconds") % period);
 
-            FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
-            switch (decision.getAction()) {
-                case FailoverStrategyAction::NOOP:
-                    KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
-                    break;
-                case FailoverStrategyAction::RETRY:
-                {
-                    std::size_t period = decision.getRetryPeriod();
-                    KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
-                                               "according to failover strategy decision.") % period);
-                    retryTimer_.stop();
-                    retryTimer_.start(period, [&] { receiveOperationsServerList(); });
-                    break;
-                }
-                case FailoverStrategyAction::STOP_CLIENT:
-                    KAA_LOG_WARN("Stopping client according to failover strategy decision!");
-                    client_->stop();
-                    break;
-                default:
-                    break;
-            }
+            auto currentOperationsServer = *(lastServerIt->second);
+
+            retryTimer_.stop();
+            retryTimer_.start(period,
+                             [this, currentOperationsServer]
+                                  {
+                                       channelManager_->onTransportConnectionInfoUpdated(currentOperationsServer);
+                                  });
+            break;
         }
-    } else {
-        throw KaaException("There are no available servers at the time");
+        case FailoverStrategyAction::USE_NEXT_OPERATIONS_SERVER:
+        {
+            OperationsServers::iterator nextOperationIterator = (lastServerIt->second) + 1;
+            if (nextOperationIterator != serverIt->second.end()) {
+                KAA_LOG_INFO(boost::format("New Operations service [%1%] will be used for %2%")
+                                           % (*nextOperationIterator)->getAccessPointId()
+                                           % LoggingUtils::toString(protocolId));
+
+                lastOperationsServers_[protocolId] = nextOperationIterator;
+
+                channelManager_->onTransportConnectionInfoUpdated(*nextOperationIterator);
+            } else {
+                KAA_LOG_WARN(boost::format("No Operations services are accessible for %1%.")
+                                                         % LoggingUtils::toString(protocolId));
+
+                onCurrentBootstrapServerFailed(KaaFailoverReason::ALL_OPERATIONS_SERVERS_NA);
+            }
+            break;
+        }
+        case FailoverStrategyAction::STOP_CLIENT:
+            KAA_LOG_WARN("Stopping client according to failover strategy decision!");
+            client_->stop();
+            break;
+        default:
+            KAA_LOG_WARN(boost::format("Unexpected '%s' decision for Operations '%s' failover")
+                                                                 % LoggingUtils::toString(decision)
+                                                                 % LoggingUtils::toString(reason));
+            break;
     }
 }
 
@@ -112,7 +124,7 @@ void BootstrapManager::useNextOperationsServerByAccessPointId(std::int32_t id)
 {
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
-    KAA_LOG_DEBUG(boost::format("Going to use new operations server: access_point=0x%X") % id);
+    KAA_LOG_DEBUG(boost::format("Going to use new operations service: access_point=0x%X") % id);
 
     auto servers = getOPSByAccessPointId(id);
     if (servers.size() > 0) {
@@ -139,44 +151,27 @@ void BootstrapManager::setChannelManager(IKaaChannelManager* manager)
     channelManager_ = manager;
 }
 
+void BootstrapManager::onCurrentBootstrapServerFailed(KaaFailoverReason reason)
+{
+    KAA_LOG_TRACE(boost::format("Processing '%s' failover...") % LoggingUtils::toString(reason));
+
+    auto channel = channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP);
+    if (channel) {
+        channelManager_->onServerFailed(channel->getServer(), reason);
+    }
+}
+
 void BootstrapManager::onServerListUpdated(const std::vector<ProtocolMetaData>& operationsServers)
 {
     if (operationsServers.empty()) {
-        KAA_LOG_WARN("Received empty operations server list");
-
-        KaaFailoverReason failoverReason = KaaFailoverReason::NO_OPERATION_SERVERS_RECEIVED;
-        FailoverStrategyDecision decision = failoverStrategy_->onFailover(failoverReason);
-        switch (decision.getAction()) {
-        case FailoverStrategyAction::NOOP:
-            KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
-            break;
-        case FailoverStrategyAction::RETRY:
-        {
-            std::size_t period = decision.getRetryPeriod();
-            KAA_LOG_WARN(boost::format("Attempt to receive operations server list will be made in %1% secs "
-                                       "according to failover strategy decision.") % period);
-            retryTimer_.stop();
-            retryTimer_.start(period, [&] { receiveOperationsServerList(); });
-            break;
-        }
-        case FailoverStrategyAction::USE_NEXT_BOOTSTRAP:
-            KAA_LOG_WARN("Try next bootstrap server.");
-            channelManager_->onServerFailed(channelManager_->getChannelByTransportType(TransportType::BOOTSTRAP)->getServer(),
-                                            failoverReason);
-            break;
-        case FailoverStrategyAction::STOP_CLIENT:
-            KAA_LOG_WARN("Stopping client according to failover strategy decision!");
-            client_->stop();
-            break;
-        default:
-            break;
-        }
+        KAA_LOG_WARN("Received empty operations service list");
+        onCurrentBootstrapServerFailed(KaaFailoverReason::NO_OPERATIONS_SERVERS_RECEIVED);
         return;
     }
 
     KAA_R_MUTEX_UNIQUE_DECLARE(lock, guard_);
 
-    KAA_LOG_INFO(boost::format("Received %1% new operations servers") % operationsServers.size());
+    KAA_LOG_INFO(boost::format("Received %1% new operations services") % operationsServers.size());
 
     lastOperationsServers_.clear();
     operationServers_.clear();

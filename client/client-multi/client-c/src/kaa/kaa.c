@@ -30,7 +30,15 @@
 #include "kaa_defaults.h"
 #include "platform/ext_key_utils.h"
 
+#ifdef KAA_ENCRYPTION
+#include "platform/ext_encryption_utils.h"
+#endif
+
 #include <kaa_extension.h>
+
+#ifndef KAA_DISABLE_FEATURE_PROFILE
+#include "kaa_profile_private.h"
+#endif
 
 static kaa_error_t kaa_context_destroy(kaa_context_t *context);
 
@@ -107,6 +115,26 @@ static kaa_error_t kaa_context_destroy(kaa_context_t *context)
     return KAA_ERR_NONE;
 }
 
+static kaa_error_t kaa_init_keys(void)
+{
+    kaa_error_t error = kaa_init_rsa_keypair();
+    if (error) {
+        return error;
+    }
+#ifdef KAA_ENCRYPTION
+    error = kaa_init_session_key();
+    if (error) {
+        return error;
+    }
+#endif
+    return error;
+}
+
+static void kaa_deinit_keys(void)
+{
+    kaa_deinit_rsa_keypair();
+}
+
 kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
 {
     KAA_RETURN_IF_NIL(kaa_context_p, KAA_ERR_BADPARAM);
@@ -114,8 +142,9 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     // Initialize logger
     kaa_logger_t *logger = NULL;
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL); // TODO: make log destination configurable
-    if (error)
+    if (error) {
         return error;
+    }
 
     KAA_LOG_INFO(logger, KAA_ERR_NONE, "Kaa SDK version %s, commit hash %s", KAA_BUILD_VERSION, KAA_BUILD_COMMIT_HASH);
 
@@ -123,43 +152,24 @@ kaa_error_t kaa_init(kaa_context_t **kaa_context_p)
     error = kaa_context_create(kaa_context_p, logger);
     if (error) {
         KAA_LOG_FATAL(logger, error, "Failed to create Kaa context");
-        kaa_log_destroy(logger);
         *kaa_context_p = NULL;
         return error;
     }
 
     // Initialize endpoint identity
-    char *pub_key_buffer = NULL;
-    size_t pub_key_buffer_size = 0;
-    bool need_deallocation = false;
+    uint8_t *sha1 = NULL;
+    size_t sha1_size = 0;
 
-    ext_get_endpoint_public_key(&pub_key_buffer, &pub_key_buffer_size, &need_deallocation);
-
-    kaa_digest pub_key_hash;
-    error = ext_calculate_sha_hash(pub_key_buffer, pub_key_buffer_size, pub_key_hash);
-
-    if (need_deallocation && pub_key_buffer_size > 0) {
-        KAA_FREE(pub_key_buffer);
-    }
-
+    error = kaa_init_keys();
     if (error) {
-        KAA_LOG_FATAL(logger, error, "Failed to calculate EP ID");
-        kaa_context_destroy(*kaa_context_p);
-        *kaa_context_p = NULL;
-        kaa_log_destroy(logger);
+        KAA_LOG_ERROR(logger, error, "Failed to initialize keys");
         return error;
     }
 
-    error = ext_copy_sha_hash((*kaa_context_p)->status->status_instance->endpoint_public_key_hash, pub_key_hash);
-    if (error) {
-        KAA_LOG_FATAL(logger, error, "Failed to set Endpoint public key");
-        kaa_context_destroy(*kaa_context_p);
-        *kaa_context_p = NULL;
-        kaa_log_destroy(logger);
-        return error;
-    }
+    ext_get_sha1_public(&sha1, &sha1_size);
+    ext_copy_sha_hash((*kaa_context_p)->status->status_instance->endpoint_public_key_hash, sha1);
 
-    return KAA_ERR_NONE;
+    return kaa_status_set_updated((*kaa_context_p)->status->status_instance, true);
 }
 
 kaa_error_t kaa_start(kaa_context_t *kaa_context)
@@ -197,9 +207,11 @@ kaa_error_t kaa_deinit(kaa_context_t *kaa_context)
 
     kaa_logger_t *logger = kaa_context->logger;
     kaa_error_t error = kaa_context_destroy(kaa_context);
-    if (error)
+    if (error) {
         KAA_LOG_ERROR(logger, error, "Failed to destroy Kaa context");
+    }
     kaa_log_destroy(logger);
+    kaa_deinit_keys();
     return error;
 }
 
@@ -218,10 +230,13 @@ kaa_error_t kaa_context_set_status_registered(kaa_context_t *kaa_context, bool i
 kaa_error_t kaa_check_readiness(kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
+
+#ifndef KAA_DISABLE_FEATURE_PROFILE
     if (!kaa_profile_manager_is_profile_set(kaa_context->profile_manager)) {
         KAA_LOG_ERROR(kaa_context->logger, KAA_ERR_PROFILE_IS_NOT_SET, "Profile isn't set");
         return KAA_ERR_PROFILE_IS_NOT_SET;
     }
+#endif
 
     return KAA_ERR_NONE;
 }

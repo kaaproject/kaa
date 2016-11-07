@@ -18,48 +18,51 @@
 ### Toolchain setup ###
 #######################
 
+set(CMAKE_SYSTEM_NAME "Generic")
+
 include(CMakeForceCompiler)
 
-set(ARM_GCC_COMPILER "xtensa-lx106-elf-gcc${CMAKE_EXECUTABLE_SUFFIX}")
+set(XTENSA_GCC_COMPILER "xtensa-lx106-elf-gcc${CMAKE_EXECUTABLE_SUFFIX}")
 
-if(DEFINED ENV{ESP8266_TOOLCHAIN_PATH})
-  set(TOOLCHAIN_PATH "$ENV{ESP8266_TOOLCHAIN_PATH}")
-  message(STATUS "Toolchain path is provided: ${TOOLCHAIN_PATH}")
-else ()
-  # Check if GCC is reachable.
-  find_path(TOOLCHAIN_PATH bin/${ARM_GCC_COMPILER})
+if(NOT DEFINED ESP8266_TOOLCHAIN_PATH)
+    # Check if GCC is reachable.
+    find_path(ESP8266_TOOLCHAIN_PATH bin/${XTENSA_GCC_COMPILER})
 
-  if (NOT TOOLCHAIN_PATH)
-    # Set default path.
-    set(TOOLCHAIN_PATH /opt/Espressif/crosstool-NG/builds/xtensa-lx106-elf)
-    message(STATUS "GCC not found, default path will be used")
-  endif ()
-endif ()
+    if(NOT ESP8266_TOOLCHAIN_PATH)
+        # Set default path.
+        set(ESP8266_TOOLCHAIN_PATH /opt/Espressif/crosstool-NG/builds/xtensa-lx106-elf)
+        message(STATUS "GCC not found, default path will be used: ${ESP8266_TOOLCHAIN_PATH}")
+    endif()
+else()
+    message(STATUS "Toolchain path: ${ESP8266_TOOLCHAIN_PATH}")
+endif()
 
-CMAKE_FORCE_C_COMPILER(${TOOLCHAIN_PATH}/bin/xtensa-lx106-elf-gcc GNU)
+cmake_force_c_compiler(${ESP8266_TOOLCHAIN_PATH}/bin/${XTENSA_GCC_COMPILER} GNU)
 
+set(CMAKE_OBJCOPY ${ESP8266_TOOLCHAIN_PATH}/bin/xtensa-lx106-elf-objcopy CACHE PATH "")
 
 #########################
 ### ESP8266 SDK setup ###
 #########################
 
-if(DEFINED ENV{ESP8266_SDK_BASE})
-    set(ESP8266_SDK_BASE $ENV{ESP8266_SDK_BASE})
+if(NOT DEFINED ESP8266_SDK_PATH)
+    set(ESP8266_SDK_PATH /opt/Espressif/esp-rtos-sdk)
+    message(STATUS "Default SDK location will be used: ${ESP8266_SDK_PATH}")
 else()
-    set(ESP8266_SDK_BASE /opt/Espressif/esp-rtos-sdk)
+    message(STATUS "ESP8266 SDK path: ${ESP8266_SDK_PATH}")
 endif()
 
-set(CMAKE_LIBRARY_PATH ${ESP8266_SDK_BASE}/lib/)
+set(CMAKE_LIBRARY_PATH ${ESP8266_SDK_PATH}/lib/)
 
 set(ESP8266_INCDIRS
-    ${ESP8266_SDK_BASE}/extra_include
-    ${ESP8266_SDK_BASE}/include
-    ${ESP8266_SDK_BASE}/include/lwip
-    ${ESP8266_SDK_BASE}/include/lwip/ipv4
-    ${ESP8266_SDK_BASE}/include/lwip/ipv6
-    ${ESP8266_SDK_BASE}/include/espressif/
-    ${TOOLCHAIN_PATH}/lib/gcc/xtensa-lx106-elf/4.8.2/include/
-    )
+        ${ESP8266_SDK_PATH}/extra_include
+        ${ESP8266_SDK_PATH}/include
+        ${ESP8266_SDK_PATH}/include/lwip
+        ${ESP8266_SDK_PATH}/include/lwip/ipv4
+        ${ESP8266_SDK_PATH}/include/lwip/ipv6
+        ${ESP8266_SDK_PATH}/include/espressif/
+        ${ESP8266_TOOLCHAIN_PATH}/lib/gcc/xtensa-lx106-elf/4.8.2/include/
+        )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-comment -fno-builtin -Wno-implicit-function-declaration -Os -Wpointer-arith  -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -ffunction-sections")
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-comment -fno-builtin -Wno-implicit-function-declaration -Os -Wpointer-arith -Wl,-EL,--gc-sections -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -ffunction-sections" CACHE FORCE "")
+set(CMAKE_C_LINK_EXECUTABLE "<CMAKE_C_COMPILER> <FLAGS> <CMAKE_C_LINK_FLAGS> <LINK_FLAGS> -o <TARGET> -Wl,--start-group <OBJECTS> <LINK_LIBRARIES> -Wl,--end-group" CACHE FORCE "")

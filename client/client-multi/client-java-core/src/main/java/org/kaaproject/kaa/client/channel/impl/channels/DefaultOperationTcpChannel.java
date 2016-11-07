@@ -228,11 +228,9 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
                 } catch (IOException | KaaTcpProtocolException | RuntimeException e) {
                     if (Thread.currentThread().isInterrupted()) {
                         if (channelState != State.SHUTDOWN) {
-                            LOG.warn("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
-                            LOG.warn("Socket connection for channel [{}] was interrupted: ", e);
+                            LOG.warn("Socket connection for channel [{}] was interrupted: ", getId(), e);
                         } else {
-                            LOG.debug("Failed to read from the socket for channel [{}]. Stack trace: ", getId(), e);
-                            LOG.debug("Socket connection for channel [{}] was interrupted: ", e);
+                            LOG.debug("Socket connection for channel [{}] was interrupted.", getId());
                         }
                     }
 
@@ -319,7 +317,7 @@ public class DefaultOperationTcpChannel implements KaaDataChannel {
         byte[] requestBodyEncoded = encDec.encodeData(body);
         byte[] sessionKey = encDec.getEncodedSessionKey();
         byte[] signature = encDec.sign(sessionKey);
-        sendFrame(new Connect(CHANNEL_TIMEOUT, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID, sessionKey, requestBodyEncoded, signature));
+        sendFrame(new Connect(CHANNEL_TIMEOUT, Constants.KAA_PLATFORM_PROTOCOL_AVRO_ID_V2, sessionKey, requestBodyEncoded, signature));
     }
 
     private synchronized void closeConnection() {

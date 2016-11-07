@@ -39,23 +39,12 @@ import java.util.List;
 
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_GROUP_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ENDPOINT_PROFILE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ACCESS_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_APPLICATION_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_ENDPOINT_KEY_HASH;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_GROUP_STATE;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_PROFILE_VERSION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SDK_TOKEN;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SERVER_PROFILE_VERSION_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_USER_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static org.springframework.data.mongodb.core.query.Update.update;
 
-@Repository
+@Repository("endpointProfileDao")
 public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEndpointProfile, ByteBuffer> implements EndpointProfileDao<MongoEndpointProfile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileMongoDao.class);
@@ -103,7 +92,7 @@ public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEn
                 where(EP_GROUP_STATE + "." + ENDPOINT_GROUP_ID).is(pageLink.getEndpointGroupId())));
         query.skip(offs).limit(lim + 1);
         query.fields().include(DaoConstants.PROFILE).include(EP_SERVER_PROFILE_PROPERTY).include(EP_ENDPOINT_KEY_HASH).include(EP_APPLICATION_ID)
-                .include(EP_PROFILE_VERSION).include(EP_SERVER_PROFILE_VERSION_PROPERTY);
+                .include(EP_PROFILE_VERSION).include(EP_SERVER_PROFILE_VERSION_PROPERTY).include(EP_USE_RAW_SCHEMA);
         List<EndpointProfileDto> endpointProfileDtoList = convertDtoList(mongoTemplate.find(query, getDocumentClass()));
         if (endpointProfileDtoList.size() == (lim + 1)) {
             String offset = Integer.toString(lim + offs);
@@ -149,7 +138,7 @@ public class EndpointProfileMongoDao extends AbstractVersionableMongoDao<MongoEn
         EndpointProfileBodyDto endpointProfileBodyDto = null;
         Query query = Query.query(where(EP_ENDPOINT_KEY_HASH).is(endpointKeyHash));
         query.fields().include(DaoConstants.PROFILE).include(EP_SERVER_PROFILE_PROPERTY).include(EP_APPLICATION_ID)
-                .include(EP_PROFILE_VERSION).include(EP_SERVER_PROFILE_VERSION_PROPERTY);
+                .include(EP_PROFILE_VERSION).include(EP_SERVER_PROFILE_VERSION_PROPERTY).include(EP_USE_RAW_SCHEMA);
         EndpointProfileDto pf = mongoTemplate.findOne(query, getDocumentClass()).toDto();
         if (pf != null) {
             endpointProfileBodyDto = new EndpointProfileBodyDto(endpointKeyHash, pf.getClientProfileBody(), pf.getServerProfileBody(),

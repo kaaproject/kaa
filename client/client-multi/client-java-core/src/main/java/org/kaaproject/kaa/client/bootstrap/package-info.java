@@ -15,6 +15,6 @@
  */
 
 /**
- * Provides implementation for bootstrap server communications
+ * Provides implementation for bootstrap service communications
  */
 package org.kaaproject.kaa.client.bootstrap;

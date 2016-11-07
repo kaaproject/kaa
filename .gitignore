@@ -22,7 +22,11 @@ tmp_sh/
 bin/
 **/dependency-reduced-pom.xml
 server/common/server-shared/src/main/java/org/kaaproject/kaa/server/common/Version.java
+server/admin/src/main/java/org/kaaproject/kaa/server/admin/shared/Version.java
+sandbox/web/src/main/java/org/kaaproject/kaa/sandbox/web/shared/Version.java
 pom.xml.versionsBackup
+examples/*/source/lib/
+examples/*/source/java/lib/
 server/common/dao/src/main/resources/dao.properties
 server/common/dao/src/main/resources/sql-dao.properties
 server/node/src/main/resources/admin-dao.properties
@@ -55,3 +59,5 @@ xcuserdata
 *.ipa
 Tests/Pods
 **/.toDelete
+/test-gh-pages-current/
+doc/Programming-guide/Server-REST-APIs/swagger.json

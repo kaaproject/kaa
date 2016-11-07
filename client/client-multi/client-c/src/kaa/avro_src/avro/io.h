@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 #include "platform.h"
+#include <stdint.h>
 
 struct avro_reader_t_ {
     const char *buf;

@@ -88,6 +88,7 @@ public class DefaultEndpointRegistrationManager implements EndpointRegistrationM
 
     public void updateEndpointAccessToken(String token) {
         state.setEndpointAccessToken(token);
+        state.setIfNeedProfileResync(true);
         onEndpointAccessTokenChanged();
     }
 

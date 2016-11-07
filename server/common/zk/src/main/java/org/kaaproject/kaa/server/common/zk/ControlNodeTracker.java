@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.UnhandledErrorListener;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.NodeCache;
@@ -56,7 +54,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
             .getLogger(ControlNodeTracker.class);
 
     /** The client. */
-    protected CuratorFramework client;
+    protected CuratorFramework zkClient;
 
     /** The control cache. */
     private NodeCache controlCache;
@@ -107,34 +105,9 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     /**
      * Instantiates a new control node tracker.
      *
-     * @param zkHostPortList
-     *            the zk host port list
-     * @param retryPolicy
-     *            the retry policy
      */
-    public ControlNodeTracker(String zkHostPortList, RetryPolicy retryPolicy) {
-        this(zkHostPortList, -1, -1, retryPolicy);
-    }
-
-    /**
-     * Instantiates a new control node tracker.
-     *
-     * @param zkHostPortList
-     *            the zk host port list
-     * @param sessionTimeoutMs
-     *            session timeout
-     * @param connectionTimeoutMs
-     *            connection timeout
-     * @param retryPolicy
-     *            the retry policy
-     */
-    public ControlNodeTracker(String zkHostPortList, int sessionTimeoutMs, int connectionTimeoutMs, RetryPolicy retryPolicy) {
+    public ControlNodeTracker() {
         super();
-        if (sessionTimeoutMs > -1 && connectionTimeoutMs > -1) {
-            this.client = CuratorFrameworkFactory.newClient(zkHostPortList, sessionTimeoutMs, connectionTimeoutMs, retryPolicy);
-        } else {
-            this.client = CuratorFrameworkFactory.newClient(zkHostPortList, retryPolicy);
-        }
         this.listeners = new CopyOnWriteArrayList<ControlNodeListener>();
     }
 
@@ -146,20 +119,19 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
      */
     public void start() throws Exception { //NOSONAR
         LOG.info("Starting node tracker");
-        client.start();
-        client.getUnhandledErrorListenable().addListener(errorsListener);
+        zkClient.getUnhandledErrorListenable().addListener(errorsListener);
         if(createZkNode()){
-            controlCache = new NodeCache(client, CONTROL_SERVER_NODE_PATH);
+            controlCache = new NodeCache(zkClient, CONTROL_SERVER_NODE_PATH);
             controlCache.getListenable().addListener(new NodeCacheListener() {
 
                 @Override
                 public void nodeChanged() throws Exception {
                     ChildData currentData = controlCache.getCurrentData();
                     if (currentData == null) {
-                        LOG.warn("Control server node died!");
+                        LOG.warn("Control service node died!");
                         onNoMaster();
                     } else {
-                        LOG.warn("Control server node changed!");
+                        LOG.warn("Control service node changed!");
                         onMasterChange(currentData);
                     }
                 }
@@ -204,7 +176,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
      * @return true, if is connected
      */
     public boolean isConnected() {
-        return client.getZookeeperClient().isConnected();
+        return zkClient.getZookeeperClient().isConnected();
     }
 
     /**
@@ -250,14 +222,12 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
         if(nodePath != null){
             try {
-                client.delete().forPath(nodePath);
+                zkClient.delete().forPath(nodePath);
                 LOG.debug("Node with path {} successfully deleted", nodePath);
             } catch (Exception e) {
                 LOG.debug("Failed to delete node", e);
             }
         }
-
-        client.close();
     }
 
     /*
@@ -277,7 +247,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
     }
 
     /**
-     * Extract control server info.
+     * Extract control service info.
      *
      * @param currentData
      *            the current data
@@ -288,7 +258,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
         try {
             controlServerInfo = controlNodeAvroConverter.get().fromByteArray(currentData.getData(), controlServerInfo);
         } catch (IOException e) {
-            LOG.error("error reading control server info", e);
+            LOG.error("error reading control service info", e);
         }
         return controlServerInfo;
     }
@@ -299,7 +269,7 @@ public abstract class ControlNodeTracker implements ControlNodeAware, Closeable 
 
     public boolean doZKClientAction(ZKClientAction action, boolean throwIOException) throws IOException{
         try{
-            action.doWithZkClient(client);
+            action.doWithZkClient(zkClient);
             return true;
         } catch (Exception e) {
             LOG.error("Unknown Error", e);

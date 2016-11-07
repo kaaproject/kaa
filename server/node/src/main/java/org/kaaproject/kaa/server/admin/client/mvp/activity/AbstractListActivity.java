@@ -44,7 +44,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 public abstract class AbstractListActivity<T extends HasId, P extends TreePlace> extends AbstractActivity implements BaseListView.Presenter {
 
     protected final ClientFactory clientFactory;
-    private final Class<T> dataClass;
+    protected final Class<T> dataClass;
 
     protected AbstractDataProvider<T, String> dataProvider;
 

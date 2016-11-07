@@ -16,22 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.kaaproject.kaa.common.dto.UpdateStatus.ACTIVE;
-import static org.kaaproject.kaa.common.dto.UpdateStatus.INACTIVE;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
-import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToString;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
-import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
+import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -45,6 +30,8 @@ import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
+import org.kaaproject.kaa.server.common.core.algorithms.AvroUtils;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithm;
 import org.kaaproject.kaa.server.common.core.algorithms.generation.DefaultRecordGenerationAlgorithmImpl;
 import org.kaaproject.kaa.server.common.core.algorithms.schema.SchemaCreationException;
@@ -55,15 +42,18 @@ import org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
+import org.kaaproject.kaa.server.common.core.configuration.OverrideData;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
+import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
+import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.kaaproject.kaa.server.common.dao.exception.UpdateStatusConflictException;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.ConfigurationSchemaDao;
@@ -76,6 +66,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.kaaproject.kaa.common.dto.UpdateStatus.ACTIVE;
+import static org.kaaproject.kaa.common.dto.UpdateStatus.INACTIVE;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.convertDtoList;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.getDto;
+import static org.kaaproject.kaa.server.common.dao.impl.DaoUtil.idToString;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlId;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateSqlObject;
 
 @Service
 @Transactional
@@ -96,6 +103,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private HistoryService historyService;
+
+
+    @Autowired
+    private CTLService ctlService;
 
     @Autowired
     private SchemaGenerationAlgorithmFactory schemaGeneratorFactory;
@@ -186,7 +197,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         if (record.isEmpty()) {
             LOG.debug("Can't find related Configuration record.");
-            throw new IncorrectParameterException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: "
+            throw new NotFoundException("Configuration record not found, schemaId: " + schemaId + ", endpointGroupId: "
                     + endpointGroupId); // NOSONAR
         }
         return record;
@@ -224,6 +235,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 throw new UpdateStatusConflictException("Can't update configuration, invalid id " + id);
             }
             configurationSchemaDto = findConfSchemaById(configurationDto.getSchemaId());
+            configurationDto.setSchemaVersion(configurationSchemaDto.getVersion());
+            configurationDto.setCreatedTime(oldConfiguration.getCreatedTime());
+            configurationDto.setCreatedUsername(oldConfiguration.getCreatedUsername());
             LOG.debug("Update existing configuration with id: [{}]", configurationDto.getId());
         } else {
             String schemaId = configurationDto.getSchemaId();
@@ -260,6 +274,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         try {
             EndpointGroup endpointGroup = endpointGroupDao.findById(currentConfiguration.getEndpointGroupId());
             GenericAvroConverter<GenericRecord> avroConverter;
+            Schema avroSchema;
             KaaData body = null;
             if (endpointGroup != null) {
                 if (endpointGroup.getWeight() == 0) {
@@ -267,17 +282,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     BaseSchema baseSchema = new BaseSchema(configurationSchema.getBaseSchema());
                     uuidValidator = new DefaultUuidValidator(baseSchema, new BaseDataFactory());
                     avroConverter = new GenericAvroConverter<GenericRecord>(baseSchema.getRawSchema());
+                    avroSchema = new Schema.Parser().parse(baseSchema.getRawSchema());
                 } else {
                     LOG.debug("Create default UUID validator with override schema: {}", configurationSchema.getOverrideSchema());
                     OverrideSchema overrideSchema = new OverrideSchema(configurationSchema.getOverrideSchema());
                     uuidValidator = new DefaultUuidValidator(overrideSchema, new OverrideDataFactory());
                     avroConverter = new GenericAvroConverter<GenericRecord>(overrideSchema.getRawSchema());
+                    avroSchema = new Schema.Parser().parse(overrideSchema.getRawSchema());
                 }
                 GenericRecord previousRecord = null;
                 if (previousConfiguration != null) {
                     previousRecord = avroConverter.decodeJson(previousConfiguration.getBody());
                 }
-                GenericRecord currentRecord = avroConverter.decodeJson(currentConfiguration.getBody());
+                GenericRecord currentRecord = avroConverter.decodeJson(AvroUtils.injectUuids(currentConfiguration.getBody(), avroSchema));
                 body = uuidValidator.validateUuidFields(currentRecord, previousRecord);
             }
             if (body != null) {
@@ -452,6 +469,34 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
+    public String normalizeAccordingToOverrideConfigurationSchema(String appId, int schemaVersion, String configurationBody) {
+        ConfigurationSchemaDto schemaDto = this.findConfSchemaByAppIdAndVersion(appId, schemaVersion);
+        if (schemaDto != null) {
+            OverrideSchema overrideSchema = new OverrideSchema(schemaDto.getOverrideSchema());
+            LOG.debug("Create default UUID validator with override schema: {}", overrideSchema.getRawSchema());
+            UuidValidator<OverrideData> uuidValidator = new DefaultUuidValidator<>(overrideSchema, new OverrideDataFactory());
+            GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(overrideSchema.getRawSchema());
+            try {
+                GenericRecord configRecord = avroConverter.decodeJson(configurationBody);
+                // TODO: Need to use last active configuration instead of null. Will be changed after supporting delta configuration
+                KaaData<OverrideSchema> body = uuidValidator.validateUuidFields(configRecord, null);
+                if (body != null) {
+                    return body.getRawData();
+                } else {
+                    LOG.warn("Validated configuration body is empty");
+                    throw new IncorrectParameterException("Validated configuration body is empty");
+                }
+            } catch (IOException e) {
+                LOG.error("Invalid configuration for override schema.", e);
+                throw new IncorrectParameterException("Invalid configuration for override schema.");
+            }
+        } else {
+            LOG.warn("Can't find configuration schema with version {}.", schemaVersion);
+            throw new IncorrectParameterException("Can't find configuration schema for specified version.");
+        }
+    }
+
+    @Override
     public ConfigurationSchemaDto findConfSchemaById(String id) {
         validateSqlId(id, "Incorrect configuration schema id " + id + ". Can't find configuration schema.");
         return getDto(configurationSchemaDao.findById(id));
@@ -495,7 +540,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     private void generateSchemas(ConfigurationSchemaDto schema) throws SchemaCreationException {
-        DataSchema dataSchema = new DataSchema(schema.getSchema());
+        CTLSchemaDto ctlSchema = ctlService.findCTLSchemaById(schema.getCtlSchemaId());
+        String sch = ctlService.flatExportAsString(ctlSchema);
+        DataSchema dataSchema = new DataSchema(sch);
         if (!dataSchema.isEmpty()) {
             SchemaGenerationAlgorithm schemaGenerator = schemaGeneratorFactory.createSchemaGenerator(dataSchema);
             ProtocolSchema protocol = schemaGenerator.getProtocolSchema();

@@ -16,21 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.delta;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
-import javax.transaction.Transactional;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericRecord;
@@ -60,6 +45,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.delta.DeltaCalculatorExc
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
+import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
 import org.kaaproject.kaa.server.operations.service.OperationsServiceIT;
@@ -72,6 +58,20 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Base64Utils;
+
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/common-test-context.xml")
@@ -103,8 +103,11 @@ public class DeltaServiceIT extends AbstractTest {
 
     @Autowired
     protected DeltaService deltaService;
+
     @Autowired
     protected CacheService cacheService;
+
+
 
     private TenantDto tenant;
     private ApplicationDto application;
@@ -131,7 +134,7 @@ public class DeltaServiceIT extends AbstractTest {
     }
 
     @Before
-    public void beforeTest() throws IOException, DeltaCalculatorException {
+    public void beforeTest() throws IOException, DeltaCalculatorException, ControlServiceException {
         String dataSchema = OperationsServiceIT.getResourceAsString(OperationsServiceIT.DATA_SCHEMA_LOCATION);
         PROFILE_BYTES = avroConverter.encode(ENDPOINT_PROFILE);
         PROFILE_JSON = avroConverter.encodeToJson(ENDPOINT_PROFILE);
@@ -163,10 +166,20 @@ public class DeltaServiceIT extends AbstractTest {
         profileCtlSchema.setMetaInfo(metaInfo);
         profileCtlSchema.setBody(BasicEndpointProfile.SCHEMA$.toString());
         profileCtlSchema.setVersion(1);
-        
         profileCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
-        
         profileCtlSchema = ctlService.saveCTLSchema(profileCtlSchema);
+
+
+        Schema schema = new Schema.Parser().parse(dataSchema);
+        CTLSchemaDto confCtlSchema = new CTLSchemaDto();
+        CTLSchemaMetaInfoDto confMetaInfo = new CTLSchemaMetaInfoDto(schema.getFullName(),
+                application.getTenantId(),
+                application.getId());
+        confCtlSchema.setMetaInfo(confMetaInfo);
+        confCtlSchema.setBody(schema.toString());
+        confCtlSchema.setVersion(CONF_SCHEMA_VERSION);
+        confCtlSchema.setDependencySet(new HashSet<CTLSchemaDto>());
+        confCtlSchema = ctlService.saveCTLSchema(confCtlSchema);
 
         EndpointProfileSchemaDto profileSchemaObj = new EndpointProfileSchemaDto();
         profileSchemaObj.setVersion(PROFILE_SCHEMA_VERSION);
@@ -194,7 +207,8 @@ public class DeltaServiceIT extends AbstractTest {
         confSchema = new ConfigurationSchemaDto();
         confSchema.setApplicationId(application.getId());
         confSchema.setVersion(CONF_SCHEMA_VERSION);
-        confSchema.setSchema(dataSchema);
+        confSchema.setCtlSchemaId(confCtlSchema.getId());
+
         try {
             confSchema = configurationService.saveConfSchema(confSchema);
         } catch (IncorrectParameterException e) {
@@ -221,7 +235,7 @@ public class DeltaServiceIT extends AbstractTest {
 
         endpointProfile = new EndpointProfileDto();
         endpointProfile.setApplicationId(application.getId());
-        endpointProfile.setEndpointKeyHash(UUID.randomUUID().toString().getBytes());
+        endpointProfile.setEndpointKeyHash(Base64Utils.decodeFromString("EndpointId"));
         endpointProfile.setClientProfileBody(PROFILE_JSON);
         endpointProfile.setProfileHash(EndpointObjectHash.fromSHA1(PROFILE_BYTES).getData());
         endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());

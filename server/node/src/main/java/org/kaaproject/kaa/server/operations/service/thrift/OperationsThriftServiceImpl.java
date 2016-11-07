@@ -16,13 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.thrift;
 
-import java.util.List;
-
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.ProfileService;
 import org.kaaproject.kaa.server.common.dao.ServerProfileService;
@@ -31,6 +30,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
@@ -47,6 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.security.PublicKey;
+import java.util.List;
 
 /**
  * The implementation of {#link
@@ -94,7 +97,7 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
 
     @Override
     public void onNotification(Notification notification) throws TException {
-        LOG.debug("Received Notification from control server {}", notification);
+        LOG.debug("Received Notification from control service {}", notification);
         LOG.debug("Going to notify cache service..");
         processCacheNotification(notification);
         if (notification.getOp() != Operation.APP_UPDATE) {
@@ -210,11 +213,21 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
     public void onServerProfileUpdate(ThriftServerProfileUpdateMessage message) throws TException {
         clusterService.onServerProfileUpdateMessage(message);
     }
-    
+
     @Override
     public void onEndpointDeregistration(ThriftEndpointDeregistrationMessage message) throws TException {
         LOG.debug("Received Event about endpoint deregistration {}", message);
+        byte[] address = message.getAddress().getEntityId();
+        EndpointObjectHash hash = EndpointObjectHash.fromBytes(address);
         clusterService.onEndpointDeregistrationMessage(message);
+        PublicKey endpointPublickKey = cacheService.getEndpointKey(hash);
+        if(endpointPublickKey != null){
+            cacheService.resetEndpointKey(hash, endpointPublickKey);
+        }
     }
 
+    @Override
+    public void sendEndpointConfigurationRefreshMessage(ThriftEndpointConfigurationRefreshMessage message) throws TException {
+        clusterService.sendEndpointConfigurationRefreshMessage(message);
+    }
 }

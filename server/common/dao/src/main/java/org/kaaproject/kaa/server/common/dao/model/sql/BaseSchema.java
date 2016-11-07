@@ -66,7 +66,7 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
     protected long createdTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = BASE_SCHEMA_APPLICATION_ID, nullable=false, foreignKey = @ForeignKey(name = BASE_SCHEMA_FK_APP_ID))
+    @JoinColumn(name = BASE_SCHEMA_APPLICATION_ID, foreignKey = @ForeignKey(name = BASE_SCHEMA_FK_APP_ID))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Application application;
     

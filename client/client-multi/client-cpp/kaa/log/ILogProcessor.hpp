@@ -32,7 +32,7 @@ public:
     /**
      * Called when log upload response arrived.
      *
-     * \param   response    Response from operations server.
+     * \param   response    Response from operations service.
      */
     virtual void onLogUploadResponse(const LogSyncResponse& response) = 0;
 

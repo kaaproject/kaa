@@ -20,7 +20,7 @@ import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 
 /**
- * Resolves {@link OperationsNodeInfo operations server node} for given entities
+ * Resolves {@link OperationsNodeInfo operations service node} for given entities
  * 
  * @author Andrew Shvayka
  *

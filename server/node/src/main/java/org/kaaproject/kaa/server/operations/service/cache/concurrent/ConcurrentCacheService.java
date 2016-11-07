@@ -52,6 +52,8 @@ import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
+import org.kaaproject.kaa.server.common.core.configuration.RawData;
+import org.kaaproject.kaa.server.common.core.structure.Pair;
 import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
 import org.kaaproject.kaa.server.common.dao.CTLService;
@@ -181,7 +183,7 @@ public class ConcurrentCacheService implements CacheService {
     private final CacheTemporaryMemorizer<EndpointObjectHash, PublicKey> endpointKeyMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The merged configuration memorizer. */
-    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, BaseData> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
+    private final CacheTemporaryMemorizer<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> mergedConfigurationMemorizer = new CacheTemporaryMemorizer<>();
 
     /** The delta memorizer. */
     private final CacheTemporaryMemorizer<DeltaCacheKey, ConfigurationCacheEntry> deltaMemorizer = new CacheTemporaryMemorizer<>();
@@ -323,7 +325,7 @@ public class ConcurrentCacheService implements CacheService {
                         relatedChanges.add(historyDto);
                     } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
                         ProfileFilterDto profileFilter = profileService.findProfileFilterById(changeDto.getProfileFilterId());
-                        if (supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
+                        if (profileFilter != null && supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
                             relatedChanges.add(historyDto);
                         }
                     } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
@@ -663,7 +665,7 @@ public class ConcurrentCacheService implements CacheService {
 
             @Override
             public String compute(EventClassFamilyIdKey key) {
-                LOG.debug("Fetching result for getEcfId using key {}", key);
+                LOG.debug("Fetching result for getEcfvId using key {}", key);
                 EventClassFamilyDto ecf = eventClassService.findEventClassFamilyByTenantIdAndName(key.getTenantId(), key.getName());
                 if (ecf != null) {
                     return ecf.getId();
@@ -691,9 +693,10 @@ public class ConcurrentCacheService implements CacheService {
                 LOG.debug("Fetching result for getEventClassFamilyIdByEventClassFqn using key {}", key);
                 List<EventClassDto> eventClasses = eventClassService.findEventClassByTenantIdAndFQN(key.getTenantId(), key.getFqn());
                 if (eventClasses != null && !eventClasses.isEmpty()) {
-                    return eventClasses.get(0).getEcfId();
+                    String ecfvId = eventClasses.get(0).getEcfvId();
+                    return eventClassService.findEventClassFamilyByEcfvId(ecfvId).getId();
                 } else {
-                    LOG.warn("Fetching result for getEcfId using key {} Failed!", key);
+                    LOG.warn("Fetching result for getEcfvId using key {} Failed!", key);
                     return null;
                 }
             }
@@ -713,15 +716,16 @@ public class ConcurrentCacheService implements CacheService {
                 EventClassDto eventClass = eventClassService.findEventClassByTenantIdAndFQNAndVersion(key.getTenantId(), key.getFqn(),
                         key.getVersion());
 
-                String eventClassFamilyId = eventClass.getEcfId();
+                String ecfvId = eventClass.getEcfvId();
+                String ecfId = eventClassService.findEventClassFamilyByEcfvId(ecfvId).getId();
 
-                List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(eventClassFamilyId,
+                List<ApplicationEventFamilyMapDto> mappingList = applicationEventMapService.findByEcfIdAndVersion(ecfId,
                         key.getVersion());
                 for (ApplicationEventFamilyMapDto mapping : mappingList) {
                     String applicationId = mapping.getApplicationId();
                     ApplicationDto appDto = applicationService.findAppById(applicationId);
                     RouteTableKey routeTableKey = new RouteTableKey(appDto.getApplicationToken(), new EventClassFamilyVersion(
-                            eventClassFamilyId, key.getVersion()));
+                            ecfId, key.getVersion()));
                     if (!routeKeys.contains(routeTableKey)) {
                         for (ApplicationEventMapDto eventMap : mapping.getEventMaps()) {
                             if (eventMap.getEventClassId().equals(eventClass.getId())
@@ -813,6 +817,19 @@ public class ConcurrentCacheService implements CacheService {
         return endpointKey;
     }
 
+    /**
+     *
+     * Remove key from hash
+     *
+     * @param hash
+     * @param endpointKey
+     */
+    @Override
+    @CacheEvict(value = "endpointKeys", key = "#key")
+    public void resetEndpointKey(EndpointObjectHash hash, PublicKey endpointKey){
+        // Do nothing
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -822,14 +839,13 @@ public class ConcurrentCacheService implements CacheService {
      */
     @Override
     @Cacheable(value = "mergedConfigurations", key = "#key")
-    public BaseData getMergedConfiguration(final List<EndpointGroupStateDto> key,
-            final Computable<List<EndpointGroupStateDto>, BaseData> worker) {
-        return mergedConfigurationMemorizer.compute(key, new Computable<List<EndpointGroupStateDto>, BaseData>() {
-
+    public Pair<BaseData, RawData> getMergedConfiguration(final List<EndpointGroupStateDto> key,
+                                                          final Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>> worker) {
+        return mergedConfigurationMemorizer.compute(key, new Computable<List<EndpointGroupStateDto>, Pair<BaseData, RawData>>() {
             @Override
-            public BaseData compute(List<EndpointGroupStateDto> key) {
+            public Pair<BaseData, RawData> compute(List<EndpointGroupStateDto> key) {
                 LOG.debug("Fetching result for getMergedConfiguration");
-                BaseData result = worker.compute(key);
+                Pair<BaseData, RawData> result = worker.compute(key);
                 return result;
             }
         });

@@ -21,12 +21,12 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEventHandler;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
-import org.kaaproject.kaa.server.admin.client.mvp.data.EcfSchemasDataProvider;
+import org.kaaproject.kaa.server.admin.client.mvp.data.EcfVersionsDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.place.EcfPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.place.EcfSchemaPlace;
+import org.kaaproject.kaa.server.admin.client.mvp.place.EcfVersionPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
@@ -35,12 +35,17 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import org.kaaproject.kaa.server.admin.shared.schema.EventClassViewDto;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EcfActivity
         extends
         AbstractDetailsActivity<EventClassFamilyDto, EcfView, EcfPlace> {
 
-    private EcfSchemasDataProvider ecfSchemasDataProvider;
+    private EcfVersionsDataProvider ecfVersionsDataProvider;
 
     public EcfActivity(EcfPlace place,
             ClientFactory clientFactory) {
@@ -51,28 +56,28 @@ public class EcfActivity
     public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
         super.start(containerWidget, eventBus);
         if (!create) {
-            AbstractGrid<EventSchemaVersionDto, Integer> ecfSchemasGrid = detailsView.getEcfSchemasGrid();
-            ecfSchemasDataProvider = new EcfSchemasDataProvider(ecfSchemasGrid, detailsView);
+            AbstractGrid<EventClassFamilyVersionDto, Integer> ecfVersionsGrid = detailsView.getEcfVersionsGrid();
+            ecfVersionsDataProvider = new EcfVersionsDataProvider(ecfVersionsGrid, detailsView);
         }
     }
 
     protected void bind(final EventBus eventBus) {
         super.bind(eventBus);
 
-        registrations.add(detailsView.getAddEcfSchemaButton().addClickHandler(new ClickHandler() {
+        registrations.add(detailsView.getAddEcfVersionButton().addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                addEcfSchema();
+                addEcfVersion();
             }
           }));
 
-        registrations.add(detailsView.getEcfSchemasGrid().addRowActionHandler(new RowActionEventHandler<Integer>() {
+        registrations.add(detailsView.getEcfVersionsGrid().addRowActionHandler(new RowActionEventHandler<Integer>() {
               @Override
               public void onRowAction(RowActionEvent<Integer> event) {
                   Integer id = event.getClickedId();
                   if (event.getAction()==RowActionEvent.CLICK) {
-                      EcfSchemaPlace ecfSchemaPlace = new EcfSchemaPlace(entityId, id);
-                      ecfSchemaPlace.setPreviousPlace(place);
-                      goTo(ecfSchemaPlace);
+                      EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, place.getEcfId(), id);
+                      ecfVersionPlace.setPreviousPlace(place);
+                      goTo(ecfVersionPlace);
                   }
               }
           }));
@@ -107,8 +112,18 @@ public class EcfActivity
         detailsView.getCreatedUsername().setValue(entity.getCreatedUsername());
         detailsView.getCreatedDateTime().setValue(Utils.millisecondsToDateTimeString(entity.getCreatedTime()));
         if (!create) {
-            ecfSchemasDataProvider.setSchemas(entity.getSchemas());
-            ecfSchemasDataProvider.reload();
+            KaaAdmin.getDataSource().getEventClassFamilyVersions(entity.getId(), new AsyncCallback<List<EventClassFamilyVersionDto>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    Utils.handleException(caught, EcfActivity.this.detailsView);
+                }
+
+                @Override
+                public void onSuccess(List<EventClassFamilyVersionDto> eventClassFamilyVersionDtos) {
+                    ecfVersionsDataProvider.setSchemas(eventClassFamilyVersionDtos);
+                    ecfVersionsDataProvider.reload();
+                }
+            });
         }
     }
 
@@ -151,10 +166,10 @@ public class EcfActivity
         KaaAdmin.getDataSource().editEcf(entity, callback);
     }
 
-    private void addEcfSchema() {
-        EcfSchemaPlace ecfSchemaPlace = new EcfSchemaPlace(entityId, -1);
-        ecfSchemaPlace.setPreviousPlace(place);
-        goTo(ecfSchemaPlace);
+    private void addEcfVersion() {
+        EcfVersionPlace ecfVersionPlace = new EcfVersionPlace(entityId, "", -1, null);
+        ecfVersionPlace.setPreviousPlace(place);
+        goTo(ecfVersionPlace);
     }
 
 }

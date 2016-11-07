@@ -19,7 +19,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 import com.google.gwt.place.shared.Prefix;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ServerProfileSchemaPlace extends AbstractSchemaPlace {
+public class ServerProfileSchemaPlace extends AbstractSchemaPlaceApplication {
 
     public ServerProfileSchemaPlace(String applicationId, String schemaId) {
         super(applicationId, schemaId);
@@ -36,7 +36,7 @@ public class ServerProfileSchemaPlace extends AbstractSchemaPlace {
     }
 
     @Prefix(value = "serverProfSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<ServerProfileSchemaPlace> {
+    public static class Tokenizer extends AbstractSchemaPlaceApplication.Tokenizer<ServerProfileSchemaPlace> {
 
         @Override
         protected ServerProfileSchemaPlace getPlaceImpl(String applicationId,

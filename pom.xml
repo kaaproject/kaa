@@ -20,7 +20,7 @@ Copyright 2014-2016 CyberVision, Inc.
 
     <groupId>org.kaaproject</groupId>
     <artifactId>kaa</artifactId>
-    <version>0.9.0</version>
+    <version>0.11.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Kaa</name>
@@ -30,6 +30,8 @@ Copyright 2014-2016 CyberVision, Inc.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <main.dir>${basedir}</main.dir>
+        <avro-ui.version>0.2.1</avro-ui.version>
+
         <akka.version>2.4.1</akka.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <spring.security.version>3.2.9.RELEASE</spring.security.version>
@@ -54,6 +56,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <flume.version>1.5.0.1</flume.version>
 
         <netty.version>4.0.34.Final</netty.version>
+        <avro-kaa.version>1.7.5-KAA</avro-kaa.version>
         <avro.version>1.7.5</avro.version>
         <apache.velocity>1.7</apache.velocity>
         <zookeeper.version>3.4.6</zookeeper.version>
@@ -71,7 +74,8 @@ Copyright 2014-2016 CyberVision, Inc.
         <commons-lang3.version>3.1</commons-lang3.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <httpcomponents.version>4.3.2</httpcomponents.version>
-        <jackson.version>2.4.1</jackson.version>
+        <jackson.version>2.7.5</jackson.version>
+        <javax.validation.version>1.1.0.Final</javax.validation.version>
         <joda-time.version>2.2</joda-time.version>
         <junit.version>4.11</junit.version>
         <embed.mongo.version>1.42</embed.mongo.version>
@@ -82,7 +86,6 @@ Copyright 2014-2016 CyberVision, Inc.
         <jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
         <jackson-core-asl.version>1.9.13</jackson-core-asl.version>
         <jline.version>2.11</jline.version>
-        <avro-ui.version>0.2.1</avro-ui.version>
 
         <slf4j.version>1.7.7</slf4j.version>
         <slf4j-android.version>1.7.7</slf4j-android.version>
@@ -124,10 +127,14 @@ Copyright 2014-2016 CyberVision, Inc.
         <hsqldb.version>2.3.2</hsqldb.version>
         <ant.version>1.9.4</ant.version>
         <hibernate-jpa-2.1-api.version>1.0.0.Final</hibernate-jpa-2.1-api.version>
-        <cdap-stream-client.version>1.0.1</cdap-stream-client.version>
         <jetty.version>9.2.2.v20140723</jetty.version>
         <kafka.clients.version>0.8.2.0</kafka.clients.version>
         <guava-gwt.version>18.0</guava-gwt.version>
+        <swagger-maven-plugin.version>3.1.3</swagger-maven-plugin.version>
+        <swagger-annotations.version>1.5.9</swagger-annotations.version>
+        <javax.el>2.2.4</javax.el>
+        <org.glassfish.web>2.2.6</org.glassfish.web>
+        <hibernate-validator>5.2.4.Final</hibernate-validator>
     </properties>
 
     <modules>
@@ -457,7 +464,7 @@ Copyright 2014-2016 CyberVision, Inc.
                                             avro-maven-plugin
                                         </artifactId>
                                         <versionRange>
-                                            [1.7.5,)
+                                            [1.7.5-KAA,)
                                         </versionRange>
                                         <goals>
                                             <goal>schema</goal>
@@ -573,8 +580,6 @@ Copyright 2014-2016 CyberVision, Inc.
                         <exclude>**/*.cql</exclude>
                         <exclude>**/src/main/sh/bin/jetty.sh</exclude>
                         <exclude>**/src/main/resources/jetty/**</exclude>
-                        <exclude>**/openssl.framework/**</exclude>
-                        <exclude>**/openssl/**</exclude>
                         <exclude>**/*xcodeproj/**</exclude>
                         <exclude>**/*.plist</exclude>
                         <exclude>**/*.cproject</exclude>
@@ -583,7 +588,17 @@ Copyright 2014-2016 CyberVision, Inc.
                         <exclude>**/source/esp8266/include/driver/uart*.h</exclude>
                         <exclude>**/source/cc32xx/platform/cc32xx/app.ld</exclude>
                         <exclude>**/security.policy</exclude>
+                        <exclude>doc/</exclude>
+
+                        <exclude>gh-pages-stub/</exclude>
+
                         <exclude>nix/astyle/max_indent.patch</exclude>
+                        <!-- backported from nixpkgs -->
+                        <exclude>nix/avro-c++/</exclude>
+
+                        <!-- Auto-generated -->
+                        <exclude>nix/kaa-docs/Gemfile.lock</exclude>
+                        <exclude>nix/kaa-docs/gemset.nix</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -814,7 +829,7 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-annotations</artifactId>
                 <version>${jetty.version}</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
@@ -856,6 +871,12 @@ Copyright 2014-2016 CyberVision, Inc.
                 <version>${akka.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-testkit_2.11</artifactId>
+                <version>${akka.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
@@ -895,7 +916,7 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>org.springframework.retry</groupId>
                 <artifactId>spring-retry</artifactId>
                 <version>${spring.retry.version}</version>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>com.couchbase.client</groupId>
                 <artifactId>java-client</artifactId>
@@ -944,17 +965,17 @@ Copyright 2014-2016 CyberVision, Inc.
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-compiler</artifactId>
-                <version>${avro.version}</version>
+                <version>${avro-kaa.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
-                <version>${avro.version}</version>
+                <version>${avro-kaa.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro-mapred</artifactId>
-                <version>${avro.version}</version>
+                <version>${avro-kaa.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.velocity</groupId>
@@ -1038,7 +1059,7 @@ Copyright 2014-2016 CyberVision, Inc.
                 <artifactId>kvstore</artifactId>
                 <version>${oracle-kvstore.version}</version>
                 <scope>test</scope>
-            </dependency>        
+            </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
@@ -1220,6 +1241,12 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-user</artifactId>
                 <version>${gwt.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.validation</groupId>
+                        <artifactId>validation-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.google.gwt</groupId>
@@ -1305,11 +1332,6 @@ Copyright 2014-2016 CyberVision, Inc.
                 <version>${commons-lang.version}</version>
             </dependency>
             <dependency>
-                <groupId>co.cask.cdap</groupId>
-                <artifactId>cdap-stream-client</artifactId>
-                <version>${cdap-stream-client.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
@@ -1367,8 +1389,8 @@ Copyright 2014-2016 CyberVision, Inc.
                     </tags>
                 </configuration>
             </plugin>
-            <!-- uncomment when all licence headers will be added <plugin> 
-                <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId> 
+            <!-- uncomment when all licence headers will be added <plugin>
+                <groupId>org.apache.rat</groupId> <artifactId>apache-rat-plugin</artifactId>
                 <version>${rat.version}</version> </plugin> -->
         </plugins>
     </reporting>
@@ -1387,7 +1409,7 @@ Copyright 2014-2016 CyberVision, Inc.
             <id>central</id>
             <url>http://repo1.maven.org/maven2/</url>
         </repository>
-    	<repository>
+        <repository>
             <id>twitter-twttr</id>
             <url>http://maven.twttr.com/</url>
         </repository>

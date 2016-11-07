@@ -35,15 +35,17 @@ import org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData;
 public interface BootstrapManager {
 
     /**
-     * Receives the latest list of servers from the bootstrap server.
+     * Receives the latest list of services from the bootstrap service.
+     *
      * @throws TransportException the transport exception
      */
     void receiveOperationsServerList() throws TransportException;
 
     /**
-     * Force switch to the next operations server that support given {@link TransportProtocolId}
+     * Force switch to the next operations service that support given {@link TransportProtocolId}
      *
      * @param transportId of the transport protocol.
+     * @param status failover status
      * @see TransportProtocolId
      */
     void useNextOperationsServer(TransportProtocolId transportId, FailoverStatus status);

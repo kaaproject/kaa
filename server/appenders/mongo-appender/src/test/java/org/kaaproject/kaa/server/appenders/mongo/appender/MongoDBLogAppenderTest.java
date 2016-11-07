@@ -62,6 +62,7 @@ import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseProfileInfo
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseSchemaInfo;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.MongoDBTestRunner;
+import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,10 +91,10 @@ public class MongoDBLogAppenderTest {
     private static final String SERVER_PROFILE_CONTENT_FILE = "server_profile_content.json";
 
     // According to the server profile schema file
-    private static final String SERVER_FIELD_KEY = "serverField";
+    private static final String SERVER_FIELD_KEY = "country．＄";
 
     // According to the server profile content file
-    private static final int SERVER_FIELD_VALUE = 111;
+    private static final String SERVER_FIELD_VALUE = "1.0.$.";
 
     private static final String SERVER_PROFILE = "serverProfile";
 
@@ -173,9 +174,8 @@ public class MongoDBLogAppenderTest {
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, 1, null);
 
         LogSchemaDto schemaDto = new LogSchemaDto();
-        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
         schemaDto.setVersion(1);
-        LogSchema schema = new LogSchema(schemaDto);
+        LogSchema schema = new LogSchema(schemaDto, BasicEndpointProfile.SCHEMA$.toString());
         logEventPack.setLogSchema(schema);
 
         logAppender.doAppend(logEventPack, callback);
@@ -200,8 +200,7 @@ public class MongoDBLogAppenderTest {
         events.add(event3);
 
         LogSchemaDto schemaDto = new LogSchemaDto();
-        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        LogSchema schema = new LogSchema(schemaDto);
+        LogSchema schema = new LogSchema(schemaDto, BasicEndpointProfile.SCHEMA$.toString());
 
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
@@ -235,8 +234,7 @@ public class MongoDBLogAppenderTest {
         events.add(event3);
 
         LogSchemaDto schemaDto = new LogSchemaDto();
-        schemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        LogSchema schema = new LogSchema(schemaDto);
+        LogSchema schema = new LogSchema(schemaDto, BasicEndpointProfile.SCHEMA$.toString());
 
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, schema.getVersion(), events);
@@ -273,8 +271,7 @@ public class MongoDBLogAppenderTest {
         logEvents.add(alpha);
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
-        logSchemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        LogSchema logSchema = new LogSchema(logSchemaDto);
+        LogSchema logSchema = new LogSchema(logSchemaDto, BasicEndpointProfile.SCHEMA$.toString());
 
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, logSchema.getVersion(), logEvents);
@@ -288,7 +285,9 @@ public class MongoDBLogAppenderTest {
         this.logAppender.doAppend(logEventPack, new TestLogDeliveryCallback());
         String collectionName = (String) ReflectionTestUtils.getField(this.logAppender, "collectionName");
         DBObject serverProfile = (DBObject) MongoDBTestRunner.getDB().getCollection(collectionName).findOne().get(SERVER_PROFILE);
-        Assert.assertEquals(SERVER_FIELD_VALUE, serverProfile.get(SERVER_FIELD_KEY));
+        DBObject profile = (DBObject) serverProfile.get("Profile");
+        DBObject profileNamespace = (DBObject) profile.get("org．kaaproject．kaa．schema．sample．profile");
+        Assert.assertEquals(SERVER_FIELD_VALUE, profileNamespace.get(SERVER_FIELD_KEY));
     }
 
     @Test
@@ -313,8 +312,7 @@ public class MongoDBLogAppenderTest {
         logEvents.add(alpha);
 
         LogSchemaDto logSchemaDto = new LogSchemaDto();
-        logSchemaDto.setSchema(BasicEndpointProfile.SCHEMA$.toString());
-        LogSchema logSchema = new LogSchema(logSchemaDto);
+        LogSchema logSchema = new LogSchema(logSchemaDto, BasicEndpointProfile.SCHEMA$.toString());
 
         EndpointProfileDataDto profileDto = new EndpointProfileDataDto("1", ENDPOINT_KEY, 1, "", 0, null);
         BaseLogEventPack logEventPack = new BaseLogEventPack(profileDto, DATE_CREATED, logSchema.getVersion(), logEvents);

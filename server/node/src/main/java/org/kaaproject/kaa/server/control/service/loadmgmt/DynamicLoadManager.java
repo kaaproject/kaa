@@ -92,10 +92,10 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
     /** Map to store Operations servers, key - DNS name host:port. */
     private final Map<Integer, OperationsServerMeta> opsServersMap;
 
-    /** Map to store bootstrap servers, key - DNS name host:port. */
+    /** Map to store bootstrap services, key - DNS name host:port. */
     private final Map<String, BootstrapNodeInfo> bootstrapsMap;
 
-    /** The last bootstrap servers update failed. */
+    /** The last bootstrap services update failed. */
     private boolean lastBootstrapServersUpdateFailed = false;
 
     /** Time to live of Operations server load history, in ms. */
@@ -304,7 +304,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
      */
     private void updateBootstrap(BootstrapNodeInfo nodeInfo) {
         final String dnsName = getNameFromConnectionInfo(nodeInfo.getConnectionInfo());
-        LOG.debug("Update bootstrap server: {}", dnsName);
+        LOG.debug("Update bootstrap service: {}", dnsName);
         try {
             ThriftClient<BootstrapThriftService.Client> client = new ThriftClient<BootstrapThriftService.Client>(nodeInfo
                     .getConnectionInfo().getThriftHost().toString(), nodeInfo.getConnectionInfo().getThriftPort(), KaaThriftService.BOOTSTRAP_SERVICE,
@@ -314,7 +314,7 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
                 @Override
                 public void isSuccess(boolean activitySuccess) {
                     lastBootstrapServersUpdateFailed = !activitySuccess;
-                    LOG.info("Bootstrap {}: Operations servers list updated {}", dnsName, activitySuccess ? "successfully"
+                    LOG.info("Bootstrap {}: Operations services list updated {}", dnsName, activitySuccess ? "successfully"
                             : "unsuccessfully");
                 }
 
@@ -340,19 +340,19 @@ public class DynamicLoadManager implements OperationsNodeListener, BootstrapNode
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             lastBootstrapServersUpdateFailed = true;
-            LOG.error(MessageFormat.format("Bootstrap {0} Operations servers list execute updated failed", dnsName), e);
+            LOG.error(MessageFormat.format("Bootstrap {0} Operations services list execute updated failed", dnsName), e);
         }
     }
 
     /**
      * Send redirection rule.
      *
-     * @param dnsName
-     *            the dns name
+     * @param accessPointId
+     *            the access point identifier
      * @param nodeInfo
      *            the node info
-     * @param rule
-     *            the rule
+     * @param rules
+     *            the list of redirection rules
      */
     private void sendRedirectionRule(final Integer accessPointId, OperationsNodeInfo nodeInfo, final List<RedirectionRule> rules) {
         LOG.trace("Set redirection rule for Operations server: {}; Thrift: {}:{}", accessPointId, nodeInfo.getConnectionInfo()

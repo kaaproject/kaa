@@ -17,8 +17,9 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
+import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.TenantsDataProvider;
@@ -30,20 +31,20 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
-public class TenantsActivity extends AbstractListActivity<TenantUserDto, TenantsPlace> {
+public class TenantsActivity extends AbstractListActivity<TenantDto, TenantsPlace> {
 
     public TenantsActivity(TenantsPlace place, ClientFactory clientFactory) {
-        super(place, TenantUserDto.class, clientFactory);
+        super(place, TenantDto.class, clientFactory);
     }
 
     @Override
-    protected BaseListView<TenantUserDto> getView() {
+    protected BaseListView<TenantDto> getView() {
         return clientFactory.getTenantsView();
     }
 
     @Override
-    protected AbstractDataProvider<TenantUserDto, String> getDataProvider(
-            AbstractGrid<TenantUserDto, String> dataGrid) {
+    protected AbstractDataProvider<TenantDto, String> getDataProvider(
+            AbstractGrid<TenantDto, String> dataGrid) {
         return new TenantsDataProvider(dataGrid, listView);
     }
 
@@ -59,7 +60,7 @@ public class TenantsActivity extends AbstractListActivity<TenantUserDto, Tenants
 
     @Override
     protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().deleteTenant(id, callback);
+        callback.onSuccess((Void) null);
     }
 
 }

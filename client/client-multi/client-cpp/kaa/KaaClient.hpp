@@ -37,7 +37,7 @@
 #include "kaa/configuration/manager/ConfigurationManager.hpp"
 #include "kaa/log/LogCollector.hpp"
 #include "kaa/context/IExecutorContext.hpp"
-#include "kaa/IKaaClientStateListener.hpp"
+#include "kaa/KaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientProperties.hpp"
 #include "kaa/KaaClientContext.hpp"
@@ -45,9 +45,9 @@
 namespace kaa {
 
 class KaaClient : public IKaaClient,
-                  public std::enable_shared_from_this<IKaaClient> {
+                  public std::enable_shared_from_this<KaaClient> {
 public:
-    KaaClient(IKaaClientPlatformContextPtr context, IKaaClientStateListenerPtr listener);
+    KaaClient(IKaaClientPlatformContextPtr platformContext, KaaClientStateListenerPtr listener);
 
     virtual void start();
     virtual void stop();
@@ -59,7 +59,8 @@ public:
     virtual const KeyPair&                      getClientKeyPair();
     virtual void                                setEndpointAccessToken(const std::string& token);
     virtual std::string                         refreshEndpointAccessToken();
-    virtual std::string                         getEndpointAccessToken();
+    virtual std::string                         getEndpointAccessToken() const;
+    virtual std::string                         getEndpointKeyHash() const;
     virtual IKaaDataMultiplexer&                getOperationMultiplexer();
     virtual IKaaDataDemultiplexer&              getOperationDemultiplexer();
     virtual EventFamilyFactory&                 getEventFamilyFactory();
@@ -103,6 +104,7 @@ public:
     virtual IKaaDataMultiplexer&                getBootstrapMultiplexer();
     virtual IKaaDataDemultiplexer&              getBootstrapDemultiplexer();
     virtual IKaaClientContext&                  getKaaClientContext();
+
 private:
     void init();
 
@@ -142,16 +144,12 @@ private:
     std::unique_ptr<DefaultOperationLongPollChannel> opsLongPollChannel_;
 #endif
 
-    IKaaClientPlatformContextPtr                     platformContext_;
-    IKaaClientStateListenerPtr                       stateListener_;
-
     std::unique_ptr<IBootstrapManager>               bootstrapManager_;
     std::unique_ptr<IKaaChannelManager>              channelManager_;
     std::unique_ptr<SyncDataProcessor>               syncProcessor_;
     IFailoverStrategyPtr                             failoverStrategy_;
 
     std::unique_ptr<KeyPair>                         clientKeys_;
-    std::string                                      publicKeyHash_;
     std::unique_ptr<ProfileManager>                  profileManager_;
 #ifdef KAA_USE_NOTIFICATIONS
     std::unique_ptr<NotificationManager>             notificationManager_;
@@ -167,6 +165,8 @@ private:
 #ifdef KAA_USE_LOGGING
     std::unique_ptr<LogCollector>                    logCollector_;
 #endif
+
+    IKaaClientPlatformContextPtr                     platformContext_;
 };
 
 }

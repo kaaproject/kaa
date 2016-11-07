@@ -21,14 +21,14 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.Prefix;
 
-public class LogSchemasPlace extends SchemasPlace {
+public class LogSchemasPlace extends SchemasPlaceApplication {
 
     public LogSchemasPlace(String applicationId) {
         super(applicationId);
     }
 
     @Prefix(value = "logSchemas")
-    public static class Tokenizer extends SchemasPlace.Tokenizer<LogSchemasPlace> {
+    public static class Tokenizer extends SchemasPlaceApplication.Tokenizer<LogSchemasPlace> {
 
         @Override
         protected LogSchemasPlace getPlaceImpl(String applicationId) {

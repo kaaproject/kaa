@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject</groupId>
-        <version>0.9.0</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>kaa</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa</groupId>
@@ -40,6 +40,7 @@
         <module>appenders</module>
         <module>transports</module>
         <module>verifiers</module>
+        <module>upgrade/data-migration-0.9.0-0.10.0</module>
     </modules>
 
     <profiles>

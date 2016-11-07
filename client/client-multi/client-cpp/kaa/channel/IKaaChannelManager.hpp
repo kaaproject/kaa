@@ -18,10 +18,12 @@
 #define IKAACHANNELMANAGER_HPP_
 
 #include <list>
+#include <string>
 
 #include "kaa/channel/IDataChannel.hpp"
 #include "kaa/channel/ITransportConnectionInfo.hpp"
 #include "kaa/channel/connectivity/IConnectivityChecker.hpp"
+#include "kaa/EndpointConnectionInfo.hpp"
 
 namespace kaa {
 
@@ -116,6 +118,13 @@ public:
      *
      */
     virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) = 0;
+
+    /**
+     * Reports to Channel Manager about successful connection.
+     *
+     * @param connection connection metadata.
+     */
+    virtual void onConnected(const EndpointConnectionInfo& connection) = 0;
 
     /**
      * Reports to Channel Manager about the new server.

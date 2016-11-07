@@ -160,6 +160,9 @@ public class DefaultAkkaService implements AkkaService {
     @PreDestroy
     public void preDestroy() {
         context.getEventService().removeListener(eventListener);
+        akka.stop(ioRouter);
+        akka.stop(opsActor);
+        akka.terminate();
     }
 
     @Override

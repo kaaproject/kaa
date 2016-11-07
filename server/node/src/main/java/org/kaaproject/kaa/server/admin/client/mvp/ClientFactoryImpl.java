@@ -16,16 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp;
 
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
@@ -33,33 +25,7 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
-import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.AefMapView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ApplicationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ConfigurationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EcfSchemaView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EcfView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointGroupView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.HeaderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.LogAppenderView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.NavigationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.ProfileFilterView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.SdkProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.SendNotificationView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.TenantView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.TopicView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UpdateUserConfigView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UserProfileView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UserVerifierView;
-import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
+import org.kaaproject.kaa.server.admin.client.mvp.view.*;
 import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppenderViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.appender.LogAppendersViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.application.ApplicationViewImpl;
@@ -76,12 +42,14 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupVie
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointGroupsViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfileViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.endpoint.EndpointProfilesViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.GetUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.enduser.UpdateUserConfigViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.AefMapsViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfsViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EcfVersionViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.event.EventClassViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.header.HeaderViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.log.LogSchemasViewImpl;
@@ -128,7 +96,7 @@ public class ClientFactoryImpl implements ClientFactory {
 
     private final BasePropertiesView mailPropertiesView = new MailPropertiesViewImpl();
 
-    private final BaseListView<TenantUserDto> tenantsView = new TenantsViewImpl();
+    private final BaseListView<TenantDto> tenantsView = new TenantsViewImpl();
     private final TenantView createTenantView = new TenantViewImpl(true);
     private final TenantView tenantView = new TenantViewImpl(false);
 
@@ -153,16 +121,16 @@ public class ClientFactoryImpl implements ClientFactory {
     private final BaseCtlSchemaView createServerProfileSchemaView = new ServerProfileSchemaViewImpl(true);
 
     private final BaseListView<ConfigurationSchemaDto> configurationSchemasView = new ConfigurationSchemasViewImpl();
-    private final BaseSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
-    private final BaseSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
+    private final BaseCtlSchemaView configurationSchemaView = new ConfigurationSchemaViewImpl(false);
+    private final BaseCtlSchemaView createConfigurationSchemaView = new ConfigurationSchemaViewImpl(true);
 
     private final BaseListView<NotificationSchemaDto> notificationSchemasView = new NotificationSchemasViewImpl();
-    private final BaseSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
-    private final BaseSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
+    private final BaseCtlSchemaView notificationSchemaView = new NotificationSchemaViewImpl(false);
+    private final BaseCtlSchemaView createNotificationSchemaView = new NotificationSchemaViewImpl(true);
 
     private final BaseListView<LogSchemaDto> logSchemasView = new LogSchemasViewImpl();
-    private final BaseSchemaView logSchemaView = new LogSchemaViewImpl(false);
-    private final BaseSchemaView createLogSchemaView = new LogSchemaViewImpl(true);
+    private final BaseCtlSchemaView logSchemaView = new LogSchemaViewImpl(false);
+    private final BaseCtlSchemaView createLogSchemaView = new LogSchemaViewImpl(true);
 
     private final BaseListView<EndpointGroupDto> endpointGroupsView = new EndpointGroupsViewImpl();
     private final EndpointGroupView endpointGroupView = new EndpointGroupViewImpl(false);
@@ -195,14 +163,18 @@ public class ClientFactoryImpl implements ClientFactory {
     private final EcfView ecfView = new EcfViewImpl(false);
     private final EcfView createEcfView = new EcfViewImpl(true);
 
-    private final EcfSchemaView ecfSchemaView = new EcfSchemaViewImpl(false);
-    private final EcfSchemaView createEcfSchemaView = new EcfSchemaViewImpl(true);
+    private final EventClassView eventClassView = new EventClassViewImpl(false);
+    private final EventClassView createEventClassView = new EventClassViewImpl(true);
+
+    private final EcfVersionView createEcfVersionView = new EcfVersionViewImpl(true);
+    private final EcfVersionView versionView = new EcfVersionViewImpl(false);
 
     private final BaseListView<ApplicationEventFamilyMapDto> aefMapsView = new AefMapsViewImpl();
     private final AefMapView aefMapView = new AefMapViewImpl(false);
     private final AefMapView createAefMapView = new AefMapViewImpl(true);
 
     private final UpdateUserConfigView updateUserConfigView = new UpdateUserConfigViewImpl();
+    private  final GetUserConfigView getUserConfigView = new GetUserConfigViewImpl();
     
     private final CtlSchemasView systemCtlSchemasView = new SystemCtlSchemasViewImpl();
     private final CtlSchemasView tenantCtlSchemasView = new TenantCtlSchemasViewImpl();
@@ -251,7 +223,7 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseListView<TenantUserDto> getTenantsView() {
+    public BaseListView<TenantDto> getTenantsView() {
         return tenantsView;
     }
 
@@ -346,12 +318,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getConfigurationSchemaView() {
+    public BaseCtlSchemaView getConfigurationSchemaView() {
         return configurationSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateConfigurationSchemaView() {
+    public BaseCtlSchemaView getCreateConfigurationSchemaView() {
         return createConfigurationSchemaView;
     }
 
@@ -361,12 +333,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getNotificationSchemaView() {
+    public BaseCtlSchemaView getNotificationSchemaView() {
         return notificationSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateNotificationSchemaView() {
+    public BaseCtlSchemaView getCreateNotificationSchemaView() {
         return createNotificationSchemaView;
     }
 
@@ -376,12 +348,12 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public BaseSchemaView getLogSchemaView() {
+    public BaseCtlSchemaView getLogSchemaView() {
         return logSchemaView;
     }
 
     @Override
-    public BaseSchemaView getCreateLogSchemaView() {
+    public BaseCtlSchemaView getCreateLogSchemaView() {
         return createLogSchemaView;
     }
 
@@ -466,13 +438,23 @@ public class ClientFactoryImpl implements ClientFactory {
     }
 
     @Override
-    public EcfSchemaView getEcfSchemaView() {
-        return ecfSchemaView;
+    public EventClassView getEventClassView() {
+        return eventClassView;
     }
 
     @Override
-    public EcfSchemaView getCreateEcfSchemaView() {
-        return createEcfSchemaView;
+    public EventClassView getCreateEventClassView() {
+        return createEventClassView;
+    }
+
+    @Override
+    public EcfVersionView  getCreateEcfVersionView() {
+        return createEcfVersionView;
+    }
+
+    @Override
+    public EcfVersionView getEcfVersionView() {
+        return versionView;
     }
 
     @Override
@@ -533,6 +515,11 @@ public class ClientFactoryImpl implements ClientFactory {
     @Override
     public UpdateUserConfigView getUpdateUserConfigView() {
         return updateUserConfigView;
+    }
+
+    @Override
+    public GetUserConfigView getUserConfigView() {
+        return getUserConfigView;
     }
 
     @Override

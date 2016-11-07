@@ -32,7 +32,7 @@ namespace kaa {
 /**
  * @typedef The user-defined profile structure.
  */
-typedef kaa_profile::Profile KaaProfile;
+typedef kaa_profile::EmptyData KaaProfile;
 
 }
 

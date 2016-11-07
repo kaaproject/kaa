@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.curator.framework.CuratorFramework;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
@@ -61,6 +61,9 @@ public class BootstrapInitializationService extends AbstractInitializationServic
     /** The key store service. */
     @Autowired
     private KeyStoreService bootstrapKeyStoreService;
+
+    @Autowired
+    private CuratorFramework zkClient;
 
     /*
      * (non-Javadoc)
@@ -143,7 +146,7 @@ public class BootstrapInitializationService extends AbstractInitializationServic
             nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
             nodeInfo.setTransports(new ArrayList<TransportMetaData>());
             nodeInfo.setTimeStarted(System.currentTimeMillis());
-            bootstrapNode = new BootstrapNode(nodeInfo, getNodeConfig().getZkHostPortList(), new RetryUntilElapsed(getNodeConfig().getZkMaxRetryTime(), getNodeConfig().getZkSleepTime()));
+            bootstrapNode = new BootstrapNode(nodeInfo, zkClient);
             if (bootstrapNode != null) {
                 bootstrapNode.start();
             }

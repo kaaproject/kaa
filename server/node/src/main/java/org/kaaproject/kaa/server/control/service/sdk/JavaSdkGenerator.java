@@ -57,284 +57,177 @@ import org.kaaproject.kaa.server.control.service.sdk.event.JavaEventClassesGener
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * The Class JavaSdkGenerator.
- */
+
 public class JavaSdkGenerator extends SdkGenerator {
 
-    /**
-     * The Constant LOG.
-     */
+
     private static final Logger LOG = LoggerFactory.getLogger(JavaSdkGenerator.class);
 
-    /**
-     * The Constant JAVA_SDK_DIR.
-     */
+
     private static final String JAVA_SDK_DIR = "sdk/java";
 
-    /**
-     * The Constant JAVA_SDK_PREFIX.
-     */
+
     private static final String JAVA_SDK_PREFIX = "kaa-java-ep-sdk-";
 
-    /**
-     * The Constant ANDROID_SDK_DIR.
-     */
+
     private static final String ANDROID_SDK_DIR = "sdk/android";
 
-    /**
-     * The Constant ANDROID_SDK_PREFIX.
-     */
+
     private static final String ANDROID_SDK_PREFIX = "kaa-android-ep-sdk-";
 
-    /**
-     * The Constant CLIENT_PROPERTIES.
-     */
+
     private static final String CLIENT_PROPERTIES = "client.properties";
 
-    /**
-     * The Constant BUILD_VERSION.
-     */
+
     private static final String BUILD_VERSION = "build.version";
 
-    /**
-     * The Constant BUILD_COMMIT_HASH.
-     */
+
     private static final String BUILD_COMMIT_HASH = "build.commit_hash";
 
-    /**
-     * The Constant BOOTSTRAP_SERVERS_PROPERTY.
-     */
+
     private static final String BOOTSTRAP_SERVERS_PROPERTY = "transport.bootstrap.servers";
 
-    /**
-     * The Constant SDK_TOKEN_PROPERTY
-     */
+
     private static final String SDK_TOKEN_PROPERTY = "sdk_token";
 
-    /**
-     * The Constant CONFIG_DATA_DEFAULT_PROPERTY.
-     */
+
     private static final String CONFIG_DATA_DEFAULT_PROPERTY = "config.data.default";
 
-    /**
-     * The Constant CONFIG_SCHEMA_DEFAULT_PROPERTY.
-     */
+
     private static final String CONFIG_SCHEMA_DEFAULT_PROPERTY = "config.schema.default";
 
-    /**
-     * The Constant KAA_CLIENT_SOURCE_TEMPLATE.
-     */
+
     private static final String KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/KaaClient.java.template";
 
-    /**
-     * The Constant BASE_KAA_CLIENT_SOURCE_TEMPLATE.
-     */
+
     private static final String BASE_KAA_CLIENT_SOURCE_TEMPLATE = "sdk/java/BaseKaaClient.java.template";
 
-    /**
-     * The Constant CONFIGURATION_MANAGER_SOURCE_TEMPLATE.
-     */
+
     private static final String CONFIGURATION_MANAGER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationManager.java.template";
 
-    /**
-     * The Constant CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE.
-     */
+
     private static final String CONFIGURATION_MANAGER_IMPL_SOURCE_TEMPLATE = "sdk/java/cf/ResyncConfigurationManager.java.template";
 
-    /**
-     * The Constant CONFIGURATION_LISTENER_SOURCE_TEMPLATE.
-     */
+
     private static final String CONFIGURATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationListener.java.template";
 
-    /**
-     * The Constant CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE.
-     */
+
     private static final String CONFIGURATION_DESERIALIZER_SOURCE_TEMPLATE = "sdk/java/cf/ConfigurationDeserializer.java.template";
 
-    /**
-     * The Constant NOTIFICATION_LISTENER_SOURCE_TEMPLATE.
-     */
+
     private static final String NOTIFICATION_LISTENER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationListener.java.template";
 
-    /**
-     * The Constant NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE.
-     */
+
     private static final String NOTIFICATION_DESERIALIZER_SOURCE_TEMPLATE = "sdk/java/nf/NotificationDeserializer.java.template";
 
-    /**
-     * The Constant PROFILE_CONTAINER_SOURCE_TEMPLATE.
-     */
+
     private static final String PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileContainer.java.template";
 
-    /**
-     * The Constant PROFILE_SERIALIZER_SOURCE_TEMPLATE.
-     */
+
+    private static final String DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileContainer.java.template";
+
+
     private static final String PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/ProfileSerializer.java.template";
 
-    /**
-     * The Constant DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE.
-     */
+
     private static final String DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE = "sdk/java/profile/DefaultProfileSerializer.java.template";
 
-    /**
-     * The Constant LOG_RECORD_SOURCE_TEMPLATE.
-     */
+
     private static final String LOG_RECORD_SOURCE_TEMPLATE = "sdk/java/log/LogRecord.java.template";
 
-    /**
-     * The Constant LOG_COLLECTOR_INTERFACE_TEMPLATE.
-     */
+
     private static final String LOG_COLLECTOR_INTERFACE_TEMPLATE = "sdk/java/log/LogCollector.java.template";
 
-    /**
-     * The Constant LOG_COLLECTOR_SOURCE_TEMPLATE.
-     */
+
     private static final String LOG_COLLECTOR_SOURCE_TEMPLATE = "sdk/java/log/DefaultLogCollector.java.template";
 
-    /**
-     * The Constant USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE.
-     */
+
     private static final String USER_VERIFIER_CONSTANTS_SOURCE_TEMPLATE = "sdk/java/event/UserVerifierConstants.java.template";
 
-    /**
-     * The Constant ABSTRACT_PROFILE_CONTAINER.
-     */
+
     private static final String PROFILE_CONTAINER = "ProfileContainer";
 
-    /**
-     * The Constant ABSTRACT_PROFILE_CONTAINER.
-     */
+
+    private static final String DEFAULT_PROFILE_CONTAINER = "DefaultProfileContainer";
+
+
     private static final String PROFILE_SERIALIZER = "ProfileSerializer";
 
-    /**
-     * The Constant CONFIGURATION_MANAGER.
-     */
+
     private static final String CONFIGURATION_MANAGER = "ConfigurationManager";
 
-    /**
-     * The Constant CONFIGURATION_MANAGER.
-     */
+
     private static final String CONFIGURATION_MANAGER_IMPL = "ResyncConfigurationManager";
 
-    /**
-     * The Constant CONFIGURATION_LISTENER.
-     */
+
     private static final String CONFIGURATION_LISTENER = "ConfigurationListener";
 
-    /**
-     * The Constant CONFIGURATION_DESERIALIZER.
-     */
+
     private static final String CONFIGURATION_DESERIALIZER = "ConfigurationDeserializer";
 
-    /**
-     * The Constant NOTIFICATION_LISTENER.
-     */
+
     private static final String NOTIFICATION_LISTENER = "NotificationListener";
 
-    /**
-     * The Constant NOTIFICATION_DESERIALIZER.
-     */
+
     private static final String NOTIFICATION_DESERIALIZER = "NotificationDeserializer";
 
-    /**
-     * The Constant USER_VERIFIER_CONSTANTS.
-     */
+
     private static final String USER_VERIFIER_CONSTANTS = "UserVerifierConstants";
 
-    /**
-     * The Constant DEFAULT_SCHEMA_VERSION.
-     */
+
     private static final int DEFAULT_SCHEMA_VERSION = 1;
     
-    /**
-     * The Constant DEFAULT_PROFILE_SCHEMA_VERSION.
-     */
+
     private static final int DEFAULT_PROFILE_SCHEMA_VERSION = 0;
 
-    /**
-     * The Constant KAA_CLIENT.
-     */
+
     private static final String KAA_CLIENT = "KaaClient";
 
-    /**
-     * The Constant BASE_KAA_CLIENT.
-     */
+
     private static final String BASE_KAA_CLIENT = "BaseKaaClient";
 
-    /**
-     * The Constant LOG_RECORD.
-     */
+
     private static final String LOG_RECORD = "LogRecord";
 
-    /**
-     * The Constant LOG_COLLECTOR_INTERFACE.
-     */
+
     private static final String LOG_COLLECTOR_INTERFACE = "LogCollector";
 
-    /**
-     * The Constant DEFAULT_LOG_COLLECTOR.
-     */
+
     private static final String LOG_COLLECTOR_SOURCE = "DefaultLogCollector";
 
-    /**
-     * The Constant PROFILE_CLASS_PACKAGE_VAR.
-     */
+
     private static final String PROFILE_CLASS_PACKAGE_VAR = "\\$\\{profile_class_package\\}";
 
-    /**
-     * The Constant PROFILE_CLASS_VAR.
-     */
+
     private static final String PROFILE_CLASS_VAR = "\\$\\{profile_class\\}";
 
-    /**
-     * The Constant CONFIGURATION_CLASS_PACKAGE_VAR.
-     */
+
     private static final String CONFIGURATION_CLASS_PACKAGE_VAR = "\\$\\{configuration_class_package\\}";
 
-    /**
-     * The Constant CONFIGURATION_CLASS_VAR.
-     */
+
     private static final String CONFIGURATION_CLASS_VAR = "\\$\\{configuration_class\\}";
 
-    /**
-     * The Constant NOTIFICATION_CLASS_PACKAGE_VAR.
-     */
+
     private static final String NOTIFICATION_CLASS_PACKAGE_VAR = "\\$\\{notification_class_package\\}";
 
-    /**
-     * The Constant NOTIFICATION_CLASS_VAR.
-     */
+
     private static final String NOTIFICATION_CLASS_VAR = "\\$\\{notification_class\\}";
 
-    /**
-     * The Constant LOG_RECORD_CLASS_PACKAGE_VAR.
-     */
+
     private static final String LOG_RECORD_CLASS_PACKAGE_VAR = "\\$\\{log_record_class_package\\}";
 
-    /**
-     * The Constant LOG_RECORD_CLASS_VAR.
-     */
+
     private static final String LOG_RECORD_CLASS_VAR = "\\$\\{log_record_class\\}";
 
-    /**
-     * The Constant DEFAULT_USER_VERIFIER_TOKEN_VAR.
-     */
+
     private static final String DEFAULT_USER_VERIFIER_TOKEN_VAR = "\\$\\{default_user_verifier_token\\}";
     
-    /**
-     * The Constant JAVA_SOURCE_COMPILER_RELEASE.
-     */
+
     private static final String JAVA_SOURCE_COMPILER_RELEASE = "7";
-    
-    /**
-     * The Constant JAVA_TARGET_COMPILER_RELEASE.
-     */
+
     private static final String JAVA_TARGET_COMPILER_RELEASE = "7";
 
-    /**
-     * The Constant random.
-     */
+
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final SdkPlatform sdkPlatform;
@@ -370,11 +263,13 @@ public class JavaSdkGenerator extends SdkGenerator {
         Schema notificationSchema = new Schema.Parser().parse(notificationSchemaBody);
         Schema logSchema = new Schema.Parser().parse(logSchemaBody);
 
-        List<Schema> eventFamilySchemas = new LinkedList<>();
-        if (eventFamilies != null && !eventFamilies.isEmpty()) {
-            for (EventFamilyMetadata eventFamily : eventFamilies) {
-                Schema eventFamilySchema = new Schema.Parser().parse(eventFamily.getEcfSchema());
-                eventFamilySchemas.add(eventFamilySchema);
+        List<String> flatEventClassCtlSchemas = new ArrayList<>();
+        eventFamilies.forEach(ecf -> flatEventClassCtlSchemas.addAll(ecf.getRawCtlsSchemas()));
+        List<Schema> eventClassCtlSchemas = new LinkedList<>();
+        if (flatEventClassCtlSchemas != null && !flatEventClassCtlSchemas.isEmpty()) {
+            for (String flatCtlSchema : flatEventClassCtlSchemas) {
+                Schema eventClassCtlSchema = new Schema.Parser().parse(flatCtlSchema);
+                eventClassCtlSchemas.add(eventClassCtlSchema);
             }
         }
 
@@ -383,7 +278,7 @@ public class JavaSdkGenerator extends SdkGenerator {
         schemasToCheck.add(profileSchema);
         schemasToCheck.add(notificationSchema);
         schemasToCheck.add(logSchema);
-        schemasToCheck.addAll(eventFamilySchemas);
+        schemasToCheck.addAll(eventClassCtlSchemas);
 
         Map<String, Schema> uniqueSchemasMap = SchemaUtil.getUniqueSchemasMap(schemasToCheck);
 
@@ -459,6 +354,12 @@ public class JavaSdkGenerator extends SdkGenerator {
         JavaDynamicBean profileContainerClassBean = new JavaDynamicBean(PROFILE_CONTAINER, profileContainerSource);
         javaSources.add(profileContainerClassBean);
 
+        String defaultProfileContainerTemplate = readResource(DEFAULT_PROFILE_CONTAINER_SOURCE_TEMPLATE);
+        String defaultProfileContainerSource = defaultProfileContainerTemplate.replaceAll(PROFILE_CLASS_PACKAGE_VAR, profileClassPackage).replaceAll(
+                PROFILE_CLASS_VAR, profileClassName);
+        JavaDynamicBean defaultProfileContainerClassBean = new JavaDynamicBean(DEFAULT_PROFILE_CONTAINER, defaultProfileContainerSource);
+        javaSources.add(defaultProfileContainerClassBean);
+
         String profileSerializerTemplate;
         if (profileSchemaVersion == DEFAULT_PROFILE_SCHEMA_VERSION) {
             profileSerializerTemplate = readResource(DEFAULT_PROFILE_SERIALIZER_SOURCE_TEMPLATE);
@@ -516,8 +417,8 @@ public class JavaSdkGenerator extends SdkGenerator {
         javaSources.add(logCollectorSourceClassBean);
 
         if (eventFamilies != null && !eventFamilies.isEmpty()) {
-            for (Schema eventFamilySchema : eventFamilySchemas) {
-                javaSources.addAll(generateSchemaSources(eventFamilySchema, uniqueSchemasMap));
+            for (Schema ctlSchema : eventClassCtlSchemas) {
+                javaSources.addAll(generateSchemaSources(ctlSchema, uniqueSchemasMap));
             }
             javaSources.addAll(JavaEventClassesGenerator.generateEventClasses(eventFamilies));
         }

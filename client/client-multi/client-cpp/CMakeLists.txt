@@ -14,10 +14,129 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 2.8.8)
+# Available options
+
+
+
+#   - `KAA_MAX_LOG_LEVEL` - maximum log level the SDK should produce.
+#
+#       Values:
+#
+#       - `0` - `NONE`
+#       - `1` - `FATAL`
+#       - `2` - `ERROR`
+#       - `3` - `WARN`
+#       - `4` - `INFO`
+#       - `5` - `DEBUG`
+#       - `6` - `TRACE`
+#
+#       Default: `4`.
+#
+#   - `KAA_WITHOUT_EVENTS` - disable Event feature.
+#
+#       Values:
+#
+#       - `1` - Event feature is disabled
+#       - `0` - Event feature is enabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_NOTIFICATION` - disable Notification feature.
+#
+#       Values:
+#
+#       - `1` - Notification feature is disabled
+#       - `0` - Notification feature is enabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_CONFIGURATION` - disable Configuration feature.
+#
+#       Values:
+#
+#       - `1` - Configuration feature is disabled
+#       - `0` - Configuration feature is enabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_LOGGING` - disable Logging feature.
+#
+#       Values:
+#
+#       - `1` - Logging feature is disabled
+#       - `0` - Logging feature is enabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITH_SQLITE_STORAGE` - enables SQLite storage for Logging feature.
+#   That requires SQLite3 headers present on the system.
+#
+#       Values:
+#
+#       - `0` - SQLite storage is disabled
+#       - `1` - SQLite storage is enabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_THREADSAFE` - disable thread safe mode. Otherwise, Kaa SDK will maintain a thread pool.
+#
+#       Values:
+#
+#       - `0` - Threadsafe mode is enabled
+#       - `1` - Threadsafe mode is disabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_CONNECTIVITY_CHECKER` - disable connectivity checking. Should be used if you implement custom connectivity checker.
+#
+#       Values:
+#
+#       - `0` - Default connectivity checking is enabled
+#       - `1` - Default connectivity checking is disabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_OPERATION_HTTP_CHANNEL` - disable default Operation HTTP channel. Should be used if you implement custom Operation channel.
+#
+#       Values:
+#
+#       - `0` - Default Operation HTTP channel is enabled
+#       - `1` - Default Operation HTTP channel is disabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_OPERATION_TCP_CHANNEL` - disable default Operation TCP channel. Should be used if you implement custom Operation channel.
+#
+#       Values:
+#
+#       - `0` - Default Operation TCP channel is enabled
+#       - `1` - Default Operation TCP channel is disabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL` - disable default Operation long poll channel. Should be used if you implement custom Operation channel.
+#
+#       Values:
+#
+#       - `0` - Default Operation long poll channel is enabled
+#       - `1` - Default Operation long poll channel is disabled
+#
+#       Default: `0`.
+#
+#   - `KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL` - disable default Bootstrap HTTP channel. Should be used if you implement custom Bootstrap channel.
+#
+#       Values:
+#
+#       - `0` - Default Bootstrap HTTP channel is enabled
+#       - `1` - Default Bootstrap HTTP channel is disabled
+#
+#       Default: `0`.
+
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+project(KaaCppSdk CXX)
 
 macro(DECCHAR2HEX VAR VAL)
-    if (${VAL} LESS 10)
+    if(${VAL} LESS 10)
         SET(${VAR} ${VAL})
     elseif(${VAL} EQUAL 10)
         SET(${VAR} "A")
@@ -37,7 +156,7 @@ macro(DECCHAR2HEX VAR VAL)
 endmacro(DECCHAR2HEX)
 
 macro(DEC2HEX16 VAR VAL)
-    if (${VAL} EQUAL 0)
+    if(${VAL} EQUAL 0)
         SET(${VAR} 0)
     else()
         SET(VAL2 ${VAL})
@@ -51,61 +170,59 @@ macro(DEC2HEX16 VAR VAL)
     endif()
 endmacro(DEC2HEX16)
 
-project (Kaa-cpp)
-enable_language(CXX)
-
 # Path to CMake's scripts.
 set(CMAKE_MODULE_PATH 
-	 ${CMAKE_MODULE_PATH}
-	 ${CMAKE_CURRENT_SOURCE_DIR}/Modules
-    )
+         ${CMAKE_MODULE_PATH}
+         ${CMAKE_CURRENT_SOURCE_DIR}/Modules)
 
 #Checks whether avrogen script exists
-set (WORKDIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(WORKDIR ${CMAKE_CURRENT_SOURCE_DIR})
 message("==================================")
-if (WIN32)
-    set (AVROGEN "avrogen.bat")
-    if (NOT EXISTS "${WORKDIR}/${AVROGEN}")
+if(WIN32)
+    set(AVROGEN "avrogen.bat")
+    if(NOT EXISTS "${WORKDIR}/${AVROGEN}")
        message("Error: avrogen.bat hasn't been found.")
     else()
        execute_process(COMMAND "${AVROGEN}"
-                   WORKING_DIRECTORY ${WORKDIR}
-                  )
+                       WORKING_DIRECTORY ${WORKDIR})
     endif()
 else()
-    set (AVROGEN "avrogen.sh")
-    if (NOT EXISTS "${WORKDIR}/${AVROGEN}")
+    set(AVROGEN "avrogen.sh")
+    if(NOT EXISTS "${WORKDIR}/${AVROGEN}")
        message("Error: avrogen.sh hasn't been found.")
     else()
        execute_process(COMMAND chmod +x ./${AVROGEN}
-                   COMMAND "./${AVROGEN}" 
-                   WORKING_DIRECTORY ${WORKDIR}
-                  )
+                       COMMAND "./${AVROGEN}" 
+                       WORKING_DIRECTORY ${WORKDIR})
     endif()
 endif()
 
 #
 # Sets common compilation flags.
 # 
-# NOTE: Platform specific compilation flags should be set 
-# in the corresponding platform CMake script(s).
-if (NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif ()
-
-if (NOT MSVC)
+if(NOT MSVC)
    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ggdb")
-endif ()
-
-#Compiler specific flags
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=gnu++11 -stdlib=libc++")
 endif()
 
+# "no-unused-private-field" is added since in most of cases it is false positive
+if(NOT MSVC)
+    list(APPEND KAA_COMPILE_OPTIONS
+                    -Wno-unused-private-field)
+endif()
 
-if (CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
-endif ()
+#Compiler specific flags
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    list(APPEND KAA_COMPILE_OPTIONS 
+                    -Wall
+                    -std=gnu++11
+                    -stdlib=libc++)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    list(APPEND KAA_COMPILE_OPTIONS 
+                    -Wall
+                    -std=c++11) 
+endif()
 
 #
 # Sets maximum Kaa SDK log level.
@@ -126,20 +243,21 @@ if(NOT DEFINED KAA_MAX_LOG_LEVEL)
     endif()
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
+list(APPEND KAA_COMPILE_DEFINITIONS KAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL})
 
-if (NOT KAA_WITHOUT_LOGGING AND KAA_WITH_SQLITE_LOG_STORAGE)
-    set(SQLITE_LOG_STORAGE_ENABLED 1)
+if(KAA_WITHOUT_LOGGING)
+    set(KAA_WITH_SQLITE_LOG_STORAGE 0)
 endif()
 
 # Disables Kaa library modules.
 message("==================================")
 message("KAA_MAX_LOG_LEVEL=${KAA_MAX_LOG_LEVEL}")
 
-if ( NOT KAA_WITHOUT_EVENTS )
+if(NOT KAA_WITHOUT_EVENTS)
     message("EVENTS ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_EVENTS")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_USE_EVENTS)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/event/registration/EndpointRegistrationManager.cpp
             impl/event/registration/UserTransport.cpp
             impl/event/EventManager.cpp
@@ -147,20 +265,21 @@ if ( NOT KAA_WITHOUT_EVENTS )
     )
 endif()
 
-if ( NOT KAA_WITHOUT_NOTIFICATIONS ) 
+if(NOT KAA_WITHOUT_NOTIFICATIONS) 
     message("NOTIFICATIONS ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_NOTIFICATIONS")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_USE_NOTIFICATIONS)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/notification/NotificationManager.cpp
             impl/notification/NotificationTransport.cpp
     )
-    
 endif()
 
-if ( NOT KAA_WITHOUT_CONFIGURATION )
+if(NOT KAA_WITHOUT_CONFIGURATION)
     message("CONFIGURATION ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_CONFIGURATION")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_USE_CONFIGURATION)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/configuration/ConfigurationTransport.cpp
             impl/configuration/manager/ConfigurationManager.cpp
             impl/configuration/storage/FileConfigurationStorage.cpp
@@ -168,10 +287,11 @@ if ( NOT KAA_WITHOUT_CONFIGURATION )
 endif()
 
 
-if ( NOT KAA_WITHOUT_LOGGING )
+if(NOT KAA_WITHOUT_LOGGING )
     message("LOGGING ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_LOGGING")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_USE_LOGGING)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/log/LoggingTransport.cpp
             impl/log/LogCollector.cpp
             impl/log/LogStorageConstants.cpp
@@ -180,57 +300,64 @@ if ( NOT KAA_WITHOUT_LOGGING )
             impl/log/DefaultLogUploadStrategy.cpp
     )
 
-    if (KAA_WITH_SQLITE_LOG_STORAGE)
+    if(KAA_WITH_SQLITE_LOG_STORAGE)
         message("SQLITE_LOG_STORAGE ENABLED")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_USE_SQLITE_LOG_STORAGE")
-        set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
-            impl/log/SQLiteDBLogStorage.cpp
+        list(APPEND KAA_COMPILE_DEFINITIONS KAA_USE_SQLITE_LOG_STORAGE)
+        set(KAA_SOURCE_FILES
+                ${KAA_SOURCE_FILES}
+                impl/log/SQLiteDBLogStorage.cpp
         )
     endif() 
 endif()
 
-if ( NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL )
+if(NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL)
     message("OPERATION_TCP_CHANNEL ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_TCP_CHANNEL")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_DEFAULT_TCP_CHANNEL)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationTcpChannel.cpp
     )
 endif()
 
-if ( NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL )
+if(NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL)
     message("OPERATION_LONG_POLL_CHANNEL ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_LONG_POLL_CHANNEL")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_DEFAULT_LONG_POLL_CHANNEL)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationLongPollChannel.cpp
     )
 endif()
 
-if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL )
+if(NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL)
     message("OPERATION_HTTP_CHANNEL ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_OPERATION_HTTP_CHANNEL")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_DEFAULT_OPERATION_HTTP_CHANNEL)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultOperationHttpChannel.cpp
     )
 endif()
 
-if ( NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
+if(NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL)
     message("BOOTSTRAP_HTTP_CHANNEL ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/channel/impl/DefaultBootstrapChannel.cpp
     )
 endif()
 
-if ( NOT KAA_WITHOUT_CONNECTIVITY_CHECKER )
+if(NOT KAA_WITHOUT_CONNECTIVITY_CHECKER)
     message("CONNECTIVITY_CHECKER ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_DEFAULT_CONNECTIVITY_CHECKER)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/channel/connectivity/IPConnectivityChecker.cpp
     )
 endif()
 
-if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL )
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+if(NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_BOOTSTRAP_HTTP_CHANNEL)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/http/HttpUrl.cpp
             impl/http/MultipartPostHttpRequest.cpp
             impl/http/HttpResponse.cpp
@@ -240,67 +367,102 @@ if ( NOT KAA_WITHOUT_OPERATION_HTTP_CHANNEL OR NOT KAA_WITHOUT_OPERATION_LONG_PO
     )
 endif()
 
-if ( NOT KAA_WITHOUT_THREADSAFE OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL)
+if(NOT KAA_WITHOUT_THREADSAFE OR NOT KAA_WITHOUT_OPERATION_LONG_POLL_CHANNEL OR NOT KAA_WITHOUT_OPERATION_TCP_CHANNEL)
     message("KAA_THREADSAFE ENABLED")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
-    set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+    list(APPEND KAA_COMPILE_DEFINITIONS KAA_THREADSAFE)
+    set(KAA_SOURCE_FILES
+            ${KAA_SOURCE_FILES}
             impl/utils/ThreadPool.cpp
     )
 endif()
 message("==================================")
 
+option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
+if(${KAA_RUNTIME_KEY_GENERATION})
+    add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+endif()
+
 #
 # Find third-party dependencies
 #
-find_package (Boost 1.54 REQUIRED COMPONENTS log system thread)
-find_package (Avro REQUIRED)
-find_package (Botan REQUIRED)
+find_package(Boost 1.54 REQUIRED COMPONENTS log system thread)
+find_package(Avro REQUIRED)
+find_package(Botan REQUIRED)
 
-
-if (SQLITE_LOG_STORAGE_ENABLED)
-    find_package (Sqlite3 REQUIRED)
+if(KAA_WITH_SQLITE_LOG_STORAGE)
+    find_package(Sqlite3 REQUIRED)
 endif()
 
-if (WIN32 AND NOT CYGWIN AND NOT MSYS)
-    if (CMAKE_SYSTEM_VERSION)
+if(WIN32 AND NOT CYGWIN AND NOT MSYS)
+    if(CMAKE_SYSTEM_VERSION)
         string(REGEX REPLACE "^([0-9]+).*" "\\1" verMajor ${CMAKE_SYSTEM_VERSION})
         string(REGEX REPLACE "^[0-9]+.([0-9]+).*" "\\1" verMinor ${CMAKE_SYSTEM_VERSION})
         math(EXPR ver "((${verMajor} << 8) + ${verMinor})")
         DEC2HEX16(version ${ver})
         message(STATUS "CMAKE_SYSTEM_VERSION=${CMAKE_SYSTEM_VERSION}")
         message(STATUS "VERSION=${version}")
-        add_definitions(-D_WIN32_WINNT=0x${version})
+
+        list(APPEND KAA_COMPILE_DEFINITIONS _WIN32_WINNT=0x${version})
     endif() 
 
-    add_definitions (/EHs)
-    add_definitions (
-        -DBOOST_REGEX_DYN_LINK
-        -DBOOST_FILESYSTEM_DYN_LINK
-        -DBOOST_SYSTEM_DYN_LINK
-        -DBOOST_PROGRAM_OPTIONS_DYN_LINK
-        -DBOOST_LOG_DYN_LINK
-        -DBOOST_ALL_NO_LIB)
+    list(APPEND KAA_COMPILE_DEFINITIONS
+                    /EHs
+                    BOOST_REGEX_DYN_LINK
+                    BOOST_FILESYSTEM_DYN_LINK
+                    BOOST_SYSTEM_DYN_LINK
+                    BOOST_PROGRAM_OPTIONS_DYN_LINK
+                    BOOST_LOG_DYN_LINK
+                    BOOST_ALL_NO_LIB)
 else()
-    add_definitions (${Boost_LIB_DIAGNOSTIC_DEFINITIONS} -DBOOST_LOG_DYN_LINK)
+    list(APPEND KAA_COMPILE_DEFINITIONS ${Boost_LIB_DIAGNOSTIC_DEFINITIONS})
+    if(NOT Boost_USE_STATIC_LIBS)
+       list(APPEND KAA_COMPILE_DEFINITIONS BOOST_LOG_DYN_LINK)
+    endif()
 endif()
 
-# Sets path(s) to source files.
-include_directories (${CMAKE_CURRENT_SOURCE_DIR} 
-                     ${Boost_INCLUDE_DIRS}
-                     ${AVRO_INCLUDE_DIRS} 
-                     ${BOTAN_INCLUDE_DIR})
-                     
-if (SQLITE_LOG_STORAGE_ENABLED)
-    include_directories (${SQLITE3_INCLUDE_DIR})
+set(KAA_INCLUDE_DIRS
+        ${CMAKE_CURRENT_SOURCE_DIR} 
+        ${Boost_INCLUDE_DIRS}
+        ${AVRO_INCLUDE_DIRS} 
+        ${BOTAN_INCLUDE_DIR})
+
+set(KAA_THIRDPARTY_LIBRARIES 
+        ${BOTAN_LIBRARY} 
+        ${AVRO_LIBRARIES} 
+        ${Boost_LIBRARIES}
+)
+
+if(KAA_WITH_SQLITE_LOG_STORAGE)
+    set(KAA_INCLUDE_DIRS
+            ${KAA_INCLUDE_DIRS}
+            ${SQLITE3_INCLUDE_DIR})
+
+    set(KAA_THIRDPARTY_LIBRARIES
+            ${KAA_THIRDPARTY_LIBRARIES} 
+            ${SQLITE3_LIBRARY})
 endif()
 
-set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
+if(WIN32 AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    set(KAA_THIRDPARTY_LIBRARIES
+            ${KAA_THIRDPARTY_LIBRARIES}
+            dbghelp)
+endif()
+
+if(NOT WIN32)
+    set(KAA_THIRDPARTY_LIBRARIES
+            ${KAA_THIRDPARTY_LIBRARIES}
+            pthread)
+endif()
+
+set(KAA_SOURCE_FILES
+        ${KAA_SOURCE_FILES}
         impl/ClientStatus.cpp
         impl/KaaDefaults.cpp
         impl/Kaa.cpp
         impl/KaaClient.cpp
         impl/logging/Log.cpp
         impl/logging/DefaultLogger.cpp
+        impl/logging/LoggingUtils.cpp
         impl/security/KeyUtils.cpp
         impl/security/RsaEncoderDecoder.cpp
         impl/common/EndpointObjectHash.cpp
@@ -325,30 +487,18 @@ set (KAA_SOURCE_FILES ${KAA_SOURCE_FILES}
     )
 
 # Builds Kaa libraries.
-add_library(kaacpp_o OBJECT ${KAA_SOURCE_FILES})
-add_library (kaacpp SHARED ./kaa $<TARGET_OBJECTS:kaacpp_o>)
+add_library(kaacpp ${KAA_SOURCE_FILES})
+target_compile_options(kaacpp PUBLIC ${KAA_COMPILE_OPTIONS})
+target_compile_definitions(kaacpp PUBLIC ${KAA_COMPILE_DEFINITIONS})
+target_include_directories(kaacpp PUBLIC ${KAA_INCLUDE_DIRS})
+target_link_libraries(kaacpp PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 
-target_link_libraries(kaacpp
-                     ${BOTAN_LIBRARY}
-                     ${AVRO_LIBRARIES}
-                     ${Boost_LIBRARIES}
-    )
+# Install Kaa headers/libraries.
+message(STATUS "KAA WILL BE INSTALLED TO ${CMAKE_INSTALL_PREFIX}")
 
-if (SQLITE_LOG_STORAGE_ENABLED)
-    target_link_libraries(kaacpp ${SQLITE3_LIBRARY})
-endif()
+install(DIRECTORY kaa/ 
+        DESTINATION include/kaa
+        FILES_MATCHING PATTERN *.hpp)
 
-if (WIN32 AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-    target_link_libraries(kaacpp dbghelp)
-endif()
-
-if (NOT WIN32)
-    target_link_libraries(kaacpp pthread)
-endif()
-
-add_library (kaacpp_s STATIC ./kaa $<TARGET_OBJECTS:kaacpp_o>)
-
-message(STATUS "KAA WILL BE INSTALLED TO ${CMAKE_INSTALL_PREFIX} ")
-install (DIRECTORY kaa/ DESTINATION include/kaa
-    FILES_MATCHING PATTERN *.hpp)
-install (TARGETS kaacpp kaacpp_s DESTINATION lib)
+install(TARGETS kaacpp 
+        DESTINATION lib)
