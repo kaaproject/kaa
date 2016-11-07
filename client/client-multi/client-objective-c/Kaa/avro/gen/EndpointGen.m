@@ -19,7 +19,6 @@
 /*
  * AUTO-GENERATED CODE
  */
-
 @implementation TopicState
 
 
@@ -34,15 +33,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.TopicState";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"TopicId", self.topicId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNumber", self.seqNumber]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -63,10 +53,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation SubscriptionCommand
 
@@ -82,15 +69,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.SubscriptionCommand";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"TopicId", self.topicId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Command", SubscriptionCommandTypeArray(self.command)]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -111,10 +89,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation UserAttachRequest
 
@@ -131,16 +106,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.UserAttachRequest";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserVerifierId", self.userVerifierId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserExternalId", self.userExternalId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserAccessToken", self.userAccessToken]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -164,10 +129,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation UserAttachResponse
 
@@ -194,16 +156,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ErrorCode", self.errorCode]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ErrorReason", self.errorReason]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeEnum:@(self.result) to:writer];
     [self serializeErrorCode:self.errorCode to:writer];
@@ -223,8 +175,6 @@
     self.errorCode = [self deserializeErrorCode:reader];
     self.errorReason = [self deserializeErrorReason:reader];
 }
-
-
 
 
 - (void)serializeErrorCode:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -343,7 +293,6 @@
 
 @end
 
-
 @implementation UserAttachNotification
 
 
@@ -358,15 +307,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.UserAttachNotification";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserExternalId", self.userExternalId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointAccessToken", self.endpointAccessToken]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -387,10 +327,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation UserDetachNotification
 
@@ -405,14 +342,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.UserDetachNotification";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointAccessToken", self.endpointAccessToken]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -430,10 +359,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation EndpointAttachRequest
 
@@ -449,15 +375,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.EndpointAttachRequest";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointAccessToken", self.endpointAccessToken]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -478,10 +395,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation EndpointAttachResponse
 
@@ -507,16 +421,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.EndpointAttachResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointKeyHash", self.endpointKeyHash]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeInt:@(self.requestId) to:writer];
     [self serializeEndpointKeyHash:self.endpointKeyHash to:writer];
@@ -536,8 +440,6 @@
     self.endpointKeyHash = [self deserializeEndpointKeyHash:reader];
     self.result = [[self.utils deserializeEnum:reader] intValue];
 }
-
-
 
 
 - (void)serializeEndpointKeyHash:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -599,7 +501,6 @@
 
 @end
 
-
 @implementation EndpointDetachRequest
 
 
@@ -614,15 +515,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.EndpointDetachRequest";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointKeyHash", self.endpointKeyHash]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -643,10 +535,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation EndpointDetachResponse
 
@@ -662,15 +551,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.EndpointDetachResponse";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -691,10 +571,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation Event
 
@@ -723,18 +600,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.Event";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNum", self.seqNum]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventClassFQN", self.eventClassFQN]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventData", self.eventData]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Source", self.source]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Target", self.target]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeInt:@(self.seqNum) to:writer];
     [self.utils serializeString:self.eventClassFQN to:writer];
@@ -760,8 +625,6 @@
     self.source = [self deserializeSource:reader];
     self.target = [self deserializeTarget:reader];
 }
-
-
 
 
 - (void)serializeSource:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -880,7 +743,6 @@
 
 @end
 
-
 @implementation EventListenersRequest
 
 
@@ -895,15 +757,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.EventListenersRequest";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventClassFQNs", self.eventClassFQNs]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -924,10 +777,7 @@
     }
 
 
-
-
 @end
-
 
 @implementation EventListenersResponse
 
@@ -953,16 +803,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.EventListenersResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Listeners", self.listeners]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeInt:@(self.requestId) to:writer];
     [self serializeListeners:self.listeners to:writer];
@@ -982,8 +822,6 @@
     self.listeners = [self deserializeListeners:reader];
     self.result = [[self.utils deserializeEnum:reader] intValue];
 }
-
-
 
 
 - (void)serializeListeners:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -1045,20 +883,12 @@
 
 @end
 
-
 @implementation EventSequenceNumberRequest
 
 
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberRequest";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -1075,10 +905,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation EventSequenceNumberResponse
 
@@ -1093,14 +920,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.EventSequenceNumberResponse";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNum", self.seqNum]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -1118,10 +937,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation Notification
 
@@ -1150,18 +966,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.Notification";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"TopicId", self.topicId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Type", NotificationTypeArray(self.type)]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Uid", self.uid]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SeqNumber", self.seqNumber]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Body", self.body]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeLong:@(self.topicId) to:writer];
     [self.utils serializeEnum:@(self.type) to:writer];
@@ -1187,8 +991,6 @@
     self.seqNumber = [self deserializeSeqNumber:reader];
     self.body = [self.utils deserializeBytes:reader];
 }
-
-
 
 
 - (void)serializeUid:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -1307,7 +1109,6 @@
 
 @end
 
-
 @implementation Topic
 
 
@@ -1323,16 +1124,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.Topic";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"Id", self.id]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Name", self.name]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SubscriptionType", SubscriptionTypeArray(self.subscriptionType)]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -1356,10 +1147,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation LogEntry
 
@@ -1374,14 +1162,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.LogEntry";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Data", self.data]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -1399,10 +1179,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation SyncRequestMetaData
 
@@ -1431,17 +1208,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.SyncRequestMetaData";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SdkToken", self.sdkToken]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointPublicKeyHash", self.endpointPublicKeyHash]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProfileHash", self.profileHash]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Timeout", self.timeout]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeString:self.sdkToken to:writer];
     [self serializeEndpointPublicKeyHash:self.endpointPublicKeyHash to:writer];
@@ -1464,8 +1230,6 @@
     self.profileHash = [self deserializeProfileHash:reader];
     self.timeout = [self deserializeTimeout:reader];
 }
-
-
 
 
 - (void)serializeEndpointPublicKeyHash:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -1641,7 +1405,6 @@
 
 @end
 
-
 @implementation ProfileSyncRequest
 
 - (instancetype)init {
@@ -1667,16 +1430,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.ProfileSyncRequest";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointPublicKey", self.endpointPublicKey]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProfileBody", self.profileBody]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointAccessToken", self.endpointAccessToken]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self serializeEndpointPublicKey:self.endpointPublicKey to:writer];
     [self.utils serializeBytes:self.profileBody to:writer];
@@ -1696,8 +1449,6 @@
     self.profileBody = [self.utils deserializeBytes:reader];
     self.endpointAccessToken = [self deserializeEndpointAccessToken:reader];
 }
-
-
 
 
 - (void)serializeEndpointPublicKey:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -1816,7 +1567,6 @@
 
 @end
 
-
 @implementation ProtocolVersionPair
 
 
@@ -1831,15 +1581,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.ProtocolVersionPair";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"Id", self.id]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"Version", self.version]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -1860,10 +1601,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation BootstrapSyncRequest
 
@@ -1879,15 +1617,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncRequest";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SupportedProtocols", self.supportedProtocols]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -1909,10 +1638,7 @@
     }
 
 
-
-
 @end
-
 
 @implementation ConfigurationSyncRequest
 
@@ -1937,15 +1663,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncRequest";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfigurationHash", self.configurationHash]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ResyncOnly", self.resyncOnly]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeBytes:self.configurationHash to:writer];
     [self serializeResyncOnly:self.resyncOnly to:writer];
@@ -1962,8 +1679,6 @@
     self.configurationHash = [self.utils deserializeBytes:reader];
     self.resyncOnly = [self deserializeResyncOnly:reader];
 }
-
-
 
 
 - (void)serializeResyncOnly:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -2025,7 +1740,6 @@
 
 @end
 
-
 @implementation NotificationSyncRequest
 
 - (instancetype)init {
@@ -2053,17 +1767,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.NotificationSyncRequest";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"TopicListHash", self.topicListHash]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"TopicStates", self.topicStates]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"AcceptedUnicastNotifications", self.acceptedUnicastNotifications]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SubscriptionCommands", self.subscriptionCommands]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeInt:@(self.topicListHash) to:writer];
     [self serializeTopicStates:self.topicStates to:writer];
@@ -2086,8 +1789,6 @@
     self.acceptedUnicastNotifications = [self deserializeAcceptedUnicastNotifications:reader];
     self.subscriptionCommands = [self deserializeSubscriptionCommands:reader];
 }
-
-
 
 
 - (void)serializeTopicStates:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -2265,7 +1966,6 @@
 
 @end
 
-
 @implementation UserSyncRequest
 
 - (instancetype)init {
@@ -2292,16 +1992,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserAttachRequest", self.userAttachRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointAttachRequests", self.endpointAttachRequests]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointDetachRequests", self.endpointDetachRequests]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self serializeUserAttachRequest:self.userAttachRequest to:writer];
     [self serializeEndpointAttachRequests:self.endpointAttachRequests to:writer];
@@ -2321,8 +2011,6 @@
     self.endpointAttachRequests = [self deserializeEndpointAttachRequests:reader];
     self.endpointDetachRequests = [self deserializeEndpointDetachRequests:reader];
 }
-
-
 
 
 - (void)serializeUserAttachRequest:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -2500,7 +2188,6 @@
 
 @end
 
-
 @implementation EventSyncRequest
 
 - (instancetype)init {
@@ -2527,16 +2214,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.EventSyncRequest";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventSequenceNumberRequest", self.eventSequenceNumberRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventListenersRequests", self.eventListenersRequests]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Events", self.events]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self serializeEventSequenceNumberRequest:self.eventSequenceNumberRequest to:writer];
     [self serializeEventListenersRequests:self.eventListenersRequests to:writer];
@@ -2556,8 +2233,6 @@
     self.eventListenersRequests = [self deserializeEventListenersRequests:reader];
     self.events = [self deserializeEvents:reader];
 }
-
-
 
 
 - (void)serializeEventSequenceNumberRequest:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -2721,7 +2396,6 @@
 
 @end
 
-
 @implementation LogSyncRequest
 
 - (instancetype)init {
@@ -2745,15 +2419,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.LogSyncRequest";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"LogEntries", self.logEntries]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeInt:@(self.requestId) to:writer];
     [self serializeLogEntries:self.logEntries to:writer];
@@ -2770,8 +2435,6 @@
     self.requestId = [[self.utils deserializeInt:reader] intValue];
     self.logEntries = [self deserializeLogEntries:reader];
 }
-
-
 
 
 - (void)serializeLogEntries:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -2834,7 +2497,6 @@
 
 @end
 
-
 @implementation ProtocolMetaData
 
 
@@ -2850,16 +2512,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.ProtocolMetaData";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"AccessPointId", self.accessPointId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProtocolVersionInfo", self.protocolVersionInfo]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConnectionInfo", self.connectionInfo]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -2883,10 +2535,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation BootstrapSyncResponse
 
@@ -2902,15 +2551,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.BootstrapSyncResponse";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SupportedProtocols", self.supportedProtocols]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -2932,10 +2572,7 @@
     }
 
 
-
-
 @end
-
 
 @implementation ProfileSyncResponse
 
@@ -2950,14 +2587,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.ProfileSyncResponse";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ResponseStatus", SyncResponseStatusArray(self.responseStatus)]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -2975,10 +2604,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation ConfigurationSyncResponse
 
@@ -3005,16 +2631,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.ConfigurationSyncResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ResponseStatus", SyncResponseStatusArray(self.responseStatus)]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfSchemaBody", self.confSchemaBody]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfDeltaBody", self.confDeltaBody]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeEnum:@(self.responseStatus) to:writer];
     [self serializeConfSchemaBody:self.confSchemaBody to:writer];
@@ -3034,8 +2650,6 @@
     self.confSchemaBody = [self deserializeConfSchemaBody:reader];
     self.confDeltaBody = [self deserializeConfDeltaBody:reader];
 }
-
-
 
 
 - (void)serializeConfSchemaBody:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -3154,7 +2768,6 @@
 
 @end
 
-
 @implementation NotificationSyncResponse
 
 - (instancetype)init {
@@ -3180,16 +2793,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.NotificationSyncResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ResponseStatus", SyncResponseStatusArray(self.responseStatus)]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Notifications", self.notifications]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"AvailableTopics", self.availableTopics]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeEnum:@(self.responseStatus) to:writer];
     [self serializeNotifications:self.notifications to:writer];
@@ -3209,8 +2812,6 @@
     self.notifications = [self deserializeNotifications:reader];
     self.availableTopics = [self deserializeAvailableTopics:reader];
 }
-
-
 
 
 - (void)serializeNotifications:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -3331,7 +2932,6 @@
 
 @end
 
-
 @implementation UserSyncResponse
 
 - (instancetype)init {
@@ -3362,18 +2962,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserAttachResponse", self.userAttachResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserAttachNotification", self.userAttachNotification]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserDetachNotification", self.userDetachNotification]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointAttachResponses", self.endpointAttachResponses]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EndpointDetachResponses", self.endpointDetachResponses]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self serializeUserAttachResponse:self.userAttachResponse to:writer];
     [self serializeUserAttachNotification:self.userAttachNotification to:writer];
@@ -3399,8 +2987,6 @@
     self.endpointAttachResponses = [self deserializeEndpointAttachResponses:reader];
     self.endpointDetachResponses = [self deserializeEndpointDetachResponses:reader];
 }
-
-
 
 
 - (void)serializeUserAttachResponse:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -3692,7 +3278,6 @@
 
 @end
 
-
 @implementation EventSyncResponse
 
 - (instancetype)init {
@@ -3719,16 +3304,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.EventSyncResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventSequenceNumberResponse", self.eventSequenceNumberResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventListenersResponses", self.eventListenersResponses]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Events", self.events]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self serializeEventSequenceNumberResponse:self.eventSequenceNumberResponse to:writer];
     [self serializeEventListenersResponses:self.eventListenersResponses to:writer];
@@ -3748,8 +3323,6 @@
     self.eventListenersResponses = [self deserializeEventListenersResponses:reader];
     self.events = [self deserializeEvents:reader];
 }
-
-
 
 
 - (void)serializeEventSequenceNumberResponse:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -3927,7 +3500,6 @@
 
 @end
 
-
 @implementation LogDeliveryStatus
 
 - (instancetype)init {
@@ -3952,16 +3524,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.LogDeliveryStatus";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Result", SyncResponseResultTypeArray(self.result)]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ErrorCode", self.errorCode]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self.utils serializeInt:@(self.requestId) to:writer];
     [self.utils serializeEnum:@(self.result) to:writer];
@@ -3981,8 +3543,6 @@
     self.result = [[self.utils deserializeEnum:reader] intValue];
     self.errorCode = [self deserializeErrorCode:reader];
 }
-
-
 
 
 - (void)serializeErrorCode:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -4044,7 +3604,6 @@
 
 @end
 
-
 @implementation LogSyncResponse
 
 - (instancetype)init {
@@ -4067,14 +3626,6 @@
     return @"org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse";
 }
 
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"DeliveryStatuses", self.deliveryStatuses]];
-
-    return fieldsDescription;
-}
-
 - (void)serialize:(avro_writer_t)writer {
     [self serializeDeliveryStatuses:self.deliveryStatuses to:writer];
 }
@@ -4088,8 +3639,6 @@
 - (void)deserialize:(avro_reader_t)reader {
     self.deliveryStatuses = [self deserializeDeliveryStatuses:reader];
 }
-
-
 
 
 - (void)serializeDeliveryStatuses:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -4152,7 +3701,6 @@
 
 @end
 
-
 @implementation RedirectSyncResponse
 
 
@@ -4166,14 +3714,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"AccessPointId", self.accessPointId]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -4191,10 +3731,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation ExtensionSync
 
@@ -4210,15 +3747,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.ExtensionSync";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"ExtensionId", self.extensionId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Payload", self.payload]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -4239,10 +3767,7 @@
 }
 
 
-
-
 @end
-
 
 @implementation SyncRequest
 
@@ -4281,23 +3806,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.SyncRequest";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"SyncRequestMetaData", self.syncRequestMetaData]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"BootstrapSyncRequest", self.bootstrapSyncRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProfileSyncRequest", self.profileSyncRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfigurationSyncRequest", self.configurationSyncRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"NotificationSyncRequest", self.notificationSyncRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserSyncRequest", self.userSyncRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventSyncRequest", self.eventSyncRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"LogSyncRequest", self.logSyncRequest]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ExtensionSyncRequests", self.extensionSyncRequests]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -4340,8 +3848,6 @@
     self.logSyncRequest = [self deserializeLogSyncRequest:reader];
     self.extensionSyncRequests = [self deserializeExtensionSyncRequests:reader];
 }
-
-
 
 
 - (void)serializeSyncRequestMetaData:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -4860,7 +4366,6 @@
 
 @end
 
-
 @implementation SyncResponse
 
 - (instancetype)init {
@@ -4899,24 +4404,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.SyncResponse";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"RequestId", self.requestId]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"Status", SyncResponseResultTypeArray(self.status)]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"BootstrapSyncResponse", self.bootstrapSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ProfileSyncResponse", self.profileSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ConfigurationSyncResponse", self.configurationSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"NotificationSyncResponse", self.notificationSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"UserSyncResponse", self.userSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"EventSyncResponse", self.eventSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"RedirectSyncResponse", self.redirectSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"LogSyncResponse", self.logSyncResponse]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"ExtensionSyncResponses", self.extensionSyncResponses]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -4962,8 +4449,6 @@
     self.logSyncResponse = [self deserializeLogSyncResponse:reader];
     self.extensionSyncResponses = [self deserializeExtensionSyncResponses:reader];
 }
-
-
 
 
 - (void)serializeBootstrapSyncResponse:(KAAUnion *)kaaUnion to:(avro_writer_t)writer {
@@ -5482,7 +4967,6 @@
 
 @end
 
-
 @implementation TopicSubscriptionInfo
 
 
@@ -5497,15 +4981,6 @@
 
 + (NSString *)FQN {
     return @"org.kaaproject.kaa.common.endpoint.gen.TopicSubscriptionInfo";
-}
-
-- (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
-
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"TopicInfo", self.topicInfo]];
-    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"SeqNumber", self.seqNumber]];
-
-    return fieldsDescription;
 }
 
 - (void)serialize:(avro_writer_t)writer {
@@ -5524,8 +4999,6 @@
     self.topicInfo = (Topic *)[self.utils deserializeRecord:reader as:[Topic class]];
     self.seqNumber = [[self.utils deserializeInt:reader] intValue];
 }
-
-
 
 
 @end

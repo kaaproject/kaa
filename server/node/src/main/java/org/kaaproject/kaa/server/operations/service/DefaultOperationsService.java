@@ -16,9 +16,18 @@
 
 package org.kaaproject.kaa.server.operations.service;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -28,7 +37,6 @@ import org.kaaproject.kaa.common.hash.SHA1HashUtils;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.core.structure.Pair;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.EndpointSpecificConfigurationService;
 import org.kaaproject.kaa.server.common.dao.UserConfigurationService;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaRequest;
 import org.kaaproject.kaa.server.operations.pojo.GetDeltaResponse;
@@ -77,17 +85,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 
 @Service
 public class DefaultOperationsService implements OperationsService {
@@ -117,9 +114,6 @@ public class DefaultOperationsService implements OperationsService {
 
     @Autowired
     EndpointService endpointService;
-
-    @Autowired
-    EndpointSpecificConfigurationService endpointSpecificConfigurationService;
 
     private String operationServerHash;
 
@@ -198,7 +192,7 @@ public class DefaultOperationsService implements OperationsService {
         return context;
     }
 
-    private EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto endpointProfile, boolean updateConfiguration) {
+    private EndpointProfileDto syncProfileState(String appToken, String endpointId, EndpointProfileDto endpointProfile, boolean userConfigurationChanged) {
         LOG.debug("[{}][{}] going to sync endpoint group states", appToken, endpointId);
 
         Function<EndpointProfileDto, Pair<EndpointProfileDto, HistoryDelta>> updateFunction = profile -> {
@@ -207,7 +201,7 @@ public class DefaultOperationsService implements OperationsService {
             HistoryDelta historyDelta = fetchHistory(endpointId, appToken, profile, curAppSeqNumber);
             profile.setGroupState(historyDelta.getEndpointGroupStates());
             profile.setSequenceNumber(curAppSeqNumber);
-            if (historyDelta.isConfigurationChanged() || updateConfiguration) {
+            if (historyDelta.isConfigurationChanged() || userConfigurationChanged) {
                 LOG.debug("[{}][{}] configuration change detected", appToken, endpointId);
                 try {
                     syncEndpointConfiguration(appToken, endpointId, profile);
@@ -227,12 +221,11 @@ public class DefaultOperationsService implements OperationsService {
         endpointProfile = result.getV1();
         HistoryDelta historyDelta = result.getV2();
 
-        if (historyDelta.isSmthChanged() || updateConfiguration) {
+        if (historyDelta.isSmthChanged() || userConfigurationChanged) {
             LOG.debug("[{}][{}] going to save new profile", appToken, endpointId);
             endpointProfile = profileService.updateProfile(endpointProfile, (storedProfile, newProfile) -> {
-                if (updateConfiguration) {
+                if (userConfigurationChanged) {
                     storedProfile.setUserConfigurationHash(newProfile.getUserConfigurationHash());
-                    storedProfile.setEpsConfigurationHash(newProfile.getEpsConfigurationHash());
                 }
                 storedProfile.setGroupState(new ArrayList<EndpointGroupStateDto>());
                 return updateFunction.apply(storedProfile).getV1();
@@ -248,11 +241,11 @@ public class DefaultOperationsService implements OperationsService {
             LOG.trace("[{}][{}] Result configuration hash is {}", appToken, endpointId, Arrays.toString(configurationHash));
         }
         profile.setConfigurationHash(configurationHash);
-        EndpointObjectHash userConfigHash = configurationCache.getUserConfigurationHash();
-        profile.setUserConfigurationHash(userConfigHash == null ? null : userConfigHash.getData());
-        EndpointObjectHash epsConfigHash = configurationCache.getEpsConfigurationHash();
-        profile.setEpsConfigurationHash(epsConfigHash == null ? null : epsConfigHash.getData());
-
+        if (configurationCache.getUserConfigurationHash() != null) {
+            profile.setUserConfigurationHash(configurationCache.getUserConfigurationHash().getData());
+        } else {
+            profile.setUserConfigurationHash(null);
+        }
     }
 
     private void syncTopicList(String appToken, String endpointId, EndpointProfileDto profile) {
@@ -275,11 +268,10 @@ public class DefaultOperationsService implements OperationsService {
     }
 
     @Override
-    public SyncContext syncConfigurationHashes(SyncContext context, byte[] ucfHash, byte[] epsConfigHash) {
+    public SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash) {
         EndpointProfileDto profile = context.getEndpointProfile();
         profile.setUserConfigurationHash(ucfHash);
-        profile.setEpsConfigurationHash(epsConfigHash);
-        syncProfileState(context.getAppToken(), context.getEndpointKey(), profile, true);
+        profile = syncProfileState(context.getAppToken(), context.getEndpointKey(), profile, true);
         return context;
     }
 
@@ -347,13 +339,6 @@ public class DefaultOperationsService implements OperationsService {
             return EndpointObjectHash.fromString(ucfDto.getBody()).getData();
         }
         return null;
-    }
-
-    @Override
-    public byte[] fetchEndpointSpecificConfigurationHash(EndpointProfileDto profile) {
-        Optional<EndpointSpecificConfigurationDto> configuration = endpointSpecificConfigurationService.findActiveConfigurationByEndpointProfile(profile);
-        return configuration.filter(conf -> conf.getConfiguration() != null)
-                .map(dto -> EndpointObjectHash.fromString(dto.getConfiguration()).getData()).orElse(null);
     }
 
     private EndpointProfileDto registerEndpoint(String endpointId, int requestHash, ClientSyncMetaData metaData, ProfileClientSync request) {

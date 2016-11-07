@@ -645,7 +645,6 @@ void test_max_parallel_uploads_with_log_sync(void **state)
     /*
      * Ensure the first request is allowed.
      */
-    // cppcheck-suppress redundantAssignment
     strategy.max_parallel_uploads = 1;
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -731,7 +730,6 @@ void test_max_parallel_uploads_with_sync_all(void **state)
     /*
      * Ensure the first request is allowed.
      */
-    // cppcheck-suppress redundantAssignment
     strategy.max_parallel_uploads = 1;
     error_code = kaa_logging_add_record(log_collector, test_log_record, NULL);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -780,6 +778,7 @@ void test_max_parallel_uploads_with_sync_all(void **state)
 struct response_chunk {
     uint8_t bucket_id[2];  /* 16 bits for bucket ID */
     uint8_t resp_code;     /* 8 bits for response code. 0 == SUCCESS, 1 == FAILURE */
+    // cppcheck-suppress unusedStructMember
     uint8_t reserved;      /* Should be 0 */
 };
 

@@ -73,7 +73,6 @@ CREATE TABLE IF NOT EXISTS kaa.ep_profile (
     pf_ver int,
     srv_pf_ver int,
     ucf_hash blob,
-    eps_cf_hash blob,
     cf_hash blob,
     cf_ver int,
     topic_hash blob,
@@ -151,11 +150,3 @@ CREATE TABLE IF NOT EXISTS kaa.credentials (
     creds_status text,
     PRIMARY KEY (creds_application_id, creds_id)
 );
-
-CREATE TABLE IF NOT EXISTS kaa.ep_specific_conf (
-    ep_key_hash blob,
-    cf_ver int,
-    body text,
-    opt_lock bigint,
-    PRIMARY KEY((ep_key_hash), cf_ver)
-) WITH CLUSTERING ORDER BY (cf_ver DESC);

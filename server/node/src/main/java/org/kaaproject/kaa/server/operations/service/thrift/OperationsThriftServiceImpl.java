@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.thrift;
 
+import java.security.PublicKey;
+import java.util.List;
+
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -30,7 +33,6 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
@@ -47,9 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.security.PublicKey;
-import java.util.List;
 
 /**
  * The implementation of {#link
@@ -224,10 +223,5 @@ public class OperationsThriftServiceImpl implements OperationsThriftService.Ifac
         if(endpointPublickKey != null){
             cacheService.resetEndpointKey(hash, endpointPublickKey);
         }
-    }
-
-    @Override
-    public void sendEndpointConfigurationRefreshMessage(ThriftEndpointConfigurationRefreshMessage message) throws TException {
-        clusterService.sendEndpointConfigurationRefreshMessage(message);
     }
 }

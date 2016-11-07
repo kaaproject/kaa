@@ -18,14 +18,6 @@
 set -e
 set -v
 
-make
-
-cd build-posix
-ctest -T test
-ctest -T memcheck
-ctest -T coverage
-cd ..
-
-make -C build-posix doxygen
-
-make -C build-posix cppcheck
+curl https://nixos.org/nix/install | sh
+sudo mkdir /etc/nix
+sudo sh -c 'echo "build-max-jobs = 4" > /etc/nix/nix.conf'

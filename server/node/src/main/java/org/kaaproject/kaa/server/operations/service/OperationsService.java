@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service;
 
+import java.util.List;
+
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
@@ -28,8 +30,6 @@ import org.kaaproject.kaa.server.sync.NotificationClientSync;
 import org.kaaproject.kaa.server.sync.ProfileClientSync;
 import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.sync.UserClientSync;
-
-import java.util.List;
 
 /**
  * The interface OperationsService is used to define key operations with
@@ -64,15 +64,6 @@ public interface OperationsService extends PublicKeyAware {
     EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
 
     /**
-     * Retrieves endpoint specific configuration hash according
-     * to current endpoint configuration schema version
-     *
-     * @param profile        the endpoint profile
-     * @return endpoint specific configuration hash
-     */
-    byte[] fetchEndpointSpecificConfigurationHash(EndpointProfileDto profile);
-
-    /**
      * Update sync response.
      *
      * @param response              the response
@@ -101,14 +92,13 @@ public interface OperationsService extends PublicKeyAware {
     public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
 
     /**
-     * Update profile state based on new user and endpoint specific configuration hashes
+     * Update profile state based on new user configuration hash
      *
      * @param context - sync context that contains profile and other metadata
      * @param ucfHash - user configuration hash
-     * @param epsConfHash - endpoint specific configuration hash
      * @return sync context
      */
-    SyncContext syncConfigurationHashes(SyncContext context, byte[] ucfHash, byte[] epsConfHash);
+    SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash);
 
     SyncContext syncUseConfigurationRawSchema(SyncContext context, boolean useConfigurationRawSchema);
 }

@@ -16,18 +16,20 @@
 
 #include <inttypes.h>
 
+
+
 uint64_t __ashldi3(uint64_t a, int b)
 {
-    if (b <= 0) {
+    if (b <= 0 ) {
         return a;
     }
     if (b >= 64) {
         return 0;
     }
-    uint32_t aLow = (uint32_t)a;
-    uint32_t aHigh = (uint32_t)(a >> 32);
+    uint32_t aLow = (uint32_t) a;
+    uint32_t aHigh = (uint32_t) (a >> 32);
     if (b >= 32) {
-        aHigh = (aLow << (b - 32));
+        aHigh = (aLow << b);
         aLow = 0;
     } else {
         aHigh = (aHigh << b) + (aLow >> (32 - b));
@@ -35,3 +37,5 @@ uint64_t __ashldi3(uint64_t a, int b)
     }
     return ((uint64_t) aHigh << 32) + aLow;
 }
+
+

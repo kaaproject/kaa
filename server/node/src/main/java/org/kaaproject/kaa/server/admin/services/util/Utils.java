@@ -20,7 +20,6 @@ import org.kaaproject.kaa.server.admin.services.entity.AuthUserDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterException;
-import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Utils {
 
@@ -62,8 +62,6 @@ public class Utils {
             return (KaaAdminServiceException) exception;
         } else if (exception instanceof NotFoundException) {
             return new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.ITEM_NOT_FOUND);
-        } else if (exception instanceof KaaOptimisticLockingFailureException) {
-            return new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.CONFLICT);
         } else if (exception instanceof IllegalArgumentException || exception instanceof IncorrectParameterException
                 || cause.contains("IncorrectParameterException")) {
             return new KaaAdminServiceException(exception.getMessage(), ServiceErrorCode.BAD_REQUEST_PARAMS);
