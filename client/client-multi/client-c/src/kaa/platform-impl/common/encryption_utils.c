@@ -110,9 +110,10 @@ kaa_error_t ext_encrypt_data(const uint8_t *input, size_t payload_size, uint8_t 
     /* Adding PKCS7 padding */
     size_t enc_data_size = ext_get_encrypted_data_size(payload_size);
     uint8_t padding = enc_data_size - payload_size;
+    memcpy(output, input, payload_size);
     memset(output + payload_size, padding, padding);
 
-    return aes_encrypt_decrypt(MBEDTLS_AES_ENCRYPT, input, enc_data_size,
+    return aes_encrypt_decrypt(MBEDTLS_AES_ENCRYPT, output, enc_data_size,
             output, keys.session_key);
 }
 
