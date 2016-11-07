@@ -21,8 +21,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
 public class ApplicationTest {
-    @Test
-    public void hashCodeEqualsTest() {
-        EqualsVerifier.forClass(Application.class).usingGetClass().verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(Application.class).usingGetClass().verify();
+  }
 }

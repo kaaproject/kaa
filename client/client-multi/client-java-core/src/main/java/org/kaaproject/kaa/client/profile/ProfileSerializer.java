@@ -16,12 +16,12 @@
 
 package org.kaaproject.kaa.client.profile;
 
+import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
+import org.kaaproject.kaa.schema.system.EmptyData;
+
 import java.io.IOException;
 
 import javax.annotation.Generated;
-
-import org.kaaproject.kaa.common.avro.AvroByteArrayConverter;
-import org.kaaproject.kaa.schema.system.EmptyData;
 
 /**
  * This class serialize entity defined in profile schema and returned by profile container.
@@ -34,23 +34,24 @@ import org.kaaproject.kaa.schema.system.EmptyData;
  */
 @Generated("ProfileSerializer.java.template")
 class ProfileSerializer {
-    private final AvroByteArrayConverter<EmptyData> converter = new AvroByteArrayConverter<EmptyData>(EmptyData.class);
+  private final AvroByteArrayConverter<EmptyData> converter =
+          new AvroByteArrayConverter<EmptyData>(EmptyData.class);
 
-    byte[] toByteArray(ProfileContainer container) throws IOException {
-        EmptyData profile;
-        if (container == null) {
-            throw new RuntimeException("Profile container is not set!");
-        } else {
-            profile = container.getProfile();
-        }
-        if (profile != null) {
-            return converter.toByteArray(profile);
-        } else {
-            throw new RuntimeException("Profile is not set!");
-        }
+  byte[] toByteArray(ProfileContainer container) throws IOException {
+    EmptyData profile;
+    if (container == null) {
+      throw new RuntimeException("Profile container is not set!");
+    } else {
+      profile = container.getProfile();
     }
+    if (profile != null) {
+      return converter.toByteArray(profile);
+    } else {
+      throw new RuntimeException("Profile is not set!");
+    }
+  }
 
-    boolean isDefault() {
-        return false;
-    }
+  boolean isDefault() {
+    return false;
+  }
 }

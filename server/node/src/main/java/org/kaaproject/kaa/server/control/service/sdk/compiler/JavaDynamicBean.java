@@ -26,58 +26,62 @@ import javax.tools.SimpleJavaFileObject;
  * The Class JavaDynamicBean.
  */
 public class JavaDynamicBean extends SimpleJavaFileObject {
-    
-    /** The source. */
-    private String source; 
-    
-    /** The byte code. */
-    private ByteArrayOutputStream byteCode = new ByteArrayOutputStream();
-    
-    /**
-     * Instantiates a new java dynamic bean.
-     *
-     * @param baseName the base name
-     * @param source the source
-     */
-    public JavaDynamicBean(String baseName, String source) { 
-        super(JavaDynamicUtils.INSTANCE.createURI(JavaDynamicUtils.INSTANCE.getClassNameWithExt(baseName)),
-                Kind.SOURCE);
-            this.source = source;
-    } 
-    
-    /**
-     * Instantiates a new java dynamic bean.
-     *
-     * @param name the name
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public JavaDynamicBean(String name) throws IOException { 
-        super(JavaDynamicUtils.INSTANCE.createURI(name), Kind.CLASS);
-    }
-    
-    /* (non-Javadoc)
-     * @see javax.tools.SimpleJavaFileObject#getCharContent(boolean)
-     */
-    @Override 
-    public String getCharContent(boolean ignoreEncodingErrors) { 
-      return source; 
-    } 
 
-    /* (non-Javadoc)
-     * @see javax.tools.SimpleJavaFileObject#openOutputStream()
-     */
-    @Override 
-    public OutputStream openOutputStream() { 
-      return byteCode; 
-    } 
+  /**
+   * The source.
+   */
+  private String source;
 
-    /**
-     * Gets the bytes.
-     *
-     * @return the bytes
-     */
-    public byte[] getBytes() { 
-      return byteCode.toByteArray(); 
-    } 
-    
+  /**
+   * The byte code.
+   */
+  private ByteArrayOutputStream byteCode = new ByteArrayOutputStream();
+
+  /**
+   * Instantiates a new java dynamic bean.
+   *
+   * @param baseName the base name
+   * @param source   the source
+   */
+  public JavaDynamicBean(String baseName, String source) {
+    super(JavaDynamicUtils.INSTANCE
+        .createUri(JavaDynamicUtils.INSTANCE.getClassNameWithExt(baseName)), Kind.SOURCE);
+    this.source = source;
+  }
+
+  /**
+   * Instantiates a new java dynamic bean.
+   *
+   * @param name the name
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  public JavaDynamicBean(String name) throws IOException {
+    super(JavaDynamicUtils.INSTANCE.createUri(name), Kind.CLASS);
+  }
+
+  /* (non-Javadoc)
+   * @see javax.tools.SimpleJavaFileObject#getCharContent(boolean)
+   */
+  @Override
+  public String getCharContent(boolean ignoreEncodingErrors) {
+    return source;
+  }
+
+  /* (non-Javadoc)
+   * @see javax.tools.SimpleJavaFileObject#openOutputStream()
+   */
+  @Override
+  public OutputStream openOutputStream() {
+    return byteCode;
+  }
+
+  /**
+   * Gets the bytes.
+   *
+   * @return the bytes
+   */
+  public byte[] getBytes() {
+    return byteCode.toByteArray();
+  }
+
 }

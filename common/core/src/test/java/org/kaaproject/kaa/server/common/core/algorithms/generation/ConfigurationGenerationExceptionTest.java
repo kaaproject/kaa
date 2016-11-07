@@ -21,39 +21,39 @@ import org.junit.Test;
 
 public class ConfigurationGenerationExceptionTest {
 
-    @Test
-    public void testConfigurationProcessingExceptionEmptyConstructor() {
-        ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException();
+  @Test
+  public void testConfigurationProcessingExceptionEmptyConstructor() {
+    ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException();
 
-        Assert.assertNull(configurationProcessingException.getMessage());
-        Assert.assertNull(configurationProcessingException.getCause());
-    }
+    Assert.assertNull(configurationProcessingException.getMessage());
+    Assert.assertNull(configurationProcessingException.getCause());
+  }
 
-    @Test
-    public void testMergeExceptionConstructorWithMessageParameter() {
-        String message = "test_message";
-        ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException(message);
+  @Test
+  public void testMergeExceptionConstructorWithMessageParameter() {
+    String message = "test_message";
+    ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException(message);
 
-        Assert.assertEquals(message, configurationProcessingException.getMessage());
-        Assert.assertNull(configurationProcessingException.getCause());
-    }
+    Assert.assertEquals(message, configurationProcessingException.getMessage());
+    Assert.assertNull(configurationProcessingException.getCause());
+  }
 
-    @Test
-    public void testMergeExceptionConstructorWithMessageAndCauseParameters() {
-        String message = "test_message";
-        Exception cause = new RuntimeException();
-        ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException(message, cause);
+  @Test
+  public void testMergeExceptionConstructorWithMessageAndCauseParameters() {
+    String message = "test_message";
+    Exception cause = new RuntimeException();
+    ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException(message, cause);
 
-        Assert.assertEquals(message, configurationProcessingException.getMessage());
-        Assert.assertTrue(cause == configurationProcessingException.getCause());
-    }
+    Assert.assertEquals(message, configurationProcessingException.getMessage());
+    Assert.assertTrue(cause == configurationProcessingException.getCause());
+  }
 
-    @Test
-    public void testMergeExceptionConstructorWithCauseParameter() {
-        Exception cause = new RuntimeException();
-        ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException(cause);
+  @Test
+  public void testMergeExceptionConstructorWithCauseParameter() {
+    Exception cause = new RuntimeException();
+    ConfigurationGenerationException configurationProcessingException = new ConfigurationGenerationException(cause);
 
-        Assert.assertEquals(cause.toString(), configurationProcessingException.getMessage());
-        Assert.assertTrue(cause == configurationProcessingException.getCause());
-    }
+    Assert.assertEquals(cause.toString(), configurationProcessingException.getMessage());
+    Assert.assertTrue(cause == configurationProcessingException.getCause());
+  }
 }

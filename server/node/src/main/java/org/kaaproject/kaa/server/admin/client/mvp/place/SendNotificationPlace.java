@@ -16,89 +16,90 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class SendNotificationPlace extends TreePlace {
 
-    private String applicationId;
-    private String topicId;
+  private String applicationId;
+  private String topicId;
 
-    public SendNotificationPlace(String applicationId, String topicId) {
-        this.applicationId = applicationId;
-        this.topicId = topicId;
-    }
+  public SendNotificationPlace(String applicationId, String topicId) {
+    this.applicationId = applicationId;
+    this.topicId = topicId;
+  }
 
-    public String getApplicationId() {
-        return applicationId;
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  public String getTopicId() {
+    return topicId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.sendNotification();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-    
-    public String getTopicId() {
-        return topicId;
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    SendNotificationPlace other = (SendNotificationPlace) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
+        return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
+    }
+    if (topicId == null) {
+      if (other.topicId != null) {
+        return false;
+      }
+    } else if (!topicId.equals(other.topicId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new TopicPlace(applicationId, topicId);
+  }
+
+  @Prefix(value = "sendNotif")
+  public static class Tokenizer implements PlaceTokenizer<SendNotificationPlace>, PlaceConstants {
+
+    @Override
+    public SendNotificationPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new SendNotificationPlace(
+          PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(TOPIC_ID));
     }
 
     @Override
-    public String getName() {
-        return Utils.constants.sendNotification();
+    public String getToken(SendNotificationPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      PlaceParams.putParam(TOPIC_ID, place.getTopicId());
+      return PlaceParams.generateToken();
     }
-
-    @Prefix(value = "sendNotif")
-    public static class Tokenizer implements PlaceTokenizer<SendNotificationPlace>, PlaceConstants {
-
-        @Override
-        public SendNotificationPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new SendNotificationPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(TOPIC_ID));
-        }
-
-        @Override
-        public String getToken(SendNotificationPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(TOPIC_ID, place.getTopicId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        SendNotificationPlace other = (SendNotificationPlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        if (topicId == null) {
-            if (other.topicId != null) {
-                return false;
-            }
-        } else if (!topicId.equals(other.topicId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new TopicPlace(applicationId, topicId);
-    }
+  }
 
 }

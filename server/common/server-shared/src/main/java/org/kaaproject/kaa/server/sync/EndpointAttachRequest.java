@@ -17,96 +17,94 @@
 package org.kaaproject.kaa.server.sync;
 
 public final class EndpointAttachRequest {
-    private int requestId;
-    private String endpointAccessToken;
+  private int requestId;
+  private String endpointAccessToken;
 
-    public EndpointAttachRequest() {
-    }
+  public EndpointAttachRequest() {
+  }
 
-    /**
-     * All-args constructor.
-     */
-    public EndpointAttachRequest(int requestId, String endpointAccessToken) {
-        this.requestId = requestId;
-        this.endpointAccessToken = endpointAccessToken;
-    }
+  /**
+   * All-args constructor.
+   */
+  public EndpointAttachRequest(int requestId, String endpointAccessToken) {
+    this.requestId = requestId;
+    this.endpointAccessToken = endpointAccessToken;
+  }
 
-    /**
-     * Gets the value of the 'requestId' field.
-     */
-    public int getRequestId() {
-        return requestId;
-    }
+  /**
+   * Gets the value of the 'requestId' field.
+   */
+  public int getRequestId() {
+    return requestId;
+  }
 
-    /**
-     * Sets the value of the 'requestId' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setRequestId(int value) {
-        this.requestId = value;
-    }
+  /**
+   * Sets the value of the 'requestId' field.
+   *
+   * @param value the value to set.
+   */
+  public void setRequestId(int value) {
+    this.requestId = value;
+  }
 
-    /**
-     * Gets the value of the 'endpointAccessToken' field.
-     */
-    public String getEndpointAccessToken() {
-        return endpointAccessToken;
-    }
+  /**
+   * Gets the value of the 'endpointAccessToken' field.
+   */
+  public String getEndpointAccessToken() {
+    return endpointAccessToken;
+  }
 
-    /**
-     * Sets the value of the 'endpointAccessToken' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setEndpointAccessToken(String value) {
-        this.endpointAccessToken = value;
-    }
+  /**
+   * Sets the value of the 'endpointAccessToken' field.
+   *
+   * @param value the value to set.
+   */
+  public void setEndpointAccessToken(String value) {
+    this.endpointAccessToken = value;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
-        result = prime * result + requestId;
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((endpointAccessToken == null) ? 0 : endpointAccessToken.hashCode());
+    result = prime * result + requestId;
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointAttachRequest other = (EndpointAttachRequest) obj;
-        if (endpointAccessToken == null) {
-            if (other.endpointAccessToken != null) {
-                return false;
-            }
-        } else if (!endpointAccessToken.equals(other.endpointAccessToken)) {
-            return false;
-        }
-        if (requestId != other.requestId) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    EndpointAttachRequest other = (EndpointAttachRequest) obj;
+    if (endpointAccessToken == null) {
+      if (other.endpointAccessToken != null) {
+        return false;
+      }
+    } else if (!endpointAccessToken.equals(other.endpointAccessToken)) {
+      return false;
+    }
+    if (requestId != other.requestId) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointAttachRequest [requestId=");
-        builder.append(requestId);
-        builder.append(", endpointAccessToken=");
-        builder.append(endpointAccessToken);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointAttachRequest [requestId=");
+    builder.append(requestId);
+    builder.append(", endpointAccessToken=");
+    builder.append(endpointAccessToken);
+    builder.append("]");
+    return builder.toString();
+  }
 }

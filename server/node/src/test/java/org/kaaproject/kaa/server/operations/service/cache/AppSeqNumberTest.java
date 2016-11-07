@@ -22,9 +22,9 @@ import org.junit.Test;
 
 public class AppSeqNumberTest {
 
-    @Test
-    public void testHashCodeAndEquals(){
-        EqualsVerifier.forClass(AppSeqNumber.class).verify();
-    }
+  @Test
+  public void testHashCodeAndEquals() {
+    EqualsVerifier.forClass(AppSeqNumber.class).verify();
+  }
 
 }

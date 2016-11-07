@@ -16,84 +16,100 @@
 
 package org.kaaproject.kaa.common.dto.admin;
 
-import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
-
 import java.io.Serializable;
 
 public class UserProfileUpdateDto implements Serializable {
 
-    private static final long serialVersionUID = 8016870008519720555L;
+  private static final long serialVersionUID = 8016870008519720555L;
 
-    private String firstName;
-    private String lastName;
-    private String mail;
+  private String firstName;
+  private String lastName;
+  private String mail;
 
-    public UserProfileUpdateDto(String firstName, String lastName, String mail) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.mail = mail;
+  /**
+   * Instantiates the UserProfileUpdateDto.
+   */
+  public UserProfileUpdateDto(String firstName, String lastName, String mail) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.mail = mail;
+  }
+
+  /**
+   * Instantiates the UserProfileUpdateDto.
+   */
+  public UserProfileUpdateDto(UserDto userDto) {
+    this.firstName = userDto.getFirstName();
+    this.lastName = userDto.getLastName();
+    this.mail = userDto.getMail();
+  }
+
+  public UserProfileUpdateDto() {
+  }
+
+  public String getFirstName() {
+    return firstName;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+
+  public String getMail() {
+    return mail;
+  }
+
+  public void setMail(String mail) {
+    this.mail = mail;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this
+        == obj) {
+      return true;
+    }
+    if (obj
+        == null
+        || getClass()
+           != obj.getClass()) {
+      return false;
     }
 
-    public UserProfileUpdateDto(UserDto userDto) {
-        this.firstName = userDto.getFirstName();
-        this.lastName = userDto.getLastName();
-        this.mail = userDto.getMail();
+    UserProfileUpdateDto that = (UserProfileUpdateDto) obj;
+
+    if (!firstName.equals(that.firstName)) {
+      return false;
     }
-
-    public UserProfileUpdateDto() {
+    if (!lastName.equals(that.lastName)) {
+      return false;
     }
+    return mail.equals(that.mail);
 
-    public String getFirstName() {
-        return firstName;
-    }
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  @Override
+  public int hashCode() {
+    int result = firstName.hashCode();
+    result = 31 * result + lastName.hashCode();
+    result = 31 * result + mail.hashCode();
+    return result;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UserProfileUpdateDto that = (UserProfileUpdateDto) o;
-
-        if (!firstName.equals(that.firstName)) return false;
-        if (!lastName.equals(that.lastName)) return false;
-        return mail.equals(that.mail);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = firstName.hashCode();
-        result = 31 * result + lastName.hashCode();
-        result = 31 * result + mail.hashCode();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "UserProfileUpdateDto{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", mail='" + mail + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "UserProfileUpdateDto{"
+           + "firstName='" + firstName + '\''
+           + ", lastName='" + lastName + '\''
+           + ", mail='" + mail + '\''
+           + '}';
+  }
 }

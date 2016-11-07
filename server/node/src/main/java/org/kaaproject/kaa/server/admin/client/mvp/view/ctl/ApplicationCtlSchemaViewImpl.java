@@ -16,15 +16,15 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.ctl;
 
-public class ApplicationCtlSchemaViewImpl extends CtlSchemaViewImpl{
+public class ApplicationCtlSchemaViewImpl extends CtlSchemaViewImpl {
 
-    public ApplicationCtlSchemaViewImpl(boolean create, boolean editable) {
-        super(create, editable);
-    }
+  public ApplicationCtlSchemaViewImpl(boolean create, boolean editable) {
+    super(create, editable);
+  }
 
-    @Override
-    protected boolean hasUpdateScopeOption() {
-        return true;
-    }
+  @Override
+  protected boolean hasUpdateScopeOption() {
+    return true;
+  }
 
 }

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.transports.tcp.transport.messages;
 
-import java.util.UUID;
-
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.Connect;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
@@ -28,63 +26,83 @@ import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionCreateListener;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
+import java.util.UUID;
+
 public class NettyTcpConnectMessage extends AbstractMessage implements SessionInitMessage {
 
-    private final Connect command;
-    private final SessionCreateListener sessionAware;
+  private final Connect command;
+  private final SessionCreateListener sessionAware;
 
-    public NettyTcpConnectMessage(UUID uuid, ChannelContext channelContext, Connect command,
-            ChannelType channelType, SessionCreateListener sessionAware, MessageBuilder responseConverter, ErrorBuilder errorConverter) {
-        super(uuid, command.getNextProtocolId(), channelContext, channelType, responseConverter, errorConverter);
-        this.command = command;
-        this.sessionAware = sessionAware;
-    }
+  /**
+   * Create new instance of <code>NettyTcpConnectMessage</code>.
+   *
+   * @param uuid              immutable universally unique identifier
+   * @param channelContext    transport channel context, it has methods to write data to the
+   *                          channel
+   * @param command           is instance of <code>Connect</code>
+   * @param channelType       is enum that represent channel type
+   * @param sessionAware      represents a listener for the session creation event
+   * @param responseConverter converts the message data into objects specific to the corresponding
+   *                          transport channel
+   * @param errorConverter    converts an exception into objects specific to the corresponding
+   *                          transport channel
+   */
+  public NettyTcpConnectMessage(UUID uuid, ChannelContext channelContext, Connect command,
+                                ChannelType channelType, SessionCreateListener sessionAware,
+                                MessageBuilder responseConverter, ErrorBuilder errorConverter
+  ) {
+    super(uuid, command.getNextProtocolId(), channelContext,
+            channelType, responseConverter, errorConverter
+    );
+    this.command = command;
+    this.sessionAware = sessionAware;
+  }
 
-    @Override
-    public void onSessionCreated(SessionInfo session) {
-        this.sessionAware.onSessionCreated(session);
-    }
+  @Override
+  public void onSessionCreated(SessionInfo session) {
+    this.sessionAware.onSessionCreated(session);
+  }
 
-    @Override
-    public byte[] getEncodedMessageData() {
-        return command.getSyncRequest();
-    }
+  @Override
+  public byte[] getEncodedMessageData() {
+    return command.getSyncRequest();
+  }
 
-    @Override
-    public byte[] getEncodedSessionKey() {
-        return command.getAesSessionKey();
-    }
+  @Override
+  public byte[] getEncodedSessionKey() {
+    return command.getAesSessionKey();
+  }
 
-    @Override
-    public byte[] getSessionKeySignature() {
-        return command.getSignature();
-    }
+  @Override
+  public byte[] getSessionKeySignature() {
+    return command.getSignature();
+  }
 
-    @Override
-    public boolean isEncrypted() {
-        return command.isEncrypted();
-    }
+  @Override
+  public boolean isEncrypted() {
+    return command.isEncrypted();
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NettyTcpConnectMessage [command=");
-        builder.append(command);
-        builder.append(", sessionAware=");
-        builder.append(sessionAware);
-        builder.append(", getUuid()=");
-        builder.append(getChannelUuid());
-        builder.append(", getChannelContext()=");
-        builder.append(getChannelContext());
-        builder.append(", getChannelType()=");
-        builder.append(getChannelType());
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("NettyTcpConnectMessage [command=");
+    builder.append(command);
+    builder.append(", sessionAware=");
+    builder.append(sessionAware);
+    builder.append(", getUuid()=");
+    builder.append(getChannelUuid());
+    builder.append(", getChannelContext()=");
+    builder.append(getChannelContext());
+    builder.append(", getChannelType()=");
+    builder.append(getChannelType());
+    builder.append("]");
+    return builder.toString();
+  }
 
-    @Override
-    public int getKeepAlive() {
-        return command.getKeepAlive();
-    }
+  @Override
+  public int getKeepAlive() {
+    return command.getKeepAlive();
+  }
 
 }

@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
+
 import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
 
 
 public interface GetUserConfigView extends BaseDetailsView {
 
-    HasValue<String> getExternalUserId();
+  HasValue<String> getExternalUserId();
 
-    ValueListBox<SchemaInfoDto> getConfigurationSchemaInfo();
+  ValueListBox<SchemaInfoDto> getConfigurationSchemaInfo();
 
-    HasClickHandlers getDownloadUserCongigurationButton();
+  HasClickHandlers getDownloadUserCongigurationButton();
 }

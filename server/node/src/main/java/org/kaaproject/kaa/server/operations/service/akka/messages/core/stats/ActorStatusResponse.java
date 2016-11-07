@@ -20,20 +20,23 @@ import java.util.UUID;
 
 public class ActorStatusResponse {
 
-    private final UUID requestId;
-    private final int endpointCount;
+  private final UUID requestId;
+  private final int endpointCount;
 
-    public ActorStatusResponse(UUID requestId, int endpointCount) {
-        super();
-        this.requestId = requestId;
-        this.endpointCount = endpointCount;
-    }
-    
-    public UUID getRequestId() {
-        return requestId;
-    }
+  /**
+   * All-args constructor.
+   */
+  public ActorStatusResponse(UUID requestId, int endpointCount) {
+    super();
+    this.requestId = requestId;
+    this.endpointCount = endpointCount;
+  }
 
-    public int getEndpointCount() {
-        return endpointCount;
-    }    
+  public UUID getRequestId() {
+    return requestId;
+  }
+
+  public int getEndpointCount() {
+    return endpointCount;
+  }
 }

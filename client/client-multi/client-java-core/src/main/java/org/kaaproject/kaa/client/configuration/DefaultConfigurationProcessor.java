@@ -16,91 +16,94 @@
 
 package org.kaaproject.kaa.client.configuration;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericArray;
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.client.schema.SchemaUpdatesReceiver;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
- * Implementation of {@link ConfigurationProcessor} using avro decoding mechanisms
+ * Implementation of {@link ConfigurationProcessor} using avro decoding mechanisms.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public class DefaultConfigurationProcessor implements
-        ConfigurationProcessor, DecodedDeltaObservable,
-        SchemaUpdatesReceiver, ConfigurationProcessedObservable {
+    ConfigurationProcessor, DecodedDeltaObservable,
+    SchemaUpdatesReceiver, ConfigurationProcessedObservable {
 
-    private final List<GenericDeltaReceiver> onDeltaReceived = new LinkedList<GenericDeltaReceiver>();
-    private final List<ConfigurationProcessedObserver> onProcessed = new LinkedList<ConfigurationProcessedObserver>();
-    private Schema schema;
+  private final List<GenericDeltaReceiver> onDeltaReceived = new LinkedList<>();
+  private final List<ConfigurationProcessedObserver> onProcessed = new LinkedList<>();
+  private Schema schema;
 
-    public DefaultConfigurationProcessor() {
+  public DefaultConfigurationProcessor() {
 
-    }
+  }
 
-    @Override
-    public synchronized void processConfigurationData(ByteBuffer buffer, boolean fullResync) throws IOException {
-        if (buffer != null) {
-            if (schema == null) {
-                throw new ConfigurationRuntimeException("Can't process configuration update. Schema is null");
-            }
-            GenericAvroConverter<GenericArray<GenericRecord>> converter = new GenericAvroConverter<GenericArray<GenericRecord>>(schema);
-            GenericArray<GenericRecord> deltaArray = converter.decodeBinary(buffer.array());
+  @Override
+  public synchronized void processConfigurationData(ByteBuffer buffer, boolean fullResync)
+          throws IOException {
+    if (buffer != null) {
+      if (schema == null) {
+        throw new ConfigurationRuntimeException(
+                "Can't process configuration update. Schema is null");
+      }
+      GenericAvroConverter<GenericArray<GenericRecord>> converter =
+              new GenericAvroConverter<>(schema);
+      GenericArray<GenericRecord> deltaArray = converter.decodeBinary(buffer.array());
 
-            for (GenericRecord delta : deltaArray) {
-                GenericRecord record = (GenericRecord) delta.get("delta");
-                int index = delta.getSchema().getField("delta").schema().getTypes().indexOf(record.getSchema());
-                for (GenericDeltaReceiver subscriber : onDeltaReceived) {
-                    subscriber.onDeltaReceived(index, record, fullResync);
-                }
-            }
-
-            for (ConfigurationProcessedObserver callback : onProcessed) {
-                callback.onConfigurationProcessed();
-            }
+      for (GenericRecord delta : deltaArray) {
+        GenericRecord record = (GenericRecord) delta.get("delta");
+        int index = delta.getSchema().getField("delta").schema().getTypes().indexOf(
+                record.getSchema());
+        for (GenericDeltaReceiver subscriber : onDeltaReceived) {
+          subscriber.onDeltaReceived(index, record, fullResync);
         }
-    }
+      }
 
-    @Override
-    public synchronized void onSchemaUpdated(Schema schema) {
-        if (schema != null) {
-            this.schema = schema;
-        }
+      for (ConfigurationProcessedObserver callback : onProcessed) {
+        callback.onConfigurationProcessed();
+      }
     }
+  }
 
-    @Override
-    public void subscribeForUpdates(GenericDeltaReceiver receiver) {
-        if (receiver != null && !onDeltaReceived.contains(receiver)) {
-            onDeltaReceived.add(receiver);
-        }
+  @Override
+  public synchronized void onSchemaUpdated(Schema schema) {
+    if (schema != null) {
+      this.schema = schema;
     }
+  }
 
-    @Override
-    public void unsubscribeFromUpdates(GenericDeltaReceiver receiver) {
-        if (receiver != null) {
-            onDeltaReceived.remove(receiver);
-        }
+  @Override
+  public void subscribeForUpdates(GenericDeltaReceiver receiver) {
+    if (receiver != null && !onDeltaReceived.contains(receiver)) {
+      onDeltaReceived.add(receiver);
     }
+  }
 
-    @Override
-    public void addOnProcessedCallback(ConfigurationProcessedObserver callback) {
-        if (callback != null && !onProcessed.contains(callback)) {
-            onProcessed.add(callback);
-        }
+  @Override
+  public void unsubscribeFromUpdates(GenericDeltaReceiver receiver) {
+    if (receiver != null) {
+      onDeltaReceived.remove(receiver);
     }
+  }
 
-    @Override
-    public void removeOnProcessedCallback(ConfigurationProcessedObserver callback) {
-        if (callback != null) {
-            onProcessed.remove(callback);
-        }
+  @Override
+  public void addOnProcessedCallback(ConfigurationProcessedObserver callback) {
+    if (callback != null && !onProcessed.contains(callback)) {
+      onProcessed.add(callback);
     }
+  }
+
+  @Override
+  public void removeOnProcessedCallback(ConfigurationProcessedObserver callback) {
+    if (callback != null) {
+      onProcessed.remove(callback);
+    }
+  }
 
 }

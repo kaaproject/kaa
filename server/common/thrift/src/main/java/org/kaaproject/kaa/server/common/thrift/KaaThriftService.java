@@ -18,18 +18,18 @@ package org.kaaproject.kaa.server.common.thrift;
 
 public enum KaaThriftService {
 
-    KAA_NODE_SERVICE("KaaNodeService"),
-    BOOTSTRAP_SERVICE("BootstrapService"),
-    OPERATIONS_SERVICE("OperationsService");
-    
-    private String serviceName;
-    
-    private KaaThriftService(String serviceName) {
-        this.serviceName = serviceName;
-    }
-    
-    public String getServiceName() {
-        return serviceName;
-    }
-    
+  KAA_NODE_SERVICE("KaaNodeService"),
+  BOOTSTRAP_SERVICE("BootstrapService"),
+  OPERATIONS_SERVICE("OperationsService");
+
+  private String serviceName;
+
+  private KaaThriftService(String serviceName) {
+    this.serviceName = serviceName;
+  }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
 }

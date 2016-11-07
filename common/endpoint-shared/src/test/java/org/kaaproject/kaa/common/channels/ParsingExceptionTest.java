@@ -16,28 +16,27 @@
 
 package org.kaaproject.kaa.common.channels;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public class ParsingExceptionTest {
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.common.channels.ParsingException#ParsingException(java.lang.String)}.
-     */
-    @Test
-    public void testParsingExceptionString() {
-        String testMessage = new String("test");
-        try {
-            throw new ParsingException(testMessage);
-        } catch (ParsingException e) {
-            assertEquals(testMessage, e.getMessage());
-        }
+  /**
+   * Test method for {@link org.kaaproject.kaa.common.channels.ParsingException#ParsingException(java.lang.String)}.
+   */
+  @Test
+  public void testParsingExceptionString() {
+    String testMessage = new String("test");
+    try {
+      throw new ParsingException(testMessage);
+    } catch (ParsingException e) {
+      assertEquals(testMessage, e.getMessage());
     }
+  }
 
 
 }

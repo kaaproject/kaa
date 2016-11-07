@@ -24,7 +24,7 @@
 
 kaa_error_t ext_calculate_sha_hash(const char *data, size_t data_size, kaa_digest digest)
 {
-    if (!digest || !data || !data_size) {
+    if ((digest == NULL) || ((data == NULL) && (data_size != 0))) {
         return KAA_ERR_BADPARAM;
     }
 

@@ -16,19 +16,20 @@
 
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 
+import java.util.List;
+
 public interface LogEventDao {
 
-    void createCollection(String collectionName);
+  void createCollection(String collectionName);
 
-    List<LogEvent> save(List<LogEventDto> logEventDtos, ProfileInfo clientProfile, ProfileInfo serverProfile, String collectionName);
+  List<LogEvent> save(List<LogEventDto> logEventDtos, ProfileInfo clientProfile,
+                      ProfileInfo serverProfile, String collectionName);
 
-    void removeAll(String collectionName);
+  void removeAll(String collectionName);
 
-    void close();
+  void close();
 
 }

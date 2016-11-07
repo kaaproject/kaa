@@ -18,6 +18,6 @@ package org.kaaproject.kaa.client.channel.impl.channels.polling;
 
 public interface CancelableRunnable extends Runnable {
 
-	public void cancel();
-	
+  public void cancel();
+
 }

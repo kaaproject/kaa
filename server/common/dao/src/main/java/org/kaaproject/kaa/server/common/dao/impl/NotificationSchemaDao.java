@@ -26,47 +26,48 @@ import java.util.List;
  * @param <T> the generic type
  */
 public interface NotificationSchemaDao<T> extends SqlDao<T> {
-    
-    /**
-     * Find notification schemas by application id.
-     *
-     * @param appId the application id
-     * @return the list of notification schemas
-     */
-    List<T> findNotificationSchemasByAppId(String appId);
 
-    /**
-     * Removes the notification schemas by application id.
-     *
-     * @param appId the application id
-     */
-    void removeNotificationSchemasByAppId(String appId);
+  /**
+   * Find notification schemas by application id.
+   *
+   * @param appId the application id
+   * @return the list of notification schemas
+   */
+  List<T> findNotificationSchemasByAppId(String appId);
 
-    /**
-     * Find notification schemas by application id and type.
-     *
-     * @param appId the application id
-     * @param type the type
-     * @return the list of notification schemas
-     */
-    List<T> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type);
+  /**
+   * Removes the notification schemas by application id.
+   *
+   * @param appId the application id
+   */
+  void removeNotificationSchemasByAppId(String appId);
 
-    /**
-     * Find notification schemas by application id and type and version.
-     *
-     * @param appId the application id
-     * @param type the type
-     * @param majorVersion the major version
-     * @return the notification schema
-     */
-    T findNotificationSchemasByAppIdAndTypeAndVersion(String appId, NotificationTypeDto type, int majorVersion);
+  /**
+   * Find notification schemas by application id and type.
+   *
+   * @param appId the application id
+   * @param type  the type
+   * @return the list of notification schemas
+   */
+  List<T> findNotificationSchemasByAppIdAndType(String appId, NotificationTypeDto type);
 
-    /**
-     * Find latest notification schema by application id.
-     *
-     * @param applicationId the application id
-     * @param type the type
-     * @return the notification schema
-     */
-    T findLatestNotificationSchemaByAppId(String applicationId, NotificationTypeDto type);
+  /**
+   * Find notification schemas by application id and type and version.
+   *
+   * @param appId        the application id
+   * @param type         the type
+   * @param majorVersion the major version
+   * @return the notification schema
+   */
+  T findNotificationSchemasByAppIdAndTypeAndVersion(
+          String appId, NotificationTypeDto type, int majorVersion);
+
+  /**
+   * Find latest notification schema by application id.
+   *
+   * @param applicationId the application id
+   * @param type          the type
+   * @return the notification schema
+   */
+  T findLatestNotificationSchemaByAppId(String applicationId, NotificationTypeDto type);
 }

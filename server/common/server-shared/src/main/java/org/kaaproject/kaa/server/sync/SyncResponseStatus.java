@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.sync;
 
 public enum SyncResponseStatus {
-    NO_DELTA, DELTA, RESYNC;
+  NO_DELTA, DELTA, RESYNC;
 }

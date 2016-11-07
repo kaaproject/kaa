@@ -16,135 +16,135 @@
 
 package org.kaaproject.kaa.client.common;
 
+import org.apache.avro.Schema;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.avro.Schema;
-
 /**
  * Default {@link CommonRecord} implementation.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public final class DefaultCommonRecord implements CommonRecord {
-    private UUID uuid = new UUID(0, 0);
-    private final Schema schema;
-    private final Map<String, CommonValue> record = new HashMap<String, CommonValue>();
+  private final Schema schema;
+  private final Map<String, CommonValue> record = new HashMap<String, CommonValue>();
+  private UUID uuid = new UUID(0, 0);
 
-    DefaultCommonRecord(CommonRecord other) {
-        DefaultCommonRecord defaultOther = (DefaultCommonRecord) other;
-        this.uuid = defaultOther.uuid;
-        this.schema = defaultOther.schema;
-        copyFromCommonRecord(defaultOther);
-    }
+  DefaultCommonRecord(CommonRecord other) {
+    DefaultCommonRecord defaultOther = (DefaultCommonRecord) other;
+    this.uuid = defaultOther.uuid;
+    this.schema = defaultOther.schema;
+    copyFromCommonRecord(defaultOther);
+  }
 
-    DefaultCommonRecord(UUID uuid, Schema schema) {
-        this.uuid = uuid;
-        this.schema = schema;
-    }
+  DefaultCommonRecord(UUID uuid, Schema schema) {
+    this.uuid = uuid;
+    this.schema = schema;
+  }
 
-    DefaultCommonRecord(Schema schema) {
-        this.schema = schema;
-    }
+  DefaultCommonRecord(Schema schema) {
+    this.schema = schema;
+  }
 
-    private void copyFromCommonRecord(DefaultCommonRecord other) {
-        for (Map.Entry<String, CommonValue> entry : other.record.entrySet()) {
-            String key = entry.getKey();
-            CommonValue value = entry.getValue();
-            if (value.isRecord()) {
-                this.record.put(key, new DefaultCommonValue(new DefaultCommonRecord(value.getRecord())));
-            } else if (value.isArray()) {
-                List<CommonValue> newArray = new LinkedList<CommonValue>();
-                List<CommonValue> array = value.getArray().getList();
-                for (CommonValue item : array) {
-                    if (item.isRecord()) {
-                        newArray.add(new DefaultCommonValue(new DefaultCommonRecord(item.getRecord())));
-                    } else {
-                        newArray.add(item);
-                    }
-                }
-                this.record.put(key, new DefaultCommonValue(new DefaultCommonArray(value.getArray().getSchema(), newArray)));
-            } else {
-                this.record.put(key, value);
-            }
+  private void copyFromCommonRecord(DefaultCommonRecord other) {
+    for (Map.Entry<String, CommonValue> entry : other.record.entrySet()) {
+      String key = entry.getKey();
+      CommonValue value = entry.getValue();
+      if (value.isRecord()) {
+        this.record.put(key, new DefaultCommonValue(new DefaultCommonRecord(value.getRecord())));
+      } else if (value.isArray()) {
+        List<CommonValue> newArray = new LinkedList<CommonValue>();
+        List<CommonValue> array = value.getArray().getList();
+        for (CommonValue item : array) {
+          if (item.isRecord()) {
+            newArray.add(new DefaultCommonValue(new DefaultCommonRecord(item.getRecord())));
+          } else {
+            newArray.add(item);
+          }
         }
+        this.record.put(key, new DefaultCommonValue(new DefaultCommonArray(
+                value.getArray().getSchema(), newArray)));
+      } else {
+        this.record.put(key, value);
+      }
     }
+  }
 
-    @Override
-    public UUID getUuid() {
-        return uuid;
-    }
+  @Override
+  public UUID getUuid() {
+    return uuid;
+  }
 
-    @Override
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
+  @Override
+  public void setUuid(UUID uuid) {
+    this.uuid = uuid;
+  }
 
-    @Override
-    public Schema getSchema() {
-        return schema;
-    }
+  @Override
+  public Schema getSchema() {
+    return schema;
+  }
 
-    @Override
-    public void setField(String field, CommonValue value) {
-        record.put(field, value);
-    }
+  @Override
+  public void setField(String field, CommonValue value) {
+    record.put(field, value);
+  }
 
-    @Override
-    public boolean hasField(String field) {
-        return record.get(field) != null;
-    }
+  @Override
+  public boolean hasField(String field) {
+    return record.get(field) != null;
+  }
 
-    @Override
-    public CommonValue getField(String field) {
-        return record.get(field);
-    }
+  @Override
+  public CommonValue getField(String field) {
+    return record.get(field);
+  }
 
-    @Override
-    public String toString() {
-        return record.toString();
-    }
+  @Override
+  public String toString() {
+    return record.toString();
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((record == null) ? 0 : record.hashCode());
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((record == null) ? 0 : record.hashCode());
+    result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DefaultCommonRecord other = (DefaultCommonRecord) obj;
-        if (record == null) {
-            if (other.record != null) {
-                return false;
-            }
-        } else if (!record.equals(other.record)) {
-            return false;
-        }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    DefaultCommonRecord other = (DefaultCommonRecord) obj;
+    if (record == null) {
+      if (other.record != null) {
+        return false;
+      }
+    } else if (!record.equals(other.record)) {
+      return false;
+    }
+    if (schema == null) {
+      if (other.schema != null) {
+        return false;
+      }
+    } else if (!schema.equals(other.schema)) {
+      return false;
+    }
+    return true;
+  }
 
 }

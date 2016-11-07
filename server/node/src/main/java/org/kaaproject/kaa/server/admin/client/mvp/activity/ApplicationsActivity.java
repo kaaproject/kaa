@@ -16,6 +16,9 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
@@ -25,39 +28,36 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ApplicationsPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public class ApplicationsActivity extends AbstractListActivity<ApplicationDto, ApplicationsPlace> {
 
-    public ApplicationsActivity(ApplicationsPlace place, ClientFactory clientFactory) {
-        super(place, ApplicationDto.class, clientFactory);
-    }
+  public ApplicationsActivity(ApplicationsPlace place, ClientFactory clientFactory) {
+    super(place, ApplicationDto.class, clientFactory);
+  }
 
-    @Override
-    protected BaseListView<ApplicationDto> getView() {
-        return clientFactory.getApplicationsView();
-    }
+  @Override
+  protected BaseListView<ApplicationDto> getView() {
+    return clientFactory.getApplicationsView();
+  }
 
-    @Override
-    protected AbstractDataProvider<ApplicationDto, String> getDataProvider(
-            AbstractGrid<ApplicationDto, String> dataGrid) {
-        return new ApplicationsDataProvider(dataGrid, listView);
-    }
+  @Override
+  protected AbstractDataProvider<ApplicationDto, String> getDataProvider(
+      AbstractGrid<ApplicationDto, String> dataGrid) {
+    return new ApplicationsDataProvider(dataGrid, listView);
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new ApplicationPlace("");
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new ApplicationPlace("");
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new ApplicationPlace(id);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new ApplicationPlace(id);
+  }
 
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        callback.onSuccess((Void) null);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    callback.onSuccess((Void) null);
+  }
 
 }

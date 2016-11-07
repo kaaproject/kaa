@@ -17,14 +17,14 @@
 package org.kaaproject.kaa.server.operations.service.akka.messages.io;
 
 public class RuleTimeoutMessage {
-    private final Long ruleId;
+  private final Long ruleId;
 
-    public RuleTimeoutMessage(Long ruleId) {
-        super();
-        this.ruleId = ruleId;
-    }
+  public RuleTimeoutMessage(Long ruleId) {
+    super();
+    this.ruleId = ruleId;
+  }
 
-    public Long getRuleId() {
-        return ruleId;
-    }
+  public Long getRuleId() {
+    return ruleId;
+  }
 }

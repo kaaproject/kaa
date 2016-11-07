@@ -27,24 +27,24 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 
 public class KaaPostAuthenticationChecks implements UserDetailsChecker {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KaaPostAuthenticationChecks.class);
-    protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
+  private static final Logger LOG = LoggerFactory.getLogger(KaaPostAuthenticationChecks.class);
+  protected MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
 
-    @Override
-    public void check(UserDetails user) {
-        if (!user.isCredentialsNonExpired()) {
-            LOG.debug("User account credentials have expired");
+  @Override
+  public void check(UserDetails user) {
+    if (!user.isCredentialsNonExpired()) {
+      LOG.debug("User account credentials have expired");
 
-            throw new CredentialsExpiredException(messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.credentialsExpired",
-                    "User credentials have expired"));
-        }
-        if (user instanceof AuthUserDto) {
-            AuthUserDto authUser = (AuthUserDto)user;
-            if (authUser.isTempPassword()) {
-                throw new TempCredentialsException("Temp credentials used to authenticate");
-            }
-        }
+      throw new CredentialsExpiredException(messages.getMessage(
+          "AbstractUserDetailsAuthenticationProvider.credentialsExpired",
+          "User credentials have expired"));
     }
+    if (user instanceof AuthUserDto) {
+      AuthUserDto authUser = (AuthUserDto) user;
+      if (authUser.isTempPassword()) {
+        throw new TempCredentialsException("Temp credentials used to authenticate");
+      }
+    }
+  }
 
 }

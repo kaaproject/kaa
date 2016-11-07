@@ -470,12 +470,14 @@ std::string ClientStatus::getEndpointAccessToken()
 void ClientStatus::setEndpointAccessToken(const std::string& token)
 {
     setParameterDataWithEqualCheck<ClientParameterT::EP_ACCESS_TOKEN>(token);
+    setProfileResyncNeeded(true);
 }
 
 std::string ClientStatus::refreshEndpointAccessToken()
 {
     std::string token(UuidGenerator::generateUuid());
     setEndpointAccessToken(token);
+    setProfileResyncNeeded(false);
     return token;
 }
 

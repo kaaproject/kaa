@@ -21,7 +21,12 @@
 /**
  * Returns the timestamp in milliseconds indicating when log bucket was scheduled for delivery.
  */
-@property (nonatomic) double scheduledBucketTimestamp;
+@property (nonatomic) double scheduledBucketRunnerTimestamp;
+
+/**
+ * Return the time in milliseconds, when a response was received.
+ */
+@property (nonatomic) double receivedResponseTime;
 
 /**
  * Returns the total time in milliseconds spent to deliver log bucket.

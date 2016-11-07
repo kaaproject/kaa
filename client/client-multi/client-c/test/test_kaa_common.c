@@ -39,7 +39,7 @@ void test_profile_update(void **state)
     err = ext_calculate_sha_hash(NULL, 50, calculated_hash);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
     err = ext_calculate_sha_hash(body, 0, calculated_hash);
-    ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
+    ASSERT_EQUAL(err, KAA_ERR_NONE);
     err = ext_calculate_sha_hash(body, 4, NULL);
     ASSERT_NOT_EQUAL(err, KAA_ERR_NONE);
 

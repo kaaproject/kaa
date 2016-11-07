@@ -28,49 +28,49 @@ import org.mockito.Mockito;
 
 public class DefaultLogTransportTest {
 
-    @Test(expected = ChannelRuntimeException.class)
-    public void testSyncNegative() {
-        KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        LogTransport transport = new DefaultLogTransport();
-        transport.setClientState(clientState);
-        transport.sync();
-    }
+  @Test(expected = ChannelRuntimeException.class)
+  public void testSyncNegative() {
+    KaaClientState clientState = Mockito.mock(KaaClientState.class);
+    LogTransport transport = new DefaultLogTransport();
+    transport.setClientState(clientState);
+    transport.sync();
+  }
 
-    @Test
-    public void testSync() {
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
-        KaaClientState clientState = Mockito.mock(KaaClientState.class);
+  @Test
+  public void testSync() {
+    KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+    KaaClientState clientState = Mockito.mock(KaaClientState.class);
 
-        LogTransport transport = new DefaultLogTransport();
-        transport.setChannelManager(channelManager);
-        transport.setClientState(clientState);
-        transport.sync();
+    LogTransport transport = new DefaultLogTransport();
+    transport.setChannelManager(channelManager);
+    transport.setClientState(clientState);
+    transport.sync();
 
-        Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.LOGGING);
-    }
+    Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.LOGGING);
+  }
 
-    @Test
-    public void testCreateRequest() {
-        LogProcessor processor = Mockito.mock(LogProcessor.class);
+  @Test
+  public void testCreateRequest() {
+    LogProcessor processor = Mockito.mock(LogProcessor.class);
 
-        LogTransport transport = new DefaultLogTransport();
-        transport.createLogRequest();
-        transport.setLogProcessor(processor);
-        transport.createLogRequest();
-        Mockito.verify(processor, Mockito.times(1)).fillSyncRequest(Mockito.any(LogSyncRequest.class));
-    }
+    LogTransport transport = new DefaultLogTransport();
+    transport.createLogRequest();
+    transport.setLogProcessor(processor);
+    transport.createLogRequest();
+    Mockito.verify(processor, Mockito.times(1)).fillSyncRequest(Mockito.any(LogSyncRequest.class));
+  }
 
-    @Test
-    public void onEventResponse() throws Exception {
-        LogProcessor processor = Mockito.mock(LogProcessor.class);
-        LogTransport transport = new DefaultLogTransport();
-        LogSyncResponse response = new LogSyncResponse();
+  @Test
+  public void onEventResponse() throws Exception {
+    LogProcessor processor = Mockito.mock(LogProcessor.class);
+    LogTransport transport = new DefaultLogTransport();
+    LogSyncResponse response = new LogSyncResponse();
 
-        transport.onLogResponse(response);
-        transport.setLogProcessor(processor);
-        transport.onLogResponse(response);
+    transport.onLogResponse(response);
+    transport.setLogProcessor(processor);
+    transport.onLogResponse(response);
 
-        Mockito.verify(processor, Mockito.times(1)).onLogResponse(response);
-    }
+    Mockito.verify(processor, Mockito.times(1)).onLogResponse(response);
+  }
 
 }

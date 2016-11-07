@@ -16,40 +16,41 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.config;
 
+import com.google.gwt.user.cellview.client.DataGrid;
+
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractStructGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigRecordKey;
 
-import com.google.gwt.user.cellview.client.DataGrid;
+public class ConfigurationStructGrid
+    extends AbstractStructGrid<ConfigurationDto, ConfigurationRecordDto, ConfigRecordKey> {
 
-public class ConfigurationStructGrid extends AbstractStructGrid<ConfigurationDto, ConfigurationRecordDto, ConfigRecordKey> {
+  @Override
+  protected float constructColumnsImpl(DataGrid<ConfigurationRecordDto> table) {
+    float prefWidth = 0;
+    prefWidth += constructStringColumn(table,
+        Utils.constants.configurationSchema(),
+        new StringValueProvider<ConfigurationRecordDto>() {
+          @Override
+          public String getValue(ConfigurationRecordDto item) {
+            return item.getSchemaVersion() + "";
+          }
+        }, 80);
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<ConfigurationRecordDto> table) {
-        float prefWidth = 0;
-        prefWidth += constructStringColumn(table,
-                Utils.constants.configurationSchema(),
-                new StringValueProvider<ConfigurationRecordDto>() {
-                    @Override
-                    public String getValue(ConfigurationRecordDto item) {
-                        return item.getSchemaVersion() + "";
-                    }
-                }, 80);
-        
-        prefWidth += super.constructColumnsImpl(table);
-        
-        return prefWidth;
+    prefWidth += super.constructColumnsImpl(table);
+
+    return prefWidth;
+  }
+
+  @Override
+  protected ConfigRecordKey getObjectId(ConfigurationRecordDto value) {
+    if (value != null) {
+      return new ConfigRecordKey(value.getSchemaId(), value.getEndpointGroupId());
+    } else {
+      return null;
     }
-    
-    @Override
-    protected ConfigRecordKey getObjectId(ConfigurationRecordDto value) {
-        if (value != null) {
-            return new ConfigRecordKey(value.getSchemaId(), value.getEndpointGroupId());
-        } else {
-            return null;
-        }
-    }
-    
+  }
+
 }

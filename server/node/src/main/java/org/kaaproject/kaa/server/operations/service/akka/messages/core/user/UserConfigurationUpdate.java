@@ -20,61 +20,69 @@ import java.util.Arrays;
 
 public class UserConfigurationUpdate {
 
-    private final String tenantId;
-    private final String userId;
-    private final String applicationToken;
-    private final int schemaVersion;
-    private final byte[] hash;
+  private final String tenantId;
+  private final String userId;
+  private final String applicationToken;
+  private final int schemaVersion;
+  private final byte[] hash;
 
-    public UserConfigurationUpdate(String tenantId, String userId, String applicationToken, int schemaVersion, byte[] hash) {
-        super();
-        this.tenantId = tenantId;
-        this.userId = userId;
-        this.applicationToken = applicationToken;
-        this.schemaVersion = schemaVersion;
-        this.hash = hash;
-    }
+  /**
+   * All-args constructor.
+   */
+  public UserConfigurationUpdate(String tenantId, String userId, String applicationToken,
+                                 int schemaVersion, byte[] hash) {
+    super();
+    this.tenantId = tenantId;
+    this.userId = userId;
+    this.applicationToken = applicationToken;
+    this.schemaVersion = schemaVersion;
+    this.hash = hash;
+  }
 
-    public String getTenantId() {
-        return tenantId;
-    }
+  /**
+   * All-args constructor.
+   */
+  public static UserConfigurationUpdate fromThrift(
+      org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate notification) {
+    return new UserConfigurationUpdate(notification.getTenantId(), notification.getUserId(),
+            notification.getApplicationToken(), notification.getCfSchemaVersion(),
+            notification.getUcfHash());
+  }
 
-    public String getUserId() {
-        return userId;
-    }
+  public String getTenantId() {
+    return tenantId;
+  }
 
-    public String getApplicationToken() {
-        return applicationToken;
-    }
+  public String getUserId() {
+    return userId;
+  }
 
-    public int getSchemaVersion() {
-        return schemaVersion;
-    }
+  public String getApplicationToken() {
+    return applicationToken;
+  }
 
-    public byte[] getHash() {
-        return hash;
-    }
+  public int getSchemaVersion() {
+    return schemaVersion;
+  }
 
-    public static UserConfigurationUpdate fromThrift(
-            org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate notification) {
-        return new UserConfigurationUpdate(notification.getTenantId(), notification.getUserId(), notification.getApplicationToken(),
-                notification.getCfSchemaVersion(), notification.getUcfHash());
-    }
+  public byte[] getHash() {
+    return hash;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UserConfigurationUpdate [tenantId=");
-        builder.append(tenantId);
-        builder.append(", userId=");
-        builder.append(userId);
-        builder.append(", applicationToken=");
-        builder.append(applicationToken);
-        builder.append(", schemaVersion=");
-        builder.append(schemaVersion);
-        builder.append(", hash=");
-        builder.append(Arrays.toString(hash));
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("UserConfigurationUpdate [tenantId=");
+    builder.append(tenantId);
+    builder.append(", userId=");
+    builder.append(userId);
+    builder.append(", applicationToken=");
+    builder.append(applicationToken);
+    builder.append(", schemaVersion=");
+    builder.append(schemaVersion);
+    builder.append(", hash=");
+    builder.append(Arrays.toString(hash));
+    builder.append("]");
+    return builder.toString();
+  }
 }

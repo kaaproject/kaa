@@ -16,13 +16,13 @@
 
 package org.kaaproject.kaa.server.common.thrift.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
 import org.kaaproject.kaa.common.dto.HasId;
 import org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The Class ThriftDtoConverter.<br>
@@ -31,150 +31,134 @@ import org.kaaproject.kaa.server.common.thrift.gen.shared.DataStruct;
  */
 public class ThriftDtoConverter {
 
-    private ThriftDtoConverter() {
-    }
+  private ThriftDtoConverter() {
+  }
 
-    /**
-     * Convert DTO to thrift DataStruct.
-     * 
-     * @param <T>
-     *            the DTO generic type
-     * @param dto
-     *            the DTO
-     * @return the thrift DataStruct
-     */
-    public static <T extends HasId> DataStruct toDataStruct(T dto) {
-        DataStruct dataStruct = new DataStruct();
-        if (dto != null) {
-            dataStruct.setKey(dto.getId());
-            dataStruct.setData(DtoByteMarshaller.toBytes(dto));
-        }
-        return dataStruct;
+  /**
+   * Convert DTO to thrift DataStruct.
+   *
+   * @param <T> the DTO generic type
+   * @param dto the DTO
+   * @return the thrift DataStruct
+   */
+  public static <T extends HasId> DataStruct toDataStruct(T dto) {
+    DataStruct dataStruct = new DataStruct();
+    if (dto != null) {
+      dataStruct.setKey(dto.getId());
+      dataStruct.setData(DtoByteMarshaller.toBytes(dto));
     }
-    
-    /**
-     * Convert DTO to thrift DataStruct.
-     * 
-     * @param <T>
-     *            the DTO generic type
-     * @param dto
-     *            the DTO
-     * @return the thrift DataStruct
-     */
-    public static <T> DataStruct toGenericDataStruct(T dto) {
-        DataStruct dataStruct = new DataStruct();
-        if (dto != null) {
-            dataStruct.setData(DtoByteMarshaller.toBytes(dto));
-        }
-        return dataStruct;
-    }
+    return dataStruct;
+  }
 
-    /**
-     * Convert DTOs list to thrift DataStructs list.
-     * 
-     * @param <T>
-     *            the DTO generic type
-     * @param dtoList
-     *            the DTOs list
-     * @return the thrift DataStructs list
-     */
-    public static <T extends HasId> List<DataStruct> toDataStructList(
-            Collection<T> dtoList) {
-        List<DataStruct> dataStructList = new ArrayList<DataStruct>(
-                dtoList.size());
-        for (T dto : dtoList) {
-            dataStructList.add(toDataStruct(dto));
-        }
-        return dataStructList;
+  /**
+   * Convert DTO to thrift DataStruct.
+   *
+   * @param <T> the DTO generic type
+   * @param dto the DTO
+   * @return the thrift DataStruct
+   */
+  public static <T> DataStruct toGenericDataStruct(T dto) {
+    DataStruct dataStruct = new DataStruct();
+    if (dto != null) {
+      dataStruct.setData(DtoByteMarshaller.toBytes(dto));
     }
-    
-    /**
-     * Convert DTOs list to thrift DataStructs list.
-     * 
-     * @param <T>
-     *            the DTO generic type
-     * @param dtoList
-     *            the DTOs list
-     * @return the thrift DataStructs list
-     */
-    public static <T> List<DataStruct> toGenericDataStructList(
-            Collection<T> dtoList) {
-        List<DataStruct> dataStructList = new ArrayList<DataStruct>(
-                dtoList.size());
-        for (T dto : dtoList) {
-            dataStructList.add(toGenericDataStruct(dto));
-        }
-        return dataStructList;
-    }
+    return dataStruct;
+  }
 
-    /**
-     * Convert thrift DataStruct to DTO.
-     * 
-     * @param <T>
-     *            the DTO generic type
-     * @param dataStruct
-     *            the thrift DataStruct
-     * @return the DTO
-     */
-    public static <T extends HasId> T toDto(DataStruct dataStruct) {
-        T dto = null;
-        if (dataStruct != null && dataStruct.getData() != null) {
-            dto = DtoByteMarshaller.fromBytes(dataStruct.getData());
-        }
-        return dto;
+  /**
+   * Convert DTOs list to thrift DataStructs list.
+   *
+   * @param <T>     the DTO generic type
+   * @param dtoList the DTOs list
+   * @return the thrift DataStructs list
+   */
+  public static <T extends HasId> List<DataStruct> toDataStructList(
+      Collection<T> dtoList) {
+    List<DataStruct> dataStructList = new ArrayList<DataStruct>(
+        dtoList.size());
+    for (T dto : dtoList) {
+      dataStructList.add(toDataStruct(dto));
     }
+    return dataStructList;
+  }
 
-    /**
-     * Convert thrift DataStruct to DTO.
-     *
-     * @param <T>
-     *            the DTO generic type
-     * @param dataStruct
-     *            the thrift DataStruct
-     * @return the DTO
-     */
-    public static <T> T toGenericDto(DataStruct dataStruct) {
-        T dto = null;
-        if (dataStruct != null && dataStruct.getData() != null) {
-            dto = DtoByteMarshaller.fromBytes(dataStruct.getData());
-        }
-        return dto;
+  /**
+   * Convert DTOs list to thrift DataStructs list.
+   *
+   * @param <T>     the DTO generic type
+   * @param dtoList the DTOs list
+   * @return the thrift DataStructs list
+   */
+  public static <T> List<DataStruct> toGenericDataStructList(
+      Collection<T> dtoList) {
+    List<DataStruct> dataStructList = new ArrayList<DataStruct>(
+        dtoList.size());
+    for (T dto : dtoList) {
+      dataStructList.add(toGenericDataStruct(dto));
     }
+    return dataStructList;
+  }
 
-    /**
-     * Convert thrift DataStructs list to DTOs list.
-     * 
-     * @param <T>
-     *            the DTO generic type
-     * @param dataStructList
-     *            the thrift DataStructs list
-     * @return the DTOs list
-     */
-    public static <T extends HasId> List<T> toDtoList(
-            Collection<DataStruct> dataStructList) {
-        List<T> dtoList = new ArrayList<T>(dataStructList.size());
-        for (DataStruct dataStruct : dataStructList) {
-            dtoList.add(ThriftDtoConverter.<T> toDto(dataStruct));
-        }
-        return dtoList;
+  /**
+   * Convert thrift DataStruct to DTO.
+   *
+   * @param <T>        the DTO generic type
+   * @param dataStruct the thrift DataStruct
+   * @return the DTO
+   */
+  public static <T extends HasId> T toDto(DataStruct dataStruct) {
+    T dto = null;
+    if (dataStruct != null && dataStruct.getData() != null) {
+      dto = DtoByteMarshaller.fromBytes(dataStruct.getData());
     }
-    
-    /**
-     * Convert thrift DataStructs list to DTOs list.
-     * 
-     * @param <T>
-     *            the DTO generic type
-     * @param dataStructList
-     *            the thrift DataStructs list
-     * @return the DTOs list
-     */
-    public static <T> List<T> toGenericDtoList(
-            Collection<DataStruct> dataStructList) {
-        List<T> dtoList = new ArrayList<T>(dataStructList.size());
-        for (DataStruct dataStruct : dataStructList) {
-            dtoList.add(ThriftDtoConverter.<T> toGenericDto(dataStruct));
-        }
-        return dtoList;
+    return dto;
+  }
+
+  /**
+   * Convert thrift DataStruct to DTO.
+   *
+   * @param <T>        the DTO generic type
+   * @param dataStruct the thrift DataStruct
+   * @return the DTO
+   */
+  public static <T> T toGenericDto(DataStruct dataStruct) {
+    T dto = null;
+    if (dataStruct != null && dataStruct.getData() != null) {
+      dto = DtoByteMarshaller.fromBytes(dataStruct.getData());
     }
+    return dto;
+  }
+
+  /**
+   * Convert thrift DataStructs list to DTOs list.
+   *
+   * @param <T>            the DTO generic type
+   * @param dataStructList the thrift DataStructs list
+   * @return the DTOs list
+   */
+  public static <T extends HasId> List<T> toDtoList(
+      Collection<DataStruct> dataStructList) {
+    List<T> dtoList = new ArrayList<T>(dataStructList.size());
+    for (DataStruct dataStruct : dataStructList) {
+      dtoList.add(ThriftDtoConverter.<T>toDto(dataStruct));
+    }
+    return dtoList;
+  }
+
+  /**
+   * Convert thrift DataStructs list to DTOs list.
+   *
+   * @param <T>            the DTO generic type
+   * @param dataStructList the thrift DataStructs list
+   * @return the DTOs list
+   */
+  public static <T> List<T> toGenericDtoList(
+      Collection<DataStruct> dataStructList) {
+    List<T> dtoList = new ArrayList<T>(dataStructList.size());
+    for (DataStruct dataStruct : dataStructList) {
+      dtoList.add(ThriftDtoConverter.<T>toGenericDto(dataStruct));
+    }
+    return dtoList;
+  }
 
 }

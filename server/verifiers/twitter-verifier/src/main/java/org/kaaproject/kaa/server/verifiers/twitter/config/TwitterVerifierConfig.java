@@ -25,20 +25,20 @@ import org.kaaproject.kaa.server.verifiers.twitter.config.gen.TwitterAvroConfig;
 @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
 public class TwitterVerifierConfig implements PluginConfig {
 
-    private static final String TWITTER_VERIFIER_NAME = "Twitter verifier";
+  private static final String TWITTER_VERIFIER_NAME = "Twitter verifier";
 
-    @Override
-    public String getPluginTypeName() {
-        return TWITTER_VERIFIER_NAME;
-    }
+  @Override
+  public String getPluginTypeName() {
+    return TWITTER_VERIFIER_NAME;
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.twitter.verifier.TwitterUserVerifier";
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.verifiers.twitter.verifier.TwitterUserVerifier";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return TwitterAvroConfig.SCHEMA$;
-    }
+  @Override
+  public Schema getPluginConfigSchema() {
+    return TwitterAvroConfig.SCHEMA$;
+  }
 }

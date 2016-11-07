@@ -22,27 +22,36 @@ import org.codehaus.jackson.node.ObjectNode;
 import java.io.IOException;
 import java.util.Base64;
 
-final public class Utils {
+public final class Utils {
 
-    private static final String UUID_FIELD = "__uuid";
-    private static final String UUID_VALUE = "org.kaaproject.configuration.uuidT";
+  private static final String UUID_FIELD = "__uuid";
+  private static final String UUID_VALUE = "org.kaaproject.configuration.uuidT";
 
 
-    public static JsonNode encodeUuids(JsonNode json) throws IOException {
-        if (json.has(UUID_FIELD)) {
-            JsonNode j = json.get(UUID_FIELD);
-            if (j.has(UUID_VALUE)) {
-                String value = j.get(UUID_VALUE).asText();
-                String encodedValue = Base64.getEncoder().encodeToString(value.getBytes("ISO-8859-1"));
-                ((ObjectNode) j).put(UUID_VALUE, encodedValue);
-            }
-        }
-
-        for (JsonNode node : json) {
-            if (node.isContainerNode()) encodeUuids(node);
-        }
-
-        return json;
+  /**
+   * Change encoding of uuids  from <b>latin1 (ISO-8859-1)</b> to <b>base64</b>.
+   *
+   * @param json the json that should be processed
+   * @return the json with changed uuids
+   * @throws IOException the io exception
+   */
+  public static JsonNode encodeUuids(JsonNode json) throws IOException {
+    if (json.has(UUID_FIELD)) {
+      JsonNode jsonNode = json.get(UUID_FIELD);
+      if (jsonNode.has(UUID_VALUE)) {
+        String value = jsonNode.get(UUID_VALUE).asText();
+        String encodedValue = Base64.getEncoder().encodeToString(value.getBytes("ISO-8859-1"));
+        ((ObjectNode) jsonNode).put(UUID_VALUE, encodedValue);
+      }
     }
+
+    for (JsonNode node : json) {
+      if (node.isContainerNode()) {
+        encodeUuids(node);
+      }
+    }
+
+    return json;
+  }
 
 }

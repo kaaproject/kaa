@@ -18,20 +18,20 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 import org.kaaproject.kaa.common.dto.TenantDto;
-import org.kaaproject.kaa.common.dto.admin.UserDto;
 
 import java.util.List;
 
 @RemoteServiceRelativePath("springGwtServices/tenantService")
 public interface TenantService extends RemoteService {
 
-    List<TenantDto> getTenants() throws KaaAdminServiceException;
+  List<TenantDto> getTenants() throws KaaAdminServiceException;
 
-    TenantDto getTenant(String userId) throws KaaAdminServiceException;
+  TenantDto getTenant(String userId) throws KaaAdminServiceException;
 
-    TenantDto editTenant(TenantDto tenantUser) throws KaaAdminServiceException;
+  TenantDto editTenant(TenantDto tenantUser) throws KaaAdminServiceException;
 
-    void deleteTenant(String tenantId) throws KaaAdminServiceException;
+  void deleteTenant(String tenantId) throws KaaAdminServiceException;
 
 }

@@ -19,9 +19,8 @@ package org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 
 /**
- * @author Andrey Panasenko
- *
+ * @author Andrey Panasenko.
  */
 public interface MessageListener<T extends MqttFrame> {
-    public void onMessage(T message);
+  public void onMessage(T message);
 }

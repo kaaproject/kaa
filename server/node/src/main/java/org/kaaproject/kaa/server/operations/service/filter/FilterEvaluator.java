@@ -21,29 +21,27 @@ import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 
 /**
  * The interface FilterEvaluator is used to model filtering of endpoint profiles.
- * 
+ *
  * @author ashvayka
  */
 public interface FilterEvaluator {
 
-    /**
-     * Initialize Filter evaluator with profile information
-     * 
-     * @param profile
-     *            - endpoint profile
-     * @param endpointProfileSchemaBody
-     *            - endpoint profile schema body
-     * @param serverProfileSchemaBody
-     *            - server profile schema body
-     */
-    void init(EndpointProfileDto profile, String endpointProfileSchemaBody, String serverProfileSchemaBody);
+  /**
+   * Initialize Filter evaluator with profile information.
+   *
+   * @param profile                   - endpoint profile
+   * @param endpointProfileSchemaBody - endpoint profile schema body
+   * @param serverProfileSchemaBody   - server profile schema body
+   */
+  void init(EndpointProfileDto profile,
+            String endpointProfileSchemaBody,
+            String serverProfileSchemaBody);
 
-    /**
-     * Evaluates profile filter.
-     *
-     * @param filter
-     *            the profile filter
-     * @return true, if profile body matches filter
-     */
-    boolean matches(ProfileFilterDto filter);
+  /**
+   * Evaluates profile filter.
+   *
+   * @param filter the profile filter
+   * @return true, if profile body matches filter
+   */
+  boolean matches(ProfileFilterDto filter);
 }

@@ -20,60 +20,66 @@ import java.util.List;
 
 public class EndpointProfilesBodyDto extends AbstractEndpointProfilesDto {
 
-    private static final long serialVersionUID = -3301431577852472525L;
+  private static final long serialVersionUID = -3301431577852472525L;
 
-    private List<EndpointProfileBodyDto> endpointProfilesBody;
+  private List<EndpointProfileBodyDto> endpointProfilesBody;
 
-    public EndpointProfilesBodyDto() {
+  public EndpointProfilesBodyDto() {
+  }
+
+  public EndpointProfilesBodyDto(List<EndpointProfileBodyDto> endpointProfileBody) {
+    this.endpointProfilesBody = endpointProfileBody;
+  }
+
+  /**
+   * Tests whether endpoint body is present.
+   *
+   * @return true if endpoint body is present otherwise false
+   */
+  public boolean hasEndpointBodies() {
+    boolean result = false;
+    if (endpointProfilesBody != null) {
+      result = !endpointProfilesBody.isEmpty();
     }
+    return result;
+  }
 
-    public EndpointProfilesBodyDto(List<EndpointProfileBodyDto> endpointProfileBody) {
-       this.endpointProfilesBody = endpointProfileBody;
-    }
+  public List<EndpointProfileBodyDto> getEndpointProfilesBody() {
+    return endpointProfilesBody;
+  }
 
-    public boolean hasEndpointBodies() {
-        boolean result = false;
-        if (endpointProfilesBody != null) {
-            result = !endpointProfilesBody.isEmpty();
-        }
-        return result;
-    }
+  public void setEndpointProfilesBody(List<EndpointProfileBodyDto> endpointProfileBody) {
+    this.endpointProfilesBody = endpointProfileBody;
+  }
 
-    public List<EndpointProfileBodyDto> getEndpointProfilesBody() {
-        return endpointProfilesBody;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((endpointProfilesBody == null) ? 0 :
+                                       endpointProfilesBody.hashCode());
+    return result;
+  }
 
-    public void setEndpointProfilesBody(List<EndpointProfileBodyDto> endpointProfileBody) {
-        this.endpointProfilesBody = endpointProfileBody;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((endpointProfilesBody == null) ? 0 : endpointProfilesBody.hashCode());
-        return result;
+    if (!super.equals(obj)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointProfilesBodyDto other = (EndpointProfilesBodyDto) obj;
-        if (endpointProfilesBody == null) {
-            if (other.endpointProfilesBody != null) {
-                return false;
-            }
-        } else if (!endpointProfilesBody.equals(other.endpointProfilesBody)) {
-            return false;
-        }
-        return true;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
+    EndpointProfilesBodyDto other = (EndpointProfilesBodyDto) obj;
+    if (endpointProfilesBody == null) {
+      if (other.endpointProfilesBody != null) {
+        return false;
+      }
+    } else if (!endpointProfilesBody.equals(other.endpointProfilesBody)) {
+      return false;
+    }
+    return true;
+  }
 }

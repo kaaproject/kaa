@@ -23,109 +23,114 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_CONF_PROPERTY;
 
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-
-import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
-
 import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
 
+import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+
 
 @Table(name = ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME)
 public final class CassandraEndpointConfiguration implements EndpointConfiguration, Serializable {
 
-    @Transient
-    private static final long serialVersionUID = -5682011223088285599L;
+  @Transient
+  private static final long serialVersionUID = -5682011223088285599L;
 
-    @PartitionKey
-    @Column(name = ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY)
-    private ByteBuffer configurationHash;
-    @Column(name = ENDPOINT_CONFIGURATION_CONF_PROPERTY)
-    private ByteBuffer configuration;
-    @Column(name = ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY)
-    private String id;
+  @PartitionKey
+  @Column(name = ENDPOINT_CONFIGURATION_CONF_HASH_PROPERTY)
+  private ByteBuffer configurationHash;
+  @Column(name = ENDPOINT_CONFIGURATION_CONF_PROPERTY)
+  private ByteBuffer configuration;
+  @Column(name = ENDPOINT_CONFIGURATION_CONF_ID_PROPERTY)
+  private String id;
 
-    public CassandraEndpointConfiguration() {
+  public CassandraEndpointConfiguration() {
+  }
+
+  public CassandraEndpointConfiguration(EndpointConfigurationDto dto) {
+    this.configuration = getByteBuffer(dto.getConfiguration());
+    this.configurationHash = getByteBuffer(dto.getConfigurationHash());
+  }
+
+  public ByteBuffer getConfigurationHash() {
+    return configurationHash;
+  }
+
+  public void setConfigurationHash(ByteBuffer configurationHash) {
+    this.configurationHash = configurationHash;
+  }
+
+  public ByteBuffer getConfiguration() {
+    return configuration;
+  }
+
+  public void setConfiguration(ByteBuffer configuration) {
+    this.configuration = configuration;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    public CassandraEndpointConfiguration(EndpointConfigurationDto dto) {
-        this.configuration = getByteBuffer(dto.getConfiguration());
-        this.configurationHash = getByteBuffer(dto.getConfigurationHash());
+    CassandraEndpointConfiguration that = (CassandraEndpointConfiguration) object;
+
+    if (configuration != null
+        ? !configuration.equals(that.configuration)
+        : that.configuration != null) {
+      return false;
+    }
+    if (configurationHash != null
+        ? !configurationHash.equals(that.configurationHash)
+        : that.configurationHash != null) {
+      return false;
     }
 
-    public ByteBuffer getConfigurationHash() {
-        return configurationHash;
+    if (id != null ? !id.equals(that.id) : that.id != null) {
+      return false;
     }
 
-    public void setConfigurationHash(ByteBuffer configurationHash) {
-        this.configurationHash = configurationHash;
-    }
+    return true;
+  }
 
-    public ByteBuffer getConfiguration() {
-        return configuration;
-    }
+  @Override
+  public int hashCode() {
+    int result = configurationHash != null ? configurationHash.hashCode() : 0;
+    result = 31 * result + (configuration != null ? configuration.hashCode() : 0);
+    result = 31 * result + (id != null ? id.hashCode() : 0);
+    return result;
+  }
 
-    public void setConfiguration(ByteBuffer configuration) {
-        this.configuration = configuration;
-    }
+  @Override
+  public String toString() {
+    return "EndpointConfiguration{"
+        + "configurationHash=" + configurationHash
+        + ", configuration=" + configuration
+        + '}';
+  }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        CassandraEndpointConfiguration that = (CassandraEndpointConfiguration) o;
-
-        if (configuration != null ? !configuration.equals(that.configuration) : that.configuration != null) {
-            return false;
-        }
-        if (configurationHash != null ? !configurationHash.equals(that.configurationHash) : that.configurationHash != null) {
-            return false;
-        }
-        if (id != null ? !id.equals(that.id) : that.id != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = configurationHash != null ? configurationHash.hashCode() : 0;
-        result = 31 * result + (configuration != null ? configuration.hashCode() : 0);
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "EndpointConfiguration{" +
-                "configurationHash=" + configurationHash +
-                ", configuration=" + configuration +
-                '}';
-    }
-
-    @Override
-    public EndpointConfigurationDto toDto() {
-        EndpointConfigurationDto dto = new EndpointConfigurationDto();
-        dto.setConfiguration(getBytes(configuration));
-        dto.setConfigurationHash(getBytes(configurationHash));
-        return dto;
-    }
+  @Override
+  public EndpointConfigurationDto toDto() {
+    EndpointConfigurationDto dto = new EndpointConfigurationDto();
+    dto.setConfiguration(getBytes(configuration));
+    dto.setConfigurationHash(getBytes(configurationHash));
+    return dto;
+  }
 }

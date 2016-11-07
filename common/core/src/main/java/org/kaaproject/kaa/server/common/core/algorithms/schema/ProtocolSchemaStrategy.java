@@ -18,69 +18,70 @@ package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.DELTA;
 import static org.kaaproject.kaa.server.common.core.algorithms.CommonConstants.KAA_NAMESPACE;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.Schema.Type;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
- * This is protocol schema strategy for generating schema protocol schema. This schema used in transport layer
- * between client and endpoint server.
+ * This is protocol schema strategy for generating schema protocol schema. This schema used in
+ * transport layer between client and endpoint server.
  */
 public class ProtocolSchemaStrategy extends AbstractSchemaStrategy<ProtocolSchema> {
 
-    @Override
-    public boolean isUuidOptional() {
-        return false;
+  @Override
+  public boolean isUuidOptional() {
+    return false;
+  }
+
+  @Override
+  public boolean isUnchangedSupported() {
+    return true;
+  }
+
+  @Override
+  public void onOptionalField(List<Schema> union) {
+    Schema nullSchema = Schema.create(Type.NULL);
+    if (!union.contains(nullSchema)) {
+      union.add(0, nullSchema);
     }
+  }
 
-    @Override
-    public boolean isUnchangedSupported() {
-        return true;
-    }
+  @Override
+  public void onMandatoryField(List<Schema> union) {
+    // Nothing to do
+  }
 
-    @Override
-    public void onOptionalField(List<Schema> union) {
-        Schema nullSchema = Schema.create(Type.NULL);
-        if (!union.contains(nullSchema)) {
-            union.add(0, nullSchema);
-        }
-    }
-
-    @Override
-    public void onMandatoryField(List<Schema> union) {
-        // Nothing to do
-    }
-
-    @Override
-    public Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords) {
-        List<Schema> deltaTypes = new ArrayList<Schema>(addressableRecords.size() + 1);
-        deltaTypes.add(rootSchema);
-        deltaTypes.addAll(addressableRecords);
+  @Override
+  public Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords) {
+    List<Schema> deltaTypes = new ArrayList<Schema>(addressableRecords.size() + 1);
+    deltaTypes.add(rootSchema);
+    deltaTypes.addAll(addressableRecords);
 
 
-        Field deltaTypesField = new Field(DELTA, Schema.createUnion(deltaTypes), null, null);
+    Field deltaTypesField = new Field(DELTA, Schema.createUnion(deltaTypes), null, null);
 
-        List<Field> deltaFields = new ArrayList<Field>();
-        deltaFields.add(deltaTypesField);
+    List<Field> deltaFields = new ArrayList<Field>();
+    deltaFields.add(deltaTypesField);
 
-        Schema delta = Schema.createRecord(DELTA + "T", null, KAA_NAMESPACE, false);
-        delta.setFields(deltaFields);
+    Schema delta = Schema.createRecord(DELTA + "T", null, KAA_NAMESPACE, false);
+    delta.setFields(deltaFields);
 
-        return Schema.createArray(delta);
-    }
+    return Schema.createArray(delta);
+  }
 
-    @Override
-    public boolean isArrayEditable() {
-        return true;
-    }
+  @Override
+  public boolean isArrayEditable() {
+    return true;
+  }
 
-    @Override
-    public ProtocolSchema createSchema(Schema schema) {
-        return getSchemaFactory().createProtocolSchema(schema.toString());
-    }
+  @Override
+  public ProtocolSchema createSchema(Schema schema) {
+    return getSchemaFactory().createProtocolSchema(schema.toString());
+  }
 }

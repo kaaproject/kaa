@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.user;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 import org.kaaproject.kaa.server.sync.EndpointAttachRequest;
@@ -27,18 +25,26 @@ import org.kaaproject.kaa.server.sync.EndpointDetachResponse;
 import org.kaaproject.kaa.server.sync.EventListenersRequest;
 import org.kaaproject.kaa.server.sync.EventListenersResponse;
 
+import java.util.List;
+
 public interface EndpointUserService {
 
-    UserVerifierDto findUserVerifier(String appId, String verifierToken);
+  UserVerifierDto findUserVerifier(String appId, String verifierToken);
 
-    List<UserVerifierDto> findUserVerifiers(String appId);
+  List<UserVerifierDto> findUserVerifiers(String appId);
 
-    EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId);
+  EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile,
+                                          String appToken,
+                                          String userExternalId);
 
-    EndpointAttachResponse attachEndpoint(EndpointProfileDto profile, EndpointAttachRequest endpointAttachRequest);
+  EndpointAttachResponse attachEndpoint(EndpointProfileDto profile,
+                                        EndpointAttachRequest endpointAttachRequest);
 
-    EndpointDetachResponse detachEndpoint(EndpointProfileDto profile, EndpointDetachRequest endpointDetachRequest);
+  EndpointDetachResponse detachEndpoint(EndpointProfileDto profile,
+                                        EndpointDetachRequest endpointDetachRequest);
 
-    EventListenersResponse findListeners(EndpointProfileDto profile, String appToken, EventListenersRequest request);
+  EventListenersResponse findListeners(EndpointProfileDto profile,
+                                       String appToken,
+                                       EventListenersRequest request);
 
 }

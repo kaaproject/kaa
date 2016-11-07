@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.10.0-SNAPSHOT</version>
+        <version>0.10.0</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -629,6 +629,22 @@
                             <resources>
                                 <resource>
                                     <directory>src/main/admin-web</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-admin-web-test</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/admin-web</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>

@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.common.admin;
 
-import java.io.IOException;
-import java.net.URI;
-
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -41,123 +38,142 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
-public class HttpComponentsRequestFactoryBasicAuth extends
-        HttpComponentsClientHttpRequestFactory {
+import java.io.IOException;
+import java.net.URI;
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpComponentsRequestFactoryBasicAuth.class);
-    
-    private static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 100;
+public class HttpComponentsRequestFactoryBasicAuth extends HttpComponentsClientHttpRequestFactory {
 
-    private static final int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 5;
+  private static final Logger LOG = LoggerFactory
+      .getLogger(HttpComponentsRequestFactoryBasicAuth.class);
 
-    private HttpHost host;
-    private CredentialsProvider credsProvider;
-    
-    public HttpComponentsRequestFactoryBasicAuth(HttpHost host) {
-        super(createHttpClient());
-        this.host = host;
-        credsProvider = new BasicCredentialsProvider();
-        this.setConnectTimeout(60000);
-        this.setReadTimeout(0);
-    }
-    
-    private static HttpClient createHttpClient() {
-        CloseableHttpClient httpClient = HttpClientBuilder.create().
-                setMaxConnTotal(DEFAULT_MAX_TOTAL_CONNECTIONS).
-                setMaxConnPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE).
-                setRetryHandler(new BasicHttpRequestRetryHandler(5, 10000)).
-                setServiceUnavailableRetryStrategy(new BaseServiceUnavailableRetryStrategy(3, 5000)).
-                build();
-        return httpClient;
+  private static final int DEFAULT_MAX_TOTAL_CONNECTIONS = 100;
+
+  private static final int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 5;
+
+  private HttpHost host;
+  private CredentialsProvider credsProvider;
+
+  /**
+   * Create new instance of <code>HttpComponentsRequestFactoryBasicAuth</code>.
+   *
+   * @param host the http host
+   */
+  public HttpComponentsRequestFactoryBasicAuth(HttpHost host) {
+    super(createHttpClient());
+    this.host = host;
+    credsProvider = new BasicCredentialsProvider();
+    this.setConnectTimeout(60000);
+    this.setReadTimeout(0);
+  }
+
+  private static HttpClient createHttpClient() {
+    CloseableHttpClient httpClient = HttpClientBuilder.create()
+        .setMaxConnTotal(DEFAULT_MAX_TOTAL_CONNECTIONS)
+        .setMaxConnPerRoute(DEFAULT_MAX_CONNECTIONS_PER_ROUTE)
+        .setRetryHandler(new BasicHttpRequestRetryHandler(5, 10000))
+        .setServiceUnavailableRetryStrategy(new BaseServiceUnavailableRetryStrategy(3, 5000))
+        .build();
+    return httpClient;
+  }
+
+  protected HttpContext createHttpContext(HttpMethod httpMethod, URI uri) {
+    return createHttpContext();
+  }
+
+  private HttpContext createHttpContext() {
+    AuthCache authCache = new BasicAuthCache();
+    BasicScheme basicAuth = new BasicScheme();
+    authCache.put(host, basicAuth);
+    HttpClientContext context = HttpClientContext.create();
+    context.setCredentialsProvider(credsProvider);
+    context.setAuthCache(authCache);
+    return context;
+  }
+
+  public CredentialsProvider getCredentialsProvider() {
+    return credsProvider;
+  }
+
+  /**
+   * Set credentials to field <code>credsProvider</code>.
+   *
+   * @param username the username, part of credentials
+   * @param password the password, part of credentials
+   */
+  public void setCredentials(String username, String password) {
+    credsProvider.setCredentials(
+        new AuthScope(host.getHostName(), host.getPort(), AuthScope.ANY_REALM),
+        new UsernamePasswordCredentials(username, password));
+  }
+
+  private static class BasicHttpRequestRetryHandler extends DefaultHttpRequestRetryHandler {
+
+    private final long connectRetryInterval;
+
+    public BasicHttpRequestRetryHandler(int retryCount, long connectRetryInterval) {
+      super(retryCount, false);
+      this.connectRetryInterval = connectRetryInterval;
     }
 
-    protected HttpContext createHttpContext(HttpMethod httpMethod, URI uri) {
-        return createHttpContext();
-    }
-
-    private HttpContext createHttpContext() {
-        AuthCache authCache = new BasicAuthCache();
-        BasicScheme basicAuth = new BasicScheme();
-        authCache.put(host, basicAuth);
-        HttpClientContext context = HttpClientContext.create();
-        context.setCredentialsProvider(credsProvider);
-        context.setAuthCache(authCache);
-        return context;
-    }
-    
-    public CredentialsProvider getCredentialsProvider() {
-        return credsProvider;
-    }
-    
-    public void setCredentials(String username, String password) {
-        credsProvider.setCredentials(
-                new AuthScope(host.getHostName(), host.getPort(), AuthScope.ANY_REALM),
-                 new UsernamePasswordCredentials(username, password));
-    }
-    
-    static class BasicHttpRequestRetryHandler extends DefaultHttpRequestRetryHandler {
-
-        private final long connectRetryInterval;
-        
-        public BasicHttpRequestRetryHandler(int retryCount, long connectRetryInterval) {
-            super(retryCount, false);
-            this.connectRetryInterval = connectRetryInterval;
+    @Override
+    public boolean retryRequest(IOException exception, int executionCount,
+                                HttpContext context) {
+      if (executionCount <= getRetryCount()) {
+        try {
+          LOG.warn("IOException '{}'. Wait for {} before next attempt to connect...",
+              exception.getMessage(), connectRetryInterval);
+          Thread.sleep(connectRetryInterval);
+        } catch (InterruptedException ex) {
+          LOG.error("Thread was interrupted", ex);
         }
-        
-        @Override
-        public boolean retryRequest(IOException exception, int executionCount,
-                HttpContext context) {
-            if (executionCount <= getRetryCount()) {
-                try {
-                    LOG.warn("IOException '{}'. Wait for {} before next attempt to connect...", exception.getMessage(), connectRetryInterval);
-                    Thread.sleep(connectRetryInterval);
-                } catch (InterruptedException e) {}
-                return true;
-            }
-            else {
-                return super.retryRequest(exception, executionCount, context);
-            }
-        }
-        
+        return true;
+      } else {
+        return super.retryRequest(exception, executionCount, context);
+      }
     }
-    
-    static class BaseServiceUnavailableRetryStrategy implements ServiceUnavailableRetryStrategy {
 
-        /**
-         * Maximum number of allowed retries if the server responds with a HTTP code
-         * in our retry code list. Default value is 1.
-         */
-        private final int maxRetries;
+  }
 
-        /**
-         * Retry interval between subsequent requests, in milliseconds. Default
-         * value is 1 second.
-         */
-        private final long retryInterval;
+  private static class BaseServiceUnavailableRetryStrategy
+      implements ServiceUnavailableRetryStrategy {
 
-        public BaseServiceUnavailableRetryStrategy(int maxRetries, int retryInterval) {
-            super();
-            if (maxRetries < 1) {
-                throw new IllegalArgumentException("MaxRetries must be greater than 1");
-            }
-            if (retryInterval < 1) {
-                throw new IllegalArgumentException("Retry interval must be greater than 1");
-            }
-            this.maxRetries = maxRetries;
-            this.retryInterval = retryInterval;
-        }
+    /**
+     * Maximum number of allowed retries if the server responds with a HTTP code
+     * in our retry code list. Default value is 1.
+     */
+    private final int maxRetries;
 
-        public BaseServiceUnavailableRetryStrategy() {
-            this(1, 1000);
-        }
+    /**
+     * Retry interval between subsequent requests, in milliseconds. Default
+     * value is 1 second.
+     */
+    private final long retryInterval;
 
-        public boolean retryRequest(final HttpResponse response, int executionCount, final HttpContext context) {
-            return executionCount <= maxRetries && response.getStatusLine().getStatusCode() == HttpStatus.SC_SERVICE_UNAVAILABLE;
-        }
-
-        public long getRetryInterval() {
-            return retryInterval;
-        }
-
+    public BaseServiceUnavailableRetryStrategy(int maxRetries, int retryInterval) {
+      super();
+      if (maxRetries < 1) {
+        throw new IllegalArgumentException("MaxRetries must be greater than 1");
+      }
+      if (retryInterval < 1) {
+        throw new IllegalArgumentException("Retry interval must be greater than 1");
+      }
+      this.maxRetries = maxRetries;
+      this.retryInterval = retryInterval;
     }
+
+    public BaseServiceUnavailableRetryStrategy() {
+      this(1, 1000);
+    }
+
+    public boolean retryRequest(final HttpResponse response, int executionCount,
+                                final HttpContext context) {
+      return executionCount <= maxRetries
+          && response.getStatusLine().getStatusCode() == HttpStatus.SC_SERVICE_UNAVAILABLE;
+    }
+
+    public long getRetryInterval() {
+      return retryInterval;
+    }
+
+  }
 }

@@ -16,61 +16,67 @@
 
 package org.kaaproject.kaa.common.dto.logs.security;
 
+import org.kaaproject.kaa.common.dto.HasId;
+
 import java.io.Serializable;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.HasId;
-
 public class MongoUserDto implements HasId, Serializable {
-    
-    private static final long serialVersionUID = -5098682629917434127L;
-    
-    private String id;
-    private String user;
-    private String pwd;
-    private List<String> roles;
-    
-    public MongoUserDto () {
-        
-    }
-    
-    public MongoUserDto(String user, String pwd, List<String> roles) {
-        this.user = user;
-        this.pwd = pwd;
-        this.roles = roles;
-    }
-    
-    @Override
-    public String getId() {
-        return id;
-    }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    public void setUserName(String user) {
-        this.user = user;
-    }
-    
-    public String getUserName() {
-        return user;
-    }
-    
-    public void setPassword(String pwd) {
-        this.pwd = pwd;
-    }
-    
-    public String getPassword() {
-        return pwd;
-    }
-    
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-    
-    public List<String> getRoles() {
-        return roles;
-    }
+  private static final long serialVersionUID = -5098682629917434127L;
+
+  private String id;
+  private String user;
+  private String pwd;
+  private List<String> roles;
+
+  /**
+   * Instantiates the MongoUserDto.
+   */
+  public MongoUserDto() {
+
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public MongoUserDto(String user, String pwd, List<String> roles) {
+    this.user = user;
+    this.pwd = pwd;
+    this.roles = roles;
+  }
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getUserName() {
+    return user;
+  }
+
+  public void setUserName(String user) {
+    this.user = user;
+  }
+
+  public String getPassword() {
+    return pwd;
+  }
+
+  public void setPassword(String pwd) {
+    this.pwd = pwd;
+  }
+
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
+  }
 }

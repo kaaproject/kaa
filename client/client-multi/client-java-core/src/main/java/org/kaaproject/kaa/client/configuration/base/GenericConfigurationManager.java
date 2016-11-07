@@ -22,21 +22,21 @@ import org.kaaproject.kaa.client.configuration.storage.ConfigurationStorage;
 
 public interface GenericConfigurationManager {
 
-    void init();
+  void init();
 
-    boolean addListener(ConfigurationListener listener);
+  boolean addListener(ConfigurationListener listener);
 
-    boolean removeListener(ConfigurationListener listener);
+  boolean removeListener(ConfigurationListener listener);
 
-    /**
-     * Provide storage object which is able to persist encoded configuration data.
-     *
-     * @param storage Object which will save and load configuration data
-     * @see ConfigurationStorage
-     */
-    void setConfigurationStorage(ConfigurationStorage storage);
+  /**
+   * Provide storage object which is able to persist encoded configuration data.
+   *
+   * @param storage Object which will save and load configuration data
+   * @see ConfigurationStorage
+   */
+  void setConfigurationStorage(ConfigurationStorage storage);
 
-    ConfigurationProcessor getConfigurationProcessor();
+  ConfigurationProcessor getConfigurationProcessor();
 
-    ConfigurationHashContainer getConfigurationHashContainer();
+  ConfigurationHashContainer getConfigurationHashContainer();
 }

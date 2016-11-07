@@ -4,32 +4,28 @@
   {% assign val = item[1] %}
   {% if page_dir contains key %}
     {% assign navtree = site.data.menu[key].subitems %}
-  {% endif %}  
+  {% endif %}
 {% endfor %}
 
 <div class="column col-sm-2 col-xs-1 sidebar-offcanvas" id="sidebar">
-              
+
 <ul class="nav">
   <li><a href="#" data-toggle="offcanvas" class="visible-xs text-center"><i class="glyphicon glyphicon-chevron-right"></i></a></li>
 </ul>
 
 <ul class="nav">
-  <li><a href="{{ site.baseurl }}/" data-toggle="offcanvas" class="hidden-xs text-center logo"><img src="{{ site.baseurl }}/public/kaa-avatar.png"/></a></li>
+  <li><a href="{{ site.baseurl }}/" data-toggle="offcanvas" class="hidden-xs text-center logo"><img src="{{ site.baseurl }}{{site.data.permanent_config.sidebar_img_path}}"/></a></li>
 </ul>
 
 <ul class="nav hidden-xs" id="lg-menu">
-  <a href="{{ site.baseurl }}/" data-toggle="offcanvas" class="hidden-xs text-center logo sidebar-header"><h2>Kaa core</h2></a>
+  <a href="{{ site.baseurl }}/" data-toggle="offcanvas" class="hidden-xs text-center logo sidebar-header"><h2>{{site.title}}</h2></a>
   <li class="dropdown text-center sidebar-header">
   {% include versions.html nav=site.data.versions %}
   </li>
-  {% include nav.html nav=navtree lvl=0 %}
+  <div class="sidebar-navigation-container nav">
+    {% include nav.html nav=navtree lvl=0 %}
+  </div>
 </ul>
-
-<!--<ul class="list-unstyled hidden-xs" id="sidebar-footer">
-  <li>
-    <a href="http://kaaproject.org">kaaproject.org</a>
-  </li>
-</ul>-->
 
 <!-- tiny only nav-->
 <ul class="nav visible-xs" id="xs-menu">
@@ -38,11 +34,11 @@
   <li><a href="#" class="text-center"><i class="glyphicon glyphicon-paperclip"></i></a></li>
     <li><a href="#" class="text-center"><i class="glyphicon glyphicon-refresh"></i></a></li>          -->
 </ul>
-<div id="search"> 
+<div id="search">
   <form role="search" action="{{ site.baseurl }}/search/" method="get">
    <input type="text" size="40" placeholder="Search" name="query">
    <input type="hidden" name="version" value="{{ version }}">
    <input type="hidden" name="baseUrl" value="{{ site.baseurl }}/{{ base_docs_path }}">
   </form>
-</div>            
+</div>
 </div>

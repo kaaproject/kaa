@@ -16,41 +16,53 @@
 
 package org.kaaproject.kaa.server.common.log.shared;
 
-import java.io.IOException;
-
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.kaaproject.kaa.server.common.utils.FileUtils;
 
+import java.io.IOException;
+
 public class RecordWrapperSchemaGenerator {
-    
-    public static String RECORD_HEADER_FIELD = "recordHeader";
-    public static String RECORD_DATA_FIELD = "recordData";
 
-    /** The Constant RECORD_WRAPPER_SCHEMA_TEMPLATE. */
-    private static final String RECORD_WRAPPER_SCHEMA_TEMPLATE = "avro/record_wrapper_schema.avsc.template";
+  /**
+   * The Constant RECORD_WRAPPER_SCHEMA_TEMPLATE.
+   */
+  private static final String
+          RECORD_WRAPPER_SCHEMA_TEMPLATE = "avro/record_wrapper_schema.avsc.template";
+  /**
+   * The Constant RECORD_HEADER_SCHEMA_VAR.
+   */
+  private static final String RECORD_HEADER_SCHEMA_VAR = "\\$\\{record_header_schema\\}";
+  /**
+   * The Constant RECORD_DATA_SCHEMA_VAR.
+   */
+  private static final String RECORD_DATA_SCHEMA_VAR = "\\$\\{record_data_schema\\}";
+  public static String RECORD_HEADER_FIELD = "recordHeader";
+  public static String RECORD_DATA_FIELD = "recordData";
+  private static String recordWrapperSchemaTemplate;
 
-    /** The Constant RECORD_HEADER_SCHEMA_VAR. */
-    private static final String RECORD_HEADER_SCHEMA_VAR = "\\$\\{record_header_schema\\}";
+  private RecordWrapperSchemaGenerator() {
+  }
 
-    /** The Constant RECORD_DATA_SCHEMA_VAR. */
-    private static final String RECORD_DATA_SCHEMA_VAR = "\\$\\{record_data_schema\\}";
-    
-    private static String recordWrapperSchemaTemplate;
-
-    private RecordWrapperSchemaGenerator() {
+  /**
+   * Generate record wrapper schema.
+   *
+   * @param userRecordSchema is user record schema which we wrapped by record wrapper schema
+   * @return record wrapper schema
+   * @throws IOException Signals that an I/O exception has occurred
+   */
+  public static Schema generateRecordWrapperSchema(String userRecordSchema) throws IOException {
+    if (recordWrapperSchemaTemplate == null) {
+      recordWrapperSchemaTemplate = FileUtils.readResource(RECORD_WRAPPER_SCHEMA_TEMPLATE);
+      String recordHeaderSchema = RecordHeader.getClassSchema().toString();
+      recordWrapperSchemaTemplate =
+              recordWrapperSchemaTemplate.replaceAll(RECORD_HEADER_SCHEMA_VAR, recordHeaderSchema);
     }
+    String recordWrapperSchemaString =
+            recordWrapperSchemaTemplate.replaceAll(RECORD_DATA_SCHEMA_VAR, userRecordSchema);
+    Schema.Parser parser = new Schema.Parser();
+    Schema recordWrapperSchema = parser.parse(recordWrapperSchemaString);
+    return recordWrapperSchema;
+  }
 
-    public static Schema generateRecordWrapperSchema(String userRecordSchema) throws IOException {
-        if (recordWrapperSchemaTemplate == null) {
-            recordWrapperSchemaTemplate = FileUtils.readResource(RECORD_WRAPPER_SCHEMA_TEMPLATE);
-            String recordHeaderSchema = RecordHeader.getClassSchema().toString();
-            recordWrapperSchemaTemplate = recordWrapperSchemaTemplate.replaceAll(RECORD_HEADER_SCHEMA_VAR, recordHeaderSchema);
-        }
-        String recordWrapperSchemaString = recordWrapperSchemaTemplate.replaceAll(RECORD_DATA_SCHEMA_VAR, userRecordSchema);
-        Schema.Parser parser = new Schema.Parser();
-        Schema recordWrapperSchema = parser.parse(recordWrapperSchemaString);
-        return recordWrapperSchema;
-    }
-    
 }

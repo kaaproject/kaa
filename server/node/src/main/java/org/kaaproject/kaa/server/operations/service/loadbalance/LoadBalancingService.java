@@ -21,8 +21,8 @@ import org.kaaproject.kaa.server.operations.service.akka.AkkaStatusListener;
 
 public interface LoadBalancingService extends AkkaStatusListener {
 
-    void start(OperationsNode operationsNode);
-    
-    void stop();
-    
+  void start(OperationsNode operationsNode);
+
+  void stop();
+
 }

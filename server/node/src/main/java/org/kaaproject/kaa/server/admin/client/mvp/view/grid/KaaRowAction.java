@@ -23,34 +23,54 @@ import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
  */
 public class KaaRowAction {
 
-    /** The Constant SEND_NOTIFICATION. */
-    public static final int SEND_NOTIFICATION = RowActionEvent.MAX_ACTION + 1;
+  /**
+   * The Constant SEND_NOTIFICATION.
+   */
+  public static final int SEND_NOTIFICATION = RowActionEvent.MAX_ACTION + 1;
 
-    /** The Constant DOWNLOAD_LOG_SCHEMA_LIBRARY. */
-    public static final int DOWNLOAD_LOG_SCHEMA_LIBRARY = RowActionEvent.MAX_ACTION + 2;
+  /**
+   * The Constant DOWNLOAD_LOG_SCHEMA_LIBRARY.
+   */
+  public static final int DOWNLOAD_LOG_SCHEMA_LIBRARY = RowActionEvent.MAX_ACTION + 2;
 
-    /** The Constant DOWNLOAD_SCHEMA. */
-    public static final int DOWNLOAD_SCHEMA = RowActionEvent.MAX_ACTION + 3;
+  /**
+   * The Constant DOWNLOAD_SCHEMA.
+   */
+  public static final int DOWNLOAD_SCHEMA = RowActionEvent.MAX_ACTION + 3;
 
-    /** The Constant DOWNLOAD_BASE_SCHEMA. */
-    public static final int DOWNLOAD_BASE_SCHEMA = RowActionEvent.MAX_ACTION + 4;
+  /**
+   * The Constant DOWNLOAD_BASE_SCHEMA.
+   */
+  public static final int DOWNLOAD_BASE_SCHEMA = RowActionEvent.MAX_ACTION + 4;
 
-    /** The Constant DOWNLOAD_OVERRIDE_SCHEMA. */
-    public static final int DOWNLOAD_OVERRIDE_SCHEMA = RowActionEvent.MAX_ACTION + 5;
+  /**
+   * The Constant DOWNLOAD_OVERRIDE_SCHEMA.
+   */
+  public static final int DOWNLOAD_OVERRIDE_SCHEMA = RowActionEvent.MAX_ACTION + 5;
 
-    /** The Constant GENERATE_SDK. */
-    public static final int GENERATE_SDK = RowActionEvent.MAX_ACTION + 6;
-    
-    /** The Constant CTL_EXPORT_SHALLOW. */
-    public static final int CTL_EXPORT_SHALLOW = RowActionEvent.MAX_ACTION + 7;
-    
-    /** The Constant CTL_EXPORT_DEEP. */
-    public static final int CTL_EXPORT_DEEP = RowActionEvent.MAX_ACTION + 8;
-    
-    /** The Constant CTL_EXPORT_FLAT. */
-    public static final int CTL_EXPORT_FLAT = RowActionEvent.MAX_ACTION + 9;
-    
-    /** The Constant CTL_EXPORT_LIBRARY. */
-    public static final int CTL_EXPORT_LIBRARY = RowActionEvent.MAX_ACTION + 10;
+  /**
+   * The Constant GENERATE_SDK.
+   */
+  public static final int GENERATE_SDK = RowActionEvent.MAX_ACTION + 6;
+
+  /**
+   * The Constant CTL_EXPORT_SHALLOW.
+   */
+  public static final int CTL_EXPORT_SHALLOW = RowActionEvent.MAX_ACTION + 7;
+
+  /**
+   * The Constant CTL_EXPORT_DEEP.
+   */
+  public static final int CTL_EXPORT_DEEP = RowActionEvent.MAX_ACTION + 8;
+
+  /**
+   * The Constant CTL_EXPORT_FLAT.
+   */
+  public static final int CTL_EXPORT_FLAT = RowActionEvent.MAX_ACTION + 9;
+
+  /**
+   * The Constant CTL_EXPORT_LIBRARY.
+   */
+  public static final int CTL_EXPORT_LIBRARY = RowActionEvent.MAX_ACTION + 10;
 
 }

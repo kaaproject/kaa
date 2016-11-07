@@ -21,8 +21,8 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 public class NettyTcpDisconnectMessage extends SessionDisconnectMessage {
 
-    public NettyTcpDisconnectMessage(SessionInfo session) {
-        super(session);
-    }
+  public NettyTcpDisconnectMessage(SessionInfo session) {
+    super(session);
+  }
 
 }

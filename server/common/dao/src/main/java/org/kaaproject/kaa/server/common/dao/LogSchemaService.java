@@ -17,10 +17,10 @@
 package org.kaaproject.kaa.server.common.dao;
 
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
+
+import java.util.List;
 
 /**
  * The interface Log Schema service.
@@ -28,58 +28,58 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
 public interface LogSchemaService {
 
-    /**
-     * Find log schemas by application id.
-     *
-     * @param applicationId the application id
-     * @return the list of log schemas
-     */
-    List<LogSchemaDto> findLogSchemasByAppId(String applicationId);
+  /**
+   * Find log schemas by application id.
+   *
+   * @param applicationId the application id
+   * @return the list of log schemas
+   */
+  List<LogSchemaDto> findLogSchemasByAppId(String applicationId);
 
-    /**
-     * Find all Log Schema versions for Application with specific id
-     *
-     * @param applicationId the id of Application
-     * @return List of Log Schema versions
-     */
-    List<VersionDto> findLogSchemaVersionsByApplicationId(String applicationId);
+  /**
+   * Find all Log Schema versions for Application with specific id.
+   *
+   * @param applicationId the id of Application
+   * @return List of Log Schema versions
+   */
+  List<VersionDto> findLogSchemaVersionsByApplicationId(String applicationId);
 
-    /**
-     * Find log schema by id.
-     *
-     * @param id the log schema id
-     * @return the log schema dto
-     */
-    LogSchemaDto findLogSchemaById(String id);
+  /**
+   * Find log schema by id.
+   *
+   * @param id the log schema id
+   * @return the log schema dto
+   */
+  LogSchemaDto findLogSchemaById(String id);
 
-    /**
-     * Find log schema by application id and version.
-     *
-     * @param appId the application id
-     * @param schemaVersion the schema version
-     * @return the log schema dto
-     */
-    LogSchemaDto findLogSchemaByAppIdAndVersion(String appId, int schemaVersion);
+  /**
+   * Find log schema by application id and version.
+   *
+   * @param appId         the application id
+   * @param schemaVersion the schema version
+   * @return the log schema dto
+   */
+  LogSchemaDto findLogSchemaByAppIdAndVersion(String appId, int schemaVersion);
 
-    /**
-     * Save log schema.
-     *
-     * @param logSchemaDto the log schema dto
-     * @return the log schema dto
-     */
-    LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto);
+  /**
+   * Save log schema.
+   *
+   * @param logSchemaDto the log schema dto
+   * @return the log schema dto
+   */
+  LogSchemaDto saveLogSchema(LogSchemaDto logSchemaDto);
 
-    /**
-     * Remove log schemas by application id.
-     *
-     * @param applicationId the application id
-     */
-    void removeLogSchemasByAppId(String applicationId);
+  /**
+   * Remove log schemas by application id.
+   *
+   * @param applicationId the application id
+   */
+  void removeLogSchemasByAppId(String applicationId);
 
-    /**
-     * Remove log schema by id.
-     *
-     * @param id the id
-     */
-    void removeLogSchemaById(String id);
+  /**
+   * Remove log schema by id.
+   *
+   * @param id the id
+   */
+  void removeLogSchemaById(String id);
 }

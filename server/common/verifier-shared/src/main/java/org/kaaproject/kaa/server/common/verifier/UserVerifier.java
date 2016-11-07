@@ -18,44 +18,40 @@ package org.kaaproject.kaa.server.common.verifier;
 
 /**
  * Represents process of access token verification of endpoint user.
- * 
+ *
  * @author Andrew Shvayka
- * 
  */
 public interface UserVerifier {
 
-    /**
-     * Initialize a user verifier instance with a particular configuration and
-     * common transport properties. The configuration is a serialized Avro
-     * object. The serialization is done using the schema specified in
-     * {@link KaaUserVerifierConfig}.
-     *
-     * @param context
-     *            the user verifier initialization context
-     * @throws UserVerifierLifecycleException
-     */
-    void init(UserVerifierContext context) throws UserVerifierLifecycleException;
-    
-    /**
-     * Verifies the access token.
-     *
-     * @param userExternalId the user external id
-     * @param accessToken the access token
-     * @return true, if verified
-     */
-    void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback);
+  /**
+   * Initialize a user verifier instance with a particular configuration and
+   * common transport properties. The configuration is a serialized Avro
+   * object. The serialization is done using the schema specified in
+   * {@link KaaUserVerifierConfig}.
+   *
+   * @param context the user verifier initialization context
+   */
+  void init(UserVerifierContext context) throws UserVerifierLifecycleException;
 
-    /**
-     * Starts a user verifier instance. This method should block its caller thread
-     * until the user verifier is started. This method should not block its caller
-     * thread after startup sequence is successfully completed.
-     */
-    void start();
+  /**
+   * Verifies the access token.
+   *
+   * @param userExternalId the user external id
+   * @param accessToken    the access token
+   */
+  void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback);
 
-    /**
-     * Stops the user verifier instance. This method should block its current thread
-     * until user verifier is stopped. User verifier may be started again after it is
-     * stopped.
-     */
-    void stop();
+  /**
+   * Starts a user verifier instance. This method should block its caller thread
+   * until the user verifier is started. This method should not block its caller
+   * thread after startup sequence is successfully completed.
+   */
+  void start();
+
+  /**
+   * Stops the user verifier instance. This method should block its current thread
+   * until user verifier is stopped. User verifier may be started again after it is
+   * stopped.
+   */
+  void stop();
 }

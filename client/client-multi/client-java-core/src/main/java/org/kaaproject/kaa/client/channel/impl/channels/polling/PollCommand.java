@@ -16,62 +16,66 @@
 
 package org.kaaproject.kaa.client.channel.impl.channels.polling;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.kaaproject.kaa.client.channel.ChannelDirection;
-import org.kaaproject.kaa.client.channel.IPTransportInfo;
+import org.kaaproject.kaa.client.channel.IpTransportInfo;
 import org.kaaproject.kaa.client.transport.AbstractHttpClient;
 import org.kaaproject.kaa.common.TransportType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class PollCommand implements Command {
 
-    public static final Logger LOG = LoggerFactory //NOSONAR
-            .getLogger(PollCommand.class);
+  public static final Logger LOG = LoggerFactory //NOSONAR
+      .getLogger(PollCommand.class);
 
-    private final AbstractHttpClient httpClient;
-    private final RawDataProcessor processor;
-    private final Map<TransportType, ChannelDirection> transportTypes;
-    private final IPTransportInfo serverInfo;
-    private volatile boolean canceled = false;
+  private final AbstractHttpClient httpClient;
+  private final RawDataProcessor processor;
+  private final Map<TransportType, ChannelDirection> transportTypes;
+  private final IpTransportInfo serverInfo;
+  private volatile boolean canceled = false;
 
-    public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType, ChannelDirection> transportTypes, IPTransportInfo serverInfo) {
-        this.httpClient = client;
-        this.serverInfo = serverInfo;
-        this.processor = processor;
-        this.transportTypes = transportTypes;
-    }
+  /**
+   * All-args constructor.
+   */
+  public PollCommand(AbstractHttpClient client, RawDataProcessor processor, Map<TransportType,
+          ChannelDirection> transportTypes, IpTransportInfo serverInfo) {
+    this.httpClient = client;
+    this.serverInfo = serverInfo;
+    this.processor = processor;
+    this.transportTypes = transportTypes;
+  }
 
-    @Override
-    public void execute() {
-        try {
-            if (httpClient != null ) {
-                LinkedHashMap<String, byte[]> request = processor.createRequest(transportTypes); //NOSONAR
-                if (request != null && !canceled) {
-                    byte[] responseDataRaw = httpClient.executeHttpRequest("", request, false);
-                    processor.onResponse(responseDataRaw);
-                }
-            } else {
-                LOG.warn("Unable to execute http request, http client is null.");
-            }
-        } catch (Exception e) {
-            if (!canceled) {
-                LOG.error("Server failed {}", e);
-            } else {
-                LOG.debug("PollCommand execution aborted");
-            }
-            processor.onServerError(serverInfo);
+  @Override
+  public void execute() {
+    try {
+      if (httpClient != null) {
+        LinkedHashMap<String, byte[]> request = processor.createRequest(transportTypes); //NOSONAR
+        if (request != null && !canceled) {
+          byte[] responseDataRaw = httpClient.executeHttpRequest("", request, false);
+          processor.onResponse(responseDataRaw);
         }
+      } else {
+        LOG.warn("Unable to execute http request, http client is null.");
+      }
+    } catch (Exception ex) {
+      if (!canceled) {
+        LOG.error("Server failed {}", ex);
+      } else {
+        LOG.debug("PollCommand execution aborted");
+      }
+      processor.onServerError(serverInfo);
     }
+  }
 
-    @Override
-    public void cancel() {
-        canceled = true;
-        if (httpClient != null && httpClient.canAbort()) {
-            httpClient.abort();
-        }
+  @Override
+  public void cancel() {
+    canceled = true;
+    if (httpClient != null && httpClient.canAbort()) {
+      httpClient.abort();
     }
+  }
 
 }

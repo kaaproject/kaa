@@ -20,47 +20,46 @@ package org.kaaproject.kaa.server.transport.channel;
  * Represents the types of channels supported by Kaa server components. Messages
  * that are dispatched by a specific channel may be handled differently based on
  * the channel type.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public enum ChannelType {
 
-    /**
-     * The sync channel indicates that messages from this channel require an
-     * immediate reply. One of the sync channels is a regular http channel.
-     */
-    SYNC(false, false),
+  /**
+   * The sync channel indicates that messages from this channel require an
+   * immediate reply. One of the sync channels is a regular http channel.
+   */
+  SYNC(false, false),
 
-    /**
-     * The sync with timeout channel indicates that messages from this channel
-     * does not require an immediate reply. A reply to the incoming message may
-     * delayed if there are no updates from Kaa server in the reply. An example
-     * of the sync with timeout channel is an http long poll channel.
-     */
-    SYNC_WITH_TIMEOUT(true, false),
+  /**
+   * The sync with timeout channel indicates that messages from this channel
+   * does not require an immediate reply. A reply to the incoming message may
+   * delayed if there are no updates from Kaa server in the reply. An example
+   * of the sync with timeout channel is an http long poll channel.
+   */
+  SYNC_WITH_TIMEOUT(true, false),
 
-    /**
-     * The async channel indicates that messages from this channel does not
-     * require any reply at all. Incoming and outcoming messages are
-     * independent, thus communication is asynchronous. The server will push
-     * updates to this channel as soon as they arrive.
-     */
-    ASYNC(false, true);
+  /**
+   * The async channel indicates that messages from this channel does not
+   * require any reply at all. Incoming and outcoming messages are
+   * independent, thus communication is asynchronous. The server will push
+   * updates to this channel as soon as they arrive.
+   */
+  ASYNC(false, true);
 
-    private final boolean longPoll;
-    private final boolean async;
+  private final boolean longPoll;
+  private final boolean async;
 
-    private ChannelType(boolean longPoll, boolean async) {
-        this.longPoll = longPoll;
-        this.async = async;
-    }
+  private ChannelType(boolean longPoll, boolean async) {
+    this.longPoll = longPoll;
+    this.async = async;
+  }
 
-    public boolean isAsync() {
-        return async;
-    }
+  public boolean isAsync() {
+    return async;
+  }
 
-    public boolean isLongPoll() {
-        return longPoll;
-    }
+  public boolean isLongPoll() {
+    return longPoll;
+  }
 }

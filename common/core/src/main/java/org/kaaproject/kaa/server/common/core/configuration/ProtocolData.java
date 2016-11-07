@@ -18,13 +18,13 @@ package org.kaaproject.kaa.server.common.core.configuration;
 
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 
-public class ProtocolData extends AbstractConfigurationData<ProtocolSchema>{
+public class ProtocolData extends AbstractConfigurationData<ProtocolSchema> {
 
-    private static final long serialVersionUID = 9106249492676940634L;
+  private static final long serialVersionUID = 9106249492676940634L;
 
-    public ProtocolData(ProtocolSchema schema, String data) {
-        super(schema, data);
-    }
+  public ProtocolData(ProtocolSchema schema, String data) {
+    super(schema, data);
+  }
 
 
 }

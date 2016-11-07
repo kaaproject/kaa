@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -24,28 +24,29 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class ApplicationsDataProvider extends AbstractDataProvider<ApplicationDto, String>{
+public class ApplicationsDataProvider extends AbstractDataProvider<ApplicationDto, String> {
 
-    public ApplicationsDataProvider(AbstractGrid<ApplicationDto, String> dataGrid,
-                                    HasErrorMessage hasErrorMessage) {
-        super(dataGrid, hasErrorMessage);
-    }
+  public ApplicationsDataProvider(AbstractGrid<ApplicationDto, String> dataGrid,
+                                  HasErrorMessage hasErrorMessage) {
+    super(dataGrid, hasErrorMessage);
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadApplications(new AsyncCallback<List<ApplicationDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadApplications(new AsyncCallback<List<ApplicationDto>>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        callback.onFailure(caught);
 
-            }
-            @Override
-            public void onSuccess(List<ApplicationDto> result) {
-                callback.onSuccess(result);
-            }
-        });
-    }
+      }
+
+      @Override
+      public void onSuccess(List<ApplicationDto> result) {
+        callback.onSuccess(result);
+      }
+    });
+  }
 
 }

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.client.logging.strategies;
 
-import java.util.concurrent.TimeUnit;
-
 import org.kaaproject.kaa.client.logging.DefaultLogUploadStrategy;
 import org.kaaproject.kaa.client.logging.LogStorageStatus;
 import org.kaaproject.kaa.client.logging.LogUploadStrategy;
@@ -25,31 +23,33 @@ import org.kaaproject.kaa.client.logging.LogUploadStrategyDecision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Reference implementation for {@link LogUploadStrategy}.
  * Issue log upload each timeLimit timeUnit units.
  */
 public class PeriodicLogUploadStrategy extends DefaultLogUploadStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(PeriodicLogUploadStrategy.class);
-    protected long lastUploadTime = System.currentTimeMillis();
+  private static final Logger LOG = LoggerFactory.getLogger(PeriodicLogUploadStrategy.class);
+  protected long lastUploadTime = System.currentTimeMillis();
 
-    public PeriodicLogUploadStrategy(long timeLimit, TimeUnit timeUnit) {
-        setUploadCheckPeriod((int)timeUnit.toSeconds(timeLimit));
+  public PeriodicLogUploadStrategy(long timeLimit, TimeUnit timeUnit) {
+    setUploadCheckPeriod((int) timeUnit.toSeconds(timeLimit));
+  }
+
+  @Override
+  protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
+    LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
+
+    long currentTime = System.currentTimeMillis();
+
+    if (((currentTime - lastUploadTime) / 1000) >= uploadCheckPeriod) {
+      LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {} sec",
+              status.getRecordCount(), lastUploadTime, uploadCheckPeriod);
+      decision = LogUploadStrategyDecision.UPLOAD;
+      lastUploadTime = currentTime;
     }
 
-    @Override
-    protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
-        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
-
-        long currentTime = System.currentTimeMillis();
-
-        if(((currentTime - lastUploadTime) / 1000) >= uploadCheckPeriod){
-            LOG.info("Need to upload logs - current count: {}, lastUploadedTime: {}, timeLimit: {} sec"
-                                            , status.getRecordCount(), lastUploadTime, uploadCheckPeriod);
-            decision = LogUploadStrategyDecision.UPLOAD;
-            lastUploadTime = currentTime;
-        }
-
-        return decision;
-    }
+    return decision;
+  }
 }

@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.common.dto.event;
 
 public enum ApplicationEventAction {
-    SOURCE, SINK, BOTH;
+  SOURCE, SINK, BOTH;
 }

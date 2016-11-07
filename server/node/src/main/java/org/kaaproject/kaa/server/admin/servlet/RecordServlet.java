@@ -16,16 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.servlet;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.iharder.Base64;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
@@ -37,38 +27,53 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class RecordServlet extends HttpServlet implements Servlet, ServletParams {
 
-    private static final long serialVersionUID = 1584721028492234643L;
+  private static final long serialVersionUID = 1584721028492234643L;
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(RecordServlet.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(RecordServlet.class);
 
-    private static final int BUFFER = 1024 * 100;
+  private static final int BUFFER = 1024 * 100;
 
-    @Autowired
-    private CacheService cacheService;
+  @Autowired
+  private CacheService cacheService;
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    SpringBeanAutowiringSupport
+        .processInjectionBasedOnServletContext(this, config.getServletContext());
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    String recordKeyBase64 = URLDecoder.decode(request.getParameter(RECORD_KEY_PARAMETER), "UTF-8");
+    try {
+      RecordKey key = (RecordKey) Base64.decodeToObject(recordKeyBase64, Base64.URL_SAFE, null);
+      FileData recordLibrary = cacheService.getRecordData(key);
+      ServletUtils.prepareDisposition(request, response, recordLibrary.getFileName());
+      response.setContentLength(recordLibrary.getFileData().length);
+      response.setBufferSize(BUFFER);
+      response.getOutputStream().write(recordLibrary.getFileData());
+      response.flushBuffer();
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in RecordLibraryServlet.doGet: ", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: "
+          + ex.getMessage());
     }
-
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String recordKeyBase64 = URLDecoder.decode(request.getParameter(RECORD_KEY_PARAMETER), "UTF-8");
-        try {
-            RecordKey key = (RecordKey) Base64.decodeToObject(recordKeyBase64, Base64.URL_SAFE, null);
-            FileData recordLibrary = cacheService.getRecordData(key);
-            ServletUtils.prepareDisposition(request, response, recordLibrary.getFileName());
-            response.setContentLength(recordLibrary.getFileData().length);
-            response.setBufferSize(BUFFER);
-            response.getOutputStream().write(recordLibrary.getFileData());
-            response.flushBuffer();
-        } catch (Exception e) {
-            LOG.error("Unexpected error in RecordLibraryServlet.doGet: ", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get file: " + e.getMessage());
-        }
-    }
+  }
 }

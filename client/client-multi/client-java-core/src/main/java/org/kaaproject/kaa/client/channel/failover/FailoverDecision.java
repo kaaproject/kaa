@@ -20,44 +20,49 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Class that describes a decision which is made by a failover manager,
- * which corresponds to a failover strategy
+ * which corresponds to a failover strategy.
+ *
  * @see FailoverManager
  */
 public class FailoverDecision {
-    private final FailoverAction action;
-    private long retryPeriod;
-    private TimeUnit timeUnit;
+  private final FailoverAction action;
+  private long retryPeriod;
+  private TimeUnit timeUnit;
 
-    public FailoverDecision(FailoverAction action) {
-        this.action = action;
-    }
+  public FailoverDecision(FailoverAction action) {
+    this.action = action;
+  }
 
-    public FailoverDecision(FailoverAction action, long retryPeriod, TimeUnit timeUnit) {
-        this.action = action;
-        this.retryPeriod = retryPeriod;
-        this.timeUnit = timeUnit;
-    }
+  /**
+   * All-args constructor.
+   */
+  public FailoverDecision(FailoverAction action, long retryPeriod, TimeUnit timeUnit) {
+    this.action = action;
+    this.retryPeriod = retryPeriod;
+    this.timeUnit = timeUnit;
+  }
 
-    public FailoverAction getAction() {
-        return action;
-    }
+  public FailoverAction getAction() {
+    return action;
+  }
 
-    /**
-     * Is used to get retryPeriod value in milliseconds
-     * @return retry period in milliseconds
-     */
-    public long getRetryPeriod() {
-        return TimeUnit.MILLISECONDS.convert(retryPeriod, timeUnit);
-    }
+  /**
+   * Is used to get retryPeriod value in milliseconds.
+   *
+   * @return retry period in milliseconds
+   */
+  public long getRetryPeriod() {
+    return TimeUnit.MILLISECONDS.convert(retryPeriod, timeUnit);
+  }
 
-    /**
-     * Enum which represents an action corresponding to a failover scenario
-     */
-    public static enum FailoverAction {
-        NOOP,               // doing nothing
-        RETRY,
-        USE_NEXT_BOOTSTRAP,
-        USE_NEXT_OPERATIONS,
-        FAILURE
-    }
+  /**
+   * Enum which represents an action corresponding to a failover scenario.
+   */
+  public static enum FailoverAction {
+    NOOP,               // doing nothing
+    RETRY,
+    USE_NEXT_BOOTSTRAP,
+    USE_NEXT_OPERATIONS,
+    FAILURE
+  }
 }

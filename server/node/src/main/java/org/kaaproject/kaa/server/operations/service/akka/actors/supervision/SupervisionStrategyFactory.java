@@ -16,85 +16,91 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.supervision;
 
-import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import scala.concurrent.duration.Duration;
 import akka.actor.OneForOneStrategy;
 import akka.actor.SupervisorStrategy;
 import akka.actor.SupervisorStrategy.Directive;
 import akka.japi.Function;
+import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import scala.concurrent.duration.Duration;
+
+
 
 public final class SupervisionStrategyFactory {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(SupervisionStrategyFactory.class);
 
-    private SupervisionStrategyFactory() {
-    }
+  private static final Logger LOG = LoggerFactory.getLogger(SupervisionStrategyFactory.class);
 
-    public static SupervisorStrategy createIORouterStrategy(AkkaContext context) {
-        return buildResumeOrEscalateStrategy();
-    }
+  private SupervisionStrategyFactory() {
+  }
 
-    public static SupervisorStrategy createOpsActorStrategy(AkkaContext context) {
-        return buildResumeOnRuntimeErrorStrategy();
-    }
+  public static SupervisorStrategy createIoRouterStrategy(AkkaContext context) {
+    return buildResumeOrEscalateStrategy();
+  }
 
-    public static SupervisorStrategy createTenantActorStrategy(AkkaContext context) {
-        return buildResumeOnRuntimeErrorStrategy();
-    }
+  public static SupervisorStrategy createOpsActorStrategy(AkkaContext context) {
+    return buildResumeOnRuntimeErrorStrategy();
+  }
 
-    public static SupervisorStrategy createApplicationActorStrategy(AkkaContext context) {
-        return buildRestartOrEscalateStrategy();
-    }
+  public static SupervisorStrategy createTenantActorStrategy(AkkaContext context) {
+    return buildResumeOnRuntimeErrorStrategy();
+  }
 
-    private static SupervisorStrategy buildResumeOrEscalateStrategy() {
-        return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
-            @Override
-            public Directive apply(Throwable t) throws Exception {
-                logException(t);
-                if (t instanceof Error) {
-                    return OneForOneStrategy.escalate();
-                } else {
-                    return OneForOneStrategy.resume();
-                }
-            }
-        });
-    }
+  public static SupervisorStrategy createApplicationActorStrategy(AkkaContext context) {
+    return buildRestartOrEscalateStrategy();
+  }
 
-    private static SupervisorStrategy buildRestartOrEscalateStrategy() {
-        return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
-            @Override
-            public Directive apply(Throwable t) throws Exception {
-                logException(t);
-                if (t instanceof Error) {
-                    return OneForOneStrategy.escalate();
-                } else {
-                    return OneForOneStrategy.restart();
-                }
-            }
-        });
-    }
+  private static SupervisorStrategy buildResumeOrEscalateStrategy() {
+    return new OneForOneStrategy(-1, Duration.Inf(),
+            new Function<Throwable, SupervisorStrategy.Directive>() {
+        @Override
+        public Directive apply(Throwable throwable) throws Exception {
+          logException(throwable);
+          if (throwable instanceof Error) {
+            return OneForOneStrategy.escalate();
+          } else {
+            return OneForOneStrategy.resume();
+          }
+        }
+      });
+  }
 
-    private static SupervisorStrategy buildResumeOnRuntimeErrorStrategy() {
-        return new OneForOneStrategy(-1, Duration.Inf(), new Function<Throwable, SupervisorStrategy.Directive>() {
-            @Override
-            public Directive apply(Throwable t) throws Exception {
-                logException(t);
-                if (t instanceof Error) {
-                    return OneForOneStrategy.escalate();
-                } else if (t instanceof RuntimeException) {
-                    return OneForOneStrategy.resume();
-                } else {
-                    return OneForOneStrategy.restart();
-                }
-            }
-        });
-    }
+  private static SupervisorStrategy buildRestartOrEscalateStrategy() {
+    return new OneForOneStrategy(-1, Duration.Inf(),
+            new Function<Throwable, SupervisorStrategy.Directive>() {
+        @Override
+        public Directive apply(Throwable throwable) throws Exception {
+          logException(throwable);
+          if (throwable instanceof Error) {
+            return OneForOneStrategy.escalate();
+          } else {
+            return OneForOneStrategy.restart();
+          }
+        }
+      });
+  }
 
-    private static void logException(Throwable t) {
-        LOG.error("Supervisor strategy got exception: {}", t.getMessage(), t);
-    }
+  private static SupervisorStrategy buildResumeOnRuntimeErrorStrategy() {
+    return new OneForOneStrategy(-1, Duration.Inf(),
+            new Function<Throwable, SupervisorStrategy.Directive>() {
+        @Override
+        public Directive apply(Throwable throwable) throws Exception {
+          logException(throwable);
+          if (throwable instanceof Error) {
+            return OneForOneStrategy.escalate();
+          } else if (throwable instanceof RuntimeException) {
+            return OneForOneStrategy.resume();
+          } else {
+            return OneForOneStrategy.restart();
+          }
+        }
+      });
+  }
+
+  private static void logException(Throwable throwable) {
+    LOG.error("Supervisor strategy got exception: {}", throwable.getMessage(), throwable);
+  }
 
 }

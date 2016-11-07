@@ -16,57 +16,59 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.cellview.client.DataGrid;
+
 import org.kaaproject.kaa.common.dto.AbstractStructureDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.DataGrid;
+public abstract class AbstractStructGrid
+    <R extends AbstractStructureDto, T extends StructureRecordDto<R>, K>
+    extends AbstractKaaGrid<T, K> {
 
-public abstract class AbstractStructGrid<R extends AbstractStructureDto, T extends StructureRecordDto<R>, K> extends AbstractKaaGrid<T, K> {
+  public AbstractStructGrid() {
+    super(Unit.PX, true, true);
+  }
 
-    public AbstractStructGrid() {
-        super(Unit.PX, true, true);
-    }
+  @Override
+  protected float constructColumnsImpl(DataGrid<T> table) {
+    float prefWidth = 0;
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<T> table) {
-        float prefWidth = 0;
+    prefWidth += constructStringColumn(table,
+        Utils.constants.description(),
+        new StringValueProvider<T>() {
+          @Override
+          public String getValue(T item) {
+            return item.getDescription();
+          }
+        }, 160);
 
-        prefWidth += constructStringColumn(table,
-                Utils.constants.description(),
-                new StringValueProvider<T>() {
-                    @Override
-                    public String getValue(T item) {
-                        return item.getDescription();
-                    }
-                }, 160);
-        
-        prefWidth += constructBooleanColumn(table,
-                Utils.constants.active(),
-                new BooleanValueProvider<T>() {
-                    @Override
-                    public Boolean getValue(T item) {
-                        return item.hasActive() && !item.hasDeprecated();
-                    }
-                }, 40);
+    prefWidth += constructBooleanColumn(table,
+        Utils.constants.active(),
+        new BooleanValueProvider<T>() {
+          @Override
+          public Boolean getValue(T item) {
+            return item.hasActive() && !item.hasDeprecated();
+          }
+        }, 40);
 
-        prefWidth += constructBooleanColumn(table,
-                Utils.constants.draft(),
-                new BooleanValueProvider<T>() {
-                    @Override
-                    public Boolean getValue(T item) {
-                        return item.hasDraft();
-                    }
-                }, 40);
+    prefWidth += constructBooleanColumn(table,
+        Utils.constants.draft(),
+        new BooleanValueProvider<T>() {
+          @Override
+          public Boolean getValue(T item) {
+            return item.hasDraft();
+          }
+        }, 40);
 
-        return prefWidth;
-    }
+    return prefWidth;
+  }
 
-    @Override
-    protected boolean canDelete(T value) {
-        return value.hasDraft() || !value.hasDeprecated();
-    }
+  @Override
+  protected boolean canDelete(T value) {
+    return value.hasDraft() || !value.hasDeprecated();
+  }
 
 }

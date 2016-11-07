@@ -16,71 +16,71 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static org.kaaproject.kaa.common.dto.Util.getArrayCopy;
-
 public class EndpointConfigurationDto implements Serializable {
 
-    private static final long serialVersionUID = 5662111748223086520L;
+  private static final long serialVersionUID = 5662111748223086520L;
 
-    private byte[] configurationHash;
-    private byte[] configuration;
+  private byte[] configurationHash;
+  private byte[] configuration;
 
-    public byte[] getConfigurationHash() {
-        return configurationHash;
+  public byte[] getConfigurationHash() {
+    return configurationHash;
+  }
+
+  public void setConfigurationHash(byte[] configurationHash) {
+    this.configurationHash = getArrayCopy(configurationHash);
+  }
+
+  public byte[] getConfiguration() {
+    return configuration;
+  }
+
+  public void setConfiguration(byte[] configuration) {
+    this.configuration = configuration;
+  }
+
+  public String getConfigurationAsString() {
+    return new String(configuration);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
     }
 
-    public void setConfigurationHash(byte[] configurationHash) {
-        this.configurationHash = getArrayCopy(configurationHash);
+    EndpointConfigurationDto that = (EndpointConfigurationDto) obj;
+
+    if (!Arrays.equals(configuration, that.configuration)) {
+      return false;
+    }
+    if (!Arrays.equals(configurationHash, that.configurationHash)) {
+      return false;
     }
 
-    public byte[] getConfiguration() {
-        return configuration;
-    }
+    return true;
+  }
 
-    public String getConfigurationAsString() {
-        return new String(configuration);
-    }
+  @Override
+  public int hashCode() {
+    int result = configurationHash != null ? Arrays.hashCode(configurationHash) : 0;
+    result = 31 * result + (configuration != null ? Arrays.hashCode(configuration) : 0);
+    return result;
+  }
 
-    public void setConfiguration(byte[] configuration) {
-        this.configuration = configuration;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        EndpointConfigurationDto that = (EndpointConfigurationDto) o;
-
-        if (!Arrays.equals(configuration, that.configuration)) {
-            return false;
-        }
-        if (!Arrays.equals(configurationHash, that.configurationHash)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = configurationHash != null ? Arrays.hashCode(configurationHash) : 0;
-        result = 31 * result + (configuration != null ? Arrays.hashCode(configuration) : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "EndpointConfigurationDto{" +
-                "configurationHash=" + Arrays.toString(configurationHash) +
-                ", configuration=" + Arrays.toString(configuration) +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "EndpointConfigurationDto{"
+           + "configurationHash=" + Arrays.toString(configurationHash)
+           + ", configuration=" + Arrays.toString(configuration)
+           + '}';
+  }
 }

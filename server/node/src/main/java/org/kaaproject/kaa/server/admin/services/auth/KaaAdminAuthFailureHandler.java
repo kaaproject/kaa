@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.services.auth;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
@@ -31,110 +25,125 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class KaaAdminAuthFailureHandler implements AuthenticationFailureHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KaaAdminAuthFailureHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(KaaAdminAuthFailureHandler.class);
 
-    private String defaultFailureUrl;
-    private boolean forwardToDestination = false;
-    private boolean allowSessionCreation = true;
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+  private String defaultFailureUrl;
+  private boolean forwardToDestination = false;
+  private boolean allowSessionCreation = true;
+  private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    public KaaAdminAuthFailureHandler() {
-    }
+  public KaaAdminAuthFailureHandler() {
+  }
 
-    public KaaAdminAuthFailureHandler(String defaultFailureUrl) {
-        setDefaultFailureUrl(defaultFailureUrl);
-    }
+  public KaaAdminAuthFailureHandler(String defaultFailureUrl) {
+    setDefaultFailureUrl(defaultFailureUrl);
+  }
 
-    /**
-     * Performs the redirect or forward to the {@code defaultFailureUrl} if set, otherwise returns a 401 error code.
-     * <p>
-     * If redirecting or forwarding, {@code saveException} will be called to cache the exception for use in
-     * the target view.
-     */
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException exception) throws IOException, ServletException {
+  /**
+   * Performs the redirect or forward to the {@code defaultFailureUrl} if set, otherwise returns a
+   * 401 error code.
+   *
+   * <p>If redirecting or forwarding, {@code saveException}
+   * will be called to cache the exception for use in the target view.
+   */
+  public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+                                      AuthenticationException exception)
+      throws IOException, ServletException {
 
-        if (defaultFailureUrl == null) {
-            LOG.debug("No failure URL set, sending 401 Unauthorized error");
+    if (defaultFailureUrl == null) {
+      LOG.debug("No failure URL set, sending 401 Unauthorized error");
 
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Failed: " + exception.getLocalizedMessage());
+      response.sendError(
+          HttpServletResponse.SC_UNAUTHORIZED,
+          "Authentication Failed: " + exception.getLocalizedMessage());
+    } else {
+      saveException(request, exception);
+
+      String targetUrl = defaultFailureUrl;
+
+      if (forwardToDestination) {
+        LOG.debug("Forwarding to " + targetUrl);
+
+        request.getRequestDispatcher(targetUrl).forward(request, response);
+      } else {
+        response.addHeader("Error", exception.getLocalizedMessage());
+        if (exception instanceof TempCredentialsException) {
+          response.addHeader("ErrorType", "TempCredentials");
         } else {
-            saveException(request, exception);
-
-            String targetUrl = defaultFailureUrl;
-
-            if (forwardToDestination) {
-                LOG.debug("Forwarding to " + targetUrl);
-
-                request.getRequestDispatcher(targetUrl).forward(request, response);
-            } else {
-                response.addHeader("Error", exception.getLocalizedMessage());
-                if (exception instanceof TempCredentialsException) {
-                    response.addHeader("ErrorType", "TempCredentials");
-                } else {
-                    response.addHeader("ErrorType", "GeneralError");
-                }
-                response.setStatus(HttpServletResponse.SC_OK);
-            }
+          response.addHeader("ErrorType", "GeneralError");
         }
+        response.setStatus(HttpServletResponse.SC_OK);
+      }
     }
+  }
 
-    /**
-     * Caches the {@code AuthenticationException} for use in view rendering.
-     * <p>
-     * If {@code forwardToDestination} is set to true, request scope will be used, otherwise it will attempt to store
-     * the exception in the session. If there is no session and {@code allowSessionCreation} is {@code true} a session
-     * will be created. Otherwise the exception will not be stored.
-     * @param request   the request
-     * @param exception the exception
-     */
-    protected final void saveException(HttpServletRequest request, AuthenticationException exception) {
-        // Do nothing
-    }
+  /**
+   * Caches the {@code AuthenticationException} for use in view rendering.
+   *
+   * <p>If {@code
+   * forwardToDestination} is set to true, request scope will be used, otherwise it will attempt to
+   * store the exception in the session. If there is no session and {@code allowSessionCreation} is
+   * {@code true} a session will be created. Otherwise the exception will not be stored.
+   *
+   * @param request   the request
+   * @param exception the exception
+   */
+  protected final void saveException(HttpServletRequest request,
+                                     AuthenticationException exception) {
+    // Do nothing
+  }
 
-    /**
-     * The URL which will be used as the failure destination.
-     *
-     * @param defaultFailureUrl the failure URL, for example "/loginFailed.jsp".
-     */
-    public void setDefaultFailureUrl(String defaultFailureUrl) {
-        Assert.isTrue(UrlUtils.isValidRedirectUrl(defaultFailureUrl),
-                "'" + defaultFailureUrl + "' is not a valid redirect URL");
-        this.defaultFailureUrl = defaultFailureUrl;
-    }
+  /**
+   * The URL which will be used as the failure destination.
+   *
+   * @param defaultFailureUrl the failure URL, for example "/loginFailed.jsp".
+   */
+  public void setDefaultFailureUrl(String defaultFailureUrl) {
+    Assert.isTrue(UrlUtils.isValidRedirectUrl(defaultFailureUrl),
+        "'" + defaultFailureUrl + "' is not a valid redirect URL");
+    this.defaultFailureUrl = defaultFailureUrl;
+  }
 
-    protected boolean isUseForward() {
-        return forwardToDestination;
-    }
+  protected boolean isUseForward() {
+    return forwardToDestination;
+  }
 
-    /**
-     * If set to <tt>true</tt>, performs a forward to the failure destination URL instead of a redirect. Defaults to
-     * <tt>false</tt>.
-     * @param forwardToDestination the forward to destination
-     */
-    public void setUseForward(boolean forwardToDestination) {
-        this.forwardToDestination = forwardToDestination;
-    }
+  /**
+   * If set to <tt>true</tt>, performs a forward to the failure destination URL instead of a
+   * redirect. Defaults to <tt>false</tt>.
+   *
+   * @param forwardToDestination the forward to destination
+   */
+  public void setUseForward(boolean forwardToDestination) {
+    this.forwardToDestination = forwardToDestination;
+  }
 
-    /**
-     * Allows overriding of the behaviour when redirecting to a target URL.
-     * @param redirectStrategy the redirect strategy
-     */
-    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
-        this.redirectStrategy = redirectStrategy;
-    }
+  protected RedirectStrategy getRedirectStrategy() {
+    return redirectStrategy;
+  }
 
-    protected RedirectStrategy getRedirectStrategy() {
-        return redirectStrategy;
-    }
+  /**
+   * Allows overriding of the behaviour when redirecting to a target URL.
+   *
+   * @param redirectStrategy the redirect strategy
+   */
+  public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+    this.redirectStrategy = redirectStrategy;
+  }
 
-    protected boolean isAllowSessionCreation() {
-        return allowSessionCreation;
-    }
+  protected boolean isAllowSessionCreation() {
+    return allowSessionCreation;
+  }
 
-    public void setAllowSessionCreation(boolean allowSessionCreation) {
-        this.allowSessionCreation = allowSessionCreation;
-    }
+  public void setAllowSessionCreation(boolean allowSessionCreation) {
+    this.allowSessionCreation = allowSessionCreation;
+  }
 }

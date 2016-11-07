@@ -17,11 +17,12 @@
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+
 import org.junit.Test;
 
 public class TenantTest {
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(Tenant.class).usingGetClass().verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(Tenant.class).usingGetClass().verify();
+  }
 }

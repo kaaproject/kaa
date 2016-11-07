@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.server.common.dao.SdkProfileService;
@@ -35,82 +33,86 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class SdkProfileServiceImpl implements SdkProfileService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SdkProfileServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SdkProfileServiceImpl.class);
 
-    @Autowired
-    private ApplicationDao<Application> applicationDao;
-    
-    @Autowired
-    private SdkProfileDao<SdkProfile> sdkProfileDao;
+  @Autowired
+  private ApplicationDao<Application> applicationDao;
 
-    private EndpointProfileDao<EndpointProfile> endpointProfileDao;
+  @Autowired
+  private SdkProfileDao<SdkProfile> sdkProfileDao;
 
-    public EndpointProfileDao<EndpointProfile> getEndpointProfileDao() {
-        return endpointProfileDao;
-    }
+  private EndpointProfileDao<EndpointProfile> endpointProfileDao;
 
-    public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
-        this.endpointProfileDao = endpointProfileDao;
-    }
+  public EndpointProfileDao<EndpointProfile> getEndpointProfileDao() {
+    return endpointProfileDao;
+  }
 
-    @Override
-    public SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfileDto) {
-        SdkProfileDto saved = null;
-        if (Validator.isValidSqlObject(sdkProfileDto)) {
-            if (StringUtils.isNotBlank(sdkProfileDto.getId())) {
-                throw new IncorrectParameterException("Update of existing SDK profile is prohibited.");
-            } else {
-                applicationDao.findById(sdkProfileDto.getApplicationId());
-                SdkTokenGenerator.generateSdkToken(sdkProfileDto);
-                SdkProfile entity = new SdkProfile(sdkProfileDto);
-                SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());
-                if (loaded == null) {
-                    saved = DaoUtil.getDto(sdkProfileDao.save(entity));
-                } else {
-                    throw new IncorrectParameterException("An SDK profile with token [" + entity.getToken() + "] already exists.");
-                }
-            }
+  public void setEndpointProfileDao(EndpointProfileDao<EndpointProfile> endpointProfileDao) {
+    this.endpointProfileDao = endpointProfileDao;
+  }
+
+  @Override
+  public SdkProfileDto saveSdkProfile(SdkProfileDto sdkProfileDto) {
+    SdkProfileDto saved = null;
+    if (Validator.isValidSqlObject(sdkProfileDto)) {
+      if (StringUtils.isNotBlank(sdkProfileDto.getId())) {
+        throw new IncorrectParameterException("Update of existing SDK profile is prohibited.");
+      } else {
+        applicationDao.findById(sdkProfileDto.getApplicationId());
+        SdkTokenGenerator.generateSdkToken(sdkProfileDto);
+        SdkProfile entity = new SdkProfile(sdkProfileDto);
+        SdkProfile loaded = sdkProfileDao.findSdkProfileByToken(entity.getToken());
+        if (loaded == null) {
+          saved = DaoUtil.getDto(sdkProfileDao.save(entity));
+        } else {
+          throw new IncorrectParameterException("An SDK profile with token ["
+                                                + entity.getToken() + "] already exists.");
         }
-        return saved;
+      }
     }
+    return saved;
+  }
 
-    @Override
-    public SdkProfileDto findSdkProfileById(String id) {
-        SdkProfileDto sdkPropertiesDto = null;
-        if (Validator.isValidId(id)) {
-            sdkPropertiesDto = DaoUtil.getDto(sdkProfileDao.findById(id));
-        }
-        return sdkPropertiesDto;
+  @Override
+  public SdkProfileDto findSdkProfileById(String id) {
+    SdkProfileDto sdkPropertiesDto = null;
+    if (Validator.isValidId(id)) {
+      sdkPropertiesDto = DaoUtil.getDto(sdkProfileDao.findById(id));
     }
+    return sdkPropertiesDto;
+  }
 
-    @Override
-    public SdkProfileDto findSdkProfileByToken(String token) {
-        SdkProfileDto sdkPropertiesDto = null;
-        if (Validator.isValidId(token)) {
-            sdkPropertiesDto = DaoUtil.getDto(sdkProfileDao.findSdkProfileByToken(token));
-        }
-        return sdkPropertiesDto;
+  @Override
+  public SdkProfileDto findSdkProfileByToken(String token) {
+    SdkProfileDto sdkPropertiesDto = null;
+    if (Validator.isValidId(token)) {
+      sdkPropertiesDto = DaoUtil.getDto(sdkProfileDao.findSdkProfileByToken(token));
     }
+    return sdkPropertiesDto;
+  }
 
-    @Override
-    public List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId) {
-        Validator.validateId(applicationId, "Unable to find SDK profiles. Invalid application ID: " + applicationId);
-        return DaoUtil.convertDtoList(sdkProfileDao.findSdkProfileByApplicationId(applicationId));
-    }
+  @Override
+  public List<SdkProfileDto> findSdkProfilesByApplicationId(String applicationId) {
+    Validator.validateId(applicationId, "Unable to find SDK profiles. Invalid application ID: "
+                                        + applicationId);
+    return DaoUtil.convertDtoList(sdkProfileDao.findSdkProfileByApplicationId(applicationId));
+  }
 
-    @Override
-    public void removeSdkProfileById(String id) {
-        Validator.validateId(id, "Unable to remove SDK profile. Invalid SDK profile ID: " + id);
-        sdkProfileDao.removeById(id);
-        LOG.debug("Removed SDK profile [{}]", id);
-    }
+  @Override
+  public void removeSdkProfileById(String id) {
+    Validator.validateId(id, "Unable to remove SDK profile. Invalid SDK profile ID: " + id);
+    sdkProfileDao.removeById(id);
+    LOG.debug("Removed SDK profile [{}]", id);
+  }
 
-    @Override
-    public boolean isSdkProfileUsed(String token) {
-        return endpointProfileDao.checkSdkToken(token);
-    }
+  @Override
+  public boolean isSdkProfileUsed(String token) {
+    return endpointProfileDao.checkSdkToken(token);
+  }
 }

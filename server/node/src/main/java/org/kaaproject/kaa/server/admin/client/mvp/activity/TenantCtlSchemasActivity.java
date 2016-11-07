@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
-import java.util.Collections;
+import com.google.gwt.place.shared.Place;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto;
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.TenantCtlSchemasDataProvider;
@@ -28,40 +28,40 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TenantCtlSchemasPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.CtlSchemasView;
 
-import com.google.gwt.place.shared.Place;
+import java.util.Collections;
 
 public class TenantCtlSchemasActivity extends CtlSchemasActivity<TenantCtlSchemasPlace> {
 
-    public TenantCtlSchemasActivity(TenantCtlSchemasPlace place, ClientFactory clientFactory) {
-        super(place, CTLSchemaMetaInfoDto.class, clientFactory);
-    }
+  public TenantCtlSchemasActivity(TenantCtlSchemasPlace place, ClientFactory clientFactory) {
+    super(place, CtlSchemaMetaInfoDto.class, clientFactory);
+  }
 
-    @Override
-    protected CtlSchemasView getView() {
-        return clientFactory.getTenantCtlSchemasView();
-    }
+  @Override
+  protected CtlSchemasView getView() {
+    return clientFactory.getTenantCtlSchemasView();
+  }
 
-    @Override
-    protected AbstractDataProvider<CTLSchemaMetaInfoDto, String> getDataProvider(
-            AbstractGrid<CTLSchemaMetaInfoDto, String> dataGrid) {
-        return new TenantCtlSchemasDataProvider(dataGrid, listView);
-    }
+  @Override
+  protected AbstractDataProvider<CtlSchemaMetaInfoDto, String> getDataProvider(
+      AbstractGrid<CtlSchemaMetaInfoDto, String> dataGrid) {
+    return new TenantCtlSchemasDataProvider(dataGrid, listView);
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new CtlSchemaPlace("", null, getCurrentScope(), null, true, true);
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new CtlSchemaPlace("", null, getCurrentScope(), null, true, true);
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        CTLSchemaMetaInfoDto schema = dataProvider.getRowData(id);        
-        return new CtlSchemaPlace(id, Collections.max(schema.getVersions()), schema.getScope(), null, 
-                schema.getScope() == getCurrentScope(), false);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    CtlSchemaMetaInfoDto schema = dataProvider.getRowData(id);
+    return new CtlSchemaPlace(id, Collections.max(schema.getVersions()), schema.getScope(), null,
+        schema.getScope() == getCurrentScope(), false);
+  }
 
-    @Override
-    protected CTLSchemaScopeDto getCurrentScope() {
-        return CTLSchemaScopeDto.TENANT;
-    }
+  @Override
+  protected CTLSchemaScopeDto getCurrentScope() {
+    return CTLSchemaScopeDto.TENANT;
+  }
 
 }

@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,49 +25,51 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 public class HibernateHistoryDaoTest extends HibernateAbstractTest {
 
-    @Test
-    public void findByAppIdTest() {
-       List<History> histories = generateHistory(null, 3);
-       Assert.assertNotNull(histories);
-       History first = histories.get(0);
-       List<History> found = historyDao.findByAppId(first.getApplication().getId().toString());
-       Assert.assertEquals(histories, found);
-    }
+  @Test
+  public void findByAppIdTest() {
+    List<History> histories = generateHistory(null, 3);
+    Assert.assertNotNull(histories);
+    History first = histories.get(0);
+    List<History> found = historyDao.findByAppId(first.getApplication().getId().toString());
+    Assert.assertEquals(histories, found);
+  }
 
-    @Test
-    public void findBySeqNumberTest() {
-        List<History> histories = generateHistory(null, 3);
-        Assert.assertNotNull(histories);
-        History third = histories.get(2);
-        History found = historyDao.findBySeqNumber(third.getApplication().getId().toString(), 3);
-        Assert.assertEquals(third, found);
+  @Test
+  public void findBySeqNumberTest() {
+    List<History> histories = generateHistory(null, 3);
+    Assert.assertNotNull(histories);
+    History third = histories.get(2);
+    History found = historyDao.findBySeqNumber(third.getApplication().getId().toString(), 3);
+    Assert.assertEquals(third, found);
 
-    }
+  }
 
-    @Test
-    public void findBySeqNumberStartTest() {
-        List<History> histories = generateHistory(null, 3);
-        Assert.assertNotNull(histories);
-        History third = histories.get(2);
-        List<History> found = historyDao.findBySeqNumberStart(third.getApplication().getId().toString(), 2);
-        Assert.assertEquals(1, found.size());
-        Assert.assertEquals(third, found.get(0));
+  @Test
+  public void findBySeqNumberStartTest() {
+    List<History> histories = generateHistory(null, 3);
+    Assert.assertNotNull(histories);
+    History third = histories.get(2);
+    List<History> found = historyDao.findBySeqNumberStart(third.getApplication().getId().toString(), 2);
+    Assert.assertEquals(1, found.size());
+    Assert.assertEquals(third, found.get(0));
 
-    }
+  }
 
-    @Test
-    public void findBySeqNumberRangeTest() {
-        List<History> histories = generateHistory(null, 3);
-        Assert.assertNotNull(histories);
-        History second = histories.get(1);
-        List<History> found = historyDao.findBySeqNumberRange(second.getApplication().getId().toString(), 1, 2);
-        Assert.assertEquals(1, found.size());
-        Assert.assertEquals(second, found.get(0));
-    }
+  @Test
+  public void findBySeqNumberRangeTest() {
+    List<History> histories = generateHistory(null, 3);
+    Assert.assertNotNull(histories);
+    History second = histories.get(1);
+    List<History> found = historyDao.findBySeqNumberRange(second.getApplication().getId().toString(), 1, 2);
+    Assert.assertEquals(1, found.size());
+    Assert.assertEquals(second, found.get(0));
+  }
 }

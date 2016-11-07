@@ -16,66 +16,66 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.schema;
 
-import java.util.List;
-import java.util.Set;
-
 import org.apache.avro.Schema;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * The Interface SchemaCreationStrategy.
  */
 public interface SchemaCreationStrategy<T extends KaaSchema> {
 
-    /**
-     * Checks if is array editable.
-     *
-     * @return true, if is array editable
-     */
-    boolean isArrayEditable();
+  /**
+   * Checks if is array editable.
+   *
+   * @return true, if is array editable
+   */
+  boolean isArrayEditable();
 
-    /**
-     * Checks if is uuid optional.
-     *
-     * @return true, if is uuid optional
-     */
-    boolean isUuidOptional();
+  /**
+   * Checks if is uuid optional.
+   *
+   * @return true, if is uuid optional
+   */
+  boolean isUuidOptional();
 
-    /**
-     * Checks if is unchanged supported.
-     *
-     * @return true, if is unchanged supported
-     */
-    boolean isUnchangedSupported();
+  /**
+   * Checks if is unchanged supported.
+   *
+   * @return true, if is unchanged supported
+   */
+  boolean isUnchangedSupported();
 
-    /**
-     * On optional field listener.
-     *
-     * @param union the list of union type objects
-     */
-    void onOptionalField(List<Schema> union);
+  /**
+   * On optional field listener.
+   *
+   * @param union the list of union type objects
+   */
+  void onOptionalField(List<Schema> union);
 
-    /**
-     * On mandatory field listener.
-     *
-     * @param union the list of union type objects
-     */
-    void onMandatoryField(List<Schema> union);
+  /**
+   * On mandatory field listener.
+   *
+   * @param union the list of union type objects
+   */
+  void onMandatoryField(List<Schema> union);
 
-    /**
-     * On schema processed.
-     *
-     * @param rootSchema the root schema
-     * @param addressableRecords the addressable records
-     * @return the map
-     */
-    Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords);
+  /**
+   * On schema processed.
+   *
+   * @param rootSchema         the root schema
+   * @param addressableRecords the addressable records
+   * @return the map
+   */
+  Schema onSchemaProcessed(Schema rootSchema, Set<Schema> addressableRecords);
 
-    /**
-     * Creates a schema object
-     *
-     * @param schema the raw schema data
-     * @return the schema object
-     */
-    T createSchema(Schema schema);
+  /**
+   * Creates a schema object.
+   *
+   * @param schema the raw schema data
+   * @return the schema object
+   */
+  T createSchema(Schema schema);
 }

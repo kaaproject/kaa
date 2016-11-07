@@ -25,21 +25,21 @@ import org.kaaproject.kaa.server.verifiers.trustful.config.gen.TrustfulAvroConfi
 @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
 public class TrustfulVerifierConfig implements PluginConfig {
 
-    private static final String TRUSTFUL_VERIFIER_NAME = "Trustful verifier";
+  private static final String TRUSTFUL_VERIFIER_NAME = "Trustful verifier";
 
-    @Override
-    public String getPluginTypeName() {
-        return TRUSTFUL_VERIFIER_NAME;
-    }
+  @Override
+  public String getPluginTypeName() {
+    return TRUSTFUL_VERIFIER_NAME;
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.trustful.verifier.TrustfulUserVerifier";
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.verifiers.trustful.verifier.TrustfulUserVerifier";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return TrustfulAvroConfig.SCHEMA$;
-    }
+  @Override
+  public Schema getPluginConfigSchema() {
+    return TrustfulAvroConfig.SCHEMA$;
+  }
 
 }

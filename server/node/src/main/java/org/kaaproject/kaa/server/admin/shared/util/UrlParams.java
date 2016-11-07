@@ -16,42 +16,53 @@
 
 package org.kaaproject.kaa.server.admin.shared.util;
 
-import java.util.Map;
-
 import com.google.gwt.http.client.URL;
+
+import java.util.Map;
 
 public class UrlParams {
 
-    public static final String RESET_PASSWORD = "resetPassword";
-    public static final int PASSWORD_RESET_HASH_LENGTH = 128;
-    public static final String PARAMS_SEPARATOR = "&";
+  public static final String RESET_PASSWORD = "resetPassword";
+  public static final int PASSWORD_RESET_HASH_LENGTH = 128;
+  public static final String PARAMS_SEPARATOR = "&";
 
-    private UrlParams() {
-    }
+  private UrlParams() {
+  }
 
-    public static String generateParamsUrl(Map<String, String> paramsMap) {
-        String paramsUrl = "";
-        for (String key : paramsMap.keySet()) {
-            String val = paramsMap.get(key);
-            if (paramsUrl.length() > 0) {
-                paramsUrl += PARAMS_SEPARATOR;
-            }
-            paramsUrl += key + "=" + URL.encodeQueryString(val);
-        }
-        return paramsUrl;
+  /**
+   * Transform params map of request to URL link.
+   *
+   * @param paramsMap the params map
+   * @return URL string
+   */
+  public static String generateParamsUrl(Map<String, String> paramsMap) {
+    String paramsUrl = "";
+    for (String key : paramsMap.keySet()) {
+      String val = paramsMap.get(key);
+      if (paramsUrl.length() > 0) {
+        paramsUrl += PARAMS_SEPARATOR;
+      }
+      paramsUrl += key + "=" + URL.encodeQueryString(val);
     }
-    
-    public static void updateParamsFromUrl(Map<String, String> paramsMap,
-            String paramsUrl) {
-        if (paramsUrl != null && paramsUrl.trim().length() > 0) {
-            String[] params = paramsUrl.split(PARAMS_SEPARATOR);
-            for (String param : params) {
-                String[] keyVal = param.split("=");
-                if (keyVal != null && keyVal.length == 2) {
-                    paramsMap.put(keyVal[0], URL.decodeQueryString(keyVal[1]));
-                }
-            }
+    return paramsUrl;
+  }
+
+  /**
+   * Get request params from URL string and put them in map.
+   *
+   * @param paramsMap the params map
+   */
+  public static void updateParamsFromUrl(Map<String, String> paramsMap,
+                                         String paramsUrl) {
+    if (paramsUrl != null && paramsUrl.trim().length() > 0) {
+      String[] params = paramsUrl.split(PARAMS_SEPARATOR);
+      for (String param : params) {
+        String[] keyVal = param.split("=");
+        if (keyVal != null && keyVal.length == 2) {
+          paramsMap.put(keyVal[0], URL.decodeQueryString(keyVal[1]));
         }
+      }
     }
-    
+  }
+
 }

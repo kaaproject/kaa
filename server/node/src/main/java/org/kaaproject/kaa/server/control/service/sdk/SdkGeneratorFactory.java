@@ -24,26 +24,26 @@ import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
  */
 public class SdkGeneratorFactory {
 
-    /**
-     * Creates a new SdkGenerator object.
-     *
-     * @param sdkPlatform the sdk platform
-     * @return the sdk generator
-     */
-    public static SdkGenerator createSdkGenerator(SdkPlatform sdkPlatform) {
-        switch (sdkPlatform) {
-        case JAVA:
-        case ANDROID:
-            return new JavaSdkGenerator(sdkPlatform);
-        case CPP:
-            return new CppSdkGenerator();
-        case C:
-            return new CSdkGenerator();
-        case OBJC:
-            return new ObjCSdkGenerator();
-        default:
-            return null;
-        }
+  /**
+   * Creates a new SdkGenerator object.
+   *
+   * @param sdkPlatform the sdk platform
+   * @return the sdk generator
+   */
+  public static SdkGenerator createSdkGenerator(SdkPlatform sdkPlatform) {
+    switch (sdkPlatform) {
+      case JAVA:
+      case ANDROID:
+        return new JavaSdkGenerator(sdkPlatform);
+      case CPP:
+        return new CppSdkGenerator();
+      case C:
+        return new CSdkGenerator();
+      case OBJC:
+        return new ObjCSdkGenerator();
+      default:
+        return null;
     }
+  }
 
 }

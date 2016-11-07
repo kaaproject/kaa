@@ -21,18 +21,18 @@ import org.junit.Test;
 
 public class ProtocolConnectionDataTest {
 
-    @Test
-    public void protocolConnectionDataTest() {
-        int accessPointId = 1;
-        int protocolId = 1;
-        int protocolVersion = 1;
-        ProtocolVersionId protocolVersionId = new ProtocolVersionId(protocolId, protocolVersion);
-        byte[] connectionData = new byte[10];
-        ProtocolConnectionData protocolConnectionData = new ProtocolConnectionData(accessPointId, protocolVersionId, connectionData);
-        Assert.assertEquals(accessPointId, protocolConnectionData.getAccessPointId());
-        Assert.assertEquals(connectionData, protocolConnectionData.getConnectionData());
-        Assert.assertEquals(protocolId, protocolConnectionData.getProtocolId());
-        Assert.assertEquals(protocolVersion, protocolConnectionData.getProtocolVersion());
-        Assert.assertNotNull(protocolConnectionData.toString());
-    }
+  @Test
+  public void protocolConnectionDataTest() {
+    int accessPointId = 1;
+    int protocolId = 1;
+    int protocolVersion = 1;
+    ProtocolVersionId protocolVersionId = new ProtocolVersionId(protocolId, protocolVersion);
+    byte[] connectionData = new byte[10];
+    ProtocolConnectionData protocolConnectionData = new ProtocolConnectionData(accessPointId, protocolVersionId, connectionData);
+    Assert.assertEquals(accessPointId, protocolConnectionData.getAccessPointId());
+    Assert.assertEquals(connectionData, protocolConnectionData.getConnectionData());
+    Assert.assertEquals(protocolId, protocolConnectionData.getProtocolId());
+    Assert.assertEquals(protocolVersion, protocolConnectionData.getProtocolVersion());
+    Assert.assertNotNull(protocolConnectionData.toString());
+  }
 }

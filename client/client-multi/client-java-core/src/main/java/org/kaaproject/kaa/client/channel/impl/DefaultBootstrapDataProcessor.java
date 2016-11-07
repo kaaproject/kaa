@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.client.channel.impl;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.kaaproject.kaa.client.channel.BootstrapTransport;
 import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.KaaDataDemultiplexer;
@@ -30,44 +27,50 @@ import org.kaaproject.kaa.common.endpoint.gen.SyncResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class DefaultBootstrapDataProcessor implements KaaDataMultiplexer, KaaDataDemultiplexer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapDataProcessor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultBootstrapDataProcessor.class);
 
-    private final AvroByteArrayConverter<SyncRequest> requestConverter = new AvroByteArrayConverter<>(SyncRequest.class);
-    private final AvroByteArrayConverter<SyncResponse> responseConverter = new AvroByteArrayConverter<>(SyncResponse.class);
-    private BootstrapTransport transport;
+  private final AvroByteArrayConverter<SyncRequest> requestConverter =
+          new AvroByteArrayConverter<>(SyncRequest.class);
+  private final AvroByteArrayConverter<SyncResponse> responseConverter =
+          new AvroByteArrayConverter<>(SyncResponse.class);
+  private BootstrapTransport transport;
 
-    public void setBootstrapTransport(BootstrapTransport transport) {
-        this.transport = transport;
+  public void setBootstrapTransport(BootstrapTransport transport) {
+    this.transport = transport;
+  }
+
+  @Override
+  public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types)
+          throws IOException {
+    if (transport != null) {
+      SyncRequest request = transport.createResolveRequest();
+      LOG.trace("Created Resolve request {}", request);
+      return requestConverter.toByteArray(request);
     }
+    return null; //NOSONAR
+  }
 
-    @Override
-    public synchronized byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws IOException {
-        if (transport != null) {
-            SyncRequest request = transport.createResolveRequest();
-            LOG.trace("Created Resolve request {}", request);
-            return requestConverter.toByteArray(request);
-        }
-        return null; //NOSONAR
+  @Override
+  public synchronized void processResponse(byte[] response) throws IOException {
+    if (transport != null && response != null) {
+      SyncResponse list = responseConverter.fromByteArray(response);
+      LOG.trace("Received OperationsServerList response {}", list);
+      transport.onResolveResponse(list);
     }
+  }
 
-    @Override
-    public synchronized void processResponse(byte[] response) throws IOException {
-        if (transport != null && response != null) {
-            SyncResponse list = responseConverter.fromByteArray(response);
-            LOG.trace("Received OperationsServerList response {}", list);
-            transport.onResolveResponse(list);
-        }
-    }
+  @Override
+  public void preProcess() {
+    // Do nothing
+  }
 
-    @Override
-    public void preProcess() {
-        // Do nothing
-    }
-
-    @Override
-    public void postProcess() {
-        // Do nothing
-    }
+  @Override
+  public void postProcess() {
+    // Do nothing
+  }
 }

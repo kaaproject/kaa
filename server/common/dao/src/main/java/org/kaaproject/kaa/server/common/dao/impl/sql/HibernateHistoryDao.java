@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.SEQUENCE_NUMBER_PROPERTY;
+
 import org.hibernate.criterion.Restrictions;
 import org.kaaproject.kaa.server.common.dao.impl.HistoryDao;
 import org.kaaproject.kaa.server.common.dao.model.sql.History;
@@ -27,90 +33,93 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_ALIAS;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROPERTY;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.SEQUENCE_NUMBER_PROPERTY;
-
 @Repository
-public class HibernateHistoryDao extends HibernateAbstractDao<History> implements HistoryDao<History> {
+public class HibernateHistoryDao extends HibernateAbstractDao<History>
+    implements HistoryDao<History> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateHistoryDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateHistoryDao.class);
 
-    @Override
-    public List<History> findByAppId(String appId) {
-        List<History> histories = Collections.emptyList();
-        LOG.debug("Searching history by application id [{}]", appId);
-        if (isNotBlank(appId)) {
-            histories = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(histories.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", appId, histories.size());
-        }
-        return histories;
+  @Override
+  public List<History> findByAppId(String appId) {
+    List<History> histories = Collections.emptyList();
+    LOG.debug("Searching history by application id [{}]", appId);
+    if (isNotBlank(appId)) {
+      histories = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)));
+    }
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{}] Search result: {}.", appId, Arrays.toString(histories.toArray()));
+    } else {
+      LOG.debug("[{}] Search result: {}.", appId, histories.size());
+    }
+    return histories;
+  }
+
+  @Override
+  public History findBySeqNumber(String appId, int seqNum) {
+    History history = null;
+    LOG.debug("Searching history by application id [{}] and sequence number [{}]", appId, seqNum);
+    if (isNotBlank(appId)) {
+      history = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.and(
+              Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+              Restrictions.eq(SEQUENCE_NUMBER_PROPERTY, seqNum)));
+    }
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{},{}] Search result: {}.", appId, seqNum, history);
+    } else {
+      LOG.debug("[{},{}] Search result: {}.", appId, seqNum, history != null);
+    }
+    return history;
+  }
+
+  @Override
+  public List<History> findBySeqNumberStart(String appId, int startSeqNum) {
+    List<History> histories = Collections.emptyList();
+    LOG.debug("Searching history by application id [{}] start sequence number [{}]",
+        appId, startSeqNum);
+    if (isNotBlank(appId)) {
+      histories = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.and(
+              Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+              Restrictions.gt(SEQUENCE_NUMBER_PROPERTY, startSeqNum)));
     }
 
-    @Override
-    public History findBySeqNumber(String appId, int seqNum) {
-        History history = null;
-        LOG.debug("Searching history by application id [{}] and sequence number [{}]", appId, seqNum);
-        if (isNotBlank(appId)) {
-            history = findOneByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.eq(SEQUENCE_NUMBER_PROPERTY, seqNum)));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{}] Search result: {}.", appId, seqNum, history);
-        } else {
-            LOG.debug("[{},{}] Search result: {}.", appId, seqNum, history != null);
-        }
-        return history;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{},{}] Search result: {}.",
+          appId, startSeqNum, Arrays.toString(histories.toArray()));
+    } else {
+      LOG.debug("[{},{}] Search result: {}.",
+          appId, startSeqNum, histories.size());
+    }
+    return histories;
+  }
+
+  @Override
+  public List<History> findBySeqNumberRange(String appId, int startSeqNum, int endSeqNum) {
+    List<History> histories = Collections.emptyList();
+    LOG.debug("Searching history by application id {} start sequence number {} and end {}",
+        appId, startSeqNum, endSeqNum);
+    if (isNotBlank(appId)) {
+      histories = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
+          Restrictions.and(
+              Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
+              Restrictions.gt(SEQUENCE_NUMBER_PROPERTY, startSeqNum),
+              Restrictions.le(SEQUENCE_NUMBER_PROPERTY, endSeqNum)));
     }
 
-    @Override
-    public List<History> findBySeqNumberStart(String appId, int startSeqNum) {
-        List<History> histories = Collections.emptyList();
-        LOG.debug("Searching history by application id [{}] start sequence number [{}]", appId, startSeqNum);
-        if (isNotBlank(appId)) {
-            histories = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.gt(SEQUENCE_NUMBER_PROPERTY, startSeqNum)));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{}] Search result: {}.", appId, startSeqNum, Arrays.toString(histories.toArray()));
-        } else {
-            LOG.debug("[{},{}] Search result: {}.", appId, startSeqNum, histories.size());
-        }
-        return histories;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{},{},{}] Search result: {}.",
+          appId, startSeqNum, endSeqNum, Arrays.toString(histories.toArray()));
+    } else {
+      LOG.debug("[{},{},{}] Search result: {}.",
+          appId, startSeqNum, endSeqNum, histories.size());
     }
+    return histories;
+  }
 
-    @Override
-    public List<History> findBySeqNumberRange(String appId, int startSeqNum, int endSeqNum) {
-        List<History> histories = Collections.emptyList();
-        LOG.debug("Searching history by application id {} start sequence number {} and end {}", appId, startSeqNum, endSeqNum);
-        if (isNotBlank(appId)) {
-            histories = findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS,
-                    Restrictions.and(
-                            Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(appId)),
-                            Restrictions.gt(SEQUENCE_NUMBER_PROPERTY, startSeqNum),
-                            Restrictions.le(SEQUENCE_NUMBER_PROPERTY, endSeqNum)));
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{},{},{}] Search result: {}.", appId, startSeqNum, endSeqNum, Arrays.toString(histories.toArray()));
-        } else {
-            LOG.debug("[{},{},{}] Search result: {}.", appId, startSeqNum, endSeqNum, histories.size());
-        }
-        return histories;
-    }
-
-    @Override
-    protected Class<History> getEntityClass() {
-        return History.class;
-    }
+  @Override
+  protected Class<History> getEntityClass() {
+    return History.class;
+  }
 }

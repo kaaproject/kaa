@@ -16,8 +16,10 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.navigation;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.gwt.view.client.TreeViewModel;
+import com.google.web.bindery.event.shared.EventBus;
 
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -30,70 +32,73 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace.PlaceCell;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UsersPlace;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.SingleSelectionModel;
-import com.google.gwt.view.client.TreeViewModel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavigationTreeViewModel implements TreeViewModel {
 
-    private List<TreePlace> nodes = new ArrayList<TreePlace>();
+  private List<TreePlace> nodes = new ArrayList<TreePlace>();
 
-    private SingleSelectionModel<TreePlace> selectionModel = new SingleSelectionModel<TreePlace>();
+  private SingleSelectionModel<TreePlace> selectionModel = new SingleSelectionModel<TreePlace>();
 
-    private EventBus eventBus;
+  private EventBus eventBus;
 
-    public NavigationTreeViewModel() {
-        KaaAuthorityDto autority = KaaAdmin.getAuthInfo().getAuthority();
-        switch (autority) {
-        case KAA_ADMIN:
-            nodes.add(new TenantsPlace());
-            nodes.add(new SystemCtlSchemasPlace());
-            break;
-        case TENANT_ADMIN:
-            nodes.add(new ApplicationsPlace());
-            nodes.add(new UsersPlace());
-            nodes.add(new EcfsPlace());
-            nodes.add(new TenantCtlSchemasPlace());
-            break;
-        case TENANT_DEVELOPER:
-            nodes.add(new ApplicationsPlace());
-            nodes.add(new TenantCtlSchemasPlace());
-            break;
-        case TENANT_USER:
-            nodes.add(new ApplicationsPlace());
-            nodes.add(new TenantCtlSchemasPlace());
-            break;
-        }
+  /**
+   * Instantiates a new NavigationTreeViewModel.
+   */
+  public NavigationTreeViewModel() {
+    KaaAuthorityDto autority = KaaAdmin.getAuthInfo().getAuthority();
+    switch (autority) {
+      case KAA_ADMIN:
+        nodes.add(new TenantsPlace());
+        nodes.add(new SystemCtlSchemasPlace());
+        break;
+      case TENANT_ADMIN:
+        nodes.add(new ApplicationsPlace());
+        nodes.add(new UsersPlace());
+        nodes.add(new EcfsPlace());
+        nodes.add(new TenantCtlSchemasPlace());
+        break;
+      case TENANT_DEVELOPER:
+        nodes.add(new ApplicationsPlace());
+        nodes.add(new TenantCtlSchemasPlace());
+        break;
+      case TENANT_USER:
+        nodes.add(new ApplicationsPlace());
+        nodes.add(new TenantCtlSchemasPlace());
+        break;
+      default:
+        break;
     }
+  }
 
-    public void setEventBus(EventBus eventBus) {
-        this.eventBus = eventBus;
-    }
+  public void setEventBus(EventBus eventBus) {
+    this.eventBus = eventBus;
+  }
 
-    public SingleSelectionModel<TreePlace> getSelectionModel() {
-        return selectionModel;
-    }
+  public SingleSelectionModel<TreePlace> getSelectionModel() {
+    return selectionModel;
+  }
 
-    @Override
-    public <T> NodeInfo<?> getNodeInfo(T value) {
-        if (value == null) {
-            ListDataProvider<TreePlace> dataProvider = new ListDataProvider<TreePlace>(
-                    nodes);
-            PlaceCell cell = new PlaceCell();
-            return new DefaultNodeInfo<TreePlace>(dataProvider, cell, selectionModel, null);
-        } else if (value instanceof TreePlace) {
-            return ((TreePlace)value).getNodeInfo(selectionModel, eventBus);
-        }
-        return null;
+  @Override
+  public <T> NodeInfo<?> getNodeInfo(T value) {
+    if (value == null) {
+      ListDataProvider<TreePlace> dataProvider = new ListDataProvider<TreePlace>(
+          nodes);
+      PlaceCell cell = new PlaceCell();
+      return new DefaultNodeInfo<TreePlace>(dataProvider, cell, selectionModel, null);
+    } else if (value instanceof TreePlace) {
+      return ((TreePlace) value).getNodeInfo(selectionModel, eventBus);
     }
+    return null;
+  }
 
-    @Override
-    public boolean isLeaf(Object value) {
-        if (value instanceof TreePlace) {
-            return ((TreePlace)value).isLeaf();
-        }
-        return value != null;
+  @Override
+  public boolean isLeaf(Object value) {
+    if (value instanceof TreePlace) {
+      return ((TreePlace) value).isLeaf();
     }
+    return value != null;
+  }
 
 }

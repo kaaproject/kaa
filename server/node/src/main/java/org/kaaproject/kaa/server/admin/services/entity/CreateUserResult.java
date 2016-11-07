@@ -18,31 +18,31 @@ package org.kaaproject.kaa.server.admin.services.entity;
 
 public class CreateUserResult {
 
-    private Long userId;
-    private String password;
+  private Long userId;
+  private String password;
 
-    public CreateUserResult() {
-    }
+  public CreateUserResult() {
+  }
 
-    public CreateUserResult(Long userId, String password) {
-        this.userId = userId;
-        this.password = password;
-    }
+  public CreateUserResult(Long userId, String password) {
+    this.userId = userId;
+    this.password = password;
+  }
 
-    public Long getUserId() {
-        return userId;
-    }
+  public Long getUserId() {
+    return userId;
+  }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
 }

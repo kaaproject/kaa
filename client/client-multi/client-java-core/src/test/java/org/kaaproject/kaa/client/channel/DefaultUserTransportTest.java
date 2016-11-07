@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.client.channel.impl.ChannelRuntimeException;
@@ -39,101 +35,129 @@ import org.kaaproject.kaa.common.endpoint.gen.UserSyncRequest;
 import org.kaaproject.kaa.common.endpoint.gen.UserSyncResponse;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public class DefaultUserTransportTest {
 
-    private static final int REQUEST_ID_1 = 42;
-    private static final int REQUEST_ID_2 = 73;
-    
-    @Test(expected = ChannelRuntimeException.class)
-    public void testSyncNegative() {
-        KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        UserTransport transport = new DefaultUserTransport();
-        transport.setClientState(clientState);
-        transport.sync();
-    }
+  private static final int REQUEST_ID_1 = 42;
+  private static final int REQUEST_ID_2 = 73;
 
-    @Test
-    public void testSync() {
-        KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
-        KaaClientState clientState = Mockito.mock(KaaClientState.class);
+  @Test(expected = ChannelRuntimeException.class)
+  public void testSyncNegative() {
+    KaaClientState clientState = Mockito.mock(KaaClientState.class);
+    UserTransport transport = new DefaultUserTransport();
+    transport.setClientState(clientState);
+    transport.sync();
+  }
 
-        UserTransport transport = new DefaultUserTransport();
-        transport.setChannelManager(channelManager);
-        transport.setClientState(clientState);
-        transport.sync();
+  @Test
+  public void testSync() {
+    KaaChannelManager channelManager = Mockito.mock(KaaChannelManager.class);
+    KaaClientState clientState = Mockito.mock(KaaClientState.class);
 
-        Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.USER);
-    }
+    UserTransport transport = new DefaultUserTransport();
+    transport.setChannelManager(channelManager);
+    transport.setClientState(clientState);
+    transport.sync();
 
-    @Test
-    public void testCreateRequest() {
-        Map<Integer, EndpointAccessToken> attachedEPs = new HashMap<>();
-        attachedEPs.put(REQUEST_ID_1, new EndpointAccessToken("acessToken1"));
+    Mockito.verify(channelManager, Mockito.times(1)).sync(TransportType.USER);
+  }
 
-        Map<Integer, EndpointKeyHash> detachedEPs = new HashMap<>();
-        detachedEPs.put(REQUEST_ID_1, new EndpointKeyHash("keyhash1"));
+  @Test
+  public void testCreateRequest() {
+    Map<Integer, EndpointAccessToken> attachedEPs = new HashMap<>();
+    attachedEPs.put(REQUEST_ID_1, new EndpointAccessToken("acessToken1"));
 
-        EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
-        Mockito.when(processor.getAttachEndpointRequests()).thenReturn(attachedEPs);
-        Mockito.when(processor.getDetachEndpointRequests()).thenReturn(detachedEPs);
+    Map<Integer, EndpointKeyHash> detachedEPs = new HashMap<>();
+    detachedEPs.put(REQUEST_ID_1, new EndpointKeyHash("keyhash1"));
 
-        UserTransport transport = new DefaultUserTransport();
-        transport.createUserRequest();
-        transport.setEndpointRegistrationProcessor(processor);
+    EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
+    Mockito.when(processor.getAttachEndpointRequests()).thenReturn(attachedEPs);
+    Mockito.when(processor.getDetachEndpointRequests()).thenReturn(detachedEPs);
 
-        UserSyncRequest request = transport.createUserRequest();
+    UserTransport transport = new DefaultUserTransport();
+    transport.createUserRequest();
+    transport.setEndpointRegistrationProcessor(processor);
 
-        Mockito.verify(processor, Mockito.times(1)).getAttachEndpointRequests();
-        Mockito.verify(processor, Mockito.times(1)).getDetachEndpointRequests();
-        Mockito.verify(processor, Mockito.times(1)).getUserAttachRequest();
+    UserSyncRequest request = transport.createUserRequest();
 
-        Assert.assertTrue(!request.getEndpointAttachRequests().isEmpty());
-        Assert.assertTrue(!request.getEndpointDetachRequests().isEmpty());
-    }
+    Mockito.verify(processor, Mockito.times(1)).getAttachEndpointRequests();
+    Mockito.verify(processor, Mockito.times(1)).getDetachEndpointRequests();
+    Mockito.verify(processor, Mockito.times(1)).getUserAttachRequest();
 
-    @Test
-    public void onUserResponse() throws Exception {
+    Assert.assertTrue(!request.getEndpointAttachRequests().isEmpty());
+    Assert.assertTrue(!request.getEndpointDetachRequests().isEmpty());
+  }
 
-        Map<Integer, EndpointAccessToken> attachingEPs = new HashMap<>();
-        attachingEPs.put(REQUEST_ID_1, new EndpointAccessToken("token1"));
-        attachingEPs.put(REQUEST_ID_2, new EndpointAccessToken("token2"));
+  @Test
+  public void onUserResponse() throws Exception {
 
-        Map<Integer, EndpointKeyHash> dettachingEPs = new HashMap<>();
-        dettachingEPs.put(REQUEST_ID_1, new EndpointKeyHash("keyhash1"));
-        dettachingEPs.put(REQUEST_ID_2, new EndpointKeyHash("keyhash2"));
+    Map<Integer, EndpointAccessToken> attachingEPs = new HashMap<>();
+    attachingEPs.put(REQUEST_ID_1, new EndpointAccessToken("token1"));
+    attachingEPs.put(REQUEST_ID_2, new EndpointAccessToken("token2"));
 
-        KaaClientState clientState = Mockito.mock(KaaClientState.class);
-        EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
+    Map<Integer, EndpointKeyHash> dettachingEPs = new HashMap<>();
+    dettachingEPs.put(REQUEST_ID_1, new EndpointKeyHash("keyhash1"));
+    dettachingEPs.put(REQUEST_ID_2, new EndpointKeyHash("keyhash2"));
 
-        Mockito.when(processor.getAttachEndpointRequests()).thenReturn(attachingEPs);
-        Mockito.when(processor.getDetachEndpointRequests()).thenReturn(dettachingEPs);
+    KaaClientState clientState = Mockito.mock(KaaClientState.class);
 
-        UserTransport transport = new DefaultUserTransport();
-        UserSyncResponse response1 = new UserSyncResponse();
+    EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
 
-        response1.setEndpointAttachResponses(Arrays.asList(
-                new EndpointAttachResponse(REQUEST_ID_1, "keyhash1", SyncResponseResultType.SUCCESS),
-                new EndpointAttachResponse(REQUEST_ID_2, "keyhash2", SyncResponseResultType.SUCCESS),
-                new EndpointAttachResponse(REQUEST_ID_1 + 1, "keyhash2", SyncResponseResultType.FAILURE)));
+    Mockito.when(processor.getAttachEndpointRequests()).thenReturn(attachingEPs);
+    Mockito.when(processor.getDetachEndpointRequests()).thenReturn(dettachingEPs);
 
-        response1.setEndpointDetachResponses(Arrays.asList(
-                new EndpointDetachResponse(REQUEST_ID_1, SyncResponseResultType.SUCCESS),
-                new EndpointDetachResponse(REQUEST_ID_1 + 2, SyncResponseResultType.FAILURE)));
+    UserTransport transport = new DefaultUserTransport();
+    UserSyncResponse response1 = new UserSyncResponse();
 
-        transport.onUserResponse(response1);
-        transport.setEndpointRegistrationProcessor(processor);
-        transport.setClientState(clientState);
-        transport.onUserResponse(response1);
+    response1.setEndpointAttachResponses(Arrays.asList(
+        new EndpointAttachResponse(REQUEST_ID_1, "keyhash1", SyncResponseResultType.SUCCESS),
+        new EndpointAttachResponse(REQUEST_ID_2, "keyhash2", SyncResponseResultType.SUCCESS),
+        new EndpointAttachResponse(REQUEST_ID_1 + 1, "keyhash2", SyncResponseResultType.FAILURE)));
 
-        Mockito.verify(processor, Mockito.times(1)).onUpdate(Mockito.anyListOf(EndpointAttachResponse.class), Mockito.anyListOf(EndpointDetachResponse.class), Mockito.any(UserAttachResponse.class), Mockito.any(UserAttachNotification.class), Mockito.any(UserDetachNotification.class));
+    response1.setEndpointDetachResponses(Arrays.asList(
+        new EndpointDetachResponse(REQUEST_ID_1, SyncResponseResultType.SUCCESS),
+        new EndpointDetachResponse(REQUEST_ID_1 + 2, SyncResponseResultType.FAILURE)));
 
-        UserSyncResponse response2 = new UserSyncResponse();
+    transport.setEndpointRegistrationProcessor(processor);
+    transport.setClientState(clientState);
+    transport.onUserResponse(response1);
 
-        response2.setEndpointDetachResponses(Arrays.asList(
-                new EndpointDetachResponse(REQUEST_ID_2, SyncResponseResultType.SUCCESS)));
+    Mockito.verify(processor, Mockito.times(1)).onUpdate(Mockito.anyListOf(EndpointAttachResponse.class), Mockito.anyListOf(EndpointDetachResponse.class), Mockito.any(UserAttachResponse.class), Mockito.any(UserAttachNotification.class), Mockito.any(UserDetachNotification.class));
 
-        transport.onUserResponse(response2);
+    Mockito.verify(clientState, Mockito.times(1)).setAttachedEndpointsList(Mockito.anyMap());
+  }
 
-        Mockito.verify(clientState, Mockito.times(2)).setAttachedEndpointsList(Mockito.anyMap());
-    }
+  @Test
+  public void onDuplicateUserAttachResponse() throws Exception {
+    KaaClientState clientState = Mockito.mock(KaaClientState.class);
+    EndpointRegistrationProcessor processor = Mockito.mock(EndpointRegistrationProcessor.class);
+
+    Map<Integer, EndpointAccessToken> attachingEPs = new HashMap<>();
+    attachingEPs.put(REQUEST_ID_1, new EndpointAccessToken("token1"));
+
+
+    Mockito.when(processor.getAttachEndpointRequests()).thenReturn(attachingEPs);
+
+    UserTransport transport = new DefaultUserTransport();
+    UserSyncResponse response1 = new UserSyncResponse();
+
+    response1.setEndpointAttachResponses(Arrays.asList(
+        new EndpointAttachResponse(REQUEST_ID_1, "keyhash1", SyncResponseResultType.SUCCESS)));
+
+    transport.setClientState(clientState);
+    transport.setEndpointRegistrationProcessor(processor);
+
+    Map<EndpointAccessToken, EndpointKeyHash> map = new HashMap<>();
+    map.put(new EndpointAccessToken("token1"), new EndpointKeyHash("keyhash1"));
+
+    transport.onUserResponse(response1);
+    Mockito.verify(clientState, Mockito.times(1)).setAttachedEndpointsList(map);
+
+    transport.onUserResponse(response1);
+    Mockito.verify(clientState, Mockito.times(1)).setAttachedEndpointsList(map);
+  }
+
 }

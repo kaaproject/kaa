@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.login;
 
-import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
-import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel.Type;
-import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
-import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -38,107 +32,128 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
+import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel.Type;
+import org.kaaproject.kaa.server.admin.client.KaaAdminResources.KaaAdminStyle;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class LoginView extends Composite implements HasErrorMessage {
-    private static LoginViewUiBinder uiBinder = GWT.create(LoginViewUiBinder.class);
+  private static LoginViewUiBinder uiBinder = GWT.create(LoginViewUiBinder.class);
+  @UiField(provided = true)
+  final AlertPanel errorPanel;
+  @UiField(provided = true)
+  final AlertPanel infoPanel;
+  @UiField(provided = true)
+  final KaaAdminStyle kaaAdminStyle;
+  @UiField
+  HTMLPanel loginTitle;
+  @UiField
+  FormPanel loginForm;
+  @UiField
+  FlexTable loginTable;
+  private TextBox usernameBox;
+  private PasswordTextBox passwordBox;
+  private Button loginButton;
+  private Label forgotPasswordLabel;
 
-    interface LoginViewUiBinder extends UiBinder<Widget, LoginView> {
-    }
+  /**
+   * Instantiates a new LoginView.
+   */
+  public LoginView() {
 
-    @UiField (provided=true) final AlertPanel errorPanel;
-    @UiField (provided=true) final AlertPanel infoPanel;
-    @UiField HTMLPanel loginTitle;
-    @UiField FormPanel loginForm;
-    @UiField FlexTable loginTable;
-    @UiField(provided=true) final KaaAdminStyle kaaAdminStyle;
+    errorPanel = new AlertPanel(Type.ERROR);
+    infoPanel = new AlertPanel(Type.INFO);
+    kaaAdminStyle = Utils.kaaAdminStyle;
 
-    private TextBox usernameBox;
-    private PasswordTextBox passwordBox;
-    private Button loginButton;
-    private Label forgotPasswordLabel;
+    initWidget(uiBinder.createAndBindUi(this));
 
-    public LoginView() {
+    loginTitle.getElement().setInnerSafeHtml(
+        SafeHtmlUtils.fromSafeConstant(Utils.messages.loginTitle()));
 
-        errorPanel = new AlertPanel(Type.ERROR);
-        infoPanel = new AlertPanel(Type.INFO);
-        kaaAdminStyle = Utils.kaaAdminStyle;
+    usernameBox = new TextBox();
+    usernameBox.setName("j_username");
+    usernameBox.setWidth("100%");
 
-        initWidget(uiBinder.createAndBindUi(this));
+    passwordBox = new PasswordTextBox();
+    passwordBox.setName("j_password");
+    passwordBox.setWidth("100%");
 
-        loginTitle.getElement().setInnerSafeHtml(SafeHtmlUtils.fromSafeConstant(Utils.messages.loginTitle()));
+    Label loginLabel = new Label(Utils.constants.username());
+    loginTable.setWidget(0, 0, loginLabel);
+    loginTable.setWidget(0, 1, usernameBox);
+    Label passwordLabel = new Label(Utils.constants.password());
+    loginTable.setWidget(1, 0, passwordLabel);
+    loginTable.setWidget(1, 1, passwordBox);
 
-        Label loginLabel = new Label(Utils.constants.username());
-        usernameBox = new TextBox();
-        usernameBox.setName("j_username");
-        usernameBox.setWidth("100%");
+    forgotPasswordLabel = new Label(Utils.constants.forgotPassword());
+    forgotPasswordLabel.addStyleName(Utils.kaaAdminStyle.linkLabel());
+    loginTable.setWidget(2, 0, forgotPasswordLabel);
 
-        Label passwordLabel = new Label(Utils.constants.password());
-        passwordBox = new PasswordTextBox();
-        passwordBox.setName("j_password");
-        passwordBox.setWidth("100%");
+    loginTable.getFlexCellFormatter().setWidth(0, 0, "130px");
+    loginTable.getFlexCellFormatter()
+        .setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    loginTable.getFlexCellFormatter()
+        .setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    loginTable.getFlexCellFormatter()
+        .setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    loginTable.getFlexCellFormatter()
+        .setColSpan(2, 0, 2);
 
-        loginTable.setWidget(0, 0, loginLabel);
-        loginTable.setWidget(0, 1, usernameBox);
-        loginTable.setWidget(1, 0, passwordLabel);
-        loginTable.setWidget(1, 1, passwordBox);
-        
-        forgotPasswordLabel = new Label(Utils.constants.forgotPassword());
-        forgotPasswordLabel.addStyleName(Utils.kaaAdminStyle.linkLabel());
-        loginTable.setWidget(2, 0, forgotPasswordLabel);
+    loginButton = new Button(Utils.constants.login());
+    loginButton.addStyleName(Utils.kaaAdminStyle.loginButton());
+    loginTable.setWidget(3, 2, loginButton);
+    loginButton.getElement().getStyle().setMarginTop(15, Unit.PX);
 
-        loginTable.getFlexCellFormatter().setWidth(0, 0, "130px");
-        loginTable.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-        loginTable.getFlexCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-        loginTable.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-        loginTable.getFlexCellFormatter().setColSpan(2, 0, 2);
+    loginForm.setWidget(loginTable);
+    loginForm.setAction("");
 
-        loginButton = new Button(Utils.constants.login());
-        loginButton.addStyleName(Utils.kaaAdminStyle.loginButton());
-        loginTable.setWidget(3, 2, loginButton);
-        loginButton.getElement().getStyle().setMarginTop(15, Unit.PX);
+  }
 
-        loginForm.setWidget(loginTable);
-        loginForm.setAction("");
+  public Button getLoginButton() {
+    return loginButton;
+  }
 
-    }
+  public TextBox getUsernameBox() {
+    return usernameBox;
+  }
 
-    public Button getLoginButton() {
-        return loginButton;
-    }
+  public PasswordTextBox getPasswordBox() {
+    return passwordBox;
+  }
 
-    public TextBox getUsernameBox() {
-        return usernameBox;
-    }
+  public Label getForgotPasswordLabel() {
+    return forgotPasswordLabel;
+  }
 
-    public PasswordTextBox getPasswordBox() {
-        return passwordBox;
-    }
-    
-    public Label getForgotPasswordLabel() {
-        return forgotPasswordLabel;
-    }
+  @Override
+  public void clearError() {
+    errorPanel.setMessage("");
+    errorPanel.setVisible(false);
+  }
 
-    @Override
-    public void clearError() {
-        errorPanel.setMessage("");
-        errorPanel.setVisible(false);
-    }
+  @Override
+  public void setErrorMessage(String message) {
+    errorPanel.setMessage(message);
+    errorPanel.setVisible(true);
+  }
 
-    @Override
-    public void setErrorMessage(String message) {
-        errorPanel.setMessage(message);
-        errorPanel.setVisible(true);
-    }
+  /**
+   * Clear messages.
+   */
+  public void clearMessages() {
+    errorPanel.setMessage("");
+    errorPanel.setVisible(false);
+    infoPanel.setMessage("");
+    infoPanel.setVisible(false);
+  }
 
-    public void clearMessages() {
-        errorPanel.setMessage("");
-        errorPanel.setVisible(false);
-        infoPanel.setMessage("");
-        infoPanel.setVisible(false);
-    }
+  public void setInfoMessage(String message) {
+    infoPanel.setMessage(message);
+    infoPanel.setVisible(true);
+  }
 
-    public void setInfoMessage(String message) {
-        infoPanel.setMessage(message);
-        infoPanel.setVisible(true);
-    }
+  interface LoginViewUiBinder extends UiBinder<Widget, LoginView> {
+  }
 
 }

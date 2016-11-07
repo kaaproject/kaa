@@ -16,22 +16,22 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
-import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.endpoint.gen.BasicEndpointProfile;
 
+import java.io.IOException;
+
 public class ProfileJsonTest {
 
-    @Test
-    public void testJsonConversion() throws IOException{
-        String expected = "{\"profileBody\":\"test2\"}";
-        BasicEndpointProfile bep = new BasicEndpointProfile();
-        bep.setProfileBody("test2");
-        GenericAvroConverter converter = new GenericAvroConverter(BasicEndpointProfile.SCHEMA$);
-        Assert.assertEquals(expected, converter.encodeToJson(bep));
-    }
+  @Test
+  public void testJsonConversion() throws IOException {
+    String expected = "{\"profileBody\":\"test2\"}";
+    BasicEndpointProfile bep = new BasicEndpointProfile();
+    bep.setProfileBody("test2");
+    GenericAvroConverter converter = new GenericAvroConverter(BasicEndpointProfile.SCHEMA$);
+    Assert.assertEquals(expected, converter.encodeToJson(bep));
+  }
 
 }

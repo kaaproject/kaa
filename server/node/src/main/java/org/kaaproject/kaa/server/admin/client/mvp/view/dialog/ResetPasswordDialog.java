@@ -18,6 +18,16 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.dialog;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
 import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
 import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
 import org.kaaproject.avro.ui.gwt.client.widget.AlertPanel;
@@ -29,167 +39,165 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAuthServiceAsync;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
 public class ResetPasswordDialog extends AvroUiDialog implements HasErrorMessage {
 
-    private KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
+  private KaaAuthServiceAsync authService = KaaAuthServiceAsync.Util.getInstance();
 
-    private AlertPanel errorPanel;
-    private AlertPanel messagePanel;
+  private AlertPanel errorPanel;
+  private AlertPanel messagePanel;
 
-    private SizedTextBox usernameOrEmail;
-    private Button sendResetPasswordLinkButton;
-    private Listener listener;
+  private SizedTextBox usernameOrEmail;
+  private Button sendResetPasswordLinkButton;
+  private Listener listener;
 
-    public static ResetPasswordDialog showResetPasswordDialog(Listener listener) {
-        ResetPasswordDialog dialog = new ResetPasswordDialog(listener);
-        dialog.center();
-        dialog.show();
-        return dialog;
-    }
+  /**
+   * Instantiates a new ResetPasswordDialog.
+   */
+  public ResetPasswordDialog(Listener listener) {
+    super(false, true);
 
-    public ResetPasswordDialog(Listener listener) {
-        super(false, true);
-        
-        this.listener = listener;
+    this.listener = listener;
 
-        setWidth("500px");
+    setWidth("500px");
 
-        setTitle(Utils.constants.resetPassword());
+    setTitle(Utils.constants.resetPassword());
 
-        VerticalPanel dialogContents = new VerticalPanel();
-        dialogContents.setSpacing(4);
-        setWidget(dialogContents);
+    VerticalPanel dialogContents = new VerticalPanel();
+    dialogContents.setSpacing(4);
+    setWidget(dialogContents);
 
-        errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
-        errorPanel.setVisible(false);
-        dialogContents.add(errorPanel);
+    errorPanel = new AlertPanel(AlertPanel.Type.ERROR);
+    errorPanel.setVisible(false);
+    dialogContents.add(errorPanel);
 
-        messagePanel = new AlertPanel(AlertPanel.Type.WARNING);
-        messagePanel.setMessage(Utils.messages.resetPasswordMessage());
-        dialogContents.add(messagePanel);
+    messagePanel = new AlertPanel(AlertPanel.Type.WARNING);
+    messagePanel.setMessage(Utils.messages.resetPasswordMessage());
+    dialogContents.add(messagePanel);
 
-        FlexTable table  = new FlexTable();
-        table.setCellSpacing(6);
+    FlexTable table = new FlexTable();
+    table.setCellSpacing(6);
 
-        int row = 0;
-        Widget label = new Label(Utils.constants.usernameOrEmail());
-        label.addStyleName(Utils.avroUiStyle.requiredField());
-        usernameOrEmail = new KaaAdminSizedTextBox(255);
-        table.setWidget(row, 0, label);
-        table.setWidget(row, 1, usernameOrEmail);
-        usernameOrEmail.addInputHandler(new InputEventHandler() {
-            @Override
-            public void onInputChanged(InputEvent event) {
-                boolean valid = validate();
-                sendResetPasswordLinkButton.setEnabled(valid);
-            }
-        });
+    int row = 0;
+    Widget label = new Label(Utils.constants.usernameOrEmail());
+    label.addStyleName(Utils.avroUiStyle.requiredField());
+    usernameOrEmail = new KaaAdminSizedTextBox(255);
+    table.setWidget(row, 0, label);
+    table.setWidget(row, 1, usernameOrEmail);
+    usernameOrEmail.addInputHandler(new InputEventHandler() {
+      @Override
+      public void onInputChanged(InputEvent event) {
+        boolean valid = validate();
+        sendResetPasswordLinkButton.setEnabled(valid);
+      }
+    });
 
-        table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    table.getCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 
-        dialogContents.add(table);
+    dialogContents.add(table);
 
-        sendResetPasswordLinkButton = new Button(Utils.constants.sendResetPasswordLink(), new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
+    sendResetPasswordLinkButton = new Button(
+            Utils.constants.sendResetPasswordLink(), new ClickHandler() {
+              @Override
+              public void onClick(ClickEvent event) {
                 validateUsernameOrEmail();
-            }
-        });
+              }
+            });
 
-        Button cancelButton = new Button(Utils.constants.cancel(), new ClickHandler() {
+    Button cancelButton = new Button(Utils.constants.cancel(), new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        hide();
+        ResetPasswordDialog.this.listener.onCancel();
+      }
+    });
+    addButton(sendResetPasswordLinkButton);
+    addButton(cancelButton);
+
+    sendResetPasswordLinkButton.setEnabled(false);
+  }
+
+  /**
+   * Show reset password dialog.
+   */
+  public static ResetPasswordDialog showResetPasswordDialog(Listener listener) {
+    ResetPasswordDialog dialog = new ResetPasswordDialog(listener);
+    dialog.center();
+    dialog.show();
+    return dialog;
+  }
+
+  private boolean validate() {
+    return !isEmpty(usernameOrEmail.getValue());
+  }
+
+  private void validateUsernameOrEmail() {
+    String usernameOrEmailText = usernameOrEmail.getValue();
+    authService.checkUsernameOrEmailExists(usernameOrEmailText, new AsyncCallback<ResultCode>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        Utils.handleException(caught, ResetPasswordDialog.this);
+      }
+
+      @Override
+      public void onSuccess(ResultCode result) {
+        if (ResultCode.OK != result) {
+          setErrorMessage(Utils.constants.getString(result.getResourceKey()));
+        } else {
+          sendResetPasswordLink();
+        }
+      }
+
+    });
+  }
+
+  private void sendResetPasswordLink() {
+    String usernameOrEmailText = usernameOrEmail.getValue();
+    authService.sendPasswordResetLinkByEmail(usernameOrEmailText, new AsyncCallback<ResultCode>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        Utils.handleException(caught, ResetPasswordDialog.this);
+      }
+
+      @Override
+      public void onSuccess(ResultCode result) {
+        if (ResultCode.OK != result) {
+          setErrorMessage(Utils.constants.getString(result.getResourceKey()));
+        } else {
+          MessageDialog dialog = new MessageDialog(new MessageDialog.Listener() {
             @Override
-            public void onClick(ClickEvent event) {
-                hide();
-                ResetPasswordDialog.this.listener.onCancel();
+            public void onOk() {
+              hide();
+              listener.onSendResetPasswordLink();
             }
-        });
-        addButton(sendResetPasswordLinkButton);
-        addButton(cancelButton);
+          },
+              Utils.constants.resetLinkWasSent(),
+              Utils.messages.resetPasswordLinkWasSent());
+          dialog.show();
+          dialog.center();
+        }
+      }
 
-        sendResetPasswordLinkButton.setEnabled(false);
-    }
+    });
+  }
 
-    private boolean validate() {
-        return !isEmpty(usernameOrEmail.getValue());
-    }
+  @Override
+  public void clearError() {
+    errorPanel.setMessage("");
+    errorPanel.setVisible(false);
+  }
 
-    private void validateUsernameOrEmail() {
-        String usernameOrEmailText = usernameOrEmail.getValue();
-        authService.checkUsernameOrEmailExists(usernameOrEmailText, new AsyncCallback<ResultCode>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, ResetPasswordDialog.this);
-            }
+  @Override
+  public void setErrorMessage(String message) {
+    errorPanel.setMessage(message);
+    errorPanel.setVisible(true);
+  }
 
-            @Override
-            public void onSuccess(ResultCode result) {
-                if (ResultCode.OK != result) {
-                    setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-                } else {
-                    sendResetPasswordLink();
-                }
-            }
-            
-        });
-    }
+  public interface Listener {
 
-    private void sendResetPasswordLink () {
-        String usernameOrEmailText = usernameOrEmail.getValue();
-        authService.sendPasswordResetLinkByEmail(usernameOrEmailText, new AsyncCallback<ResultCode>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, ResetPasswordDialog.this);
-            }
+    public void onSendResetPasswordLink();
 
-            @Override
-            public void onSuccess(ResultCode result) {
-                if (ResultCode.OK != result) {
-                    setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-                } else {
-                    MessageDialog dialog = new MessageDialog(new MessageDialog.Listener() {
-                        @Override
-                        public void onOk() {
-                            hide();
-                            listener.onSendResetPasswordLink();
-                        }
-                    },
-                    Utils.constants.resetLinkWasSent(),
-                    Utils.messages.resetPasswordLinkWasSent());
-                    dialog.show();
-                    dialog.center();
-                }
-            }
-            
-        });
-    }
+    public void onCancel();
 
-    @Override
-    public void clearError() {
-        errorPanel.setMessage("");
-        errorPanel.setVisible(false);
-    }
-
-    @Override
-    public void setErrorMessage(String message) {
-        errorPanel.setMessage(message);
-        errorPanel.setVisible(true);
-    }
-
-    public interface Listener {
-
-        public void onSendResetPasswordLink();
-        public void onCancel();
-
-    }
+  }
 
 }

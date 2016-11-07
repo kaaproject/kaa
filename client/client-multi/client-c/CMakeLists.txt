@@ -82,6 +82,7 @@ option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
 option(WITH_EXTENSION_NOTIFICATION "Enable notification extension" ON)
 option(WITH_EXTENSION_USER "Enable user extension" ON)
 option(WITH_ENCRYPTION "Enable encryption" ON)
+option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" OFF)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -115,7 +116,7 @@ if (CMAKE_COMPILER_IS_GNUCC)
 endif ()
 
 # Creates variable to specify thirdparty libraries.
-set(KAA_THIRDPARTY_LIBRARIES "")
+set(KAA_THIRDPARTY_LIBRARIES mbedtls)
 
 # Sets the default build platform to POSIX.
 if (NOT DEFINED KAA_PLATFORM)
@@ -166,6 +167,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/avro_src/io.c
         ${KAA_SRC_FOLDER}/avro_src/encoding_binary.c
         ${KAA_SRC_FOLDER}/collections/kaa_list.c
+        ${KAA_SRC_FOLDER}/utilities/kaa_aes_rsa.c
         ${KAA_SRC_FOLDER}/utilities/kaa_log.c
         ${KAA_SRC_FOLDER}/utilities/kaa_mem.c
         ${KAA_SRC_FOLDER}/utilities/kaa_buffer.c
@@ -194,6 +196,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/listfiles/CMakeGen.cmake)
 set(KAA_INCLUDE_DIRS
         ${KAA_INCLUDE_PATHS}
         ${CMAKE_CURRENT_LIST_DIR}/src
+        ${CMAKE_CURRENT_LIST_DIR}/thirdparty/mbedtls
+        ${CMAKE_CURRENT_LIST_DIR}/tools/kaa_encryption/rsa_key_gen/include
         ${KAA_SRC_FOLDER}
         ${KAA_THIRDPARTY_INCLUDE_DIR})
 
@@ -208,7 +212,7 @@ add_subdirectory(tools/kaa_encryption/rsa_key_gen)
 # Build Kaa libraries.
 add_library(kaac ${KAA_SOURCE_FILES})
 target_include_directories(kaac PUBLIC ${KAA_INCLUDE_DIRS})
-target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES} mbedtls)
+target_link_libraries(kaac PRIVATE ${KAA_THIRDPARTY_LIBRARIES})
 
 message("BOOTSTRAP ENABLED")
 include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/bootstrap/CMakeLists.txt)
@@ -286,10 +290,12 @@ add_subdirectory(Modules/cppcheck)
 
 #Set key pair generation parameter for posix platform
 #Use application for another platform
-if(${KAA_PLATFORM} STREQUAL "posix")
-    option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" ON)
-    if(${KAA_RUNTIME_KEY_GENERATION})
+if(KAA_RUNTIME_KEY_GENERATION)
+    if(KAA_PLATFORM STREQUAL "posix")
         add_definitions(-DKAA_RUNTIME_KEY_GENERATION)
+        target_link_libraries(kaac PUBLIC rsa_keygen)
+    else()
+        message(FATAL_ERROR "The runtime key generation option may be enabled only for POSIX platform")
     endif()
     target_link_libraries(kaac PUBLIC rsa_keygen)
 else()
@@ -299,7 +305,5 @@ else()
                         CMAKE_ARGS -DKAA_SDK_DIR=${KAA_SDK_DIR}
                         BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
 
-    externalproject_add_step(kaa_rsa_keygen "Copying generated files"
-                             COMMAND mv -f "${CMAKE_CURRENT_BINARY_DIR}/kaa_keys/kaa_keys_gen.h"
-                             "${KAA_SRC_FOLDER}/gen" DEPENDEES install)
+    target_include_directories(kaac PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/kaa_keys)
 endif()

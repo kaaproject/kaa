@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.datamigration.utils.datadefinition;
 
 enum ConstraintType {
-    FK, PK, UNIQUE, CHECK
+  FK, PK, UNIQUE, CHECK
 }

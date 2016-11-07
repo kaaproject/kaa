@@ -20,44 +20,45 @@ import java.util.List;
 
 /**
  * The interface History dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface HistoryDao<T> extends SqlDao<T> {
 
-    /**
-     * Find history by application id.
-     *
-     * @param appId the application id
-     * @return the list of history objects
-     */
-    List<T> findByAppId(String appId);
+  /**
+   * Find history by application id.
+   *
+   * @param appId the application id
+   * @return the list of history objects
+   */
+  List<T> findByAppId(String appId);
 
-    /**
-     * Find history by sequence number.
-     *
-     * @param appId the application id
-     * @param seqNum the sequence number
-     * @return the history object
-     */
-    T findBySeqNumber(String appId, int seqNum);
+  /**
+   * Find history by sequence number.
+   *
+   * @param appId  the application id
+   * @param seqNum the sequence number
+   * @return the history object
+   */
+  T findBySeqNumber(String appId, int seqNum);
 
-    /**
-     * Find history by sequence number start.
-     *
-     * @param appId the application id
-     * @param startSeqNum the start sequence number
-     * @return the list of history objects
-     */
-    List<T> findBySeqNumberStart(String appId, int startSeqNum);
+  /**
+   * Find history by sequence number start.
+   *
+   * @param appId       the application id
+   * @param startSeqNum the start sequence number
+   * @return the list of history objects
+   */
+  List<T> findBySeqNumberStart(String appId, int startSeqNum);
 
-    /**
-     * Find history by sequence number range.
-     *
-     * @param appId the application id
-     * @param startSeqNum the start sequence number
-     * @param endSeqNum the end sequence number
-     * @return the list of history objects
-     */
-    List<T> findBySeqNumberRange(String appId, int startSeqNum, int endSeqNum);
+  /**
+   * Find history by sequence number range.
+   *
+   * @param appId       the application id
+   * @param startSeqNum the start sequence number
+   * @param endSeqNum   the end sequence number
+   * @return the list of history objects
+   */
+  List<T> findBySeqNumberRange(String appId, int startSeqNum, int endSeqNum);
 
 }

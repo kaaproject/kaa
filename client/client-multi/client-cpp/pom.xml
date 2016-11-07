@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.10.0-SNAPSHOT</version>
+        <version>0.10.0</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-cpp</artifactId>
@@ -72,18 +72,19 @@
                         <exclude>gcovr.log</exclude>
                         <exclude>gcovr-report.xml</exclude>
                         <exclude>test/resources/test_kaa_status.file</exclude>
-                        <exclude>build/**</exclude>
+                        <exclude>**/build/**</exclude>
                         <exclude>gcovr</exclude>
                         <exclude>test/resources/*.json</exclude>
                         <exclude>Modules/FindSqlite3.cmake</exclude>
                         <exclude>tools/avro-cpp-disable-tests.patch</exclude>
                         <exclude>toolchains/*.cmake</exclude>
+                        <exclude>tools/qnx/include/**</exclude>
                         <exclude>avro/configuration.avsc</exclude>
                         <exclude>avro/endpoint.avsc</exclude>
                         <exclude>avro/log.avsc</exclude>
                         <exclude>avro/notification.avsc</exclude>
                         <exclude>avro/profile.avsc</exclude>
-                </excludes>
+					</excludes>
                 </configuration>
             </plugin>
         </plugins>

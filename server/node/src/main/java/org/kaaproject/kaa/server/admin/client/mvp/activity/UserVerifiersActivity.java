@@ -16,6 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -30,81 +36,78 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+public class UserVerifiersActivity
+    extends AbstractListActivity<UserVerifierDto, UserVerifiersPlace> {
 
-public class UserVerifiersActivity extends AbstractListActivity<UserVerifierDto, UserVerifiersPlace> {
+  private String applicationId;
 
-    private String applicationId;
+  public UserVerifiersActivity(UserVerifiersPlace place, ClientFactory clientFactory) {
+    super(place, UserVerifierDto.class, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
 
-    public UserVerifiersActivity(UserVerifiersPlace place, ClientFactory clientFactory) {
-        super(place, UserVerifierDto.class, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
+  @Override
+  protected BaseListView<UserVerifierDto> getView() {
+    return clientFactory.getUserVerifiersView();
+  }
 
-    @Override
-    protected BaseListView<UserVerifierDto> getView() {
-        return clientFactory.getUserVerifiersView();
-    }
+  @Override
+  protected AbstractDataProvider<UserVerifierDto, String> getDataProvider(
+      AbstractGrid<UserVerifierDto, String> dataGrid) {
+    return new UserVerifiersDataProvider(dataGrid, listView, applicationId);
+  }
 
-    @Override
-    protected AbstractDataProvider<UserVerifierDto, String> getDataProvider(AbstractGrid<UserVerifierDto, String> dataGrid) {
-        return new UserVerifiersDataProvider(dataGrid, listView, applicationId);
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new UserVerifierPlace(applicationId, "");
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new UserVerifierPlace(applicationId, "");
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new UserVerifierPlace(applicationId, id);
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new UserVerifierPlace(applicationId, id);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    KaaAdmin.getDataSource().removeUserVerifier(id, callback);
+  }
 
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().removeUserVerifier(id, callback);
-    }
+  @Override
+  protected void onCustomRowAction(RowActionEvent<String> event) {
+    Integer verifierId = Integer.valueOf(event.getClickedId());
+    final int action = event.getAction();
+    AsyncCallback<UserVerifierDto> callback = new AsyncCallback<UserVerifierDto>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        Utils.handleException(caught, listView);
+      }
 
-    @Override
-    protected void onCustomRowAction(RowActionEvent<String> event) {
-        Integer verifierId = Integer.valueOf(event.getClickedId());
-        final int action = event.getAction();
-        AsyncCallback<UserVerifierDto> callback = new AsyncCallback<UserVerifierDto>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, listView);
-            }
-            @Override
-            public void onSuccess(UserVerifierDto key) {
+      @Override
+      public void onSuccess(UserVerifierDto key) {
 
-                String jsonConfig = key.getJsonConfiguration();
+        String jsonConfig = key.getJsonConfiguration();
 
-                JSONObject json;
-                //Some verifiers (ex:Trustful) has no jsonConfiguration field
-                if(jsonConfig!=null && !jsonConfig.isEmpty()) {
-                    json = (JSONObject) JSONParser.parseLenient(jsonConfig);
-                }else{
-                    json = new JSONObject();
-                }
-
-                json.put("pluginTypeName", new JSONString(key.getPluginTypeName()));
-                json.put("pluginClassName", new JSONString(key.getPluginClassName()));
-
-                ServletHelper.downloadJsonFile(json.toString(), key.getPluginTypeName() + ".json");
-            }
-        };
-
-        switch (action) {
-            case KaaRowAction.DOWNLOAD_SCHEMA:
-                KaaAdmin.getDataSource().getUserVerifier(String.valueOf(verifierId), callback);
-                break;
-            default:
-                break;
+        JSONObject json;
+        //Some verifiers (ex:Trustful) has no jsonConfiguration field
+        if (jsonConfig != null && !jsonConfig.isEmpty()) {
+          json = (JSONObject) JSONParser.parseLenient(jsonConfig);
+        } else {
+          json = new JSONObject();
         }
+
+        json.put("pluginTypeName", new JSONString(key.getPluginTypeName()));
+        json.put("pluginClassName", new JSONString(key.getPluginClassName()));
+
+        ServletHelper.downloadJsonFile(json.toString(), key.getPluginTypeName() + ".json");
+      }
+    };
+
+    switch (action) {
+      case KaaRowAction.DOWNLOAD_SCHEMA:
+        KaaAdmin.getDataSource().getUserVerifier(String.valueOf(verifierId), callback);
+        break;
+      default:
+        break;
     }
+  }
 }

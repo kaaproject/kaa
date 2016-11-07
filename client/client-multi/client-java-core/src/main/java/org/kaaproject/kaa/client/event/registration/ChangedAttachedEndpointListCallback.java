@@ -16,25 +16,24 @@
 
 package org.kaaproject.kaa.client.event.registration;
 
-import java.util.Map;
-
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 
+import java.util.Map;
+
 /**
- * Callback interface for attached endpoint list change notifications
+ * Callback interface for attached endpoint list change notifications.
  *
  * @author Taras Lemkin
- *
  */
 public interface ChangedAttachedEndpointListCallback {
-    /**
-     * Callback on attached endpoints list changed
-     *
-     * @param attachedEndpoints the attached endpoints
-     *
-     * @see EndpointAccessToken
-     * @see EndpointKeyHash
-     */
-    void onAttachedEndpointListChanged(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
+
+  /**
+   * Callback on attached endpoints list changed.
+   *
+   * @param attachedEndpoints the attached endpoints
+   * @see EndpointAccessToken
+   * @see EndpointKeyHash
+   */
+  void onAttachedEndpointListChanged(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
 }

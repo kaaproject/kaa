@@ -16,51 +16,56 @@
 
 package org.kaaproject.kaa.client.notification;
 
+import org.kaaproject.kaa.common.endpoint.gen.Topic;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.endpoint.gen.Topic;
-
 /**
  * The Class TopicListHashCalculator.
  */
 public class TopicListHashCalculator {
-    
-    /** The Constant NULL_LIST_HASH. */
-    public static final Integer NULL_LIST_HASH = 0;
-    
-    /** The Constant EMPTRY_LIST_HASH. */
-    public static final Integer EMPTRY_LIST_HASH = 1;
 
-    /**
-     * Calculate topic list hash.
-     *
-     * @param topics the topics
-     * @return the integer
-     */
-    public static Integer calculateTopicListHash(List<Topic> topics) {
-        if (topics == null)
-            return NULL_LIST_HASH;
+  /**
+   * The Constant NULL_LIST_HASH.
+   */
+  public static final Integer NULL_LIST_HASH = 0;
 
-        int result = EMPTRY_LIST_HASH;
-        if (!topics.isEmpty()) {
-            List<Topic> newTopics = new LinkedList<>(topics);
-            Collections.sort(newTopics, new Comparator<Topic>() {
-                @Override
-                public int compare(Topic o1, Topic o2) {
-                    return o1.getId() < o2.getId() ? -1 : (o1.getId() > o2.getId() ) ? 1 : 0;
-                }
-            });
+  /**
+   * The Constant EMPTRY_LIST_HASH.
+   */
+  public static final Integer EMPTRY_LIST_HASH = 1;
 
-            for (Topic topic : newTopics) {
-                long topicId = topic.getId();
-                int elementHash = (int)(topicId ^ (topicId >>> 32));
-                result = 31 * result + elementHash;
-            }
-        }
-
-        return result;
+  /**
+   * Calculate topic list hash.
+   *
+   * @param topics the topics
+   * @return the integer
+   */
+  public static Integer calculateTopicListHash(List<Topic> topics) {
+    if (topics == null) {
+      return NULL_LIST_HASH;
     }
+
+    int result = EMPTRY_LIST_HASH;
+    if (!topics.isEmpty()) {
+      List<Topic> newTopics = new LinkedList<>(topics);
+      Collections.sort(newTopics, new Comparator<Topic>() {
+        @Override
+        public int compare(Topic o1, Topic o2) {
+          return o1.getId() < o2.getId() ? -1 : (o1.getId() > o2.getId()) ? 1 : 0;
+        }
+      });
+
+      for (Topic topic : newTopics) {
+        long topicId = topic.getId();
+        int elementHash = (int) (topicId ^ (topicId >>> 32));
+        result = 31 * result + elementHash;
+      }
+    }
+
+    return result;
+  }
 }

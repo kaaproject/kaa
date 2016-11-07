@@ -30,69 +30,69 @@ import org.springframework.test.util.ReflectionTestUtils;
  */
 public class ControlInitializationServiceTest {
 
-    private ControlZkService zkService;
-    private LoadDistributionService loadMgmtService;
-    private InitializationService adminInitializationService;
-    
-    /**
-     * Test control initialization service start.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testControlInitializationServiceStart() throws Exception {
-        ControlInitializationService controlInitializationService = controlInitializationServiceSpy();
-        controlInitializationService.start();
-        
-        Mockito.verify(zkService).start();
-        Mockito.verify(loadMgmtService).start();
-        Mockito.verify(adminInitializationService).start();
-    }
+  private ControlZkService zkService;
+  private LoadDistributionService loadMgmtService;
+  private InitializationService adminInitializationService;
 
-    /**
-     * Test control initialization service stop.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testControlInitializationServiceStop() throws Exception {
-        ControlInitializationService controlInitializationService = controlInitializationServiceSpy();
-        controlInitializationService.start();
-        controlInitializationService.stop();
-        
-        Mockito.verify(zkService).start();
-        Mockito.verify(loadMgmtService).start();
-        Mockito.verify(adminInitializationService).start();
+  /**
+   * Test control initialization service start.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testControlInitializationServiceStart() throws Exception {
+    ControlInitializationService controlInitializationService = controlInitializationServiceSpy();
+    controlInitializationService.start();
 
-        Mockito.verify(zkService).stop();
-        Mockito.verify(loadMgmtService).shutdown();
-        Mockito.verify(adminInitializationService).stop();
-    }
-    
-    /**
-     * created stubbed control initialization service.
-     *
-     * @return the ControlInitializationService
-     * @throws Exception the exception
-     */
-    private ControlInitializationService controlInitializationServiceSpy() throws Exception {
-        
-        ControlInitializationService controlInitializationService = Mockito.spy(new ControlInitializationService());
-        
-        KaaNodeServerConfig kaaNodeServerConfig = new KaaNodeServerConfig();
-        kaaNodeServerConfig.setZkEnabled(true);
-        ReflectionTestUtils.setField(controlInitializationService, "kaaNodeServerConfig", kaaNodeServerConfig);
-        
-        zkService = Mockito.mock(ControlZkService.class);
-        loadMgmtService = Mockito.mock(LoadDistributionService.class);
-        adminInitializationService = Mockito.mock(AdminInitializationService.class);
-        
-        ReflectionTestUtils.setField(controlInitializationService, "controlZkService", zkService);
-        
-        ReflectionTestUtils.setField(controlInitializationService, "loadMgmtService", loadMgmtService);
-        
-        ReflectionTestUtils.setField(controlInitializationService, "adminInitializationService", adminInitializationService);
-        
-        return controlInitializationService;
-    }
+    Mockito.verify(zkService).start();
+    Mockito.verify(loadMgmtService).start();
+    Mockito.verify(adminInitializationService).start();
+  }
+
+  /**
+   * Test control initialization service stop.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testControlInitializationServiceStop() throws Exception {
+    ControlInitializationService controlInitializationService = controlInitializationServiceSpy();
+    controlInitializationService.start();
+    controlInitializationService.stop();
+
+    Mockito.verify(zkService).start();
+    Mockito.verify(loadMgmtService).start();
+    Mockito.verify(adminInitializationService).start();
+
+    Mockito.verify(zkService).stop();
+    Mockito.verify(loadMgmtService).shutdown();
+    Mockito.verify(adminInitializationService).stop();
+  }
+
+  /**
+   * created stubbed control initialization service.
+   *
+   * @return the ControlInitializationService
+   * @throws Exception the exception
+   */
+  private ControlInitializationService controlInitializationServiceSpy() throws Exception {
+
+    ControlInitializationService controlInitializationService = Mockito.spy(new ControlInitializationService());
+
+    KaaNodeServerConfig kaaNodeServerConfig = new KaaNodeServerConfig();
+    kaaNodeServerConfig.setZkEnabled(true);
+    ReflectionTestUtils.setField(controlInitializationService, "kaaNodeServerConfig", kaaNodeServerConfig);
+
+    zkService = Mockito.mock(ControlZkService.class);
+    loadMgmtService = Mockito.mock(LoadDistributionService.class);
+    adminInitializationService = Mockito.mock(AdminInitializationService.class);
+
+    ReflectionTestUtils.setField(controlInitializationService, "controlZkService", zkService);
+
+    ReflectionTestUtils.setField(controlInitializationService, "loadMgmtService", loadMgmtService);
+
+    ReflectionTestUtils.setField(controlInitializationService, "adminInitializationService", adminInitializationService);
+
+    return controlInitializationService;
+  }
 }

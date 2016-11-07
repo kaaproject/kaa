@@ -16,8 +16,7 @@
 
 /**
  * Provides Channels capabilities definition classes.
- * 
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 package org.kaaproject.kaa.common.channels;

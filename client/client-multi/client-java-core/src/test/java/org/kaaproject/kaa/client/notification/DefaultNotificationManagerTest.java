@@ -18,15 +18,6 @@ package org.kaaproject.kaa.client.notification;
 
 import static org.mockito.Mockito.mock;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -45,443 +36,449 @@ import org.kaaproject.kaa.common.endpoint.gen.SubscriptionType;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.mockito.Mockito;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class DefaultNotificationManagerTest {
 
-    private static ExecutorContext executorContext;
-    private static ExecutorService executor;
+  private static final String workDir = "work_dir" + System.getProperty("file.separator");
+  private static final Long UNKNOWN_TOPIC_ID = 100500l;
+  private static ExecutorContext executorContext;
+  private static ExecutorService executor;
 
-    private static final String workDir = "work_dir" + System.getProperty("file.separator");
+  @BeforeClass
+  public static void beforeSuite() {
+    executorContext = Mockito.mock(ExecutorContext.class);
+    executor = Executors.newSingleThreadExecutor();
+    Mockito.when(executorContext.getApiExecutor()).thenReturn(executor);
+    Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
+  }
 
-    private static final Long UNKNOWN_TOPIC_ID = 100500l;
+  @AfterClass
+  public static void afterSuite() {
+    executor.shutdown();
+  }
 
-    @BeforeClass
-    public static void beforeSuite(){
-        executorContext = Mockito.mock(ExecutorContext.class);
-        executor = Executors.newSingleThreadExecutor();
-        Mockito.when(executorContext.getApiExecutor()).thenReturn(executor);
-        Mockito.when(executorContext.getCallbackExecutor()).thenReturn(executor);
+  @Test
+  public void testEmptyTopicList() throws IOException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
+
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+
+    for (Topic t : notificationManager.getTopics()) {
+      System.out.println(t);
     }
 
-    @AfterClass
-    public static void afterSuite(){
-        executor.shutdown();
-    }
+    Assert.assertTrue(notificationManager.getTopics().isEmpty());
+  }
 
-    @Test
-    public void testEmptyTopicList() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+  @Test
+  public void testTopicsAfterUpdate() throws IOException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        for (Topic t : notificationManager.getTopics()) {
-            System.out.println(t);
-        }
+    List<Topic> topics = Arrays.asList(new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        Assert.assertTrue(notificationManager.getTopics().isEmpty());
-    }
+    notificationManager.topicsListUpdated(topics);
 
-    @Test
-    public void testTopicsAfterUpdate() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(),KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    Assert.assertTrue(notificationManager.getTopics().size() == topics.size());
+  }
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+  @Test
+  public void testTopicPersistence() throws IOException {
+    KaaClientProperties props = KaaClientPropertiesStateTest.getProperties();
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), props);
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        List<Topic> topics = Arrays.asList(new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
-                                         , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        notificationManager.topicsListUpdated(topics);
+    List<Topic> topics = Arrays.asList(new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        Assert.assertTrue(notificationManager.getTopics().size() == topics.size());
-    }
+    notificationManager.topicsListUpdated(topics);
+    state.persist();
 
-    @Test
-    public void testTopicPersistence() throws IOException {
-        KaaClientProperties props = KaaClientPropertiesStateTest.getProperties();
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                                            new FilePersistentStorage(), CommonsBase64.getInstance(),props);
-        NotificationTransport transport = mock(NotificationTransport.class);
+    KaaClientPropertiesState newState = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    DefaultNotificationManager newNotificationManager = new DefaultNotificationManager(newState, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    Assert.assertTrue(newNotificationManager.getTopics().size() == topics.size());
 
-        List<Topic> topics = Arrays.asList(new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
-                                         , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    boolean deleted = new File(workDir + props.getProperty("state.file_name")).delete();
+    Assert.assertTrue(deleted);
+  }
 
-        notificationManager.topicsListUpdated(topics);
-        state.persist();
+  @Test
+  public void testTwiceTopicUpdate() throws IOException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        KaaClientPropertiesState newState = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        DefaultNotificationManager newNotificationManager = new DefaultNotificationManager(newState, executorContext, transport);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        Assert.assertTrue(newNotificationManager.getTopics().size() == topics.size());
+    Topic topic1 = new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION);
+    Topic topic2 = new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION);
+    Topic topic3 = new Topic(3l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION);
 
-        boolean deleted = new File(workDir + props.getProperty("state.file_name")).delete();
-        Assert.assertTrue(deleted);
-    }
+    List<Topic> topicUpdates = new LinkedList<>();
+    topicUpdates.add(topic1);
+    topicUpdates.add(topic2);
 
-    @Test
-    public void testTwiceTopicUpdate() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    notificationManager.topicsListUpdated(topicUpdates);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    topicUpdates.remove(topic2);
+    topicUpdates.add(topic3);
 
-        Topic topic1 = new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION);
-        Topic topic2 = new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION);
-        Topic topic3 = new Topic(3l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION);
+    notificationManager.topicsListUpdated(topicUpdates);
 
-        List<Topic> topicUpdates = new LinkedList<>();
-        topicUpdates.add(topic1);
-        topicUpdates.add(topic2);
+    List<Topic> newTopics = notificationManager.getTopics();
 
-        notificationManager.topicsListUpdated(topicUpdates);
+    Assert.assertTrue(newTopics.size() == topicUpdates.size());
+    Assert.assertTrue(newTopics.contains(topic1));
+    Assert.assertTrue(newTopics.contains(topic3));
+  }
 
-        topicUpdates.remove(topic2);
-        topicUpdates.add(topic3);
+  @Test
+  public void testAddTopicUpdateListener() throws Exception {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        notificationManager.topicsListUpdated(topicUpdates);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        List<Topic> newTopics = notificationManager.getTopics();
+    final List<Topic> topicUpdates = new LinkedList<>();
+    topicUpdates.add(new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    topicUpdates.add(new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    topicUpdates.add(new Topic(3l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        Assert.assertTrue(newTopics.size() == topicUpdates.size());
-        Assert.assertTrue(newTopics.contains(topic1));
-        Assert.assertTrue(newTopics.contains(topic3));
-    }
+    notificationManager.addTopicListListener(new NotificationTopicListListener() {
+      @Override
+      public void onListUpdated(List<Topic> list) {
+        Assert.assertArrayEquals(topicUpdates.toArray(), list.toArray());
+        topicUpdates.clear();
+      }
+    });
 
-    @Test
-    public void testAddTopicUpdateListener() throws Exception {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    notificationManager.topicsListUpdated(topicUpdates);
 
-        final List<Topic> topicUpdates = new LinkedList<>();
-        topicUpdates.add(new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
-        topicUpdates.add(new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
-        topicUpdates.add(new Topic(3l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    Thread.sleep(500);
 
-        notificationManager.addTopicListListener(new NotificationTopicListListener() {
-            @Override
-            public void onListUpdated(List<Topic> list) {
-                Assert.assertArrayEquals(topicUpdates.toArray(), list.toArray());
-                topicUpdates.clear();
-            }
-        });
+    Assert.assertTrue(topicUpdates.isEmpty());
+  }
 
+  @Test
+  public void testRemoveTopicUpdateListener() throws IOException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        notificationManager.topicsListUpdated(topicUpdates);
+    NotificationTopicListListener listener1 = Mockito.mock(NotificationTopicListListener.class);
+    NotificationTopicListListener listener2 = Mockito.mock(NotificationTopicListListener.class);
 
-        Thread.sleep(500);
+    notificationManager.addTopicListListener(listener1);
+    notificationManager.addTopicListListener(listener2);
 
-        Assert.assertTrue(topicUpdates.isEmpty());
-    }
+    List<Topic> topicUpdate = Arrays.asList(new Topic());
 
-    @Test
-    public void testRemoveTopicUpdateListener() throws IOException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    notificationManager.topicsListUpdated(topicUpdate);
+    notificationManager.removeTopicListListener(listener2);
+    notificationManager.topicsListUpdated(topicUpdate);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    Mockito.verify(listener1, Mockito.timeout(1000).times(2)).onListUpdated(topicUpdate);
+    Mockito.verify(listener2, Mockito.timeout(1000).times(1)).onListUpdated(topicUpdate);
+  }
 
-        NotificationTopicListListener listener1 = Mockito.mock(NotificationTopicListListener.class);
-        NotificationTopicListListener listener2 = Mockito.mock(NotificationTopicListListener.class);
+  @Test
+  public void testGlobalNotificationListeners() throws Exception {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        notificationManager.addTopicListListener(listener1);
-        notificationManager.addTopicListListener(listener2);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        List<Topic> topicUpdate = Arrays.asList(new Topic());
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        notificationManager.topicsListUpdated(topicUpdate);
-        notificationManager.removeTopicListListener(listener2);
-        notificationManager.topicsListUpdated(topicUpdate);
+    ByteBuffer notificationBody = ByteBuffer.wrap(new AvroByteArrayConverter<>(org.kaaproject.kaa.schema.base.Notification.class).toByteArray(
+        new org.kaaproject.kaa.schema.base.Notification()));
 
-        Mockito.verify(listener1, Mockito.timeout(1000).times(2)).onListUpdated(topicUpdate);
-        Mockito.verify(listener2, Mockito.timeout(1000).times(1)).onListUpdated(topicUpdate);
-    }
+    notificationManager.topicsListUpdated(topicsUpdate);
 
-    @Test
-    public void testGlobalNotificationListeners() throws Exception {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    List<Notification> notificationUpdate = Arrays.asList(
+        new Notification(1l, NotificationType.CUSTOM, null, 1, notificationBody),
+        new Notification(2l, NotificationType.CUSTOM, null, 1, notificationBody));
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    NotificationListener mandatoryListener = Mockito.mock(NotificationListener.class);
+    NotificationListener globalListener = Mockito.mock(NotificationListener.class);
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    notificationManager.addNotificationListener(mandatoryListener);
 
-        ByteBuffer notificationBody = ByteBuffer.wrap(new AvroByteArrayConverter<>(org.kaaproject.kaa.schema.base.Notification.class).toByteArray(
-                new org.kaaproject.kaa.schema.base.Notification()));
+    notificationManager.notificationReceived(notificationUpdate);
 
-        notificationManager.topicsListUpdated(topicsUpdate);
+    Thread.sleep(500);
 
-        List<Notification> notificationUpdate = Arrays.asList(
-                new Notification(1l, NotificationType.CUSTOM, null, 1, notificationBody),
-                new Notification(2l, NotificationType.CUSTOM, null, 1, notificationBody));
+    notificationManager.removeNotificationListener(mandatoryListener);
+    notificationManager.addNotificationListener(globalListener);
 
-        NotificationListener mandatoryListener = Mockito.mock(NotificationListener.class);
-        NotificationListener globalListener = Mockito.mock(NotificationListener.class);
+    notificationManager.notificationReceived(notificationUpdate);
 
-        notificationManager.addNotificationListener(mandatoryListener);
+    notificationManager.notificationReceived(notificationUpdate);
 
-        notificationManager.notificationReceived(notificationUpdate);
+    Mockito.verify(mandatoryListener, Mockito.timeout(1000).times(notificationUpdate.size()))
+        .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
 
-        Thread.sleep(500);
+    Mockito.verify(globalListener, Mockito.timeout(1000).times(notificationUpdate.size() * 2))
+        .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
+  }
 
-        notificationManager.removeNotificationListener(mandatoryListener);
-        notificationManager.addNotificationListener(globalListener);
+  @Test
+  public void testNotificationListenerOnTopic() throws Exception {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        notificationManager.notificationReceived(notificationUpdate);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        notificationManager.notificationReceived(notificationUpdate);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        Mockito.verify(mandatoryListener, Mockito.timeout(1000).times(notificationUpdate.size()))
-            .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
+    ByteBuffer notificationBody = ByteBuffer.wrap(new AvroByteArrayConverter<>(Topic.class).toByteArray(
+        new Topic(3l, "name", SubscriptionType.MANDATORY_SUBSCRIPTION)));
 
-        Mockito.verify(globalListener, Mockito.timeout(1000).times(notificationUpdate.size() * 2))
-            .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
-    }
+    notificationManager.topicsListUpdated(topicsUpdate);
 
-    @Test
-    public void testNotificationListenerOnTopic() throws Exception{
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    List<Notification> notificationUpdate = Arrays.asList(
+        new Notification(1l, NotificationType.CUSTOM, null, 1, notificationBody),
+        new Notification(2l, NotificationType.CUSTOM, null, 1, notificationBody));
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    NotificationListener globalListener = Mockito.mock(NotificationListener.class);
+    NotificationListener topicListener = Mockito.mock(NotificationListener.class);
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    notificationManager.addNotificationListener(globalListener);
+    notificationManager.addNotificationListener(2l, topicListener);
 
-        ByteBuffer notificationBody = ByteBuffer.wrap(new AvroByteArrayConverter<>(Topic.class).toByteArray(
-                new Topic(3l, "name", SubscriptionType.MANDATORY_SUBSCRIPTION)));
+    notificationManager.notificationReceived(notificationUpdate);
+    notificationManager.removeNotificationListener(2l, topicListener);
+    notificationManager.notificationReceived(notificationUpdate);
 
-        notificationManager.topicsListUpdated(topicsUpdate);
+    Mockito.verify(globalListener, Mockito.timeout(1000).times(notificationUpdate.size() * 2 - 1))
+        .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
 
-        List<Notification> notificationUpdate = Arrays.asList(
-                new Notification(1l, NotificationType.CUSTOM, null, 1, notificationBody),
-                new Notification(2l, NotificationType.CUSTOM, null, 1, notificationBody));
+    Mockito.verify(topicListener, Mockito.timeout(1000).times(1))
+        .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
+  }
 
-        NotificationListener globalListener = Mockito.mock(NotificationListener.class);
-        NotificationListener topicListener = Mockito.mock(NotificationListener.class);
+  @Test(expected = UnavailableTopicException.class)
+  public void testAddListenerForUnknownTopic() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        notificationManager.addNotificationListener(globalListener);
-        notificationManager.addNotificationListener(2l, topicListener);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        notificationManager.notificationReceived(notificationUpdate);
-        notificationManager.removeNotificationListener(2l, topicListener);
-        notificationManager.notificationReceived(notificationUpdate);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        Mockito.verify(globalListener, Mockito.timeout(1000).times(notificationUpdate.size() * 2 - 1))
-                .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
+    notificationManager.topicsListUpdated(topicsUpdate);
 
-        Mockito.verify(topicListener, Mockito.timeout(1000).times(1))
-            .onNotification(Mockito.anyLong(), Mockito.any(org.kaaproject.kaa.schema.base.Notification.class));
-    }
+    NotificationListener listener = Mockito.mock(NotificationListener.class);
+    notificationManager.addNotificationListener(UNKNOWN_TOPIC_ID, listener);
+  }
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testAddListenerForUnknownTopic() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(),KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+  @Test(expected = UnavailableTopicException.class)
+  public void testRemoveListenerForUnknownTopic() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.topicsListUpdated(topicsUpdate);
 
-        NotificationListener listener = Mockito.mock(NotificationListener.class);
-        notificationManager.addNotificationListener(UNKNOWN_TOPIC_ID, listener);
-    }
+    NotificationListener listener = Mockito.mock(NotificationListener.class);
+    notificationManager.removeNotificationListener(UNKNOWN_TOPIC_ID, listener);
+  }
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testRemoveListenerForUnknownTopic() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+  @Test(expected = UnavailableTopicException.class)
+  public void testSubscribeOnUnknownTopic1() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
 
-        notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.subscribeToTopic(UNKNOWN_TOPIC_ID, true);
+  }
 
-        NotificationListener listener = Mockito.mock(NotificationListener.class);
-        notificationManager.removeNotificationListener(UNKNOWN_TOPIC_ID, listener);
-    }
+  @Test(expected = UnavailableTopicException.class)
+  public void testSubscribeOnUnknownTopic2() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testSubscribeOnUnknownTopic1() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.subscribeToTopics(Arrays.asList(1l, 2l, UNKNOWN_TOPIC_ID), true);
+  }
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeToTopic(UNKNOWN_TOPIC_ID, true);
-    }
+  @Test(expected = UnavailableTopicException.class)
+  public void testUnsubscribeFromUnknownTopic1() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testSubscribeOnUnknownTopic2() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.unsubscribeFromTopic(UNKNOWN_TOPIC_ID, true);
+  }
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeToTopics(Arrays.asList(1l, 2l, UNKNOWN_TOPIC_ID), true);
-    }
+  @Test(expected = UnavailableTopicException.class)
+  public void testUnsubscribeFromUnknownTopic2() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testUnsubscribeFromUnknownTopic1() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.unsubscribeFromTopics(Arrays.asList(1l, 2l, UNKNOWN_TOPIC_ID), true);
+  }
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.unsubscribeFromTopic(UNKNOWN_TOPIC_ID, true);
-    }
+  @Test(expected = UnavailableTopicException.class)
+  public void testSubscribeOnMandatoryTopic1() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testUnsubscribeFromUnknownTopic2() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.subscribeToTopic(2l, true);
+  }
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.unsubscribeFromTopics(Arrays.asList(1l, 2l, UNKNOWN_TOPIC_ID), true);
-    }
+  @Test(expected = UnavailableTopicException.class)
+  public void testSubscribeOnMandatoryTopic2() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testSubscribeOnMandatoryTopic1() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.subscribeToTopics(Arrays.asList(1l, 2l), true);
+  }
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeToTopic(2l, true);
-    }
+  @Test(expected = UnavailableTopicException.class)
+  public void testUnsubscribeFromMandatoryTopic1() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testSubscribeOnMandatoryTopic2() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.unsubscribeFromTopic(2l, true);
+  }
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeToTopics(Arrays.asList(1l, 2l), true);
-    }
+  @Test(expected = UnavailableTopicException.class)
+  public void testUnsubscribeFromMandatoryTopic2() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testUnsubscribeFromMandatoryTopic1() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.unsubscribeFromTopics(Arrays.asList(1l, 2l), true);
+  }
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.unsubscribeFromTopic(2l, true);
-    }
+  @Test
+  public void testSuccessSubscriptionToTopic() throws IOException, UnavailableTopicException {
+    KaaClientPropertiesState state = new KaaClientPropertiesState(
+        new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
+    NotificationTransport transport = mock(NotificationTransport.class);
 
-    @Test(expected=UnavailableTopicException.class)
-    public void testUnsubscribeFromMandatoryTopic2() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    List<Topic> topicsUpdate = Arrays.asList(
+        new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
+        , new Topic(3l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.MANDATORY_SUBSCRIPTION));
+    notificationManager.topicsListUpdated(topicsUpdate);
+    notificationManager.subscribeToTopic(1l, true);
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.unsubscribeFromTopics(Arrays.asList(1l, 2l), true);
-    }
+    Mockito.verify(transport, Mockito.times(1)).sync();
 
-    @Test
-    public void testSuccessSubscriptionToTopic() throws IOException, UnavailableTopicException {
-        KaaClientPropertiesState state = new KaaClientPropertiesState(
-                new FilePersistentStorage(), CommonsBase64.getInstance(), KaaClientPropertiesStateTest.getProperties());
-        NotificationTransport transport = mock(NotificationTransport.class);
+    notificationManager.subscribeToTopics(Arrays.asList(1l, 2l), false);
+    notificationManager.unsubscribeFromTopic(1l, false);
 
-        DefaultNotificationManager notificationManager = new DefaultNotificationManager(state, executorContext, transport);
+    Mockito.verify(transport, Mockito.times(1)).sync();
 
-        List<Topic> topicsUpdate = Arrays.asList(
-                new Topic(1l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(2l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION)
-              , new Topic(3l, "topic_name1", SubscriptionType.OPTIONAL_SUBSCRIPTION));
+    notificationManager.sync();
 
-        notificationManager.topicsListUpdated(topicsUpdate);
-        notificationManager.subscribeToTopic(1l, true);
+    Mockito.verify(transport, Mockito.times(2)).sync();
 
-        Mockito.verify(transport, Mockito.times(1)).sync();
+    notificationManager.unsubscribeFromTopics(Arrays.asList(1l, 2l), true);
 
-        notificationManager.subscribeToTopics(Arrays.asList(1l, 2l), false);
-        notificationManager.unsubscribeFromTopic(1l, false);
-
-        Mockito.verify(transport, Mockito.times(1)).sync();
-
-        notificationManager.sync();
-
-        Mockito.verify(transport, Mockito.times(2)).sync();
-
-        notificationManager.unsubscribeFromTopics(Arrays.asList(1l, 2l), true);
-
-        Mockito.verify(transport, Mockito.times(3)).sync();
-    }
+    Mockito.verify(transport, Mockito.times(3)).sync();
+  }
 }

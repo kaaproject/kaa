@@ -18,12 +18,12 @@ package org.kaaproject.kaa.server.common.core.schema;
 
 public interface KaaSchemaFactory {
 
-    BaseSchema createBaseSchema(String schema);
+  BaseSchema createBaseSchema(String schema);
 
-    OverrideSchema createOverrideSchema(String schema);
+  OverrideSchema createOverrideSchema(String schema);
 
-    ProtocolSchema createProtocolSchema(String schema);
+  ProtocolSchema createProtocolSchema(String schema);
 
-    DataSchema createDataSchema(String schema);
+  DataSchema createDataSchema(String schema);
 
 }

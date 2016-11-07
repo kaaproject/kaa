@@ -20,10 +20,10 @@ import org.kaaproject.kaa.server.common.core.schema.RawSchema;
 
 public class RawData extends AbstractKaaData<RawSchema> {
 
-    private static final long serialVersionUID = 7829004601893588255L;
+  private static final long serialVersionUID = 7829004601893588255L;
 
-    public RawData(RawSchema schema, String data) {
-        super(schema, data);
-    }
+  public RawData(RawSchema schema, String data) {
+    super(schema, data);
+  }
 
 }

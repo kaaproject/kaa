@@ -16,16 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.servlet;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.iharder.Base64;
 
 import org.kaaproject.kaa.common.dto.file.FileData;
@@ -36,41 +26,56 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public class SdkServlet extends HttpServlet implements Servlet, ServletParams {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(SdkServlet.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(SdkServlet.class);
 
-    private static final long serialVersionUID = 4151191758109799417L;
+  private static final long serialVersionUID = 4151191758109799417L;
 
-    private static final int BUFFER = 1024 * 100;
+  private static final int BUFFER = 1024 * 100;
 
-    @Autowired
-    private CacheService cacheService;
+  @Autowired
+  private CacheService cacheService;
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
-          config.getServletContext());
+  @Override
+  public void init(ServletConfig config) throws ServletException {
+    super.init(config);
+    SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+        config.getServletContext());
+  }
+
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    String sdkKeyBase64 = URLDecoder.decode(request.getParameter(SDK_KEY_PARAMETER), "UTF-8");
+    try {
+      CacheService.SdkKey key = (CacheService.SdkKey) Base64
+          .decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
+      FileData sdkFile = cacheService.getSdk(key);
+      response.setContentType(sdkFile.getContentType());
+      ServletUtils.prepareDisposition(request, response, sdkFile.getFileName());
+      response.setContentLength(sdkFile.getFileData().length);
+      response.setBufferSize(BUFFER);
+      response.getOutputStream().write(sdkFile.getFileData());
+      response.flushBuffer();
+    } catch (Exception ex) {
+      LOG.error("Unexpected error in SdkServlet.doGet: ", ex);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get Sdk file: "
+          + ex.getMessage());
     }
-
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String sdkKeyBase64 = URLDecoder.decode(request.getParameter(SDK_KEY_PARAMETER), "UTF-8");
-        try {
-            CacheService.SdkKey key = (CacheService.SdkKey)Base64.decodeToObject(sdkKeyBase64, Base64.URL_SAFE, null);
-            FileData sdkFile = cacheService.getSdk(key);
-            response.setContentType(sdkFile.getContentType());
-            ServletUtils.prepareDisposition(request, response, sdkFile.getFileName());
-            response.setContentLength(sdkFile.getFileData().length);
-            response.setBufferSize(BUFFER);
-            response.getOutputStream().write(sdkFile.getFileData());
-            response.flushBuffer();
-        } catch (Exception e) {
-            LOG.error("Unexpected error in SdkServlet.doGet: ", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Unable to get Sdk file: " + e.getMessage());
-        }
-    }
+  }
 
 }

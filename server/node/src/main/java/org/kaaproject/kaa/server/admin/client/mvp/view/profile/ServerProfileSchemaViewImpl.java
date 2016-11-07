@@ -21,23 +21,23 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ServerProfileSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
-    public ServerProfileSchemaViewImpl(boolean create) {
-        super(create);
-    }
+  public ServerProfileSchemaViewImpl(boolean create) {
+    super(create);
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.addServerProfileSchema();
-    }
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.addServerProfileSchema();
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.serverProfileSchema();
-    }
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.serverProfileSchema();
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.serverProfileSchemaDetails();
-    }
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.serverProfileSchemaDetails();
+  }
 
 }

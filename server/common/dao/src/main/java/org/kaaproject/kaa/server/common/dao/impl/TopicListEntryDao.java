@@ -28,26 +28,26 @@ import java.nio.ByteBuffer;
  */
 public interface TopicListEntryDao<T extends TopicListEntry> extends Dao<T, ByteBuffer> {
 
-    /**
-     * Save topic list entry
-     *
-     * @param dto topic list entry
-     * @return save topic list entry
-     */
-    T save(TopicListEntryDto dto);
+  /**
+   * Save topic list entry.
+   *
+   * @param dto topic list entry
+   * @return save topic list entry
+   */
+  T save(TopicListEntryDto dto);
 
-    /**
-     * Find topic list entry by hash
-     *
-     * @param hash the hash of a topic list
-     * @return found topic list entry
-     */
-    T findByHash(byte[] hash);
+  /**
+   * Find topic list entry by hash.
+   *
+   * @param hash the hash of a topic list
+   * @return found topic list entry
+   */
+  T findByHash(byte[] hash);
 
-    /**
-     * Remove topic list entry by hash
-     *
-     * @param hash the hash of a topic list
-     */
-    void removeByHash(byte[] hash);
+  /**
+   * Remove topic list entry by hash.
+   *
+   * @param hash the hash of a topic list
+   */
+  void removeByHash(byte[] hash);
 }

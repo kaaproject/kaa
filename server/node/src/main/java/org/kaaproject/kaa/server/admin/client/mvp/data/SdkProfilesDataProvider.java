@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -25,38 +25,42 @@ import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProv
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.shared.util.Utils;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
 /**
  * @author Bohdan Khablenko
- *
  * @since v0.8.0
  */
 public class SdkProfilesDataProvider extends AbstractDataProvider<SdkProfileDto, String> {
 
-    private final String applicationId;
+  private final String applicationId;
+  
+  /**
+   * All-args constructor.
+   */
+  public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid,
+                                 HasErrorMessage hasErrorMessage, String applicationId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    this.addDataDisplay();
+  }
 
-    public SdkProfilesDataProvider(AbstractGrid<SdkProfileDto, String> dataGrid, HasErrorMessage hasErrorMessage, String applicationId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        this.addDataDisplay();
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    if (!Utils.isEmpty(applicationId)) {
+      KaaAdmin.getDataSource().loadSdkProfiles(
+          applicationId, new AsyncCallback<List<SdkProfileDto>>() {
+
+            @Override
+            public void onSuccess(List<SdkProfileDto> result) {
+              callback.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+              callback.onFailure(cause);
+            }
+          });
     }
-
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        if (!Utils.isEmpty(applicationId)) {
-            KaaAdmin.getDataSource().loadSdkProfiles(applicationId, new AsyncCallback<List<SdkProfileDto>>() {
-
-                @Override
-                public void onSuccess(List<SdkProfileDto> result) {
-                    callback.onSuccess(result);
-                }
-
-                @Override
-                public void onFailure(Throwable cause) {
-                    callback.onFailure(cause);
-                }
-            });
-        }
-    }
+  }
 }

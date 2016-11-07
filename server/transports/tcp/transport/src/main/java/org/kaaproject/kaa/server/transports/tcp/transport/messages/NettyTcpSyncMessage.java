@@ -25,45 +25,56 @@ import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
 public class NettyTcpSyncMessage extends AbstractMessage implements SessionAwareMessage {
 
-    private final SyncRequest command;
-    private final SessionInfo sessionInfo;
+  private final SyncRequest command;
+  private final SessionInfo sessionInfo;
 
-    public NettyTcpSyncMessage(SyncRequest command, SessionInfo sessionInfo,
-            MessageBuilder responseConverter, ErrorBuilder errorConverter) {
-        super(sessionInfo.getUuid(), sessionInfo.getPlatformId(), sessionInfo.getCtx(), sessionInfo.getChannelType(), responseConverter, errorConverter);
-        this.command = command;
-        this.sessionInfo = sessionInfo;
-    }
+  /**
+   * Create new instance of <code>NettyTcpSyncMessage</code>.
+   *
+   * @param command is instance of <code>SyncRequest</code>
+   * @param sessionInfo is information about session
+   * @param responseConverter convert response
+   * @param errorConverter convert error
+   */
+  public NettyTcpSyncMessage(SyncRequest command, SessionInfo sessionInfo,
+                             MessageBuilder responseConverter, ErrorBuilder errorConverter
+  ) {
+    super(sessionInfo.getUuid(), sessionInfo.getPlatformId(), sessionInfo.getCtx(),
+            sessionInfo.getChannelType(), responseConverter, errorConverter
+    );
+    this.command = command;
+    this.sessionInfo = sessionInfo;
+  }
 
-    @Override
-    public byte[] getEncodedMessageData() {
-        return command.getAvroObject();
-    }
+  @Override
+  public byte[] getEncodedMessageData() {
+    return command.getAvroObject();
+  }
 
-    @Override
-    public SessionInfo getSessionInfo() {
-        return sessionInfo;
-    }
+  @Override
+  public SessionInfo getSessionInfo() {
+    return sessionInfo;
+  }
 
-    @Override
-    public boolean isEncrypted() {
-        return command.isEncrypted();
-    }
+  @Override
+  public boolean isEncrypted() {
+    return command.isEncrypted();
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NettyTcpSyncMessage [command=");
-        builder.append(command);
-        builder.append(", sessionInfo=");
-        builder.append(sessionInfo);
-        builder.append(", getUuid()=");
-        builder.append(getChannelUuid());
-        builder.append(", getChannelContext()=");
-        builder.append(getChannelContext());
-        builder.append(", getChannelType()=");
-        builder.append(getChannelType());
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("NettyTcpSyncMessage [command=");
+    builder.append(command);
+    builder.append(", sessionInfo=");
+    builder.append(sessionInfo);
+    builder.append(", getUuid()=");
+    builder.append(getChannelUuid());
+    builder.append(", getChannelContext()=");
+    builder.append(getChannelContext());
+    builder.append(", getChannelType()=");
+    builder.append(getChannelType());
+    builder.append("]");
+    return builder.toString();
+  }
 }

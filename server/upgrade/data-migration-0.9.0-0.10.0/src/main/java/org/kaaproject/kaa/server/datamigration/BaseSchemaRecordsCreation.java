@@ -28,36 +28,48 @@ import java.util.List;
 import java.util.Map;
 
 public class BaseSchemaRecordsCreation {
-    protected Connection connection;
-    protected QueryRunner runner;
-    protected DataDefinition dd;
+  protected Connection connection;
+  protected QueryRunner runner;
+  protected DataDefinition dd;
 
-    public BaseSchemaRecordsCreation(Connection connection) {
-        this.connection = connection;
-        runner = new QueryRunner();
-        dd = new DataDefinition(connection);
+  /**
+   * Create new instance of BaseSchemaRecordsCreation.
+   *
+   * @param connection the connection to relational database
+   */
+  public BaseSchemaRecordsCreation(Connection connection) {
+    this.connection = connection;
+    runner = new QueryRunner();
+    dd = new DataDefinition(connection);
+  }
+
+  /**
+   * Final phase of migration -- add created ctl based schemas to database.
+   *
+   * @param ctlToSchemas mapping of common type to a couple of schemas
+   * @throws SQLException the sql exception
+   */
+  public void create(Map<Ctl, List<Schema>> ctlToSchemas) throws SQLException {
+    List<Object[]> params = new ArrayList<>();
+    int schemaCounter = 0;
+    for (Ctl ctl : ctlToSchemas.keySet()) {
+      for (Schema schema : ctlToSchemas.get(ctl)) {
+        schemaCounter++;
+        params.add(new Object[]{
+            schema.getId(),
+            schema.getCreatedTime(),
+            schema.getCreatedUsername(),
+            schema.getDescription(),
+            schema.getName(),
+            schema.getVersion(),
+            ctl.getMetaInfo().getAppId(),
+            ctl.getId()
+        });
+      }
     }
 
-    public void create(Map<Ctl, List<Schema>> ctlToSchemas) throws SQLException {
-        List<Object[]> params = new ArrayList<>();
-        int schemaCounter = 0;
-        for (Ctl ctl : ctlToSchemas.keySet()) {
-            for (Schema schema : ctlToSchemas.get(ctl)) {
-                schemaCounter++;
-                params.add(new Object[]{
-                        schema.getId(),
-                        schema.getCreatedTime(),
-                        schema.getCreatedUsername(),
-                        schema.getDescription(),
-                        schema.getName(),
-                        schema.getVersion(),
-                        ctl.getMetaInfo().getAppId(),
-                        ctl.getId()
-                });
-            }
-        }
-
-        runner.batch(connection, "insert into base_schems values(?, ?, ?, ?, ?, ?, ?, ?)", params.toArray(new Object[schemaCounter][]));
-    }
+    runner.batch(connection, "insert into base_schems values(?, ?, ?, ?, ?, ?, ?, ?)",
+        params.toArray(new Object[schemaCounter][]));
+  }
 
 }

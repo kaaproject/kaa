@@ -44,6 +44,10 @@
     <util:properties id="properties"
         location="classpath:/kaa-node.properties" />
 
+    <bean id="ttl" class="java.lang.Integer">
+        <constructor-arg value="#{properties[default_ttl]}" />
+    </bean>
+
     <!-- Node configuration from properties file -->
 
     <bean id="kaaNodeServerConfig" class="org.kaaproject.kaa.server.node.service.config.KaaNodeServerConfig">
@@ -59,7 +63,6 @@
         <property name="zkSleepTime" value="#{properties[zk_sleep_time]}" />
         <property name="zkIgnoreErrors" value="#{properties[zk_ignore_errors]}" />
     </bean>
-
     <!--Zookeeper client configuration-->
 
     <bean id="zkRetryPolicy" class="org.apache.curator.retry.RetryUntilElapsed">

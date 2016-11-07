@@ -16,8 +16,9 @@
 
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
-import java.text.MessageFormat;
-import java.util.List;
+import com.mongodb.MongoInternalException;
+import com.mongodb.MongoServerException;
+import com.mongodb.MongoSocketException;
 
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
@@ -30,88 +31,98 @@ import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.MongoInternalException;
-import com.mongodb.MongoServerException;
-import com.mongodb.MongoSocketException;
+import java.text.MessageFormat;
+import java.util.List;
 
 public class MongoDbLogAppender extends AbstractLogAppender<MongoDbConfig> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDbLogAppender.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MongoDbLogAppender.class);
 
-    private LogEventDao logEventDao;
-    private String collectionName;
-    private boolean closed = false;
+  private LogEventDao logEventDao;
+  private String collectionName;
+  private boolean closed = false;
 
-    private boolean includeClientProfile;
-    private boolean includeServerProfile;
+  private boolean includeClientProfile;
+  private boolean includeServerProfile;
 
-    public MongoDbLogAppender() {
-        super(MongoDbConfig.class);
-    }
+  public MongoDbLogAppender() {
+    super(MongoDbConfig.class);
+  }
 
-    @Override
-    public void doAppend(LogEventPack logEventPack, RecordHeader header, LogDeliveryCallback listener) {
-        if (!closed) {
-            try {
-                ProfileInfo clientProfile = (this.includeClientProfile) ? logEventPack.getClientProfile() : null;
-                ProfileInfo serverProfile = (this.includeServerProfile) ? logEventPack.getServerProfile() : null;
-                
-                LOG.debug("[{}] appending {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
-                List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
-                LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
-                if (!dtos.isEmpty()) {
-                    logEventDao.save(dtos, clientProfile, serverProfile, collectionName);
-                    LOG.debug("[{}] appended {} logs to mongodb collection", collectionName, logEventPack.getEvents().size());
-                }
-                listener.onSuccess();
-            } catch (MongoSocketException e) {
-                LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to network error", getName()), e);
-                listener.onConnectionError();
-            } catch (MongoInternalException | MongoServerException e) {
-                LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to remote error", getName()), e);
-                listener.onRemoteError();
-            } catch (Exception e) {
-                LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed due to internal error", getName()), e);
-                listener.onInternalError();
-            }
-        } else {
-            LOG.info("Attempted to append to closed appender named [{}].", getName());
-            listener.onInternalError();
+  @Override
+  public void doAppend(LogEventPack logEventPack, RecordHeader header,
+                       LogDeliveryCallback listener) {
+    if (!closed) {
+      try {
+        ProfileInfo clientProfile = (this.includeClientProfile)
+            ? logEventPack.getClientProfile() : null;
+
+        ProfileInfo serverProfile = (this.includeServerProfile)
+            ? logEventPack.getServerProfile() : null;
+
+        LOG.debug("[{}] appending {} logs to mongodb collection",
+            collectionName, logEventPack.getEvents().size());
+
+        List<LogEventDto> dtos = generateLogEvent(logEventPack, header);
+        LOG.debug("[{}] saving {} objects", collectionName, dtos.size());
+        if (!dtos.isEmpty()) {
+          logEventDao.save(dtos, clientProfile, serverProfile, collectionName);
+
+          LOG.debug("[{}] appended {} logs to mongodb collection",
+              collectionName, logEventPack.getEvents().size());
         }
+        listener.onSuccess();
+      } catch (MongoSocketException ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed "
+            + "due to network error", getName()), ex);
+        listener.onConnectionError();
+      } catch (MongoInternalException | MongoServerException ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed "
+            + "due to remote error", getName()), ex);
+        listener.onRemoteError();
+      } catch (Exception ex) {
+        LOG.error(MessageFormat.format("[{0}] Attempted to append logs failed "
+            + "due to internal error", getName()), ex);
+        listener.onInternalError();
+      }
+    } else {
+      LOG.info("Attempted to append to closed appender named [{}].", getName());
+      listener.onInternalError();
     }
+  }
 
-    @Override
-    protected void initFromConfiguration(LogAppenderDto appender, MongoDbConfig configuration) {
-        LOG.debug("Initializing new instance of MongoDB log appender");
-        try {
-            logEventDao = new LogEventMongoDao(configuration);
-            this.includeClientProfile = configuration.getIncludeClientProfile();
-            this.includeServerProfile = configuration.getIncludeServerProfile();
-            createCollection(appender.getApplicationToken());
-        } catch (Exception e) {
-            LOG.error("Failed to init MongoDB log appender: ", e);
-        }
+  @Override
+  protected void initFromConfiguration(LogAppenderDto appender, MongoDbConfig configuration) {
+    LOG.debug("Initializing new instance of MongoDB log appender");
+    try {
+      logEventDao = new LogEventMongoDao(configuration);
+      this.includeClientProfile = configuration.getIncludeClientProfile();
+      this.includeServerProfile = configuration.getIncludeServerProfile();
+      createCollection(appender.getApplicationToken());
+    } catch (Exception ex) {
+      LOG.error("Failed to init MongoDB log appender: ", ex);
     }
+  }
 
-    private void createCollection(String applicationToken) {
-        if (collectionName == null) {
-            collectionName = "logs_" + applicationToken;
-            logEventDao.createCollection(collectionName);
-        } else {
-            LOG.error("Appender is already initialized..");
-        }
+  private void createCollection(String applicationToken) {
+    if (collectionName == null) {
+      collectionName = "logs_" + applicationToken;
+      logEventDao.createCollection(collectionName);
+    } else {
+      LOG.error("Appender is already initialized..");
     }
+  }
 
-    @Override
-    public void close() {
-        if (!closed) {
-            closed = true;
-            if (logEventDao != null) {
-                logEventDao.close();
-                logEventDao = null;
-            }
-        }
-        LOG.debug("Stoped MongoDB log appender.");
+  @Override
+  public void close() {
+    if (!closed) {
+      closed = true;
+      if (logEventDao != null) {
+        logEventDao.close();
+        logEventDao = null;
+      }
     }
+    LOG.debug("Stoped MongoDB log appender.");
+  }
 
 }

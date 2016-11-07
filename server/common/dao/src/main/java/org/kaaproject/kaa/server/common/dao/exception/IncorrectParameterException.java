@@ -19,13 +19,13 @@ package org.kaaproject.kaa.server.common.dao.exception;
 
 public class IncorrectParameterException extends RuntimeException {
 
-    private static final long serialVersionUID = 1446867056117761527L;
+  private static final long serialVersionUID = 1446867056117761527L;
 
-    public IncorrectParameterException(String message) {
-        super(message);
-    }
+  public IncorrectParameterException(String message) {
+    super(message);
+  }
 
-    public IncorrectParameterException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public IncorrectParameterException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

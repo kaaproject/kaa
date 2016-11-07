@@ -21,29 +21,28 @@ package org.kaaproject.kaa.server.bootstrap.service.thrift;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collections;
-
 import org.apache.thrift.TException;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
 
+import java.util.Collections;
+
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
- *
  */
 public class BootstrapThriftServiceImplTest {
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.thrift.BootstrapThriftServiceImpl#onOperationsServerListUpdate(java.util.List)}.
-     */
-    @Test
-    public void testOnOperationsServerListUpdate() {
-        BootstrapThriftServiceImpl b = new BootstrapThriftServiceImpl();
-        assertNotNull(b);
-        try {
-            b.onOperationsServerListUpdate(Collections.<ThriftOperationsServer>emptyList());
-        } catch (TException e) {
-            e.printStackTrace();
-        }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.bootstrap.service.thrift.BootstrapThriftServiceImpl#onOperationsServerListUpdate(java.util.List)}.
+   */
+  @Test
+  public void testOnOperationsServerListUpdate() {
+    BootstrapThriftServiceImpl b = new BootstrapThriftServiceImpl();
+    assertNotNull(b);
+    try {
+      b.onOperationsServerListUpdate(Collections.<ThriftOperationsServer>emptyList());
+    } catch (TException e) {
+      e.printStackTrace();
     }
+  }
 }

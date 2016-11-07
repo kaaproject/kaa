@@ -16,37 +16,40 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
+import com.google.gwt.text.shared.Renderer;
+
+import org.kaaproject.kaa.common.dto.TopicDto;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.TopicDto;
-
-import com.google.gwt.text.shared.Renderer;
-
 public class TopicListBox extends MultiValueListBox<TopicDto> {
 
-    public TopicListBox() {
-        super(new TopicDtoRenderer());
+  public TopicListBox() {
+    super(new TopicDtoRenderer());
+  }
+
+  /**
+   * Reset.
+   */
+  public void reset() {
+    List<TopicDto> emptyList = Collections.emptyList();
+    setValue(null);
+    setAcceptableValues(emptyList);
+  }
+
+  static class TopicDtoRenderer implements Renderer<TopicDto> {
+
+    @Override
+    public String render(TopicDto object) {
+      return object != null ? object.getName() : "";
     }
 
-    public void reset() {
-        List<TopicDto> emptyList = Collections.emptyList();
-        setValue(null);
-        setAcceptableValues(emptyList);
+    @Override
+    public void render(TopicDto object, Appendable appendable)
+        throws IOException {
+      appendable.append(render(object));
     }
-
-    static class TopicDtoRenderer implements Renderer<TopicDto> {
-
-        @Override
-        public String render(TopicDto object) {
-            return object != null ? object.getName() : "";
-        }
-
-        @Override
-        public void render(TopicDto object, Appendable appendable)
-                throws IOException {
-            appendable.append(render(object));
-        }
-    }
+  }
 }

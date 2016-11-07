@@ -30,7 +30,7 @@ if(NOT DEFINED EDISON_SDK_ROOT AND WIN32)
 		set(EDISON_SDK_ROOT C:/Edison/poky-edison-eglibc-x86_64-edison-image-core2-32-toolchain-1.7.2)
 	endif()
 else(NOT DEFINED EDISON_SDK_ROOT)
-	set(EDISON_SDK_ROOT /opt/poky-edison/1.7.2)
+	set(EDISON_SDK_ROOT /opt/poky-edison/1.6)
 endif()
 
 #Set the host parameters

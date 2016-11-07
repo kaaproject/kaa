@@ -19,30 +19,29 @@ package org.kaaproject.kaa.server.common.core.algorithms.delta;
 import java.io.IOException;
 
 /**
- * Simple container for resync delta encoded using base schema
- * 
- * @author Andrew Shvayka
+ * Simple container for resync delta encoded using base schema.
  *
+ * @author Andrew Shvayka
  */
-public class BaseBinaryDelta implements RawBinaryDelta{
+public class BaseBinaryDelta implements RawBinaryDelta {
 
-    private static final long serialVersionUID = -3689001649508558531L;
-    
-    private final byte[] data;
-    
-    public BaseBinaryDelta(byte[] data) {
-        super();
-        this.data = data;
-    }
+  private static final long serialVersionUID = -3689001649508558531L;
 
-    @Override
-    public byte[] getData() throws IOException {
-        return data;
-    }
+  private final byte[] data;
 
-    @Override
-    public boolean hasChanges() {
-        return true;
-    }
+  public BaseBinaryDelta(byte[] data) {
+    super();
+    this.data = data;
+  }
+
+  @Override
+  public byte[] getData() throws IOException {
+    return data;
+  }
+
+  @Override
+  public boolean hasChanges() {
+    return true;
+  }
 
 }

@@ -17,14 +17,14 @@
 package org.kaaproject.kaa.server.common.log.shared.appender;
 
 public class LogEvent {
-    
-    private byte[] logData;
-    
-    public byte[] getLogData() {
-        return logData;
-    }
 
-    public void setLogData(byte[] logData) {
-        this.logData = logData;
-    }
+  private byte[] logData;
+
+  public byte[] getLogData() {
+    return logData;
+  }
+
+  public void setLogData(byte[] logData) {
+    this.logData = logData;
+  }
 }

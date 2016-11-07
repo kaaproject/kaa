@@ -16,6 +16,13 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FQN;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TENANT_ID;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TYPE;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
@@ -29,207 +36,204 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FQN;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TENANT_ID;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_TYPE;
-
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
-
 @Entity
 @Table(name = EVENT_CLASS_TABLE_NAME)
 public class EventClass extends BaseSchema<EventClassDto> {
 
-    private static final long serialVersionUID = 3766947955702551264L;
+  private static final long serialVersionUID = 3766947955702551264L;
 
-    @ManyToOne
-    @JoinColumn(name = EVENT_CLASS_TENANT_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Tenant tenant;
+  @ManyToOne
+  @JoinColumn(name = EVENT_CLASS_TENANT_ID, nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Tenant tenant;
 
-    @ManyToOne
-    @JoinColumn(name = EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private EventClassFamilyVersion ecfv;
+  @ManyToOne
+  @JoinColumn(name = EVENT_CLASS_EVENT_CLASS_FAMILY_VERSION_ID, nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private EventClassFamilyVersion ecfv;
 
-    @Column(name = EVENT_CLASS_FQN)
-    private String fqn;
+  @Column(name = EVENT_CLASS_FQN)
+  private String fqn;
 
-    @Column(name = EVENT_CLASS_TYPE)
-    @Enumerated(EnumType.STRING)
-    private EventClassType type;
+  @Column(name = EVENT_CLASS_TYPE)
+  @Enumerated(EnumType.STRING)
+  private EventClassType type;
 
-    public EventClass() {
+  public EventClass() {
+  }
+
+  public EventClass(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * Create new instance of EventClass.
+   *
+   * @param dto data transfer object, contain data for new instance
+   */
+  public EventClass(EventClassDto dto) {
+    super(dto);
+    this.id = getLongId(dto.getId());
+    Long tenantId = getLongId(dto.getTenantId());
+    if (tenantId != null) {
+      this.tenant = new Tenant(tenantId);
     }
-
-    public EventClass(Long id) {
-        this.id = id;
+    this.fqn = dto.getFqn();
+    this.type = dto.getType();
+    Long ecfvId = getLongId(dto.getEcfvId());
+    if (ecfvId != null) {
+      this.ecfv = new EventClassFamilyVersion(ecfvId);
     }
-
-    public EventClass(EventClassDto dto) {
-        super(dto);
-        this.id = getLongId(dto.getId());
-        Long tenantId = getLongId(dto.getTenantId());
-        if (tenantId != null) {
-            this.tenant = new Tenant(tenantId);
-        }
-        this.fqn = dto.getFqn();
-        this.type = dto.getType();
-        Long ecfvId = getLongId(dto.getEcfvId());
-        if (ecfvId != null) {
-            this.ecfv = new EventClassFamilyVersion(ecfvId);
-        }
-        this.version = dto.getVersion();
-        this.name = dto.getName();
-        this.description = dto.getDescription();
-        this.createdUsername = dto.getCreatedUsername();
-        this.createdTime = dto.getCreatedTime();
-        Long ctlId = getLongId(dto.getCtlSchemaId());
-        if (ctlId != null) {
-            this.setCtlSchema(new CTLSchema(ctlId));
-        }
+    this.version = dto.getVersion();
+    this.name = dto.getName();
+    this.description = dto.getDescription();
+    this.createdUsername = dto.getCreatedUsername();
+    this.createdTime = dto.getCreatedTime();
+    Long ctlId = getLongId(dto.getCtlSchemaId());
+    if (ctlId != null) {
+      this.setCtlSchema(new CtlSchema(ctlId));
     }
+  }
 
 
+  public Tenant getTenant() {
+    return tenant;
+  }
 
-    public Tenant getTenant() {
-        return tenant;
+  public void setTenant(Tenant tenant) {
+    this.tenant = tenant;
+  }
+
+  public EventClassFamilyVersion getEcfv() {
+    return ecfv;
+  }
+
+  public void setEcfv(EventClassFamilyVersion ecfv) {
+    this.ecfv = ecfv;
+  }
+
+  public String getFqn() {
+    return fqn;
+  }
+
+  public void setFqn(String fqn) {
+    this.fqn = fqn;
+  }
+
+  public EventClassType getType() {
+    return type;
+  }
+
+  public void setType(EventClassType type) {
+    this.type = type;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((ecfv == null) ? 0 : ecfv.hashCode());
+    result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((getCtlSchema() == null) ? 0 : getCtlSchema().hashCode());
+    result = prime * result + ((tenant == null) ? 0 : tenant.hashCode());
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public void setTenant(Tenant tenant) {
-        this.tenant = tenant;
+    if (obj == null) {
+      return false;
     }
-
-    public EventClassFamilyVersion getEcfv() {
-        return ecfv;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setEcfv(EventClassFamilyVersion ecfv) {
-        this.ecfv = ecfv;
+    EventClass other = (EventClass) obj;
+    if (ecfv == null) {
+      if (other.ecfv != null) {
+        return false;
+      }
+    } else if (!ecfv.equals(other.ecfv)) {
+      return false;
     }
-
-    public String getFqn() {
-        return fqn;
+    if (fqn == null) {
+      if (other.fqn != null) {
+        return false;
+      }
+    } else if (!fqn.equals(other.fqn)) {
+      return false;
     }
-
-    public void setFqn(String fqn) {
-        this.fqn = fqn;
+    if (id == null) {
+      if (other.id != null) {
+        return false;
+      }
+    } else if (!id.equals(other.id)) {
+      return false;
     }
-
-    public EventClassType getType() {
-        return type;
+    if (getCtlSchema() == null) {
+      if (other.getCtlSchema() != null) {
+        return false;
+      }
+    } else if (!getCtlSchema().equals(other.getCtlSchema())) {
+      return false;
     }
-
-    public void setType(EventClassType type) {
-        this.type = type;
+    if (tenant == null) {
+      if (other.tenant != null) {
+        return false;
+      }
+    } else if (!tenant.equals(other.tenant)) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((ecfv == null) ? 0 : ecfv.hashCode());
-        result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((getCtlSchema() == null) ? 0 : getCtlSchema().hashCode());
-        result = prime * result + ((tenant == null) ? 0 : tenant.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+    if (type == null) {
+      if (other.type != null) {
+        return false;
+      }
+    } else if (!type.equals(other.type)) {
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClass other = (EventClass) obj;
-        if (ecfv == null) {
-            if (other.ecfv != null) {
-                return false;
-            }
-        } else if (!ecfv.equals(other.ecfv)) {
-            return false;
-        }
-        if (fqn == null) {
-            if (other.fqn != null) {
-                return false;
-            }
-        } else if (!fqn.equals(other.fqn)) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (getCtlSchema() == null) {
-            if (other.getCtlSchema() != null) {
-                return false;
-            }
-        } else if (!getCtlSchema().equals(other.getCtlSchema())) {
-            return false;
-        }
-        if (tenant == null) {
-            if (other.tenant != null) {
-                return false;
-            }
-        } else if (!tenant.equals(other.tenant)) {
-            return false;
-        }
-        if (type == null) {
-            if (other.type != null) {
-                return false;
-            }
-        } else if (!type.equals(other.type)) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  protected EventClassDto createDto() {
+    return new EventClassDto();
+  }
 
-    @Override
-    protected EventClassDto createDto() {
-        return new EventClassDto();
-    }
+  @Override
+  protected GenericModel<EventClassDto> newInstance(Long id) {
+    return new EventClass(id);
+  }
 
-    @Override
-    protected GenericModel<EventClassDto> newInstance(Long id) {
-        return new EventClass(id);
+  @Override
+  public EventClassDto toDto() {
+    EventClassDto dto = createDto();
+    dto.setId(getStringId());
+    if (tenant != null) {
+      dto.setTenantId(tenant.getStringId());
     }
+    if (ecfv != null) {
+      dto.setEcfvId(ecfv.getStringId());
+    }
+    dto.setFqn(fqn);
+    dto.setType(type);
+    dto.setCreatedUsername(createdUsername);
+    dto.setCreatedTime(createdTime);
+    dto.setDescription(description);
+    dto.setName(name);
+    dto.setVersion(version);
+    dto.setCtlSchemaId(getCtlSchema().getStringId());
+    return dto;
+  }
 
-    @Override
-    public EventClassDto toDto() {
-        EventClassDto dto = createDto();
-        dto.setId(getStringId());
-        if (tenant != null) {
-            dto.setTenantId(tenant.getStringId());
-        }
-        if (ecfv != null) {
-            dto.setEcfvId(ecfv.getStringId());
-        }
-        dto.setFqn(fqn);
-        dto.setType(type);
-        dto.setCreatedUsername(createdUsername);
-        dto.setCreatedTime(createdTime);
-        dto.setDescription(description);
-        dto.setName(name);
-        dto.setVersion(version);
-        dto.setCtlSchemaId(getCtlSchema().getStringId());
-        return dto;
-    }
-
-    @Override
-    public String toString() {
-        return "EventClass [ecfv=" + ecfv + ", fqn=" + fqn + ", type=" + type + ", ctlSchema=" + getCtlSchema() + ", id=" + id + "]";
-    }
+  @Override
+  public String toString() {
+    return "EventClass [ecfv=" + ecfv + ", fqn=" + fqn + ", type=" + type + ", ctlSchema="
+            + getCtlSchema() + ", id=" + id + "]";
+  }
 
 
 }

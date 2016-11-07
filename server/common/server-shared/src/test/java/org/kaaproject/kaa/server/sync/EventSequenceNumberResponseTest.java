@@ -21,12 +21,12 @@ import org.junit.Test;
 
 public class EventSequenceNumberResponseTest {
 
-    @Test
-    public void eventSequenceNumberResponseTest() {
-        EventSequenceNumberResponse sequenceNumberResponse = new EventSequenceNumberResponse();
-        Integer num = 1;
-        sequenceNumberResponse.setSeqNum(num);
-        Assert.assertEquals(num, sequenceNumberResponse.getSeqNum());
-        Assert.assertNotNull(sequenceNumberResponse.toString());
-    }
+  @Test
+  public void eventSequenceNumberResponseTest() {
+    EventSequenceNumberResponse sequenceNumberResponse = new EventSequenceNumberResponse();
+    Integer num = 1;
+    sequenceNumberResponse.setSeqNum(num);
+    Assert.assertEquals(num, sequenceNumberResponse.getSeqNum());
+    Assert.assertNotNull(sequenceNumberResponse.toString());
+  }
 }

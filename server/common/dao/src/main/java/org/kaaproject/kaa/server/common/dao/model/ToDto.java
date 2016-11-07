@@ -23,10 +23,10 @@ package org.kaaproject.kaa.server.common.dao.model;
  */
 public interface ToDto<T> {
 
-    /**
-     * This method convert domain model object to data transfer object.
-     *
-     * @return the dto object
-     */
-    T toDto();
+  /**
+   * This method convert domain model object to data transfer object.
+   *
+   * @return the dto object
+   */
+  T toDto();
 }

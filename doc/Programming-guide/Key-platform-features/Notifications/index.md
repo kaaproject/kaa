@@ -18,7 +18,7 @@ For example, a notification can cause a [Kaa client]({{root_url}}/#kaa-client) t
 
 To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
 After that, you need to create a tenant with tenant admin, and an application.
-To do this, you can use the server REST API ([tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [tenant admin]({{root_url}}/Programming-guide/Server-REST-APIs/#!/User/editUser), [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application)) or the [Administration UI]({{root_url}}Administration-guide/Users-management/#managing-tenant-admins).
+To do this, you can use the server REST API ([tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [tenant admin]({{root_url}}/Programming-guide/Server-REST-APIs/#!/User/editUser), [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application)).
 
 It is strongly recommended that you first read the [Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) sections before you proceed.
 
@@ -148,7 +148,7 @@ To send a notification, use the [server REST API]({{root_url}}Programming-guide/
 
 1. Select the topic from the **Notification topics** page of the application and click **Send notification**.
 
-2. On the **Notification details** page, create a notification either by using the **Notification body** [record form]({{root_url}}Administration-guide/Tenants-and-applications-management/#record-form) or by uploading a JSON file.
+2. On the **Notification details** page, create a notification either by using the **Notification body** record form or by uploading a JSON file.
 The data structure of your JSON file must match the corresponding notification schema.
 
 	![Send Notification](images/send_notification.png)
@@ -212,41 +212,41 @@ Below are code examples of how to get a list of available topics:
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
-...
-    KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext())
-    // Start Kaa client
-    kaaClient.start()
-...
  
-    List<Topic> topics = kaaClient.getTopics();
- 
-    for (Topic topic : topics) {
-        System.out.printf("Id: %s, name: %s, type: %s"
-                , topic.getId(), topic.getName(), topic.getSubscriptionType());
-    }
+...
+KaaClient kaaClient = Kaa.newClient(new DesktopKaaPlatformContext(), new SimpleKaaClientStateListener(), true)
+// Start Kaa client
+kaaClient.start()
+...
+
+List<Topic> topics = kaaClient.getTopics();
+
+for (Topic topic : topics) {
+    System.out.printf("Id: %s, name: %s, type: %s"
+            , topic.getId(), topic.getName(), topic.getSubscriptionType());
+}
 ```
 
 </div><div id="C_plus_plus-9" class="tab-pane fade" markdown="1" >
 
 ```c++
 #include <iostream>
- 
 #include <kaa/Kaa.hpp>
+#include <kaa/IKaaClient.hpp>
 #include <kaa/logging/LoggingUtils.hpp>
  
-using namespace kaa;
- 
 ...
+ 
 // Create an endpoint instance
-auto kaaClient = Kaa::newClient();
+auto kaaClient = kaa::Kaa::newClient();
 // Start an endpoint
 kaaClient->start();
- 
+
 // Get available topics
 const auto& topics = kaaClient->getTopics();
 for (const auto& topic : topics) {
     std::cout << "Id: " << topic.id << ", name: " << topic.name
-              << ", type: " << LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType) << std::endl;
+              << ", type: " << kaa::LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType) << std::endl;
 }
 ```
 
@@ -324,17 +324,15 @@ kaaClient.unsubscribeFromTopic("Android notifications", true);
 ```c++
 #include <kaa/Kaa.hpp>
  
-using namespace kaa;
+...
+ 
+// Subscribe
+kaaClient->subscribeToTopic(1);
  
 ...
  
-// Add notification listener(s) (optional)
- 
-// Subscribe
-kaaClient->subscribeToTopic("Android notifications");
- 
 // Unsubscribe
-kaaClient->unsubscribeFromTopic("Android notifications");
+kaaClient->unsubscribeFromTopic(1);
 ```
 
 </div><div id="C-14" class="tab-pane fade" markdown="1" >
@@ -395,14 +393,16 @@ kaaClient.unsubscribeFromTopics(Arrays.asList("iOS 8 notifications", "another_op
 
 ```c++
 #include <kaa/Kaa.hpp>
+ 
 ...
-// Add notification listener(s) (optional)
  
 // Subscribe
-kaaClient->subscribeToTopics({"iOS 8 notifications", "another_optional_topic_id"});
+kaaClient->subscribeToTopics({1, 2});
+ 
+...
  
 // Unsubscribe
-kaaClient->unsubscribeFromTopics({"iOS 8 notifications", "another_optional_topic_id"});
+kaaClient->unsubscribeFromTopics({1, 2});
 ```
 
 </div><div id="C-15" class="tab-pane fade" markdown="1" >
@@ -460,6 +460,7 @@ import org.kaaproject.kaa.client.KaaDesktop;
 import org.kaaproject.kaa.client.notification.NotificationManager;
 import org.kaaproject.kaa.client.notification.NotificationTopicListListener;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+ 
 ...
 // Add listener
 kaaClient.addTopicListListener(new NotificationTopicListListener() {
@@ -470,6 +471,7 @@ kaaClient.addTopicListListener(new NotificationTopicListListener() {
             topic.getId(), topic.getName(), topic.getSubscriptionType());
     }
 }});
+ 
 ...
 // Remove listener
 kaaClient.removeTopicListListener(someOtherTopicUpdateListener);
@@ -480,28 +482,31 @@ kaaClient.removeTopicListListener(someOtherTopicUpdateListener);
 ```c++
 #include <iostream>
 #include <memory>
- 
 #include <kaa/Kaa.hpp>
 #include <kaa/logging/LoggingUtils.hpp>
 #include <kaa/notification/INotificationTopicListListener.hpp>
  
-using namespace kaa;
-class NotificationTopicListListener : public INotificationTopicListListener {
+class NotificationTopicListListener : public kaa::INotificationTopicListListener {
 public:
-    virtual void onListUpdated(const Topics& topics)
+    virtual void onListUpdated(const kaa::Topics& topics)
     {
         for (const auto& topic : topics) {
             std::cout << "Id: " << topic.id << ", name: " << topic.name
-              << ", type: " << LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType) << std::endl;
+              << ", type: " << kaa::LoggingUtils::TopicSubscriptionTypeToString(topic.subscriptionType) << std::endl;
         }
     }
 };
+ 
 ...
+ 
 // Create a listener which receives the list of available topics.
 std::unique_ptr<NotificationTopicListListener> topicListListener(new NotificationTopicListListener());
  
 // Add a listener
 kaaClient->addTopicListListener(*topicListListener);
+ 
+...
+ 
 // Remove a listener
 kaaClient->removeTopicListListener(*topicListListener);
 ```
@@ -559,6 +564,7 @@ To accommodate for simultaneous change of several subscription topics, consider 
 
 ```java
 import org.kaaproject.kaa.client.notification.NotificationManager;
+ 
 ...
 // Do subscription changes with parameter forceSync set to false
 kaaClient.subscribeToTopics(Arrays.asList("iOS 8 notifications", "another_optional_topic_id"), false);
@@ -574,18 +580,16 @@ kaaClient.syncTopicsList();
 
 ```c++
 #include <kaa/Kaa.hpp>
+ 
 ...
  
 // Subscribe to the list of topics and unsubscribe from one topic.
 // By setting the second parameter to false an endpoint postpones sending a subscription request till a user calls syncTopicSubscriptions().
- 
-kaaClient->subscribeOnTopics({"iOS 8 notifications", "another_optional_topic_id"}, false);
-kaaClient->unsubscribeFromTopic("boring_optional_topic_id", false);
-...
- 
-// Add notification listener(s) (optional)
+kaaClient->subscribeToTopics({1, 2}, false);
+kaaClient->unsubscribeFromTopic(1, false);
  
 ...
+ 
 // Sending a subscription request
 kaaClient->syncTopicSubscriptions();
 ```
@@ -648,6 +652,7 @@ As a result, the listener will receive notifications from all topics (all mandat
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.notification.NotificationListener;
 import org.kaaproject.kaa.schema.sample.notification.ExampleNotification;
+ 
 ...
 public class BasicNotificationListener implements NotificationListener {
  
@@ -671,18 +676,17 @@ kaaClient.removeNotificationListener(listener);
 #include <cstdint>
 #include <iostream>
 #include <memory>
- 
+#include <kaa/Kaa.hpp>
 #include <kaa/notification/INotificationListener.hpp>
  
-using namespace kaa;
- 
-class BasicNotificationListener : public INotificationListener {
+class BasicNotificationListener : public kaa::INotificationListener {
 public:
-    virtual void onNotification(const std::int64_t topicId, const KaaNotification& notification)
+    virtual void onNotification(const std::int64_t topicId, const kaa::KaaNotification& notification)
     {
         std::cout << "Received notification on topic: id '"<< topicId << "', message: " << notification.message << std::endl;
     }
 };
+ 
 ...
  
 // Creates the listener which receives notifications on all available topics.
@@ -755,6 +759,7 @@ To receive notifications on some specific topic (either mandatory or optional), 
 ```java
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.schema.sample.notification.Notification;
+ 
 ...
 BasicNotificationListener specificListener = new BasicNotificationListener();
 // Add listener
@@ -767,10 +772,7 @@ kaaClient.removeNotificationListener("All devices notifications", listener);
 </div><div id="C_plus_plus-13" class="tab-pane fade" markdown="1" >
 
 ```c++
-#include <iostream>
-#include <string>
 #include <memory>
- 
 #include <kaa/Kaa.hpp>
  
 ...
@@ -779,10 +781,10 @@ kaaClient.removeNotificationListener("All devices notifications", listener);
 std::unique_ptr<BasicNotificationListener> listener(new BasicNotificationListener());
  
 // Add listener
-kaaClient->addNotificationListener("All devices notifications", *listener);
+kaaClient->addNotificationListener(1, *listener);
  
 // Remove listener
-kaaClient->removeNotificationListener("All devices notifications", *listener);
+kaaClient->removeNotificationListener(1, *listener);
 ```
 
 </div><div id="C-13" class="tab-pane fade" markdown="1" >

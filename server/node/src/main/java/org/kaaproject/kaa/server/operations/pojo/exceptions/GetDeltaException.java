@@ -17,33 +17,35 @@
 package org.kaaproject.kaa.server.operations.pojo.exceptions;
 
 /**
- * Class for modeling exception of delta request.
- * It is used to communicate with {@link org.kaaproject.kaa.server.operations.service.delta.DeltaService DeltaService}
+ * Class for modeling exception of delta request. It is used to communicate with {@link
+ * org.kaaproject.kaa.server.operations.service.delta.DeltaService DeltaService}
  *
  * @author ashvayka
  */
 public class GetDeltaException extends Exception {
-    
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
 
-    /**
-     * Instantiates a new delta exception.
-     *
-     * @param message the message
-     */
-    public GetDeltaException(String message){
-        super(message);
-    }
-    
-    /**
-     * Instantiates a new delta exception.
-     *
-     * @param e the e
-     */
-    public GetDeltaException(Exception e){
-        super(e);
-    }
+  /**
+   * The Constant serialVersionUID.
+   */
+  private static final long serialVersionUID = 1L;
 
-    
+  /**
+   * Instantiates a new delta exception.
+   *
+   * @param message the message
+   */
+  public GetDeltaException(String message) {
+    super(message);
+  }
+
+  /**
+   * Instantiates a new delta exception.
+   *
+   * @param ex exception
+   */
+  public GetDeltaException(Exception ex) {
+    super(ex);
+  }
+
+
 }

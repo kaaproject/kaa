@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.common.core.algorithms.delta;
 
-import java.io.IOException;
-
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
+
+import java.io.IOException;
 
 /**
  * Performs total list of deltas from given old and new configurations.
@@ -27,25 +27,26 @@ import org.kaaproject.kaa.server.common.core.configuration.BaseData;
  */
 public interface DeltaCalculationAlgorithm {
 
-    /**
-     * Calculates delta merging new and old configurations.
-     *
-     * @param oldConfiguration old configuration data (binary)
-     * @param newConfigurationBody the new configuration body (binary)
-     * @return the raw binary delta
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws DeltaCalculatorException the delta calculator exception
-     */
-    RawBinaryDelta calculate(BaseData endpointConfiguration, BaseData newConfigurationBody)
-            throws IOException, DeltaCalculatorException;
+  /**
+   * Calculates delta merging new and old configurations.
+   *
+   * @param endpointConfiguration     old configuration data (binary)
+   * @param newConfigurationBody the new configuration body (binary)
+   * @return the raw binary delta
+   * @throws IOException              Signals that an I/O exception has occurred.
+   * @throws DeltaCalculatorException the delta calculator exception
+   */
+  RawBinaryDelta calculate(BaseData endpointConfiguration, BaseData newConfigurationBody)
+      throws IOException, DeltaCalculatorException;
 
-    /**
-     * Calculates delta using only new configuration (no merging).
-     *
-     * @param newConfigurationBody the new configuration body (binary)
-     * @return the raw binary delta
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws DeltaCalculatorException the delta calculator exception
-     */
-    RawBinaryDelta calculate(BaseData newConfigurationBody) throws IOException, DeltaCalculatorException;
+  /**
+   * Calculates delta using only new configuration (no merging).
+   *
+   * @param newConfigurationBody the new configuration body (binary)
+   * @return the raw binary delta
+   * @throws IOException              Signals that an I/O exception has occurred.
+   * @throws DeltaCalculatorException the delta calculator exception
+   */
+  RawBinaryDelta calculate(BaseData newConfigurationBody)
+          throws IOException, DeltaCalculatorException;
 }

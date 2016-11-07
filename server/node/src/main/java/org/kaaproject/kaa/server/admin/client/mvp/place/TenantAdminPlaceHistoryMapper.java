@@ -30,6 +30,5 @@ import com.google.gwt.place.shared.WithTokenizers;
     EventClassPlace.Tokenizer.class,
     TenantCtlSchemasPlace.Tokenizer.class,
     CtlSchemaPlace.Tokenizer.class})
-public interface TenantAdminPlaceHistoryMapper extends PlaceHistoryMapper
-{
+public interface TenantAdminPlaceHistoryMapper extends PlaceHistoryMapper {
 }
