@@ -31,13 +31,18 @@
 #include "utilities/kaa_mem.h"
 #include "platform/ext_transport_channel.h"
 #include "platform/ext_tcp_utils.h"
+#include "platform/ext_key_utils.h"
+#include "platform/ext_encryption_utils.h"
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "kaa_protocols/kaa_tcp/kaatcp_request.h"
+#include "extensions/bootstrap/kaa_bootstrap_manager.h"
 #include <kaa_common.h>
 
 #define ACCESS_POINT_SOCKET_FD 5
+#define EXPECTED_KEEPALIVE              200
+#define EXPECTED_PROTOCOL_ID            0x3553c66f
+#define EXPECTED_PROTOCOL_VERSION       1
 
-#define KEEPALIVE 1000
 
 typedef struct {
     bool        gethostbyaddr_requested; //
@@ -75,9 +80,6 @@ static kaa_logger_t *logger = NULL;
 static uint8_t CONNACK[] = {0x20, 0x02, 0x00, 0x01};
 
 static uint8_t DISCONNECT_NONE[] = {0xE0, 0x02, 0x00, 0x00};
-
-static uint8_t KAASYNC_OP_SERV[] = {0xf0, 0x0e, 0x00, 0x06, 'K', 'a','a','t','c','p',
-                                 0x01, 0x00, 0x00, 0x11, 0x34, 0x45};
 
 static uint8_t KAASYNC_OP[] = {0xF0, 0x13, 0x00, 0x06, 'K', 'a','a','t','c','p',
                                    0x01, 0x00, 0x01, 0x10, 'K', 'a','a','t','c','p', 0x00};
@@ -132,6 +134,28 @@ static uint8_t CONNECTION_DATA[]   = { 0x00, 0x00, 0x01, 0x26, 0x30, 0x82, 0x01,
                                     0x00, 0x01, 0x00, 0x00, 0x00, 0x0C, 0x31, 0x39,
                                     0x32, 0x2E, 0x31, 0x36, 0x38, 0x2E, 0x37, 0x37,
                                     0x2E, 0x32, 0x00, 0x00, 0x26, 0xA0};
+                                    
+                                    
+#ifdef KAA_ENCRYPTION
+                             
+static uint8_t KAASYNC_OP_SERV_ENCRYPTED[] = { 
+    0xF0, 0x1C, 0x00, 0x06,  'K',  'a',  'a',  't',  'c',  'p', 0x01, 0x00, 0x00, 0x15, 0x34, 
+    0x45, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+#define KAASYNC_OP_SERV_DATA_OFFSET     14
+#define KAASYNC_OP_SERV_DATA_SIZE       2
+
+#else //KAA_ENCRYPTION
+
+static uint8_t KAASYNC_OP_SERV[] = { 0xf0, 0x0e, 0x00, 0x06, 'K', 'a','a','t','c','p', 0x01, 0x00, 0x00, 0x11, 0x34, 0x45 };
+
+#endif //KAA_ENCRYPTION                                    
+                                    
+static uint8_t *g_connect_sync_request;
+static size_t g_connect_sync_request_size;
+static uint8_t *g_kaasync_op_serv;
+static size_t g_kaasync_op_serv_size;
 
 kaa_error_t kaa_tcp_channel_event_callback_fn(void *context, kaa_tcp_channel_event_t event_type, kaa_fd_t fd);
 void test_set_access_point(kaa_transport_channel_interface_t *channel);
@@ -187,7 +211,7 @@ void test_create_kaa_tcp_channel(void **state)
     ASSERT_EQUAL(protocol_info.id, 0x56c8ff92);
     ASSERT_EQUAL(protocol_info.version, 1);
 
-    kaa_extension_id *r_supported_services;
+    const kaa_extension_id *r_supported_services = NULL;
     size_t r_supported_service_count = 0;
     error_code = channel->get_supported_services(channel->context, &r_supported_services, &r_supported_service_count);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
@@ -595,11 +619,13 @@ void test_set_access_point(kaa_transport_channel_interface_t *channel)
 
 kaa_error_t kaa_bootstrap_manager_on_access_point_failed(kaa_bootstrap_manager_t *self
                                                        , kaa_transport_protocol_id_t *protocol_id
-                                                       , kaa_server_type_t type)
+                                                       , kaa_server_type_t type
+                                                       , kaa_failover_reason failover_reason)
 {
     (void)self;
+    ASSERT_EQUAL(failover_reason, KAA_CHANNEL_NA);
     ASSERT_EQUAL(protocol_id->id, 0x56c8ff92);
-    ASSERT_EQUAL(protocol_id->version, 1);
+    ASSERT_EQUAL(protocol_id->version, EXPECTED_PROTOCOL_VERSION);
     ASSERT_EQUAL(type, KAA_SERVER_OPERATIONS);
     access_point_test_info.bootstrap_manager_on_access_point_failed  = true;
     return KAA_ERR_NONE;
@@ -635,17 +661,17 @@ kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
     if (message->protocol_version != PROTOCOL_VERSION) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (message->next_ptorocol_id != 0x3553c66f) {
+    if (message->next_ptorocol_id != EXPECTED_PROTOCOL_ID) {
         return KAATCP_ERR_BAD_PARAM;
     }
     if (message->connect_flags != KAA_CONNECT_FLAGS) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (message->keep_alive != (KEEPALIVE * 1.2)) {
+    if (message->keep_alive != EXPECTED_KEEPALIVE) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (message->sync_request && message->sync_request_size == sizeof(CONNECT_PACK)) {
-        if (!memcmp(CONNECT_PACK, message->sync_request, message->sync_request_size)) {
+    if (message->sync_request && message->sync_request_size == g_connect_sync_request_size) {
+        if (!memcmp(g_connect_sync_request, message->sync_request, message->sync_request_size)) {
             *buf_size = 0;
             memcpy(buf, CONNECT_HEAD, sizeof(CONNECT_HEAD));
             *buf_size += sizeof(CONNECT_HEAD);
@@ -664,14 +690,18 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
                                          , char *signature, size_t signature_size
                                          , kaatcp_connect_t *message)
 {
-    if (keepalive != (KEEPALIVE * 1.2)) {
+    if (keepalive != EXPECTED_KEEPALIVE) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (next_protocol_id != 0x3553c66f) {
+    if (next_protocol_id != EXPECTED_PROTOCOL_ID) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (sync_request && sync_request_size == sizeof(CONNECT_PACK)) {
-        if (!memcmp(CONNECT_PACK, sync_request, sync_request_size)) {
+    if (sync_request == NULL) {
+        return KAA_ERR_BADPARAM;
+    }
+        
+    if (sync_request_size == g_connect_sync_request_size) {
+        if (!memcmp(g_connect_sync_request, sync_request, sync_request_size)) {
             memset(message, 0, sizeof(kaatcp_connect_t));
 
             message->protocol_name_length = KAA_TCP_NAME_LENGTH;
@@ -707,7 +737,7 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
 }
 
 kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *self
-                                                    , const char *buffer
+                                                    , const uint8_t *buffer
                                                     , size_t buffer_size)
 {
     (void)self;
@@ -722,24 +752,22 @@ kaa_error_t kaa_platform_protocol_process_server_sync(kaa_platform_protocol_t *s
 }
 
 kaa_error_t kaa_platform_protocol_alloc_serialize_client_sync(kaa_platform_protocol_t *self,
-        const extension_id *services, size_t services_count,
-        char **buffer, size_t *buffer_size)
+        const kaa_extension_id *services, size_t services_count,
+        uint8_t **buffer, size_t *buffer_size)
 {
-
-    if (services_count == 4
-            && services[0] == KAA_EXTENSION_PROFILE
-            && services[1] == KAA_EXTENSION_USER
-            && services[2] == KAA_EXTENSION_EVENT
-            && services[3] == KAA_EXTENSION_LOGGING) {
-        char *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
-        if (alloc_buffer) {
-            memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
-            *buffer = alloc_buffer;
-            *buffer_size = sizeof(CONNECT_PACK);
-            return KAA_ERR_NONE;
-        }
+    (void)self;
+    
+    ASSERT_EQUAL(services_count > 0, true);
+    ASSERT_NOT_NULL(services);
+    
+    uint8_t *alloc_buffer = KAA_MALLOC(sizeof(CONNECT_PACK));
+    if (alloc_buffer) {
+        memcpy(alloc_buffer, CONNECT_PACK, sizeof(CONNECT_PACK));
+        *buffer = alloc_buffer;
+        *buffer_size = sizeof(CONNECT_PACK);
+        return KAA_ERR_NONE;
     }
-
+        
     return KAA_ERR_BADPARAM;
 }
 
@@ -856,23 +884,24 @@ ext_tcp_socket_io_errors_t ext_tcp_utils_tcp_socket_write(kaa_fd_t fd, const cha
     }
 
     if (access_point_test_info.kaasync_read_scenario) {
-        if (!memcmp(buffer, KAASYNC_OP_SERV, sizeof(KAASYNC_OP_SERV))) {
+        if (buffer_size == g_kaasync_op_serv_size
+            && !memcmp(buffer, g_kaasync_op_serv, g_kaasync_op_serv_size)) {
             access_point_test_info.kaasync_write = true;
-            *bytes_written = sizeof(KAASYNC_OP_SERV);
+            *bytes_written = g_kaasync_op_serv_size;
             return KAA_TCP_SOCK_IO_OK;
         }
 
         *bytes_written = buffer_size;
         return KAA_TCP_SOCK_IO_OK;
     } else if (!access_point_test_info.auth_packet_written) {
-        if (buffer_size != (sizeof(CONNECT_HEAD) + sizeof(CONNECT_PACK))) {
+        if (buffer_size != (sizeof(CONNECT_HEAD) + g_connect_sync_request_size)) {
             return KAA_TCP_SOCK_IO_ERROR;
         }
         *bytes_written = 0;
         if (!memcmp(buffer, CONNECT_HEAD, sizeof(CONNECT_HEAD))) {
-            if (!memcmp(buffer+sizeof(CONNECT_HEAD), CONNECT_PACK, sizeof(CONNECT_PACK))) {
+            if (!memcmp(buffer+sizeof(CONNECT_HEAD), g_connect_sync_request, g_connect_sync_request_size)) {
                 access_point_test_info.auth_packet_written = true;
-                *bytes_written = sizeof(CONNECT_HEAD) + sizeof(CONNECT_PACK);
+                *bytes_written = sizeof(CONNECT_HEAD) + g_connect_sync_request_size;
                 return KAA_TCP_SOCK_IO_OK;
             }
         }
@@ -910,13 +939,41 @@ int test_init(void)
     kaa_error_t error = kaa_log_create(&logger, KAA_MAX_LOG_MESSAGE_LENGTH, KAA_MAX_LOG_LEVEL, NULL);
     if (error || !logger)
         return error;
-
-
+    
+#ifdef KAA_ENCRYPTION
+    kaa_init_rsa_keypair();
+    
+    g_connect_sync_request_size = ext_get_encrypted_data_size(sizeof(CONNECT_PACK));
+    g_connect_sync_request = KAA_MALLOC(g_connect_sync_request_size);
+    if (g_connect_sync_request == NULL) {
+        return -1;
+    }
+    ext_encrypt_data(CONNECT_PACK, sizeof(CONNECT_PACK), g_connect_sync_request);
+    
+    g_kaasync_op_serv_size = sizeof(KAASYNC_OP_SERV_ENCRYPTED);
+    g_kaasync_op_serv = KAASYNC_OP_SERV_ENCRYPTED;
+    uint8_t *pdata = KAASYNC_OP_SERV_ENCRYPTED + KAASYNC_OP_SERV_DATA_OFFSET;
+    ext_encrypt_data(pdata, KAASYNC_OP_SERV_DATA_SIZE, pdata);
+#else
+    g_connect_sync_request_size = sizeof(CONNECT_PACK);
+    g_connect_sync_request = CONNECT_PACK;
+    
+    g_kaasync_op_serv_size = sizeof(KAASYNC_OP_SERV);
+    g_kaasync_op_serv = KAASYNC_OP_SERV;
+#endif
+    
     return 0;
 }
 
 int test_deinit(void)
 {
+#ifdef KAA_ENCRYPTION
+    kaa_deinit_rsa_keypair();
+    KAA_FREE(g_connect_sync_request);
+    g_connect_sync_request = NULL;
+    g_connect_sync_request_size = 0;
+#endif
+    
     kaa_log_destroy(logger);
     return 0;
 }
