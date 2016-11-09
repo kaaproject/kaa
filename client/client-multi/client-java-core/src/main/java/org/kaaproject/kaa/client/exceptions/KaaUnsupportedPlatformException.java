@@ -18,10 +18,10 @@ package org.kaaproject.kaa.client.exceptions;
 
 public class KaaUnsupportedPlatformException extends KaaRuntimeException {
 
-    private static final long serialVersionUID = -3654602596040528863L;
+  private static final long serialVersionUID = -3654602596040528863L;
 
-    public KaaUnsupportedPlatformException(Exception cause) {
-        super(cause);
-    }
+  public KaaUnsupportedPlatformException(Exception cause) {
+    super(cause);
+  }
 
 }

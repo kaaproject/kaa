@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Rest log appender
+title: REST log appender
 permalink: /:path/
 nav: /:path/Programming-guide/Key-platform-features/Data-collection/Rest-log-appender
 sort_idx: 90
@@ -17,7 +17,7 @@ The REST log appender is responsible for transferring logs from Operations servi
 
 # Creating REST log appender with Admin UI
 
-The easiest way to create a Cassandra log appender for your application is by using Admin UI.
+The easiest way to create REST log appender for your application is by using Admin UI.
 
 To create a log appender, do the following:
 
@@ -38,7 +38,7 @@ The following example illustrates how to create the REST log appender via Admin 
 ## Configuration
 
 The Admin REST log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc) Avro schema.
 
 Parameters for defining REST log appender:
 

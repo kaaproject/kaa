@@ -16,81 +16,80 @@
 
 package org.kaaproject.kaa.server.common;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.Session;
+
 import org.cassandraunit.BaseCassandraUnit;
 import org.cassandraunit.CQLDataLoader;
 import org.cassandraunit.dataset.CQLDataSet;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
-
 public class CustomCassandraCQLUnit extends BaseCassandraUnit {
-    private CQLDataSet dataSet;
+  public Session session;
+  public Cluster cluster;
+  private CQLDataSet dataSet;
 
-    public Session session;
-    public Cluster cluster;
+  public CustomCassandraCQLUnit(CQLDataSet dataSet) {
+    this.dataSet = dataSet;
+  }
 
-    public CustomCassandraCQLUnit(CQLDataSet dataSet) {
-        this.dataSet = dataSet;
+  public CustomCassandraCQLUnit(CQLDataSet dataSet, int readTimeoutMillis) {
+    this.dataSet = dataSet;
+    this.readTimeoutMillis = readTimeoutMillis;
+  }
+
+  public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName) {
+    this(dataSet);
+    this.configurationFileName = configurationFileName;
+  }
+
+  public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, int readTimeoutMillis) {
+    this(dataSet);
+    this.configurationFileName = configurationFileName;
+    this.readTimeoutMillis = readTimeoutMillis;
+  }
+
+  public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, long startUpTimeoutMillis) {
+    super(startUpTimeoutMillis);
+    this.dataSet = dataSet;
+    this.configurationFileName = configurationFileName;
+  }
+
+  public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, long startUpTimeoutMillis, int readTimeoutMillis) {
+    super(startUpTimeoutMillis);
+    this.dataSet = dataSet;
+    this.configurationFileName = configurationFileName;
+    this.readTimeoutMillis = readTimeoutMillis;
+  }
+
+  @Override
+  protected void load() {
+    String hostIp = EmbeddedCassandraServerHelper.getHost();
+    int port = EmbeddedCassandraServerHelper.getNativeTransportPort();
+    cluster = new Cluster.Builder().addContactPoints(hostIp).withPort(port).withSocketOptions(getSocketOptions())
+        .build();
+    session = cluster.connect();
+    CQLDataLoader dataLoader = new CQLDataLoader(session);
+    dataLoader.load(dataSet);
+    session = dataLoader.getSession();
+  }
+
+  @Override
+  protected void after() {
+    super.after();
+    try (Cluster c = cluster; Session s = session) {
+      session = null;
+      cluster = null;
     }
+  }
 
-    public CustomCassandraCQLUnit(CQLDataSet dataSet, int readTimeoutMillis) {
-        this.dataSet = dataSet;
-        this.readTimeoutMillis = readTimeoutMillis;
-    }
+  // Getters for those who do not like to directly access fields
 
-    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName) {
-        this(dataSet);
-        this.configurationFileName = configurationFileName;
-    }
+  public Session getSession() {
+    return session;
+  }
 
-    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, int readTimeoutMillis) {
-        this(dataSet);
-        this.configurationFileName = configurationFileName;
-        this.readTimeoutMillis = readTimeoutMillis;
-    }
-
-    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, long startUpTimeoutMillis) {
-        super(startUpTimeoutMillis);
-        this.dataSet = dataSet;
-        this.configurationFileName = configurationFileName;
-    }
-
-    public CustomCassandraCQLUnit(CQLDataSet dataSet, String configurationFileName, long startUpTimeoutMillis, int readTimeoutMillis) {
-        super(startUpTimeoutMillis);
-        this.dataSet = dataSet;
-        this.configurationFileName = configurationFileName;
-        this.readTimeoutMillis = readTimeoutMillis;
-    }
-
-    @Override
-    protected void load() {
-        String hostIp = EmbeddedCassandraServerHelper.getHost();
-        int port = EmbeddedCassandraServerHelper.getNativeTransportPort();
-        cluster = new Cluster.Builder().addContactPoints(hostIp).withPort(port).withSocketOptions(getSocketOptions())
-                .build();
-        session = cluster.connect();
-        CQLDataLoader dataLoader = new CQLDataLoader(session);
-        dataLoader.load(dataSet);
-        session = dataLoader.getSession();
-    }
-
-    @Override
-    protected void after() {
-        super.after();
-        try (Cluster c = cluster; Session s = session) {
-            session = null;
-            cluster = null;
-        }
-    }
-
-    // Getters for those who do not like to directly access fields
-
-    public Session getSession() {
-        return session;
-    }
-
-    public Cluster getCluster() {
-        return cluster;
-    }
+  public Cluster getCluster() {
+    return cluster;
+  }
 }

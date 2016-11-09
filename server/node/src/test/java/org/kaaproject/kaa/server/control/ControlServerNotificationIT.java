@@ -26,15 +26,15 @@ import org.kaaproject.kaa.common.dto.NotificationTypeDto;
  */
 public class ControlServerNotificationIT extends AbstractTestControlServer {
 
-    /**
-     * Send notification.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void sendNotification() throws Exception {
-        NotificationDto notification = sendNotification(null, null, NotificationTypeDto.SYSTEM);
-        Assert.assertNotNull(notification.getId());
-    }
+  /**
+   * Send notification.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void sendNotification() throws Exception {
+    NotificationDto notification = sendNotification(null, null, NotificationTypeDto.SYSTEM);
+    Assert.assertNotNull(notification.getId());
+  }
 
 }

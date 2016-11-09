@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.profile;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.AbstractRecordPanel;
 import org.kaaproject.kaa.server.admin.client.mvp.view.struct.BaseStructView;
@@ -23,32 +25,31 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.struct.ProfileFilterStruc
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
+public class ProfileFilterPanel extends AbstractRecordPanel<ProfileFilterDto, String> {
 
-public class ProfileFilterPanel extends AbstractRecordPanel<ProfileFilterDto, String>{
+  public ProfileFilterPanel(HasErrorMessage hasErrorMessage) {
+    super(hasErrorMessage);
+  }
 
-    public ProfileFilterPanel(HasErrorMessage hasErrorMessage) {
-        super(hasErrorMessage);
-    }
+  @Override
+  protected String bodyLabelText() {
+    return Utils.constants.filterBody();
+  }
 
-    @Override
-    protected String bodyLabelText() {
-        return Utils.constants.filterBody();
-    }
+  @Override
+  public void setReadOnly() {
+    setActiveReadOnly();
+    setInactiveReadOnly();
+  }
 
-    @Override
-    public void setReadOnly() {
-        setActiveReadOnly();
-        setInactiveReadOnly();
-    }
+  @Override
+  protected BaseStructView<ProfileFilterDto, String> createStructView(
+      HasErrorMessage hasErrorMessage) {
+    return new ProfileFilterStructView(hasErrorMessage);
+  }
 
-    @Override
-    protected BaseStructView<ProfileFilterDto, String> createStructView(HasErrorMessage hasErrorMessage) {
-        return new ProfileFilterStructView(hasErrorMessage);
-    }
-    
-    public HasClickHandlers getTestFilterButton() {
-        return ((ProfileFilterStructView)inactivePanel).getTestFilterButton();
-    }
+  public HasClickHandlers getTestFilterButton() {
+    return ((ProfileFilterStructView) inactivePanel).getTestFilterButton();
+  }
 
 }

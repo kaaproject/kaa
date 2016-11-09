@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.widget;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
@@ -39,6 +33,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SimpleKeyProvider;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MultiValueListBox<T> extends Composite implements
     Focusable, HasValue<List<T>>, HasEnabled,
     IsEditor<TakesValueEditor<List<T>>> {
@@ -55,6 +55,9 @@ public class MultiValueListBox<T> extends Composite implements
     this(renderer, new SimpleKeyProvider<T>());
   }
 
+  /**
+   * Instantiates a new MultiValueListBox.
+   */
   public MultiValueListBox(Renderer<T> renderer, ProvidesKey<T> keyProvider) {
     this.keyProvider = keyProvider;
     this.renderer = renderer;
@@ -64,15 +67,23 @@ public class MultiValueListBox<T> extends Composite implements
     getListBox().addChangeHandler(new ChangeHandler() {
       public void onChange(ChangeEvent event) {
         List<T> newValue = new ArrayList<>();
-        for (int i=0;i<values.size();i++) {
-            if (getListBox().isItemSelected(i)) {
-                newValue.add(values.get(i));
-            }
+        for (int i = 0; i < values.size(); i++) {
+          if (getListBox().isItemSelected(i)) {
+            newValue.add(values.get(i));
+          }
         }
         setValue(newValue, true);
       }
     });
   }
+
+  private static native void addItemWithTitle(Element element, String name, String value) /*-{
+      var opt = $doc.createElement("option");
+      opt.title = name;
+      opt.text = name;
+      opt.value = value;
+      element.options.add(opt);
+  }-*/;
 
   public HandlerRegistration addValueChangeHandler(ValueChangeHandler<List<T>> handler) {
     return addHandler(handler, ValueChangeEvent.getType());
@@ -93,8 +104,38 @@ public class MultiValueListBox<T> extends Composite implements
     return getListBox().getTabIndex();
   }
 
+  @Override
+  public void setTabIndex(int index) {
+    getListBox().setTabIndex(index);
+  }
+
   public List<T> getValue() {
     return value;
+  }
+
+  /**
+   * Set the value and display it in the select element. Add the value to the
+   * acceptable set if it is not already there.
+   */
+  public void setValue(List<T> value) {
+    setValue(value, false);
+  }
+
+  /**
+   * Set value.
+   */
+  public void setValue(List<T> value, boolean fireEvents) {
+    if (value == this.value || (this.value != null && this.value.equals(value))) {
+      return;
+    }
+
+    List<T> before = this.value;
+    this.value = value;
+    updateListBox();
+
+    if (fireEvents) {
+      ValueChangeEvent.fireIfNotEqual(this, before, value);
+    }
   }
 
   @Override
@@ -102,6 +143,16 @@ public class MultiValueListBox<T> extends Composite implements
     return getListBox().isEnabled();
   }
 
+  @Override
+  public void setEnabled(boolean enabled) {
+    getListBox().setEnabled(enabled);
+  }
+
+  /**
+   * Set acceptable values.
+   *
+   * @param newValues the new values
+   */
   public void setAcceptableValues(Collection<T> newValues) {
     values.clear();
     valueKeyToIndex.clear();
@@ -121,44 +172,12 @@ public class MultiValueListBox<T> extends Composite implements
   }
 
   @Override
-  public void setEnabled(boolean enabled) {
-    getListBox().setEnabled(enabled);
-  }
-
-  @Override
   public void setFocus(boolean focused) {
     getListBox().setFocus(focused);
   }
 
-  @Override
-  public void setTabIndex (int index) {
-    getListBox().setTabIndex(index);
-  }
-
-  /**
-   * Set the value and display it in the select element. Add the value to the
-   * acceptable set if it is not already there.
-   */
-  public void setValue(List<T> value) {
-    setValue(value, false);
-  }
-
-  public void setValue(List<T> value, boolean fireEvents) {
-    if (value == this.value || (this.value != null && this.value.equals(value))) {
-      return;
-    }
-
-    List<T> before = this.value;
-    this.value = value;
-    updateListBox();
-
-    if (fireEvents) {
-      ValueChangeEvent.fireIfNotEqual(this, before, value);
-    }
-  }
-  
   public List<T> getValues() {
-      return values;
+    return values;
   }
 
   private void addValue(T value) {
@@ -172,34 +191,26 @@ public class MultiValueListBox<T> extends Composite implements
     addListBoxItem(renderer.render(value));
     assert values.size() == getListBox().getItemCount();
   }
-  
+
   private void addListBoxItem(String item) {
-      addItemWithTitle(getListBox().getElement(), item, item);
+    addItemWithTitle(getListBox().getElement(), item, item);
   }
-  
-  private static native void addItemWithTitle(Element element, String name, String value) /*-{
-      var opt = $doc.createElement("option");
-      opt.title = name;
-      opt.text = name;
-      opt.value = value;
-      element.options.add(opt);
-  }-*/;
 
   private ListBox getListBox() {
     return (ListBox) getWidget();
   }
 
   private void updateListBox() {
-      if (value != null) {
-          for (T item : value) {
-              Object key = keyProvider.getKey(item);
-              Integer index = valueKeyToIndex.get(key);
-              if (index == null) {
-                  addValue(item);
-              }
-              index = valueKeyToIndex.get(key);
-              getListBox().setItemSelected(index, true);
-          }
+    if (value != null) {
+      for (T item : value) {
+        Object key = keyProvider.getKey(item);
+        Integer index = valueKeyToIndex.get(key);
+        if (index == null) {
+          addValue(item);
+        }
+        index = valueKeyToIndex.get(key);
+        getListBox().setItemSelected(index, true);
       }
+    }
   }
 }

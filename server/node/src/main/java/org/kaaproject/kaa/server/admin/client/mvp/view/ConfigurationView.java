@@ -16,16 +16,16 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
+import com.google.gwt.user.client.ui.HasValue;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
-import com.google.gwt.user.client.ui.HasValue;
-
 public interface ConfigurationView extends BaseRecordView<ConfigurationRecordFormDto, RecordField> {
-    
-    public VersionListBox getSchema();
 
-    public HasValue<String> getSchemaVersion();
+  public VersionListBox getSchema();
+
+  public HasValue<String> getSchemaVersion();
 
 }

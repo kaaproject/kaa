@@ -18,6 +18,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.tenant;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Label;
+
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
@@ -27,97 +30,93 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.user.UsersGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.Label;
-
 public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
 
-    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
-    
-    private SizedTextBox tenantName;
+  private static final String REQUIRED = Utils.avroUiStyle.requiredField();
 
-    private UsersGrid tenantAdminsGrid;
+  private SizedTextBox tenantName;
 
-    private Button tenantAdminAddButton;
+  private UsersGrid tenantAdminsGrid;
 
-    private Label lableUser;
+  private Button tenantAdminAddButton;
+
+  private Label lableUser;
 
 
-    public TenantViewImpl(boolean create) {
-        super(create);
+  public TenantViewImpl(boolean create) {
+    super(create);
+  }
+
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.addNewTenant();
+  }
+
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.tenant();
+  }
+
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.tenantDetails();
+  }
+
+  @Override
+  protected void initDetailsTable() {
+
+    tenantName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
+    tenantName.setWidth("100%");
+    tenantName.addInputHandler(this);
+    lableUser = new Label("Users");
+
+    Label titleLabel = new Label(Utils.constants.tenantName());
+    titleLabel.addStyleName(REQUIRED);
+    detailsTable.setWidget(0, 0, titleLabel);
+    detailsTable.setWidget(0, 1, tenantName);
+
+
+    tenantAdminsGrid = new UsersGrid(false, true);
+    tenantAdminsGrid.setWidth("100%");
+    tenantAdminsGrid.setSize("1000px", "400px");
+
+    detailsTable.getFlexCellFormatter().setColSpan(2, 0, 3);
+
+    tenantAdminAddButton = new Button(Utils.constants.addNewUser());
+    tenantAdminAddButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
+    tenantName.setFocus(true);
+    if (!create) {
+      detailsTable.setWidget(2, 0, tenantAdminsGrid);
+      detailsTable.setWidget(3, 3, tenantAdminAddButton);
+      detailsTable.setWidget(1, 0, lableUser);
     }
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.addNewTenant();
-    }
+  @Override
+  protected void resetImpl() {
+    tenantName.setValue("");
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.tenant();
-    }
+  @Override
+  protected boolean validate() {
+    boolean result = tenantName.getValue().length() > 2 && tenantName.getValue().length() < 255;
+    return result;
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.tenantDetails();
-    }
+  @Override
+  public HasValue<String> getTenantName() {
+    return tenantName;
+  }
 
-    @Override
-    protected void initDetailsTable() {
+  @Override
+  public AbstractGrid<UserDto, String> getTenantAdminsGrid() {
+    return tenantAdminsGrid;
+  }
 
-        tenantName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
-        tenantName.setWidth("100%");
-        tenantName.addInputHandler(this);
-        lableUser = new Label("Users");
-
-        Label titleLabel = new Label(Utils.constants.tenantName());
-        titleLabel.addStyleName(REQUIRED);
-        detailsTable.setWidget(0, 0, titleLabel);
-        detailsTable.setWidget(0, 1, tenantName);
-
-
-            tenantAdminsGrid = new UsersGrid(false, true);
-            tenantAdminsGrid.setWidth("100%");
-            tenantAdminsGrid.setSize("1000px", "400px");
-
-        detailsTable.getFlexCellFormatter().setColSpan(2, 0, 3);
-
-        tenantAdminAddButton  = new Button(Utils.constants.addNewUser());
-        tenantAdminAddButton.addStyleName(Utils.kaaAdminStyle.bAppButtonSmall());
-        tenantName.setFocus(true);
-        if(!create) {
-            detailsTable.setWidget(2,0,tenantAdminsGrid);
-            detailsTable.setWidget(3, 3, tenantAdminAddButton);
-            detailsTable.setWidget(1, 0, lableUser);
-        }
-    }
-
-    @Override
-    protected void resetImpl() {
-        tenantName.setValue("");
-    }
-
-    @Override
-    protected boolean validate() {
-        boolean result = tenantName.getValue().length()>2 && tenantName.getValue().length()<255;
-        return result;
-    }
-
-    @Override
-    public HasValue<String> getTenantName() {
-        return tenantName;
-    }
-
-    @Override
-    public AbstractGrid<UserDto, String> getTenantAdminsGrid() {
-        return  tenantAdminsGrid;
-    }
-
-    @Override
-    public HasClickHandlers getAddTenantAdminButton() {
-        return tenantAdminAddButton;
-    }
-
+  @Override
+  public HasClickHandlers getAddTenantAdminButton() {
+    return tenantAdminAddButton;
+  }
 
 
 }

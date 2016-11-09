@@ -20,98 +20,99 @@ import java.io.Serializable;
 
 public class HistoryDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = 8451794973218317603L;
+  private static final long serialVersionUID = 8451794973218317603L;
 
-    private String id;
-    private String applicationId;
-    private int sequenceNumber;
-    private ChangeDto change;
-    private long lastModifyTime;
+  private String id;
+  private String applicationId;
+  private int sequenceNumber;
+  private ChangeDto change;
+  private long lastModifyTime;
 
-    public String getId() {
-        return id;
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public int getSequenceNumber() {
+    return sequenceNumber;
+  }
+
+  public void setSequenceNumber(int sequenceNumber) {
+    this.sequenceNumber = sequenceNumber;
+  }
+
+  public ChangeDto getChange() {
+    return change;
+  }
+
+  public void setChange(ChangeDto change) {
+    this.change = change;
+  }
+
+  public long getLastModifyTime() {
+    return lastModifyTime;
+  }
+
+  public void setLastModifyTime(long lastModifyTime) {
+    this.lastModifyTime = lastModifyTime;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    HistoryDto that = (HistoryDto) obj;
+
+    if (lastModifyTime != that.lastModifyTime) {
+      return false;
+    }
+    if (sequenceNumber != that.sequenceNumber) {
+      return false;
+    }
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
+      return false;
+    }
+    if (change != null ? !change.equals(that.change) : that.change != null) {
+      return false;
     }
 
-    public String getApplicationId() {
-        return applicationId;
-    }
+    return true;
+  }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
-    }
+  @Override
+  public int hashCode() {
+    int result = applicationId != null ? applicationId.hashCode() : 0;
+    result = 31 * result + sequenceNumber;
+    result = 31 * result + (change != null ? change.hashCode() : 0);
+    result = 31 * result + (int) (lastModifyTime ^ (lastModifyTime >>> 32));
+    return result;
+  }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
-    }
-
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
-
-    public ChangeDto getChange() {
-        return change;
-    }
-
-    public void setChange(ChangeDto change) {
-        this.change = change;
-    }
-
-    public long getLastModifyTime() {
-        return lastModifyTime;
-    }
-
-    public void setLastModifyTime(long lastModifyTime) {
-        this.lastModifyTime = lastModifyTime;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        HistoryDto that = (HistoryDto) o;
-
-        if (lastModifyTime != that.lastModifyTime) {
-            return false;
-        }
-        if (sequenceNumber != that.sequenceNumber) {
-            return false;
-        }
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
-            return false;
-        }
-        if (change != null ? !change.equals(that.change) : that.change != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = applicationId != null ? applicationId.hashCode() : 0;
-        result = 31 * result + sequenceNumber;
-        result = 31 * result + (change != null ? change.hashCode() : 0);
-        result = 31 * result + (int) (lastModifyTime ^ (lastModifyTime >>> 32));
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "HistoryDto{" +
-                "id='" + id + '\'' +
-                ", applicationId='" + applicationId + '\'' +
-                ", sequenceNumber=" + sequenceNumber +
-                ", change=" + change +
-                ", lastModifyTime=" + lastModifyTime +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "HistoryDto{"
+           + "id='" + id + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", sequenceNumber=" + sequenceNumber
+           + ", change=" + change
+           + ", lastModifyTime=" + lastModifyTime
+           + '}';
+  }
 }

@@ -50,233 +50,233 @@ import java.util.concurrent.Future;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
 
-    private static final String TEST_APPID = "1";
-    private static final String TEST_LIMIT = "3";
-    private static final String TEST_OFFSET = "0";
-    private static final int GENERATED_PROFILES_COUNT = 5;
+  private static final String TEST_APPID = "1";
+  private static final String TEST_LIMIT = "3";
+  private static final String TEST_OFFSET = "0";
+  private static final int GENERATED_PROFILES_COUNT = 5;
 
-    private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDaoTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDaoTest.class);
 
-    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
+  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
 
-    @Test
-    public void testFindByEndpointGroupId() throws Exception {
-        PageLinkDto pageLink = getPageLinkDto();
-        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
-        Assert.assertFalse(found.getEndpointProfiles().isEmpty());
-        int lim = Integer.valueOf(TEST_LIMIT);
-        Assert.assertEquals(lim, found.getEndpointProfiles().size());
-        pageLink.setApplicationId(TEST_APPID);
-        EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink);
-        Assert.assertFalse(foundbyAppId.getEndpointProfiles().isEmpty());
-        Assert.assertEquals(lim, foundbyAppId.getEndpointProfiles().size());
+  @Test
+  public void testFindByEndpointGroupId() throws Exception {
+    PageLinkDto pageLink = getPageLinkDto();
+    EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
+    Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+    int lim = Integer.valueOf(TEST_LIMIT);
+    Assert.assertEquals(lim, found.getEndpointProfiles().size());
+    pageLink.setApplicationId(TEST_APPID);
+    EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink);
+    Assert.assertFalse(foundbyAppId.getEndpointProfiles().isEmpty());
+    Assert.assertEquals(lim, foundbyAppId.getEndpointProfiles().size());
+  }
+
+  @Test
+  public void testFindByEndpointGroupIdWithNfGroupState() throws Exception {
+    PageLinkDto pageLink = getPageLinkDto();
+    EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
+    Assert.assertFalse(found.getEndpointProfiles().isEmpty());
+    int lim = Integer.valueOf(TEST_LIMIT);
+    Assert.assertEquals(lim, found.getEndpointProfiles().size());
+    pageLink.setApplicationId(TEST_APPID);
+    EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink);
+    Assert.assertFalse(foundbyAppId.getEndpointProfiles().isEmpty());
+    Assert.assertEquals(lim, foundbyAppId.getEndpointProfiles().size());
+  }
+
+  @Test
+  public void testFindBodyByEndpointGroupId() throws Exception {
+    PageLinkDto pageLink = getPageLinkDto();
+    EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+    Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
+    int lim = Integer.valueOf(TEST_LIMIT);
+    Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
+    pageLink.setApplicationId(TEST_APPID);
+    EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+    Assert.assertFalse(foundbyAppId.getEndpointProfilesBody().isEmpty());
+    Assert.assertEquals(lim, foundbyAppId.getEndpointProfilesBody().size());
+  }
+
+  @Test
+  public void testFindBodyByEndpointGroupIdWithNfGroupState() throws Exception {
+    PageLinkDto pageLink = getPageLinkDto();
+    EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+    Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
+    int lim = Integer.valueOf(TEST_LIMIT);
+    Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
+    pageLink.setApplicationId(TEST_APPID);
+    EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
+    Assert.assertFalse(foundbyAppId.getEndpointProfilesBody().isEmpty());
+    Assert.assertEquals(lim, foundbyAppId.getEndpointProfilesBody().size());
+  }
+
+  private PageLinkDto getPageLinkDto() {
+    List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
+    for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
+      endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID));
     }
+    String id = endpointProfileList.get(0).getGroupState().get(0).getEndpointGroupId();
+    return new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
+  }
 
-    @Test
-    public void testFindByEndpointGroupIdWithNfGroupState() throws Exception {
-        PageLinkDto pageLink = getPageLinkDto();
-        EndpointProfilesPageDto found = endpointProfileDao.findByEndpointGroupId(pageLink);
-        Assert.assertFalse(found.getEndpointProfiles().isEmpty());
-        int lim = Integer.valueOf(TEST_LIMIT);
-        Assert.assertEquals(lim, found.getEndpointProfiles().size());
-        pageLink.setApplicationId(TEST_APPID);
-        EndpointProfilesPageDto foundbyAppId = endpointProfileDao.findByEndpointGroupId(pageLink);
-        Assert.assertFalse(foundbyAppId.getEndpointProfiles().isEmpty());
-        Assert.assertEquals(lim, foundbyAppId.getEndpointProfiles().size());
+  @Test
+  public void testFindBodyByKeyHash() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null);
+    EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(expected.getEndpointKeyHash());
+    Assert.assertFalse(found.getClientSideProfile().isEmpty());
+    Assert.assertFalse(found.getServerSideProfile().isEmpty());
+    Assert.assertEquals(expected.getClientProfileBody(), found.getClientSideProfile());
+    Assert.assertEquals(expected.getServerProfileBody(), found.getServerSideProfile());
+  }
+
+  @Test
+  public void testUpdate() throws Exception {
+    List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<>();
+    List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<>();
+    PageLinkDto pageLink;
+    EndpointProfilesPageDto found;
+    String endpointProfileId = "11";
+    EndpointGroupDto endpointGroupDto = new EndpointGroupDto();
+    endpointGroupDto.setWeight(1);
+    cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
+    cfGroupStateSave.add(new EndpointGroupStateDto("222", null, null));
+    cfGroupStateSave.add(new EndpointGroupStateDto("333", null, null));
+    byte[] keyHash = generateBytes();
+    EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, keyHash, cfGroupStateSave);
+    EndpointProfile saved = endpointProfileDao.save(endpointProfileSave);
+    cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
+    cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
+    EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, keyHash, cfGroupStateUpdate);
+    endpointProfileUpdate.setVersion(saved.getVersion());
+    saved = endpointProfileDao.save(endpointProfileUpdate);
+    String limit = "10";
+    String offset = "0";
+    String[] endpointGroupId = {"111", "444", "222", "333"};
+    for (int i = 0; i < 2; i++) {
+      pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
+      found = endpointProfileDao.findByEndpointGroupId(pageLink);
+      Assert.assertFalse(found.getEndpointProfiles().isEmpty());
     }
-
-    @Test
-    public void testFindBodyByEndpointGroupId() throws Exception {
-        PageLinkDto pageLink = getPageLinkDto();
-        EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
-        Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
-        int lim = Integer.valueOf(TEST_LIMIT);
-        Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
-        pageLink.setApplicationId(TEST_APPID);
-        EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
-        Assert.assertFalse(foundbyAppId.getEndpointProfilesBody().isEmpty());
-        Assert.assertEquals(lim, foundbyAppId.getEndpointProfilesBody().size());
+    for (int i = 2; i < 4; i++) {
+      pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
+      found = endpointProfileDao.findByEndpointGroupId(pageLink);
+      Assert.assertTrue(found.getEndpointProfiles().isEmpty());
     }
+  }
 
-    @Test
-    public void testFindBodyByEndpointGroupIdWithNfGroupState() throws Exception {
-        PageLinkDto pageLink = getPageLinkDto();
-        EndpointProfilesBodyDto found = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
-        Assert.assertFalse(found.getEndpointProfilesBody().isEmpty());
-        int lim = Integer.valueOf(TEST_LIMIT);
-        Assert.assertEquals(lim, found.getEndpointProfilesBody().size());
-        pageLink.setApplicationId(TEST_APPID);
-        EndpointProfilesBodyDto foundbyAppId = endpointProfileDao.findBodyByEndpointGroupId(pageLink);
-        Assert.assertFalse(foundbyAppId.getEndpointProfilesBody().isEmpty());
-        Assert.assertEquals(lim, foundbyAppId.getEndpointProfilesBody().size());
-    }
+  @Test
+  public void testSave() throws Exception {
+    EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
+    EndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
+    Assert.assertEquals(endpointProfile, found.toDto());
+  }
 
-    private PageLinkDto getPageLinkDto() {
-        List<EndpointProfileDto> endpointProfileList = new ArrayList<>();
-        for (int i = 0; i < GENERATED_PROFILES_COUNT; i++) {
-            endpointProfileList.add(generateEndpointProfileWithEndpointGroupId(TEST_APPID));
+  @Test
+  public void testFindByKeyHash() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
+    EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+    Assert.assertEquals(expected, found.toDto());
+  }
+
+  @Test
+  public void testFindEndpointIdByKeyHash() throws Exception {
+    EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
+    EndpointProfile ep = endpointProfileDao.findEndpointIdByKeyHash(endpointProfile.getEndpointKeyHash());
+    Assert.assertEquals(endpointProfile.getId(), ep.getId());
+    Assert.assertNull(endpointProfile.getEndpointKey());
+    Assert.assertNull(ep.getEndpointKey());
+    Assert.assertNull(ep.getEndpointUserId());
+    Assert.assertNull(ep.getSubscriptions());
+  }
+
+  @Test(expected = KaaOptimisticLockingFailureException.class)
+  public void testOptimisticLockWithConcurrency() throws Throwable {
+    final EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
+    List<Future<?>> tasks = new ArrayList<>();
+    for (int i = 0; i < 100; i++) {
+      final int id = i;
+      tasks.add(EXECUTOR.submit(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            CassandraEndpointProfile ep = new CassandraEndpointProfile(endpointProfile);
+            ep.setEndpointUserId("Ololo " + id);
+            endpointProfileDao.save(ep.toDto());
+          } catch (KaaOptimisticLockingFailureException ex) {
+            LOG.error("Catch optimistic exception.");
+            throw ex;
+          }
         }
-        String id = endpointProfileList.get(0).getGroupState().get(0).getEndpointGroupId();
-        return new PageLinkDto(id, TEST_LIMIT, TEST_OFFSET);
+      }));
     }
+    for (Future future : tasks) {
+      try {
+        future.get();
+      } catch (ExecutionException ex) {
+        throw ex.getCause();
+      }
+    }
+  }
 
-    @Test
-    public void testFindBodyByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfileWithEndpointGroupId(null);
-        EndpointProfileBodyDto found = endpointProfileDao.findBodyByKeyHash(expected.getEndpointKeyHash());
-        Assert.assertFalse(found.getClientSideProfile().isEmpty());
-        Assert.assertFalse(found.getServerSideProfile().isEmpty());
-        Assert.assertEquals(expected.getClientProfileBody(), found.getClientSideProfile());
-        Assert.assertEquals(expected.getServerProfileBody(), found.getServerSideProfile());
-    }
+  @Test
+  public void testRemoveByKeyHash() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
+    endpointProfileDao.removeByKeyHash(expected.getEndpointKeyHash());
+    EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+    Assert.assertNull(found);
+  }
 
-    @Test
-    public void testUpdate() throws Exception {
-        List<EndpointGroupStateDto> cfGroupStateSave = new ArrayList<>();
-        List<EndpointGroupStateDto> cfGroupStateUpdate = new ArrayList<>();
-        PageLinkDto pageLink;
-        EndpointProfilesPageDto found;
-        String endpointProfileId = "11";
-        EndpointGroupDto endpointGroupDto = new EndpointGroupDto();
-        endpointGroupDto.setWeight(1);
-        cfGroupStateSave.add(new EndpointGroupStateDto("111", null, null));
-        cfGroupStateSave.add(new EndpointGroupStateDto("222", null, null));
-        cfGroupStateSave.add(new EndpointGroupStateDto("333", null, null));
-        byte[] keyHash = generateBytes();
-        EndpointProfileDto endpointProfileSave = generateEndpointProfileForTestUpdate(null, keyHash, cfGroupStateSave);
-        EndpointProfile saved = endpointProfileDao.save(endpointProfileSave);
-        cfGroupStateUpdate.add(new EndpointGroupStateDto("111", null, null));
-        cfGroupStateUpdate.add(new EndpointGroupStateDto("444", null, null));
-        EndpointProfileDto endpointProfileUpdate = generateEndpointProfileForTestUpdate(endpointProfileId, keyHash, cfGroupStateUpdate);
-        endpointProfileUpdate.setVersion(saved.getVersion());
-        saved = endpointProfileDao.save(endpointProfileUpdate);
-        String limit = "10";
-        String offset = "0";
-        String[] endpointGroupId = {"111", "444", "222", "333"};
-        for (int i = 0; i < 2; i++) {
-            pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
-            found = endpointProfileDao.findByEndpointGroupId(pageLink);
-            Assert.assertFalse(found.getEndpointProfiles().isEmpty());
-        }
-        for (int i = 2; i < 4; i++) {
-            pageLink = new PageLinkDto(endpointGroupId[i], limit, offset);
-            found = endpointProfileDao.findByEndpointGroupId(pageLink);
-            Assert.assertTrue(found.getEndpointProfiles().isEmpty());
-        }
-    }
+  @Test
+  public void testRemoveById() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
+    endpointProfileDao.removeById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
+    EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+    Assert.assertNull(found);
+  }
 
-    @Test
-    public void testSave() throws Exception {
-        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
-        EndpointProfile found = endpointProfileDao.findByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(endpointProfile, found.toDto());
-    }
+  @Test
+  public void testRemoveByIdNullKey() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
+    EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
+    Assert.assertNotNull(found);
+  }
 
-    @Test
-    public void testFindByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
-        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
-        Assert.assertEquals(expected, found.toDto());
-    }
+  @Test
+  public void testFindById() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
+    EndpointProfile found = endpointProfileDao.findById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
+    Assert.assertEquals(expected, found.toDto());
+  }
 
-    @Test
-    public void testFindEndpointIdByKeyHash() throws Exception {
-        EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
-        EndpointProfile ep = endpointProfileDao.findEndpointIdByKeyHash(endpointProfile.getEndpointKeyHash());
-        Assert.assertEquals(endpointProfile.getId(), ep.getId());
-        Assert.assertNull(endpointProfile.getEndpointKey());
-        Assert.assertNull(ep.getEndpointKey());
-        Assert.assertNull(ep.getEndpointUserId());
-        Assert.assertNull(ep.getSubscriptions());
-    }
+  @Test
+  public void testFindByIdNullKey() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
+    EndpointProfile found = endpointProfileDao.findById(null);
+    Assert.assertNull(found);
+  }
 
-    @Test(expected = KaaOptimisticLockingFailureException.class)
-    public void testOptimisticLockWithConcurrency() throws Throwable {
-        final EndpointProfileDto endpointProfile = generateEndpointProfile(null, null, null, null);
-        List<Future<?>> tasks = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            final int id = i;
-            tasks.add(EXECUTOR.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        CassandraEndpointProfile ep = new CassandraEndpointProfile(endpointProfile);
-                        ep.setEndpointUserId("Ololo " + id);
-                        endpointProfileDao.save(ep.toDto());
-                    } catch (KaaOptimisticLockingFailureException ex) {
-                        LOG.error("Catch optimistic exception.");
-                        throw ex;
-                    }
-                }
-            }));
-        }
-        for (Future future : tasks) {
-            try {
-                future.get();
-            } catch (ExecutionException ex) {
-                throw ex.getCause();
-            }
-        }
-    }
+  @Test
+  public void testFindByAccessToken() throws Exception {
+    EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
+    EndpointProfile found = endpointProfileDao.findByAccessToken(expected.getAccessToken());
+    Assert.assertEquals(expected, found.toDto());
+  }
 
-    @Test
-    public void testRemoveByKeyHash() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
-        endpointProfileDao.removeByKeyHash(expected.getEndpointKeyHash());
-        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
-        Assert.assertNull(found);
-    }
+  @Test
+  public void testFindByEndpointUserId() throws Exception {
+    EndpointProfileDto endpointProfileDto = generateEndpointProfile(null, null, null, null);
+    EndpointUserDto endpointUserDto = generateEndpointUser(Arrays.asList(endpointProfileDto.getId()));
+    List<CassandraEndpointProfile> found = endpointProfileDao.findByEndpointUserId(endpointUserDto.getId());
+    Assert.assertFalse(found.isEmpty());
+    Assert.assertEquals(endpointProfileDto, found.get(0).toDto());
+  }
 
-    @Test
-    public void testRemoveById() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
-        endpointProfileDao.removeById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
-        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
-        Assert.assertNull(found);
-    }
+  @Test
+  public void testCheckSdkToken() throws Exception {
+    generateEndpointProfile(null, "alpha", null, null);
+    Assert.assertTrue(endpointProfileDao.checkSdkToken("alpha"));
+    Assert.assertFalse(endpointProfileDao.checkSdkToken("beta"));
+  }
 
-    @Test
-    public void testRemoveByIdNullKey() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
-        EndpointProfile found = endpointProfileDao.findByKeyHash(expected.getEndpointKeyHash());
-        Assert.assertNotNull(found);
-    }
-
-    @Test
-    public void testFindById() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
-        EndpointProfile found = endpointProfileDao.findById(ByteBuffer.wrap(expected.getEndpointKeyHash()));
-        Assert.assertEquals(expected, found.toDto());
-    }
-
-    @Test
-    public void testFindByIdNullKey() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
-        EndpointProfile found = endpointProfileDao.findById(null);
-        Assert.assertNull(found);
-    }
-
-    @Test
-    public void testFindByAccessToken() throws Exception {
-        EndpointProfileDto expected = generateEndpointProfile(null, null, null, null);
-        EndpointProfile found = endpointProfileDao.findByAccessToken(expected.getAccessToken());
-        Assert.assertEquals(expected, found.toDto());
-    }
-
-    @Test
-    public void testFindByEndpointUserId() throws Exception {
-        EndpointProfileDto endpointProfileDto = generateEndpointProfile(null, null, null, null);
-        EndpointUserDto endpointUserDto = generateEndpointUser(Arrays.asList(endpointProfileDto.getId()));
-        List<CassandraEndpointProfile> found = endpointProfileDao.findByEndpointUserId(endpointUserDto.getId());
-        Assert.assertFalse(found.isEmpty());
-        Assert.assertEquals(endpointProfileDto, found.get(0).toDto());
-    }
-
-    @Test
-    public void testCheckSdkToken() throws Exception {
-        generateEndpointProfile(null, "alpha", null, null);
-        Assert.assertTrue(endpointProfileDao.checkSdkToken("alpha"));
-        Assert.assertFalse(endpointProfileDao.checkSdkToken("beta"));
-    }
- 
 }

@@ -16,20 +16,20 @@
 
 package org.kaaproject.kaa.server.appenders.kafka.appender;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.Future;
-
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Future;
+
 public interface LogEventDao {
 
-    List<Future<RecordMetadata>> save(List<KafkaLogEventDto> logEventDtoList,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-            Callback callback) throws IOException;
+  List<Future<RecordMetadata>> save(List<KafkaLogEventDto> logEventDtoList,
+                                    GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+                                    Callback callback) throws IOException;
 
-    void close();
+  void close();
 }

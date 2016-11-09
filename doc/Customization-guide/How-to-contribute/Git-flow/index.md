@@ -7,45 +7,67 @@ sort_idx: 10
 
 {% include variables.md %}
 
-We use a [GitHub flow](https://guides.github.com/introduction/flow/). That means, you should branch from the main repository and contribute back via pull requests. That's de facto standard workflow on GitHub.
+* TOC
+{:toc}
 
-## Branches
+To contribute to Kaa project on [GitHub](https://github.com/kaaproject/kaa), use the [GitHub flow](https://guides.github.com/introduction/flow/).
+In a nutshell, it means that you should branch from the main repository and contribute back by making [pull requests](https://help.github.com/articles/using-pull-requests/).
+That is a generally accepted process flow on GitHub.
 
-The `master` branch represents latest development version of Kaa. Most changes should go there.
+## Getting started
 
-There are also `release-x.x` branches, which are stabilizing branches used for releasing maintenance releases. (All actual releases are tagged.)
+To follow the instructions in this guide and start contributing to Kaa project on GitHub:
 
-If you want to backport a bug fix, open your pull request against the appropriate release branch.
+<ol>
+<li markdown="1">
+[Fork](https://help.github.com/articles/fork-a-repo/) the [Kaa main repository](https://github.com/kaaproject/kaa).
+</li>
 
-## Clonning
-
-The main Kaa repository is located here: <https://github.com/kaaproject/kaa>. To contribute to the Kaa you need to fork it (click fork button on the page), then clone your new repository:
+<li markdown="1">
+[Clone](https://help.github.com/articles/cloning-a-repository/) your new repository.
+To do this, run the following command.
 
 ```sh
-git clone git@github.com:<your_github_name>/kaa.git # Replace <your_github_name> with your github name.
+git clone git@github.com:<your_github_name>/kaa.git # Replace <your_github_name> with your GitHub profile name.
 cd kaa
 ```
+</li>
 
-You may need to sync with the main repository, so it's good to add it to remotes:
+<li markdown="1">
+To synchronize with the main repository, add it to the remotes.
 
 ```sh
 git remote add upstream https://github.com/kaaproject/kaa.git
 ```
 
-The rest of the guide assumes the above command was executed, so `upstream` points to `kaaproject/kaa`.
+Now your **upstream** points to **kaaproject/kaa**.
+
+</li>
+</ol>
+
+## Branches
+
+The **master** branch represents the latest development version of Kaa.
+Most changes should go there.
+
+The **release-x.x** branches are used as stabilizing branches for maintenance releases.
+All actual releases are tagged.
+
+If you want to backport a bug fix, open your pull request (PR) against the appropriate release branch.
 
 ## Merge requirements
 
 ### No merge conflicts
 
-Resolve any merge conflicts that may arise. (GitHub will display a warning on the pull request page.)
+Resolve any merge conflicts that may arise.
+If conflict occurs, a corresponding message will be displayed on the PR page on GitHub.
 
-You can do that with the following commands:
+To resolve a conflict, run the following commands.
 
 ```sh
 # checkout a branch you open PR from
 git fetch upstream # assuming upstream is kaaproject/kaa
-git merge upstream/merge_branch # Where merge_branch is a branch you open pull request against.
+git merge upstream/merge_branch # Where merge_branch is a branch you open PR against.
 # resolve pull requests
 git add changed_files
 git commit
@@ -54,16 +76,21 @@ git push
 
 GitHub will automatically update your pull request.
 
-### Tests
+### Testing
 
-All pull requests are automatically checked with Travis and Jenkins. If any of the tests fails, fix it or describe why that can't be done.
+All pull requests are automatically tested using [Travis](https://travis-ci.org/) and [Jenkins](https://jenkins.io/).
+In case some tests fail, fix the issues or describe why the fix cannot be done.
 
 ### Review
 
-The pull request must have at least two LGTM (Looks Good To Me) from the members of the team responsible for a changed component and should have no unresolved review questions.
+Every pull request is reviewed by the assigned team members as per standard [GitHub procedure](https://help.github.com/articles/about-pull-request-reviews/).
+Reviewers can comment on a PR, approve it, or request changes to it.
+A PR can be merged when it is approved by at least two assigned reviewers and has no pending requests for changes.
 
 ## Gatekeepers
 
-Gatekeeper is a person who is responsible for the final review and merge; he is also responsible for managing git repositories. That is the only person who can write to master and release branches.
+Gatekeeper is a person responsible for the final review and merge.
+They are also responsible for managing Git repositories.
+Only gatekeepers can write to **master** and release branches.
 
-If the pull request satisfies all merge requirements, one of gatekeepers should do a final review and merge.
+If a pull request meets all merge requirements, one of the gatekeepers performs the final review and merges the PR branch.

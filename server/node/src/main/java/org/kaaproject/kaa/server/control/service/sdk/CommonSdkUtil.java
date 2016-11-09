@@ -28,39 +28,52 @@ import java.util.List;
 
 public class CommonSdkUtil {
 
-    private static final String SEPARATOR = ":";
+  private static final String SEPARATOR = ":";
 
-    private CommonSdkUtil(){
-    }
+  private CommonSdkUtil() {
+  }
 
-    public static TarEntryData tarEntryForSources(String source, String name) {
-        TarArchiveEntry tarEntry = new TarArchiveEntry(name);
-        tarEntry.setSize(source.getBytes().length);
-        return new TarEntryData(tarEntry, source.getBytes());
-    }
+  /**
+   * Create new zip entry data for the input source.
+   *
+   * @param source  the input source
+   * @param name the entry name
+   * @return the new zip entry data
+   */
+  public static TarEntryData tarEntryForSources(String source, String name) {
+    TarArchiveEntry tarEntry = new TarArchiveEntry(name);
+    tarEntry.setSize(source.getBytes().length);
+    return new TarEntryData(tarEntry, source.getBytes());
+  }
 
-    public static String bootstrapNodesToString(List<BootstrapNodeInfo> bootstrapNodes) {
-        String bootstrapServers = "";
-        if (bootstrapNodes != null && !bootstrapNodes.isEmpty()) {
-            for (BootstrapNodeInfo node : bootstrapNodes) {
-                List<TransportMetaData> supportedChannels = node.getTransports();
+  /**
+   * Convert list of {@link BootstrapNodeInfo} to the string format.
+   *
+   * @param bootstrapNodes the list of Bootstrap nodes info
+   * @return Bootstrap nodes information in the string format
+   */
+  public static String bootstrapNodesToString(List<BootstrapNodeInfo> bootstrapNodes) {
+    String bootstrapServers = "";
+    if (bootstrapNodes != null && !bootstrapNodes.isEmpty()) {
+      for (BootstrapNodeInfo node : bootstrapNodes) {
+        List<TransportMetaData> supportedChannels = node.getTransports();
 
-                int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
+        int accessPointId = ServerNameUtil.crc32(node.getConnectionInfo());
 
-                for (TransportMetaData transport : supportedChannels) {
-                    for (VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
-                        bootstrapServers += accessPointId;
-                        bootstrapServers += SEPARATOR;
-                        bootstrapServers += transport.getId();
-                        bootstrapServers += SEPARATOR;
-                        bootstrapServers += pair.getVersion();
-                        bootstrapServers += SEPARATOR;
-                        bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
-                        bootstrapServers += ";";
-                    }
-                }
-            }
+        for (TransportMetaData transport : supportedChannels) {
+          for (VersionConnectionInfoPair pair : transport.getConnectionInfo()) {
+            bootstrapServers += accessPointId;
+            bootstrapServers += SEPARATOR;
+            bootstrapServers += transport.getId();
+            bootstrapServers += SEPARATOR;
+            bootstrapServers += pair.getVersion();
+            bootstrapServers += SEPARATOR;
+            bootstrapServers += Base64.encodeBase64String(pair.getConenctionInfo().array());
+            bootstrapServers += ";";
+          }
         }
-        return bootstrapServers;
+      }
     }
+    return bootstrapServers;
+  }
 }

@@ -17,90 +17,93 @@
 package org.kaaproject.kaa.server.sync;
 
 public final class UserAttachNotification {
-    private String userExternalId;
-    private String endpointAccessToken;
+  private String userExternalId;
+  private String endpointAccessToken;
 
-    public UserAttachNotification() {
+  public UserAttachNotification() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public UserAttachNotification(String userExternalId, String endpointAccessToken) {
+    this.userExternalId = userExternalId;
+    this.endpointAccessToken = endpointAccessToken;
+  }
+
+  /**
+   * Gets the value of the 'userExternalId' field.
+   */
+  public String getUserExternalId() {
+    return userExternalId;
+  }
+
+  /**
+   * Sets the value of the 'userExternalId' field.
+   *
+   * @param value the value to set.
+   */
+  public void setUserExternalId(String value) {
+    this.userExternalId = value;
+  }
+
+  /**
+   * Gets the value of the 'endpointAccessToken' field.
+   */
+  public String getEndpointAccessToken() {
+    return endpointAccessToken;
+  }
+
+  /**
+   * Sets the value of the 'endpointAccessToken' field.
+   *
+   * @param value the value to set.
+   */
+  public void setEndpointAccessToken(String value) {
+    this.endpointAccessToken = value;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    /**
-     * All-args constructor.
-     */
-    public UserAttachNotification(String userExternalId, String endpointAccessToken) {
-        this.userExternalId = userExternalId;
-        this.endpointAccessToken = endpointAccessToken;
+    UserAttachNotification that = (UserAttachNotification) object;
+
+    if (endpointAccessToken != null
+        ? !endpointAccessToken.equals(that.endpointAccessToken)
+        : that.endpointAccessToken != null) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'userExternalId' field.
-     */
-    public String getUserExternalId() {
-        return userExternalId;
+    if (userExternalId != null
+        ? !userExternalId.equals(that.userExternalId)
+        : that.userExternalId != null) {
+      return false;
     }
 
-    /**
-     * Sets the value of the 'userExternalId' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setUserExternalId(String value) {
-        this.userExternalId = value;
-    }
+    return true;
+  }
 
-    /**
-     * Gets the value of the 'endpointAccessToken' field.
-     */
-    public String getEndpointAccessToken() {
-        return endpointAccessToken;
-    }
+  @Override
+  public int hashCode() {
+    int result = userExternalId != null ? userExternalId.hashCode() : 0;
+    result = 31 * result + (endpointAccessToken != null ? endpointAccessToken.hashCode() : 0);
+    return result;
+  }
 
-    /**
-     * Sets the value of the 'endpointAccessToken' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setEndpointAccessToken(String value) {
-        this.endpointAccessToken = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        UserAttachNotification that = (UserAttachNotification) o;
-
-        if (endpointAccessToken != null ? !endpointAccessToken.equals(that.endpointAccessToken) : that.endpointAccessToken != null) {
-            return false;
-        }
-        if (userExternalId != null ? !userExternalId.equals(that.userExternalId) : that.userExternalId != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = userExternalId != null ? userExternalId.hashCode() : 0;
-        result = 31 * result + (endpointAccessToken != null ? endpointAccessToken.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UserAttachNotification [userExternalId=");
-        builder.append(userExternalId);
-        builder.append(", endpointAccessToken=");
-        builder.append(endpointAccessToken);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("UserAttachNotification [userExternalId=");
+    builder.append(userExternalId);
+    builder.append(", endpointAccessToken=");
+    builder.append(endpointAccessToken);
+    builder.append("]");
+    return builder.toString();
+  }
 }

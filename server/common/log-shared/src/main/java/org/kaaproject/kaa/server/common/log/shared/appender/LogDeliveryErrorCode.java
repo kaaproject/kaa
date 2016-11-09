@@ -21,12 +21,20 @@ package org.kaaproject.kaa.server.common.log.shared.appender;
  */
 public enum LogDeliveryErrorCode {
 
-    /** There are no appenders configured. */
-    NO_APPENDERS_CONFIGURED,
-    /** The appender internal error. */
-    APPENDER_INTERNAL_ERROR,
-    /** The connection error to log delivery destination system. */
-    REMOTE_CONNECTION_ERROR,
-    /** The internal error of log delivery destination system. */
-    REMOTE_INTERNAL_ERROR
+  /**
+   * There are no appenders configured.
+   */
+  NO_APPENDERS_CONFIGURED,
+  /**
+   * The appender internal error.
+   */
+  APPENDER_INTERNAL_ERROR,
+  /**
+   * The connection error to log delivery destination system.
+   */
+  REMOTE_CONNECTION_ERROR,
+  /**
+   * The internal error of log delivery destination system.
+   */
+  REMOTE_INTERNAL_ERROR
 }

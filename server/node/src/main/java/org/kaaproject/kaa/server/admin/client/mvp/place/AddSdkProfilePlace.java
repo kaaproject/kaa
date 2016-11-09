@@ -18,73 +18,74 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
+
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class AddSdkProfilePlace extends TreePlace {
 
-    private String applicationId;
+  private String applicationId;
 
-    public AddSdkProfilePlace(String applicationId) {
-        this.applicationId = applicationId;
+  public AddSdkProfilePlace(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.generateSdk();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    AddSdkProfilePlace other = (AddSdkProfilePlace) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
+        return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
+    }
+    return true;
+  }
 
-    public String getApplicationId() {
-        return applicationId;
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new SdkProfilesPlace(applicationId);
+  }
+
+  @Prefix(value = "addSdkProfile")
+  public static class Tokenizer implements PlaceTokenizer<AddSdkProfilePlace>, PlaceConstants {
+
+    @Override
+    public AddSdkProfilePlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new AddSdkProfilePlace(PlaceParams.getParam(APPLICATION_ID));
     }
 
     @Override
-    public String getName() {
-        return Utils.constants.generateSdk();
+    public String getToken(AddSdkProfilePlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      return PlaceParams.generateToken();
     }
-
-    @Prefix(value = "addSdkProfile")
-    public static class Tokenizer implements PlaceTokenizer<AddSdkProfilePlace>, PlaceConstants {
-
-        @Override
-        public AddSdkProfilePlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new AddSdkProfilePlace(PlaceParams.getParam(APPLICATION_ID));
-        }
-
-        @Override
-        public String getToken(AddSdkProfilePlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AddSdkProfilePlace other = (AddSdkProfilePlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new SdkProfilesPlace(applicationId);
-    }
+  }
 
 }
 

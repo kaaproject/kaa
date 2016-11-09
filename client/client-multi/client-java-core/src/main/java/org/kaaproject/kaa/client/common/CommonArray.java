@@ -19,17 +19,16 @@ package org.kaaproject.kaa.client.common;
 import java.util.List;
 
 /**
- * Common array interface
+ * Common array interface.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface CommonArray extends SchemaDependent {
 
-    /**
-     * @return list of common values
-     * @see CommonValue
-     */
-    List<CommonValue> getList();
+  /**
+   * @return list of common values.
+   * @see CommonValue
+   */
+  List<CommonValue> getList();
 
 }

@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.kaaproject.kaa.server.transport;
 
 /**
@@ -20,21 +21,20 @@ package org.kaaproject.kaa.server.transport;
  * endpoint setup connection to the server.
  *
  * @author Bohdan Khablenko
- *
  * @since v0.9.0
  */
 public class EndpointVerificationException extends Exception {
 
-    private static final long serialVersionUID = 1000L;
-    
-    private final EndpointVerificationError error;
-    
-    public EndpointVerificationException(EndpointVerificationError error, String msg) {
-        super(msg);
-        this.error = error;
-    }
+  private static final long serialVersionUID = 1000L;
 
-    public EndpointVerificationError getError() {
-        return error;
-    }
+  private final EndpointVerificationError error;
+
+  public EndpointVerificationException(EndpointVerificationError error, String msg) {
+    super(msg);
+    this.error = error;
+  }
+
+  public EndpointVerificationError getError() {
+    return error;
+  }
 }

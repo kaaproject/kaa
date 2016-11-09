@@ -99,7 +99,7 @@ Install the third-party components as follows.
         wget https://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
         tar zxf avro-cpp-1.7.5.tar.gz
         cd avro-cpp-1.7.5
-        wget https://raw.githubusercontent.com/kaaproject/kaa/develop/client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
+        wget {{github_url_raw}}client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
         patch < avro-cpp-disable-tests.patch
         mkdir build && cd build
         cmake -DCMAKE_INSTALL_PREFIX:PATH="${INSTALLDIR}" -DCMAKE_CXX_COMPILER="${CROSS}"g++ -DCMAKE_FIND_ROOT_PATH="${INSTALLDIR}" ..

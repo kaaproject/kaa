@@ -779,6 +779,9 @@ kaa_error_t kaa_tcp_channel_process_event(kaa_transport_channel_interface_t *sel
                         error_code = kaa_tcp_channel_write_pending_services(tcp_channel
                                 , tcp_channel->pending_request_services
                                 , tcp_channel->pending_request_service_count);
+                    } else if (tcp_channel->channel_state == KAA_TCP_CHANNEL_AUTHORIZING) {
+                        KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel is authorizing (%zu pending requests)"
+                                , tcp_channel->pending_request_service_count);
                     } else {
                         KAA_LOG_TRACE(tcp_channel->logger, KAA_ERR_NONE, "Kaa TCP channel [0x%08X] authorizing channel"
                                 , tcp_channel->access_point.id);

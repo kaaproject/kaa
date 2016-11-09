@@ -22,8 +22,8 @@ import org.junit.Test;
 
 public class UserTenantKeyTest {
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(UserTenantKey.class).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(UserTenantKey.class).verify();
+  }
 }

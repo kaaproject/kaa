@@ -44,7 +44,7 @@ The following example illustrates how to create the Couchbase log appender via A
 ## Configuration
 
 The Couchbase log appender configuration must match to
-[this](https://github.com/kaaproject/kaa/blob/master/server/appenders/couchbase-appender/src/main/avro/couchbase-appender-config.avsc) Avro schema.
+[this]({{github_url}}server/appenders/couchbase-appender/src/main/avro/couchbase-appender-config.avsc) Avro schema.
 
 An example configuration that matches to previously introduced Avro schema is as below:
 
@@ -52,7 +52,7 @@ An example configuration that matches to previously introduced Avro schema is as
 {
     "couchbaseServerUris":[
         {
-            "serverUri":"http://127.0.0.1:8091/pools"
+            "serverUri":"http://127.0.0.1:8091"
         }
     ],
     "bucket":"kaa",
@@ -87,7 +87,7 @@ where file ```couchbaseLogAppender.json``` contains following data:
     "maxLogSchemaVersion":2147483647,
     "minLogSchemaVersion":1,
     "tenantId":"1",
-    "jsonConfiguration":"{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091/pools\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}"
+    "jsonConfiguration":"{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}"
 }
 ```
 
@@ -109,7 +109,7 @@ Example result:
         "LSVERSION"
     ],
     "id": "65551",
-    "jsonConfiguration": "{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091/pools\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}",
+    "jsonConfiguration": "{\"couchbaseServerUris\":[{\"serverUri\":\"http://127.0.0.1:8091\"}],\"bucket\":\"kaa\",\"password\":{\"string\":\"\"}}",
     "maxLogSchemaVersion": 2147483647,
     "minLogSchemaVersion": 1,
     "name": "Sample Couchbase log appender",
@@ -142,7 +142,7 @@ You should see something like that:
 ![Add Couchbase log appender](attach/add-couchbase-log-appender.png)
 10. Define a URL and bucket which will be used for receiving logs.
 ![Define URL](attach/define-url.png)
-11. Go to sandbox and download binary for testing the appender:
+11. Go to Data collection demos in Sandbox.
 ![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
 Use instruction from sandbox to run demo application.
 12. Open http://%your_host_name%:8091 and choose : Data Buckets -> kaa -> Documents:

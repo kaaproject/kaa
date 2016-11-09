@@ -20,29 +20,32 @@ import java.util.UUID;
 
 public class ChannelTimeoutMessage implements TimeoutMessage {
 
-    private final UUID channelUuid;
-    private final long lastActivityTime;
+  private final UUID channelUuid;
+  private final long lastActivityTime;
 
-    public ChannelTimeoutMessage(UUID uuid, long lastActivityTime) {
-        super();
-        this.channelUuid = uuid;
-        this.lastActivityTime = lastActivityTime;
-    }
+  /**
+   * All-args constructor.
+   */
+  public ChannelTimeoutMessage(UUID uuid, long lastActivityTime) {
+    super();
+    this.channelUuid = uuid;
+    this.lastActivityTime = lastActivityTime;
+  }
 
-    public UUID getChannelUuid() {
-        return channelUuid;
-    }
+  public UUID getChannelUuid() {
+    return channelUuid;
+  }
 
-    public long getLastActivityTime() {
-        return lastActivityTime;
-    }
+  public long getLastActivityTime() {
+    return lastActivityTime;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ChannelTimeoutMessage [lastActivityTime=");
-        builder.append(lastActivityTime);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ChannelTimeoutMessage [lastActivityTime=");
+    builder.append(lastActivityTime);
+    builder.append("]");
+    return builder.toString();
+  }
 }

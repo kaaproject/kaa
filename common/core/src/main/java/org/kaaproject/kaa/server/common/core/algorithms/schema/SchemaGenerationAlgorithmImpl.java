@@ -22,44 +22,46 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 import org.kaaproject.kaa.server.common.core.schema.OverrideSchema;
 import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 
-public class SchemaGenerationAlgorithmImpl implements SchemaGenerationAlgorithm{
+public class SchemaGenerationAlgorithmImpl implements SchemaGenerationAlgorithm {
 
-    private final DataSchema initialSchema;
+  private final DataSchema initialSchema;
 
-    private BaseSchema baseSchema;
-    private OverrideSchema overrideSchema;
-    private ProtocolSchema protocolSchema;
+  private BaseSchema baseSchema;
+  private OverrideSchema overrideSchema;
+  private ProtocolSchema protocolSchema;
 
-    private <T extends KaaSchema> SchemaCreator<T> getSchemaCreator(SchemaCreationStrategy<T> strategy) {
-        return new SchemaCreatorImpl<T>(strategy);
+  public SchemaGenerationAlgorithmImpl(DataSchema schema) {
+    this.initialSchema = schema;
+  }
+
+  private <T extends KaaSchema> SchemaCreator<T> getSchemaCreator(
+          SchemaCreationStrategy<T> strategy) {
+    return new SchemaCreatorImpl<T>(strategy);
+  }
+
+  @Override
+  public BaseSchema getBaseSchema() throws SchemaCreationException {
+    if (baseSchema == null) {
+      baseSchema = getSchemaCreator(new BaseDataSchemaStrategy()).createSchema(initialSchema);
     }
+    return baseSchema;
+  }
 
-    public SchemaGenerationAlgorithmImpl(DataSchema schema) {
-        this.initialSchema = schema;
+  @Override
+  public OverrideSchema getOverrideSchema() throws SchemaCreationException {
+    if (overrideSchema == null) {
+      overrideSchema = getSchemaCreator(
+              new OverrideDataSchemaStrategy()).createSchema(initialSchema);
     }
+    return overrideSchema;
+  }
 
-    @Override
-    public BaseSchema getBaseSchema() throws SchemaCreationException {
-        if (baseSchema == null) {
-            baseSchema = getSchemaCreator(new BaseDataSchemaStrategy()).createSchema(initialSchema);
-        }
-        return baseSchema;
+  @Override
+  public ProtocolSchema getProtocolSchema() throws SchemaCreationException {
+    if (protocolSchema == null) {
+      protocolSchema = getSchemaCreator(new ProtocolSchemaStrategy()).createSchema(initialSchema);
     }
-
-    @Override
-    public OverrideSchema getOverrideSchema() throws SchemaCreationException {
-        if (overrideSchema == null) {
-            overrideSchema = getSchemaCreator(new OverrideDataSchemaStrategy()).createSchema(initialSchema);
-        }
-        return overrideSchema;
-    }
-
-    @Override
-    public ProtocolSchema getProtocolSchema() throws SchemaCreationException {
-        if (protocolSchema == null) {
-            protocolSchema = getSchemaCreator(new ProtocolSchemaStrategy()).createSchema(initialSchema);
-        }
-        return protocolSchema;
-    }
+    return protocolSchema;
+  }
 
 }

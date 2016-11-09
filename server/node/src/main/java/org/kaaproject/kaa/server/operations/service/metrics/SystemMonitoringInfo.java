@@ -18,12 +18,12 @@ package org.kaaproject.kaa.server.operations.service.metrics;
 
 public interface SystemMonitoringInfo {
 
-    double getLoadAverage();
+  double getLoadAverage();
 
-    long getHeapMemoryUsage();
+  long getHeapMemoryUsage();
 
-    long getNonHeapMemoryUsage();
+  long getNonHeapMemoryUsage();
 
-    int getLiveThreadCount();
+  int getLiveThreadCount();
 
 }

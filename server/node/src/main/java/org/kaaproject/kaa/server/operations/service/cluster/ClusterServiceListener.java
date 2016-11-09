@@ -21,26 +21,24 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.End
 
 public interface ClusterServiceListener {
 
-    /**
-     * Process remote EndpointRouteMessage.
-     * 
-     * @param msg
-     *            the endpoint route message
-     */ 
-    void onRouteMsg(EndpointRouteMessage msg);
+  /**
+   * Process remote EndpointRouteMessage.
+   *
+   * @param msg the endpoint route message
+   */
+  void onRouteMsg(EndpointRouteMessage msg);
 
-    /**
-     * Process endpoint actor message
-     * 
-     * @param msg 
-     *            the endpoint actor message
-     */
-    void onEndpointActorMsg(EndpointActorMsg msg);
+  /**
+   * Process endpoint actor message.
+   *
+   * @param msg the endpoint actor message
+   */
+  void onEndpointActorMsg(EndpointActorMsg msg);
 
-    
-    /**
-     * Reports update of cluster topology;
-     */
-    void onClusterUpdated();
-    
+
+  /**
+   * Reports update of cluster topology.
+   */
+  void onClusterUpdated();
+
 }

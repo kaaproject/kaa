@@ -16,6 +16,14 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
@@ -31,80 +39,74 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONNumber;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public class LogAppendersActivity extends AbstractListActivity<LogAppenderDto, LogAppendersPlace> {
 
-    private String applicationId;
+  private String applicationId;
 
-    public LogAppendersActivity(LogAppendersPlace place, ClientFactory clientFactory) {
-        super(place, LogAppenderDto.class, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
+  public LogAppendersActivity(LogAppendersPlace place, ClientFactory clientFactory) {
+    super(place, LogAppenderDto.class, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
 
-    @Override
-    protected BaseListView<LogAppenderDto> getView() {
-        return clientFactory.getAppendersView();
-    }
+  @Override
+  protected BaseListView<LogAppenderDto> getView() {
+    return clientFactory.getAppendersView();
+  }
 
-    @Override
-    protected AbstractDataProvider<LogAppenderDto, String> getDataProvider(AbstractGrid<LogAppenderDto,String> dataGrid) {
-        return new AppendersDataProvider(dataGrid, listView, applicationId);
-    }
+  @Override
+  protected AbstractDataProvider<LogAppenderDto, String> getDataProvider(
+          AbstractGrid<LogAppenderDto, String> dataGrid) {
+    return new AppendersDataProvider(dataGrid, listView, applicationId);
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new LogAppenderPlace(applicationId, "");
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new LogAppenderPlace(applicationId, "");
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new LogAppenderPlace(applicationId, id);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new LogAppenderPlace(applicationId, id);
+  }
 
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        KaaAdmin.getDataSource().removeLogAppender(id, callback);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    KaaAdmin.getDataSource().removeLogAppender(id, callback);
+  }
 
-    @Override
-    protected void onCustomRowAction(final RowActionEvent<String> event) {
-        Integer appenderId = Integer.valueOf(event.getClickedId());
-        final int action = event.getAction();
-        AsyncCallback<LogAppenderDto> callback = new AsyncCallback<LogAppenderDto>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, listView);
-            }
-            @Override
-            public void onSuccess(LogAppenderDto key) {
-                JSONObject json = (JSONObject)JSONParser.parseLenient(key.getJsonConfiguration());
-                json.put("minLogSchemaVersion", new JSONNumber(key.getMinLogSchemaVersion()));
-                json.put("maxLogSchemaVersion", new JSONNumber(key.getMaxLogSchemaVersion()));
-                json.put("pluginTypeName", new JSONString(key.getPluginTypeName()));
-                json.put("pluginClassName", new JSONString(key.getPluginClassName()));
-                JSONArray headersStructure = new JSONArray();
-                for(LogHeaderStructureDto header : key.getHeaderStructure()){
-                    headersStructure.set(headersStructure.size(), new JSONString(header.getValue()));
-                }
-                json.put("headerStructure", headersStructure);
+  @Override
+  protected void onCustomRowAction(final RowActionEvent<String> event) {
+    Integer appenderId = Integer.valueOf(event.getClickedId());
+    final int action = event.getAction();
+    AsyncCallback<LogAppenderDto> callback = new AsyncCallback<LogAppenderDto>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        Utils.handleException(caught, listView);
+      }
 
-                ServletHelper.downloadJsonFile(json.toString(), key.getPluginTypeName()+".json");
-            }
-        };
-
-        switch (action) {
-            case KaaRowAction.DOWNLOAD_SCHEMA:
-                KaaAdmin.getDataSource().getLogAppender(String.valueOf(appenderId), callback);
-                break;
-            default:
-                break;
+      @Override
+      public void onSuccess(LogAppenderDto key) {
+        JSONObject json = (JSONObject) JSONParser.parseLenient(key.getJsonConfiguration());
+        json.put("minLogSchemaVersion", new JSONNumber(key.getMinLogSchemaVersion()));
+        json.put("maxLogSchemaVersion", new JSONNumber(key.getMaxLogSchemaVersion()));
+        json.put("pluginTypeName", new JSONString(key.getPluginTypeName()));
+        json.put("pluginClassName", new JSONString(key.getPluginClassName()));
+        JSONArray headersStructure = new JSONArray();
+        for (LogHeaderStructureDto header : key.getHeaderStructure()) {
+          headersStructure.set(headersStructure.size(), new JSONString(header.getValue()));
         }
+        json.put("headerStructure", headersStructure);
+
+        ServletHelper.downloadJsonFile(json.toString(), key.getPluginTypeName() + ".json");
+      }
+    };
+
+    switch (action) {
+      case KaaRowAction.DOWNLOAD_SCHEMA:
+        KaaAdmin.getDataSource().getLogAppender(String.valueOf(appenderId), callback);
+        break;
+      default:
+        break;
     }
+  }
 }

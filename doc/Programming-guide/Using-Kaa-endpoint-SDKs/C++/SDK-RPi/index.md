@@ -92,8 +92,8 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
         tar -xvzf avro-cpp-1.7.5.tar.gz -C ./avro/target
         cd ./avro/target/avro-cpp-1.7.5
 
-        wget https://raw.githubusercontent.com/kaaproject/kaa/8e65212dfb855363e1a8977d4053041c80d785c7/client/client-multi/client-c/toolchains/rpi.cmake
-        wget https://raw.githubusercontent.com/kaaproject/kaa/967970ec57fb0a62c23ffe573385bf0d0299d977/client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
+        wget {{github_url_raw}}client/client-multi/client-c/toolchains/rpi.cmake
+        wget {{github_url_raw}}client/client-multi/client-cpp/tools/avro-cpp-disable-tests.patch
         patch < avro-cpp-disable-tests.patch
         mkdir build && cd build
         cmake -DCMAKE_INSTALL_PREFIX:PATH=${INSTALLDIR} -DCMAKE_TOOLCHAIN_FILE=../rpi.cmake ..
@@ -110,7 +110,7 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
         cp -r ${INSTALLDIR}/include/botan-1.11/botan/ ${INSTALLDIR}/include
         rm -r ${INSTALLDIR}/include/botan-1.11
 
-7. [Generate C++ SDK]({{root_url}}/Administration-guide/Tenants-and-applications-management/#generating-endpoint-sdk).
+7. Download C++ SDK from your [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment).
 8. Compile C++ SDK.
 
         mkdir kaa-cpp

@@ -17,7 +17,7 @@
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.route;
 
 public enum RouteOperation {
-    ADD, 
-    UPDATE, 
-    DELETE
+  ADD,
+  UPDATE,
+  DELETE
 }

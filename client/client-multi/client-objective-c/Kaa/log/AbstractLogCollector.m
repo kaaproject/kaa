@@ -22,6 +22,7 @@
 #import "FailoverManager.h"
 #import "KaaLogging.h"
 #import "LogCollector.h"
+#import "NSDate+Timestamp.h"
 
 #pragma clang diagnostic ignored "-Wprotocol"
 
@@ -138,21 +139,24 @@
         if (response.deliveryStatuses && response.deliveryStatuses.branch == KAA_UNION_ARRAY_LOG_DELIVERY_STATUS_OR_NULL_BRANCH_0) {
             BOOL isAlreadyScheduled = NO;
             NSArray *deliveryStatuses = response.deliveryStatuses.data;
+            
             __weak typeof(self) weakSelf = self;
+            
             for (LogDeliveryStatus *status in deliveryStatuses) {
-                
                 NSNumber *key = @(status.requestId);
-                
                 __block BucketInfo *bucketInfo = self.bucketInfoDictionary[key];
                 
                 if (bucketInfo) {
                     [self.bucketInfoDictionary removeObjectForKey:key];
 
                     if (status.result == SYNC_RESPONSE_RESULT_TYPE_SUCCESS) {
+	                    bucketInfo.receivedResponseTime = [NSDate currentTimeInMilliseconds];
+                        
                         [self.storage removeBucketWithId:status.requestId];
                         
                         [[self.executorContext getCallbackExecutor] addOperationWithBlock:^{
                             [weakSelf notifyOnSuccessDeliveryRunnersWithBucketInfo:bucketInfo];
+                            [self.deliveryRunnerDictionary removeObjectForKey:@(bucketInfo.bucketId)];
                         }];
                         
                         if (self.logDeliveryDelegate) {
@@ -160,7 +164,6 @@
                                 [weakSelf.logDeliveryDelegate onLogDeliverySuccessWithBucketInfo:bucketInfo];
                             }];
                         }
-
                     } else {
                         [self.storage rollbackBucketWithId:status.requestId];
                         
@@ -176,6 +179,7 @@
                         }
                         
                         isAlreadyScheduled = YES;
+                        
                     }
                 } else {
                     DDLogWarn(@"%@ Can't process log response: no bucket info for id: %i", TAG, status.requestId);
@@ -279,9 +283,9 @@
     [self processUploadDecision:[self.strategy isUploadNeededForStorageStatus:[self.storage getStatus]]];
 }
 
-- (void)addDeliveryRunner:(BucketRunner *)runner bucketInfo:(BucketInfo *)bucketInfo {
+- (void)addDeliveryRunner:(BucketRunner *)runner byBucketInfoKey:(NSNumber *)bucketInfoKey {
     @synchronized(self.deliveryRunnerDictionary) {
-        NSNumber *bucketKey = @(bucketInfo.bucketId);
+        NSNumber *bucketKey = bucketInfoKey;
         
         NSMutableArray *deliveryRunners = self.deliveryRunnerDictionary[bucketKey];
         if (!deliveryRunners) {
@@ -302,7 +306,6 @@
             for (BucketRunner *runner in deliveryRunners) {
                 [runner setValue:bucketInfo];
             }
-            [self.deliveryRunnerDictionary removeObjectForKey:bucketKey];
         }
     }
 }

@@ -23,23 +23,23 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class LogAppendersViewImpl extends BaseListViewImpl<LogAppenderDto> {
 
-    public LogAppendersViewImpl() {
-        super(true);
-    }
+  public LogAppendersViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<LogAppenderDto, String> createGrid() {
-        return new LogAppenderGrid(false);
-    }
+  @Override
+  protected AbstractGrid<LogAppenderDto, String> createGrid() {
+    return new LogAppenderGrid(false);
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.logAppenders();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.logAppenders();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewLogAppender();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewLogAppender();
+  }
 
 }

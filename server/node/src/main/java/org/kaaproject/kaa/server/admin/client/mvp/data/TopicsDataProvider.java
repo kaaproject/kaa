@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.TopicDto;
@@ -26,49 +26,55 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class TopicsDataProvider extends AbstractDataProvider<TopicDto, String>{
+public class TopicsDataProvider extends AbstractDataProvider<TopicDto, String> {
 
-    private String applicationId;
-    private String endpointGroupId;
+  private String applicationId;
+  private String endpointGroupId;
 
-    public TopicsDataProvider(AbstractGrid<TopicDto, String> dataGrid,
-                              HasErrorMessage hasErrorMessage,
-                              String applicationId, String endpointGroupId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        this.endpointGroupId = endpointGroupId;
-        addDataDisplay();
-    }
+  /**
+   * Instantiates a new TopicsDataProvider.
+   */
+  public TopicsDataProvider(AbstractGrid<TopicDto, String> dataGrid,
+                            HasErrorMessage hasErrorMessage,
+                            String applicationId, String endpointGroupId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    this.endpointGroupId = endpointGroupId;
+    addDataDisplay();
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        if (!isEmpty(applicationId)) {
-            KaaAdmin.getDataSource().loadTopics(applicationId, new AsyncCallback<List<TopicDto>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    if (!isEmpty(applicationId)) {
+      KaaAdmin.getDataSource().loadTopics(applicationId, new AsyncCallback<List<TopicDto>>() {
+        @Override
+        public void onFailure(Throwable caught) {
+          callback.onFailure(caught);
 
-                }
-                @Override
-                public void onSuccess(List<TopicDto> result) {
-                    callback.onSuccess(result);
-                }
-            });
-        } else if (!isEmpty(endpointGroupId)) {
-            KaaAdmin.getDataSource().loadTopicsByEndpointGroupId(endpointGroupId, new AsyncCallback<List<TopicDto>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
-
-                }
-                @Override
-                public void onSuccess(List<TopicDto> result) {
-                    callback.onSuccess(result);
-                }
-            });
         }
+
+        @Override
+        public void onSuccess(List<TopicDto> result) {
+          callback.onSuccess(result);
+        }
+      });
+    } else if (!isEmpty(endpointGroupId)) {
+      KaaAdmin.getDataSource().loadTopicsByEndpointGroupId(
+          endpointGroupId, new AsyncCallback<List<TopicDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              callback.onFailure(caught);
+
+            }
+
+            @Override
+            public void onSuccess(List<TopicDto> result) {
+              callback.onSuccess(result);
+            }
+          });
     }
+  }
 
 }

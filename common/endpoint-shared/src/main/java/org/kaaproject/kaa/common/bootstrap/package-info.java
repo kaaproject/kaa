@@ -15,6 +15,6 @@
  */
 
 /**
- * Provides server-client common Constants and other for BootStrap Service. 
+ * Provides server-client common Constants and other for BootStrap Service.
  */
 package org.kaaproject.kaa.common.bootstrap;

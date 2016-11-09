@@ -25,68 +25,72 @@ import javax.tools.JavaFileObject;
  */
 public class JavaDynamicException extends RuntimeException {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+  /**
+   * The Constant serialVersionUID.
+   */
+  private static final long serialVersionUID = 1L;
 
-    /** The collector. */
-    private DiagnosticCollector<JavaFileObject> collector;
+  /**
+   * The collector.
+   */
+  private DiagnosticCollector<JavaFileObject> collector;
 
-    /**
-     * Instantiates a new java dynamic exception.
-     *
-     * @param message the message
-     */
-    public JavaDynamicException(String message) {
-        super(message);
+  /**
+   * Instantiates a new java dynamic exception.
+   *
+   * @param message the message
+   */
+  public JavaDynamicException(String message) {
+    super(message);
+  }
+
+  /**
+   * Instantiates a new java dynamic exception.
+   *
+   * @param message   the message
+   * @param collector the collector
+   */
+  public JavaDynamicException(String message,
+                              DiagnosticCollector<JavaFileObject> collector) {
+    super(message);
+    this.collector = collector;
+  }
+
+  /**
+   * Instantiates a new java dynamic exception.
+   *
+   * @param ex         the ex
+   * @param collector the collector
+   */
+  public JavaDynamicException(Throwable ex,
+                              DiagnosticCollector<JavaFileObject> collector) {
+    super(ex);
+    this.collector = collector;
+  }
+
+  /**
+   * Gets the compilation error.
+   *
+   * @return the compilation error
+   */
+  public String getCompilationError() {
+    if (collector != null) {
+      StringBuilder sb = new StringBuilder();
+      for (Diagnostic<? extends JavaFileObject> diagnostic : collector
+          .getDiagnostics()) {
+        sb.append(diagnostic.getMessage(null));
+      }
+      return sb.toString();
+    } else {
+      return getMessage();
     }
+  }
 
-    /**
-     * Instantiates a new java dynamic exception.
-     *
-     * @param message the message
-     * @param collector the collector
-     */
-    public JavaDynamicException(String message,
-            DiagnosticCollector<JavaFileObject> collector) {
-        super(message);
-        this.collector = collector;
-    }
-
-    /**
-     * Instantiates a new java dynamic exception.
-     *
-     * @param e the e
-     * @param collector the collector
-     */
-    public JavaDynamicException(Throwable e,
-            DiagnosticCollector<JavaFileObject> collector) {
-        super(e);
-        this.collector = collector;
-    }
-
-    /**
-     * Gets the compilation error.
-     *
-     * @return the compilation error
-     */
-    public String getCompilationError() {
-        if (collector != null) {
-            StringBuilder sb = new StringBuilder();
-            for (Diagnostic<? extends JavaFileObject> diagnostic : collector
-                    .getDiagnostics()) {
-                sb.append(diagnostic.getMessage(null));
-            }
-            return sb.toString();
-        } else {
-            return getMessage();
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Throwable#toString()
-     */
-    @Override
-    public String toString() {
-        return getCompilationError();
-    }
+  /* (non-Javadoc)
+   * @see java.lang.Throwable#toString()
+   */
+  @Override
+  public String toString() {
+    return getCompilationError();
+  }
 }

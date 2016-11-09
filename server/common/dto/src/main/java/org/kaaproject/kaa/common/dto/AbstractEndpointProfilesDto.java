@@ -16,69 +16,69 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.Serializable;
 
 public class AbstractEndpointProfilesDto implements Serializable {
 
-    private static final long serialVersionUID = 3355356067164498361L;
+  private static final long serialVersionUID = 3355356067164498361L;
 
-    @JsonIgnore
-    protected PageLinkDto pageLinkDto;
-    protected String next;
+  @JsonIgnore
+  protected PageLinkDto pageLinkDto;
+  protected String next;
 
-    public PageLinkDto getPageLinkDto() {
-        return pageLinkDto;
+  public PageLinkDto getPageLinkDto() {
+    return pageLinkDto;
+  }
+
+  public void setPageLinkDto(PageLinkDto pageLinkDto) {
+    this.pageLinkDto = pageLinkDto;
+  }
+
+  public String getNext() {
+    return next;
+  }
+
+  public void setNext(String next) {
+    this.next = next;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((next == null) ? 0 : next.hashCode());
+    result = prime * result + ((pageLinkDto == null) ? 0 : pageLinkDto.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public void setPageLinkDto(PageLinkDto pageLinkDto) {
-        this.pageLinkDto = pageLinkDto;
+    if (obj == null) {
+      return false;
     }
-
-    public String getNext() {
-        return next;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setNext(String next) {
-        this.next = next;
+    AbstractEndpointProfilesDto other = (AbstractEndpointProfilesDto) obj;
+    if (next == null) {
+      if (other.next != null) {
+        return false;
+      }
+    } else if (!next.equals(other.next)) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((next == null) ? 0 : next.hashCode());
-        result = prime * result + ((pageLinkDto == null) ? 0 : pageLinkDto.hashCode());
-        return result;
+    if (pageLinkDto == null) {
+      if (other.pageLinkDto != null) {
+        return false;
+      }
+    } else if (!pageLinkDto.equals(other.pageLinkDto)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractEndpointProfilesDto other = (AbstractEndpointProfilesDto) obj;
-        if (next == null) {
-            if (other.next != null) {
-                return false;
-            }
-        } else if (!next.equals(other.next)) {
-            return false;
-        }
-        if (pageLinkDto == null) {
-            if (other.pageLinkDto != null) {
-                return false;
-            }
-        } else if (!pageLinkDto.equals(other.pageLinkDto)) {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 }

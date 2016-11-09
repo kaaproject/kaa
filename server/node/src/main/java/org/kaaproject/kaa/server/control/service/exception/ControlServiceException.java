@@ -18,14 +18,14 @@ package org.kaaproject.kaa.server.control.service.exception;
 
 public class ControlServiceException extends Exception {
 
-    private static final long serialVersionUID = -8100470998148262317L;
+  private static final long serialVersionUID = -8100470998148262317L;
 
-    public ControlServiceException(String message){
-        super(message);
-    }
-    
-    public ControlServiceException(Exception e){
-        super(e);
-    }
-    
+  public ControlServiceException(String message) {
+    super(message);
+  }
+
+  public ControlServiceException(Exception ex) {
+    super(ex);
+  }
+
 }

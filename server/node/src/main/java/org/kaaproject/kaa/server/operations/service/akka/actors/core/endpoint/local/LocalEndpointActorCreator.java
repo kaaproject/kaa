@@ -22,15 +22,16 @@ import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.En
 
 public class LocalEndpointActorCreator extends EndpointActorCreator<LocalEndpointActor> {
 
-    private static final long serialVersionUID = 9080174513879065821L;
+  private static final long serialVersionUID = 9080174513879065821L;
 
-    public LocalEndpointActorCreator(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
-        super(context, endpointActorKey, appToken, key);
-    }
+  public LocalEndpointActorCreator(AkkaContext context, String endpointActorKey, String appToken,
+                                   EndpointObjectHash key) {
+    super(context, endpointActorKey, appToken, key);
+  }
 
-    @Override
-    public LocalEndpointActor create() throws Exception {
-        return new LocalEndpointActor(context, actorKey, appToken, endpointKey);
-    }
+  @Override
+  public LocalEndpointActor create() throws Exception {
+    return new LocalEndpointActor(context, actorKey, appToken, endpointKey);
+  }
 
 }

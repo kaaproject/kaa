@@ -18,93 +18,97 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
-public class VersionDto implements HasId, Serializable, Comparable<VersionDto>  {
-    
-    private static final long serialVersionUID = -7073061086587077053L;
-    
-    protected String id;
-    protected int version;
-    
-    public VersionDto() {
-        super();
-    }
+public class VersionDto implements HasId, Serializable, Comparable<VersionDto> {
 
-    public VersionDto(String id, int version) {
-        super();
-        this.id = id;
-        this.version = version;
-    }
+  private static final long serialVersionUID = -7073061086587077053L;
 
-    public String getId() {
-        return id;
-    }
+  protected String id;
+  protected int version;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public VersionDto() {
+    super();
+  }
 
-    public int getVersion() {
-        return version;
-    }
+  /**
+   * Instantiates a new VersionDto.
+   * @param id        the id
+   * @param version   the version
+   */
+  public VersionDto(String id, int version) {
+    super();
+    this.id = id;
+    this.version = version;
+  }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
+  public String getId() {
+    return id;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + version;
-        return result;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        VersionDto other = (VersionDto) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (version != other.version) {
-            return false;
-        }
-        return true;
-    }
+  public int getVersion() {
+    return version;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("VersionDto [id=");
-        builder.append(id);
-        builder.append(", version=");
-        builder.append(version);
-        builder.append("]");
-        return builder.toString();
-    }
+  public void setVersion(int version) {
+    this.version = version;
+  }
 
-    @Override
-    public int compareTo(VersionDto o) {
-        if (o != null) {
-            return version - o.getVersion();
-        } else {
-            return 1;
-        }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + version;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-    
-    
-    
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    VersionDto other = (VersionDto) obj;
+    if (id == null) {
+      if (other.id != null) {
+        return false;
+      }
+    } else if (!id.equals(other.id)) {
+      return false;
+    }
+    if (version != other.version) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("VersionDto [id=");
+    builder.append(id);
+    builder.append(", version=");
+    builder.append(version);
+    builder.append("]");
+    return builder.toString();
+  }
+
+  @Override
+  public int compareTo(VersionDto versionDto) {
+    if (versionDto != null) {
+      return version - versionDto.getVersion();
+    } else {
+      return 1;
+    }
+  }
+
+
 }

@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.sync;
 
 public enum SubscriptionType {
-    MANDATORY, OPTIONAL;
+  MANDATORY, OPTIONAL;
 }

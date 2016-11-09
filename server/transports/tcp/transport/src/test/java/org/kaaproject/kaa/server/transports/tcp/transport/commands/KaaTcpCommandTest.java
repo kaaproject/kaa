@@ -22,12 +22,12 @@ import org.junit.Test;
 public class KaaTcpCommandTest {
 
 
-    @Test
-    public void testKaaTcpCommand(){
-        KaaTcpCommandFactory commandFactory = new KaaTcpCommandFactory();
-        KaaTcpCommand command = (KaaTcpCommand)commandFactory.createCommandProcessor();
-        Assert.assertNotNull(command);
-        Assert.assertEquals(KaaTcpCommand.KAA_TCP, command.getName());
-    }
+  @Test
+  public void testKaaTcpCommand() {
+    KaaTcpCommandFactory commandFactory = new KaaTcpCommandFactory();
+    KaaTcpCommand command = (KaaTcpCommand) commandFactory.createCommandProcessor();
+    Assert.assertNotNull(command);
+    Assert.assertEquals(KaaTcpCommand.KAA_TCP, command.getName());
+  }
 
 }

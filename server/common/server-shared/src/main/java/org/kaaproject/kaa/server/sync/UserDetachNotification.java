@@ -17,64 +17,65 @@
 package org.kaaproject.kaa.server.sync;
 
 public final class UserDetachNotification {
-    private String endpointAccessToken;
+  private String endpointAccessToken;
 
-    public UserDetachNotification() {
+  public UserDetachNotification() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public UserDetachNotification(String endpointAccessToken) {
+    this.endpointAccessToken = endpointAccessToken;
+  }
+
+  /**
+   * Gets the value of the 'endpointAccessToken' field.
+   */
+  public String getEndpointAccessToken() {
+    return endpointAccessToken;
+  }
+
+  /**
+   * Sets the value of the 'endpointAccessToken' field.
+   *
+   * @param value the value to set.
+   */
+  public void setEndpointAccessToken(String value) {
+    this.endpointAccessToken = value;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    /**
-     * All-args constructor.
-     */
-    public UserDetachNotification(String endpointAccessToken) {
-        this.endpointAccessToken = endpointAccessToken;
+    UserDetachNotification that = (UserDetachNotification) object;
+
+    if (endpointAccessToken != null
+        ? !endpointAccessToken.equals(that.endpointAccessToken)
+        : that.endpointAccessToken != null) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'endpointAccessToken' field.
-     */
-    public String getEndpointAccessToken() {
-        return endpointAccessToken;
-    }
+    return true;
+  }
 
-    /**
-     * Sets the value of the 'endpointAccessToken' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setEndpointAccessToken(String value) {
-        this.endpointAccessToken = value;
-    }
+  @Override
+  public int hashCode() {
+    return endpointAccessToken != null ? endpointAccessToken.hashCode() : 0;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        UserDetachNotification that = (UserDetachNotification) o;
-
-        if (endpointAccessToken != null ? !endpointAccessToken.equals(that.endpointAccessToken) : that.endpointAccessToken != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return endpointAccessToken != null ? endpointAccessToken.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UserDetachNotification [endpointAccessToken=");
-        builder.append(endpointAccessToken);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("UserDetachNotification [endpointAccessToken=");
+    builder.append(endpointAccessToken);
+    builder.append("]");
+    return builder.toString();
+  }
 }

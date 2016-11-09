@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-. ./gh-pages-stub/scripts/tst_deploy.sh
+. ./gh-pages-stub/_scripts/tst_deploy.sh

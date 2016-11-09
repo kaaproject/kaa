@@ -16,69 +16,83 @@
 
 package org.kaaproject.kaa.server.admin.shared.schema;
 
+import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
+
 import java.io.Serializable;
 
-import org.kaaproject.kaa.common.dto.ctl.CTLSchemaMetaInfoDto;
+public class CtlSchemaReferenceDto implements Serializable {
+  private static final long serialVersionUID = -6668598697779214725L;
 
-public class CtlSchemaReferenceDto implements Serializable 
-{
-    private static final long serialVersionUID = -6668598697779214725L;
+  private CtlSchemaMetaInfoDto metaInfo;
+  private int version;
 
-    private CTLSchemaMetaInfoDto metaInfo;
-    private int version;
-    
-    public CtlSchemaReferenceDto() {
-        super();
-    }
-    
-    public CtlSchemaReferenceDto(CTLSchemaMetaInfoDto metaInfo, int version) {
-        super();
-        this.metaInfo = metaInfo;
-        this.version = version;
+  public CtlSchemaReferenceDto() {
+    super();
+  }
+
+  /**
+   * Create new instance of <code>CtlSchemaReferenceDto</code>.
+   *
+   * @param metaInfo the CTL schema meta info dto
+   * @param version the CTL version
+   */
+  public CtlSchemaReferenceDto(CtlSchemaMetaInfoDto metaInfo, int version) {
+    super();
+    this.metaInfo = metaInfo;
+    this.version = version;
+  }
+
+  public CtlSchemaMetaInfoDto getMetaInfo() {
+    return metaInfo;
+  }
+
+  public void setMetaInfo(CtlSchemaMetaInfoDto metaInfo) {
+    this.metaInfo = metaInfo;
+  }
+
+  public int getVersion() {
+    return version;
+  }
+
+  public void setVersion(int version) {
+    this.version = version;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((metaInfo == null) ? 0 : metaInfo.hashCode());
+    result = prime * result + version;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
 
-    public CTLSchemaMetaInfoDto getMetaInfo() {
-        return metaInfo;
+    if (obj == null) {
+      return false;
     }
 
-    public void setMetaInfo(CTLSchemaMetaInfoDto metaInfo) {
-        this.metaInfo = metaInfo;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
 
-    public int getVersion() {
-        return version;
+    CtlSchemaReferenceDto other = (CtlSchemaReferenceDto) obj;
+    if (metaInfo == null && other.metaInfo != null) {
+      return false;
+    } else {
+      if (!metaInfo.equals(other.metaInfo)) {
+        return false;
+      }
     }
-
-    public void setVersion(int version) {
-        this.version = version;
+    if (version != other.version) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((metaInfo == null) ? 0 : metaInfo.hashCode());
-        result = prime * result + version;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CtlSchemaReferenceDto other = (CtlSchemaReferenceDto) obj;
-        if (metaInfo == null) {
-            if (other.metaInfo != null)
-                return false;
-        } else if (!metaInfo.equals(other.metaInfo))
-            return false;
-        if (version != other.version)
-            return false;
-        return true;
-    }
+    return true;
+  }
 
 }

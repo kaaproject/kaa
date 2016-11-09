@@ -220,7 +220,7 @@ How to restart Kaa service
 
 # Reporting issues to the Kaa Crew
 
-You may seek help at the [Kaa official forum](http://www.kaaproject.org/forum/) by participating in existing topic discussions or, if no relevant topic was found, by starting a new topic, describing your issue and attaching logs. Please make sure the issue has not been yet addressed in other topics on the forum or in this guide.
+You may seek help at the [Kaa community at Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) by participating in existing topic discussions or, if no relevant topic was found, by starting a new topic, describing your issue and attaching logs. Please make sure the issue has not been yet addressed in other topics on the forum or in this guide.
 
 Before sending logs to the Kaa forum follow these steps:
 

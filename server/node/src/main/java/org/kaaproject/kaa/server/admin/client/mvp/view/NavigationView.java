@@ -16,26 +16,26 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
-
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.web.bindery.event.shared.EventBus;
+
+import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 
 public interface NavigationView extends IsWidget {
 
-    SingleSelectionModel<TreePlace> getSelectionModel();
+  SingleSelectionModel<TreePlace> getSelectionModel();
 
-    CellTree getMenuTree();
+  CellTree getMenuTree();
 
-    void setPresenter(Presenter presenter);
+  void setPresenter(Presenter presenter);
 
-    void setEventBus(EventBus eventBus);
+  void setEventBus(EventBus eventBus);
 
-    public interface Presenter {
-        void goTo(Place place);
-    }
+  public interface Presenter {
+    void goTo(Place place);
+  }
 
 }

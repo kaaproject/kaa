@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.common.channels.communication;
 
-public class KaaTcpParameters extends IPParameters {
+public class KaaTcpParameters extends IpParameters {
 
 
 }

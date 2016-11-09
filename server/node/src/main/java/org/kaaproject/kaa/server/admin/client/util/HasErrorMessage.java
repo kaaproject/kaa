@@ -18,8 +18,8 @@ package org.kaaproject.kaa.server.admin.client.util;
 
 public interface HasErrorMessage {
 
-    void clearError();
+  void clearError();
 
-    void setErrorMessage(String message);
-    
+  void setErrorMessage(String message);
+
 }

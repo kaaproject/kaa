@@ -74,8 +74,11 @@
             <artifactId>cassandra-driver-core</artifactId>
             <version>3.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
-
     <build>
         <finalName>db-migration</finalName>
         <plugins>

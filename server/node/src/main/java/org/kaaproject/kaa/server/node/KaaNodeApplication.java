@@ -17,9 +17,9 @@
 package org.kaaproject.kaa.server.node;
 
 import org.kaaproject.kaa.server.common.AbstractServerApplication;
+import org.kaaproject.kaa.server.common.utils.KaaUncaughtExceptionHandler;
 import org.kaaproject.kaa.server.node.service.initialization.InitializationService;
 import org.springframework.context.ApplicationContext;
-import org.kaaproject.kaa.server.common.utils.KaaUncaughtExceptionHandler;
 
 
 /**
@@ -27,37 +27,38 @@ import org.kaaproject.kaa.server.common.utils.KaaUncaughtExceptionHandler;
  */
 public class KaaNodeApplication extends AbstractServerApplication {
 
-    private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS = new String[] { "kaaNodeContext.xml" };
+  private static final String[] DEFAULT_APPLICATION_CONTEXT_XMLS =
+          new String[]{"kaaNodeContext.xml"};
 
-    private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[] {
-            "kaa-node.properties", "sql-dao.properties", "nosql-dao.properties"};
+  private static final String[] DEFAULT_APPLICATION_CONFIGURATION_FILES = new String[]{
+      "kaa-node.properties", "sql-dao.properties", "nosql-dao.properties"};
 
-    /**
-     * The main method. Used to launch Kaa Node.
-     * 
-     * @param args
-     *            the arguments
-     */
-    public static void main(String[] args) {
-        Thread.setDefaultUncaughtExceptionHandler(new KaaUncaughtExceptionHandler());
+  public KaaNodeApplication(String[] defaultContextFiles, String[] defaultConfigurationFiles) {
+    super(defaultContextFiles, defaultConfigurationFiles);
+  }
 
-        KaaNodeApplication app = new KaaNodeApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
-                DEFAULT_APPLICATION_CONFIGURATION_FILES);
-        app.startAndWait(args);
-    }
+  /**
+   * The main method. Used to launch Kaa Node.
+   *
+   * @param args the arguments
+   */
+  public static void main(String[] args) {
+    Thread.setDefaultUncaughtExceptionHandler(new KaaUncaughtExceptionHandler());
 
-    public KaaNodeApplication(String[] defaultContextFiles, String[] defaultConfigurationFiles) {
-        super(defaultContextFiles, defaultConfigurationFiles);
-    }
+    KaaNodeApplication app = new KaaNodeApplication(DEFAULT_APPLICATION_CONTEXT_XMLS,
+        DEFAULT_APPLICATION_CONFIGURATION_FILES);
+    app.startAndWait(args);
+  }
 
-    @Override
-    protected String getName() {
-        return "Kaa Node";
-    }
+  @Override
+  protected String getName() {
+    return "Kaa Node";
+  }
 
-    @Override
-    protected void init(ApplicationContext ctx) {
-        final InitializationService kaaNodeInitializationService = ctx.getBean("kaaNodeInitializationService", InitializationService.class);
-        kaaNodeInitializationService.start();
-    }
+  @Override
+  protected void init(ApplicationContext ctx) {
+    final InitializationService kaaNodeInitializationService =
+            ctx.getBean("kaaNodeInitializationService", InitializationService.class);
+    kaaNodeInitializationService.start();
+  }
 }

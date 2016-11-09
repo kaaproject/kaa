@@ -24,23 +24,23 @@ import org.kaaproject.kaa.server.common.plugin.PluginType;
 
 @KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
 public class MongoDbAppenderConfig implements PluginConfig {
-    
-    public MongoDbAppenderConfig() {
-    }
 
-    @Override
-    public String getPluginTypeName() {
-        return "MongoDB";
-    }
+  public MongoDbAppenderConfig() {
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender";
-    }
+  @Override
+  public String getPluginTypeName() {
+    return "MongoDB";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return MongoDbConfig.getClassSchema();
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender";
+  }
+
+  @Override
+  public Schema getPluginConfigSchema() {
+    return MongoDbConfig.getClassSchema();
+  }
 
 }

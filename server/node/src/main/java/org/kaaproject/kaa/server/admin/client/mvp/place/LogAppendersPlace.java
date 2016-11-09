@@ -16,28 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.Prefix;
+
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class LogAppendersPlace extends AbstractPluginsPlace {
 
-    public LogAppendersPlace(String applicationId) {
-        super(applicationId);
-    }
+  public LogAppendersPlace(String applicationId) {
+    super(applicationId);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.logAppenders();
+  }
+
+  @Prefix(value = "logAppends")
+  public static class Tokenizer extends AbstractPluginsPlace.Tokenizer<LogAppendersPlace> {
 
     @Override
-    public String getName() {
-        return Utils.constants.logAppenders();
+    protected LogAppendersPlace getPlaceImpl(String applicationId) {
+      return new LogAppendersPlace(applicationId);
     }
-
-    @Prefix(value = "logAppends")
-    public static class Tokenizer extends AbstractPluginsPlace.Tokenizer<LogAppendersPlace> {
-
-        @Override
-        protected LogAppendersPlace getPlaceImpl(String applicationId) {
-            return new LogAppendersPlace(applicationId);
-        }
-    }
+  }
 
 }

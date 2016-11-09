@@ -16,32 +16,35 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
-import org.kaaproject.kaa.common.hash.EndpointObjectHash;
-
 import akka.actor.ActorRef;
+
+import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
 
 public class EndpointStopMessage {
-    private final EndpointObjectHash endpointKey;
-    private final String actorKey;
-    private final ActorRef originator;
+  private final EndpointObjectHash endpointKey;
+  private final String actorKey;
+  private final ActorRef originator;
 
-    public EndpointStopMessage(EndpointObjectHash endpointKey, String actorKey, ActorRef originator) {
-        super();
-        this.endpointKey = endpointKey;
-        this.actorKey = actorKey;
-        this.originator = originator;
-    }
+  /**
+   * All-args constructor.
+   */
+  public EndpointStopMessage(EndpointObjectHash endpointKey, String actorKey, ActorRef originator) {
+    super();
+    this.endpointKey = endpointKey;
+    this.actorKey = actorKey;
+    this.originator = originator;
+  }
 
-    public EndpointObjectHash getEndpointKey() {
-        return endpointKey;
-    }
+  public EndpointObjectHash getEndpointKey() {
+    return endpointKey;
+  }
 
-    public String getActorKey() {
-        return actorKey;
-    }
+  public String getActorKey() {
+    return actorKey;
+  }
 
-    public ActorRef getOriginator() {
-        return originator;
-    }
+  public ActorRef getOriginator() {
+    return originator;
+  }
 }

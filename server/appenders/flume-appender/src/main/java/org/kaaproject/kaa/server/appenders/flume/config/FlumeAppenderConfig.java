@@ -25,19 +25,19 @@ import org.kaaproject.kaa.server.common.plugin.PluginType;
 @KaaPluginConfig(pluginType = PluginType.LOG_APPENDER)
 public class FlumeAppenderConfig implements PluginConfig {
 
-    @Override
-    public String getPluginTypeName() {
-        return "Flume";
-    }
+  @Override
+  public String getPluginTypeName() {
+    return "Flume";
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender";
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return FlumeConfig.getClassSchema();
-    }
+  @Override
+  public Schema getPluginConfigSchema() {
+    return FlumeConfig.getClassSchema();
+  }
 
 }

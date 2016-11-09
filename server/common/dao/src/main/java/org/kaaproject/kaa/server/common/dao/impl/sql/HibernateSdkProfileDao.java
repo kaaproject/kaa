@@ -21,10 +21,6 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_PROP
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.APPLICATION_REFERENCE;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.SDK_TOKEN_PROPERTY;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -34,49 +30,54 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 @Repository
-public class HibernateSdkProfileDao extends HibernateAbstractDao<SdkProfile> implements SdkProfileDao<SdkProfile> {
+public class HibernateSdkProfileDao extends HibernateAbstractDao<SdkProfile>
+        implements SdkProfileDao<SdkProfile> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateSdkProfileDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateSdkProfileDao.class);
 
-    @Override
-    protected Class<SdkProfile> getEntityClass() {
-        return SdkProfile.class;
+  @Override
+  protected Class<SdkProfile> getEntityClass() {
+    return SdkProfile.class;
+  }
+
+  @Override
+  public SdkProfile findSdkProfileByToken(String token) {
+    LOG.debug("Searching for an SDK profile by token: [{}]", token);
+
+    SdkProfile found = null;
+    if (StringUtils.isNotBlank(token)) {
+      found = this.findOneByCriterion(Restrictions.eq(SDK_TOKEN_PROPERTY, token));
     }
 
-    @Override
-    public SdkProfile findSdkProfileByToken(String token) {
-        LOG.debug("Searching for an SDK profile by token: [{}]", token);
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{}] Search result: {}.", token, found);
+    } else {
+      LOG.debug("[{}] Search result: {}.", token, found != null);
+    }
+    return found;
+  }
 
-        SdkProfile found = null;
-        if (StringUtils.isNotBlank(token)) {
-            found = this.findOneByCriterion(Restrictions.eq(SDK_TOKEN_PROPERTY, token));
-        }
+  @Override
+  public List<SdkProfile> findSdkProfileByApplicationId(String applicationId) {
+    LOG.debug("Searching for SDK profiles by application ID: [{}]", applicationId);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", token, found);
-        } else {
-            LOG.debug("[{}] Search result: {}.", token, found != null);
-        }
-        return found;
+    List<SdkProfile> found = Collections.emptyList();
+    if (StringUtils.isNotBlank(applicationId)) {
+      Criterion criterion = Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId));
+      found = this.findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, criterion);
     }
 
-    @Override
-    public List<SdkProfile> findSdkProfileByApplicationId(String applicationId) {
-        LOG.debug("Searching for SDK profiles by application ID: [{}]", applicationId);
-
-        List<SdkProfile> found = Collections.emptyList();
-        if (StringUtils.isNotBlank(applicationId)) {
-            Criterion criterion = Restrictions.eq(APPLICATION_REFERENCE, Long.valueOf(applicationId));
-            found = this.findListByCriterionWithAlias(APPLICATION_PROPERTY, APPLICATION_ALIAS, criterion);
-        }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(found.toArray()));
-        } else {
-            LOG.debug("[{}] Search result: {}.", applicationId, found.size());
-        }
-
-        return found;
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{}] Search result: {}.", applicationId, Arrays.toString(found.toArray()));
+    } else {
+      LOG.debug("[{}] Search result: {}.", applicationId, found.size());
     }
+
+    return found;
+  }
 }

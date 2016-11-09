@@ -18,35 +18,35 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 
 import org.kaaproject.kaa.server.operations.service.event.RouteInfo;
 
-public class RouteInfoMessage implements UserAwareMessage, TenantAwareMessage{
+public class RouteInfoMessage implements UserAwareMessage, TenantAwareMessage {
 
-    private final RouteInfo routeInfo;
+  private final RouteInfo routeInfo;
 
-    public RouteInfoMessage(RouteInfo routeInfo) {
-        super();
-        this.routeInfo = routeInfo;
-    }
+  public RouteInfoMessage(RouteInfo routeInfo) {
+    super();
+    this.routeInfo = routeInfo;
+  }
 
-    public RouteInfo getRouteInfo() {
-        return routeInfo;
-    }
+  public RouteInfo getRouteInfo() {
+    return routeInfo;
+  }
 
-    @Override
-    public String getUserId() {
-        return routeInfo.getUserId();
-    }
+  @Override
+  public String getUserId() {
+    return routeInfo.getUserId();
+  }
 
-    @Override
-    public String getTenantId() {
-        return routeInfo.getTenantId();
-    }
+  @Override
+  public String getTenantId() {
+    return routeInfo.getTenantId();
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RouteInfoMessage [routeInfo=");
-        builder.append(routeInfo);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("RouteInfoMessage [routeInfo=");
+    builder.append(routeInfo);
+    builder.append("]");
+    return builder.toString();
+  }
 }

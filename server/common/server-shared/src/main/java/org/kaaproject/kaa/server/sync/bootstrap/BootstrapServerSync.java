@@ -18,72 +18,74 @@ package org.kaaproject.kaa.server.sync.bootstrap;
 
 import java.util.Set;
 
-/**
- * 
- * @author Andrew Shvayka
- *
- */
+
 public final class BootstrapServerSync {
-    private final int requestId;
-    private final Set<ProtocolConnectionData> protocolList;
+  private final int requestId;
+  private final Set<ProtocolConnectionData> protocolList;
 
-    public BootstrapServerSync(int requestId, Set<ProtocolConnectionData> protocolList) {
-        super();
-        this.requestId = requestId;
-        this.protocolList = protocolList;
-    }
+  /**
+   * Create new instance of <code>BootstrapServerSync</code>.
+   *
+   * @param requestId is request id
+   * @param protocolList is <code>Set</code> of <code>ProtocolConnectionData</code>
+   */
+  public BootstrapServerSync(int requestId, Set<ProtocolConnectionData> protocolList) {
+    super();
+    this.requestId = requestId;
+    this.protocolList = protocolList;
+  }
 
-    public int getRequestId() {
-        return requestId;
-    }
+  public int getRequestId() {
+    return requestId;
+  }
 
-    public Set<ProtocolConnectionData> getProtocolList() {
-        return protocolList;
-    }
+  public Set<ProtocolConnectionData> getProtocolList() {
+    return protocolList;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((protocolList == null) ? 0 : protocolList.hashCode());
-        result = prime * result + requestId;
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((protocolList == null) ? 0 : protocolList.hashCode());
+    result = prime * result + requestId;
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        BootstrapServerSync other = (BootstrapServerSync) obj;
-        if (protocolList == null) {
-            if (other.protocolList != null) {
-                return false;
-            }
-        } else if (!protocolList.equals(other.protocolList)) {
-            return false;
-        }
-        if (requestId != other.requestId) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    BootstrapServerSync other = (BootstrapServerSync) obj;
+    if (protocolList == null) {
+      if (other.protocolList != null) {
+        return false;
+      }
+    } else if (!protocolList.equals(other.protocolList)) {
+      return false;
+    }
+    if (requestId != other.requestId) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BootstrapServerSync [requestId=");
-        builder.append(requestId);
-        builder.append(", protocolList=");
-        builder.append(protocolList);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("BootstrapServerSync [requestId=");
+    builder.append(requestId);
+    builder.append(", protocolList=");
+    builder.append(protocolList);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

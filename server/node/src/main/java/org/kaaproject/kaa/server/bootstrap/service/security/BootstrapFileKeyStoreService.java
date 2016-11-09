@@ -16,13 +16,6 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.security;
 
-import java.io.File;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-
-import javax.annotation.PostConstruct;
-
 import org.kaaproject.kaa.common.endpoint.security.KeyUtil;
 import org.kaaproject.kaa.server.common.Environment;
 import org.slf4j.Logger;
@@ -30,118 +23,131 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
+import javax.annotation.PostConstruct;
+
 /**
  * The Class BootstrapFileKeyStoreService.
  */
 @Service
 public class BootstrapFileKeyStoreService implements KeyStoreService {
-    private static final Logger LOG = LoggerFactory.getLogger(BootstrapFileKeyStoreService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BootstrapFileKeyStoreService.class);
 
-    @Value("#{properties[bootstrap_keys_private_key_location]}")
-    private String privateKeyLocation;
+  @Value("#{properties[bootstrap_keys_private_key_location]}")
+  private String privateKeyLocation;
 
-    @Value("#{properties[bootstrap_keys_public_key_location]}")
-    private String publicKeyLocation;
-    private PrivateKey privateKey;
-    private PublicKey publicKey;
+  @Value("#{properties[bootstrap_keys_public_key_location]}")
+  private String publicKeyLocation;
+  private PrivateKey privateKey;
+  private PublicKey publicKey;
 
-    /**
-     * Instantiates a new file key store service.
-     */
-    public BootstrapFileKeyStoreService() {
-        super();
+  /**
+   * Instantiates a new file key store service.
+   */
+  public BootstrapFileKeyStoreService() {
+    super();
+  }
+
+  /**
+   * Load keys.
+   */
+  @PostConstruct
+  public void loadKeys() {
+    privateKeyLocation = Environment.getServerHomeDir() + File.separator + privateKeyLocation;
+    publicKeyLocation = Environment.getServerHomeDir() + File.separator + publicKeyLocation;
+    LOG.debug("Loading private key from {}; public key from {}",
+        privateKeyLocation, publicKeyLocation);
+    File file = new File(privateKeyLocation);
+    if (file.exists()) {
+      try {
+        privateKey = KeyUtil.getPrivate(file);
+      } catch (Exception ex) {
+        LOG.debug("Error loading private key", ex);
+        throw new RuntimeException(ex); //NOSONAR
+      }
     }
-
-    /**
-     * Load keys.
-     */
-    @PostConstruct
-    public void loadKeys() {
-        privateKeyLocation = Environment.getServerHomeDir() + File.separator + privateKeyLocation;
-        publicKeyLocation = Environment.getServerHomeDir() + File.separator + publicKeyLocation;
-        LOG.debug("Loading private key from {}; public key from {}", privateKeyLocation, publicKeyLocation);
-        File f = new File(privateKeyLocation);
-        if (f.exists()) {
-            try {
-                privateKey = KeyUtil.getPrivate(f);
-            } catch (Exception e) {
-                LOG.debug("Error loading private key", e);
-                throw new RuntimeException(e); //NOSONAR
-            }
-        }
-        f = new File(publicKeyLocation);
-        if (f.exists()) {
-            try {
-                publicKey = KeyUtil.getPublic(f);
-            } catch (Exception e) {
-                LOG.debug("Error loading public key", e);
-                throw new RuntimeException(e); //NOSONAR
-            }
-        }
-        if (privateKey == null || publicKey == null) {
-            KeyPair keyPair = generateKeyPair(privateKeyLocation, publicKeyLocation);
-            privateKey = keyPair.getPrivate();
-            publicKey = keyPair.getPublic();
-        }
+    file = new File(publicKeyLocation);
+    if (file.exists()) {
+      try {
+        publicKey = KeyUtil.getPublic(file);
+      } catch (Exception ex) {
+        LOG.debug("Error loading public key", ex);
+        throw new RuntimeException(ex); //NOSONAR
+      }
     }
-
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService#getPrivateKey()
-     */
-    @Override
-    public PrivateKey getPrivateKey() {
-        return privateKey;
+    if (privateKey == null || publicKey == null) {
+      KeyPair keyPair = generateKeyPair(privateKeyLocation, publicKeyLocation);
+      privateKey = keyPair.getPrivate();
+      publicKey = keyPair.getPublic();
     }
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService#getPublicKey()
-     */
-    @Override
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService#getPrivateKey()
+   */
+  @Override
+  public PrivateKey getPrivateKey() {
+    return privateKey;
+  }
 
-    /**
-     * Generate key pair.
-     *
-     * @param privateKeyLocation the private key location
-     * @param publicKeyLocation the public key location
-     * @return the key pair
-     */
-    private KeyPair generateKeyPair(String privateKeyLocation, String publicKeyLocation) {
-        LOG.debug("Generating key pair (private at {}; public at {})", privateKeyLocation, publicKeyLocation);
-        return KeyUtil.generateKeyPair(privateKeyLocation, publicKeyLocation);
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService#getPublicKey()
+   */
+  @Override
+  public PublicKey getPublicKey() {
+    return publicKey;
+  }
 
-    /**
-     * PrivateKeyLocation getter.
-     * @return String the privateKeyLocation
-     */
-    public String getPrivateKeyLocation() {
-        return privateKeyLocation;
-    }
+  /**
+   * Generate key pair.
+   *
+   * @param privateKeyLocation the private key location
+   * @param publicKeyLocation  the public key location
+   * @return the key pair
+   */
+  private KeyPair generateKeyPair(String privateKeyLocation, String publicKeyLocation) {
+    LOG.debug("Generating key pair (private at {}; public at {})",
+        privateKeyLocation, publicKeyLocation);
+    return KeyUtil.generateKeyPair(privateKeyLocation, publicKeyLocation);
+  }
 
-    /**
-     * PrivateKeyLocation setter.
-     * @param privateKeyLocation String the privateKeyLocation to set
-     */
-    public void setPrivateKeyLocation(String privateKeyLocation) {
-        this.privateKeyLocation = privateKeyLocation;
-    }
+  /**
+   * PrivateKeyLocation getter.
+   *
+   * @return String the privateKeyLocation
+   */
+  public String getPrivateKeyLocation() {
+    return privateKeyLocation;
+  }
 
-    /**
-     * PublicKeyLocation getter.
-     * @return String the publicKeyLocation
-     */
-    public String getPublicKeyLocation() {
-        return publicKeyLocation;
-    }
+  /**
+   * PrivateKeyLocation setter.
+   *
+   * @param privateKeyLocation String the privateKeyLocation to set
+   */
+  public void setPrivateKeyLocation(String privateKeyLocation) {
+    this.privateKeyLocation = privateKeyLocation;
+  }
 
-    /**
-     * PublicKeyLocation setter.
-     * @param publicKeyLocation String the publicKeyLocation to set
-     */
-    public void setPublicKeyLocation(String publicKeyLocation) {
-        this.publicKeyLocation = publicKeyLocation;
-    }
+  /**
+   * PublicKeyLocation getter.
+   *
+   * @return String the publicKeyLocation
+   */
+  public String getPublicKeyLocation() {
+    return publicKeyLocation;
+  }
+
+  /**
+   * PublicKeyLocation setter.
+   *
+   * @param publicKeyLocation String the publicKeyLocation to set
+   */
+  public void setPublicKeyLocation(String publicKeyLocation) {
+    this.publicKeyLocation = publicKeyLocation;
+  }
 }

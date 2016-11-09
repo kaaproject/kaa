@@ -27,114 +27,119 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.LinkedHashMap;
 
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class DesktopHttpClient extends AbstractHttpClient {
 
-    /** The Constant LOG. */
-    public static final Logger LOG = LoggerFactory // NOSONAR
-            .getLogger(DesktopHttpClient.class);
+  /**
+   * The Constant LOG.
+   */
+  public static final Logger LOG = LoggerFactory // NOSONAR
+      .getLogger(DesktopHttpClient.class);
 
-    private CloseableHttpClient httpClient;
-    private volatile HttpPost method;
+  private CloseableHttpClient httpClient;
+  private volatile HttpPost method;
 
-    public DesktopHttpClient(String url, PrivateKey privateKey,
-            PublicKey publicKey, PublicKey remotePublicKey) {
-        super(url, privateKey, publicKey, remotePublicKey);
-        this.httpClient = HttpClientBuilder.create().build();
-        this.method = null;
+  /**
+   * All-args constructor.
+   */
+  public DesktopHttpClient(String url, PrivateKey privateKey,
+                           PublicKey publicKey, PublicKey remotePublicKey) {
+    super(url, privateKey, publicKey, remotePublicKey);
+    this.httpClient = HttpClientBuilder.create().build();
+    this.method = null;
+  }
+
+  @Override
+  public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity,
+                                   boolean verifyResponse) throws Exception { //NOSONAR
+    byte[] responseDataRaw = null;
+    method = new HttpPost(url + uri);
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+    for (String key : entity.keySet()) {
+      builder.addBinaryBody(key, entity.get(key));
     }
-
-    @Override
-    public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity
-            , boolean verifyResponse) throws Exception { //NOSONAR
-        byte[] responseDataRaw = null;
-        method = new HttpPost(url + uri);
-        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-        for (String key : entity.keySet()) {
-            builder.addBinaryBody(key, entity.get(key));
-        }
-        HttpEntity requestEntity = builder.build();
-        method.setEntity(requestEntity);
-        if (!Thread.currentThread().isInterrupted()) {
-            LOG.debug("Executing request {}", method.getRequestLine());
-            CloseableHttpResponse response = httpClient.execute(method);
-            try {
-                LOG.debug("Received {}", response.getStatusLine());
-                int status = response.getStatusLine().getStatusCode();
-                if (status >= 200 && status < 300) {
-                    responseDataRaw = getResponseBody(response, verifyResponse);
-                } else {
-                    throw new TransportException(status);
-                }
-            } finally {
-                response.close();
-                method = null;
-            }
+    HttpEntity requestEntity = builder.build();
+    method.setEntity(requestEntity);
+    if (!Thread.currentThread().isInterrupted()) {
+      LOG.debug("Executing request {}", method.getRequestLine());
+      CloseableHttpResponse response = httpClient.execute(method);
+      try {
+        LOG.debug("Received {}", response.getStatusLine());
+        int status = response.getStatusLine().getStatusCode();
+        if (status >= 200 && status < 300) {
+          responseDataRaw = getResponseBody(response, verifyResponse);
         } else {
-            method = null;
-            throw new InterruptedException();
+          throw new TransportException(status);
         }
-
-        return responseDataRaw;
+      } finally {
+        response.close();
+        method = null;
+      }
+    } else {
+      method = null;
+      throw new InterruptedException();
     }
 
-    private byte[] getResponseBody(HttpResponse response, boolean verifyResponse) throws IOException,
-            GeneralSecurityException {
+    return responseDataRaw;
+  }
 
-        HttpEntity resEntity = response.getEntity();
-        if (resEntity != null) {
-            byte[] body = EntityUtils.toByteArray(resEntity);
-            EntityUtils.consume(resEntity);
+  private byte[] getResponseBody(HttpResponse response, boolean verifyResponse) throws IOException,
+      GeneralSecurityException {
 
-            if (verifyResponse) {
-                Header signatureHeader = response
-                        .getFirstHeader(CommonEPConstans.SIGNATURE_HEADER_NAME);
+    HttpEntity resEntity = response.getEntity();
+    if (resEntity != null) {
+      byte[] body = EntityUtils.toByteArray(resEntity);
+      EntityUtils.consume(resEntity);
 
-                if (signatureHeader == null) {
-                    throw new IOException("can't verify message");
-                }
+      if (verifyResponse) {
+        Header signatureHeader = response
+            .getFirstHeader(CommonEpConstans.SIGNATURE_HEADER_NAME);
 
-                byte[] signature;
-                if (signatureHeader.getValue() != null) {
-                    signature = Base64.decodeBase64(signatureHeader.getValue()
-                            .getBytes(Charsets.UTF_8));
-                } else {
-                    signature = new byte[0];
-                }
-                return verifyResponse(body, signature);
-            } else {
-                return body;
-            }
+        if (signatureHeader == null) {
+          throw new IOException("can't verify message");
+        }
+
+        byte[] signature;
+        if (signatureHeader.getValue() != null) {
+          signature = Base64.decodeBase64(signatureHeader.getValue()
+              .getBytes(Charsets.UTF_8));
         } else {
-            throw new IOException("can't read message");
+          signature = new byte[0];
         }
+        return verifyResponse(body, signature);
+      } else {
+        return body;
+      }
+    } else {
+      throw new IOException("can't read message");
     }
+  }
 
-    @Override
-    public void close() throws IOException {
-        this.httpClient.close();
-    }
+  @Override
+  public void close() throws IOException {
+    this.httpClient.close();
+  }
 
-    @Override
-    public void abort() {
-        if (method != null && !method.isAborted()) {
-            LOG.info("Forcely aborting current request...");
-            method.abort();
-        }
+  @Override
+  public void abort() {
+    if (method != null && !method.isAborted()) {
+      LOG.info("Forcely aborting current request...");
+      method.abort();
     }
+  }
 
-    @Override
-    public boolean canAbort() {
-        return method != null && !method.isAborted();
-    }
+  @Override
+  public boolean canAbort() {
+    return method != null && !method.isAborted();
+  }
 
 }

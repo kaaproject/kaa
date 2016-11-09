@@ -28,22 +28,23 @@ import org.slf4j.LoggerFactory;
  * Start log upload when there is countThreshold records in storage.
  */
 public class RecordCountLogUploadStrategy extends DefaultLogUploadStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(RecordCountLogUploadStrategy.class);
+  private static final Logger LOG = LoggerFactory.getLogger(RecordCountLogUploadStrategy.class);
 
-    public RecordCountLogUploadStrategy(int countThreshold) {
-        setCountThreshold(countThreshold);
+  public RecordCountLogUploadStrategy(int countThreshold) {
+    setCountThreshold(countThreshold);
+  }
+
+  @Override
+  protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
+    long currentRecordCount = status.getRecordCount();
+    LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
+
+    if (currentRecordCount >= countThreshold) {
+      LOG.info("Need to upload logs - current count: {}, threshold: {}",
+              currentRecordCount, countThreshold);
+      decision = LogUploadStrategyDecision.UPLOAD;
     }
 
-    @Override
-    protected LogUploadStrategyDecision checkUploadNeeded(LogStorageStatus status) {
-        long currentRecordCount = status.getRecordCount();
-        LogUploadStrategyDecision decision = LogUploadStrategyDecision.NOOP;
-
-        if (currentRecordCount >= countThreshold) {
-            LOG.info("Need to upload logs - current count: {}, threshold: {}", currentRecordCount, countThreshold);
-            decision = LogUploadStrategyDecision.UPLOAD;
-        }
-
-        return decision;
-    }
+    return decision;
+  }
 }

@@ -16,11 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import java.util.List;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -28,87 +25,98 @@ import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.TreeViewModel.DefaultNodeInfo;
 import com.google.gwt.view.client.TreeViewModel.NodeInfo;
+import com.google.web.bindery.event.shared.EventBus;
+
+import java.util.List;
 
 public abstract class TreePlace extends Place implements PlaceConstants {
 
-    public abstract String getName();
+  private TreePlace previousPlace;
 
-    public abstract boolean isLeaf();
+  public abstract String getName();
 
-    public abstract TreePlace createDefaultPreviousPlace();
+  public abstract boolean isLeaf();
 
-    private TreePlace previousPlace;
-    
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
+  public abstract TreePlace createDefaultPreviousPlace();
+
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    return null;
+  }
+
+  /**
+   * Get previous place.
+   *
+   * @return the TreePlace
+   */
+  public TreePlace getPreviousPlace() {
+    if (previousPlace == null) {
+      previousPlace = createDefaultPreviousPlace();
+    }
+    return previousPlace;
+  }
+
+  public void setPreviousPlace(TreePlace previousPlace) {
+    this.previousPlace = previousPlace;
+  }
+
+  public NodeInfo<?> getNodeInfo(SelectionModel<TreePlace> selectionModel, EventBus eventBus) {
+    PlaceCell cell = new PlaceCell();
+    return new DefaultNodeInfo<TreePlace>(getDataProvider(eventBus), cell, selectionModel, null);
+  }
+
+  public static class PlaceCell extends AbstractCell<TreePlace> {
+    @Override
+    public void render(com.google.gwt.cell.client.Cell.Context context,
+                       TreePlace value, SafeHtmlBuilder sb) {
+      if (value != null) {
+        sb.appendEscaped(value.getName());
+      }
+    }
+  }
+
+  public abstract static class TreePlaceDataProvider extends AsyncDataProvider<TreePlace> {
+
+    protected List<TreePlace> data;
+    private LoadCallback callback;
+    private HasData<TreePlace> display;
+
+    public TreePlaceDataProvider() {
+      callback = new LoadCallback();
     }
 
-    public TreePlace getPreviousPlace() {
-        if (previousPlace == null) {
-            previousPlace = createDefaultPreviousPlace();
-        }
-        return previousPlace;
+    @Override
+    protected void onRangeChanged(HasData<TreePlace> display) {
+      loadData(callback, display);
     }
 
-    public void setPreviousPlace(TreePlace previousPlace) {
-        this.previousPlace = previousPlace;
+    @Override
+    public void addDataDisplay(final HasData<TreePlace> display) {
+      this.display = display;
+      super.addDataDisplay(display);
     }
 
-    public NodeInfo<?> getNodeInfo(SelectionModel<TreePlace> selectionModel, EventBus eventBus) {
-        PlaceCell cell = new PlaceCell();
-        return new DefaultNodeInfo<TreePlace>(getDataProvider(eventBus), cell, selectionModel, null);
+    /**
+     * Refresh.
+     */
+    public void refresh() {
+      if (display != null) {
+        loadData(callback, display);
+      }
     }
 
-    public static class PlaceCell extends AbstractCell<TreePlace> {
-        @Override
-        public void render(com.google.gwt.cell.client.Cell.Context context,
-                TreePlace value, SafeHtmlBuilder sb) {
-            if (value != null) {
-                sb.appendEscaped(value.getName());
-              }
-        }
+    protected abstract void loadData(final LoadCallback callback, final HasData<TreePlace> display);
+
+    public class LoadCallback {
+
+
+      public void onFailure(Throwable caught) {
+        GWT.log("TreePlaceDataProvider.LoadCallback.onFailure(caught):", caught);
+      }
+
+      public void onSuccess(List<TreePlace> result, final HasData<TreePlace> display) {
+        data = result;
+        updateRowData(0, data);
+      }
     }
-
-    public static abstract class TreePlaceDataProvider extends AsyncDataProvider<TreePlace> {
-
-        protected List<TreePlace> data;
-        private LoadCallback callback;
-        private HasData<TreePlace> display;
-
-        public TreePlaceDataProvider() {
-            callback = new LoadCallback();
-        }
-
-        @Override
-        protected void onRangeChanged(HasData<TreePlace> display) {
-            loadData(callback, display);
-        }
-
-        @Override
-        public void addDataDisplay(final HasData<TreePlace> display) {
-            this.display = display;
-            super.addDataDisplay(display);
-        }
-
-        public void refresh() {
-            if (display != null) {
-                loadData(callback, display);
-            }
-        }
-
-        protected abstract void loadData(final LoadCallback callback, final HasData<TreePlace> display);
-
-        public class LoadCallback {
-
-
-            public void onFailure(Throwable caught) {
-                GWT.log("TreePlaceDataProvider.LoadCallback.onFailure(caught):", caught);
-            }
-
-            public void onSuccess(List<TreePlace> result, final HasData<TreePlace> display) {
-                data = result;
-                updateRowData(0, data);
-            }
-        }
-    }
+  }
 }

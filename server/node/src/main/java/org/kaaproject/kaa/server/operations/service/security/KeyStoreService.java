@@ -22,23 +22,23 @@ import java.security.PublicKey;
 /**
  * The interface KeyStoreService is used to model key store.
  * There is only two useful methods that allow to get Public and Private Key.
- * 
+ *
  * @author ashvayka
  */
 public interface KeyStoreService {
 
-    /**
-     * Gets the private key.
-     *
-     * @return the private key
-     */
-    PrivateKey getPrivateKey();
+  /**
+   * Gets the private key.
+   *
+   * @return the private key
+   */
+  PrivateKey getPrivateKey();
 
-    /**
-     * Gets the public key.
-     *
-     * @return the public key
-     */
-    PublicKey getPublicKey();
+  /**
+   * Gets the public key.
+   *
+   * @return the public key
+   */
+  PublicKey getPublicKey();
 
 }

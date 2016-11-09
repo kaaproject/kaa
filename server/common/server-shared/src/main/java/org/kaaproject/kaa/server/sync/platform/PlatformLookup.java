@@ -16,58 +16,74 @@
 
 package org.kaaproject.kaa.server.sync.platform;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Provides ability to lookup and init {@link PlatformEncDec} instances
- * 
- * @author Andrew Shvayka
+ * Provides ability to lookup and init {@link PlatformEncDec} instances.
  *
+ * @author Andrew Shvayka
  */
 public class PlatformLookup {
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(PlatformLookup.class);
-    
-    public static final String DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME = "org.kaaproject.kaa.server";
+  public static final String DEFAULT_PROTOCOL_LOOKUP_PACKAGE_NAME = "org.kaaproject.kaa.server";
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(PlatformLookup.class);
 
-    private PlatformLookup() {
-    }
+  private PlatformLookup() {
+  }
 
-    public static Set<String> lookupPlatformProtocols(String... packageNames) {
-        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));
-        Set<BeanDefinition> beans = new HashSet<BeanDefinition>();
-        for(String packageName : packageNames){
-            beans.addAll(scanner.findCandidateComponents(packageName));
-        }
-        Set<String> protocols = new HashSet<>();
-        for (BeanDefinition bean : beans) {
-            protocols.add(bean.getBeanClassName());
-        }
-        return protocols;
+  /**
+   * Lookup for platform protocols, return <code>Set</code> of string. These strings are name of
+   * classes that annotated by <code>@KaaPlatformProtocol</code>
+   *
+   * @param packageNames is packages for scan
+   * @return <code>Set</code> of string
+   */
+  public static Set<String> lookupPlatformProtocols(String... packageNames) {
+    ClassPathScanningCandidateComponentProvider scanner =
+        new ClassPathScanningCandidateComponentProvider(false);
+    scanner.addIncludeFilter(new AnnotationTypeFilter(KaaPlatformProtocol.class));
+    Set<BeanDefinition> beans = new HashSet<>();
+    for (String packageName : packageNames) {
+      beans.addAll(scanner.findCandidateComponents(packageName));
     }
-    
-    public static Map<Integer, PlatformEncDec> initPlatformProtocolMap(Set<String> platformProtocols) {
-        Map<Integer, PlatformEncDec> platformEncDecMap = new HashMap<>();
-        for (String platformProtocol : platformProtocols) {
-            try {
-                Class<?> clazz = Class.forName(platformProtocol);
-                PlatformEncDec protocol = (PlatformEncDec) clazz.newInstance();
-                platformEncDecMap.put(protocol.getId(), protocol);
-                LOG.info("Successfully initialized platform protocol {}", platformProtocol);
-            } catch (ReflectiveOperationException e) {
-                LOG.error("Error during instantiation of platform protocol", e);
-            }
-        }
-        return platformEncDecMap;
+    Set<String> protocols = new HashSet<>();
+    for (BeanDefinition bean : beans) {
+      protocols.add(bean.getBeanClassName());
     }
+    return protocols;
+  }
+
+  /**
+   * Method takes <code>Set</code> of protocols class name and return <code>Map</code> where key is
+   * id of protocol and value is the protocol.
+   *
+   * @param platformProtocols is <code>Set</code> of platform protocols (strings)
+   * @return map where key is id of protocol and value is the protocol
+   */
+  public static Map<Integer, PlatformEncDec> initPlatformProtocolMap(
+      Set<String> platformProtocols) {
+    Map<Integer, PlatformEncDec> platformEncDecMap = new HashMap<>();
+    for (String platformProtocol : platformProtocols) {
+      try {
+        Class<?> clazz = Class.forName(platformProtocol);
+        PlatformEncDec protocol = (PlatformEncDec) clazz.newInstance();
+        platformEncDecMap.put(protocol.getId(), protocol);
+        LOG.info("Successfully initialized platform protocol {}", platformProtocol);
+      } catch (ReflectiveOperationException exception) {
+        LOG.error("Error during instantiation of platform protocol", exception);
+      }
+    }
+    return platformEncDecMap;
+  }
 }

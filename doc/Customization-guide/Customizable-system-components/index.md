@@ -5,31 +5,27 @@ permalink: /:path/
 sort_idx: 10
 ---
 
-* [Introduction](#introduction)
-* [Networking](#networking)
-* [User verifiers](#user-verifiers)
-* [Protocol adapters](#protocol-adapters)
+{% include variables.md %}
 
-## Introduction
+* TOC
+{:toc}
 
-This guide explains how to create your own versions of such Kaa entities as transports, user verifiers, and protocol adapters.
+As a 100% open-source platform, Kaa offers unmatched opportunities for customization and extension.
+This guide is designed to explain how to create your own versions of customizable Kaa components.
 
-Kaa platform provides next customization capabilities:
+More customization guides are planned to be added in future releases of the documentation.
+You can help the project tremendously by [contributing to this section]({{root_url}}Customization-guide/How-to-contribute/Contribution-guide/).
 
-* [Transports](#transports)
-* [User verifiers](#user-verifiers)
-* [Protocol adapters](#protocol-adapters)
+## Log appenders
 
-## Transports
+Kaa comes with a variety of [readily available log appenders]({{root_url}}Programming-guide/Key-platform-features/Data-collection/#existing-log-appender-implementations) that handle data collected from endpoints, and pass it to an integrated system.
+In case your project requires creating a custom log appender, you can create and load one using [this guide]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders/).
 
-Kaa platform is designed to support virtually any data transport protocols. It provides default transport channel implementations for all its services, however, developers can create custom implementations of transport channels for any of the Kaa services and thus override the default data channels. To learn how to implement your own custom transport follow [Creating custom transport](Built-in-networking-stack#creating-custom-transport) guide.
+## Owner verifiers
 
-## User verifiers
-
-User verifiers are specific server components that handles user verification. There are several default user verifier implementations like Facebook or Twitter verifiers that are available out of the box for each Kaa installation. It is also possible to plug in custom verifier implementations. For more information about integration with external authentication system refer to [Custom user verifier](Owner-verifiers) creation guide.
-
-## Protocol adapters
-
-Protocol adapters are suitable in use cases when your endpoint device uses some sophisticated communication protocol and you can not install Kaa SDK on it. To learn how to implement custom Protocol adapter refer to [Creating custom protocol adapter](Protocol-adapters) guide.
+Owner verifiers are server components that handle verification of the owners associated with endpoints.
+There are several out of the box user verifier implementations like Facebook or Twitter verifiers.
+It is also possible to plug in custom owner verifiers.
+For more information about the integration with an external authentication system, see [Owner verifiers]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/#owner-verifiers).
 
 ---

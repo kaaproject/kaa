@@ -16,6 +16,11 @@
 
 package org.kaaproject.kaa.server.operations.service.cache.concurrent;
 
+import org.jboss.netty.util.internal.ConcurrentHashMap;
+import org.kaaproject.kaa.server.operations.service.cache.Computable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.security.InvalidParameterException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -23,11 +28,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-
-import org.jboss.netty.util.internal.ConcurrentHashMap;
-import org.kaaproject.kaa.server.operations.service.cache.Computable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -38,83 +38,88 @@ import org.slf4j.LoggerFactory;
  */
 public class CacheTemporaryMemorizer<K, V> {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(CacheTemporaryMemorizer.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(CacheTemporaryMemorizer.class);
 
-    /** The cache. */
-    private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
+  /**
+   * The cache.
+   */
+  private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
 
-    /**
-     * Compute.
-     *
-     * @param key the key
-     * @param worker the worker
-     * @return the v
-     */
-    public V compute(final K key, final Computable<K, V> worker){
-        if(key == null) {
-            throw new InvalidParameterException("Cache key can't be null");
-        }
-        while (true) {
-            Future<V> f = cache.get(key);
-            if (f == null) {
-                Callable<V> eval = new Callable<V>() {
-                    public V call() throws InterruptedException {
-                        return worker.compute(key);
-                    }
-                };
-                FutureTask<V> ft = new FutureTask<V>(eval);
-                f = cache.putIfAbsent(key, ft);
-                if (f == null) {
-                    f = ft;
-                    try{
-                        ft.run();
-                        //the idea is not to cache permanently but only for the time of execution.
-                        //thus, technically, if time of calculation >> time of external cache put -> we will run calculation maximum 2 times.
-                    } catch (Throwable e) {
-                        LOG.error("Exception catched: ", e);
-                        throw e;
-                    } finally{
-                        cache.remove(key, ft);
-                    }
-                }
-            }
-            try {
-                return f.get();
-            } catch (CancellationException e) {
-                LOG.error("Exception catched: ", e);
-                cache.remove(key, f);
-            } catch (ExecutionException|InterruptedException e) {
-                LOG.error("Exception catched: ", e);
-                throw launderThrowable(e);
-            }
-        }
+  /**
+   * If the Throwable is an Error, throw it; if it is a RuntimeException
+   * return it, otherwise throw IllegalStateException.
+   *
+   * @param throwable the t
+   * @return the runtime exception
+   */
+  public static RuntimeException launderThrowable(Throwable throwable) {
+    if (throwable instanceof RuntimeException) {
+      return (RuntimeException) throwable;
+    } else if (throwable instanceof Error) {
+      throw (Error) throwable;
+    } else {
+      throw new IllegalStateException("Cache Operation Exception", throwable);
     }
-    
-    /**
-     * Gets the cache size.
-     *
-     * @return the cache size
-     */
-    public int getCacheSize(){
-        return cache.size();
-    }
+  }
 
-    /**
-     * If the Throwable is an Error, throw it; if it is a RuntimeException
-     * return it, otherwise throw IllegalStateException.
-     *
-     * @param t the t
-     * @return the runtime exception
-     */
-    public static RuntimeException launderThrowable(Throwable t) {
-        if (t instanceof RuntimeException){
-            return (RuntimeException) t;
-        }else if (t instanceof Error){
-            throw (Error) t;
-        }else{
-            throw new IllegalStateException("Cache Operation Exception", t);
-        }
+  /**
+   * Compute.
+   *
+   * @param key    the key
+   * @param worker the worker
+   * @return the v
+   */
+  public V compute(final K key, final Computable<K, V> worker) {
+    if (key == null) {
+      throw new InvalidParameterException("Cache key can't be null");
     }
+    while (true) {
+      Future<V> future = cache.get(key);
+      if (future == null) {
+        Callable<V> eval = new Callable<V>() {
+          public V call() throws InterruptedException {
+            return worker.compute(key);
+          }
+        };
+        FutureTask<V> ft = new FutureTask<V>(eval);
+        future = cache.putIfAbsent(key, ft);
+        if (future == null) {
+          future = ft;
+          try {
+            ft.run();
+            //the idea is not to cache permanently but only for the time of execution.
+            //thus, technically, if time of calculation >> time of external
+            // cache put -> we will run calculation maximum 2 times.
+          } catch (Throwable ex) {
+            LOG.error("Exception catched: ", ex);
+            throw ex;
+          } finally {
+            cache.remove(key, ft);
+          }
+        }
+      }
+      try {
+        return future.get();
+      } catch (CancellationException ex) {
+        LOG.error("Exception catched: ", ex);
+        cache.remove(key, future);
+      } catch (ExecutionException | InterruptedException ex) {
+        LOG.error("Exception catched: ", ex);
+        throw launderThrowable(ex);
+      }
+    }
+  }
+
+  /**
+   * Gets the cache size.
+   *
+   * @return the cache size
+   */
+  public int getCacheSize() {
+    return cache.size();
+  }
 
 }

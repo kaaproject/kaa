@@ -16,106 +16,106 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
+import com.google.gwt.place.shared.PlaceTokenizer;
+import com.google.gwt.view.client.HasData;
+import com.google.web.bindery.event.shared.EventBus;
+
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.gwt.view.client.HasData;
-
 public class SchemasPlaceApplication extends TreePlace {
 
-    protected String applicationId;
+  protected String applicationId;
 
-    private SchemasPlaceDataProvider dataProvider;
+  private SchemasPlaceDataProvider dataProvider;
 
-    public SchemasPlaceApplication(String applicationId) {
-        this.applicationId = applicationId;
+  public SchemasPlaceApplication(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.schemas();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getApplicationId() {
-        return applicationId;
+    if (obj == null) {
+      return false;
     }
-
-    @Override
-    public String getName() {
-        return Utils.constants.schemas();
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public static abstract class Tokenizer<P extends SchemasPlaceApplication> implements PlaceTokenizer<P>, PlaceConstants {
-
-        @Override
-        public P getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID));
-        }
-
-        protected abstract P getPlaceImpl(String applicationId);
-
-        @Override
-        public String getToken(P place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        SchemasPlaceApplication other = (SchemasPlaceApplication) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
+    SchemasPlaceApplication other = (SchemasPlaceApplication) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
         return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
     }
+    return true;
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return false;
+  }
+
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    if (dataProvider == null) {
+      dataProvider = new SchemasPlaceDataProvider();
+    }
+    return dataProvider;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ApplicationPlace(applicationId);
+  }
+
+  public abstract static class Tokenizer<P extends SchemasPlaceApplication>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        if (dataProvider == null) {
-            dataProvider = new SchemasPlaceDataProvider();
-        }
-        return dataProvider;
+    public P getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID));
     }
 
-    class SchemasPlaceDataProvider extends TreePlaceDataProvider {
-
-        @Override
-        protected void loadData(LoadCallback callback,
-                                HasData<TreePlace> display) {
-            List<TreePlace> result = new ArrayList<TreePlace>();
-            result.add(new ProfileSchemasPlace(applicationId));
-            result.add(new ServerProfileSchemasPlace(applicationId));
-            result.add(new ConfigurationSchemasPlace(applicationId));
-            result.add(new NotificationSchemasPlace(applicationId));
-            result.add(new LogSchemasPlace(applicationId));
-            callback.onSuccess(result, display);
-        }
-
-    }
+    protected abstract P getPlaceImpl(String applicationId);
 
     @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
+    public String getToken(P place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      return PlaceParams.generateToken();
     }
+  }
+
+  class SchemasPlaceDataProvider extends TreePlaceDataProvider {
+
+    @Override
+    protected void loadData(LoadCallback callback,
+                            HasData<TreePlace> display) {
+      List<TreePlace> result = new ArrayList<TreePlace>();
+      result.add(new ProfileSchemasPlace(applicationId));
+      result.add(new ServerProfileSchemasPlace(applicationId));
+      result.add(new ConfigurationSchemasPlace(applicationId));
+      result.add(new NotificationSchemasPlace(applicationId));
+      result.add(new LogSchemasPlace(applicationId));
+      callback.onSuccess(result, display);
+    }
+
+  }
 }

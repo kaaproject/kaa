@@ -15,7 +15,7 @@
  */
 
 /**
- * Provides implementation of channel management and stuff 
+ * Provides implementation of channel management and stuff
  * for processing request/response to/from bootstrap and operation servers
  */
 package org.kaaproject.kaa.client.channel.impl;

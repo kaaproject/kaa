@@ -27,35 +27,49 @@ import java.io.ObjectOutputStream;
 
 public class DtoByteMarshaller {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(DtoByteMarshaller.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory
+      .getLogger(DtoByteMarshaller.class);
 
-    private DtoByteMarshaller() {
-    }
+  private DtoByteMarshaller() {
+  }
 
-    public static <T> byte[] toBytes(T object) {
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream out = new ObjectOutputStream(byteStream);
-            out.writeObject(object);
-        } catch (IOException e) {
-            LOG.error("Can't convert object to bytes.", e);
-        }
-        return byteStream.toByteArray();
+  /**
+   * Converts an object ot byte array.
+   *
+   * @param object object
+   * @param <T>    generic type
+   * @return       byte array
+   */
+  public static <T> byte[] toBytes(T object) {
+    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(byteStream);
+      out.writeObject(object);
+    } catch (IOException ex) {
+      LOG.error("Can't convert object to bytes.", ex);
     }
+    return byteStream.toByteArray();
+  }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T fromBytes(byte[] bytes) {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        T object = null;
-        try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-            object = (T) objectInputStream.readObject();
-        } catch (Exception e) {
-            LOG.error("Can't convert bytes to object.", e);
-        }
-        return object;
+  /**
+   * Converts a byte array to an object.
+   *
+   * @param bytes byte array
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T fromBytes(byte[] bytes) {
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+    T object = null;
+    try {
+      ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+      object = (T) objectInputStream.readObject();
+    } catch (Exception ex) {
+      LOG.error("Can't convert bytes to object.", ex);
     }
+    return object;
+  }
 
 }

@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.sync;
 
 public enum NotificationType {
-    SYSTEM, CUSTOM;
+  SYSTEM, CUSTOM;
 }

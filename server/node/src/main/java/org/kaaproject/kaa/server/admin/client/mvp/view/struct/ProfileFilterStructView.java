@@ -16,37 +16,40 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
 import org.kaaproject.kaa.common.dto.UpdateStatus;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-
 public class ProfileFilterStructView extends TextAreaStructView<ProfileFilterDto> {
-    
-    private Button testFilterButton;
 
-    public ProfileFilterStructView(HasErrorMessage hasErrorMessage) {
-        super(hasErrorMessage);
-        testFilterButton = new Button(Utils.constants.testFilter());
-        prependButton(testFilterButton);
-    }
-    
-    public void reset() {
-        super.reset();
-        testFilterButton.setVisible(false);
-    }
-    
-    @Override
-    public void setData(ProfileFilterDto struct) {
-        super.setData(struct);
-        testFilterButton.setVisible(struct.getStatus() == UpdateStatus.INACTIVE);
-    }
-    
-    public HasClickHandlers getTestFilterButton() {
-        return testFilterButton;
-    }
+  private Button testFilterButton;
+
+  /**
+   * Instantiates a new ProfileFilterStructView.
+   */
+  public ProfileFilterStructView(HasErrorMessage hasErrorMessage) {
+    super(hasErrorMessage);
+    testFilterButton = new Button(Utils.constants.testFilter());
+    prependButton(testFilterButton);
+  }
+
+  public void reset() {
+    super.reset();
+    testFilterButton.setVisible(false);
+  }
+
+  @Override
+  public void setData(ProfileFilterDto struct) {
+    super.setData(struct);
+    testFilterButton.setVisible(struct.getStatus() == UpdateStatus.INACTIVE);
+  }
+
+  public HasClickHandlers getTestFilterButton() {
+    return testFilterButton;
+  }
 
 }

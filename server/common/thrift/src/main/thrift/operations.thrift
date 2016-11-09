@@ -236,11 +236,6 @@ struct ThriftUnicastNotificationMessage {
   3: string notificationId;
 }
 
-struct ThriftEndpointConfigurationRefreshMessage {
-  1: ThriftEntityAddress address
-  2: ThriftActorClassifier actorClassifier
-}
-
 struct ThriftServerProfileUpdateMessage {
   1: ThriftEntityAddress address
   2: ThriftActorClassifier actorClassifier
@@ -287,10 +282,4 @@ service OperationsThriftService {
  *  Interface to send server profile update message
  */
   void onEndpointDeregistration(1: ThriftEndpointDeregistrationMessage message);
-
-/**
-*  Interface to send endpoint configuration refresh message
-*/
-  void sendEndpointConfigurationRefreshMessage(1: ThriftEndpointConfigurationRefreshMessage message);
-
 }

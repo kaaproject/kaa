@@ -31,41 +31,42 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class KaaNodeThriftServiceImplTest {
 
-    private static InitializationService kaaNodeInitializationService;
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        kaaNodeInitializationService = mock(InitializationService.class);
+  private static InitializationService kaaNodeInitializationService;
+
+  /**
+   * @throws java.lang.Exception
+   */
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
+    kaaNodeInitializationService = mock(InitializationService.class);
+  }
+
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.node.service.thrift.KaaNodeThriftServiceImpl#getServerShortName()}.
+   */
+  @Test
+  public void testGetServerShortName() {
+    KaaNodeThriftServiceImpl b = new KaaNodeThriftServiceImpl();
+    assertNotNull(b);
+    assertEquals("kaa-node", b.getServerShortName());
+  }
+
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.node.service.thrift.KaaNodeThriftServiceImpl#shutdown()}.
+   */
+
+  @Test
+  public void testShutdown() {
+    KaaNodeThriftServiceImpl b = new KaaNodeThriftServiceImpl();
+    ReflectionTestUtils.setField(b, "kaaNodeInitializationService", kaaNodeInitializationService);
+
+    try {
+      b.shutdown();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.node.service.thrift.KaaNodeThriftServiceImpl#getServerShortName()}.
-     */
-    @Test
-    public void testGetServerShortName() {
-        KaaNodeThriftServiceImpl b = new KaaNodeThriftServiceImpl();
-        assertNotNull(b);
-        assertEquals("kaa-node", b.getServerShortName());
-    }
-
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.node.service.thrift.KaaNodeThriftServiceImpl#shutdown()}.
-     */
-
-    @Test
-    public void testShutdown() {
-        KaaNodeThriftServiceImpl b = new KaaNodeThriftServiceImpl();
-        ReflectionTestUtils.setField(b, "kaaNodeInitializationService", kaaNodeInitializationService);
-
-        try {
-            b.shutdown();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Mockito.verify(kaaNodeInitializationService, Mockito.timeout(10000)).stop();
-    }
+    Mockito.verify(kaaNodeInitializationService, Mockito.timeout(10000)).stop();
+  }
 
 }

@@ -23,57 +23,57 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
 
 public interface KaaAdminResources extends ClientBundle {
-    
-    public interface KaaTheme extends CssResource {
-        
-        String DEFAULT_CSS = "KaaTheme.css";
 
-    }
+  @NotStrict
+  @Source(KaaTheme.DEFAULT_CSS)
+  KaaTheme kaaTheme();
 
-    public interface KaaAdminStyle extends KaaAdminTheme {
+  @NotStrict
+  @Source(KaaAdminStyle.DEFAULT_CSS)
+  KaaAdminStyle kaaAdminStyle();
 
-        String DEFAULT_CSS = "KaaAdminTheme.css";
-        
-    }
-    
-    @NotStrict
-    @Source(KaaTheme.DEFAULT_CSS)
-    KaaTheme kaaTheme();
+  @ImageOptions(width = 14, height = 14)
+  @Source("images/remove.png")
+  ImageResource remove();
 
-    @NotStrict
-    @Source(KaaAdminStyle.DEFAULT_CSS)
-    KaaAdminStyle kaaAdminStyle();
+  @ImageOptions(width = 14, height = 14)
+  @Source("images/send.png")
+  ImageResource send();
 
-    @ImageOptions(width = 14, height = 14)
-    @Source("images/remove.png")
-    ImageResource remove();
+  @ImageOptions(width = 14, height = 14)
+  @Source("images/details.png")
+  ImageResource details();
 
-    @ImageOptions(width = 14, height = 14)
-    @Source("images/send.png")
-    ImageResource send();
+  @ImageOptions(width = 14, height = 14)
+  @Source("images/plus.png")
+  ImageResource plus();
 
-    @ImageOptions(width = 14, height = 14)
-    @Source("images/details.png")
-    ImageResource details();
+  @ImageOptions(width = 14, height = 14)
+  @Source("images/drop-down.png")
+  ImageResource drop_down();
 
-    @ImageOptions(width = 14, height = 14)
-    @Source("images/plus.png")
-    ImageResource plus();
+  @ImageOptions(width = 14, height = 14)
+  @Source("images/download_grey.png")
+  ImageResource download_grey();
 
-    @ImageOptions(width = 14, height = 14)
-    @Source("images/drop-down.png")
-    ImageResource drop_down();
+  @ImageOptions(width = 14, height = 14)
+  @Source("images/download.png")
+  ImageResource download();
 
-    @ImageOptions(width = 14, height = 14)
-    @Source("images/download_grey.png")
-    ImageResource download_grey();
-    
-    @ImageOptions(width = 14, height = 14)
-    @Source("images/download.png")
-    ImageResource download();
-    
-    @ImageOptions(width = 16, height = 16)
-    @Source("images/export.png")
-    ImageResource export();
+  @ImageOptions(width = 16, height = 16)
+  @Source("images/export.png")
+  ImageResource export();
+
+  public interface KaaTheme extends CssResource {
+
+    String DEFAULT_CSS = "KaaTheme.css";
+
+  }
+
+  public interface KaaAdminStyle extends KaaAdminTheme {
+
+    String DEFAULT_CSS = "KaaAdminTheme.css";
+
+  }
 
 }

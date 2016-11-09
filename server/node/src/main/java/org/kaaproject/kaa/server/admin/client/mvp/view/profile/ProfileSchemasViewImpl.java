@@ -24,24 +24,24 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ProfileSchemasViewImpl extends BaseListViewImpl<EndpointProfileSchemaDto> {
 
-    public ProfileSchemasViewImpl() {
-        super(true);
-    }
+  public ProfileSchemasViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<EndpointProfileSchemaDto, String> createGrid() {
-        return new BaseCtlSchemasGrid<EndpointProfileSchemaDto>();
-    }
+  @Override
+  protected AbstractGrid<EndpointProfileSchemaDto, String> createGrid() {
+    return new BaseCtlSchemasGrid<EndpointProfileSchemaDto>();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.endpointProfileSchemas();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.endpointProfileSchemas();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewSchema();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewSchema();
+  }
 
 }
 

@@ -18,62 +18,79 @@ package org.kaaproject.kaa.avro.avrogen;
 
 public class StyleUtils {
 
-    private StyleUtils() {
-    }
+  private StyleUtils() {
+  }
 
-    public static String toLowerUnderScore(String camelCaseName) {
-        StringBuilder convertedName = new StringBuilder();
+  /**
+   * Convert to lower underscore format.
+   *
+   * @param   camelCaseName the name in camel case format
+   * @return  the string in lower underscore format
+   */
+  public static String toLowerUnderScore(String camelCaseName) {
+    StringBuilder convertedName = new StringBuilder();
 
-        for (int i = 0; i < camelCaseName.length(); ++i) {
-            char c = camelCaseName.charAt(i);
-            if (Character.isUpperCase(c)) {
-                c = Character.toLowerCase(c);
-                if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length())
-                        && (Character.isLowerCase(camelCaseName.charAt(i + 1))
-                                || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
-                    convertedName.append("_");
-                }
-                convertedName.append(c);
-            } else {
-                convertedName.append(c);
-            }
+    for (int i = 0; i < camelCaseName.length(); ++i) {
+      char character = camelCaseName.charAt(i);
+      if (Character.isUpperCase(character)) {
+        character = Character.toLowerCase(character);
+        if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length())
+            && (Character.isLowerCase(camelCaseName.charAt(i + 1))
+            || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
+          convertedName.append("_");
         }
-
-        return convertedName.toString();
+        convertedName.append(character);
+      } else {
+        convertedName.append(character);
+      }
     }
 
-    public static String toUpperUnderScore(String camelCaseName) {
-        StringBuilder convertedName = new StringBuilder();
+    return convertedName.toString();
+  }
 
-        for (int i = 0; i < camelCaseName.length(); ++i) {
-            char c = camelCaseName.charAt(i);
-            if (Character.isUpperCase(c)) {
-                if (convertedName.length() > 0  && ((i + 1) < camelCaseName.length()) &&
-                        (Character.isLowerCase(camelCaseName.charAt(i + 1))
-                                || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
-                    convertedName.append("_");
-                }
-                convertedName.append(c);
-            } else {
-                convertedName.append(Character.toUpperCase(c));
-            }
+  /**
+   * Convert to upper underscore format.
+   *
+   * @param   camelCaseName the input name
+   * @return  the string in upper underscore format
+   */
+  public static String toUpperUnderScore(String camelCaseName) {
+    StringBuilder convertedName = new StringBuilder();
+
+    for (int i = 0; i < camelCaseName.length(); ++i) {
+      char character = camelCaseName.charAt(i);
+      if (Character.isUpperCase(character)) {
+        if (convertedName.length() > 0 && ((i + 1) < camelCaseName.length())
+                && (Character.isLowerCase(camelCaseName.charAt(i + 1))
+                || Character.isLowerCase(camelCaseName.charAt(i - 1)))) {
+          convertedName.append("_");
         }
-
-        return convertedName.toString();
+        convertedName.append(character);
+      } else {
+        convertedName.append(Character.toUpperCase(character));
+      }
     }
 
-    public static String fixCamelHumps(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Name couldn't be null or empty");
-        }
-        if (Character.isLowerCase(name.charAt(0))) {
-            return Character.toUpperCase(name.charAt(0)) + name.substring(1);
-        }
-        return name;
-    }
+    return convertedName.toString();
+  }
 
-    public static String removePackageName(String fullClassName) {
-        int index = fullClassName.lastIndexOf('.');
-        return index == -1 ? fullClassName : fullClassName.substring(index + 1);
+  /**
+   * Fix camel humps.
+   * @param   name the input name
+   * @return  the string with fixed camel humps
+   */
+  public static String fixCamelHumps(String name) {
+    if (name == null || name.isEmpty()) {
+      throw new IllegalArgumentException("Name couldn't be null or empty");
     }
+    if (Character.isLowerCase(name.charAt(0))) {
+      return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
+    return name;
+  }
+
+  public static String removePackageName(String fullClassName) {
+    int index = fullClassName.lastIndexOf('.');
+    return index == -1 ? fullClassName : fullClassName.substring(index + 1);
+  }
 }

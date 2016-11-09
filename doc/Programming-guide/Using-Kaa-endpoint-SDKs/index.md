@@ -5,20 +5,55 @@ permalink: /:path/
 sort_idx: 40
 ---
 
-
 {% include variables.md %}
 
-* TOC
-{:toc}
+In order to save developers' time, allow users concentrate on important business logic, and thus minimize the time to production, [Kaa platform]({{root_url}}) offers endpoint SDKs.
+An endpoint SDK is a library that provides communication, data marshaling, persistence, and other functions available in Kaa for a specific [SDK type]({{root_url}}Glossary/#sdk-type).
+Each SDK type is designed to be embedded into your [client application]({{root_url}}Glossary/#kaa-client) and works in conjunction with [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) that serves as a cloud-based middleware for a particular IoT solution.
 
-Developing an IoT solution we all the time facing the same routine: creating network communication stack, log delivery functionality, event exchange between endpoints, etc.
-The Kaa platform already provides all of this functionality, and you can get it out of the box using Kaa endpoint SDK.
+The following table provides platforms that were verified to support at least one type of the Kaa SDK.
+Click in an appropriate cell for the detailed instructions for your target platform and programming language.
 
-An endpoint SDK is a library which provides communication, data marshalling, persistence, and other functions available in Kaa for specific type of an endpoint (e.g. [Java-based](Java), [C++-based](C++), [C-based](C), [Objective-C-based](Objective-C).
-The SDK is designed to be embedded into your devices and managed applications, while Kaa cluster constitutes the middleware "cloud" basis for a particular solution.
-The SDK works in conjunction with the cluster.
-It is the responsibility of the Kaa client to process structured data provided by the Kaa server (configuration, notifications, etc.) and to supply data to the return path interfaces (profiles, logs, etc.).
+{% capture sdk_c %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C{% endcapture %}
+{% capture LC %}{{sdk_c}}/SDK-Linux/{% endcapture %}
+{% capture EC %}{{sdk_c}}/SDK-ESP8266/{% endcapture %}
+{% capture TC %}{{sdk_c}}/SDK-TI-CC3200/{% endcapture %}
+{% capture UC %}{{sdk_c}}/SDK-UDOO/{% endcapture %}
+{% capture RC %}{{sdk_c}}/SDK-RPi/{% endcapture %}
+{% capture BC %}{{sdk_c}}/SDK-Beaglebone/{% endcapture %}
+{% capture QC %}{{sdk_c}}/SDK-QNX-Neutrino/{% endcapture %}
 
-Endpoint SDK helps to save time on development routine and allows to concentrate on your business logic.
+{% capture sdk_cpp %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++{% endcapture %}
+{% capture LCPP %}{{sdk_cpp}}/SDK-Linux/{% endcapture %}
+{% capture RCPP %}{{sdk_cpp}}/SDK-RPi/{% endcapture %}
+{% capture BCPP %}{{sdk_cpp}}/SDK-Beaglebone/{% endcapture %}
+{% capture SCPP %}{{sdk_cpp}}/SDK-Samsung-Artik-5/{% endcapture %}
+{% capture ICPP %}{{sdk_cpp}}/SDK-Edison/{% endcapture %}
+{% capture WCPP %}{{sdk_cpp}}/SDK-Windows/{% endcapture %}
 
-Get SDK that perfectly fits your environment in [the Supported platforms page](Supported-platforms).
+{% capture obj %}Objective-C{% endcapture %}
+{% capture sdk_obj %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C{% endcapture %}
+{% capture IO %}{{sdk_obj}}{% endcapture %}
+
+{% capture sdk_java %}{{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Java/{% endcapture %}
+{% capture JJ %}{{sdk_java}}{% endcapture %}
+{% capture X %}Supported{% endcapture %}
+
+{% capture TICC3200 %}Texas Instruments CC3200{% endcapture %}
+
+{: id="supportedPlatformsTable"}
+| Platform           | [C]({{sdk_c}})  | [C++]({{sdk_cpp}}) | [{{obj}}]({{sdk_obj}}) | [Java]({{sdk_java}}) |
+| -------            | ---             | ---                | ---                    | ---                  |
+| Linux              | [{{X}}]({{LC}}) | [{{X}}]({{LCPP}})  |                        | [{{X}}]({{JJ}})      |
+| Windows            |                 | [{{X}}]({{WCPP}})  |                        | [{{X}}]({{JJ}})      |
+| QNX Neutrino RTOS  | [{{X}}]({{QC}}) |                    |                        |                      |
+| Generic Desktop    |                 |                    |                        | [{{X}}]({{JJ}})      |
+| Android            |                 |                    |                        | [{{X}}]({{JJ}})      |
+| iOS                |                 |                    | [{{X}}]({{IO}})        |                      |
+| Raspberry Pi       | [{{X}}]({{RC}}) | [{{X}}]({{RCPP}})  |                        |                      |
+| Intel Edison       |                 | [{{X}}]({{ICPP}})  |                        |                      |
+| Beaglebone         | [{{X}}]({{BC}}) | [{{X}}]({{BCPP}})  |                        |                      |
+| Samsung Artik 5    |                 | [{{X}}]({{SCPP}})  |                        |                      |
+| UDOO               | [{{X}}]({{UC}}) |                    |                        |                      |
+| {{TICC3200}}       | [{{X}}]({{TC}}) |                    |                        |                      |
+| ESP8266            | [{{X}}]({{EC}}) |                    |                        |                      |

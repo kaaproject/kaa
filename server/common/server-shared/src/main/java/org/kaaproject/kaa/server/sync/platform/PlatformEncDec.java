@@ -25,32 +25,27 @@ import org.kaaproject.kaa.server.sync.ServerSync;
  */
 public interface PlatformEncDec {
 
-    /**
-     * Returns id of the platform level protocol
-     *
-     */
-    int getId();
+  /**
+   * Returns id of the platform level protocol.
+   */
+  int getId();
 
-    /**
-     * Decodes platform level data to {@link ClientSync}.
-     *
-     * @param data
-     *            the data to decode
-     * @return the client sync
-     * @throws PlatformEncDecException
-     *             signals that decode exception has occurred.
-     */
-    ClientSync decode(byte[] data) throws PlatformEncDecException;
+  /**
+   * Decodes platform level data to {@link ClientSync}.
+   *
+   * @param data the data to decode
+   * @return the client sync
+   * @throws PlatformEncDecException signals that decode exception has occurred.
+   */
+  ClientSync decode(byte[] data) throws PlatformEncDecException;
 
-    /**
-     * Encodes {@link ServerSync} to platform data.
-     *
-     * @param sync
-     *            the sync to encode
-     * @return the encoded platform data
-     * @throws PlatformEncDecException
-     *             signals that encode exception has occurred.
-     */
-    byte[] encode(ServerSync sync) throws PlatformEncDecException;
+  /**
+   * Encodes {@link ServerSync} to platform data.
+   *
+   * @param sync the sync to encode
+   * @return the encoded platform data
+   * @throws PlatformEncDecException signals that encode exception has occurred.
+   */
+  byte[] encode(ServerSync sync) throws PlatformEncDecException;
 
 }

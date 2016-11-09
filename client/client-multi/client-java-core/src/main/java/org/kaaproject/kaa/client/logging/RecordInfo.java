@@ -18,57 +18,57 @@ package org.kaaproject.kaa.client.logging;
 
 /**
  * <p>Describes unique log record delivery info.</p>
- * 
  */
 public class RecordInfo {
-    
-    private final BucketInfo bucketInfo;
-    private long recordAddedTimestampMs;
-    private long recordDeliveryTimeMs;
 
-    /**
-     * Constructs the {@link RecordInfo} object which contains useful information about a log record delivery info.
-     *
-     * @param bucketInfo The {@link BucketInfo} to which belongs this record.
-     */
-    public RecordInfo(BucketInfo bucketInfo) {
-        super();
-        this.bucketInfo = bucketInfo;
-    }
+  private final BucketInfo bucketInfo;
+  private long recordAddedTimestampMs;
+  private long recordDeliveryTimeMs;
 
-    /**
-     * <p>Returns the parent bucket.</p>
-     *
-     * @return The bucket info.
-     */
-    public BucketInfo getBucketInfo() {
-        return bucketInfo;
-    }
-    
-    /**
-     * <p>Returns the timestamp indicating when log record was scheduled for delivery</p>
-     *
-     * @return The timestamp in milliseconds.
-     */
-    public long getRecordAddedTimestampMs() {
-        return recordAddedTimestampMs;
-    }
+  /**
+   * Constructs the {@link RecordInfo} object which contains useful information about a log record
+   * delivery info.
+   *
+   * @param bucketInfo The {@link BucketInfo} to which belongs this record.
+   */
+  public RecordInfo(BucketInfo bucketInfo) {
+    super();
+    this.bucketInfo = bucketInfo;
+  }
 
-    public void setRecordAddedTimestampMs(long recordAddedTimestampMs) {
-        this.recordAddedTimestampMs = recordAddedTimestampMs;
-    }
+  /**
+   * <p>Returns the parent bucket.</p>
+   *
+   * @return The bucket info.
+   */
+  public BucketInfo getBucketInfo() {
+    return bucketInfo;
+  }
 
-    /**
-     * <p>Returns the total spent time to deliver log record in milliseconds</p>
-     *
-     * @return The log delivery time in milliseconds.
-     */
-    public long getRecordDeliveryTimeMs() {
-        return recordDeliveryTimeMs;
-    }
+  /**
+   * <p>Returns the timestamp indicating when log record was scheduled for delivery</p>
+   *
+   * @return The timestamp in milliseconds.
+   */
+  public long getRecordAddedTimestampMs() {
+    return recordAddedTimestampMs;
+  }
 
-    public void setRecordDeliveryTimeMs(long recordDeliveryTimeMs) {
-        this.recordDeliveryTimeMs = recordDeliveryTimeMs;
-    }
-    
+  public void setRecordAddedTimestampMs(long recordAddedTimestampMs) {
+    this.recordAddedTimestampMs = recordAddedTimestampMs;
+  }
+
+  /**
+   * <p>Returns the total spent time to deliver log record in milliseconds</p>
+   *
+   * @return The log delivery time in milliseconds.
+   */
+  public long getRecordDeliveryTimeMs() {
+    return recordDeliveryTimeMs;
+  }
+
+  public void setRecordDeliveryTimeMs(long recordDeliveryTimeMs) {
+    this.recordDeliveryTimeMs = recordDeliveryTimeMs;
+  }
+
 }

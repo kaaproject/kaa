@@ -22,18 +22,18 @@ import org.kaaproject.kaa.common.endpoint.gen.RedirectSyncResponse;
 
 public class DefaultRedirectionTransport implements RedirectionTransport {
 
-    private BootstrapManager manager;
+  private BootstrapManager manager;
 
-    @Override
-    public void setBootstrapManager(BootstrapManager manager) {
-        this.manager = manager;
-    }
+  @Override
+  public void setBootstrapManager(BootstrapManager manager) {
+    this.manager = manager;
+  }
 
-    @Override
-    public void onRedirectionResponse(RedirectSyncResponse response) {
-        if (response != null && manager != null) {
-            manager.useNextOperationsServerByAccessPointId(response.getAccessPointId());
-        }
+  @Override
+  public void onRedirectionResponse(RedirectSyncResponse response) {
+    if (response != null && manager != null) {
+      manager.useNextOperationsServerByAccessPointId(response.getAccessPointId());
     }
+  }
 
 }

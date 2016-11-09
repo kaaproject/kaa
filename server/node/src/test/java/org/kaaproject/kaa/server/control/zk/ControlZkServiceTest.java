@@ -40,135 +40,134 @@ import java.util.List;
  * The Class ControlZkServiceTest.
  */
 public class ControlZkServiceTest {
-    
-    /**
-     * Test control zk service start.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testControlZkServiceStart() throws Exception {
-        ControlZkService zkService = new ControlZkService();
-        KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
-        ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
-        kaaNodeServerConfig.setZkEnabled(false);
-        zkService.start();
-        kaaNodeServerConfig.setZkEnabled(true);
-        kaaNodeServerConfig.setZkIgnoreErrors(true);
-        zkService.start();
-    }
-    
-    /**
-     * Test control zk service start with error.
-     *
-     * @throws Exception the exception
-     */
-    @Test(expected = RuntimeException.class)
-    public void testControlZkServiceStartWithError() throws Exception {
-        ControlZkService zkService = new ControlZkService();
-        KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
-        ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
-        kaaNodeServerConfig.setZkIgnoreErrors(false);
-        zkService.start();
-    }
-    
-    /**
-     * Test control zk service stop.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testControlZkServiceStop() throws Exception {
-        
-        ControlZkService zkService = new ControlZkService();
-        KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
-        ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
-        kaaNodeServerConfig.setZkEnabled(false);
-        zkService.stop();
-        
-        ControlNode controlZKNode = Mockito.mock(ControlNode.class);
-        Mockito.doNothing().when(controlZKNode).close();
 
-        kaaNodeServerConfig.setZkEnabled(true);
-        ReflectionTestUtils.setField(zkService, "controlZKNode", controlZKNode);
-        zkService.stop();
-        
-        Mockito.doThrow(IOException.class).when(controlZKNode).close();
-        zkService.stop();
-    }
-    
-    /**
-     * Test control zk service getBootstrapNodes.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testControlZkBootstrapNodes() throws Exception {
-        ControlZkService zkService = new ControlZkService();
-        KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
-        ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
-        kaaNodeServerConfig.setZkEnabled(false);
-        Assert.assertNull(zkService.getCurrentBootstrapNodes());
-        
-        kaaNodeServerConfig.setZkEnabled(true);
-        
-        ControlNode controlZKNode = Mockito.mock(ControlNode.class);
-        ReflectionTestUtils.setField(zkService, "controlZKNode", controlZKNode);
-        
-        Assert.assertNotNull(zkService.getCurrentBootstrapNodes());
-    }
-    
-    /**
-     * Test control zk service sendEndpointNotification.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testControlZkSendEndpointNotification() throws Exception {
-        ControlZkService zkService = new ControlZkService();
-        KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
-        ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
-        kaaNodeServerConfig.setZkEnabled(false);
-        zkService.sendEndpointNotification(null);
-        
-        kaaNodeServerConfig.setZkEnabled(true);
-        ControlNode controlZKNode = Mockito.mock(ControlNode.class);
-        ReflectionTestUtils.setField(zkService, "controlZKNode", controlZKNode);
-        
-        List<OperationsNodeInfo> endpointNodes = Arrays.asList(
-                new OperationsNodeInfo(new ConnectionInfo("host1", 123, null), new LoadInfo(1, 1.0), System.currentTimeMillis(), new ArrayList<TransportMetaData>()));
-        
-        
-        Mockito.when(controlZKNode.getCurrentOperationServerNodes()).thenReturn(endpointNodes);
-        
-        Notification notification = new Notification();
-        zkService.sendEndpointNotification(notification);
-        
-        Thread.sleep(6000);
-        
-        ControlZkService zkServiceStubbed = Mockito.spy(zkService);
+  /**
+   * Test control zk service start.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testControlZkServiceStart() throws Exception {
+    ControlZkService zkService = new ControlZkService();
+    KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
+    ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
+    kaaNodeServerConfig.setZkEnabled(false);
+    zkService.start();
+    kaaNodeServerConfig.setZkEnabled(true);
+    kaaNodeServerConfig.setZkIgnoreErrors(true);
+    zkService.start();
+  }
 
-        OperationsThriftService.Client client = Mockito.mock(OperationsThriftService.Client.class);
-        Mockito.doNothing().when(client).onNotification(notification);
-        
-        zkServiceStubbed.sendEndpointNotification(notification);
-        
-        Thread.sleep(2000);
-    }
-    
-    /**
-     * create Kaa Node Config.
-     *
-     */
-    private KaaNodeServerConfig createKaaNodeServerConfig() {
-        KaaNodeServerConfig kaaNodeServerConfig = new KaaNodeServerConfig();
-        kaaNodeServerConfig.setZkEnabled(true);
-        kaaNodeServerConfig.setThriftHost("localhost");
-        kaaNodeServerConfig.setThriftPort(9090);
-        kaaNodeServerConfig.setZkHostPortList("localhost:2185");
-        kaaNodeServerConfig.setZkMaxRetryTime(3000);
-        kaaNodeServerConfig.setZkSleepTime(1000);
-        return kaaNodeServerConfig;
-    }
+  /**
+   * Test control zk service start with error.
+   *
+   * @throws Exception the exception
+   */
+  @Test(expected = RuntimeException.class)
+  public void testControlZkServiceStartWithError() throws Exception {
+    ControlZkService zkService = new ControlZkService();
+    KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
+    ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
+    kaaNodeServerConfig.setZkIgnoreErrors(false);
+    zkService.start();
+  }
+
+  /**
+   * Test control zk service stop.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testControlZkServiceStop() throws Exception {
+
+    ControlZkService zkService = new ControlZkService();
+    KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
+    ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
+    kaaNodeServerConfig.setZkEnabled(false);
+    zkService.stop();
+
+    ControlNode controlZKNode = Mockito.mock(ControlNode.class);
+    Mockito.doNothing().when(controlZKNode).close();
+
+    kaaNodeServerConfig.setZkEnabled(true);
+    ReflectionTestUtils.setField(zkService, "controlZkNode", controlZKNode);
+    zkService.stop();
+
+    Mockito.doThrow(IOException.class).when(controlZKNode).close();
+    zkService.stop();
+  }
+
+  /**
+   * Test control zk service getBootstrapNodes.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testControlZkBootstrapNodes() throws Exception {
+    ControlZkService zkService = new ControlZkService();
+    KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
+    ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
+    kaaNodeServerConfig.setZkEnabled(false);
+    Assert.assertNull(zkService.getCurrentBootstrapNodes());
+
+    kaaNodeServerConfig.setZkEnabled(true);
+
+    ControlNode controlZKNode = Mockito.mock(ControlNode.class);
+    ReflectionTestUtils.setField(zkService, "controlZkNode", controlZKNode);
+
+    Assert.assertNotNull(zkService.getCurrentBootstrapNodes());
+  }
+
+  /**
+   * Test control zk service sendEndpointNotification.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testControlZkSendEndpointNotification() throws Exception {
+    ControlZkService zkService = new ControlZkService();
+    KaaNodeServerConfig kaaNodeServerConfig = createKaaNodeServerConfig();
+    ReflectionTestUtils.setField(zkService, "kaaNodeServerConfig", kaaNodeServerConfig);
+    kaaNodeServerConfig.setZkEnabled(false);
+    zkService.sendEndpointNotification(null);
+
+    kaaNodeServerConfig.setZkEnabled(true);
+    ControlNode controlZKNode = Mockito.mock(ControlNode.class);
+    ReflectionTestUtils.setField(zkService,  "controlZkNode", controlZKNode);
+
+    List<OperationsNodeInfo> endpointNodes = Arrays.asList(
+        new OperationsNodeInfo(new ConnectionInfo("host1", 123, null), new LoadInfo(1, 1.0), System.currentTimeMillis(), new ArrayList<TransportMetaData>()));
+
+
+    Mockito.when(controlZKNode.getCurrentOperationServerNodes()).thenReturn(endpointNodes);
+
+    Notification notification = new Notification();
+    zkService.sendEndpointNotification(notification);
+
+    Thread.sleep(6000);
+
+    ControlZkService zkServiceStubbed = Mockito.spy(zkService);
+
+    OperationsThriftService.Client client = Mockito.mock(OperationsThriftService.Client.class);
+    Mockito.doNothing().when(client).onNotification(notification);
+
+    zkServiceStubbed.sendEndpointNotification(notification);
+
+    Thread.sleep(2000);
+  }
+
+  /**
+   * create Kaa Node Config.
+   */
+  private KaaNodeServerConfig createKaaNodeServerConfig() {
+    KaaNodeServerConfig kaaNodeServerConfig = new KaaNodeServerConfig();
+    kaaNodeServerConfig.setZkEnabled(true);
+    kaaNodeServerConfig.setThriftHost("localhost");
+    kaaNodeServerConfig.setThriftPort(9090);
+    kaaNodeServerConfig.setZkHostPortList("localhost:2185");
+    kaaNodeServerConfig.setZkMaxRetryTime(3000);
+    kaaNodeServerConfig.setZkSleepTime(1000);
+    return kaaNodeServerConfig;
+  }
 
 }

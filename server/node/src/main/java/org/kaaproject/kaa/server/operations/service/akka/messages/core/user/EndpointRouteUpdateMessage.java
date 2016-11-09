@@ -19,33 +19,33 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.user;
 import org.kaaproject.kaa.server.operations.service.event.GlobalRouteInfo;
 
 public class EndpointRouteUpdateMessage implements GlobalUserAwareMessage {
-    
-    private final GlobalRouteInfo route;
 
-    public EndpointRouteUpdateMessage(GlobalRouteInfo route) {
-        this.route = route;
-    }
-    
-    @Override
-    public String getUserId() {
-        return route.getUserId();
-    }
+  private final GlobalRouteInfo route;
 
-    @Override
-    public String getTenantId() {
-        return route.getTenantId();
-    }
+  public EndpointRouteUpdateMessage(GlobalRouteInfo route) {
+    this.route = route;
+  }
 
-    public GlobalRouteInfo getRoute() {
-        return route;
-    }
+  @Override
+  public String getUserId() {
+    return route.getUserId();
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("GlobalRouteInfoMessage [message=");
-        builder.append(route);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String getTenantId() {
+    return route.getTenantId();
+  }
+
+  public GlobalRouteInfo getRoute() {
+    return route;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("GlobalRouteInfoMessage [message=");
+    builder.append(route);
+    builder.append("]");
+    return builder.toString();
+  }
 }

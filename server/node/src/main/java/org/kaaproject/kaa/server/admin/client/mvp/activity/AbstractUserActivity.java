@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.event.shared.EventBus;
+
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.kaa.common.dto.admin.ResultCode;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
@@ -25,91 +27,90 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.shared.EventBus;
-
-public abstract class AbstractUserActivity<T extends UserDto, V extends UserView, P extends UserPlace> extends
-        AbstractDetailsActivity<T, V, P> {
+public abstract class AbstractUserActivity<T extends UserDto, V extends UserView, P extends
+        UserPlace> extends AbstractDetailsActivity<T, V, P> {
 
 
+  public AbstractUserActivity(P place, ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
 
-    public AbstractUserActivity(P place, ClientFactory clientFactory) {
-        super(place, clientFactory);
-    }
+  @Override
+  protected String getEntityId(P place) {
+    return place.getUserId();
+  }
 
-    @Override
-    protected String getEntityId(P place) {
-        return place.getUserId();
-    }
+  @Override
+  protected void onEntityRetrieved() {
+    detailsView.getUserName().setValue(entity.getUsername());
+    detailsView.getEmail().setValue(entity.getMail());
+  }
 
-    @Override
-    protected void onEntityRetrieved() {
-        detailsView.getUserName().setValue(entity.getUsername());
-        detailsView.getEmail().setValue(entity.getMail());
-    }
+  @Override
+  protected void onSave() {
+    entity.setUsername(detailsView.getUserName().getValue());
+    entity.setMail(detailsView.getEmail().getValue());
+  }
 
-    @Override
-    protected void onSave() {
-        entity.setUsername(detailsView.getUserName().getValue());
-        entity.setMail(detailsView.getEmail().getValue());
-    }
+  @Override
+  protected void doSave(final EventBus eventBus) {
+    onSave();
 
-    @Override
-    protected void doSave(final EventBus eventBus) {
-        onSave();
+    detailsView.clearError();
 
-        detailsView.clearError();
-
-        if (create) {
-            KaaAdmin.getAuthService().checkUserNameOccupied(entity.getUsername(), null, new BusyAsyncCallback<ResultCode>() {
-                @Override
-                public void onFailureImpl(Throwable caught) {
-                    Utils.handleException(caught, detailsView);
-                }
-
-                @Override
-                public void onSuccessImpl(ResultCode result) {
-                    if (result != ResultCode.OK) {
-                        detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-                    } else {
-                        checkEmail();
-                    }
-                }
-            });
-        } else {
-            checkEmail();
-        }
-    }
-
-    private void checkEmail() {
-        final Long userId = !create ? Long.valueOf(entity.getExternalUid()) : null;
-        KaaAdmin.getAuthService().checkEmailOccupied(entity.getMail(), userId,new BusyAsyncCallback<ResultCode>() {
+    if (create) {
+      KaaAdmin.getAuthService().checkUserNameOccupied(
+          entity.getUsername(), null, new BusyAsyncCallback<ResultCode>() {
             @Override
             public void onFailureImpl(Throwable caught) {
-                Utils.handleException(caught, detailsView);
+              Utils.handleException(caught, detailsView);
             }
 
             @Override
             public void onSuccessImpl(ResultCode result) {
-                if (result != ResultCode.OK) {
-                    detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
-                } else {
-                    performSave();
-                }
+              if (result != ResultCode.OK) {
+                detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
+              } else {
+                checkEmail();
+              }
             }
-        });
+          });
+    } else {
+      checkEmail();
     }
+  }
 
-    private void performSave() {
-        editEntity(entity,
-                new BusyAsyncCallback<T>() {
-                    public void onSuccessImpl(T result) {
-                        goTo(place.getPreviousPlace());
-                    }
+  private void checkEmail() {
+    final Long userId = !create ? Long.valueOf(entity.getExternalUid()) : null;
+    KaaAdmin.getAuthService().checkEmailOccupied(
+        entity.getMail(), userId, new BusyAsyncCallback<ResultCode>() {
+          @Override
+          public void onFailureImpl(Throwable caught) {
+            Utils.handleException(caught, detailsView);
+          }
 
-                    public void onFailureImpl(Throwable caught) {
-                        Utils.handleException(caught, detailsView);
-                    }
+          @Override
+          public void onSuccessImpl(ResultCode result) {
+            if (result != ResultCode.OK) {
+              detailsView.setErrorMessage(Utils.constants.getString(result.getResourceKey()));
+            } else {
+              performSave();
+            }
+          }
         });
-    }
+  }
+
+  private void performSave() {
+    editEntity(entity,
+        new BusyAsyncCallback<T>() {
+          public void onSuccessImpl(T result) {
+            goTo(place.getPreviousPlace());
+          }
+
+          public void onFailureImpl(Throwable caught) {
+            Utils.handleException(caught, detailsView);
+          }
+        });
+  }
 
 }

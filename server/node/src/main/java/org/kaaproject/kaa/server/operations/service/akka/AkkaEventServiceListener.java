@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointRouteUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdate;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConfigurationUpdateMessage;
@@ -30,52 +32,50 @@ import org.kaaproject.kaa.server.operations.service.event.UserRouteInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import akka.actor.ActorRef;
-
 final class AkkaEventServiceListener implements EventServiceListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AkkaEventServiceListener.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AkkaEventServiceListener.class);
 
-    private final ActorRef opsActor;
+  private final ActorRef opsActor;
 
-    public AkkaEventServiceListener(ActorRef opsActor) {
-        super();
-        this.opsActor = opsActor;
-    }
+  public AkkaEventServiceListener(ActorRef opsActor) {
+    super();
+    this.opsActor = opsActor;
+  }
 
-    @Override
-    public void onRouteInfo(RouteInfo routeInfo) {
-        RouteInfoMessage message = new RouteInfoMessage(routeInfo);
-        LOG.debug("Sending message {} to OPS actor", message);
-        opsActor.tell(message, ActorRef.noSender());
-    }
+  @Override
+  public void onRouteInfo(RouteInfo routeInfo) {
+    RouteInfoMessage message = new RouteInfoMessage(routeInfo);
+    LOG.debug("Sending message {} to OPS actor", message);
+    opsActor.tell(message, ActorRef.noSender());
+  }
 
-    @Override
-    public void onUserRouteInfo(UserRouteInfo routeInfo) {
-        UserRouteInfoMessage message = new UserRouteInfoMessage(routeInfo);
-        LOG.debug("Sending message {} to OPS actor", message);
-        opsActor.tell(message, ActorRef.noSender());
-    }
+  @Override
+  public void onUserRouteInfo(UserRouteInfo routeInfo) {
+    UserRouteInfoMessage message = new UserRouteInfoMessage(routeInfo);
+    LOG.debug("Sending message {} to OPS actor", message);
+    opsActor.tell(message, ActorRef.noSender());
+  }
 
-    @Override
-    public void onEvent(RemoteEndpointEvent event) {
-        RemoteEndpointEventMessage message = new RemoteEndpointEventMessage(event);
-        LOG.debug("Sending message {} to OPS actor", message);
-        opsActor.tell(message, ActorRef.noSender());
-    }
+  @Override
+  public void onEvent(RemoteEndpointEvent event) {
+    RemoteEndpointEventMessage message = new RemoteEndpointEventMessage(event);
+    LOG.debug("Sending message {} to OPS actor", message);
+    opsActor.tell(message, ActorRef.noSender());
+  }
 
-    @Override
-    public void onEndpointStateUpdate(EndpointUserConfigurationUpdate notification) {
-        opsActor.tell(new EndpointUserConfigurationUpdateMessage(notification), ActorRef.noSender());
-    }
+  @Override
+  public void onEndpointStateUpdate(EndpointUserConfigurationUpdate notification) {
+    opsActor.tell(new EndpointUserConfigurationUpdateMessage(notification), ActorRef.noSender());
+  }
 
-    @Override
-    public void onEndpointRouteUpdate(GlobalRouteInfo message) {
-        opsActor.tell(new EndpointRouteUpdateMessage(message), ActorRef.noSender());
-    }
+  @Override
+  public void onEndpointRouteUpdate(GlobalRouteInfo message) {
+    opsActor.tell(new EndpointRouteUpdateMessage(message), ActorRef.noSender());
+  }
 
-    @Override
-    public void onServerError(String serverId) {
-        // TODO: handle
-    }
+  @Override
+  public void onServerError(String serverId) {
+    // TODO: handle
+  }
 }

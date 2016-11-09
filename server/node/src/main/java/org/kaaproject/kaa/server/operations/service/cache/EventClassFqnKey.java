@@ -18,68 +18,67 @@ package org.kaaproject.kaa.server.operations.service.cache;
 
 import java.io.Serializable;
 
-public final class EventClassFqnKey implements Serializable{
+public final class EventClassFqnKey implements Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 4837917862920568450L;
+  private static final long serialVersionUID = 4837917862920568450L;
 
-    private final String tenantId;
-    private final String fqn;
+  private final String tenantId;
+  private final String fqn;
 
-    public EventClassFqnKey(String tenantId, String fqn) {
-        super();
-        this.tenantId = tenantId;
-        this.fqn = fqn;
+  /**
+   * All-args constructor.
+   */
+  public EventClassFqnKey(String tenantId, String fqn) {
+    super();
+    this.tenantId = tenantId;
+    this.fqn = fqn;
+  }
+
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public String getFqn() {
+    return fqn;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
+    result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getTenantId() {
-        return tenantId;
+    if (obj == null) {
+      return false;
     }
-
-    public String getFqn() {
-        return fqn;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((fqn == null) ? 0 : fqn.hashCode());
-        result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
-        return result;
+    EventClassFqnKey other = (EventClassFqnKey) obj;
+    if (fqn == null) {
+      if (other.fqn != null) {
+        return false;
+      }
+    } else if (!fqn.equals(other.fqn)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClassFqnKey other = (EventClassFqnKey) obj;
-        if (fqn == null) {
-            if (other.fqn != null) {
-                return false;
-            }
-        } else if (!fqn.equals(other.fqn)) {
-            return false;
-        }
-        if (tenantId == null) {
-            if (other.tenantId != null) {
-                return false;
-            }
-        } else if (!tenantId.equals(other.tenantId)) {
-            return false;
-        }
-        return true;
+    if (tenantId == null) {
+      if (other.tenantId != null) {
+        return false;
+      }
+    } else if (!tenantId.equals(other.tenantId)) {
+      return false;
     }
-
+    return true;
+  }
 
 
 }

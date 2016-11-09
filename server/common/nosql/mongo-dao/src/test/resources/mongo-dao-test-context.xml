@@ -89,8 +89,4 @@
         <property name="credentialsDao" ref="credentialsDao"/>
     </bean>
 
-    <bean id="endpointSpecificConfigurationService"
-          class="org.kaaproject.kaa.server.common.dao.service.EndpointSpecificConfigurationServiceImpl">
-        <property name="endpointSpecificConfigurationDao" ref="endpointSpecificConfigurationDao"/>
-    </bean>
 </beans>

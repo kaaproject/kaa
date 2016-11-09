@@ -19,71 +19,75 @@ package org.kaaproject.kaa.server.operations.service.event;
 import java.io.Serializable;
 
 public final class EventClassFamilyVersion implements Serializable {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 7302504644662229284L;
+
+  private static final long serialVersionUID = 7302504644662229284L;
 
 
-    private final String ecfId;
-    private final int version;
+  private final String ecfId;
+  private final int version;
 
-    public EventClassFamilyVersion(String ecfId, int version) {
-        super();
-        this.ecfId = ecfId;
-        this.version = version;
+  /**
+   * Create new instance of <code>EventClassFamilyVersion</code>.
+   *
+   * @param ecfId the event class family id
+   * @param version the version number of event class family
+   */
+  public EventClassFamilyVersion(String ecfId, int version) {
+    super();
+    this.ecfId = ecfId;
+    this.version = version;
+  }
+
+  public String getEcfId() {
+    return ecfId;
+  }
+
+  public int getVersion() {
+    return version;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
+    result = prime * result + version;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getEcfId() {
-        return ecfId;
+    if (obj == null) {
+      return false;
     }
-
-    public int getVersion() {
-        return version;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
-        result = prime * result + version;
-        return result;
+    EventClassFamilyVersion other = (EventClassFamilyVersion) obj;
+    if (ecfId == null) {
+      if (other.ecfId != null) {
+        return false;
+      }
+    } else if (!ecfId.equals(other.ecfId)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClassFamilyVersion other = (EventClassFamilyVersion) obj;
-        if (ecfId == null) {
-            if (other.ecfId != null) {
-                return false;
-            }
-        } else if (!ecfId.equals(other.ecfId)) {
-            return false;
-        }
-        if (version != other.version) {
-            return false;
-        }
-        return true;
+    if (version != other.version) {
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EventClassFamilyVersion [ecfId=");
-        builder.append(ecfId);
-        builder.append(", version=");
-        builder.append(version);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EventClassFamilyVersion [ecfId=");
+    builder.append(ecfId);
+    builder.append(", version=");
+    builder.append(version);
+    builder.append("]");
+    return builder.toString();
+  }
 }

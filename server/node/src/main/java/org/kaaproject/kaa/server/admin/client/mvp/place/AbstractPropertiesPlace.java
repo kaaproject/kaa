@@ -20,31 +20,32 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 
 public abstract class AbstractPropertiesPlace extends TreePlace {
 
-    public AbstractPropertiesPlace() {
-    }
+  public AbstractPropertiesPlace() {
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof AbstractPropertiesPlace);
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return null;
+  }
+
+  public abstract static class Tokenizer<P extends AbstractPropertiesPlace>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
-    public boolean equals(Object obj) {
-        return obj != null && (obj instanceof AbstractPropertiesPlace);
+    public String getToken(P place) {
+      PlaceParams.clear();
+      return PlaceParams.generateToken();
     }
-
-    public static abstract class Tokenizer<P extends AbstractPropertiesPlace> implements PlaceTokenizer<P>, PlaceConstants {
-
-        @Override
-        public String getToken(P place) {
-            PlaceParams.clear();
-            return PlaceParams.generateToken();
-        }
-    }
- 
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return null;
-    }
+  }
 
 }

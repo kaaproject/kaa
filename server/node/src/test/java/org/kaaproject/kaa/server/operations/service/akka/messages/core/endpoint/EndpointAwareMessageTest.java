@@ -16,35 +16,35 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint;
 
-import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
+import java.util.UUID;
+
 public class EndpointAwareMessageTest {
-    @Test
-    public void endpointAwareMessageTest(){
-        EndpointAwareMessage message1 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSHA1("1"), null);
-        EndpointAwareMessage message2 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSHA1("1"), null);
+  @Test
+  public void endpointAwareMessageTest() {
+    EndpointAwareMessage message1 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSha1("1"), null);
+    EndpointAwareMessage message2 = new EndpointAwareMessage("appToken1", EndpointObjectHash.fromSha1("1"), null);
 
-        Assert.assertTrue(message1.equals(message1));
-        Assert.assertEquals(message1.hashCode(), message1.hashCode());
+    Assert.assertTrue(message1.equals(message1));
+    Assert.assertEquals(message1.hashCode(), message1.hashCode());
 
 
-        Assert.assertFalse(message1.equals(message2));
-        Assert.assertNotEquals(message1.hashCode(), message2.hashCode());
-        Assert.assertNotEquals(message1.getUuid(), message2.getUuid());
+    Assert.assertFalse(message1.equals(message2));
+    Assert.assertNotEquals(message1.hashCode(), message2.hashCode());
+    Assert.assertNotEquals(message1.getUuid(), message2.getUuid());
 
-        UUID uuid = UUID.randomUUID();
-        EndpointAwareMessage message3 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSHA1("1"), null);
-        EndpointAwareMessage message4 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSHA1("1"), null);
+    UUID uuid = UUID.randomUUID();
+    EndpointAwareMessage message3 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSha1("1"), null);
+    EndpointAwareMessage message4 = new EndpointAwareMessage(uuid, "appToken1", EndpointObjectHash.fromSha1("1"), null);
 
-        Assert.assertTrue(message3.equals(message4));
-        Assert.assertEquals(message3.hashCode(), message4.hashCode());
+    Assert.assertTrue(message3.equals(message4));
+    Assert.assertEquals(message3.hashCode(), message4.hashCode());
 
-        Assert.assertNotEquals(message1, new String(""));
-        Assert.assertNotEquals(message1, new EndpointAwareMessage(null, "appToken1", EndpointObjectHash.fromSHA1("1"), null));
+    Assert.assertNotEquals(message1, new String(""));
+    Assert.assertNotEquals(message1, new EndpointAwareMessage(null, "appToken1", EndpointObjectHash.fromSha1("1"), null));
 
-    }
+  }
 }

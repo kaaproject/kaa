@@ -18,35 +18,35 @@ package org.kaaproject.kaa.server.admin.shared.services;
 
 public class KaaAdminServiceException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private ServiceErrorCode errorCode;
+  private ServiceErrorCode errorCode;
 
-    public KaaAdminServiceException() {
-        super();
-    }
+  public KaaAdminServiceException() {
+    super();
+  }
 
-    public KaaAdminServiceException(ServiceErrorCode errorCode) {
-        this.errorCode = errorCode;
-    }
+  public KaaAdminServiceException(ServiceErrorCode errorCode) {
+    this.errorCode = errorCode;
+  }
 
-    public KaaAdminServiceException(String message, ServiceErrorCode errorCode) {
-        super(message);
-        this.errorCode = errorCode;
-    }
+  public KaaAdminServiceException(String message, ServiceErrorCode errorCode) {
+    super(message);
+    this.errorCode = errorCode;
+  }
 
-    public KaaAdminServiceException(String message, Throwable cause, ServiceErrorCode errorCode) {
-        super(message, cause);
-        this.errorCode = errorCode;
-    }
+  public KaaAdminServiceException(String message, Throwable cause, ServiceErrorCode errorCode) {
+    super(message, cause);
+    this.errorCode = errorCode;
+  }
 
-    public KaaAdminServiceException(Throwable cause, ServiceErrorCode errorCode) {
-        super(cause);
-        this.errorCode = errorCode;
-    }
+  public KaaAdminServiceException(Throwable cause, ServiceErrorCode errorCode) {
+    super(cause);
+    this.errorCode = errorCode;
+  }
 
-    public ServiceErrorCode getErrorCode() {
-        return errorCode;
-    }
+  public ServiceErrorCode getErrorCode() {
+    return errorCode;
+  }
 
 }

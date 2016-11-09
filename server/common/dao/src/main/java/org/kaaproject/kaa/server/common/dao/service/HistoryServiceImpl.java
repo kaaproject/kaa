@@ -22,8 +22,6 @@ import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlI
 import static org.kaaproject.kaa.server.common.dao.service.Validator.isValidSqlObject;
 import static org.kaaproject.kaa.server.common.dao.service.Validator.validateId;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.HistoryDto;
 import org.kaaproject.kaa.server.common.dao.HistoryService;
 import org.kaaproject.kaa.server.common.dao.impl.ApplicationDao;
@@ -37,76 +35,83 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class HistoryServiceImpl implements HistoryService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HistoryServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HistoryServiceImpl.class);
 
-    @Value("#{sql_dao[dao_max_wait_time]}")
-    private int waitSeconds;
+  @Value("#{sql_dao[dao_max_wait_time]}")
+  private int waitSeconds;
 
-    @Autowired
-    private HistoryDao<History> historyDao;
+  @Autowired
+  private HistoryDao<History> historyDao;
 
-    @Autowired
-    private ApplicationDao<Application> applicationDao;
+  @Autowired
+  private ApplicationDao<Application> applicationDao;
 
 
-    @Override
-    public List<HistoryDto> findHistoriesByAppId(String appId) {
-        LOG.debug("Find history by application id [{}]", appId);
-        validateId(appId, "Can't find history by application id. Invalid application id " + appId);
-        return convertDtoList(historyDao.findByAppId(appId));
-    }
+  @Override
+  public List<HistoryDto> findHistoriesByAppId(String appId) {
+    LOG.debug("Find history by application id [{}]", appId);
+    validateId(appId, "Can't find history by application id. Invalid application id " + appId);
+    return convertDtoList(historyDao.findByAppId(appId));
+  }
 
-    @Override
-    public HistoryDto findHistoryBySeqNumber(String appId, int seqNum) {
-        LOG.debug("Find history by application id [{}] and sequence number {}", appId, seqNum);
-        validateId(appId, "Can't find history by application id and sequence number. Invalid application id " + appId);
-        return getDto(historyDao.findBySeqNumber(appId, seqNum));
-    }
+  @Override
+  public HistoryDto findHistoryBySeqNumber(String appId, int seqNum) {
+    LOG.debug("Find history by application id [{}] and sequence number {}", appId, seqNum);
+    validateId(appId, "Can't find history by application id and sequence number. "
+                      + "Invalid application id " + appId);
+    return getDto(historyDao.findBySeqNumber(appId, seqNum));
+  }
 
-    @Override
-    public List<HistoryDto> findHistoriesBySeqNumberStart(String appId, int startSeqNum) {
-        LOG.debug("Find history range by application id [{}] and start sequence number {}", appId, startSeqNum);
-        validateId(appId, "Can't find history by application id and start sequence number. Invalid application id " + appId);
-        return convertDtoList(historyDao.findBySeqNumberStart(appId, startSeqNum));
-    }
+  @Override
+  public List<HistoryDto> findHistoriesBySeqNumberStart(String appId, int startSeqNum) {
+    LOG.debug("Find history range by application id [{}] and start sequence number {}",
+            appId, startSeqNum);
+    validateId(appId, "Can't find history by application id and start sequence number. "
+                      + "Invalid application id " + appId);
+    return convertDtoList(historyDao.findBySeqNumberStart(appId, startSeqNum));
+  }
 
-    @Override
-    public List<HistoryDto> findHistoriesBySeqNumberRange(String appId, int startSeqNum, int endSeqNum) {
-        LOG.debug("Find history range by application id [{}] and start sequence number {} end sequence number {} ",
-                appId, startSeqNum, endSeqNum);
+  @Override
+  public List<HistoryDto> findHistoriesBySeqNumberRange(
+          String appId, int startSeqNum, int endSeqNum) {
+    LOG.debug("Find history range by application id [{}] and start sequence number {} "
+              + "end sequence number {} ", appId, startSeqNum, endSeqNum);
 
-        validateId(appId, "Can't find history by application id and sequence number range. Invalid application id " + appId);
-        return convertDtoList(historyDao.findBySeqNumberRange(appId, startSeqNum, endSeqNum));
-    }
+    validateId(appId, "Can't find history by application id and sequence number range. "
+                      + "Invalid application id " + appId);
+    return convertDtoList(historyDao.findBySeqNumberRange(appId, startSeqNum, endSeqNum));
+  }
 
-    @Override
-    public HistoryDto saveHistory(HistoryDto historyDto) {
-        HistoryDto savedDto = null;
-        if (isValidSqlObject(historyDto)) {
-            LOG.debug("History dto object is valid. Saving history...");
-            String applicationId = historyDto.getApplicationId();
-            if (isValidSqlId(applicationId)) {
-                Application application = applicationDao.getNextSeqNumber(applicationId);
-                if (application != null) {
-                    int sequenceNumber = application.getSequenceNumber();
-                    historyDto.setSequenceNumber(sequenceNumber);
-                    historyDto.setLastModifyTime(System.currentTimeMillis());
-                    History savedHistory = historyDao.persist(new History(historyDto));
-                    savedDto = savedHistory != null ? savedHistory.toDto() : null;
-                } else {
-                    LOG.debug("Can't get sequence number for application id [{}] .", applicationId);
-                }
-            } else {
-                LOG.debug("Incorrect application id, can't save history.");
-            }
+  @Override
+  public HistoryDto saveHistory(HistoryDto historyDto) {
+    HistoryDto savedDto = null;
+    if (isValidSqlObject(historyDto)) {
+      LOG.debug("History dto object is valid. Saving history...");
+      String applicationId = historyDto.getApplicationId();
+      if (isValidSqlId(applicationId)) {
+        Application application = applicationDao.getNextSeqNumber(applicationId);
+        if (application != null) {
+          int sequenceNumber = application.getSequenceNumber();
+          historyDto.setSequenceNumber(sequenceNumber);
+          historyDto.setLastModifyTime(System.currentTimeMillis());
+          History savedHistory = historyDao.persist(new History(historyDto));
+          savedDto = savedHistory != null ? savedHistory.toDto() : null;
         } else {
-            LOG.info("Invalid HistoryDto object. Can't save object.");
+          LOG.debug("Can't get sequence number for application id [{}] .", applicationId);
         }
-        return savedDto;
+      } else {
+        LOG.debug("Incorrect application id, can't save history.");
+      }
+    } else {
+      LOG.info("Invalid HistoryDto object. Can't save object.");
     }
+    return savedDto;
+  }
 
 }

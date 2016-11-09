@@ -20,14 +20,14 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class TenantCtlSchemasViewImpl extends CtlSchemasViewImpl {
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.tenantCtlTitle();
-    }
-    
-    @Override
-    public boolean displayShowHigherLevelScopeCheckBox() {
-        return true;
-    }
-    
+  @Override
+  protected String titleString() {
+    return Utils.constants.tenantCtlTitle();
+  }
+
+  @Override
+  public boolean displayShowHigherLevelScopeCheckBox() {
+    return true;
+  }
+
 }

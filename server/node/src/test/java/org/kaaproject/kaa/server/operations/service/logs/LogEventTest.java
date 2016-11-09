@@ -21,20 +21,20 @@ import org.junit.Test;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 
 public class LogEventTest {
-    
-    private static final byte[] logData = {1, 2, 3};
-    private static final byte[] fakeLogData = {1, 2, 4};
-    
-    @Test
-    public void basicLogEventTest() {
-        LogEvent logEvent = new LogEvent();
-        
-        Assert.assertNull(logEvent.getLogData());
-        
-        logEvent.setLogData(logData);
-        
-        Assert.assertEquals(logData, logEvent.getLogData());
-        
-        Assert.assertNotEquals(fakeLogData, logEvent.getLogData());
-    }
+
+  private static final byte[] logData = {1, 2, 3};
+  private static final byte[] fakeLogData = {1, 2, 4};
+
+  @Test
+  public void basicLogEventTest() {
+    LogEvent logEvent = new LogEvent();
+
+    Assert.assertNull(logEvent.getLogData());
+
+    logEvent.setLogData(logData);
+
+    Assert.assertEquals(logData, logEvent.getLogData());
+
+    Assert.assertNotEquals(fakeLogData, logEvent.getLogData());
+  }
 }

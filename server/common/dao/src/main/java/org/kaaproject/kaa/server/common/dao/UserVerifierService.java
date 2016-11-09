@@ -33,40 +33,40 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
+
+import java.util.List;
 
 public interface UserVerifierService {
 
-    /**
-     * @param   appId the app id
-     * @return  the list user verifier dto
-     */
-    List<UserVerifierDto> findUserVerifiersByAppId(String appId);
-    
-    /**
-     * @param   appId           the app id
-     * @param   verifierToken   the verifier token
-     * @return  the user verifier dto
-     */
-    UserVerifierDto findUserVerifiersByAppIdAndVerifierToken(String appId, String verifierToken);
+  /**
+   * @param appId the app id.
+   * @return the list user verifier dto
+   */
+  List<UserVerifierDto> findUserVerifiersByAppId(String appId);
 
-    /**
-     * @param   id the id
-     * @return  the user verifier dto
-     */
-    UserVerifierDto findUserVerifierById(String id);
+  /**
+   * @param appId         the app id.
+   * @param verifierToken the verifier token
+   * @return the user verifier dto
+   */
+  UserVerifierDto findUserVerifiersByAppIdAndVerifierToken(String appId, String verifierToken);
 
-    /**
-     * @param   logAppenderDto the log appender dto
-     * @return  the user verifier dto
-     */
-    UserVerifierDto saveUserVerifier(UserVerifierDto logAppenderDto);
-    
-    /**
-     * @param id the id
-     */
-    void removeUserVerifierById(String id);
+  /**
+   * @param id the id.
+   * @return the user verifier dto
+   */
+  UserVerifierDto findUserVerifierById(String id);
+
+  /**
+   * @param logAppenderDto the log appender dto.
+   * @return the user verifier dto
+   */
+  UserVerifierDto saveUserVerifier(UserVerifierDto logAppenderDto);
+
+  /**
+   * @param id the id.
+   */
+  void removeUserVerifierById(String id);
 
 }

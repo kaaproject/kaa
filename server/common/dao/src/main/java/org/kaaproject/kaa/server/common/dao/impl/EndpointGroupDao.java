@@ -26,61 +26,61 @@ import java.util.List;
 public interface EndpointGroupDao<T> extends SqlDao<T> {
 
 
-    /**
-     * Find endpoint group by application id.
-     *
-     * @param applicationId the application id
-     * @return the list of endpoint group
-     */
-    List<T> findByApplicationId(String applicationId);
+  /**
+   * Find endpoint group by application id.
+   *
+   * @param applicationId the application id
+   * @return the list of endpoint group
+   */
+  List<T> findByApplicationId(String applicationId);
 
-    /**
-     *  Find endpoint group by application id and weight.
-     *  This method used for validation. For one application can be
-     *  used unique group weight
-     *
-     * @param applicationId the application id
-     * @param weight the weight
-     * @return the endpoint group object
-     */
-    T findByAppIdAndWeight(String applicationId, int weight);
-    
-    /**
-     *  Find endpoint group by application id and group name.
-     *  This method used for validation. For one application can be
-     *  used unique group name
-     *
-     * @param applicationId the application id
-     * @param name the group name
-     * @return the endpoint group object
-     */
-    T findByAppIdAndName(String applicationId, String name);
+  /**
+   * Find endpoint group by application id and weight.
+   * This method used for validation. For one application can be
+   * used unique group weight
+   *
+   * @param applicationId the application id
+   * @param weight        the weight
+   * @return the endpoint group object
+   */
+  T findByAppIdAndWeight(String applicationId, int weight);
 
-    /**
-     * Removes the topic from endpoint group.
-     *
-     * @param id the endpoint group id
-     * @param topicId the topic id
-     * @return the endpoint group object
-     */
-    T removeTopicFromEndpointGroup(String id, String topicId);
+  /**
+   * Find endpoint group by application id and group name.
+   * This method used for validation. For one application can be
+   * used unique group name
+   *
+   * @param applicationId the application id
+   * @param name          the group name
+   * @return the endpoint group object
+   */
+  T findByAppIdAndName(String applicationId, String name);
 
-    /**
-     * Find endpoint groups by topic id and application id.
-     *
-     * @param appId the application id
-     * @param topicId the topic id
-     * @return the list of endpoint groups
-     */
-    List<T> findEndpointGroupsByTopicIdAndAppId(String appId, String topicId);
+  /**
+   * Removes the topic from endpoint group.
+   *
+   * @param id      the endpoint group id
+   * @param topicId the topic id
+   * @return the endpoint group object
+   */
+  T removeTopicFromEndpointGroup(String id, String topicId);
 
-    /**
-     * Adds the topic to endpoint group.
-     *
-     * @param id the id
-     * @param topicId the topic id
-     * @return the endpoint group object
-     */
-    T addTopicToEndpointGroup(String id, String topicId);
+  /**
+   * Find endpoint groups by topic id and application id.
+   *
+   * @param appId   the application id
+   * @param topicId the topic id
+   * @return the list of endpoint groups
+   */
+  List<T> findEndpointGroupsByTopicIdAndAppId(String appId, String topicId);
+
+  /**
+   * Adds the topic to endpoint group.
+   *
+   * @param id      the id
+   * @param topicId the topic id
+   * @return the endpoint group object
+   */
+  T addTopicToEndpointGroup(String id, String topicId);
 
 }

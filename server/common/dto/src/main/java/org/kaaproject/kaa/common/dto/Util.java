@@ -20,14 +20,20 @@ import java.util.Arrays;
 
 public class Util {
 
-    private Util() {
-    }
+  private Util() {
+  }
 
-    public static byte[] getArrayCopy(byte[] array) {
-        byte[] bytes = null;
-        if (array != null) {
-            bytes = Arrays.copyOf(array, array.length);
-        }
-        return bytes;
+  /**
+   * Copies an array.
+   *
+   * @param array array
+   * @return      array copy
+   */
+  public static byte[] getArrayCopy(byte[] array) {
+    byte[] bytes = null;
+    if (array != null) {
+      bytes = Arrays.copyOf(array, array.length);
     }
+    return bytes;
+  }
 }

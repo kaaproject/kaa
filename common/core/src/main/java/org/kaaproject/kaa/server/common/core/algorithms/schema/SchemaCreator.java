@@ -26,12 +26,12 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
  */
 public interface SchemaCreator<T extends KaaSchema> {
 
-    /**
-     * Gets protocol schema.
-     *
-     * @param configSchema the config schema
-     * @return the schema
-     * @throws SchemaCreationException the protocol schema exception
-     */
-    T createSchema(DataSchema configSchema) throws SchemaCreationException;
+  /**
+   * Gets protocol schema.
+   *
+   * @param configSchema the config schema
+   * @return the schema
+   * @throws SchemaCreationException the protocol schema exception
+   */
+  T createSchema(DataSchema configSchema) throws SchemaCreationException;
 }

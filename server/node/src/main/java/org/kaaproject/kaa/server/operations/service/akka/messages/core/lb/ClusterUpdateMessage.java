@@ -20,7 +20,6 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.lb;
  * This message indicate change in cluster topology.
  *
  * @author Andrew Shvayka
- *
  */
 public final class ClusterUpdateMessage {
 

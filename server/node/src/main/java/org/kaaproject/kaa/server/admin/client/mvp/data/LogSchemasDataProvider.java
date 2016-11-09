@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
@@ -24,33 +24,37 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class LogSchemasDataProvider extends AbstractDataProvider<LogSchemaDto, String>{
+public class LogSchemasDataProvider extends AbstractDataProvider<LogSchemaDto, String> {
 
-    private String applicationId;
- 
-    public LogSchemasDataProvider(AbstractGrid<LogSchemaDto, String> dataGrid,
-                                  HasErrorMessage hasErrorMessage,
-                                  String applicationId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        addDataDisplay();
-    }
+  private String applicationId;
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadLogSchemas(applicationId, new AsyncCallback<List<LogSchemaDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  /**
+   * All-args constructor.
+   */
+  public LogSchemasDataProvider(AbstractGrid<LogSchemaDto, String> dataGrid,
+                                HasErrorMessage hasErrorMessage,
+                                String applicationId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    addDataDisplay();
+  }
 
-            }
-            @Override
-            public void onSuccess(List<LogSchemaDto> result) {
-                callback.onSuccess(result);
-            }
-        });
-    }
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadLogSchemas(applicationId, new AsyncCallback<List<LogSchemaDto>>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        callback.onFailure(caught);
+
+      }
+
+      @Override
+      public void onSuccess(List<LogSchemaDto> result) {
+        callback.onSuccess(result);
+      }
+    });
+  }
 
 }

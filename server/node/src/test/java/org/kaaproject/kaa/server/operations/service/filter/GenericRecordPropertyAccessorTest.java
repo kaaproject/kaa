@@ -23,15 +23,15 @@ import org.springframework.expression.AccessException;
 
 public class GenericRecordPropertyAccessorTest {
 
-    @Test
-    public void canWriteTest() throws AccessException {
-        GenericRecordPropertyAccessor accessor = new GenericRecordPropertyAccessor();
-        Assert.assertFalse(accessor.canWrite(null, null, null));
-    }
+  @Test
+  public void canWriteTest() throws AccessException {
+    GenericRecordPropertyAccessor accessor = new GenericRecordPropertyAccessor();
+    Assert.assertFalse(accessor.canWrite(null, null, null));
+  }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void writeTest() throws AccessException {
-        GenericRecordPropertyAccessor accessor = new GenericRecordPropertyAccessor();
-        accessor.write(null, null, null, null);
-    }
+  @Test(expected = UnsupportedOperationException.class)
+  public void writeTest() throws AccessException {
+    GenericRecordPropertyAccessor accessor = new GenericRecordPropertyAccessor();
+    accessor.write(null, null, null, null);
+  }
 }

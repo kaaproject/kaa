@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.control.sdk;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicBean;
@@ -26,63 +23,64 @@ import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicCompile
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicException;
 import org.kaaproject.kaa.server.control.service.sdk.compiler.JavaDynamicUtils;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 /**
  * The Class JavaDynamicCompilerCompilationTest.
  */
 public class JavaDynamicCompilerCompilationTest {
 
-    /**
-     * Test compilation failure.
-     */
-    @Test
-    public void testCompilationFailure() {
-        JavaDynamicCompiler compiler = new JavaDynamicCompiler();
-        compiler.init();
-        JavaDynamicBean dummySource = new JavaDynamicBean("dummyClass", "dummyClass {}");
-        
-        JavaDynamicException expectedException = null;
-        try {
-            compiler.compile(Arrays.asList(dummySource));
-        }
-        catch (JavaDynamicException e) {
-            expectedException = e;
-        }
-        Assert.assertNotNull(expectedException);
-        Assert.assertFalse(strIsEmpty(expectedException.toString())); 
+  /**
+   * Str is empty.
+   *
+   * @param str the str
+   * @return true, if successful
+   */
+  private static boolean strIsEmpty(String str) {
+    return str == null || str.trim().equals("");
+  }
+
+  /**
+   * Test compilation failure.
+   */
+  @Test
+  public void testCompilationFailure() {
+    JavaDynamicCompiler compiler = new JavaDynamicCompiler();
+    compiler.init();
+    JavaDynamicBean dummySource = new JavaDynamicBean("dummyClass", "dummyClass {}");
+
+    JavaDynamicException expectedException = null;
+    try {
+      compiler.compile(Arrays.asList(dummySource));
+    } catch (JavaDynamicException e) {
+      expectedException = e;
     }
-    
-    /**
-     * Test compilation success.
-     */
-    @Test
-    public void testCompilationSuccess() {
-        JavaDynamicCompiler compiler = new JavaDynamicCompiler();
-        compiler.init();
-        JavaDynamicBean dummySource = new JavaDynamicBean("dummyClass", "class dummyClass {}");
-        
-        Collection<JavaDynamicBean> compiledClasses = compiler.compile(Arrays.asList(dummySource));
-        Assert.assertEquals(compiledClasses.size(), 1);
-        JavaDynamicBean compiledClass = compiledClasses.iterator().next();
-        Assert.assertEquals(compiledClass.getName(), "dummyClass");
-        Assert.assertNotNull(compiledClass.getBytes());
-    }
-    
-    /**
-     * Test invalid uri.
-     */
-    @Test(expected = RuntimeException.class)
-    public void testInvalidUri() {
-        JavaDynamicUtils.INSTANCE.createURI("\\test");
-    }
-    
-    /**
-     * Str is empty.
-     * 
-     * @param str
-     *            the str
-     * @return true, if successful
-     */
-    private static boolean strIsEmpty(String str) {
-        return str == null || str.trim().equals("");
-    }
+    Assert.assertNotNull(expectedException);
+    Assert.assertFalse(strIsEmpty(expectedException.toString()));
+  }
+
+  /**
+   * Test compilation success.
+   */
+  @Test
+  public void testCompilationSuccess() {
+    JavaDynamicCompiler compiler = new JavaDynamicCompiler();
+    compiler.init();
+    JavaDynamicBean dummySource = new JavaDynamicBean("dummyClass", "class dummyClass {}");
+
+    Collection<JavaDynamicBean> compiledClasses = compiler.compile(Arrays.asList(dummySource));
+    Assert.assertEquals(compiledClasses.size(), 1);
+    JavaDynamicBean compiledClass = compiledClasses.iterator().next();
+    Assert.assertEquals(compiledClass.getName(), "dummyClass");
+    Assert.assertNotNull(compiledClass.getBytes());
+  }
+
+  /**
+   * Test invalid uri.
+   */
+  @Test(expected = RuntimeException.class)
+  public void testInvalidUri() {
+    JavaDynamicUtils.INSTANCE.createUri("\\test");
+  }
 }

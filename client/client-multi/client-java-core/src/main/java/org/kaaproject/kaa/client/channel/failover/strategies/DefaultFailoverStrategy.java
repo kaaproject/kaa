@@ -30,74 +30,82 @@ import java.util.concurrent.TimeUnit;
  */
 public class DefaultFailoverStrategy implements FailoverStrategy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultFailoverStrategy.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultFailoverStrategy.class);
 
-    private static final long DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD = 2;
-    private static final long DEFAULT_OPERATION_SERVERS_RETRY_PERIOD = 2;
-    private static final long DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD = 5;
-    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
+  private static final long DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD = 2;
+  private static final long DEFAULT_OPERATION_SERVERS_RETRY_PERIOD = 2;
+  private static final long DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD = 5;
+  private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
 
-    private long bootstrapServersRetryPeriod;
-    private long operationsServersRetryPeriod;
-    private long noConnectivityRetryPeriod;
-    private TimeUnit timeUnit;
+  private long bootstrapServersRetryPeriod;
+  private long operationsServersRetryPeriod;
+  private long noConnectivityRetryPeriod;
+  private TimeUnit timeUnit;
 
-    public DefaultFailoverStrategy() {
-        this(DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD,
-                DEFAULT_OPERATION_SERVERS_RETRY_PERIOD,
-                DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD,
-                DEFAULT_TIME_UNIT);
+  /**
+   * Instantiates the DelautFailoverStrategy.
+   */
+  public DefaultFailoverStrategy() {
+    this(DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD,
+        DEFAULT_OPERATION_SERVERS_RETRY_PERIOD,
+        DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD,
+        DEFAULT_TIME_UNIT);
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public DefaultFailoverStrategy(long bootstrapServersRetryPeriod,
+                                 long operationsServersRetryPeriod,
+                                 long noConnectivityRetryPeriod,
+                                 TimeUnit timeUnit) {
+    this.bootstrapServersRetryPeriod = bootstrapServersRetryPeriod;
+    this.operationsServersRetryPeriod = operationsServersRetryPeriod;
+    this.noConnectivityRetryPeriod = noConnectivityRetryPeriod;
+    this.timeUnit = timeUnit;
+  }
+
+  @Override
+  public FailoverDecision onFailover(FailoverStatus failoverStatus) {
+    LOG.trace("Producing failover decision for failover status: {}", failoverStatus);
+    switch (failoverStatus) {
+      case BOOTSTRAP_SERVERS_NA:
+        return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
+      case CURRENT_BOOTSTRAP_SERVER_NA:
+        return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod,
+                timeUnit);
+      case NO_OPERATION_SERVERS_RECEIVED:
+        return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod,
+                timeUnit);
+      case OPERATION_SERVERS_NA:
+        return new FailoverDecision(FailoverAction.RETRY, operationsServersRetryPeriod, timeUnit);
+      case NO_CONNECTIVITY:
+        return new FailoverDecision(FailoverAction.RETRY, noConnectivityRetryPeriod, timeUnit);
+      case ENDPOINT_VERIFICATION_FAILED:
+      case ENDPOINT_CREDENTIALS_REVOKED:
+        return new FailoverDecision(FailoverAction.RETRY);
+      default:
+        return new FailoverDecision(FailoverAction.NOOP);
     }
+  }
 
-    public DefaultFailoverStrategy(long bootstrapServersRetryPeriod,
-                                   long operationsServersRetryPeriod,
-                                   long noConnectivityRetryPeriod,
-                                   TimeUnit timeUnit) {
-        this.bootstrapServersRetryPeriod = bootstrapServersRetryPeriod;
-        this.operationsServersRetryPeriod = operationsServersRetryPeriod;
-        this.noConnectivityRetryPeriod = noConnectivityRetryPeriod;
-        this.timeUnit = timeUnit;
-    }
+  @Override
+  public void onRecover(TransportConnectionInfo connectionInfo) {
+    LOG.debug("SDK recovered after failover with connection info: {}", connectionInfo);
+  }
 
-    @Override
-    public FailoverDecision onFailover(FailoverStatus failoverStatus) {
-        LOG.trace("Producing failover decision for failover status: {}", failoverStatus);
-        switch (failoverStatus) {
-            case BOOTSTRAP_SERVERS_NA:
-                return new FailoverDecision(FailoverAction.RETRY, bootstrapServersRetryPeriod, timeUnit);
-            case CURRENT_BOOTSTRAP_SERVER_NA:
-                return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod, timeUnit);
-            case NO_OPERATION_SERVERS_RECEIVED:
-                return new FailoverDecision(FailoverAction.USE_NEXT_BOOTSTRAP, bootstrapServersRetryPeriod, timeUnit);
-            case OPERATION_SERVERS_NA:
-                return new FailoverDecision(FailoverAction.RETRY, operationsServersRetryPeriod, timeUnit);
-            case NO_CONNECTIVITY:
-                return new FailoverDecision(FailoverAction.RETRY, noConnectivityRetryPeriod, timeUnit);
-            case ENDPOINT_VERIFICATION_FAILED:
-            case ENDPOINT_CREDENTIALS_REVOKED:
-                return new FailoverDecision(FailoverAction.RETRY);
-            default:
-                return new FailoverDecision(FailoverAction.NOOP);
-        }
-    }
+  @Override
+  public long getBootstrapServersRetryPeriod() {
+    return bootstrapServersRetryPeriod;
+  }
 
-    @Override
-    public void onRecover(TransportConnectionInfo connectionInfo) {
-        LOG.debug("SDK recovered after failover with connection info: {}", connectionInfo);
-    }
+  @Override
+  public long getOperationServersRetryPeriod() {
+    return operationsServersRetryPeriod;
+  }
 
-    @Override
-    public long getBootstrapServersRetryPeriod() {
-        return bootstrapServersRetryPeriod;
-    }
-
-    @Override
-    public long getOperationServersRetryPeriod() {
-        return operationsServersRetryPeriod;
-    }
-
-    @Override
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
+  @Override
+  public TimeUnit getTimeUnit() {
+    return timeUnit;
+  }
 }

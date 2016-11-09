@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import org.kaaproject.kaa.server.common.Base64Util;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,45 +25,51 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.kaaproject.kaa.server.common.Base64Util;
-
 public class EventStorage {
 
-    private final Map<EndpointEvent, Set<RouteTableKey>> dataMap;
+  private final Map<EndpointEvent, Set<RouteTableKey>> dataMap;
 
-    public EventStorage() {
-        super();
-        dataMap = new HashMap<EndpointEvent, Set<RouteTableKey>>();
-    }
+  public EventStorage() {
+    super();
+    dataMap = new HashMap<EndpointEvent, Set<RouteTableKey>>();
+  }
 
-    public Set<RouteTableKey> put(EndpointEvent event, Set<RouteTableKey> recipientKeys){
-        return dataMap.put(event, recipientKeys);
-    }
+  public Set<RouteTableKey> put(EndpointEvent event, Set<RouteTableKey> recipientKeys) {
+    return dataMap.put(event, recipientKeys);
+  }
 
-    public boolean clear(EndpointEvent event) {
-        return dataMap.remove(event) != null;
-    }
+  public boolean clear(EndpointEvent event) {
+    return dataMap.remove(event) != null;
+  }
 
-    public List<EndpointEvent> getEvents(RouteTableKey key) {
-        return getEvents(key, null);
-    }
+  public List<EndpointEvent> getEvents(RouteTableKey key) {
+    return getEvents(key, null);
+  }
 
-    public List<EndpointEvent> getEvents(RouteTableKey key, RouteTableAddress targetAddress) {
-        String target = null;
-        if(targetAddress != null){
-            target = Base64Util.encode(targetAddress.getEndpointKey().getData());
-        }
-        List<EndpointEvent> result = new ArrayList<>();
-        for(Entry<EndpointEvent, Set<RouteTableKey>> entry : dataMap.entrySet()){
-            EndpointEvent event = entry.getKey();
-            if(targetAddress != null && targetAddress.getEndpointKey().equals(event.getSender())){
-                continue;
-            }
-            if(entry.getValue().contains(key) && (event.getTarget() == null || target == null || event.getTarget().equals(target))) {
-                result.add(entry.getKey());
-            }
-        }
-        return result;
+  /**
+   * Returns endpoint events.
+   *
+   * @param key           route table key
+   * @param targetAddress route table address
+   * @return              endpoint events
+   */
+  public List<EndpointEvent> getEvents(RouteTableKey key, RouteTableAddress targetAddress) {
+    String target = null;
+    if (targetAddress != null) {
+      target = Base64Util.encode(targetAddress.getEndpointKey().getData());
     }
+    List<EndpointEvent> result = new ArrayList<>();
+    for (Entry<EndpointEvent, Set<RouteTableKey>> entry : dataMap.entrySet()) {
+      EndpointEvent event = entry.getKey();
+      if (targetAddress != null && targetAddress.getEndpointKey().equals(event.getSender())) {
+        continue;
+      }
+      if (entry.getValue().contains(key)
+          && (event.getTarget() == null || target == null || event.getTarget().equals(target))) {
+        result.add(entry.getKey());
+      }
+    }
+    return result;
+  }
 
 }

@@ -17,24 +17,25 @@
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
 import com.mongodb.DBObject;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 
 public class LogEventTest {
-    private static final String KEY = "key";
-    private static final String HEADER_VALUE = "value";
-    private static final Integer EVENT_VALUE = 5;
-    private static final String HEADER = "{\"" + KEY  + "\":\"" + HEADER_VALUE + "\"}";
-    private static final String EVENT = "{" + KEY  + ":" + EVENT_VALUE + "}";
+  private static final String KEY = "key";
+  private static final String HEADER_VALUE = "value";
+  private static final Integer EVENT_VALUE = 5;
+  private static final String HEADER = "{\"" + KEY + "\":\"" + HEADER_VALUE + "\"}";
+  private static final String EVENT = "{" + KEY + ":" + EVENT_VALUE + "}";
 
-    @Test
-    public void basicLogEventTest() {
-        LogEventDto logEventDto = new LogEventDto(HEADER, EVENT);
-        LogEvent logEvent = new LogEvent(logEventDto, null, null);
-        DBObject dBHeader = logEvent.getHeader();
-        DBObject dbEvent = logEvent.getEvent();
-        Assert.assertEquals(HEADER_VALUE, dBHeader.get(KEY));
-        Assert.assertEquals(EVENT_VALUE, dbEvent.get(KEY));
-    }
+  @Test
+  public void basicLogEventTest() {
+    LogEventDto logEventDto = new LogEventDto(HEADER, EVENT);
+    LogEvent logEvent = new LogEvent(logEventDto, null, null);
+    DBObject dBHeader = logEvent.getHeader();
+    DBObject dbEvent = logEvent.getEvent();
+    Assert.assertEquals(HEADER_VALUE, dBHeader.get(KEY));
+    Assert.assertEquals(EVENT_VALUE, dbEvent.get(KEY));
+  }
 }

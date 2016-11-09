@@ -22,35 +22,34 @@ import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 
 /**
  * Implementation of {@link ChannelContext} that is based on Netty channels.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public class NettyChannelContext implements ChannelContext {
-    private final ChannelHandlerContext ctx;
+  private final ChannelHandlerContext ctx;
 
-    public NettyChannelContext(ChannelHandlerContext ctx) {
-        super();
-        this.ctx = ctx;
-    }
+  public NettyChannelContext(ChannelHandlerContext ctx) {
+    super();
+    this.ctx = ctx;
+  }
 
-    @Override
-    public void writeAndFlush(Object msg) {
-        ctx.writeAndFlush(msg);
-    }
+  @Override
+  public void writeAndFlush(Object msg) {
+    ctx.writeAndFlush(msg);
+  }
 
-    @Override
-    public void fireExceptionCaught(Exception e) {
-        ctx.fireExceptionCaught(e);
-    }
+  @Override
+  public void fireExceptionCaught(Exception exception) {
+    ctx.fireExceptionCaught(exception);
+  }
 
-    @Override
-    public void write(Object msg) {
-        ctx.write(msg);
-    }
+  @Override
+  public void write(Object msg) {
+    ctx.write(msg);
+  }
 
-    @Override
-    public void flush() {
-        ctx.flush();
-    }
+  @Override
+  public void flush() {
+    ctx.flush();
+  }
 }

@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.event.RowActionEvent;
 import org.kaaproject.kaa.common.dto.BaseSchemaDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
@@ -26,50 +28,53 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.grid.KaaRowAction;
 import org.kaaproject.kaa.server.admin.client.servlet.ServletHelper;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+public abstract class AbstractBaseCtlSchemasActivity<T extends BaseSchemaDto, P extends TreePlace>
+    extends AbstractListActivity<T, P> {
 
-public abstract class AbstractBaseCtlSchemasActivity<T extends BaseSchemaDto, P extends TreePlace> extends AbstractListActivity<T, P> {
+  public AbstractBaseCtlSchemasActivity(P place, Class<T> dataClass,
+                                        ClientFactory clientFactory) {
+    super(place, dataClass, clientFactory);
+  }
 
-    public AbstractBaseCtlSchemasActivity(P place, Class<T> dataClass,
-            ClientFactory clientFactory) {
-        super(place, dataClass, clientFactory);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    callback.onSuccess((Void) null);
+  }
 
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        callback.onSuccess((Void)null);
+  @Override
+  protected void onCustomRowAction(RowActionEvent<String> event) {
+    String schemaId = event.getClickedId();
+    switch (event.getAction()) {
+      case KaaRowAction.CTL_EXPORT_SHALLOW:
+        exportSchema(schemaId, CTLSchemaExportMethod.SHALLOW);
+        break;
+      case KaaRowAction.CTL_EXPORT_DEEP:
+        exportSchema(schemaId, CTLSchemaExportMethod.DEEP);
+        break;
+      case KaaRowAction.CTL_EXPORT_FLAT:
+        exportSchema(schemaId, CTLSchemaExportMethod.FLAT);
+        break;
+      case KaaRowAction.CTL_EXPORT_LIBRARY:
+        exportSchema(schemaId, CTLSchemaExportMethod.LIBRARY);
+        break;
+      default:
+        exportSchema(schemaId, CTLSchemaExportMethod.SHALLOW); // shallow is default export
+        break;
     }
+  }
 
-    @Override
-    protected void onCustomRowAction(RowActionEvent<String> event) {
-        String schemaId = event.getClickedId();
-        switch (event.getAction()) {
-        case KaaRowAction.CTL_EXPORT_SHALLOW:
-            exportSchema(schemaId, CTLSchemaExportMethod.SHALLOW);
-            break;
-        case KaaRowAction.CTL_EXPORT_DEEP:
-            exportSchema(schemaId, CTLSchemaExportMethod.DEEP);
-            break;
-        case KaaRowAction.CTL_EXPORT_FLAT:
-            exportSchema(schemaId, CTLSchemaExportMethod.FLAT);
-            break;
-        case KaaRowAction.CTL_EXPORT_LIBRARY:
-            exportSchema(schemaId, CTLSchemaExportMethod.LIBRARY);
-            break;            
-        }
-    }
-    
-    private void exportSchema(String ctlSchemaId, CTLSchemaExportMethod method) {
-        AsyncCallback<String> schemaExportCallback = new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Utils.handleException(caught, listView);
-            }
-            @Override
-            public void onSuccess(String key) {
-                ServletHelper.exportCtlSchema(key);
-            }
-        };
-        KaaAdmin.getDataSource().prepareCTLSchemaExport(ctlSchemaId, method, schemaExportCallback);
-    }
+  private void exportSchema(String ctlSchemaId, CTLSchemaExportMethod method) {
+    AsyncCallback<String> schemaExportCallback = new AsyncCallback<String>() {
+      @Override
+      public void onFailure(Throwable caught) {
+        Utils.handleException(caught, listView);
+      }
+
+      @Override
+      public void onSuccess(String key) {
+        ServletHelper.exportCtlSchema(key);
+      }
+    };
+    KaaAdmin.getDataSource().prepareCtlSchemaExport(ctlSchemaId, method, schemaExportCallback);
+  }
 }

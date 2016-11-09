@@ -34,98 +34,91 @@ import java.util.List;
 
 /**
  * @author Andrey Panasenko
- *
  */
 public class ESTestOperationsService implements OperationsService {
 
-    @Override
-    public void setPublicKey(PublicKey publicKey) {
-        // TODO Auto-generated method stub
-        
-    }
+  @Override
+  public void setPublicKey(PublicKey publicKey) {
+    // TODO Auto-generated method stub
+
+  }
 
 
-    @Override
-    public SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public SyncContext processEndpointAttachDetachRequests(SyncContext context, UserClientSync request) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public SyncContext processEventListenerRequests(SyncContext context, EventClientSync request) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public SyncContext processEventListenerRequests(SyncContext context, EventClientSync request) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public SyncContext syncConfiguration(SyncContext context, ConfigurationClientSync request) throws GetDeltaException {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public SyncContext syncNotification(SyncContext context, NotificationClientSync request) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public SyncContext syncNotification(SyncContext context, NotificationClientSync request) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public SyncContext syncProfileServerHash(SyncContext context) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public SyncContext syncProfileServerHash(SyncContext context) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public EndpointProfileDto attachEndpointToUser(EndpointProfileDto profile, String appToken, String userExternalId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public byte[] fetchEndpointSpecificConfigurationHash(EndpointProfileDto profile) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public byte[] fetchUcfHash(String appToken, EndpointProfileDto profile) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public byte[] fetchUcfHash(String appToken, EndpointProfileDto profile) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public SyncContext syncConfigurationHashes(SyncContext context, byte[] ucfHash, byte[] epsConfHash) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public SyncContext syncUseConfigurationRawSchema(SyncContext context, boolean useConfigurationRawSchema) {
+    return null;
+  }
 
-    @Override
-    public SyncContext syncUseConfigurationRawSchema(SyncContext context, boolean useConfigurationRawSchema) {
-        return null;
-    }
+  @Override
+  public SyncContext syncClientProfile(SyncContext context, ProfileClientSync request) {
+    return null;
+  }
 
-    @Override
-    public SyncContext syncClientProfile(SyncContext context, ProfileClientSync request) {
-        return null;
-    }
-
-    @Override
-    public EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  @Override
+  public EndpointProfileDto syncServerProfile(String appToken, String endpointKey, EndpointObjectHash key) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
 
 }

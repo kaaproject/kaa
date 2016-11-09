@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,59 +25,69 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto>
+        implements Serializable, Comparable<ConfigurationRecordDto> {
 
-public class ConfigurationRecordDto extends StructureRecordDto<ConfigurationDto> implements Serializable, Comparable<ConfigurationRecordDto> {
+  private static final long serialVersionUID = 5838762122987694212L;
 
-    private static final long serialVersionUID = 5838762122987694212L;
+  public ConfigurationRecordDto() {
+    super();
+  }
 
-    public ConfigurationRecordDto() {
-        super();
+  public ConfigurationRecordDto(
+          ConfigurationDto activeConfiguration, ConfigurationDto inactiveConfiguration) {
+    super(activeConfiguration, inactiveConfiguration);
+  }
+
+  /**
+   * Converts a configuration into a configuration record.
+   *
+   * @param configurations the configurations for converting
+   * @return converted configurations
+   */
+  public static List<ConfigurationRecordDto> convertToConfigurationRecords(
+          Collection<ConfigurationDto> configurations) {
+    Map<String, ConfigurationRecordDto> configurationRecordsMap = new HashMap<>();
+    for (ConfigurationDto configuration : configurations) {
+      ConfigurationRecordDto configurationRecord = configurationRecordsMap
+              .get(configuration.getSchemaId());
+      if (configurationRecord == null) {
+        configurationRecord = new ConfigurationRecordDto();
+        configurationRecordsMap.put(configuration.getSchemaId(), configurationRecord);
+      }
+      if (configuration.getStatus() == UpdateStatus.ACTIVE) {
+        configurationRecord.setActiveStructureDto(configuration);
+      } else if (configuration.getStatus() == UpdateStatus.INACTIVE) {
+        configurationRecord.setInactiveStructureDto(configuration);
+      }
     }
+    return new ArrayList<>(configurationRecordsMap.values());
+  }
 
-    public ConfigurationRecordDto(ConfigurationDto activeConfiguration, ConfigurationDto inactiveConfiguration) {
-        super(activeConfiguration, inactiveConfiguration);
-    }
+  @JsonIgnore
+  public int getSchemaVersion() {
+    return activeStructureDto != null ? activeStructureDto.getSchemaVersion() :
+            inactiveStructureDto.getSchemaVersion();
+  }
 
-    @JsonIgnore
-    public int getSchemaVersion() {
-      return activeStructureDto != null ? activeStructureDto.getSchemaVersion() : inactiveStructureDto.getSchemaVersion();
-    }
+  @JsonIgnore
+  public String getSchemaId() {
+    return activeStructureDto != null ? activeStructureDto.getSchemaId() :
+            inactiveStructureDto.getSchemaId();
+  }
 
-    @JsonIgnore
-    public String getSchemaId() {
-        return activeStructureDto != null ? activeStructureDto.getSchemaId() : inactiveStructureDto.getSchemaId();
-    }
-    
-    public static List<ConfigurationRecordDto> convertToConfigurationRecords(Collection<ConfigurationDto> configurations) {
-        Map<String, ConfigurationRecordDto> configurationRecordsMap = new HashMap<>();
-        for (ConfigurationDto configuration : configurations) {
-            ConfigurationRecordDto configurationRecord = configurationRecordsMap.get(configuration.getSchemaId());
-            if (configurationRecord == null) {
-                configurationRecord = new ConfigurationRecordDto();
-                configurationRecordsMap.put(configuration.getSchemaId(), configurationRecord);
-            }
-            if (configuration.getStatus()==UpdateStatus.ACTIVE) {
-                configurationRecord.setActiveStructureDto(configuration);
-            } else if (configuration.getStatus()==UpdateStatus.INACTIVE) {
-                configurationRecord.setInactiveStructureDto(configuration);
-            }
-        }
-        return new ArrayList<>(configurationRecordsMap.values());
-    }
+  @Override
+  public int compareTo(ConfigurationRecordDto configurationRecordDto) {
+    return this.getSchemaVersion() - configurationRecordDto.getSchemaVersion();
+  }
 
-    @Override
-    public int compareTo(ConfigurationRecordDto o) {
-        return this.getSchemaVersion() - o.getSchemaVersion();
-    }
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 }

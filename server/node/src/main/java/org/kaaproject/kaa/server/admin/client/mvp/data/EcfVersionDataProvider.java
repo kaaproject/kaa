@@ -17,6 +17,7 @@
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.EventClassDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -29,54 +30,63 @@ import java.util.List;
 
 public class EcfVersionDataProvider extends AbstractDataProvider<EventClassDto, String> {
 
-    private String eventClassFamilyId;
-    private int ecfVersion;
-    private List<EventClassViewDto> eventClassViewDtoList;
+  private String eventClassFamilyId;
+  private int ecfVersion;
+  private List<EventClassViewDto> eventClassViewDtoList;
 
-    public EcfVersionDataProvider(AbstractGrid<EventClassDto, String> dataGrid, HasErrorMessage hasErrorMessage, String eventClassFamilyId,
-                                  int ecfVersion, List<EventClassViewDto> eventClassViewDtoList) {
-        super(dataGrid, hasErrorMessage, false);
-        this.eventClassFamilyId = eventClassFamilyId;
-        this.ecfVersion = ecfVersion;
-        this.eventClassViewDtoList = eventClassViewDtoList;
-        addDataDisplay();
-    }
+  /**
+   * All-args constructor.
+   */
+  public EcfVersionDataProvider(AbstractGrid<EventClassDto, String> dataGrid,
+                                HasErrorMessage hasErrorMessage,
+                                String eventClassFamilyId,
+                                int ecfVersion,
+                                List<EventClassViewDto> eventClassViewDtoList) {
+    super(dataGrid, hasErrorMessage, false);
+    this.eventClassFamilyId = eventClassFamilyId;
+    this.ecfVersion = ecfVersion;
+    this.eventClassViewDtoList = eventClassViewDtoList;
+    addDataDisplay();
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
+  @Override
+  protected void loadData(final LoadCallback callback) {
 
-        if (ecfVersion > 0) {
-            KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(eventClassFamilyId, ecfVersion, null,
-                    new AsyncCallback<List<EventClassDto>>() {
-                        @Override
-                        public void onFailure(Throwable cause) {
-                            callback.onFailure(cause);
-                        }
-
-                        @Override
-                        public void onSuccess(List<EventClassDto> result) {
-                            callback.onSuccess(result);
-                        }
-                    });
-        } else {
-            if (eventClassViewDtoList != null) {
-                List<EventClassDto> eventClassDtoList = new ArrayList<EventClassDto>();
-                int i = 1;
-                for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
-                    if (eventClassViewDto.getSchema() != null) {
-                        EventClassDto eventClassDto = eventClassViewDto.getSchema();
-                        eventClassDto.setCreatedTime(System.currentTimeMillis());
-                        eventClassDto.setFqn(eventClassViewDto.getCtlSchemaForm().getMetaInfo().getFqn());
-                        eventClassDto.setVersion(eventClassViewDto.getCtlSchemaForm().getVersion());
-                        eventClassDto.setId(String.valueOf(i++));
-                        eventClassDtoList.add(eventClassDto);
-                    }
-                }
-                callback.onSuccess(eventClassDtoList);
-            } else {
-                callback.onSuccess(new ArrayList<EventClassDto>());
+    if (ecfVersion > 0) {
+      KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(
+          eventClassFamilyId,
+          ecfVersion,
+          null,
+          new AsyncCallback<List<EventClassDto>>() {
+            @Override
+            public void onFailure(Throwable cause) {
+              callback.onFailure(cause);
             }
+
+            @Override
+            public void onSuccess(List<EventClassDto> result) {
+              callback.onSuccess(result);
+            }
+          });
+    } else {
+      if (eventClassViewDtoList != null) {
+        List<EventClassDto> eventClassDtoList = new ArrayList<>();
+        int cnt = 1;
+        for (EventClassViewDto eventClassViewDto : eventClassViewDtoList) {
+          if (eventClassViewDto.getSchema() != null) {
+            EventClassDto eventClassDto = eventClassViewDto.getSchema();
+            eventClassDto.setCreatedTime(System.currentTimeMillis());
+            eventClassDto.setFqn(eventClassViewDto.getCtlSchemaForm().getMetaInfo().getFqn());
+            eventClassDto.setVersion(eventClassViewDto.getCtlSchemaForm().getVersion());
+            eventClassDto.setId(String.valueOf(cnt++));
+            eventClassDtoList.add(eventClassDto);
+          }
         }
+        callback.onSuccess(eventClassDtoList);
+      } else {
+        callback.onSuccess(new ArrayList<EventClassDto>());
+      }
     }
+  }
 
 }

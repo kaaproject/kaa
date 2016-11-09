@@ -23,39 +23,42 @@ import java.util.zip.ZipEntry;
  */
 public class ZipEntryData {
 
-    /** The entry. */
-    private ZipEntry entry;
-    
-    /** The data. */
-    byte[] data;
-    
-    /**
-     * Instantiates a new zip entry data.
-     *
-     * @param entry the entry
-     * @param data the data
-     */
-    public ZipEntryData(ZipEntry entry, byte[] data) {
-        this.entry = entry;
-        this.data = data;
-    }
-    
-    /**
-     * Gets the entry.
-     *
-     * @return the entry
-     */
-    public ZipEntry getEntry() {
-        return entry;
-    }
+  /**
+   * The data.
+   */
+  byte[] data;
+  /**
+   * The entry.
+   */
+  private ZipEntry entry;
 
-    /**
-     * Gets the data.
-     *
-     * @return the data
-     */
-    public byte[] getData() {
-        return data;
-    }
+  /**
+   * Instantiates a new zip entry data.
+   *
+   * @param entry the entry
+   * @param data  the data
+   */
+  public ZipEntryData(ZipEntry entry, byte[] data) {
+    this.entry = entry;
+    this.data = data;
+  }
+
+  /**
+   * Gets the entry.
+   *
+   * @return the entry
+   */
+  public ZipEntry getEntry() {
+    return entry;
+  }
+
+  /**
+   * Gets the data.
+   *
+   * @return the data
+   */
+  public byte[] getData() {
+    return data;
+  }
 
 }

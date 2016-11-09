@@ -20,6 +20,6 @@ import java.util.List;
 
 public interface EventSchemaProcessor {
 
-    List<EventSchemaMetadata> processSchema(String schema) throws EventSchemaException;
-    
+  List<EventSchemaMetadata> processSchema(String schema) throws EventSchemaException;
+
 }

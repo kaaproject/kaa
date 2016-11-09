@@ -19,14 +19,14 @@ package org.kaaproject.kaa.server.operations.service.logs.aware;
 /**
  * Interface to be implemented by any object that wishes to be notified
  * of the Application Id that it runs in.
- *
  */
 public interface ApplicationAware {
-    
-    /**
-     * Set the Application Id that this object runs in.
-     * Normally this call will be used to initialize the Token.
-     * @param applicationId the Application Id to be used by this object
-     */
-    public void setApplicationId(String applicationId);
+
+  /**
+   * Set the Application Id that this object runs in.
+   * Normally this call will be used to initialize the Token.
+   *
+   * @param applicationId the Application Id to be used by this object
+   */
+  public void setApplicationId(String applicationId);
 }
