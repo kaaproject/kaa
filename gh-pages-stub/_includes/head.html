@@ -33,7 +33,7 @@
           var max = 320;
 	  var min = 120;
 	  var winWidth = window.innerWidth;
-	  
+
 	  function supports_html5_storage() {
 		try {
 		  return 'localStorage' in window && window['localStorage'] !== null;
@@ -41,13 +41,13 @@
 		  return false;
 		}
 	  }
-	  
+
 	  function saveSplitState(x) {
 	    if (supports_html5_storage()){
 		  localStorage.setItem("splitBar", x);
 		}
 	  }
-	  
+
 	  function setSplitBarWidth(x) {
 		if (x < max) {
 		  if (x < min) {
@@ -63,13 +63,13 @@
 		  $('#sidebar').css("width", (max/winWidth * 100) + "%");
 		  $('#search').css("width", (max/winWidth * 100) + "%");
 		  $('#main').css("width", ((winWidth - max)/winWidth * 100) + "%");
-		}	    
+		}
 	  }
-	  
+
 	  if (localStorage["splitBar"]) {
 		setSplitBarWidth(localStorage["splitBar"]);
 	  }
-	  
+
 	  $(window).resize(function() {
 		winWidth = window.innerWidth;
 	  });
@@ -83,11 +83,11 @@
 			saveSplitState(x);
 		});
 	  });
-	  
+
 	  $(document).mouseup(function (e) {
 		$(document).unbind('mousemove');
 	  });
-	  
+
 	  $('.content img').click(function(){
 		var content = $(this).attr('src');
 		$.featherlight(content);
@@ -111,12 +111,9 @@
   ga('send', 'pageview');
   </script>
   <!-- google analytics -->
-  
+
   <!-- Icons -->
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ site.baseurl }}/public/apple-touch-icon-144-precomposed.png">
                                  <link rel="shortcut icon" href="{{ site.baseurl }}/public/favicon.ico">
-
-  <!-- RSS -->
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ site.baseurl }}/atom.xml">
 
 </head>
