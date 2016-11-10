@@ -122,6 +122,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotif
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.kaaproject.kaa.server.control.service.schema.SchemaLibraryGenerator;
@@ -147,6 +149,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -158,8 +161,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import javax.annotation.PreDestroy;
 
 /**
  * The Class DefaultControlService.
@@ -993,19 +994,19 @@ public class DefaultControlService implements ControlService {
           zkNode.addListener(new OperationsNodeListener() {
             @Override
             public void onNodeUpdated(OperationsNodeInfo node) {
-              LOG.info("Update of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Update of node {} is pushed to resolver {}", node, resolver);
               resolver.onNodeUpdated(node);
             }
 
             @Override
             public void onNodeRemoved(OperationsNodeInfo node) {
-              LOG.info("Remove of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Remove of node {} is pushed to resolver {}", node, resolver);
               resolver.onNodeRemoved(node);
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
-              LOG.info("Add of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Add of node {} is pushed to resolver {}", node, resolver);
               resolver.onNodeAdded(node);
             }
           });
@@ -1013,6 +1014,46 @@ public class DefaultControlService implements ControlService {
       }
     }
     return resolver.getNode(entityId);
+  }
+
+  private void writeLogWithoutByteBuffer(String logString,
+                                         OperationsNodeInfo node,
+                                         OperationsServerResolver resolver) {
+    //temporary set public key of connection info to null
+    ByteBuffer publicKey = node.getConnectionInfo().getPublicKey();
+    node.getConnectionInfo().setPublicKey(null);
+
+    //temporary set connection info of transports to null
+    Map<
+        TransportMetaData,
+        Map<
+            VersionConnectionInfoPair,
+            ByteBuffer
+            >
+        > map = new HashMap<>();
+    HashMap<VersionConnectionInfoPair, ByteBuffer> innerMap;
+    for (TransportMetaData transport : node.getTransports()) {
+      innerMap = new HashMap<>();
+      for (VersionConnectionInfoPair connectionInfoPair : transport.getConnectionInfo()) {
+        // save ByteBuffer field value
+        innerMap.put(connectionInfoPair, connectionInfoPair.getConenctionInfo());
+        // temporary remove ByteBuffer field value
+        connectionInfoPair.setConenctionInfo(null);
+      }
+      map.put(transport, innerMap);
+    }
+
+    LOG.info(logString, node, resolver);
+
+    //set fields on previous values
+    node.getConnectionInfo().setPublicKey(publicKey);
+    for (TransportMetaData transport : node.getTransports()) {
+      if (map.containsKey(transport)) {
+        for (VersionConnectionInfoPair conInfo : transport.getConnectionInfo()) {
+          conInfo.setConenctionInfo(map.get(transport).get(conInfo));
+        }
+      }
+    }
   }
 
   /*
