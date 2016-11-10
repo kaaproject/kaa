@@ -17,7 +17,7 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
 **Verified against:**
 
  - **Host OS:** Ubuntu 16.04 64-bit LTS
- - **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3
+ - **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3, kernel version 3.10.17-poky-edison+.
 
 # Install dependencies
 
@@ -44,8 +44,9 @@ Now, dependencies are installed and it is time to create Kaa application.
 Since Edison is running Linux, you can refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) for detailed process of application creation.
 But remember, you must specify correct compiler when compiling your Kaa application for Intel Edison:
 
-        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_TOOLCHAIN_FILE=../libs/kaa/toolchains/edison.cmake ..
+        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_TOOLCHAIN_FILE=PATH_TO_KAA_SDK/toolchains/edison.cmake ..
         make 
 
+Where `PATH_TO_KAA_SDK` is path to Kaa C SDK relative to the `build` directory.
 For more details on how to build, upload and run your application on Edison board, you may refer to official [user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
 

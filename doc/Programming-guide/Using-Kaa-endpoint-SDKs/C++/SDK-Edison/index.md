@@ -11,13 +11,15 @@ sort_idx: 60
 
 The guide explains how to build applications for Intel Edison based on the Kaa C++ endpoint SDK.
 
+
 # Configuring Intel Edison board
 
 If this is the first time you use the Intel Edison technology, you have to start with configuring your board.
 For this purpose, refer to the official Edison getting started guide.
 After finishing with the guide, you will be able to access your board through both a serial terminal and the ssh client.
 
->**Note:** The instructions below are for the official Intel Edison firmware.
+>**Note:** The instructions below are for the official Intel Edison firmware, Poky (Yocto Project Reference Distro) 1.7.3, kernel version 3.10.17-poky-edison+.
+
 
 ## Installing third-party components for C++ SDK
 
