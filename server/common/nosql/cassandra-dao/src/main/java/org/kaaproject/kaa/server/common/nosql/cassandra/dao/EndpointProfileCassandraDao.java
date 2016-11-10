@@ -53,6 +53,7 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.EndpointProfileBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
@@ -364,7 +365,7 @@ public class EndpointProfileCassandraDao
       if (profile != null) {
         cassandraEndpointProfileList.add(getDto(profile));
       } else {
-        LOG.debug("Can't find endpoint profile by id {}", keyHash);
+        LOG.debug("Can't find endpoint profile by id {}", keyHash != null ? Hex.encodeHexString(keyHash.array()) : null);
       }
     }
     return cassandraEndpointProfileList;
@@ -381,7 +382,7 @@ public class EndpointProfileCassandraDao
       if (endpointProfileBodyDto != null) {
         endpointProfilesBodyDto.add(endpointProfileBodyDto);
       } else {
-        LOG.debug("Can't find endpoint profile by id {}", keyHash);
+        LOG.debug("Can't find endpoint profile by id {}", keyHash != null ? Hex.encodeHexString(keyHash.array()) : null);
       }
     }
     return endpointProfilesBodyDto;
@@ -451,7 +452,7 @@ public class EndpointProfileCassandraDao
 
   @Override
   public CassandraEndpointProfile findById(ByteBuffer key) {
-    LOG.debug("Try to find endpoint profiles by key [{}]", key);
+    LOG.debug("Try to find endpoint profiles by key [{}]", key != null ? Hex.encodeHexString(key.array()) : null);
     CassandraEndpointProfile profile = null;
     if (key != null) {
       profile = findByKeyHash(key.array());
@@ -462,7 +463,7 @@ public class EndpointProfileCassandraDao
 
   @Override
   public void removeById(ByteBuffer key) {
-    LOG.debug("Remove endpoint profiles by key [{}]", key);
+    LOG.debug("Remove endpoint profiles by key [{}]", key != null ? Hex.encodeHexString(key.array()) : null);
     if (key != null) {
       removeByKeyHash(key.array());
     }

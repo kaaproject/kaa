@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.nio.ByteBuffer;
 
 public final class Notification {
@@ -188,7 +190,7 @@ public final class Notification {
     builder.append(", seqNumber=");
     builder.append(seqNumber);
     builder.append(", body=");
-    builder.append(body);
+    builder.append(body != null ? Hex.encodeHexString(body.array()) : "");
     builder.append("]");
     return builder.toString();
   }

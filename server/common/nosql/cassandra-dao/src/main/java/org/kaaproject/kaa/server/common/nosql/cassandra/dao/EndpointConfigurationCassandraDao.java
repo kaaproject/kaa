@@ -20,6 +20,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.ENDPOINT_CONFIGURATION_COLUMN_FAMILY_NAME;
 
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
@@ -67,7 +68,7 @@ public class EndpointConfigurationCassandraDao
 
   @Override
   public CassandraEndpointConfiguration findById(ByteBuffer key) {
-    LOG.debug("Try to find endpoint configuration by hash [{}] ", key);
+    LOG.debug("Try to find endpoint configuration by hash [{}] ", key != null ? Hex.encodeHexString(key.array()) : null);
     CassandraEndpointConfiguration configuration = null;
     if (key != null) {
       configuration = findByHash(getBytes(key));
@@ -78,7 +79,7 @@ public class EndpointConfigurationCassandraDao
 
   @Override
   public void removeById(ByteBuffer key) {
-    LOG.debug("Remove endpoint configuration by hash [{}] ", key);
+    LOG.debug("Remove endpoint configuration by hash [{}] ", key != null ? Hex.encodeHexString(key.array()) : null);
     if (key != null) {
       removeByHash(getBytes(key));
     }

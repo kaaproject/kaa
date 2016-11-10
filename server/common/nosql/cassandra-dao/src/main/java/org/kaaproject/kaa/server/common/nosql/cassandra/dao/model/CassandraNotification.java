@@ -39,6 +39,7 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
 
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
@@ -279,7 +280,7 @@ public final class CassandraNotification implements Notification, Serializable {
             + ", nfVersion=" + nfVersion
             + ", seqNum=" + seqNum
             + ", lastModifyTime=" + lastModifyTime
-            + ", body=" + body
+            + ", body=" + (body != null ? Hex.encodeHexString(body.array()) : "")
             + ", expiredAt=" + expiredAt
             + '}';
   }

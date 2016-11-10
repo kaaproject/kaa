@@ -29,7 +29,7 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
-
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
@@ -158,7 +158,7 @@ public class CassandraCredentials implements Credentials, Serializable {
     return "CassandraCredentials{"
         + "applicationId='" + applicationId + '\''
         + ", id='" + id + '\''
-        + ", credentialsBody=" + cassandraCredentialsBody
+        + ", credentialsBody=" + (cassandraCredentialsBody != null ? Hex.encodeHexString(cassandraCredentialsBody.array()) : "")
         + ", status='" + cassandraCredentialsStatus + '\''
         + '}';
   }

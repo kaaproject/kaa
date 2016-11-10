@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.nio.ByteBuffer;
 
 public final class ConfigurationServerSync {
@@ -132,9 +134,9 @@ public final class ConfigurationServerSync {
     builder.append("ConfigurationServerSync [responseStatus=");
     builder.append(responseStatus);
     builder.append(", confSchemaBody=");
-    builder.append(confSchemaBody);
+    builder.append(confSchemaBody != null ? Hex.encodeHexString(confSchemaBody.array()) : "");
     builder.append(", confDeltaBody=");
-    builder.append(confDeltaBody);
+    builder.append(confDeltaBody != null ? Hex.encodeHexString(confDeltaBody.array()) : "");
     builder.append("]");
     return builder.toString();
   }

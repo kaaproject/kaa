@@ -26,6 +26,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import com.datastax.driver.core.Statement;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.AbstractCassandraDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByEndpointGroupId;
@@ -88,7 +89,7 @@ public class CassandraEpByEndpointGroupIdDao
           .limit(Integer.valueOf(limit) + 1);
       LOG.debug("Try to find endpoint key hash list by endpoint group id {} "
               + "with limit {} start from keyHash {}",
-          endpointGroupId, limit, endpointKey);
+          endpointGroupId, limit, endpointKey != null ? Hex.encodeHexString(endpointKey.array()) : null);
     }
     List<CassandraEpByEndpointGroupId> filter = findListByStatement(queryStatement);
     return getEndpointKeyHash(filter);

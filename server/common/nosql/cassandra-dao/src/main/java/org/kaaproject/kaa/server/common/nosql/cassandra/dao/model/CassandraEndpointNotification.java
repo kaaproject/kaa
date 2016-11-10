@@ -27,6 +27,7 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
 
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -296,7 +297,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
   @Override
   public String toString() {
     return "CassandraEndpointNotification{"
-        + "endpointKeyHash=" + endpointKeyHash
+        + "endpointKeyHash=" + (endpointKeyHash != null ? Hex.encodeHexString(endpointKeyHash.array()) : "")
         + ", seqNum=" + seqNum
         + ", id='" + id + '\''
         + ", type=" + type
@@ -304,7 +305,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
         + ", schemaId='" + schemaId + '\''
         + ", nfVersion=" + nfVersion
         + ", lastModifyTime=" + lastModifyTime
-        + ", body=" + body
+        + ", body=" + (body != null ? Hex.encodeHexString(body.array()) : "")
         + ", expiredAt=" + expiredAt
         + '}';
   }
