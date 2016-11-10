@@ -1427,6 +1427,11 @@
         </profile>
         <profile>
             <id>oracle-nosql</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.appenders</groupId>
@@ -1438,6 +1443,11 @@
         </profile>
         <profile>
             <id>cassandra</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.appenders</groupId>
@@ -1449,6 +1459,11 @@
         </profile>
         <profile>
             <id>kafka</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.appenders</groupId>
@@ -1460,6 +1475,11 @@
         </profile>
         <profile>
             <id>couchbase</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.kaaproject.kaa.server.appenders</groupId>
