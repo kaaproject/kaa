@@ -60,7 +60,7 @@ find_library(BOTAN_LIBRARY
     ${BOTAN_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
-message(STATUS "Include directory: ${BOTAN_INCLUDE_DIR}")
+
 # handle the QUIETLY and REQUIRED arguments and set BOTAN_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(Botan
