@@ -133,7 +133,7 @@
 #       Default: `0`.
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
-project(KaaCppSdk CXX)
+project(KaaCppSdk C CXX)
 
 macro(DECCHAR2HEX VAR VAL)
     if(${VAL} LESS 10)
@@ -393,6 +393,7 @@ endif()
 find_package(Boost 1.54 REQUIRED COMPONENTS log system thread)
 find_package(Avro REQUIRED)
 find_package(Botan REQUIRED)
+find_package(Threads REQUIRED)
 
 if(KAA_WITH_SQLITE_LOG_STORAGE)
     find_package(Sqlite3 REQUIRED)
