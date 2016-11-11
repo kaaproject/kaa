@@ -248,54 +248,84 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationAllTaskCompletedTest)
 
 BOOST_AUTO_TEST_CASE(AwaitTerminationTimeoutTest)
 {
-    std::mutex mutex;
-    std::condition_variable onStartCondition;
 
+    class Condition final
+    {
+    public:
+
+        explicit Condition(const bool state = false) :
+        mutex_(), variable_(), state_(state)
+        {}
+
+        bool state()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            return state_;
+        }
+
+        bool state(const bool newState)
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+
+            if(state_ == newState) {
+                return false;
+            }
+
+            state_ = newState;
+
+            if(newState) {
+                variable_.notify_all();
+            }
+
+            return true;
+        }
+
+        bool yes() { return state(true); }
+
+        bool no() { return state(false); }
+
+        void check()
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            variable_.wait(lock, [this] () { return state_; });
+        }
+
+    private:
+
+        std::mutex mutex_;
+        std::condition_variable variable_;
+        bool state_;
+    } isReady;
+
+    // One worker thread for sequential execution
     ThreadPool threadPool;
 
-    bool isStart = false;
-    std::size_t taskExecutionTime = 1;
-    std::uint16_t expectedTaskCount = 0;
+    constexpr std::size_t taskExecutionTime = 1;
+    constexpr std::size_t waitedTaskCount = 2;
+    constexpr std::size_t totalTaskCount = 4;
+
     std::atomic_uint actualTaskCount(0);
-    std::size_t timeToWaitAllTasks = 0;
 
-    ThreadPoolTask task = [&mutex, &onStartCondition, &actualTaskCount, &isStart, &taskExecutionTime] ()
-                              {
-                                    {
-                                        std::unique_lock<std::mutex> lock(mutex);
-                                        onStartCondition.wait(lock, [&isStart] () { return isStart; });
-                                    }
-                                    std::this_thread::sleep_for(std::chrono::seconds(taskExecutionTime));
-                                    actualTaskCount++;
-                              };
+    for(std::size_t index = 0; index != totalTaskCount ; ++index) {
+        ThreadPoolTask task = [&isReady, &actualTaskCount, taskExecutionTime] ()
+        {
+            isReady.check();
+            std::this_thread::sleep_for(std::chrono::seconds(taskExecutionTime));
+            ++actualTaskCount;
+        };
 
-    // Executed.
-    threadPool.add(task);
-    ++expectedTaskCount;
-    timeToWaitAllTasks += taskExecutionTime;
-
-    // Executed.
-    threadPool.add(task);
-    ++expectedTaskCount;
-    timeToWaitAllTasks += taskExecutionTime;
-
-    // Declined.
-    threadPool.add(task);
-    timeToWaitAllTasks += taskExecutionTime;
-
-    {
-        std::unique_lock<std::mutex> lock(mutex);
-        isStart = true;
-        onStartCondition.notify_all();
+        threadPool.add(std::move(task));
     }
 
+    isReady.yes();
+
     threadPool.shutdown();
-    threadPool.awaitTermination(expectedTaskCount * taskExecutionTime);
+    threadPool.awaitTermination(waitedTaskCount * taskExecutionTime);
 
     // Assume no tasks have not been declined so wait for all of them
-    std::this_thread::sleep_for(std::chrono::seconds(timeToWaitAllTasks));
+    std::this_thread::sleep_for(std::chrono::seconds(totalTaskCount * taskExecutionTime));
 
-    BOOST_CHECK_EQUAL(actualTaskCount.load(), expectedTaskCount);
+    BOOST_CHECK(actualTaskCount.load() < totalTaskCount);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
