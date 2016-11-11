@@ -83,7 +83,6 @@ option(WITH_EXTENSION_NOTIFICATION "Enable notification extension" ON)
 option(WITH_EXTENSION_USER "Enable user extension" ON)
 option(WITH_ENCRYPTION "Enable encryption" ON)
 option(KAA_RUNTIME_KEY_GENERATION "Enable RSA key generation at runtime" OFF)
-option(KAA_UNITTESTS_COMPILE "Compile unit tests" OFF)
 
 # Expose Kaa SDK directory to all modules
 set(KAA_SDK_DIR ${CMAKE_CURRENT_LIST_DIR})
