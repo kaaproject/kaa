@@ -1016,6 +1016,14 @@ public class DefaultControlService implements ControlService {
     return resolver.getNode(entityId);
   }
 
+  /**
+   * Used when writing OperationsNodeInfo instance in logs. OperationsNodeInfo instance has ByteBuffer fields which written incorrectly in the log file.
+   * In this method ByteBuffer fields temporary overwrite to null, print logs, and after ByteBuffer fields recover on theirs previous values.
+   *
+   * @param logString is a usual string for logging. Use '{}' for output OperationsNodeInfo and the second '{}' is OperationsServerResolver
+   * @param node      in which find and temporary overwrite all ByteBuffer-s to null
+   * @param resolver  OperationsServerResolver instance
+   */
   private void writeLogWithoutByteBuffer(String logString,
                                          OperationsNodeInfo node,
                                          OperationsServerResolver resolver) {
@@ -1024,13 +1032,7 @@ public class DefaultControlService implements ControlService {
     node.getConnectionInfo().setPublicKey(null);
 
     //temporary set connection info of transports to null
-    Map<
-        TransportMetaData,
-        Map<
-            VersionConnectionInfoPair,
-            ByteBuffer
-            >
-        > map = new HashMap<>();
+    Map<TransportMetaData, Map<VersionConnectionInfoPair, ByteBuffer>> map = new HashMap<>();
     HashMap<VersionConnectionInfoPair, ByteBuffer> innerMap;
     for (TransportMetaData transport : node.getTransports()) {
       innerMap = new HashMap<>();
@@ -1045,12 +1047,18 @@ public class DefaultControlService implements ControlService {
 
     LOG.info(logString, node, resolver);
 
-    //set fields on previous values
+    //set fields on previous values (recover fields values)
     node.getConnectionInfo().setPublicKey(publicKey);
     for (TransportMetaData transport : node.getTransports()) {
-      if (map.containsKey(transport)) {
+      Map<VersionConnectionInfoPair, ByteBuffer> map2 = map.get(transport);
+      if (map2 != null) {
         for (VersionConnectionInfoPair conInfo : transport.getConnectionInfo()) {
-          conInfo.setConenctionInfo(map.get(transport).get(conInfo));
+          for (Map.Entry<VersionConnectionInfoPair, ByteBuffer> pair : map2.entrySet()) {
+            if (pair.getKey() == conInfo) {
+              conInfo.setConenctionInfo(pair.getValue());
+              break;
+            }
+          }
         }
       }
     }
@@ -2213,7 +2221,7 @@ public class DefaultControlService implements ControlService {
       throw new ControlServiceException(ex);
     }
     String libraryFileName = MessageFormatter
-        .arrayFormat(SCHEMA_NAME_PATTERN, new Object[]{logSchemaVersion}).getMessage();
+        .arrayFormat(SCHEMA_NAME_PATTERN, new Object[] {logSchemaVersion}).getMessage();
     String schemaInJson = recordWrapperSchema.toString(true);
     byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
 
@@ -2255,7 +2263,7 @@ public class DefaultControlService implements ControlService {
           checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
           schema = confSchemaDto.getBaseSchema();
           fileName = MessageFormatter
-              .arrayFormat(DATA_NAME_PATTERN, new Object[]{
+              .arrayFormat(DATA_NAME_PATTERN, new Object[] {
                   "configuration-base",
                   key.getSchemaVersion()
               })
@@ -2267,7 +2275,7 @@ public class DefaultControlService implements ControlService {
           checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
           schema = confSchemaDto.getOverrideSchema();
           fileName = MessageFormatter
-              .arrayFormat(DATA_NAME_PATTERN, new Object[]{
+              .arrayFormat(DATA_NAME_PATTERN, new Object[] {
                   "configuration-override",
                   key.getSchemaVersion()})
               .getMessage();
@@ -2630,7 +2638,7 @@ public class DefaultControlService implements ControlService {
     } catch (CredentialsServiceException cause) {
       String message = MessageFormat
           .format("An unexpected exception occured while revoking credentials by ID [{0}]",
-                  credentialsId);
+              credentialsId);
       LOG.error(message, cause);
       throw new ControlServiceException(cause);
     }
@@ -2711,7 +2719,7 @@ public class DefaultControlService implements ControlService {
       Integer schemaVersion,
       String tenantId) {
     return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
-            externalUId, appToken, schemaVersion, tenantId);
+        externalUId, appToken, schemaVersion, tenantId);
   }
 
   @Override
