@@ -75,7 +75,6 @@ Refer to [the official Edison getting started guide](https://software.intel.com/
    cd botan-1.11.28/
    ./configure.py
    make install
-   ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
    ```
 
 6. Install SQLite (optionally).
@@ -181,7 +180,6 @@ This way we get object files `.o` and shared object files `.so` that are require
         cd Botan-1.11.27
         ${HOST_PYTHON} -E configure.py --cpu=x86_32 --cc-bin=${CROSS_COMPILE}g++ --prefix=${SDKTARGETSYSROOT}/usr
         make && make install
-        ln -rs ${SDKTARGETSYSROOT}/usr/include/botan-1.11/botan ${SDKTARGETSYSROOT}/usr/include/botan
         
     Copy Botan object files `${SDKTARGETSYSROOT}/usr/lib/libbotan*` to `/usr/lib` directory of Edison board.
 

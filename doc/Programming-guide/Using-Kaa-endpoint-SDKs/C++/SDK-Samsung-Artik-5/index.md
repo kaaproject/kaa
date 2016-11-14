@@ -113,7 +113,6 @@ Install the third-party components as follows.
         cd Botan-1.11.28
         python configure.py --cpu=arm --cc-bin="${CROSS}"g++ --prefix="${INSTALLDIR}"
         make install
-        ln -s "${INSTALLDIR}"/include/botan-1.11/botan/ "${INSTALLDIR}"/include/botan
 
 1. Copy libraries to the Artik device.
 

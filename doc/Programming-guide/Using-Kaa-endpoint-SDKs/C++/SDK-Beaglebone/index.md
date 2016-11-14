@@ -102,7 +102,6 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
         cd Botan-1.11.27
         ./configure.py --cpu=arm --cc-bin="${CROSS}"g++ --prefix="${SYSROOT}"
         make && make install
-        ln -s botan-1.11/botan/ "${SYSROOT}"/include/botan
 
 ## Create application
 Now, the toolchain and all dependencies are installed, and it is time to create Kaa application.
