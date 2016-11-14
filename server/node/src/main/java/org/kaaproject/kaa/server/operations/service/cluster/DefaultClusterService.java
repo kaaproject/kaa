@@ -23,6 +23,7 @@ import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityClusterAddress;
@@ -54,7 +55,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -219,27 +219,34 @@ public class DefaultClusterService implements ClusterService {
   @Override
   public String sendRouteMessage(EndpointRouteMessage msg) {
     String serverId = getEntityNode(msg.getAddress().getEndpointKey());
-    sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromRoute(toThriftMsg(msg)));
+    sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromRoute(toThriftMsg(msg)));
     return serverId;
   }
 
   @Override
-  public void sendUnicastNotificationMessage(String serverId,
-                                             ThriftUnicastNotificationMessage msg) {
-    sendServerProfileUpdateMessage(serverId, OperationsServiceMsg.fromNotification(msg));
+  public void sendUnicastNotificationMessage(String serverId, ThriftUnicastNotificationMessage msg) {
+    sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromNotification(msg));
   }
 
   @Override
-  public void sendServerProfileUpdateMessage(String serverId,
-                                             ThriftServerProfileUpdateMessage msg) {
-    sendServerProfileUpdateMessage(
-            serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
+  public void sendServerProfileUpdateMessage(String serverId, ThriftServerProfileUpdateMessage msg) {
+    sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromServerProfileUpdateMessage(msg));
   }
 
-  private void sendServerProfileUpdateMessage(String serverId,
-                                              OperationsServiceMsg msg) {
-    NeighborConnection<MessageTemplate, OperationsServiceMsg> server =
-            neighbors.getNeghborConnection(serverId);
+  @Override
+  public void sendEndpointConfigurationRefreshMessage(String serverId, ThriftEndpointConfigurationRefreshMessage msg) {
+    sendOperationsServiceMessage(serverId, OperationsServiceMsg.fromEndpointConfigurationRefresh(msg));
+  }
+
+  @Override
+  public void sendEndpointConfigurationRefreshMessage(ThriftEndpointConfigurationRefreshMessage msg) {
+    EndpointAddress address = fromThriftAddress(msg.getAddress());
+    ActorClassifier classifier = fromThriftActorClassifier(msg.getActorClassifier());
+    listener.onEndpointActorMsg(new ThriftEndpointActorMsg<>(address, classifier, msg));
+  }
+
+  private void sendOperationsServiceMessage(String serverId, OperationsServiceMsg msg) {
+    NeighborConnection<MessageTemplate, OperationsServiceMsg> server = neighbors.getNeghborConnection(serverId);
     if (server == null) {
       LOG.warn("Specified server {} not found in neighbors list", serverId);
     } else {

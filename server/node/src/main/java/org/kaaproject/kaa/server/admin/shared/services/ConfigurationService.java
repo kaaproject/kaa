@@ -23,6 +23,7 @@ import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
@@ -116,4 +117,9 @@ public interface ConfigurationService extends RemoteService {
   EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppIdAndSchemaVersion(
       String externalUId, String appId, Integer schemaVersion) throws KaaAdminServiceException;
 
+  EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) throws KaaAdminServiceException;
+
+  EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) throws KaaAdminServiceException;
+
+  EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) throws KaaAdminServiceException;
 }

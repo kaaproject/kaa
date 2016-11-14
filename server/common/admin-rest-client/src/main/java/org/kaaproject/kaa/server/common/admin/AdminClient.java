@@ -35,6 +35,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
@@ -841,6 +842,46 @@ public class AdminClient {
       throws Exception {
     restTemplate.postForLocation(restTemplate.getUrl() + "userConfiguration",
         endpointUserConfiguration);
+  }
+
+  public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) throws Exception {
+    return restTemplate.postForObject(restTemplate.getUrl() + "endpointSpecificConfiguration", configuration, EndpointSpecificConfigurationDto.class);
+  }
+
+  public void deleteActiveEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
+    restTemplate.delete(restTemplate.getUrl() + "endpointSpecificConfiguration/{endpointKeyHash}", toUrlSafe(endpointKeyHash));
+  }
+
+  public EndpointSpecificConfigurationDto findActiveEndpointSpecificConfiguration(String endpointKeyHash) throws Exception {
+    return restTemplate.getForObject(restTemplate.getUrl() + "endpointSpecificConfiguration/{endpointKeyHash}",
+        EndpointSpecificConfigurationDto.class, toUrlSafe(endpointKeyHash));
+  }
+
+  /**
+   * Delete endpoint specific configuration.
+   *
+   * @param endpointKeyHash endpoint key hash
+   * @param configurationSchemaVersion configuration schema version
+   */
+  public void deleteEndpointSpecificConfigurationByEndpointKeyHashAndConfigurationSchemaVersion(String endpointKeyHash,
+                                                                                                int configurationSchemaVersion) throws Exception {
+    restTemplate.delete(restTemplate.getUrl()
+            + "endpointSpecificConfiguration/{endpointKeyHash}?configurationSchemaVersion={configurationSchemaVersion}",
+        toUrlSafe(endpointKeyHash), configurationSchemaVersion);
+  }
+
+  /**
+   * Find endpoint specific configuration.
+   *
+   * @param endpointKeyHash endpoint key hash
+   * @param configurationSchemaVersion configuration schema version
+   */
+  public EndpointSpecificConfigurationDto findEndpointSpecificConfigurationByEndpointKeyHashAndConfigurationSchemaVersion(String endpointKeyHash,
+                                                                                                                          int configurationSchemaVersion)
+      throws Exception {
+    return restTemplate.getForObject(restTemplate.getUrl()
+            + "endpointSpecificConfiguration/{endpointKeyHash}?configurationSchemaVersion={configurationSchemaVersion}",
+        EndpointSpecificConfigurationDto.class, toUrlSafe(endpointKeyHash), configurationSchemaVersion);
   }
 
   public ProfileFilterDto editProfileFilter(ProfileFilterDto profileFilter) throws Exception {

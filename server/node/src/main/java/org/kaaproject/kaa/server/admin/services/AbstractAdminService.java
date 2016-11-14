@@ -17,9 +17,11 @@
 package org.kaaproject.kaa.server.admin.services;
 
 import static org.kaaproject.kaa.server.admin.services.util.Utils.checkFieldUniquieness;
+import static org.kaaproject.kaa.server.admin.services.util.Utils.checkNotNull;
 import static org.kaaproject.kaa.server.admin.services.util.Utils.getCurrentUser;
 import static org.kaaproject.kaa.server.admin.shared.schema.ConverterType.CONFIGURATION_FORM_AVRO_CONVERTER;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
+import static org.kaaproject.kaa.server.common.dao.service.Validator.validateNotNull;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
@@ -32,6 +34,7 @@ import org.kaaproject.kaa.common.avro.GenericAvroConverter;
 import org.kaaproject.kaa.common.dto.AbstractSchemaDto;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.UserDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
@@ -54,6 +57,7 @@ import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import org.kaaproject.kaa.server.common.core.schema.KaaSchemaFactoryImpl;
+import org.kaaproject.kaa.server.common.dao.EndpointService;
 import org.kaaproject.kaa.server.common.plugin.KaaPluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginConfig;
 import org.kaaproject.kaa.server.common.plugin.PluginType;
@@ -99,6 +103,9 @@ public abstract class AbstractAdminService implements InitializingBean {
 
   @Autowired
   MessagingService messagingService;
+
+  @Autowired
+  EndpointService endpointService;
 
   @Autowired
   CacheService cacheService;
@@ -217,7 +224,7 @@ public abstract class AbstractAdminService implements InitializingBean {
   }
 
   void checkApplication(ApplicationDto application) throws KaaAdminServiceException {
-    Utils.checkNotNull(application);
+    checkNotNull(application);
     checkTenantId(application.getTenantId());
   }
 
@@ -227,9 +234,21 @@ public abstract class AbstractAdminService implements InitializingBean {
         throw new IllegalArgumentException("The endpointGroupId parameter is empty.");
       }
       EndpointGroupDto endpointGroup = controlService.getEndpointGroup(endpointGroupId);
-      Utils.checkNotNull(endpointGroup);
+      checkNotNull(endpointGroup);
       checkApplicationId(endpointGroup.getApplicationId());
       return endpointGroup;
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
+    }
+  }
+
+  EndpointProfileDto checkEndpointProfile(byte[] endpointKeyHash) throws KaaAdminServiceException {
+    try {
+      validateNotNull(endpointKeyHash, "Missing endpoint key hash");
+      EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(endpointKeyHash);
+      checkNotNull(endpointProfile);
+      checkApplicationId(endpointProfile.getApplicationId());
+      return endpointProfile;
     } catch (Exception ex) {
       throw Utils.handleException(ex);
     }

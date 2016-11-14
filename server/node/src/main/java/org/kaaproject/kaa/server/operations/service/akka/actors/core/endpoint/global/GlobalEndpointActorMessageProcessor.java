@@ -17,10 +17,10 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global;
 
 import akka.actor.ActorContext;
-
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
@@ -106,6 +106,8 @@ public class GlobalEndpointActorMessageProcessor
       processServerProfileUpdateMsg(context, (ThriftServerProfileUpdateMessage) thriftMsg);
     } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
       processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
+    } else if (thriftMsg instanceof ThriftEndpointConfigurationRefreshMessage) {
+      processEndpointConfigurationRefreshMsg(context, (ThriftEndpointConfigurationRefreshMessage) thriftMsg);
     }
   }
 
@@ -122,6 +124,12 @@ public class GlobalEndpointActorMessageProcessor
     ThriftUnicastNotificationMessage localMsg = new ThriftUnicastNotificationMessage(thriftMsg);
     localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
     dispatchMsg(context, localMsg, clusterService::sendUnicastNotificationMessage);
+  }
+
+  private void processEndpointConfigurationRefreshMsg(ActorContext context, ThriftEndpointConfigurationRefreshMessage thriftMsg) {
+    ThriftEndpointConfigurationRefreshMessage localMsg = new ThriftEndpointConfigurationRefreshMessage(thriftMsg);
+    localMsg.setActorClassifier(ThriftActorClassifier.LOCAL);
+    dispatchMsg(context, localMsg, clusterService::sendEndpointConfigurationRefreshMessage);
   }
 
   private <T> void dispatchMsg(ActorContext context, T localMsg, BiConsumer<String, T> biConsumer) {

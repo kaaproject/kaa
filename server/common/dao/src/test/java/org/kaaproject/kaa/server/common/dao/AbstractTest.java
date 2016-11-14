@@ -110,6 +110,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -130,13 +131,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import javax.sql.DataSource;
-
 @ActiveProfiles({"h2"})
 public class AbstractTest {
 
   public static final String DEFAULT_FQN = "org.kaaproject.kaa.ctl.TestSchema";
   public static final String TEST_PROFILE_BODY_PATH = "dao/schema/testProfileBody.json";
+  private static final byte[] EPS_CONFIG_HASH = "eps_hash_conf".getBytes();
   protected static final Random RANDOM = new Random(0);
   protected static final String SUPER_TENANT = "SuperTenant";
   protected static final String TENANT_NAME = "Generated Test Tenant";
@@ -740,6 +740,7 @@ public class AbstractTest {
     profileDto.setSubscriptions(topicIds);
     profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
     profileDto.setServerProfileBody("{\"serverTitle\": \"SERVER_TEST\"}");
+    profileDto.setEpsConfigurationHash(EPS_CONFIG_HASH);
     try {
       profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
     } catch (IOException e) {
@@ -754,6 +755,7 @@ public class AbstractTest {
     profileDto.setApplicationId(appId);
     profileDto.setServerProfileVersion(schemaVersion);
     profileDto.setEndpointKeyHash("TEST_KEY_HASH".getBytes());
+    profileDto.setEpsConfigurationHash(EPS_CONFIG_HASH);
     try {
       profileDto.setClientProfileBody(readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
     } catch (IOException e) {

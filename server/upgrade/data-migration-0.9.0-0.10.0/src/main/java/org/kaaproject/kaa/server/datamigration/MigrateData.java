@@ -104,6 +104,8 @@ public class MigrateData {
       migrationList.add(new CtlNotificationMigration(conn, options));
       migrationList.add(new CtlLogMigration(conn));
 
+      new EndpointSpecificConfigurationMigration(options.getHost(), options.getDbName(), options.getNoSql()).transform();
+
       final CtlAggregation aggregation = new CtlAggregation(conn);
       final BaseSchemaRecordsCreation recordsCreation = new BaseSchemaRecordsCreation(conn);
 

@@ -42,6 +42,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.HasId;
@@ -93,6 +94,7 @@ import org.kaaproject.kaa.server.common.dao.ConfigurationService;
 import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.EndpointRegistrationService;
 import org.kaaproject.kaa.server.common.dao.EndpointService;
+import org.kaaproject.kaa.server.common.dao.EndpointSpecificConfigurationService;
 import org.kaaproject.kaa.server.common.dao.EventClassService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
@@ -115,6 +117,7 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.Operation;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.OperationsThriftService.Iface;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftActorClassifier;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftClusterEntityType;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityAddress;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
@@ -158,7 +161,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import javax.annotation.PreDestroy;
 
 /**
@@ -307,6 +309,9 @@ public class DefaultControlService implements ControlService {
 
   @Autowired
   private EndpointRegistrationService endpointRegistrationService;
+
+  @Autowired
+  private EndpointSpecificConfigurationService endpointSpecificConfigurationService;
 
   /**
    * The neighbor connections size.
@@ -977,6 +982,64 @@ public class DefaultControlService implements ControlService {
     }
   }
 
+  @Override
+  public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) {
+    configuration = endpointSpecificConfigurationService.save(configuration);
+    sendEndpointConfigurationRefreshMessage(configuration);
+    return configuration;
+  }
+
+  @Override
+  public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) {
+    Optional<EndpointSpecificConfigurationDto> result;
+    if (confSchemaVersion == null) {
+      result = endpointSpecificConfigurationService.findActiveConfigurationByEndpointKeyHash(endpointKeyHash);
+    } else {
+      result = endpointSpecificConfigurationService.findByEndpointKeyHashAndConfSchemaVersion(endpointKeyHash, confSchemaVersion);
+    }
+    return result.orElseThrow(() -> new NotFoundException("Endpoint specific configuration not found"));
+  }
+
+  @Override
+  public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) {
+    Optional<EndpointSpecificConfigurationDto> result;
+    if (confSchemaVersion == null) {
+      result = endpointSpecificConfigurationService.deleteActiveConfigurationByEndpointKeyHash(endpointKeyHash);
+    } else {
+      result = endpointSpecificConfigurationService.deleteByEndpointKeyHashAndConfSchemaVersion(endpointKeyHash, confSchemaVersion);
+    }
+    EndpointSpecificConfigurationDto configuration = result
+        .orElseThrow(() -> new NotFoundException("Endpoint specific configuration not found"));
+    sendEndpointConfigurationRefreshMessage(configuration);
+    return configuration;
+  }
+
+  private void sendEndpointConfigurationRefreshMessage(EndpointSpecificConfigurationDto configuration) {
+    byte[] endpointKeyHashBytes = configuration.getEndpointKeyHash();
+    EndpointProfileDto endpointProfile = endpointService.findEndpointProfileByKeyHash(endpointKeyHashBytes);
+    if (!configuration.getConfigurationSchemaVersion().equals(endpointProfile.getConfigurationVersion())) {
+      return;
+    }
+    checkNeighbors();
+    String endpointKeyHash = Base64Util.encode(configuration.getEndpointKeyHash());
+    ApplicationDto appDto = applicationService.findAppById(endpointProfile.getApplicationId());
+    OperationsNodeInfo server = resolve(endpointKeyHash);
+
+    if (server != null) {
+      ThriftEndpointConfigurationRefreshMessage msg = new ThriftEndpointConfigurationRefreshMessage();
+      msg.setAddress(new ThriftEntityAddress(appDto.getTenantId(), appDto.getApplicationToken(), ThriftClusterEntityType.ENDPOINT,
+          ByteBuffer.wrap(endpointKeyHashBytes)));
+      msg.setActorClassifier(ThriftActorClassifier.GLOBAL);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("Sending message {} to [{}]", msg, Neighbors.getServerId(server.getConnectionInfo()));
+      }
+      neighbors.sendMessage(server.getConnectionInfo(), OperationsServiceMsg.fromEndpointConfigurationRefresh(msg));
+    } else {
+      LOG.warn("Can't find server for endpoint [{}]", endpointKeyHash);
+    }
+  }
+
+
   /**
    * Resolve.
    *
@@ -1148,7 +1211,7 @@ public class DefaultControlService implements ControlService {
       throws ControlServiceException {
     EndpointProfileSchemaDto profileSchema = profileService
         .findProfileSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
-        sdkProfile.getProfileSchemaVersion());
+            sdkProfile.getProfileSchemaVersion());
     if (profileSchema == null) {
       throw new NotFoundException("Profile schema not found!");
     }
@@ -1293,7 +1356,7 @@ public class DefaultControlService implements ControlService {
           .generateRecordWrapperSchema(getFlatSchemaByCtlSchemaId(logCtlSchema.getId()));
 
       String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN,
-          new Object[]{logSchemaVersion}).getMessage();
+          new Object[] {logSchemaVersion}).getMessage();
 
       return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
     } catch (Exception ex) {
@@ -2172,7 +2235,7 @@ public class DefaultControlService implements ControlService {
       throw new ControlServiceException(ex);
     }
     String libraryFileName = MessageFormatter
-        .arrayFormat(SCHEMA_NAME_PATTERN, new Object[]{logSchemaVersion}).getMessage();
+        .arrayFormat(SCHEMA_NAME_PATTERN, new Object[] {logSchemaVersion}).getMessage();
     String schemaInJson = recordWrapperSchema.toString(true);
     byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
 
@@ -2214,7 +2277,7 @@ public class DefaultControlService implements ControlService {
           checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
           schema = confSchemaDto.getBaseSchema();
           fileName = MessageFormatter
-              .arrayFormat(DATA_NAME_PATTERN, new Object[]{
+              .arrayFormat(DATA_NAME_PATTERN, new Object[] {
                   "configuration-base",
                   key.getSchemaVersion()
               })
@@ -2226,7 +2289,7 @@ public class DefaultControlService implements ControlService {
           checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
           schema = confSchemaDto.getOverrideSchema();
           fileName = MessageFormatter
-              .arrayFormat(DATA_NAME_PATTERN, new Object[]{
+              .arrayFormat(DATA_NAME_PATTERN, new Object[] {
                   "configuration-override",
                   key.getSchemaVersion()})
               .getMessage();
@@ -2589,7 +2652,7 @@ public class DefaultControlService implements ControlService {
     } catch (CredentialsServiceException cause) {
       String message = MessageFormat
           .format("An unexpected exception occured while revoking credentials by ID [{0}]",
-                  credentialsId);
+              credentialsId);
       LOG.error(message, cause);
       throw new ControlServiceException(cause);
     }
@@ -2670,7 +2733,7 @@ public class DefaultControlService implements ControlService {
       Integer schemaVersion,
       String tenantId) {
     return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
-            externalUId, appToken, schemaVersion, tenantId);
+        externalUId, appToken, schemaVersion, tenantId);
   }
 
   @Override

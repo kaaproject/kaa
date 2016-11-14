@@ -50,9 +50,14 @@ public class ConfigurationCacheEntry implements Serializable {
   private final EndpointObjectHash hash;
 
   /**
-   * The hash.
+   * User configuration hash.
    */
   private final EndpointObjectHash userConfigurationHash;
+
+  /**
+   * Endpoint specific configuration hash.
+   */
+  private final EndpointObjectHash epsConfigurationHash;
 
   /**
    * Instantiates a new delta cache entry.
@@ -61,15 +66,18 @@ public class ConfigurationCacheEntry implements Serializable {
    * @param delta                 the delta
    * @param hash                  the hash
    * @param userConfigurationHash the user configuration hash
+   * @param epsConfigurationHash  endpoint specific configuration hash
    */
   public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta,
                                  EndpointObjectHash hash,
-                                 EndpointObjectHash userConfigurationHash) {
+                                 EndpointObjectHash userConfigurationHash,
+                                 EndpointObjectHash epsConfigurationHash) {
     super();
     this.configuration = configuration;
     this.delta = delta;
     this.hash = hash;
     this.userConfigurationHash = userConfigurationHash;
+    this.epsConfigurationHash = epsConfigurationHash;
   }
 
   /**
@@ -106,5 +114,14 @@ public class ConfigurationCacheEntry implements Serializable {
    */
   public EndpointObjectHash getUserConfigurationHash() {
     return userConfigurationHash;
+  }
+
+  /**
+   * Gets the hash.
+   *
+   * @return the hash
+   */
+  public EndpointObjectHash getEpsConfigurationHash() {
+    return epsConfigurationHash;
   }
 }
