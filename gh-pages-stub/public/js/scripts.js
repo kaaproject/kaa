@@ -4,8 +4,8 @@ var SEARCHRESULTS_ID = 'search-results';
 var DEFAULT_URL      = '404.html';
 var DEFAULT_TITLE    = 'No title';
 var DEFAULT_TEXT     = '...';
-var MORE_TEXT = "Show full code"; // More button text
-var LESS_TEXT = "Show less code"; // LESS button text
+var MORE_TEXT = "Show more"; // More button text
+var LESS_TEXT = "Show less"; // LESS button text
 
 var MIN_NUMBER_OF_LINES_TO_HIDE = 5;
 var NUMBER_OF_LINES_TO_SHOW = 6;
