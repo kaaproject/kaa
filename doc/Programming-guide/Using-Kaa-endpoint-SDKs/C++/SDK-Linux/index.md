@@ -50,7 +50,6 @@ To install, proceed as follows:
    cd botan-1.11.28/
    ./configure.py
    sudo make install
-   sudo ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
    ```
 
 ## Compiling SDK

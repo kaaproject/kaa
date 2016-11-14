@@ -24,11 +24,13 @@
 # * BOTAN_INCLUDE_DIR The include directories for libbotan.
 
 message("\nLooking for Botan C++ headers and libraries")
+set(BOTAN_VERSION_CODE botan-1.11)  
+set(BOTAN_LIB libbotan-1.11) 
 
 if(NOT WIN32)
     include(FindPkgConfig)
     if(PKG_CONFIG_FOUND)
-        pkg_check_modules(BOTAN botan-1.11)
+        pkg_check_modules(BOTAN ${BOTAN_VERSION_CODE})
     endif(PKG_CONFIG_FOUND)
 endif(NOT WIN32)
 
@@ -41,12 +43,12 @@ find_path(BOTAN_INCLUDE_DIR
 
 # locate the library
 if(WIN32)
-    set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan)
+    set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_VERSION_CODE})
 else(WIN32)
     if(Botan_USE_STATIC_LIBS)
-        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} libbotan.a libbotan-1.11.a)
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_LIB}.a)
     else(Botan_USE_STATIC_LIBS)
-        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} botan botan-1.11)
+        set(BOTAN_LIBRARY_NAMES ${BOTAN_LIBRARY_NAMES} ${BOTAN_VERSION_CODE})
     endif(Botan_USE_STATIC_LIBS)
 endif(WIN32)
 
