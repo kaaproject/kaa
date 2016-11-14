@@ -29,6 +29,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
@@ -518,6 +519,32 @@ public interface ControlService {
    */
   ConfigurationDto activateConfiguration(String configurationId, String activatedUsername)
       throws ControlServiceException;
+
+  /**
+   * Edits endpoint specific configuration.
+   *
+   * @param configuration endpoint specific configuration
+   * @return saved endpoint specific configuration
+   */
+  EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration);
+
+  /**
+   * Retrieves endpoint specific configuration by endpoint key hash.
+   *
+   * @param endpointKeyHash   endpoint key hash
+   * @param confSchemaVersion configuration schema version
+   * @return endpoint specific configuration
+   */
+  EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion);
+
+  /**
+   * Deletes endpoint specific configuration by endpoint key hash.
+   *
+   * @param endpointKeyHash   endpoint key hash
+   * @param confSchemaVersion configuration schema version
+   * @return deleted endpoint specific configuration
+   */
+  EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion);
 
   /**
    * Deactivate configuration.

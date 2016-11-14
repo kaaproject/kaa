@@ -81,6 +81,12 @@ public class ESTestOperationsService implements OperationsService {
   }
 
   @Override
+  public byte[] fetchEndpointSpecificConfigurationHash(EndpointProfileDto profile) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
   public ServerSync updateSyncResponse(ServerSync response, List<NotificationDto> notifications, String unicastNotificationId) {
     // TODO Auto-generated method stub
     return null;
@@ -99,7 +105,7 @@ public class ESTestOperationsService implements OperationsService {
   }
 
   @Override
-  public SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash) {
+  public SyncContext syncConfigurationHashes(SyncContext context, byte[] ucfHash, byte[] epsConfHash) {
     // TODO Auto-generated method stub
     return null;
   }

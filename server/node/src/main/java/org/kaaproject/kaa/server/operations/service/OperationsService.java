@@ -77,6 +77,15 @@ public interface OperationsService extends PublicKeyAware {
                                 String unicastNotificationId);
 
   /**
+   * Retrieves endpoint specific configuration hash according
+   * to current endpoint configuration schema version
+   *
+   * @param profile the endpoint profile
+   * @return endpoint specific configuration hash
+   */
+  byte[] fetchEndpointSpecificConfigurationHash(EndpointProfileDto profile);
+
+  /**
    * Lookup user configuration and return it's hash
    *
    * @param appToken application token
@@ -94,13 +103,14 @@ public interface OperationsService extends PublicKeyAware {
   public EndpointProfileDto refreshServerEndpointProfile(EndpointObjectHash hash);
 
   /**
-   * Update profile state based on new user configuration hash.
+   * Update profile state based on new user and endpoint specific configuration hashes.
    *
-   * @param context - sync context that contains profile and other metadata
-   * @param ucfHash - user configuration hash
+   * @param context     - sync context that contains profile and other metadata
+   * @param ucfHash     - user configuration hash
+   * @param epsConfHash - endpoint specific configuration hash
    * @return sync context
    */
-  SyncContext syncUserConfigurationHash(SyncContext context, byte[] ucfHash);
+  SyncContext syncConfigurationHashes(SyncContext context, byte[] ucfHash, byte[] epsConfHash);
 
   SyncContext syncUseConfigurationRawSchema(SyncContext context, boolean useConfigurationRawSchema);
 }

@@ -17,8 +17,6 @@
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
 import akka.actor.ActorContext;
-
-
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
@@ -28,6 +26,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -190,7 +189,7 @@ public class LocalEndpointActorMessageProcessor
                                              EndpointUserConfigurationUpdateMessage message) {
     if (message.getUserConfigurationUpdate() != null) {
       state.setUcfHash(message.getUserConfigurationUpdate().getHash());
-      syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
+      refreshConfiguration(context);
     }
   }
 
@@ -202,9 +201,23 @@ public class LocalEndpointActorMessageProcessor
     } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
       processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
     } else if (thriftMsg instanceof ThriftEndpointDeregistrationMessage) {
-      processEndpointDeregistrationMessage(
-          context, (ThriftEndpointDeregistrationMessage) thriftMsg);
+      processEndpointDeregistrationMessage(context, (ThriftEndpointDeregistrationMessage) thriftMsg);
+    } else if (thriftMsg instanceof ThriftEndpointConfigurationRefreshMessage) {
+      processEndpointSpecificConfigurationChanged(context);
     }
+  }
+
+  private void processEndpointSpecificConfigurationChanged(ActorContext context) {
+    if (state.getProfile() == null) {
+      state.setProfile(operationsService.refreshServerEndpointProfile(key));
+    }
+    EndpointProfileDto profile = state.getProfile();
+    state.setEpsConfigurationHash(operationsService.fetchEndpointSpecificConfigurationHash(profile));
+    refreshConfiguration(context);
+  }
+
+  private void refreshConfiguration(ActorContext context) {
+    syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
   }
 
   private void processServerProfileUpdateMsg(ActorContext context,
@@ -353,10 +366,10 @@ public class LocalEndpointActorMessageProcessor
 
   private SyncContext sync(ClientSync request) throws GetDeltaException {
     if (!request.isValid()) {
-      LOG.warn("[{}] Request is not valid. It does not contain profile information!",
-          endpointKey);
+      LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointKey);
       return SyncContext.failure(request.getRequestId());
     }
+    EndpointProfileDto profile = state.getProfile();
     SyncContext context = new SyncContext(new ServerSync());
     context.setNotificationVersion(state.getProfile());
     context.setRequestId(request.getRequestId());
@@ -376,19 +389,21 @@ public class LocalEndpointActorMessageProcessor
       return context;
     }
     if (state.isUcfHashRequiresInitialization()) {
-      byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
-      LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}",
-          endpointKey, context.getRequestHash(),
+      byte[] hash = operationsService.fetchUcfHash(appToken, profile);
+      LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}", endpointKey, context.getRequestHash(),
           Arrays.toString(hash));
       state.setUcfHash(hash);
+    }
+    if (state.isEpsConfigurationRequiresInitialization()) {
+      state.setEpsConfigurationHash(operationsService.fetchEndpointSpecificConfigurationHash(profile));
     }
 
     context = operationsService.processEndpointAttachDetachRequests(
         context, request.getUserSync());
     context = operationsService.processEventListenerRequests(context, request.getEventSync());
 
-    if (state.isUserConfigurationUpdatePending()) {
-      context = operationsService.syncUserConfigurationHash(context, state.getUcfHash());
+    if (state.isUserConfigurationUpdatePending() || state.isEpsConfigurationChanged()) {
+      context = operationsService.syncConfigurationHashes(context, state.getUcfHash(), state.getEpsConfigurationHash());
     }
 
     context = operationsService.syncConfiguration(context, request.getConfigurationSync());
