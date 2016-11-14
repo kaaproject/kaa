@@ -149,7 +149,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -161,6 +160,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.PreDestroy;
 
 /**
  * The Class DefaultControlService.
@@ -994,19 +994,22 @@ public class DefaultControlService implements ControlService {
           zkNode.addListener(new OperationsNodeListener() {
             @Override
             public void onNodeUpdated(OperationsNodeInfo node) {
-              writeLogWithoutByteBuffer("Update of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Update of node {} is pushed to resolver {}",
+                  node, resolver);
               resolver.onNodeUpdated(node);
             }
 
             @Override
             public void onNodeRemoved(OperationsNodeInfo node) {
-              writeLogWithoutByteBuffer("Remove of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Remove of node {} is pushed to resolver {}",
+                  node, resolver);
               resolver.onNodeRemoved(node);
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
-              writeLogWithoutByteBuffer("Add of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Add of node {} is pushed to resolver {}",
+                  node, resolver);
               resolver.onNodeAdded(node);
             }
           });
@@ -1017,20 +1020,19 @@ public class DefaultControlService implements ControlService {
   }
 
   /**
-   * Used when writing OperationsNodeInfo instance in logs. OperationsNodeInfo instance has ByteBuffer fields which written incorrectly in the log file.
-   * In this method ByteBuffer fields temporary overwrite to null, print logs, and after ByteBuffer fields recover on theirs previous values.
+   * Used when writing OperationsNodeInfo instance in logs. OperationsNodeInfo instance has
+   * ByteBuffer fields which written incorrectly in the log file. In this method ByteBuffer fields
+   * temporary overwrite to null, print logs, and after ByteBuffer fields recover on theirs previous
+   * values.
    *
-   * @param logString is a usual string for logging. Use '{}' for output OperationsNodeInfo and the second '{}' is OperationsServerResolver
+   * @param logString is a usual string for logging. Use '{}' for output OperationsNodeInfo and
+   *                  the second '{}' is OperationsServerResolver
    * @param node      in which find and temporary overwrite all ByteBuffer-s to null
    * @param resolver  OperationsServerResolver instance
    */
   private void writeLogWithoutByteBuffer(String logString,
                                          OperationsNodeInfo node,
                                          OperationsServerResolver resolver) {
-    //temporary set public key of connection info to null
-    ByteBuffer publicKey = node.getConnectionInfo().getPublicKey();
-    node.getConnectionInfo().setPublicKey(null);
-
     //temporary set connection info of transports to null
     Map<TransportMetaData, Map<VersionConnectionInfoPair, ByteBuffer>> map = new HashMap<>();
     HashMap<VersionConnectionInfoPair, ByteBuffer> innerMap;
@@ -1044,6 +1046,9 @@ public class DefaultControlService implements ControlService {
       }
       map.put(transport, innerMap);
     }
+    //temporary set public key of connection info to null
+    ByteBuffer publicKey = node.getConnectionInfo().getPublicKey();
+    node.getConnectionInfo().setPublicKey(null);
 
     LOG.info(logString, node, resolver);
 
@@ -1197,7 +1202,7 @@ public class DefaultControlService implements ControlService {
       throws ControlServiceException {
     EndpointProfileSchemaDto profileSchema = profileService
         .findProfileSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
-        sdkProfile.getProfileSchemaVersion());
+            sdkProfile.getProfileSchemaVersion());
     if (profileSchema == null) {
       throw new NotFoundException("Profile schema not found!");
     }
@@ -1342,7 +1347,7 @@ public class DefaultControlService implements ControlService {
           .generateRecordWrapperSchema(getFlatSchemaByCtlSchemaId(logCtlSchema.getId()));
 
       String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN,
-          new Object[]{logSchemaVersion}).getMessage();
+          new Object[] {logSchemaVersion}).getMessage();
 
       return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
     } catch (Exception ex) {
