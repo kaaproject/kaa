@@ -464,6 +464,9 @@ public class ConfigurationController extends AbstractAdminController {
   @ResponseStatus(value = HttpStatus.OK)
   @ResponseBody
   public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(
+      @ApiParam(name = "endpointKeyHash",
+          value = "A unique identifier of the endpoint",
+          required = true)
       @PathVariable String endpointKeyHash,
       @ApiParam(name = "configurationSchemaVersion",
           value = "Configuration schema version",
@@ -494,6 +497,9 @@ public class ConfigurationController extends AbstractAdminController {
   @RequestMapping(value = "endpointSpecificConfiguration/{endpointKeyHash}", method = RequestMethod.DELETE)
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteEndpointSpecificConfiguration(
+      @ApiParam(name = "endpointKeyHash",
+          value = "A unique identifier of the endpoint",
+          required = true)
       @PathVariable String endpointKeyHash,
       @ApiParam(name = "configurationSchemaVersion",
           value = "Configuration schema version",
