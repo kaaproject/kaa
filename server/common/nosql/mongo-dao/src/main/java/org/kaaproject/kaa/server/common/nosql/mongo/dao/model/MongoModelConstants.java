@@ -85,6 +85,7 @@ public class MongoModelConstants {
   public static final String EP_SERVER_PROFILE_VERSION_PROPERTY = "srv_profile_version";
   public static final String EP_CONFIGURATION_HASH = "configuration_hash";
   public static final String EP_USER_CONFIGURATION_HASH = "user_configuration_hash";
+  public static final String EP_EPS_CONFIGURATION_HASH = "eps_configuration_hash";
   public static final String EP_CONFIGURATION_VERSION = "configuration_version";
   public static final String EP_TOPIC_HASH = "topic_hash";
   public static final String EP_SIMPLE_TOPIC_HASH = "simple_topic_hash";
@@ -129,6 +130,13 @@ public class MongoModelConstants {
   public static final String CREDENTIALS_ID = ID;
   public static final String CREDENTIALS_BODY = "credentials_body";
   public static final String CREDENTIAL_STATUS = "credentials_status";
+  /**
+   * {@link org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoEndpointSpecificConfiguration}
+   */
+  public static final String EP_SPECIFIC_CONFIGURATION = "endpoint_specific_configuration";
+  public static final String EP_SPECIFIC_CONFIGURATION_KEY_HASH = EP_ENDPOINT_KEY_HASH;
+  public static final String EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION = EP_CONFIGURATION_VERSION;
+  public static final String EP_SPECIFIC_CONFIGURATION_CONFIGURATION = BODY;
 
   private MongoModelConstants() {
   }

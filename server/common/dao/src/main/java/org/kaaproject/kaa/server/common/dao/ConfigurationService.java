@@ -205,6 +205,15 @@ public interface ConfigurationService {
   ConfigurationSchemaDto findConfSchemaById(String id);
 
   /**
+   * Normalize configuration according to override configuration schema.
+   *
+   * @param appId             application ID
+   * @param schemaVersion     configuration schema version
+   * @param configurationBody configuration to validate
+   */
+  String normalizeAccordingToOverrideConfigurationSchema(String appId, int schemaVersion, String configurationBody);
+
+  /**
    * Remove configuration schemas by application id.
    *
    * @param appId the application id

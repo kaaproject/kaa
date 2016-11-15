@@ -19,6 +19,7 @@ This page describes Kaa C++ SDK build process on Linux system.
 **All steps described in this guide were tested on:**
 
  - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
+ - **Host OS:** Ubuntu 16.04 LTS Desktop 64-bit
 
 ### Dependencies
 
@@ -27,10 +28,42 @@ Before building the C++ endpoint SDK, install the following components on your m
 1. Install g++, [CMake](https://cmake.org/download/), [Boost](http://www.boost.org/users/download/) and [SQLite3](https://sqlite.org/download.html):
 
    ```
-   sudo apt-get install g++ cmake libboost1.55-all-dev libsqlite3-0 libsqlite3-dev
+   sudo apt-get install g++ cmake python libsqlite3-0 libsqlite3-dev
    ```
 
-4. Install the [AvroC++](http://avro.apache.org/docs/1.7.5/api/cpp/html/index.html) library manually:
+2. Install Boost:
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#Platform1">Ubuntu 14.04</a></li>
+    <li><a data-toggle="tab" href="#Platform2">Ubuntu 16.04</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="Platform1" class="tab-pane fade in active" markdown="1" >
+
+```bash
+sudo apt-get install libboost1.55-all-dev
+```
+
+</div><div id="Platform2" class="tab-pane fade" markdown="1" >
+
+```bash
+wget https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.gz
+tar -xf boost_1_55_0.tar.gz
+cd boost_1_55_0
+./bootstrap.sh
+sudo ./bjam install
+```
+
+</div></div>
+</li>
+</ul>
+
+{: start="3"}
+3. Install the [AvroC++](http://avro.apache.org/docs/1.7.5/api/cpp/html/index.html) library manually:
+
 
    ```
    wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
@@ -40,7 +73,7 @@ Before building the C++ endpoint SDK, install the following components on your m
    sudo make install
    ```
 
-5. Install the [Botan](http://botan.randombit.net/) 1.11 library. The stock 1.10 version is not recommended for C++11 projects,
+4. Install the [Botan](http://botan.randombit.net/) 1.11 library. The stock 1.10 version is not recommended for C++11 projects,
 so the newer 1.11 version is used in Kaa C++ SDK.
 To install, proceed as follows:
 
@@ -50,7 +83,11 @@ To install, proceed as follows:
    cd botan-1.11.28/
    ./configure.py
    sudo make install
-   sudo ln -s /usr/local/include/botan-1.11/botan /usr/local/include/botan
+   ```
+5. After all the dependencies have been installed, dynamic loader's links (and, selectively, its cache) should be updated. That's the way for the loader to know where libraries are located. To update links, proceed as follows:
+
+   ```
+   sudo ldconfig
    ```
 
 ## Compiling SDK

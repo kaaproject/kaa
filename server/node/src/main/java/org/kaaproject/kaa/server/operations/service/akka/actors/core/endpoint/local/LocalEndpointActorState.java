@@ -48,6 +48,8 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
 
   private boolean ucfHashIntialized;
   private byte[] ucfHash;
+  private boolean epsConfigurationInitialized;
+  private byte[] epsConfigurationHash;
 
   /**
    * All-args constructor.
@@ -202,6 +204,39 @@ public class LocalEndpointActorState extends AbstractEndpointActorState {
   public void setUcfHash(byte[] ucfHash) {
     this.ucfHashIntialized = true;
     this.ucfHash = ucfHash;
+  }
+
+  /**
+   * Returns whether endpoint specific configuration hash requires initialization.
+   *
+   * @return true if endpoint specific configuration hash requires initialization otherwise false
+   */
+  public boolean isEpsConfigurationRequiresInitialization() {
+    if (endpointProfile == null) {
+      return false;
+    }
+    return !epsConfigurationInitialized;
+  }
+
+  /**
+   * Returns whether endpoint specific configuration  was changed.
+   *
+   * @return true if endpoint specific configuration changed otherwise false
+   */
+  public boolean isEpsConfigurationChanged() {
+    if (endpointProfile == null) {
+      return false;
+    }
+    return !Arrays.equals(epsConfigurationHash, endpointProfile.getEpsConfigurationHash());
+  }
+
+  public byte[] getEpsConfigurationHash() {
+    return epsConfigurationHash;
+  }
+
+  public void setEpsConfigurationHash(byte[] epsConfigurationHash) {
+    this.epsConfigurationHash = epsConfigurationHash;
+    this.epsConfigurationInitialized = true;
   }
 
   /**

@@ -19,6 +19,7 @@ package org.kaaproject.kaa.server.common.nosql.cassandra.dao;
 import org.kaaproject.kaa.common.dto.CtlDataDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
@@ -30,6 +31,7 @@ import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointProfileDao;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointRegistrationDao;
+import org.kaaproject.kaa.server.common.dao.impl.EndpointSpecificConfigurationDao;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.dao.impl.TopicListEntryDao;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
@@ -38,6 +40,7 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpo
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointRegistration;
+import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointSpecificConfiguration;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointUser;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraTopicListEntry;
@@ -52,6 +55,7 @@ import java.util.UUID;
 public abstract class AbstractCassandraTest {
 
   private static final String TEST_ENDPOINT_GROUP_ID = "124";
+  private static final byte[] EPS_CONFIG_HASH = "eps_hash_conf".getBytes();
 
   @Autowired
   protected EndpointNotificationDao<CassandraEndpointNotification> unicastNotificationDao;
@@ -70,6 +74,8 @@ public abstract class AbstractCassandraTest {
   protected TopicListEntryDao<CassandraTopicListEntry> topicListEntryDao;
   @Autowired
   protected CredentialsDao<CassandraCredentials> credentialsDao;
+  @Autowired
+  protected EndpointSpecificConfigurationDao<CassandraEndpointSpecificConfiguration> endpointSpecificConfigurationDao;
 
   protected List<CassandraEndpointNotification> generateEndpointNotification(ByteBuffer endpointKeyHash, int count) {
     List<CassandraEndpointNotification> savedNotifications = new ArrayList<>();
@@ -150,6 +156,7 @@ public abstract class AbstractCassandraTest {
     profileDto.setSubscriptions(topicIds);
     profileDto.setEndpointKeyHash(keyHash);
     profileDto.setAccessToken(accessToken);
+    profileDto.setEpsConfigurationHash(EPS_CONFIG_HASH);
     if (ctlDataDto != null) {
       profileDto.setServerProfileBody(ctlDataDto.getBody());
       profileDto.setServerProfileVersion(ctlDataDto.getServerProfileVersion());
@@ -165,6 +172,7 @@ public abstract class AbstractCassandraTest {
     profileDto.setAccessToken(generateStringId());
     profileDto.setGroupState(cfGroupState);
     profileDto.setSdkToken(UUID.randomUUID().toString());
+    profileDto.setEpsConfigurationHash(EPS_CONFIG_HASH);
     return profileDto;
   }
 
@@ -179,6 +187,7 @@ public abstract class AbstractCassandraTest {
     profileDto.setAccessToken(generateStringId());
     profileDto.setClientProfileBody("test profile");
     profileDto.setServerProfileBody("test server-side profile");
+    profileDto.setEpsConfigurationHash(EPS_CONFIG_HASH);
     List<EndpointGroupStateDto> groupState = new ArrayList<>();
     groupState.add(new EndpointGroupStateDto(TEST_ENDPOINT_GROUP_ID, null, null));
     profileDto.setGroupState(groupState);
@@ -233,5 +242,13 @@ public abstract class AbstractCassandraTest {
 
     CredentialsDto generatedCredentials = saved.toDto();
     return generatedCredentials;
+  }
+
+  protected EndpointSpecificConfigurationDto generateEpsConfigurationDto(byte[] endpointKeyHash,
+                                                                         Integer configurationVersion,
+                                                                         String configuration,
+                                                                         Long version) {
+    EndpointSpecificConfigurationDto dto = new EndpointSpecificConfigurationDto(endpointKeyHash, configurationVersion, configuration, version);
+    return endpointSpecificConfigurationDao.save(dto).toDto();
   }
 }

@@ -53,6 +53,7 @@ import org.kaaproject.kaa.server.common.core.algorithms.validator.UuidValidator;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
 import org.kaaproject.kaa.server.common.core.configuration.BaseDataFactory;
 import org.kaaproject.kaa.server.common.core.configuration.KaaData;
+import org.kaaproject.kaa.server.common.core.configuration.OverrideData;
 import org.kaaproject.kaa.server.common.core.configuration.OverrideDataFactory;
 import org.kaaproject.kaa.server.common.core.schema.BaseSchema;
 import org.kaaproject.kaa.server.common.core.schema.DataSchema;
@@ -77,6 +78,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -512,6 +514,34 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     validateSqlId(id, "Incorrect configuration schema id "
                       + id + ". Can't find configuration schema.");
     return getDto(configurationSchemaDao.findById(id));
+  }
+
+  @Override
+  public String normalizeAccordingToOverrideConfigurationSchema(String appId, int schemaVersion, String configurationBody) {
+    ConfigurationSchemaDto schemaDto = this.findConfSchemaByAppIdAndVersion(appId, schemaVersion);
+    if (schemaDto != null) {
+      OverrideSchema overrideSchema = new OverrideSchema(schemaDto.getOverrideSchema());
+      LOG.debug("Create default UUID validator with override schema: {}", overrideSchema.getRawSchema());
+      UuidValidator<OverrideData> uuidValidator = new DefaultUuidValidator<>(overrideSchema, new OverrideDataFactory());
+      GenericAvroConverter<GenericRecord> avroConverter = new GenericAvroConverter<>(overrideSchema.getRawSchema());
+      try {
+        GenericRecord configRecord = avroConverter.decodeJson(configurationBody);
+        // TODO: Need to use last active configuration instead of null. Will be changed after supporting delta configuration
+        KaaData<OverrideSchema> body = uuidValidator.validateUuidFields(configRecord, null);
+        if (body != null) {
+          return body.getRawData();
+        } else {
+          LOG.warn("Validated configuration body is empty");
+          throw new IncorrectParameterException("Validated configuration body is empty");
+        }
+      } catch (IOException ex) {
+        LOG.error("Invalid configuration for override schema.", ex);
+        throw new IncorrectParameterException("Invalid configuration for override schema.");
+      }
+    } else {
+      LOG.warn("Can't find configuration schema with version {}.", schemaVersion);
+      throw new IncorrectParameterException("Can't find configuration schema for specified version.");
+    }
   }
 
   @Override

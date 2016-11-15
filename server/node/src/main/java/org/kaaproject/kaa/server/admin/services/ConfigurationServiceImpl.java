@@ -31,6 +31,7 @@ import org.kaaproject.kaa.common.dto.ConfigurationDto;
 import org.kaaproject.kaa.common.dto.ConfigurationRecordDto;
 import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
 import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.StructureRecordDto;
@@ -271,6 +272,44 @@ public class ConfigurationServiceImpl
       String body = converter.encodeToJson(record);
       endpointUserConfiguration.setBody(body);
       controlService.editUserConfiguration(endpointUserConfiguration);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
+    }
+  }
+
+  @Override
+  public EndpointSpecificConfigurationDto editEndpointSpecificConfiguration(EndpointSpecificConfigurationDto configuration) throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    try {
+      checkEndpointProfile(configuration.getEndpointKeyHash());
+      return controlService.editEndpointSpecificConfiguration(configuration);
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
+    }
+  }
+
+  @Override
+  public EndpointSpecificConfigurationDto findEndpointSpecificConfiguration(byte[] endpointKeyHash, Integer confSchemaVersion) throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    try {
+      checkEndpointProfile(endpointKeyHash);
+      EndpointSpecificConfigurationDto configuration = controlService.findEndpointSpecificConfiguration(endpointKeyHash, confSchemaVersion);
+      Utils.checkNotNull(configuration);
+      return configuration;
+    } catch (Exception ex) {
+      throw Utils.handleException(ex);
+    }
+  }
+
+  @Override
+  public EndpointSpecificConfigurationDto deleteEndpointSpecificConfiguration(byte[] endpointKeyHash,
+                                                                              Integer confSchemaVersion) throws KaaAdminServiceException {
+    checkAuthority(KaaAuthorityDto.TENANT_DEVELOPER, KaaAuthorityDto.TENANT_USER);
+    try {
+      checkEndpointProfile(endpointKeyHash);
+      EndpointSpecificConfigurationDto configuration = controlService.deleteEndpointSpecificConfiguration(endpointKeyHash, confSchemaVersion);
+      Utils.checkNotNull(configuration);
+      return configuration;
     } catch (Exception ex) {
       throw Utils.handleException(ex);
     }

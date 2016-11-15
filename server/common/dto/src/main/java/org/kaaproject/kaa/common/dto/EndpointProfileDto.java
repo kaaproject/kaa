@@ -48,6 +48,7 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
   private byte[] profileHash;
   private byte[] configurationHash;
   private byte[] userConfigurationHash;
+  private byte[] epsConfigurationHash;
   private int clientProfileVersion;
   private int serverProfileVersion;
   private int configurationVersion;
@@ -295,6 +296,14 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
                                      != null ? useConfigurationRawSchema : false;
   }
 
+  public byte[] getEpsConfigurationHash() {
+    return epsConfigurationHash;
+  }
+
+  public void setEpsConfigurationHash(byte[] epsConfigurationHash) {
+    this.epsConfigurationHash = epsConfigurationHash;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -335,6 +344,9 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
       return false;
     }
     if (groupState != null ? !groupState.equals(that.groupState) : that.groupState != null) {
+      return false;
+    }
+    if (!Arrays.equals(epsConfigurationHash, that.epsConfigurationHash)) {
       return false;
     }
     if (!Arrays.equals(endpointKey, that.endpointKey)) {
@@ -385,6 +397,7 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
     result = 31 * result + (configurationHash != null ? Arrays.hashCode(configurationHash) : 0);
     result = 31 * result + (userConfigurationHash
                             != null ? Arrays.hashCode(userConfigurationHash) : 0);
+    result = 31 * result + (epsConfigurationHash != null ? Arrays.hashCode(epsConfigurationHash) : 0);
     result = 31 * result + clientProfileVersion;
     result = 31 * result + configurationVersion;
     result = 31 * result + notificationVersion;
@@ -431,6 +444,8 @@ public class EndpointProfileDto implements HasId, HasVersion, Serializable {
     builder.append(Arrays.toString(userConfigurationHash));
     builder.append(", clientProfileVersion=");
     builder.append(clientProfileVersion);
+    builder.append(", epsConfigurationHash=");
+    builder.append(Arrays.toString(epsConfigurationHash));
     builder.append(", configurationVersion=");
     builder.append(configurationVersion);
     builder.append(", notificationVersion=");

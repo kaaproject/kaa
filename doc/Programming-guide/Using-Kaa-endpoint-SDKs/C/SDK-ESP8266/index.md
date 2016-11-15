@@ -339,7 +339,7 @@ To invoke CMake, proceed as follows:
         mkdir build
         cd build
         cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE=../libs/kaa/toolchains/esp8266.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=../kaa/toolchains/esp8266.cmake \
             -DKAA_PLATFORM=esp8266 \
             -DCMAKE_BUILD_TYPE=MinSizeRel \
             -DWITH_EXTENSION_CONFIGURATION=OFF \

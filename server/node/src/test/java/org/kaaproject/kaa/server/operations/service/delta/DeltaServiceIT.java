@@ -63,16 +63,15 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Base64Utils;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
-
-import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/operations/common-test-context.xml")
@@ -231,7 +230,7 @@ public class DeltaServiceIT extends AbstractTest {
 
     endpointProfile = new EndpointProfileDto();
     endpointProfile.setApplicationId(application.getId());
-    endpointProfile.setEndpointKeyHash(UUID.randomUUID().toString().getBytes());
+    endpointProfile.setEndpointKeyHash(Base64Utils.decodeFromString("EndpointId"));
     endpointProfile.setClientProfileBody(PROFILE_JSON);
     endpointProfile.setProfileHash(EndpointObjectHash.fromSha1(PROFILE_BYTES).getData());
     endpointProfile.setConfigurationHash(endpointConfiguration.getConfigurationHash());
