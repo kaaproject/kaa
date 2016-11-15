@@ -16,10 +16,18 @@ var NUMBER_OF_LINES_TO_SHOW = 6;
 var DOM = (function () {
   var PAGE_TITLE='page-title';
   var MARKDOWN_TOC_ID='markdown-toc';
+  var DATA_TEMPLATE = 'data-';
 
   var instance = null;
 
   function init() {
+
+    function getDataParam(elementId, dataParamStr) {
+      if (elementId && dataParamStr) {
+        var DATA_ATTRIBUTE = DATA_TEMPLATE + dataParamStr;
+        return document.getElementById(elementId).getAttribute(DATA_ATTRIBUTE);
+      }
+    }
 
     function showMenuForVersion(version){
       if (version) {
@@ -33,7 +41,6 @@ var DOM = (function () {
         var VERSION_ID = VERSION_ID_TEMPLATE + version;
         var text = document.getElementById(VERSION_ID).firstElementChild.innerText;
         var tmp = document.getElementById(VERSION_SELECT_ID);
-        console.log(document.getElementById(VERSION_SELECT_ID));
         document.getElementById(VERSION_SELECT_ID).firstChild.data = text;
       }
     }
@@ -90,6 +97,7 @@ var DOM = (function () {
       replaceToc : replaceToc,
       showMenuForVersion: showMenuForVersion,
       showSelectedVersion: showSelectedVersion,
+      getDataParam: getDataParam,
     };
   }
 
