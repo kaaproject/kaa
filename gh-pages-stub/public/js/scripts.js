@@ -4,6 +4,9 @@ var SEARCHRESULTS_ID = 'search-results';
 var DEFAULT_URL      = '404.html';
 var DEFAULT_TITLE    = 'No title';
 var DEFAULT_TEXT     = '...';
+var MENU_ID_TEMPLATE = 'sidbar-nav-version-';
+var VERSION_SELECT_ID = "selected_version";
+var VERSION_ID_TEMPLATE = "li-version-";
 var MORE_TEXT = "Show more"; // More button text
 var LESS_TEXT = "Show less"; // LESS button text
 
@@ -17,6 +20,24 @@ var DOM = (function () {
   var instance = null;
 
   function init() {
+
+    function showMenuForVersion(version){
+      if (version) {
+        var MENU_ID = MENU_ID_TEMPLATE + version;
+        document.getElementById(MENU_ID).style.display = "";
+      }
+    }
+
+    function showSelectedVersion(version){
+      if (version) {
+        var VERSION_ID = VERSION_ID_TEMPLATE + version;
+        var text = document.getElementById(VERSION_ID).firstElementChild.innerText;
+        var tmp = document.getElementById(VERSION_SELECT_ID);
+        console.log(document.getElementById(VERSION_SELECT_ID));
+        document.getElementById(VERSION_SELECT_ID).firstChild.data = text;
+      }
+    }
+
     function getSearchVersion() {
       var dropDownVersionSelect = document.getElementById(VERSIONSELECT_ID);
       return dropDownVersionSelect.options[dropDownVersionSelect.selectedIndex].value;
@@ -67,6 +88,8 @@ var DOM = (function () {
       showError : showError,
       updateSearchResults : updateSearchResults,
       replaceToc : replaceToc,
+      showMenuForVersion: showMenuForVersion,
+      showSelectedVersion: showSelectedVersion,
     };
   }
 
