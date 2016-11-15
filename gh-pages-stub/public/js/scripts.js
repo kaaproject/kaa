@@ -1,4 +1,4 @@
-var VERSIONSELECT_ID = 'version-select';
+var VERSIONSELECT_ID = 'search-version-select';
 var SEARCHBOX_ID     = 'search-box';
 var SEARCHRESULTS_ID = 'search-results';
 var DEFAULT_URL      = '404.html';

@@ -6,7 +6,7 @@ no_version_test: true
 {% include variables.md %}
 <form class="form-inline" role="search" action="{{ site.baseurl }}/search/" method="get">
       <div class="form-group">
-          <select name="version" id="version-select">
+          <select name="version" id="search-version-select">
           {% for item in versions %}
              <option value="{{ item }}">
                 {{ item }}{% if item == latest_version %} (latest) {% endif %}
