@@ -43,6 +43,8 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -174,14 +176,15 @@ public class Utils {
    * @return boolean 'true' if email address is valid
    */
   public static boolean validateEmail(String mail) {
-    boolean result = false;
-    if (mail != null && mail.length() != 0) {
-      if (mail.indexOf('@') != INCORRECT_IDX
-          && mail.indexOf('.') != INCORRECT_IDX) {
-        result = true;
-      }
+    if (mail == null || mail.length() == 0) {
+      return false;
     }
-    return result;
+    Pattern pattern = Pattern
+        .compile(
+            "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE
+        );
+    Matcher matcher = pattern.matcher(mail);
+    return matcher.find();
   }
 
   /**
