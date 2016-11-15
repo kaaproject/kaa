@@ -1,3 +1,4 @@
+{% include variables.md %}
 <head>
   <link href="http://gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,7 +19,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script src="{{ site.baseurl }}/public/js/utils.js"></script>
+  <script src="{{ site.baseurl }}/public/js/utils.js" id="utils.js" data-latest-version="{{latest_version}}" data-version-list="{{versions | join: " "}}"></script>
   <script src="{{ site.baseurl }}/public/js/scripts.js"></script>
   <link rel="stylesheet" href="{{ site.baseurl }}/public/css/syntax.css">
   <link rel="stylesheet" href="{{ site.baseurl }}/public/css/styles.css">
