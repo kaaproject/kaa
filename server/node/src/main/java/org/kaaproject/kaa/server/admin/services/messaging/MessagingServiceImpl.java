@@ -129,7 +129,7 @@ public class MessagingServiceImpl implements MessagingService {
     GeneralProperties generalProperties = propertiesFacade.getSpecificProperties(
         GeneralProperties.class);
     // appBaseUrl = generalProperties.getBaseUrl(); getBaseUrl return always localhost:8080 and
-    // retrieve this data from DB instead of kaa-node property file ; TODO refactor
+    // retrieve this data from DB instead of kaa-node property file ; TODO(KAA-1619) refactor GeneralProperties
     appName = generalProperties.getAppTitle();
   }
 
@@ -211,25 +211,21 @@ public class MessagingServiceImpl implements MessagingService {
   * execution of code on server side.
   * */
   private String generateParamsUrl(Map<String, String> paramsMap) {
-    String paramsUrl = "";
+    StringBuilder paramsUrl = new StringBuilder();
     for (String key : paramsMap.keySet()) {
       String val = paramsMap.get(key);
       if (paramsUrl.length() > 0) {
-        paramsUrl += "&";
+        paramsUrl.append("&");
       }
-      paramsUrl += key + "=" + UrlEscapers.urlPathSegmentEscaper().escape(val);
+      paramsUrl.append(key)
+          .append("=")
+          .append(UrlEscapers.urlPathSegmentEscaper().escape(val));
     }
-    return paramsUrl;
+    return paramsUrl.toString();
   }
 
 
-  /**
-   * Send password after reset.
-   *
-   * @param username the username
-   * @param password the password
-   * @param email    the email
-   */
+
   @Override
   public void sendPasswordAfterReset(final String username,
                                      final String password,
