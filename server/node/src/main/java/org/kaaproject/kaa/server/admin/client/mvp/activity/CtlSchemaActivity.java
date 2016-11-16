@@ -17,7 +17,6 @@
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.APPLICATION;
-import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.SYSTEM;
 import static org.kaaproject.kaa.common.dto.ctl.CTLSchemaScopeDto.TENANT;
 
 import com.google.gwt.event.dom.client.ClickEvent;
