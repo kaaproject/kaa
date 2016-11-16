@@ -14,12 +14,13 @@
 # limitations under the License.
 #
 
-if(KAA_UNITTESTS_COMPILE)
+include(CTest)
+
+if(BUILD_TESTING)
     find_package(cmocka REQUIRED)
     find_program(MEMORYCHECK_COMMAND valgrind)
     set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-reachable=yes --trace-children=yes -v")
 
-    include(CTest)
     include(CMakeParseArguments)
 endif()
 
@@ -37,7 +38,7 @@ endif()
 #                   [DEPENDS list_of_dependencies...]
 #                   [INC_DIRS list_of_include_directories...])
 function(kaa_add_unit_test)
-    if(KAA_UNITTESTS_COMPILE)
+    if(BUILD_TESTING)
         cmake_parse_arguments(
             UNIT_TEST
             ""
