@@ -57,7 +57,7 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
   @Column(name = BASE_SCHEMA_NAME)
   protected String name;
 
-  @Column(name = BASE_SCHEMA_DESCRIPTION)
+  @Column(name = BASE_SCHEMA_DESCRIPTION, length = 1024)
   protected String description;
 
   @Column(name = BASE_SCHEMA_CREATED_USERNAME)

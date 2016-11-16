@@ -66,7 +66,7 @@ public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Ser
   @Column(name = ENDPOINT_GROUP_ENDPOINT_COUNT)
   private long endpointCount;
 
-  @Column(name = ENDPOINT_GROUP_DESCRIPTION, length = 255)
+  @Column(name = ENDPOINT_GROUP_DESCRIPTION, length = 1024)
   private String description;
 
   @Column(name = ENDPOINT_GROUP_CREATED_USERNAME)

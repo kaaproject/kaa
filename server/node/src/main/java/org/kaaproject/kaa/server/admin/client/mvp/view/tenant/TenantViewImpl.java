@@ -65,7 +65,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
   @Override
   protected void initDetailsTable() {
 
-    tenantName = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE);
+    tenantName = new KaaAdminSizedTextBox(100);
     tenantName.setWidth("100%");
     tenantName.addInputHandler(this);
     lableUser = new Label("Users");

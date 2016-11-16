@@ -46,7 +46,7 @@ import javax.persistence.Table;
 public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
 
   private static final long serialVersionUID = 3766947955702551264L;
-  @Column(name = EVENT_CLASS_FAMILY_DESCRIPTION)
+  @Column(name = EVENT_CLASS_FAMILY_DESCRIPTION, length = 1024)
   protected String description;
   @Column(name = EVENT_CLASS_FAMILY_CREATED_USERNAME)
   protected String createdUsername;
