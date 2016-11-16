@@ -249,6 +249,13 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationAllTaskCompletedTest)
 BOOST_AUTO_TEST_CASE(AwaitTerminationTimeoutTest)
 {
 
+    /**
+     * It provides a flexible thread safe way to notify the occurrence of external condition.
+     *
+     * setState(bool), setNo(), setYes() methods set a current state of condition.
+     * getState() return a current state of condition.
+     * check() wait until condition will occurred, i.e. state will be true.
+     */
     class Condition final
     {
     public:
@@ -257,32 +264,32 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationTimeoutTest)
         mutex_(), variable_(), state_(state)
         {}
 
-        bool state()
+        bool getState()
         {
             std::unique_lock<std::mutex> lock(mutex_);
             return state_;
         }
 
-        bool state(const bool newState)
+        bool setState(const bool newState)
         {
             std::unique_lock<std::mutex> lock(mutex_);
 
-            if(state_ == newState) {
+            if (state_ == newState) {
                 return false;
             }
 
             state_ = newState;
 
-            if(newState) {
+            if (newState) {
                 variable_.notify_all();
             }
 
             return true;
         }
 
-        bool yes() { return state(true); }
+        bool setYes() { return setState(true); }
 
-        bool no() { return state(false); }
+        bool setNo() { return setState(false); }
 
         void check()
         {
@@ -295,7 +302,9 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationTimeoutTest)
         std::mutex mutex_;
         std::condition_variable variable_;
         bool state_;
-    } isReady;
+    };
+
+    Condition isReady;
 
     // One worker thread for sequential execution
     ThreadPool threadPool;
@@ -306,18 +315,18 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationTimeoutTest)
 
     std::atomic_uint actualTaskCount(0);
 
-    for(std::size_t index = 0; index != totalTaskCount ; ++index) {
-        ThreadPoolTask task = [&isReady, &actualTaskCount, taskExecutionTime] ()
-        {
-            isReady.check();
-            std::this_thread::sleep_for(std::chrono::seconds(taskExecutionTime));
-            ++actualTaskCount;
-        };
+    for (std::size_t index = 0; index != totalTaskCount ; ++index) {
 
-        threadPool.add(std::move(task));
+        threadPool.add(ThreadPoolTask(
+            [&isReady, &actualTaskCount, taskExecutionTime] ()
+            {
+                isReady.check();
+                std::this_thread::sleep_for(std::chrono::seconds(taskExecutionTime));
+                ++actualTaskCount;
+            }));
     }
 
-    isReady.yes();
+    isReady.setYes();
 
     threadPool.shutdown();
     threadPool.awaitTermination(waitedTaskCount * taskExecutionTime);
@@ -325,7 +334,7 @@ BOOST_AUTO_TEST_CASE(AwaitTerminationTimeoutTest)
     // Assume no tasks have not been declined so wait for all of them
     std::this_thread::sleep_for(std::chrono::seconds(totalTaskCount * taskExecutionTime));
 
-    BOOST_CHECK(actualTaskCount.load() < totalTaskCount);
+    BOOST_CHECK_LE(actualTaskCount.load(), totalTaskCount);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
