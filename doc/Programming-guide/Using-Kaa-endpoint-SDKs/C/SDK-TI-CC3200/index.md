@@ -124,7 +124,7 @@ Change directory to where SDK was unpacked and execute the following:
 ```
 mkdir -p build
 cd build
-cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake ..
+cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake -DBUILD_TESTING=OFF ..
 make
 ```
 
@@ -137,7 +137,7 @@ Open the Cygwin terminal and execute the following:
 ```
 mkdir -p build
 cd build
-cmake.exe -G "Unix Makefiles" -DKAA_PLATFORM=cc32xx -DCC32XX_TOOLCHAIN_PATH=c:/cygwin/opt/kaa -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake ..
+cmake.exe -G "Unix Makefiles" -DKAA_PLATFORM=cc32xx -DCC32XX_TOOLCHAIN_PATH=c:/cygwin/opt/kaa -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake -DBUILD_TESTING=OFF ..
 make
 ```
 

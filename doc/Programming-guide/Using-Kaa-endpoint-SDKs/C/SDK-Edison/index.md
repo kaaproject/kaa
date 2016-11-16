@@ -45,7 +45,7 @@ Since Edison is running Linux, you can refer to [the Linux guide]({{root_url}}Pr
 But remember, you must specify correct compiler when compiling your Kaa application for Intel Edison:
 
         export EDISON_CC=/opt/poky-edison/1.6.1/sysroots/x86_64-pokysdk-linux/usr/bin/i586-poky-linux/i586-poky-linux-gcc
-        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$EDISON_CC ..
+        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$EDISON_CC -DBUILD_TESTING=OFF ..
         make 
 
 For more details on how to build, upload and run your application on Edison board, you may refer to official [user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).

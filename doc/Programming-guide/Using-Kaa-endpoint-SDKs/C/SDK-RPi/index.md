@@ -40,5 +40,5 @@ Now, dependencies are installed and it is time to create Kaa application.
 Since Raspberry is running Linux, you can refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) for detailed process of application creation.
 But remember, you must specify correct compiler name when compiling your Kaa application for Raspberry Pi:
 
-        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$ARMLINUX_GCC ..
+        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$ARMLINUX_GCC -DBUILD_TESTING=OFF ..
         make

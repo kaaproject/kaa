@@ -81,11 +81,14 @@ let
         __propagate:;
       ''
       + target posixSupport "posix"
-              "${lib.optionalString testSupport ''-DCMAKE_BUILD_TYPE=Debug -DKAA_UNITTESTS_COMPILE=on -DKAA_COLLECT_COVERAGE=1''}"
+              "${lib.optionalString testSupport ''-DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=off 
+-DKAA_COLLECT_COVERAGE=1''}"
       + target posixSupport "nologs"
-              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DKAA_MAX_LOG_LEVEL=0"
+              "${lib.optionalString testSupport ''-DBUILD_TESTING=off''} 
+-DKAA_MAX_LOG_LEVEL=0"
       + target clangSupport "clang"
-              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+              "${lib.optionalString testSupport ''-DBUILD_TESTING=off''} 
+-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
       + target cc3200Support "cc3200"
               "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake -DCC32XX_SDK='${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk' -DCC32XX_TOOLCHAIN_PATH='${gcc-arm-embedded}'"
       + target esp8266Support "esp8266"

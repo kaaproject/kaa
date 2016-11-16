@@ -77,7 +77,7 @@ Kaa C SDK already provides the toolchain file for QNX as shown below.
 ```bash
 mkdir -p build
 cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/qnx.cmake ..
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/qnx.cmake -DBUILD_TESTING=OFF ..
 make
 ````
 
