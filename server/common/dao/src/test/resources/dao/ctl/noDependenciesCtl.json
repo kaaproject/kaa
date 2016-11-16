@@ -1,0 +1,14 @@
+{
+    "type" : "record",
+    "name" : "NoDependenciesCtlExample",
+    "namespace" : "org.kaaproject.kaa",
+    "displayName" : "example schema",
+    "version" : 1,
+    "fields" : [
+        {
+            "name" : "bytesField",
+            "type" : "bytes"
+        }
+    ],
+    "dependencies" : [ ]
+}

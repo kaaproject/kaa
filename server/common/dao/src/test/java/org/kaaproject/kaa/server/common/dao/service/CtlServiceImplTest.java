@@ -30,6 +30,7 @@ import org.kaaproject.kaa.common.dto.ctl.CtlSchemaMetaInfoDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 import org.kaaproject.kaa.server.common.dao.exception.DatabaseProcessingException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,6 +52,7 @@ public class CtlServiceImplTest extends AbstractTest {
   private static final String TEST_CTL_SCHEMA_ALPHA_FLAT = "dao/ctl/alphaFlat.json";
   private static final String TEST_CTL_SCHEMA_BETA = "dao/ctl/beta.json";
   private static final String TEST_CTL_SCHEMA_GAMMA = "dao/ctl/gamma.json";
+  private static final String TEST_CTL_SCHEMA_NO_DEPENDENCIES = "dao/ctl/noDependenciesCtl.json";
   private ExecutorService executorService = Executors.newFixedThreadPool(10);
   private TenantDto tenant;
   private ApplicationDto appDto;
@@ -144,6 +146,21 @@ public class CtlServiceImplTest extends AbstractTest {
     alpha = ctlService.saveCtlSchema(alpha);
 
     alpha = ctlService.findCtlSchemaById(alpha.getId());
+  }
+
+  @Test
+  public void testSaveCtlSchemaWithNoDependencies() throws IOException {
+
+    CTLSchemaDto testCtl = new CTLSchemaDto();
+    CtlSchemaMetaInfoDto ctlMetaInfo = new CtlSchemaMetaInfoDto("org.kaaproject.kaa.NoDependenciesCtlExample", tenant.getId());
+    testCtl.setMetaInfo(ctlMetaInfo);
+    testCtl.setVersion(1);
+    testCtl.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_NO_DEPENDENCIES));
+    testCtl = ctlService.saveCtlSchema(testCtl);
+
+    CTLSchemaDto foundCtl = ctlService.findCtlSchemaById(testCtl.getId());
+
+    Assert.assertNotNull(foundCtl);
   }
 
   @Test
