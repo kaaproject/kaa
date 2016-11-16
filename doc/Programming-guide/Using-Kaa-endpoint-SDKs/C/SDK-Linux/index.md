@@ -172,10 +172,13 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
 
 1. Configure the build via CMake and run make.
 
-        cmake -DKAA_MAX_LOG_LEVEL=3 ..
+        cmake -DKAA_MAX_LOG_LEVEL=3 -DBUILD_TESTING=OFF ..
         make
 
     `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution.
+
+    `BUILD_TESTING` is ON by defaulf. Switch it to OFF to prevent running tests.
+
     Now run your application.
 
         ./kaa-app

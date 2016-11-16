@@ -34,7 +34,7 @@ fi
 prepare_build() {
     mkdir -p build-posix
     cd build-posix
-    cmake -DCMAKE_BUILD_TYPE=Debug -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_UNITTESTS_COMPILE=1 -DKAA_COLLECT_COVERAGE=1 -DKAA_ENCRYPTION=1 .. -DCMAKE_C_FLAGS="-Werror"
+    cmake -DCMAKE_BUILD_TYPE=Debug -DKAA_MAX_LOG_LEVEL=$MAX_LOG_LEVEL -DKAA_COLLECT_COVERAGE=1 -DKAA_ENCRYPTION=1 .. -DCMAKE_C_FLAGS="-Werror"
     cd ..
 }
 

@@ -81,17 +81,17 @@ let
         __propagate:;
       ''
       + target posixSupport "posix"
-              "${lib.optionalString testSupport ''-DCMAKE_BUILD_TYPE=Debug -DKAA_UNITTESTS_COMPILE=on -DKAA_COLLECT_COVERAGE=1''}"
+              "${if testSupport then ''-DCMAKE_BUILD_TYPE=Debug -DKAA_COLLECT_COVERAGE=1'' else ''-DBUILD_TESTING=OFF''}"
       + target posixSupport "nologs"
-              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DKAA_MAX_LOG_LEVEL=0"
+              "${lib.optionalString (!testSupport) ''-DBUILD_TESTING=OFF''} -DKAA_MAX_LOG_LEVEL=0"
       + target clangSupport "clang"
-              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
+              "${lib.optionalString (!testSupport) ''-DBUILD_TESTING=OFF''} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
       + target cc3200Support "cc3200"
-              "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake -DCC32XX_SDK='${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk' -DCC32XX_TOOLCHAIN_PATH='${gcc-arm-embedded}'"
+              "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake -DBUILD_TESTING=OFF -DCC32XX_SDK='${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk' -DCC32XX_TOOLCHAIN_PATH='${gcc-arm-embedded}'"
       + target esp8266Support "esp8266"
-              "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake -DESP8266_TOOLCHAIN_PATH='${gcc-xtensa-lx106}' -DESP8266_SDK_PATH='${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk'"
+              "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake -DBUILD_TESTING=OFF -DESP8266_TOOLCHAIN_PATH='${gcc-xtensa-lx106}' -DESP8266_SDK_PATH='${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk'"
       + target raspberrypiSupport "rpi"
-              "-DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake";
+              "-DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake -DBUILD_TESTING=OFF";
     };
 in stdenv.mkDerivation {
   name = "kaa-client-c";
