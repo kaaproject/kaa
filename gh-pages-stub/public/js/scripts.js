@@ -24,15 +24,15 @@ var DOM = (function () {
 
     function getDataParam(elementId, dataParamStr) {
       if (elementId && dataParamStr) {
-        var DATA_ATTRIBUTE = DATA_TEMPLATE + dataParamStr;
-        return document.getElementById(elementId).getAttribute(DATA_ATTRIBUTE);
+        var dataAttribute = DATA_TEMPLATE + dataParamStr;
+        return document.getElementById(elementId).getAttribute(dataAttribute);
       }
     }
 
     function showMenuForVersion(version){
       if (version) {
-        var MENU_ID = MENU_ID_TEMPLATE + version;
-        document.getElementById(MENU_ID).style.display = "";
+        var menuId = MENU_ID_TEMPLATE + version;
+        document.getElementById(menuId).style.display = "";
       }
     }
 
