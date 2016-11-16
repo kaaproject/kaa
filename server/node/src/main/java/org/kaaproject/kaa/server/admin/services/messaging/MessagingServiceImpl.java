@@ -212,12 +212,12 @@ public class MessagingServiceImpl implements MessagingService {
   * */
   private String generateParamsUrl(Map<String, String> paramsMap) {
     StringBuilder paramsUrl = new StringBuilder();
-    for (String key : paramsMap.keySet()) {
-      String val = paramsMap.get(key);
+    for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
+      String val = entry.getValue();
       if (paramsUrl.length() > 0) {
         paramsUrl.append("&");
       }
-      paramsUrl.append(key)
+      paramsUrl.append(entry.getKey())
           .append("=")
           .append(UrlEscapers.urlPathSegmentEscaper().escape(val));
     }
