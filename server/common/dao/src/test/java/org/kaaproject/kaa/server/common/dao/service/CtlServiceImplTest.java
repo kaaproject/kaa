@@ -52,7 +52,7 @@ public class CtlServiceImplTest extends AbstractTest {
   private static final String TEST_CTL_SCHEMA_ALPHA_FLAT = "dao/ctl/alphaFlat.json";
   private static final String TEST_CTL_SCHEMA_BETA = "dao/ctl/beta.json";
   private static final String TEST_CTL_SCHEMA_GAMMA = "dao/ctl/gamma.json";
-  private static final String TEST_CTL_SCHEMA_NO_DEPENDENCIES = "dao/ctl/noDependenciesCtl.json";
+  private static final String TEST_CTL_SCHEMA_FLAT = "dao/ctl/flatCtlExample.json";
   private ExecutorService executorService = Executors.newFixedThreadPool(10);
   private TenantDto tenant;
   private ApplicationDto appDto;
@@ -149,18 +149,30 @@ public class CtlServiceImplTest extends AbstractTest {
   }
 
   @Test
-  public void testSaveCtlSchemaWithNoDependencies() throws IOException {
+  public void testSaveFlatCtlSchema() throws IOException {
 
     CTLSchemaDto testCtl = new CTLSchemaDto();
     CtlSchemaMetaInfoDto ctlMetaInfo = new CtlSchemaMetaInfoDto("org.kaaproject.kaa.NoDependenciesCtlExample", tenant.getId());
     testCtl.setMetaInfo(ctlMetaInfo);
     testCtl.setVersion(1);
-    testCtl.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_NO_DEPENDENCIES));
+    testCtl.setBody(readSchemaFileAsString(TEST_CTL_SCHEMA_FLAT));
     testCtl = ctlService.saveCtlSchema(testCtl);
 
     CTLSchemaDto foundCtl = ctlService.findCtlSchemaById(testCtl.getId());
+    String defaultRecord = foundCtl.getDefaultRecord();
 
     Assert.assertNotNull(foundCtl);
+    Assert.assertTrue(defaultRecord.contains("\"bytesField\":\"\""));
+    Assert.assertTrue(defaultRecord.contains("\"booleanField\":false"));
+    Assert.assertTrue(defaultRecord.contains("\"intField\":0"));
+    Assert.assertTrue(defaultRecord.contains("\"longField\":0"));
+    Assert.assertTrue(defaultRecord.contains("\"floatField\":0.0"));
+    Assert.assertTrue(defaultRecord.contains("\"doubleField\":0.0"));
+    Assert.assertTrue(defaultRecord.contains("\"stringField\":\"\""));
+    Assert.assertTrue(defaultRecord.contains("\"enumField\":\"SPADES\""));
+    Assert.assertTrue(defaultRecord.contains("\"arrayField\":[]"));
+    Assert.assertTrue(defaultRecord.contains("\"recordsArrayField\":[]"));
+    Assert.assertTrue(defaultRecord.contains("\"recordField\":{\"bytesFieldInRecord\":\"\",\"booleanFieldInRecord\":false,\"intFieldInRecord\":0,\"floatFieldInRecord\":0.0}"));
   }
 
   @Test
