@@ -1,0 +1,112 @@
+{
+    "type" : "record",
+    "name" : "NoDependenciesCtlExample",
+    "namespace" : "org.kaaproject.kaa",
+    "displayName" : "example schema",
+    "version" : 1,
+    "fields" : [
+        {
+            "name" : "bytesField",
+            "type" : "bytes"
+        },
+        {
+            "name" : "booleanField",
+            "type" : "boolean"
+        },
+        {
+            "name" : "intField",
+            "type" : "int"
+        },
+        {
+            "name" : "longField",
+            "type" : "long"
+        },
+        {
+            "name" : "floatField",
+            "type" : "float"
+        },
+        {
+            "name" : "doubleField",
+            "type" : "double"
+        },
+        {
+            "name" : "stringField",
+            "type" : "string"
+        },
+        {
+            "name" : "enumField",
+            "type" : {
+                "type" : "enum",
+                "name" : "TestEnum",
+                "namespace" : "org.kaaproject.kaa",
+                "symbols" : [
+                    "SPADES",
+                    "HEARTS",
+                    "DIAMONDS",
+                    "CLUBS"
+                ]
+            }
+        },
+        {
+            "name" : "arrayField",
+            "type" : {
+                "type" : "array",
+                "items" : "string"
+            }
+        },
+        {
+            "name" : "recordsArrayField",
+            "type" : {
+                "type" : "array",
+                "items" : {
+                    "type" : "record",
+                    "name" : "TestArrayRecord",
+                    "fields" : [
+                        {
+                            "name" : "bytesFieldInArrayRecord",
+                            "type" : "bytes"
+                        },
+                        {
+                            "name" : "booleanFieldInArrayRecord",
+                            "type" : "boolean"
+                        },
+                        {
+                            "name" : "intFieldInArrayRecord",
+                            "type" : "int"
+                        },
+                        {
+                            "name" : "floatFieldInArrayRecord",
+                            "type" : "float"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name" : "recordField",
+            "type" : {
+                "type" : "record",
+                "name" : "NestedRecord",
+                "fields": [
+                    {
+                        "name": "bytesFieldInRecord",
+                        "type": "bytes"
+                    },
+                    {
+                        "name": "booleanFieldInRecord",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "intFieldInRecord",
+                        "type": "int"
+                    },
+                    {
+                        "name": "floatFieldInRecord",
+                        "type": "float"
+                    }
+                ]
+            }
+        }
+    ],
+    "dependencies" : [ ]
+}
