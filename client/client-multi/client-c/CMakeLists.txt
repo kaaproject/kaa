@@ -58,14 +58,14 @@
 #
 #	Default: `posix`
 #
-#	- `KAA_UNITETESTS_COMPILE` - compile unit tests.
+#	- `BUILD_TESTING` - compile unit tests.
 #
 #	Values:
 #
 #	- `ON`
 #	- `OFF`
 #
-#	Default: `OFF`
+#	Default: `ON`
 #
 #	Note: requires [cmocka](https://cmocka.org/) test framework to be installed.
 
