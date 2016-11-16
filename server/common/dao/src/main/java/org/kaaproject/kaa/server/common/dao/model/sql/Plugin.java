@@ -55,7 +55,7 @@ public abstract class Plugin<T extends PluginDto> extends GenericModel<T> implem
   protected Application application;
   @Column(name = PLUGIN_NAME)
   private String name;
-  @Column(name = PLUGIN_DESCRIPTION, length = 1000)
+  @Column(name = PLUGIN_DESCRIPTION, length = 1024)
   private String description;
   @Column(name = PLUGIN_CREATED_USERNAME)
   private String createdUsername;

@@ -58,7 +58,7 @@ import javax.persistence.UniqueConstraint;
 public class Topic extends GenericModel<TopicDto> implements Serializable {
 
   private static final long serialVersionUID = -5617352698933455002L;
-  @Column(name = TOPIC_DESCRIPTION)
+  @Column(name = TOPIC_DESCRIPTION, length = 1024)
   protected String description;
   @Column(name = TOPIC_CREATED_USERNAME)
   protected String createdUsername;

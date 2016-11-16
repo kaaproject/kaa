@@ -88,7 +88,7 @@ public class AddSdkProfileViewImpl
 
     Widget label = new Label(Utils.constants.name());
     label.addStyleName(REQUIRED);
-    name = new KaaAdminSizedTextBox(256);
+    name = new KaaAdminSizedTextBox(255);
     name.addInputHandler(this);
     detailsTable.setWidget(0, 0, label);
     detailsTable.setWidget(0, 1, name);
