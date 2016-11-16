@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(kaa_demo C)
 
+# Disable unused features
+set(KAA_WITH_EXTENSION_CONFIGURATION OFF)
+set(KAA_WITH_EXTENSION_EVENT OFF)
+set(KAA_WITH_EXTENSION_NOTIFICATION OFF)
+set(KAA_WITH_EXTENSION_LOGGING OFF)
+set(KAA_WITH_EXTENSION_USER OFF)
+set(KAA_WITH_EXTENSION_PROFILE OFF)
+
 # Add Kaa SDK directory
 add_subdirectory(kaa)
 
