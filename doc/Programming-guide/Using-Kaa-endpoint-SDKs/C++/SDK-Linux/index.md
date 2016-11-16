@@ -188,7 +188,7 @@ The step-by-step explanation of CMakeLists.txt follows.
 Firstly, the minimum required CMake  version is specified:
 
 ```CMake
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.8.12)
 ```
 
 Next, we tell CMake about our project and enable C++11 standard:
