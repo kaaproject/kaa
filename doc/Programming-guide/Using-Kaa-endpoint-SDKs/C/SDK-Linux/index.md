@@ -35,6 +35,13 @@ To install dependencies on Ubuntu execute the following command:
 sudo apt-get install cmake build-essential
 ```
 
+To build C SDK with Maven or to run unit tests, the cmocka unit testing framework has to be installed as well:
+
+```
+sudo apt-get install libcmocka0 libcmocka-dev
+```
+
+
 ### Build procedure
 
 After you generated archive with C SDK, proceed as follows:
