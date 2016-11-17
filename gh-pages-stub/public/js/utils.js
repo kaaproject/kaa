@@ -16,6 +16,10 @@
 var UTILS = (function () {
 	var my = {};
 
+	var SCRIPT_ID = "utils.js";
+	var DATA_LATEST_VERSION = "latest-version";
+	var DATA_VERSIONS_LIST = "version-list";
+
 	my.isBlank = function isBlank(str) {
 		return (!str || /^\s*$/.test(str));
 	};
@@ -46,6 +50,22 @@ var UTILS = (function () {
 
 	my.splitByLines = function splitByLines(text) {
 		return text.match(/[^\r\n]+/g);
+	}
+
+	my.getVersionFromURL = function getVersionFromURL() {
+		match = window.location.pathname.match(/^\/[^/]+\/[^/]+\/([^/]+)\//);
+		if (match) {
+			return match[1];
+		}
+		return "";
+	}
+
+	my.getLatestVersion = function getLatestVersion() {
+		return DOM.getInstance().getDataParam(SCRIPT_ID, DATA_LATEST_VERSION);
+	}
+
+	my.getVersionsArray = function getVersionsArray() {
+		return DOM.getInstance().getDataParam(SCRIPT_ID, DATA_VERSIONS_LIST).split(" ");
 	}
 
 	return my;

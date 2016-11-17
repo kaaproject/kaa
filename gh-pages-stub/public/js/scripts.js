@@ -1,11 +1,14 @@
-var VERSIONSELECT_ID = 'version-select';
+var VERSIONSELECT_ID = 'search-version-select';
 var SEARCHBOX_ID     = 'search-box';
 var SEARCHRESULTS_ID = 'search-results';
 var DEFAULT_URL      = '404.html';
 var DEFAULT_TITLE    = 'No title';
 var DEFAULT_TEXT     = '...';
-var MORE_TEXT = "Show full code"; // More button text
-var LESS_TEXT = "Show less code"; // LESS button text
+var MENU_ID_TEMPLATE = 'sidbar-nav-version-';
+var VERSION_SELECT_ID = "selected_version";
+var VERSION_ID_TEMPLATE = "li-version-";
+var MORE_TEXT = "Show more"; // More button text
+var LESS_TEXT = "Show less"; // LESS button text
 
 var MIN_NUMBER_OF_LINES_TO_HIDE = 5;
 var NUMBER_OF_LINES_TO_SHOW = 6;
@@ -13,10 +16,35 @@ var NUMBER_OF_LINES_TO_SHOW = 6;
 var DOM = (function () {
   var PAGE_TITLE='page-title';
   var MARKDOWN_TOC_ID='markdown-toc';
+  var DATA_TEMPLATE = 'data-';
 
   var instance = null;
 
   function init() {
+
+    function getDataParam(elementId, dataParamStr) {
+      if (elementId && dataParamStr) {
+        var dataAttribute = DATA_TEMPLATE + dataParamStr;
+        return document.getElementById(elementId).getAttribute(dataAttribute);
+      }
+    }
+
+    function showMenuForVersion(version){
+      if (version) {
+        var menuId = MENU_ID_TEMPLATE + version;
+        document.getElementById(menuId).style.display = "";
+      }
+    }
+
+    function showSelectedVersion(version){
+      if (version) {
+        var VERSION_ID = VERSION_ID_TEMPLATE + version;
+        var text = document.getElementById(VERSION_ID).firstElementChild.innerText;
+        var tmp = document.getElementById(VERSION_SELECT_ID);
+        document.getElementById(VERSION_SELECT_ID).firstChild.data = text;
+      }
+    }
+
     function getSearchVersion() {
       var dropDownVersionSelect = document.getElementById(VERSIONSELECT_ID);
       return dropDownVersionSelect.options[dropDownVersionSelect.selectedIndex].value;
@@ -67,6 +95,9 @@ var DOM = (function () {
       showError : showError,
       updateSearchResults : updateSearchResults,
       replaceToc : replaceToc,
+      showMenuForVersion: showMenuForVersion,
+      showSelectedVersion: showSelectedVersion,
+      getDataParam: getDataParam,
     };
   }
 

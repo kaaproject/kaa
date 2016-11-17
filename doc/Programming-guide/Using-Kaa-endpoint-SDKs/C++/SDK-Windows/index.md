@@ -109,7 +109,7 @@ and run the following commands:
    cd KAA_BUILD_DIR
    tools\env.bat
    avrogen.bat
-   md build && cd build
+   mkdir build && cd build
    ```
 
 1. To build Kaa C++ SDK with `nmake` run:
@@ -149,5 +149,7 @@ and run the following commands:
 
    ```
    KAA_BUILD_DIR\env.bat
-   build.bat deploy
+   mkdir build
+   cd build
+   cmake -G "NMake Makefiles" -DCMAKE_FIND_ROOT_PATH=%ROOT_PATH% ..
    ```
