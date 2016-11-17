@@ -18,6 +18,7 @@ var PROCESSOR_404 = (function () {
 	var my = {};
 
 	my.process = function process() {
+		ga('send', 'event', 'User routing', 'Page not found', window.location.pathname);
 		var version = UTILS.replaceIfBlank( UTILS.getVersionFromURL(), UTILS.getLatestVersion());
 		if (UTILS.getVersionsArray().indexOf(version) === -1 ) {
 			version = UTILS.getLatestVersion();
