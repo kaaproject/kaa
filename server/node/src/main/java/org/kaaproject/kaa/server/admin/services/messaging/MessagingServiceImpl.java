@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.services.messaging;
 
+import com.google.common.net.UrlEscapers;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import org.kaaproject.kaa.server.admin.services.dao.PropertiesFacade;
@@ -26,6 +27,7 @@ import org.kaaproject.kaa.server.admin.shared.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -67,6 +69,7 @@ public class MessagingServiceImpl implements MessagingService {
 
   private int sendTimeout;
 
+  @Value("#{'http://' + properties[transport_public_interface] + ':' + properties[admin_port]}")
   private String appBaseUrl;
 
   private String appName;
@@ -125,7 +128,8 @@ public class MessagingServiceImpl implements MessagingService {
 
     GeneralProperties generalProperties = propertiesFacade.getSpecificProperties(
         GeneralProperties.class);
-    appBaseUrl = generalProperties.getBaseUrl();
+    // appBaseUrl = generalProperties.getBaseUrl(); getBaseUrl return always localhost:8080 and
+    // retrieve this data from DB instead of kaa-node property file ; TODO(KAA-1619) refactor GeneralProperties
     appName = generalProperties.getAppTitle();
   }
 
@@ -155,7 +159,7 @@ public class MessagingServiceImpl implements MessagingService {
         "tempPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
     String text = messages.getMessage(
         "tempPasswordMailMessageBody",
-        new Object[]{appBaseUrl, appName,username, password},
+        new Object[]{appBaseUrl, appName, username, password},
         Locale.ENGLISH);
     MimeMessage mimeMsg = kaaMessagingMailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(mimeMsg, "UTF-8");
@@ -176,7 +180,7 @@ public class MessagingServiceImpl implements MessagingService {
         public Void call() throws Exception {
           Map<String, String> paramsMap = new HashMap<>();
           paramsMap.put(UrlParams.RESET_PASSWORD, passwordResetHash);
-          String params = "#" + UrlParams.generateParamsUrl(paramsMap);
+          String params = "#" + generateParamsUrl(paramsMap);
           String subject = messages.getMessage(
               "resetPasswordMailMessageSubject", new Object[]{appName}, Locale.ENGLISH);
           String text = messages.getMessage(
@@ -202,13 +206,26 @@ public class MessagingServiceImpl implements MessagingService {
     }
   }
 
-  /**
-   * Send password after reset.
-   *
-   * @param username  the username
-   * @param password  the password
-   * @param email     the email
-   */
+  /*
+  * Use instead of UrlParams#generateParamsUrl() cause it uses com.google.gwt.http.client.URL that stop
+  * execution of code on server side.
+  * */
+  private String generateParamsUrl(Map<String, String> paramsMap) {
+    StringBuilder paramsUrl = new StringBuilder();
+    for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
+      String val = entry.getValue();
+      if (paramsUrl.length() > 0) {
+        paramsUrl.append("&");
+      }
+      paramsUrl.append(entry.getKey())
+          .append("=")
+          .append(UrlEscapers.urlPathSegmentEscaper().escape(val));
+    }
+    return paramsUrl.toString();
+  }
+
+
+
   @Override
   public void sendPasswordAfterReset(final String username,
                                      final String password,

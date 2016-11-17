@@ -3,6 +3,7 @@
  *
  * DO NOT EDIT DIRECTLY
  */
+
 package org.kaaproject.kaa.server.admin.services.entity.gen;
 
 @SuppressWarnings("all")
