@@ -34,7 +34,7 @@
         $ make install
     @endcode
 
-    Specific platforms' build options are described in the <a href='README'>README</a> and <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Using-Kaa-endpoint-SDKs/">in the official online documentation.</a>
+   Build options for specific platforms are described in the <a href='README'>README</a> and <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Using-Kaa-endpoint-SDKs/">in the official online documentation.</a>
 
  \subsection linkage Link Kaa library to your project
 
@@ -121,8 +121,7 @@
         }
     @endcode
 
-    @note To use the log collection feature, go through
-    <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Key-platform-features/Data-collection">additional initialization steps.</a>
+    @note If you want to use the log collection feature, see <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Key-platform-features/Data-collection">Data collection</a> documentation page.
 
     <b>To finish the Kaa C SDK initialization, execute the following command:</b>
     @code
@@ -134,6 +133,6 @@
 
  \section programminguide Programming guide
 
-    For more information about functions supported by the Kaa C SDK, see our <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Key-platform-features/">Key platform features</a>.
+    For more information about Kaa C SDK functionality, see <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Key-platform-features/">Key platform features</a> documentation page.
  */
 
