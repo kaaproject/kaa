@@ -150,14 +150,10 @@ Connect CC3200 LaunchPad to your PC through a micro-USB connector and execute th
 ```
 tar -xzf configuration_demo.tar.gz
 cd CConfigurationDemo
-./build.sh build
-```
-
-You will be asked for desired platform. Type `cc32xx` into the console.
-
-```
-Please enter a target (default is x86-64):
-cc32xx
+tar -zxf libs/kaa/kaa-* -C libs/kaa
+mkdir -p build
+cd build
+cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../libs/kaa/toolchains/cc32xx.cmake ..
 ```
 
 To launch the application, execute the following:
