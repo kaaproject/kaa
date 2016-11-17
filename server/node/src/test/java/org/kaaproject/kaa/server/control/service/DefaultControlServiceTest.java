@@ -58,12 +58,12 @@ public class DefaultControlServiceTest {
 
   @Test
   public void testWriteLogWithoutByteBuffer() throws Exception {
-    String logStr = "Update of node {} is pushed to resolver {}";
+    String format = "Update of node {} is pushed to resolver {}";
 
     Method method = service.getClass().getDeclaredMethod("writeLogWithoutByteBuffer", String.class, node.getClass(), OperationsServerResolver.class);
     method.setAccessible(true);
     String beforeReplacing = node.toString();
-    method.invoke(service, logStr, node, null);
+    method.invoke(service, format, node, null);
     Assert.assertEquals("Object corrupted, some fields changed and not recover", beforeReplacing, node.toString());
   }
 

@@ -1020,23 +1020,22 @@ public class DefaultControlService implements ControlService {
   }
 
   /**
-   * Used when writing OperationsNodeInfo instance in logs. OperationsNodeInfo instance has
-   * ByteBuffer fields which written incorrectly in the log file. In this method ByteBuffer fields
-   * temporary overwrite to null, print logs, and after ByteBuffer fields recover on theirs previous
-   * values.
+   * Use when one need to write an OperationsNodeInfo instance to logs. The OperationsNodeInfo
+   * instance has ByteBuffer fields which should be represented in log files as null because their
+   * values are unrepresentative and redundant.
    *
-   * @param logString is a usual string for logging. Use '{}' for output OperationsNodeInfo and
-   *                  the second '{}' is OperationsServerResolver
-   * @param node      in which find and temporary overwrite all ByteBuffer-s to null
-   * @param resolver  OperationsServerResolver instance
+   * @param format   the format string
+   * @param node     the instance of OperationsNodeInfo
+   * @param resolver the instance of OperationsServerResolver
    */
-  private void writeLogWithoutByteBuffer(String logString,
+  private void writeLogWithoutByteBuffer(String format,
                                          OperationsNodeInfo node,
                                          OperationsServerResolver resolver) {
     //temporary set connection info of transports to null
-    Map<TransportMetaData, Map<VersionConnectionInfoPair, ByteBuffer>> map = new HashMap<>();
-    HashMap<VersionConnectionInfoPair, ByteBuffer> innerMap;
+    Map<TransportMetaData, Map<VersionConnectionInfoPair, ByteBuffer>> transportMetaData =
+        new HashMap<>();
     for (TransportMetaData transport : node.getTransports()) {
+      HashMap<VersionConnectionInfoPair, ByteBuffer> innerMap;
       innerMap = new HashMap<>();
       for (VersionConnectionInfoPair connectionInfoPair : transport.getConnectionInfo()) {
         // save ByteBuffer field value
@@ -1044,21 +1043,25 @@ public class DefaultControlService implements ControlService {
         // temporary remove ByteBuffer field value
         connectionInfoPair.setConenctionInfo(null);
       }
-      map.put(transport, innerMap);
+      transportMetaData.put(transport, innerMap);
     }
     //temporary set public key of connection info to null
     ByteBuffer publicKey = node.getConnectionInfo().getPublicKey();
     node.getConnectionInfo().setPublicKey(null);
 
-    LOG.info(logString, node, resolver);
+    LOG.info(format, node, resolver);
 
     //set fields on previous values (recover fields values)
     node.getConnectionInfo().setPublicKey(publicKey);
     for (TransportMetaData transport : node.getTransports()) {
-      Map<VersionConnectionInfoPair, ByteBuffer> map2 = map.get(transport);
-      if (map2 != null) {
+      Map<VersionConnectionInfoPair, ByteBuffer> connectionInfoPreviousValue =
+          transportMetaData.get(transport);
+      if (connectionInfoPreviousValue != null) {
+        //use loop instead map.get(), because we call '==' operator instead 'equals()'
         for (VersionConnectionInfoPair conInfo : transport.getConnectionInfo()) {
-          for (Map.Entry<VersionConnectionInfoPair, ByteBuffer> pair : map2.entrySet()) {
+          for (Map.Entry<VersionConnectionInfoPair, ByteBuffer> pair :
+              connectionInfoPreviousValue.entrySet()) {
+            // '==' instead '.equals()' because we don't compare objects, we found the same object
             if (pair.getKey() == conInfo) {
               conInfo.setConenctionInfo(pair.getValue());
               break;
