@@ -18,7 +18,8 @@
 SQL_PROVIDER_NAME=$1
 
 if [ -z "${SQL_PROVIDER_NAME}" ]; then
-    echo "Please specify SQL PROVIDER NAME"
+    echo "Please specify sql provider name.
+mariadb or postgresql"
 else
     case $SQL_PROVIDER_NAME in
         mariadb)
