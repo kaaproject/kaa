@@ -41,13 +41,13 @@ In this example, the Configuration feature will be used to send the sampling per
 
 To add an application:
 
-1. On the Sandbox main page, click **Administration** and log in as a tenant administrator using default **admin** username and **admin123** password.
+1. On the Sandbox main page, click **Administration UI** and log in as a [tenant administrator]({{root_url}}Glossary/#tenant-administrator) using default **admin** username and **admin123** password.
 
-2. On the **Administration** page, click **Add application**.
+2. On the **Administration UI** page, click **Add application**.
 
 3. On the **Application details** page, enter a title for your new application, select a credentials service and click **Add**.
 
-	![Administration page](attach/new_app.png)
+	![Administration UI](attach/new_app.png)
 
 ## Create schemas
 
@@ -88,7 +88,7 @@ The `by_default` parameter defines the default sampling period value which is se
 		
 3. Use the **Upload from file** section to [create CT schemas]({{root_url}}/Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the data-schema.json and configuration-schema.json files.
 		
-4. On the Sandbox main page, click **Administration** and log in as a tenant developer using default **devuser** username and **devuser123** password.
+4. On the Sandbox main page, click **Administration UI** and log in as a [tenant developer]({{root_url}}Glossary/#tenant-developer) using default **devuser** username and **devuser123** password.
 
 5. Click the **Applications** arrow to unfold the list and click the arrow of the application you created in [Add application](#add-application), then click **Schemas** > **Log** and click the **Add schema** button.
 
@@ -98,7 +98,7 @@ The `by_default` parameter defines the default sampling period value which is se
 
 7. Click the **Add** button at the top of the page.
 
->**NOTE:** Alternatively, you can use the Schema Avro UI form to create the schema.
+>**NOTE:** Alternatively, you can use the [Avro UI form]({{root_url}}Glossary/#avro-ui-form) to create the schema.
 {: .note}
 
 To create a configuration schema repeat the same procedure using the configuration-schema.json file.
@@ -935,23 +935,36 @@ This will clean up the mess that can occur when debug logs are enabled.
 
 To launch your Java application:
 
-    
-1.  Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
-    
-2.  Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) to the <b>demo_app</b> directory.
-    In Linux terminal you can just go to the <b>demo_app</b> directory and run the command:
-    <pre>wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar</pre>
-
-3.  Build the application by running the following command from the <b>demo_app</b> directory.
-    <pre>javac -cp kaa-*.jar *.java</pre>
-
-4.  Launch the application.
-    <br/>
-    <b>Unix-based OS</b>
-    <pre>java -cp '.:./*' FirstKaaDemo</pre>
-    <br/>
-    <b>Windows OS</b>
-    <pre>java -cp '.;.\*' FirstKaaDemo</pre>
+<ol>
+	<li>
+		Save the application code into FirstKaaDemo.java file located in the **demo_app** directory.
+	</li>
+	<li>
+		Build the application by running the following command from the **demo_app** directory.
+		
+		<pre>
+			javac -cp *.jar *.java
+		</pre>
+		
+	</li>
+	<li>
+		Launch the application.
+		
+		<br />
+		<br />
+		<b>Unix-based OS</b>
+		<pre>
+			java -cp '.:./*' FirstKaaDemo
+		</pre>
+		
+		<br />
+		<br />
+		<b>Windows OS</b>
+		<pre>
+			java -cp '.;.\*' FirstKaaDemo
+		</pre>
+	</li>
+</ol>
 
 </div>
 
@@ -1012,7 +1025,7 @@ To do this:
 
 1. Make sure your client application is running and transmitting the temperature values.
 
-2. Log in to the **Administration** page as a Tenant Developer using the default **devuser** username and **devuser123** password.
+2. Log in to the **Administration UI** page as a tenant developer using the default **devuser** username and **devuser123** password.
 In the **Applications** list, select the **Endpoint Groups** section of your new application.
 
     ![Endpoint groups](attach/endpoint_group.png)
@@ -1041,7 +1054,7 @@ Your client application console will display the following messages.
         Sampled temperature: 34
         Sampled temperature: 25
 
-This means that the sampling period has been successfully modified.
+    This means that the sampling period has been successfully modified.
 
 
 ## Further reading
