@@ -54,7 +54,7 @@ wget https://sourceforge.net/projects/boost/files/boost/1.55.0/boost_1_55_0.tar.
 tar -xf boost_1_55_0.tar.gz
 cd boost_1_55_0
 ./bootstrap.sh
-sudo ./bjam install
+sudo ./bjam cxxflags=-std=c++11 install
 ```
 
 </div></div>
