@@ -56,6 +56,9 @@ public class Utils {
   public static final KaaAdminStyle kaaAdminStyle = resources.kaaAdminStyle();
   public static final AvroUiStyle avroUiStyle = avroUiResources.avroUiStyle();
   private static final int MAX_ERROR_LINE_LENGTH = 200;
+  private static Pattern emailPattern = Pattern.compile(
+      "^.+@.+$", Pattern.CASE_INSENSITIVE
+  );
 
   private static final DateTimeFormat simpleDateFormat = getFormat("MM/dd/yyyy");
 
@@ -82,9 +85,9 @@ public class Utils {
   /**
    * Exception handler.
    *
-   * @param caught                  the Throwable
-   * @param hasErrorMessage         the has error message
-   * @param errorMessageCustomizer  the error message customizer
+   * @param caught                 the Throwable
+   * @param hasErrorMessage        the has error message
+   * @param errorMessageCustomizer the error message customizer
    */
   public static void handleException(Throwable caught,
                                      HasErrorMessage hasErrorMessage,
@@ -179,11 +182,7 @@ public class Utils {
     if (mail == null || mail.length() == 0) {
       return false;
     }
-    Pattern pattern = Pattern
-        .compile(
-            "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE
-        );
-    Matcher matcher = pattern.matcher(mail);
+    Matcher matcher = emailPattern.matcher(mail);
     return matcher.find();
   }
 
