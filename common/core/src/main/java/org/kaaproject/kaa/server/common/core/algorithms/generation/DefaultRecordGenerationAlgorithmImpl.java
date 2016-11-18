@@ -184,10 +184,7 @@ public class DefaultRecordGenerationAlgorithmImpl<U extends KaaSchema, T extends
       case ENUM:
         return processEnum(schemaToProcess);
       case BYTES:
-        ByteBuffer byteBuffer = ByteBuffer.allocate(byDefault.size());
-        byteBuffer.put((byte) 0);
-        byteBuffer.flip();
-        return byteBuffer;
+        return ByteBuffer.allocate(0).flip();
       case MAP:
         throw new ConfigurationGenerationException("Map is not supported.");
       case INT:
