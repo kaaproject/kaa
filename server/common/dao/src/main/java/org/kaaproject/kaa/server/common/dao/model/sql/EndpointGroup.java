@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.DESCRIPTION_ROW_LENGTH;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_CREATED_USERNAME;
@@ -66,7 +67,7 @@ public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Ser
   @Column(name = ENDPOINT_GROUP_ENDPOINT_COUNT)
   private long endpointCount;
 
-  @Column(name = ENDPOINT_GROUP_DESCRIPTION, length = 1024)
+  @Column(name = ENDPOINT_GROUP_DESCRIPTION, length = DESCRIPTION_ROW_LENGTH)
   private String description;
 
   @Column(name = ENDPOINT_GROUP_CREATED_USERNAME)
