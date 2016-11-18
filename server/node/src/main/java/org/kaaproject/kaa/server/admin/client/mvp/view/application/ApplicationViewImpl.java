@@ -74,13 +74,10 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
     applicationName.setFocus(true);
 
     if (!create) {
-      applicationToken = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, editable);
-      applicationToken.setWidth("100%");
-      applicationToken.setEnabled(false);
-
       Label tokenLabel = new Label(Utils.constants.appToken());
+      Label tokenValueLabel = new Label(Utils.constants.appToken());
       detailsTable.setWidget(2, 0, tokenLabel);
-      detailsTable.setWidget(2, 1, applicationToken);
+      detailsTable.setWidget(2, 1, tokenValueLabel);
     }
 
     if (KaaAdmin.isDevMode()) {
