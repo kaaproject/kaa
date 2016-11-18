@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.DESCRIPTION_ROW_LENGTH;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CLASS_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.PLUGIN_CREATED_TIME;
@@ -55,7 +56,7 @@ public abstract class Plugin<T extends PluginDto> extends GenericModel<T> implem
   protected Application application;
   @Column(name = PLUGIN_NAME)
   private String name;
-  @Column(name = PLUGIN_DESCRIPTION, length = 1024)
+  @Column(name = PLUGIN_DESCRIPTION, length = DESCRIPTION_ROW_LENGTH)
   private String description;
   @Column(name = PLUGIN_CREATED_USERNAME)
   private String createdUsername;

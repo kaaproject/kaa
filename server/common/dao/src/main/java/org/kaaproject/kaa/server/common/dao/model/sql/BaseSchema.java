@@ -26,6 +26,7 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.BASE_SCHEMA_FK_C
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.BASE_SCHEMA_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.BASE_SCHEMA_TABLE_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.BASE_SCHEMA_VERSION;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.DESCRIPTION_ROW_LENGTH;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 import org.hibernate.annotations.OnDelete;
@@ -57,7 +58,7 @@ public abstract class BaseSchema<T extends BaseSchemaDto> extends GenericModel<T
   @Column(name = BASE_SCHEMA_NAME)
   protected String name;
 
-  @Column(name = BASE_SCHEMA_DESCRIPTION, length = 1024)
+  @Column(name = BASE_SCHEMA_DESCRIPTION, length = DESCRIPTION_ROW_LENGTH)
   protected String description;
 
   @Column(name = BASE_SCHEMA_CREATED_USERNAME)

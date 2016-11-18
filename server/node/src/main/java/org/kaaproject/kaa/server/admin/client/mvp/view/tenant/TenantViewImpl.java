@@ -33,6 +33,7 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
 
   private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+  private static final int TENANT_NAME_TEXT_SIZE_BOX = 100;
 
   private SizedTextBox tenantName;
 
@@ -65,7 +66,7 @@ public class TenantViewImpl extends BaseDetailsViewImpl implements TenantView {
   @Override
   protected void initDetailsTable() {
 
-    tenantName = new KaaAdminSizedTextBox(100);
+    tenantName = new KaaAdminSizedTextBox(TENANT_NAME_TEXT_SIZE_BOX);
     tenantName.setWidth("100%");
     tenantName.addInputHandler(this);
     lableUser = new Label("Users");
