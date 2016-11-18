@@ -106,7 +106,7 @@ kaa_error_t kaa_event_manager_send_${prefix}_${e_name}(kaa_event_manager_t *self
         return KAA_ERR_NOMEM;
     }
     event->serialize(writer, event);
-    kaa_error_t result = kaa_event_manager_send_event(self, "${event}", writer->buf, writer->written, target);
+    kaa_error_t result = kaa_event_manager_send_event(self, "${event}", writer->buf, (size_t)writer->written, target);
     avro_writer_free(writer);
     return result;
 #else
@@ -131,7 +131,7 @@ kaa_error_t kaa_event_manager_add_${prefix}_${e_name}_event_to_block(kaa_event_m
         return KAA_ERR_NOMEM;
     }
     event->serialize(writer, event);
-    kaa_error_t result = kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", writer->buf, writer->written, target);
+    kaa_error_t result = kaa_event_manager_add_event_to_transaction(self, trx_id, "${event}", writer->buf, (size_t)writer->written, target);
     avro_writer_free(writer);
     return result;
 #else
