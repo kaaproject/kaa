@@ -91,7 +91,9 @@ public class ApplicationActivity
 
         @Override
         public void onSuccess(List<String> result) {
-          serviceNames.setValue(result.get(1));
+          if (result != null && !result.isEmpty()) {
+            serviceNames.setValue(result.get(1));
+          }
           ApplicationActivity.this.detailsView.getCredentialsServiceName()
               .setAcceptableValues(result);
         }
