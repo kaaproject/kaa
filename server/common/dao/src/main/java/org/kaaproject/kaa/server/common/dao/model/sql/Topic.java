@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.DESCRIPTION_ROW_LENGTH;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_ENDPOINT_GROUP_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_TOPICS_TABLE_NAME;
@@ -58,7 +59,7 @@ import javax.persistence.UniqueConstraint;
 public class Topic extends GenericModel<TopicDto> implements Serializable {
 
   private static final long serialVersionUID = -5617352698933455002L;
-  @Column(name = TOPIC_DESCRIPTION)
+  @Column(name = TOPIC_DESCRIPTION, length = DESCRIPTION_ROW_LENGTH)
   protected String description;
   @Column(name = TOPIC_CREATED_USERNAME)
   protected String createdUsername;
