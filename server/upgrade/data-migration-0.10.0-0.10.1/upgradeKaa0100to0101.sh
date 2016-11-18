@@ -23,12 +23,12 @@ mariadb or postgresql"
 else
     case $SQL_PROVIDER_NAME in
         mariadb)
-            echo "Upgrade mariadb 0.10.0 to 0.11.0 Kaa version"
-            mysql -usqladmin -padmin kaa < upgradeSql0100to0110kaaVersionMariadb.sql
+            echo "Upgrade mariadb 0.10.0 to 0.10.1 Kaa version"
+            mysql -usqladmin -padmin kaa < upgradeSql0100to0101kaaVersionMariadb.sql
             ;;
         postgresql)
-            echo "Upgrade postgresql 0.10.0 to 0.11.0 Kaa version"
-            sudo -u postgres psql -d kaa -a -f upgradeSql0100to0110kaaVersionPostgreSQL.sql
+            echo "Upgrade postgresql 0.10.0 to 0.10.1 Kaa version"
+            sudo -u postgres psql -d kaa -a -f upgradeSql0100to0101kaaVersionPostgreSQL.sql
             ;;
         *)
         exit 1
