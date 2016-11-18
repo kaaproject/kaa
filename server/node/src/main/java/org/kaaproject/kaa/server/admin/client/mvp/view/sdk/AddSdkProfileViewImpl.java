@@ -57,6 +57,7 @@ public class AddSdkProfileViewImpl
     implements AddSdkProfileView, ValueChangeHandler<VersionDto> {
 
   private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+  private static final int SDK_NAME_TEXT_SIZE_BOX = 255;
 
   private SizedTextBox name;
 
@@ -88,7 +89,7 @@ public class AddSdkProfileViewImpl
 
     Widget label = new Label(Utils.constants.name());
     label.addStyleName(REQUIRED);
-    name = new KaaAdminSizedTextBox(256);
+    name = new KaaAdminSizedTextBox(SDK_NAME_TEXT_SIZE_BOX);
     name.addInputHandler(this);
     detailsTable.setWidget(0, 0, label);
     detailsTable.setWidget(0, 1, name);

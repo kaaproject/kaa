@@ -82,6 +82,8 @@ public class DaoConstants {
 
   public static final String OPTIMISTIC_LOCK_PROPERTY = "OPT_LOCK";
 
+  public static final int DESCRIPTION_ROW_LENGTH = 1024;
+
   /**
    * Common constants.
    */

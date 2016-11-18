@@ -16,6 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.DESCRIPTION_ROW_LENGTH;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_CLASS_NAME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.EVENT_CLASS_FAMILY_CREATED_USERNAME;
@@ -46,7 +47,7 @@ import javax.persistence.Table;
 public class EventClassFamily extends GenericModel<EventClassFamilyDto> {
 
   private static final long serialVersionUID = 3766947955702551264L;
-  @Column(name = EVENT_CLASS_FAMILY_DESCRIPTION)
+  @Column(name = EVENT_CLASS_FAMILY_DESCRIPTION, length = DESCRIPTION_ROW_LENGTH)
   protected String description;
   @Column(name = EVENT_CLASS_FAMILY_CREATED_USERNAME)
   protected String createdUsername;
