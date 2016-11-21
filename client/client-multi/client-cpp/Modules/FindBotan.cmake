@@ -38,7 +38,7 @@ endif(NOT WIN32)
 find_path(BOTAN_INCLUDE_DIR
     botan/version.h
     HINTS
-    ${CMAKE_FIND_ROOT_PATH}/include
+    ${CMAKE_FIND_ROOT_PATH}/include/${BOTAN_VERSION_CODE}
     ${BOTAN_INCLUDE_DIRS})
 
 # locate the library
