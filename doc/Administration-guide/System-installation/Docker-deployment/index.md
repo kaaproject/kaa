@@ -147,10 +147,10 @@ or if you want run Docker container as a daemon, run
      exec -it usingcompose_kaa_0_1 /bin/bash -c "export TERM=xterm; exec bash"
      ```  
              
-    Wait a few seconds until the service kaa-node starts.
+    Wait a few seconds until the service `kaa-node` starts.
             
-    Open your browser on localhost:8080 (You can see there some error, just refresh page. It's mean that's service kaa-node does not start yet. 
-    You can verify this by looking logs of kaa-node containers.)
+    Open your browser on localhost:8080 (You can see there some error, just refresh page. It's mean that's service `kaa-node` does not start yet. 
+    You can verify this by looking logs of `kaa-node` containers.)
             
     In this example usingcompose - it's name of folder where located `kaa-docker-compose.yml` and `third-party-docker-compose.yml` files.
 

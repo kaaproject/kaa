@@ -336,7 +336,7 @@ To provision your log appender, do the following:
 3. If you using different package than `org.kaaproject.kaa.*` you need to edit `kaa-node.properties` file in `/usr/lib/kaa-node/conf` folder.
 Specify additional package to scan kaa plugins configuration in parameter `additional_plugins_scan_package`.
 For example provided in this article: `additional_plugins_scan_package=org.domain.sample.appenders.custom`.
-4. Restart kaa-node service.
+4. Restart `kaa-node` service.
 
 		$ sudo service kaa-node restart
 		

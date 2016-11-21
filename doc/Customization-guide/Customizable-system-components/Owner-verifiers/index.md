@@ -205,8 +205,8 @@ To provision your owner verifier, do the following:
 		$ mvn clean install
 		
 4. Place created jar file into `/usr/lib/kaa-node/lib`.
-5. If you using different package than `org.kaaproject.kaa.server.verifiers.*`  you need to edit kaa-node.properties file in `/usr/lib/kaa-node/conf` folder. Specify additional package to scan kaa plugins configuration in parameter `additional_plugins_scan_package`, in our case -- `org.kaaproject.kaa.sample`.
-6. Restart kaa-node service.
+5. If you using different package than `org.kaaproject.kaa.server.verifiers.*`  you need to edit `kaa-node.properties` file in `/usr/lib/kaa-node/conf` folder. Specify additional package to scan kaa plugins configuration in parameter `additional_plugins_scan_package`, in our case -- `org.kaaproject.kaa.sample`.
+6. Restart `kaa-node` service.
 
 		$ sudo service kaa-node restart
 7. Use [Administration UI]({{root_url}}Glossary/#administration-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) to create/update/delete your owner verifier instances.
