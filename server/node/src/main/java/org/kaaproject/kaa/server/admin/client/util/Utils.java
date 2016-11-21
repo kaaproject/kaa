@@ -43,6 +43,8 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -54,6 +56,9 @@ public class Utils {
   public static final KaaAdminStyle kaaAdminStyle = resources.kaaAdminStyle();
   public static final AvroUiStyle avroUiStyle = avroUiResources.avroUiStyle();
   private static final int MAX_ERROR_LINE_LENGTH = 200;
+  private static Pattern emailPattern = Pattern.compile(
+      "^.+@.+$", Pattern.CASE_INSENSITIVE
+  );
 
   private static final DateTimeFormat simpleDateFormat = getFormat("MM/dd/yyyy");
 
@@ -80,9 +85,9 @@ public class Utils {
   /**
    * Exception handler.
    *
-   * @param caught                  the Throwable
-   * @param hasErrorMessage         the has error message
-   * @param errorMessageCustomizer  the error message customizer
+   * @param caught                 the Throwable
+   * @param hasErrorMessage        the has error message
+   * @param errorMessageCustomizer the error message customizer
    */
   public static void handleException(Throwable caught,
                                      HasErrorMessage hasErrorMessage,
@@ -174,14 +179,11 @@ public class Utils {
    * @return boolean 'true' if email address is valid
    */
   public static boolean validateEmail(String mail) {
-    boolean result = false;
-    if (mail != null && mail.length() != 0) {
-      if (mail.indexOf('@') != INCORRECT_IDX
-          && mail.indexOf('.') != INCORRECT_IDX) {
-        result = true;
-      }
+    if (mail == null || mail.length() == 0) {
+      return false;
     }
-    return result;
+    Matcher matcher = emailPattern.matcher(mail);
+    return matcher.find();
   }
 
   /**
