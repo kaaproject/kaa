@@ -821,6 +821,10 @@ li.menu-opened + ul{
 	padding-left: 10px;
 }
 
+#sidebar .sidebar-navigation-container > li > a {
+  padding-left: 20px;
+}
+
 #sidebar .nav > .li-1 a {
 	padding-left: 27px;
 	background-color: #3c3c3c;
@@ -851,6 +855,10 @@ li.menu-opened + ul{
 	margin: 0px 4px 3px;
 	transform: rotate(0deg) translate(0px, 0px);
 	transition: transform 0.25s linear;
+}
+
+.car-field {
+  margin-left: -16px;
 }
 
 .car-field:hover .caret{
