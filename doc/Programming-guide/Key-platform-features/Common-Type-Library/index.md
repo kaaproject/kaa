@@ -120,7 +120,7 @@ OR
 
 - Open the **Administration UI** page, select the corresponding CTL and click the **Add new type** button.
 
-If you want to import a schema file, click **Browse**, select a `.json` file containing your schema, click **Upload**, then click **Add**
+If you want to import a schema file, click **Browse**, select a `.json` file containing your schema, click **Upload**, then click **Add**.
 
 ![CTL Import](attach/ctl_import.png)
 

@@ -40,7 +40,7 @@ $ sudo md5sum /usr/lib/kaa-node/keys/operations/private.key
 f9aab71ef879916d24dfd5200ad94ccd /usr/lib/kaa-node/keys/operations/private.key
 ```
 
-To refresh the key files, stop the kaa-node service, replace the key files, and start the service again.
+To refresh the key files, stop the `kaa-node` service, replace the key files, and start the service again.
 
 The Kaa node service requires some third party dependencies, such as SQL and NoSQL databases, and Apache Zookeeper service.
 For more information, see [Architecture overview]({{root_url}}Architecture-overview/).

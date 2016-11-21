@@ -171,7 +171,7 @@ To provision your Credentials service:
 3. If you use other package than `org.kaaproject.kaa.*`, make it scan the `kaa-node.properties` file in the `/usr/lib/kaa-node/conf` folder.
 For example: `additional_plugins_scan_package=org.myproject`
 
-4. Restart the kaa-node service:
+4. Restart the `kaa-node` service:
 
    ```bash
       $ sudo service kaa-node restart
