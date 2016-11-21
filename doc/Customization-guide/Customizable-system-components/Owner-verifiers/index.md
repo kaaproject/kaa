@@ -198,17 +198,18 @@ The following code example illustrates the implementation of a owner verifier de
 
 To provision your owner verifier, do the following:
 
-1. Create maven project. You can use this [pom]({{github_url}}server/verifiers/trustful-verifier/pom.xml) as an example. 
+1. Create maven project. You can use this [pom]({{github_url}}server/verifiers/trustful-verifier/pom.xml) as an example.
 2. Create similar classes as defined above and put them in appropriate packages.
-3. Add your verification logic to methods of `CustomOwnerVerifier` and build your project using next command: 
-<br/>
-```$ mvn clean install```
-4. Place created jar file into _/usr/lib/kaa-node/lib_.
-5. If you using different package than _org.kaaproject.kaa.server.verifiers.*_  you need to edit kaa-node.properties file in /usr/lib/kaa-node/conf folder. Specify additional package to scan kaa plugins configuration in parameter additional_plugins_scan_package, 
-   in our case -- _org.kaaproject.kaa.sample_.
-6. Restart kaa-node service:
-<br/>
-``` $ sudo service kaa-node restart```
+3. Add your verification logic to methods of `CustomOwnerVerifier` and build your project using next command.
+
+		$ mvn clean install
+		
+4. Place created jar file into `/usr/lib/kaa-node/lib`.
+5. If you using different package than `org.kaaproject.kaa.server.verifiers.*`  you need to edit `kaa-node.properties` file in `/usr/lib/kaa-node/conf` folder. Specify additional package to scan kaa plugins configuration in parameter `additional_plugins_scan_package`, in our case -- `org.kaaproject.kaa.sample`.
+6. Restart kaa-node service.
+
+		$ sudo service kaa-node restart
+		
 7. Use [Administration UI]({{root_url}}Glossary/#administration-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) to create/update/delete your owner verifier instances.
 
 ---

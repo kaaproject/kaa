@@ -120,7 +120,7 @@ OR
 
 - Open the **Administration UI** page, select the corresponding CTL and click the **Add new type** button.
 
-If you want to import a schema file, click **Browse**, select a .json file containing your schema, click **Upload**, then click **Add**
+If you want to import a schema file, click **Browse**, select a `.json` file containing your schema, click **Upload**, then click **Add**
 
 ![CTL Import](attach/ctl_import.png)
 
@@ -183,7 +183,7 @@ There are four options for CT schema export:
 * **shallow**: exports the CT schema file.
 * **deep**: exports the CT schema file and a file with all referenced CTs recursively.
 * **flat**: exports the CT schema file and a file with all referenced CTs inline.
-* **library**: exports .jar archive containing the CT schema and all referenced CTs as compiled java classes.
+* **library**: exports the `.jar` archive containing the CT schema and all referenced CTs as compiled java classes.
 
 The java library provides all necessary java structures, including the nested types, in compliance with the CT schema.
 You can use these java classes in external applications.

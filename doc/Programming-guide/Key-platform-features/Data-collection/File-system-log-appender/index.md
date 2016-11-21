@@ -12,12 +12,11 @@ sort_idx: 40
 {:toc}
 
 The file system log appender stores received logs into the local file system of the Operations service. This log appender may be used for test purposes
-or in pair with tools like Flume etc. Logs are stored in files under the ```/$logsRootPath/tenant_$tenantId/application_$applicationId``` folder,
-where _logsRootPath_ is a configuration parameter, _tenantId_ and _applicationId_ are ids of the current tenant and
+or in pair with tools like Flume etc. Logs are stored in files under the `/$logsRootPath/tenant_$tenantId/application_$applicationId` folder,
+where `logsRootPath` is a configuration parameter, `tenantId` and `applicationId` are ids of the current tenant and
 the application respectively. Access to the logs is controlled via Linux file system permissions.
 
-You can log in to the Operations service host and browse logs using the ```kaa_log_user_$applicationToken``` user name and the pubic key which is created as
-a part of the configuration.
+You can log in to the Operations service host and browse logs using the **kaa_log_user_$applicationToken** user name and the pubic key which is created as a part of the configuration.
 
 # Creating file system log appender in Admin UI
 
@@ -26,7 +25,7 @@ To create a log appender of the file system storage type, do the following:
 
 1. In the **Log appenders** window, click **Add log appender**.
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to _File_.
+3. Set the log appender type to **File**.
 4. Fill in other fields as required.
 5. Click **Add** button. Log appender is ready and operational at this point.
 
@@ -74,7 +73,7 @@ The following Admin REST API call example illustrates how to create a new file s
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @fileSystemLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file ```fileSystemLogAppender.json``` contains following data:
+where file `fileSystemLogAppender.json` contains following data:
 
 ```json
 {
@@ -157,10 +156,10 @@ Example result:
     ```
 
 11. Let's verify that our logs have been persisted in the local file system. Go to Sandbox VM and open the file
-        ```/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log```.
-        In this example path to file ```application.log``` is ```/kaa_log_uploads/tenant_1/application_24212667430286144698/```.
+        `/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log`.
+        In this example path to file `application.log` is `/kaa_log_uploads/tenant_1/application_24212667430286144698/`.
 
-     Your ```application.log``` should contain similar content:
+     Your `application.log` file should contain similar content:
 
     ```bash
     643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":28,"timeStamp":1474622330}}

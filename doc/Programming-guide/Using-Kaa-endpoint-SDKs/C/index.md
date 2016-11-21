@@ -32,18 +32,18 @@ You can find auto-generated docs for Kaa C SDK [here]({{site.baseurl}}/autogen-d
 Kaa C SDK comprises the following functional parts:
 
 - **SDK core** starts the [application]({{root_url}}Glossary/#kaa-application) main loop and controls the SDK execution processes.
-The corresponding APIs are located in the kaa/platform/kaa_client.h file.
+The corresponding APIs are located in the `kaa/platform/kaa_client.h` file.
 
 - **Build system** allows generating and customizing the project files without having to create a build infrastructure for every compiler or IDE used.
 The build system is written using [CMake](https://cmake.org/).
 
 - **Extensions** are the application-level modules within SDK that provide implementations of [Kaa platform key features]({{root_url}}Programming-guide/Key-platform-features/).
-Extensions are exposed to the user in a form of headers that are located in the **src/extensions** directory.
+Extensions are exposed to the user in a form of headers that are located in the `src/extensions` directory.
 
 ## Target support and portability
 
 C SDK contains a platform abstraction layer that hides differences across platforms, such as memory allocation procedures or time routines.
-Its interface is located in the **kaa/platform/** directory.
+Its interface is located in the `kaa/platform/` directory.
 
 Below is the list of the target platforms for which Kaa C SDK already has an implementation of the platform layer:
 
@@ -80,4 +80,4 @@ If you want to pass a configuration parameter, prefixed it with `-D`.
 This way you can customize your build for Kaa C SDK.
 For example, you can disable debug logging to decrease memory footprint.
 
-The list of available configuration parameters is located in the CMakeLists.txt file.
+The list of available configuration parameters is located in the `CMakeLists.txt` file.

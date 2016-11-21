@@ -208,6 +208,11 @@ Use lowercase unless uppercase is justified (e. g. names of UI elements).
   * Strings (enclose in quotation marks) and values.
   * Environment variables and error message names.
   * Names of programs and utilities.
+Use inline code formatting for:
+  * Short code examples.
+  * Code related entities (function names, variables, parameters, arguments, etc.).
+  * Names of files and directories.
+  * Numbers when they are used as code.
 
 ### Tables
 * Start every table with at least one introductory sentence or a table title.
@@ -241,7 +246,7 @@ However, do not use ending punctuation for lists where all entries are three wor
 
 ### Code examples
 
-* Code example should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
+* Code examples should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
 * When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.).
 See [Jekyll formatting](#jekyll-formatting).
 * Enable the syntax highlight for the language of the code example whenever available.
@@ -281,12 +286,12 @@ function fancyAlert(arg) {
 </li>
 </ul>
 
-* Use _org.kaaproject.kaa.schema.sample_ prefix to start a schema namespace used for examples and documentation purposes.
+* Use `org.kaaproject.kaa.schema.sample` prefix to start a schema namespace used for examples and documentation purposes.
 * Format all JSON files with this [online tool](https://jsonformatter.curiousconcept.com/) using the "4 space tab" profile.
 * Use inline code formatting in the documentation for:
   * Short code examples.
-  * Reference to code related entities (function names, variables, parameters, arguments, etc.).
-  * Source file names.
+  * Code related entities (function names, variables, parameters, arguments, etc.).
+  * Names of files and directories.
   * Numbers when they are used as code.
 
 ### Jekyll formatting

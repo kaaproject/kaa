@@ -22,7 +22,7 @@ It includes instructions on how to configure the **Kaa node** service and the re
 To set up a Kaa cluster, you need to have at least 3 Linux nodes with the Kaa node service installed on each of them.
 See [Single node installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/).
 
-Every Kaa node service generates two sets of public.key and private.key file pairs for [Bootstrap]({{root_url}}Architecture-overview/#bootstrap-service) and [Operations]({{root_url}}Architecture-overview/#operations-service) services.
+Every Kaa node service generates two sets of `public.key` and `private.key` file pairs for [Bootstrap]({{root_url}}Architecture-overview/#bootstrap-service) and [Operations]({{root_url}}Architecture-overview/#operations-service) services.
 Each Kaa server must have a unique RSA security key pair.
 To ensure that every Kaa node service uses a unique security key pair, you can compare checksums of the key files on different servers.
 
@@ -141,7 +141,7 @@ $ sudo service kaa-node stop
 
 ### Configure Kaa node
 
-To enable or disable the Kaa services (Bootstrap, Control or Operations), edit the corresponding properties in the /etc/kaa-node/conf/kaa-node.properties file.
+To enable or disable the Kaa services (Bootstrap, Control or Operations), edit the corresponding properties in the `/etc/kaa-node/conf/kaa-node.properties` file.
 
 ```bash
 # Specifies if Control Service is enabled.
@@ -203,7 +203,7 @@ Therefore, the node configuration will look as follows.
 zk_host_port_list=172.1.1.1:2181,172.2.2.2:2181,172.3.3.3:2181
 ```
 
-For each node, specify the node ID in the /etc/zookeeper/myid file.
+For each node, specify the node ID in the `/etc/zookeeper/myid` file.
 This file consists a single string of text representing the ID of the machine.
 The ID must be unique within the cluster and must be a value between 1 and 255.
 For this example, let's have **1**, **2**, and **3** as the IDs of the node 1, node 2, and node 3 accordingly.
@@ -227,7 +227,7 @@ See [SQL database configuration]({{root_url}}Administration-guide/System-install
 
 To configure an SQL database in the cluster:
 
-1. Set the SQL database host and port properties in the /etc/kaa-node/conf/sql-dao.properties configuration file.
+1. Set the SQL database host and port properties in the `/etc/kaa-node/conf/sql-dao.properties` configuration file.
 
    <ul class="nav nav-tabs">
      <li class="active"><a data-toggle="tab" href="#MariaDB">MariaDB</a></li>
@@ -258,7 +258,7 @@ To configure an SQL database in the cluster:
    
    </div></div>
 
-2. Set the SQL database URL property in the /etc/kaa-node/conf/admin-dao.properties file.
+2. Set the SQL database URL property in the `/etc/kaa-node/conf/admin-dao.properties` file.
 
    <ul class="nav nav-tabs">
      <li class="active"><a data-toggle="tab" href="#MariaDB1">MariaDB</a></li>
@@ -290,7 +290,7 @@ To configure an SQL database in the cluster:
 The NoSQL database configuration process is similar to the single node setup except for the database node list.
 See [NoSQL database configuration]({{root_url}}Administration-guide/System-installation/Single-node-installation/#nosql-database-configuration).
 
-Select **mongo** or **cassandra** NoSQL database in the /etc/kaa-node/conf/nosql-dao.properties file.
+Select **mongo** or **cassandra** NoSQL database in the `/etc/kaa-node/conf/nosql-dao.properties` file.
 
 ```bash
 # The NoSQL database provider name, auto-generated when the mongo-dao or cassandra-dao profile is activated
@@ -313,7 +313,7 @@ Specify database provider.
 nosql_db_provider_name=mongodb
 ```
 
-Set up the MongoDB host IP in the  /etc/kaa-node/conf/common-dao-mongodb.properties file.
+Set up the MongoDB host IP in the `/etc/kaa-node/conf/common-dao-mongodb.properties` file.
 Assuming that you selected the standard MongoDB port, the property will be as follows for all the three nodes.
 
 ```bash
@@ -329,7 +329,7 @@ Specify database provider.
 nosql_db_provider_name=cassandra
 ```
 
-Set up the Cassandra host IP in the /etc/kaa-node/conf/common-dao-cassandra.properties file.
+Set up the Cassandra host IP in the `/etc/kaa-node/conf/common-dao-cassandra.properties` file.
 Assuming that you selected the standard Cassandra port, the property will be as follows for all the three nodes.
 
 ```bash

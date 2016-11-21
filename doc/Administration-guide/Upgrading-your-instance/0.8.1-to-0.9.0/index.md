@@ -40,4 +40,4 @@ Follow these steps to run the upgrade script:
 
 >**Note:**
 >
->If needed, enter the password to the PostgreSQL database and confirm modification of configuration files located at /usr/lib/kaa-node/conf/ directory by entering "Y" during the script execution.
+>If needed, enter the password to the PostgreSQL database and confirm modification of configuration files located in the `/usr/lib/kaa-node/conf/` directory by entering "Y" during the script execution.

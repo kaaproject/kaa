@@ -123,7 +123,7 @@ public class CustomCredentialsService implements CredentialsService {
 ```
 </li>
 <li markdown="1">
-Register CredentialsServiceLocator in the /usr/lib/kaa-node/conf/kaaNodeContext.xml file for your new credential service.
+Register `CredentialsServiceLocator` in the `/usr/lib/kaa-node/conf/kaaNodeContext.xml` file for your new credential service.
 
 ```xml
 
@@ -145,7 +145,7 @@ The key value you added will be displayed in the **Administration UI**.
 
 </li>
 <li markdown="1">
-Edit the /usr/lib/kaa-node/conf/common-dao-context.xml file.
+Edit the `/usr/lib/kaa-node/conf/common-dao-context.xml` file.
 
 ```xml
 
@@ -166,10 +166,10 @@ To provision your Credentials service:
       $ mvn clean install
    ```
 
-2. Move the .jar file of your application from the **target** folder to the **/usr/lib/kaa-node/lib** folder.
+2. Move the `.jar` file of your application from the `target` folder to the `/usr/lib/kaa-node/lib` folder.
 
-3. If you use other package than org.kaaproject.kaa.*, make it scan the kaa-node.properties file in the **/usr/lib/kaa-node/conf** folder.
-For example: ```additional_plugins_scan_package=org.myproject```
+3. If you use other package than `org.kaaproject.kaa.*`, make it scan the `kaa-node.properties` file in the `/usr/lib/kaa-node/conf` folder.
+For example: `additional_plugins_scan_package=org.myproject`
 
 4. Restart the kaa-node service:
 
