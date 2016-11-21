@@ -204,15 +204,14 @@ kaa_add_unit_test(NAME test_kaa_extension_private
         INC_DIRS
         src/kaa src/extensions/bootstrap ${KAA_INCLUDE_PATHS})
 
-# KAA-985
-#kaa_add_unit_test(NAME test_kaa_tcp_channel_operation
-#        SOURCES
-#        test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
-#        test/kaa_test_external.c
-#        DEPENDS
-#        kaac
-#        INC_DIRS
-#        test)
+kaa_add_unit_test(NAME test_kaa_tcp_channel_operation
+        SOURCES
+        test/kaa_tcp_channel/test_kaa_tcp_channel_operation.c
+        test/kaa_test_external.c
+        DEPENDS
+        kaac
+        INC_DIRS
+        test)
 
 kaa_add_unit_test(NAME test_kaa_channel_manager
         SOURCES
