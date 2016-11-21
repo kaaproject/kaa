@@ -5,6 +5,8 @@ permalink: /:path/
 sort_idx: 10
 ---
 
+{% include variables.md %}
+
 * TOC
 {:toc}
 
@@ -12,7 +14,7 @@ The entire Java source code of the Kaa project must conform to the [Google Java 
 This guide describes some tools which can be used to ensure proper style and format of the Java source code.
 
 
-# IntelliJ IDEA plugin
+## IntelliJ IDEA plugin
 [Checkstyle](https://github.com/jshiell/checkstyle-idea) plugin installation:
 
 1. Go to **File>Settings>IDE Settings>plugins**.
@@ -31,15 +33,16 @@ Plugin usage:
 1. Go to **Analyze>Inspect code**.
 2. Select the inspection scope and the inspection profile.
 
-# Eclipse plugin
+## Eclipse plugin
 Follow [tutorial](http://eclipse-cs.sourceforge.net/#!/install) to install the checkstyle plugin.
 
-# Maven plugin
+## Maven plugin
 The [check style maven plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/usage.html) is used to continuously verify the style of the Java code. By default, it is already configured to use the Google coding conventions. The configuration is located in the root of the Kaa project (`checkstyle.xml`).
 
-# Automatic code formatter
-To automate formatting of the Java code, it is recommended that you use IntelliJ IDEA with appropriate Google Java Style settings. To install the code style settings, proceed as follows:
+## Automatic code formatter
+To automate formatting of the Java code, it is recommended that you use IntelliJ IDEA with appropriate code style settings.
+To install the code style settings:
 
-1. Download [IntelliJ Java Google Style](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml).
-2. Go to **File>Settings>Editor>Code Style**.
-3. Press **Manage** and import the checkstyle configuration (`checkstyle.xml`) from the root of the Kaa project.
+1. Click **File** > **Settings** > **Editor** > **Code Style**.
+
+2. Click **Manage** and import the `checkstyle.xml` configuration file from the Kaa project root directory.
