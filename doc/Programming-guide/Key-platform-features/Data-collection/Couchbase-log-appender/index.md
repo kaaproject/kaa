@@ -67,7 +67,7 @@ The following Admin REST API call example illustrates how to create a new Couchb
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @couchbaseLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
-where file ```couchbaseLogAppender.json``` contains following data:
+where file `couchbaseLogAppender.json` contains following data:
 
 ```json
 {

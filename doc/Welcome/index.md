@@ -40,6 +40,6 @@ You can report an issue by creating a corresponding ticket in [Kaa task tracker]
 
 # License
 The Kaa IoT platform is licensed under [Apache Software License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
-See [`LICENSE`]({{github_url}}LICENSE) and [`copyright.txt`]({{github_url}}copyright.txt) for details.
+See [LICENSE]({{github_url}}LICENSE) and [copyright.txt]({{github_url}}copyright.txt) for details.
 
 ---

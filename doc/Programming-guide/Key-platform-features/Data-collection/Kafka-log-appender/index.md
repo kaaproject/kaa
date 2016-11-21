@@ -99,7 +99,7 @@ The following Admin REST API call example illustrates how to create a new Kafka 
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @kafkaLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file ```kafkaLogAppender.json``` contains following data:
+where file `kafkaLogAppender.json` contains following data:
 
 ```
 {
@@ -161,9 +161,9 @@ Download [Kaa Sandbox](http://www.kaaproject.org/download-kaa/) then set up it a
 [official Apache documentation](https://kafka.apache.org/07/quickstart.html).
 > Kaa uses Zookeeper service listening on port 2181. Before starting Kafka you need to change Zookeeper to use some other port (e.g. 2183).
 > For this, you will need to edit properties files (they are located within the Kafka installation directory) like below: <br/>
-> ```config/zookeeper.properties``` : set ```clientPort=2183 ```; <br/>
-```config/server.properties``` : set ```zookeeper.connect=localhost:2183```; <br/>
-```config/consumer.properties``` : set ```zookeeper.connect=127.0.0.1:2183```
+> `config/zookeeper.properties` : set `clientPort=2183 `; <br/>
+`config/server.properties` : set `zookeeper.connect=localhost:2183`; <br/>
+`config/consumer.properties` : set ```zookeeper.connect=127.0.0.1:2183`
 
 We have next log schema:
 

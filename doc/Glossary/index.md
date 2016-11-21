@@ -93,8 +93,8 @@ sort_idx: 50
 ### Group _all_
 >A default, non-editable group created for each Kaa [application]({{root_url}}Glossary/#kaa-application).
 >The _weight_ value of this group equals to 0.
->The [profile filter]({{root_url}}Glossary/#profile-filter) of this group is automatically set to "true" for every [profile schema]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) version in the system.
->The group _all_ includes every [endpoint]({{root_url}}Glossary/#endpoint-ep) registered in the application.
+>The [profile filter]({{root_url}}Glossary/#profile-filter) of this group is automatically set to **true** for every [profile schema]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) version in the system.
+>The group **all** includes every [endpoint]({{root_url}}Glossary/#endpoint-ep) registered in the application.
 >See [Using endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups/#using-endpoint-groups) documentation section.
 
 ## K
