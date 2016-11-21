@@ -40,9 +40,84 @@ If you are willing to contribute to the Kaa code base, or submit sample [applica
 	>See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 	{:.note}
 
-## Improve documentation
+## Contribute to documentation
 
 Documentation is a part of the Kaa code base.
 You can find the documentation files in the `doc/` subdirectory of the [main repository](https://github.com/kaaproject/kaa).
-That means that the contribution process is the same for both the source code and documentation.
-See [Documentation contribution guide]({{root_url}}Customization-guide/How-to-contribute/Contribution-guide/).
+This means that the contribution process is the same for both the source code and documentation.
+
+Contributing to the Kaa documentation, make sure to complete the following:
+
+* Select `Component: Documentation` in the corresponding [Jira](http://jira.kaaproject.org/) ticket.
+* Generate and check documentation locally before committing.
+See [Preview documentation]({{root_url}}Customization-guide/How-to-contribute/#preview-documentation).
+* Check with the [Documentation style guide]({{root_url}}Customization-guide/How-to-contribute/Style-guide/) to make sure your contribution complies with the Kaa requirements.
+
+### Preview documentation
+
+To preview the documentation locally and make sure it meets the Kaa requirements:
+
+1. Install the required software:
+  * [Git](https://git-scm.com/)
+  * [Ruby](https://www.ruby-lang.org)
+  * [Jekyll](https://jekyllrb.com/)
+  * [Jekyll-sitemap](https://github.com/jekyll/jekyll-sitemap)
+  * [Jekyll-gist](https://github.com/jekyll/jekyll-gist)
+  * [Rouge](https://github.com/jneen/rouge)
+
+   Follow the instructions for your platform below.
+
+<ul>
+<li style="list-style-type: none;">
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#Platform1">Ubuntu 14.04</a></li>
+  <li><a data-toggle="tab" href="#Platform2">Ubuntu 16.04</a></li>
+  <li><a data-toggle="tab" href="#Platform3">CentOS 7</a></li>
+  <li><a data-toggle="tab" href="#Platform4">Nix</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="Platform1" class="tab-pane fade in active" markdown="1" >
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git ruby2.0 ruby2.0-dev build-essential
+sudo gem2.0 install -N jekyll jekyll-gist jekyll-sitemap rouge
+```
+
+</div><div id="Platform2" class="tab-pane fade" markdown="1" >
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git build-essential ruby ruby-dev ruby-ffi
+sudo gem install -N jekyll jekyll-gist jekyll-sitemap rouge
+```
+
+</div><div id="Platform3" class="tab-pane fade" markdown="1" >
+
+```bash
+sudo yum install -y ruby git ruby-devel
+sudo yum groupinstall -y 'Development Tools'
+sudo gem install -N jekyll jekyll-gist jekyll-sitemap rouge
+```
+
+</div><div id="Platform4" class="tab-pane fade" markdown="1" >
+
+```bash
+nix-shell doc/shell.nix --run ./test-gh-pages.sh
+```
+
+</div></div>
+</li>
+</ul>
+
+{: start="2"}
+2. Open the root directory of your git code branch and delete the `test-gh-pages-*/` folder if it exists.
+3. Run the `test-gh-pages.sh` script to generate documentation and access it at your [http://localhost:4000/](http://127.0.0.1:4000/kaa/).
+
+   ```bash
+   user@host:/kaa$ ./test-gh-pages.sh
+   ...
+   Server address: http://127.0.0.1:4000/kaa/
+   Server running... press ctrl-c to stop.
+   ```
