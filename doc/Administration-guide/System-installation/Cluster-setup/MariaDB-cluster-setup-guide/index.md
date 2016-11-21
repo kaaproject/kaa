@@ -78,7 +78,7 @@ If, for some reason, you do not already have `rsync` installed on your machines,
 
 #### MySQL Settings
 
-First of all, open the `"/etc/mysql/my.cnf"` file and comment the following lines on all the three nodes:
+First of all, open the `/etc/mysql/my.cnf` file and comment the following lines on all the three nodes:
 
 ```bash
   root@ubuntu-nodeX:~# nano /etc/mysql/my.cnf
