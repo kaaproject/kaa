@@ -21,6 +21,8 @@ import static com.google.gwt.i18n.client.DateTimeFormat.getFormat;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.StatusCodeException;
@@ -43,8 +45,6 @@ import org.kaaproject.kaa.server.admin.shared.services.ServiceErrorCode;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -56,9 +56,11 @@ public class Utils {
   public static final KaaAdminStyle kaaAdminStyle = resources.kaaAdminStyle();
   public static final AvroUiStyle avroUiStyle = avroUiResources.avroUiStyle();
   private static final int MAX_ERROR_LINE_LENGTH = 200;
-  private static Pattern emailPattern = Pattern.compile(
-      "^.+@.+$", Pattern.CASE_INSENSITIVE
-  );
+  private static RegExp emailPattern = RegExp.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]"
+          + "+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])"
+          + "*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?"
+          + "[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f"
+          + "\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])", "i");
 
   private static final DateTimeFormat simpleDateFormat = getFormat("MM/dd/yyyy");
 
@@ -84,10 +86,6 @@ public class Utils {
 
   /**
    * Exception handler.
-   *
-   * @param caught                 the Throwable
-   * @param hasErrorMessage        the has error message
-   * @param errorMessageCustomizer the error message customizer
    */
   public static void handleException(Throwable caught,
                                      HasErrorMessage hasErrorMessage,
@@ -182,8 +180,8 @@ public class Utils {
     if (mail == null || mail.length() == 0) {
       return false;
     }
-    Matcher matcher = emailPattern.matcher(mail);
-    return matcher.find();
+    MatchResult matcher = emailPattern.exec(mail);
+    return matcher != null;
   }
 
   /**
