@@ -177,11 +177,7 @@ public class Utils {
    * @return boolean 'true' if email address is valid
    */
   public static boolean validateEmail(String mail) {
-    if (mail == null || mail.length() == 0) {
-      return false;
-    }
-    MatchResult matcher = emailPattern.exec(mail);
-    return matcher != null;
+    return !(mail == null || mail.length() == 0) && emailPattern.exec(mail) != null;
   }
 
   /**
