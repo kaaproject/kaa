@@ -35,4 +35,4 @@ For detailed platform-specific instructions, refer to [Using Kaa endpoint SDKs](
 
 The Kaa C++ SDK uses the CMake build system.
 You can use CMake to tweak some of your SDK build parameters.
-The complete summary of these parameters is contained in the root CMakeLists.txt file of the C++ SDK.
+The complete summary of these parameters is contained in the root `CMakeLists.txt` file of the C++ SDK.

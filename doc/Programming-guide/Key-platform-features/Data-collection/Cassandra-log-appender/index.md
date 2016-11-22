@@ -148,7 +148,7 @@ The following Admin REST API call example illustrates how to create an instance 
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @cassandraLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file ```cassandraLogAppender.json``` contains following data:
+where file `cassandraLogAppender.json` contains following data:
 
 ```json
 {

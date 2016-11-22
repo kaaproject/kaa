@@ -147,9 +147,9 @@ $ sudo service kaa-node restart
 
 </div><div id="Console2" class="tab-pane fade" markdown="1">
 
-The Kaa service logs can be found under /var/log/kaa:
+The Kaa service logs can be found under `/var/log/kaa`:
 
-- kaa-node.* files contain log information from the Kaa service component.
+- `kaa-node.*` files contain log information from the Kaa service component.
 
 You can download logs from the Sandbox guest machine to the host machine as follows:
 
@@ -216,7 +216,7 @@ How to restart Kaa service
 
 | Error description                                                                                     | Possible cause                                                                   | Solution                                                                                                                           | Related documentation    |
 |-------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
-| Unexpected error occurred: 500 Server ErrorUnexpected service error occurred: 500 Server ErrorFailed! | By default, the Kaa Sandbox components are not accessible from the host network. | Change the Sandbox host/IP on web UI or execute the following script in the Sandbox: ```$ sudo /usr/lib/kaa-sandbox/change_kaa_host.sh``` | [Kaa Sandbox - Networking]({{root_url}}Programming-guide/Getting-started/#networking) |
+| Unexpected error occurred: 500 Server ErrorUnexpected service error occurred: 500 Server ErrorFailed! | By default, the Kaa Sandbox components are not accessible from the host network. | Change the Sandbox host/IP on web UI or execute the following script in the Sandbox: `$ sudo /usr/lib/kaa-sandbox/change_kaa_host.sh` | [Kaa Sandbox - Networking]({{root_url}}Programming-guide/Getting-started/#networking) |
 
 # Reporting issues to the Kaa Crew
 

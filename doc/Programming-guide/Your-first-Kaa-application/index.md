@@ -56,7 +56,7 @@ However, you can create custom data collection and configuration schemas.
 
 To create and upload custom schemas:
 
-1. Create a data-schema.json file containing the following schema definition.
+1. Create a `data-schema.json` file containing the following schema definition.
 
 		{
 			"type": "record",
@@ -70,7 +70,7 @@ To create and upload custom schemas:
 			]
 		}
 		
-2. Create a configuration-schema.json file containing the following schema definition.
+2. Create a `configuration-schema.json` file containing the following schema definition.
 The `by_default` parameter defines the default sampling period value which is set to **1** in this example case.
 
 		{
@@ -86,13 +86,13 @@ The `by_default` parameter defines the default sampling period value which is se
 			]
 		}
 		
-3. Use the **Upload from file** section to [create CT schemas]({{root_url}}/Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the data-schema.json and configuration-schema.json files.
+3. Use the **Upload from file** section to [create CT schemas]({{root_url}}/Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the `data-schema.json` and `configuration-schema.json` files.
 		
 4. On the Sandbox main page, click **Administration UI** and log in as a [tenant developer]({{root_url}}Glossary/#tenant-developer) using default **devuser** username and **devuser123** password.
 
 5. Click the **Applications** arrow to unfold the list and click the arrow of the application you created in [Add application](#add-application), then click **Schemas** > **Log** and click the **Add schema** button.
 
-6. On the **Add log schema** page, enter a name and description of the new data collection schema and select the CT created from the data-schema.json file.
+6. On the **Add log schema** page, enter a name and description of the new data collection schema and select the CT created from the `data-schema.json` file.
 
 	![Data collection schema](attach/new_data_schema2.png)
 
@@ -101,7 +101,7 @@ The `by_default` parameter defines the default sampling period value which is se
 >**NOTE:** Alternatively, you can use the [Avro UI form]({{root_url}}Glossary/#avro-ui-form) to create the schema.
 {: .note}
 
-To create a configuration schema repeat the same procedure using the configuration-schema.json file.
+To create a configuration schema repeat the same procedure using the `configuration-schema.json` file.
 
 ![Add configuration schema](attach/new_config_schema2.png)
 
@@ -184,9 +184,9 @@ To do this, run the following commands in the terminal.
 
 		sudo apt-get install cmake
 		
-2. Create a directory named **kaa** and unpack the C SDK archive into it.
+2. Create a directory named `kaa` and unpack the C SDK archive into it.
 
-3. In the application directory, create a CMakeLists.txt file with the following contents.
+3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
 		cmake_minimum_required(VERSION 2.8.12)
 		project(kaa-application C)
@@ -199,7 +199,7 @@ To do this, run the following commands in the terminal.
 		
 		target_link_libraries(kaa-app kaac)
 		
-4. Create a main.c source file containing empty main routine (for now).
+4. Create a `main.c` source file containing empty main routine (for now).
 
 		int main(void)
 		{
@@ -226,9 +226,9 @@ Before using the C++ application code, be sure to complete the following steps:
 
 1. Install the required libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites).
 
-2. Create a **kaa** directory and unpack the C++ SDK into it.
+2. Create a `kaa` directory and unpack the C++ SDK into it.
 
-3. In the application directory, create a CMakeLists.txt file with the following contents.
+3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
         cmake_minimum_required(VERSION 2.8.12)
         project(Cpp-SDK-your-first-Kaa-application CXX)
@@ -237,7 +237,7 @@ Before using the C++ application code, be sure to complete the following steps:
         add_executable(kaa-app main.cpp)
         target_link_libraries(kaa-app kaacpp)
 
-4. Create a main.cpp source file with empty main routine (for now).
+4. Create a `main.cpp` source file with empty main routine (for now).
 
         int main()
         {
@@ -264,9 +264,9 @@ Before using the Java application code, be sure to complete the following steps:
  
 1. Install [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) for your OS.
 
-2. Create a **demo_app** directory.
+2. Create a `demo_app` directory.
 
-3. Use the Administration UI to [generate Java SDK]({{root_url}}/Programming-guide/Your-first-Kaa-application/#generate-sdk) into the **demo_app** directory.
+3. Use the Administration UI to [generate Java SDK]({{root_url}}/Programming-guide/Your-first-Kaa-application/#generate-sdk) into the `demo_app` directory.
 
 </div>
 
@@ -282,7 +282,7 @@ Before using the Objective-C application code, be sure to complete the following
 Name it "My First Kaa Application", choose Objective-C language and leave all other fields unchanged.
 4. Link the SDK to your project as described in [Objective-C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C/).
 5. Make sure that your application builds successfully.
-6. Replace code in the ViewController.m file with the code from the [Application code](#application-code) section.
+6. Replace code in the `ViewController.m` file with the code from the [Application code](#application-code) section.
 
 </div>
 
@@ -935,14 +935,14 @@ This will clean up the mess that can occur when debug logs are enabled.
 
 To launch your Java application:
 
-1. Save the application code into FirstKaaDemo.java file located in the **demo_app** directory.
+1. Save the application code into `FirstKaaDemo.java` file located in the `demo_app` directory.
 
-2. Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) and save it to the **demo_app** directory.
-In Linux terminal, run the following command from the **demo_app** directory.
+2. Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) and save it to the `demo_app` directory.
+In Linux terminal, run the following command from the `demo_app` directory.
 
 		wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar
 
-3. Build the application by running the following command from the **demo_app** directory.
+3. Build the application by running the following command from the `demo_app` directory.
 		
 		javac -cp *.jar *.java
 
@@ -1020,7 +1020,7 @@ In the **Applications** list, select the **Endpoint Groups** section of your new
 
     ![Endpoint groups](attach/endpoint_group.png)
 
-3. Click on the endpoint group **All**.
+3. Click on the endpoint group **all**.
 On the **Endpoint group details** page, click on the latest version schema in the **Configurations** section.
 
     ![Endpoint groups inside](attach/endpoint_group_inside.png)

@@ -105,7 +105,7 @@ The following Admin REST API call example illustrates how to create a new MongoD
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @mongoDBLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file ```mongoDBLogAppender.json``` contains the following data:
+where file `mongoDBLogAppender.json` contains the following data:
 
 ```
 {

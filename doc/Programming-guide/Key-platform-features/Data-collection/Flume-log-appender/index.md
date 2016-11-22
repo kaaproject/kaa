@@ -274,7 +274,7 @@ of the log records data schema and stores log data into HDFS as Avro Sequence fi
 }
 ```
 
-```${record_data_schema}``` - is a variable which is substituted at run time by Kaa HDFS Sink with the Avro schema of the actual logs. 
+`${record_data_schema}` - is a variable which is substituted at run time by Kaa HDFS Sink with the Avro schema of the actual logs. 
 This Avro schema is obtained via [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/getLogSchemaByApplicationTokenAndVersion) call to Kaa.
 
 ## Configuration
@@ -340,7 +340,7 @@ The following Admin REST API call example illustrates how to create a new Flume 
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @flumeLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file ```flumeLogAppender.json``` contains following data:
+where file `flumeLogAppender.json` contains following data:
 
 ```json
 {

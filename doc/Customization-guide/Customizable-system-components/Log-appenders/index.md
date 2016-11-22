@@ -273,7 +273,7 @@ public class CustomLogAppender extends AbstractLogAppender<CustomAppenderConfigu
 A log appender descriptior provides Kaa with the information on how to locate and configure your custom log appender. To implement a
 log appender descriptor, you need to implement the PluginConfig interface at first.
 
-It is also important to provide your class with the ```@KaaPluginConfig``` annotation. This annotation is used by Kaa Admin UI service in order to scan
+It is also important to provide your class with the `@KaaPluginConfig` annotation. This annotation is used by Kaa Admin UI service in order to scan
 avaliable log appenders in the class path.
 
 The following code example illustrates the implementation of a log appender descriptor:
@@ -328,13 +328,17 @@ public class CustomAppenderDescriptor implements PluginConfig {
 
 To provision your log appender, do the following:
 
-1. Build your log appender using next command: <br/>
-```$ mvn clean install```
-2. Place the log appender ```*.jar``` from ```/target``` folder into the ```/usr/lib/kaa-node/lib``` folder.
-3. If you using different package than ```org.kaaproject.kaa.*``` you need to edit ```kaa-node.properties``` file in ```/usr/lib/kaa-node/conf``` folder.
-Specify additional package to scan kaa plugins configuration in parameter ```additional_plugins_scan_package```. For example provided in this article:
-```additional_plugins_scan_package=org.domain.sample.appenders.custom```.
-4. Restart kaa-node service: <br/>
-```$ sudo service kaa-node restart```
+1. Build your log appender using next command.
+		
+		$ mvn clean install
+		
+2. Place the log appender `*.jar` from `/target` folder into the `/usr/lib/kaa-node/lib` folder.
+3. If you using different package than `org.kaaproject.kaa.*` you need to edit `kaa-node.properties` file in `/usr/lib/kaa-node/conf` folder.
+Specify additional package to scan kaa plugins configuration in parameter `additional_plugins_scan_package`.
+For example provided in this article: `additional_plugins_scan_package=org.domain.sample.appenders.custom`.
+4. Restart `kaa-node` service.
+
+		$ sudo service kaa-node restart
+		
 5. Use Admin UI or REST API to create/update/delete your log appender instances as described in one of the
 [Default log appenders]({{root_url}}Programming-guide/Key-platform-features/Data-collection#default-log-appenders).
