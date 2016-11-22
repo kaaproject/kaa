@@ -239,10 +239,14 @@ However, do not use ending punctuation for lists where all entries are three wor
   * Tips
   * Important note
   * Caution
-* A _note_ displays information that is supplementary to the main text or reminds the user of some related information explained before.
-* A _tip_ explains how the readers can use the information in the main text for their specific needs, or how they can be more effective and get the best out of your product.
-* An _important note_ displays information that is critical the completion of a procedure (unlike the note, which is not critical and is for information only).
-* A _caution_ alerts users of potential risk or damage in case they do not take some action or consider some information.
+* >**NOTE:** displays information that is supplementary to the main text or reminds the user of some related information explained before.
+  {:.note}
+* >**TIP:** explains how the readers can use the information in the main text for their specific needs, or how they can be more effective and get the best out of your product.
+  {:.tip}
+* >**IMPORTANT:** displays information that is critical the completion of a procedure (unlike the note, which is not critical and is for information only).
+  {:.important}
+* >**CAUTION:** alerts users of potential risk or damage in case they do not take some action or consider some information.
+  {:.caution}
 
 ### Code examples
 
