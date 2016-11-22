@@ -16,9 +16,9 @@
   </title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="{{ site.baseurl }}/public/css/bootstrap/bootstrap.min.css">
+  <script src="{{ site.baseurl }}/public/js/jquery.min.js"></script>
+  <script src="{{ site.baseurl }}/public/js/bootstrap/bootstrap.min.js"></script>
   <script src="{{ site.baseurl }}/public/js/utils.js" id="utils.js" data-latest-version="{{latest_version}}" data-version-list="{{versions | join: " "}}"></script>
   <script src="{{ site.baseurl }}/public/js/scripts.js"></script>
   <link rel="stylesheet" href="{{ site.baseurl }}/public/css/syntax.css">
@@ -27,8 +27,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   <!-- lightbox -->
-  <link href="//cdn.rawgit.com/noelboss/featherlight/1.4.1/release/featherlight.min.css" type="text/css" rel="stylesheet" />
-  <script src="//cdn.rawgit.com/noelboss/featherlight/1.4.1/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+  <link href="{{ site.baseurl }}/public/css/featherlight.min.css" type="text/css" rel="stylesheet" />
+  <script src="{{ site.baseurl }}/public/js/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
   <script>
   $(document).ready(function(){
           var max = 320;
