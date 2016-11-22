@@ -252,16 +252,17 @@ public class CtlSchemaActivity extends
             @Override
             public void onValueChange(ValueChangeEvent<Integer> event) {
               detailsView.getVersion().setValue(version);
-              if (place.getScope() == APPLICATION) {
-                goTo(new CtlSchemaPlace(place.getMetaInfoId(), event.getValue(), place.getScope(),
-                    place.getApplicationId(), place.isEditable(), false));
-              } else if (place.getScope() == TENANT) {
+              if (place.getScope() == TENANT) {
                 goTo(new CtlSchemaPlace(
                     place.getMetaInfoId(), event.getValue(), place.getScope(),
                     place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(),
                     place.isEditable(), false)
                 );
+              } else {
+                goTo(new CtlSchemaPlace(place.getMetaInfoId(), event.getValue(), place.getScope(),
+                    place.getApplicationId(), place.isEditable(), false));
               }
+
             }
           }));
       registrations.add(detailsView.getCreateNewSchemaVersionButton().addClickHandler(
@@ -270,13 +271,13 @@ public class CtlSchemaActivity extends
             public void onClick(ClickEvent event) {
               Integer version = detailsView.getVersion().getValue();
               CtlSchemaPlace newPlace = null;
-              if (place.getScope() == APPLICATION) {
+              if (place.getScope() == TENANT) {
+                newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(),
+                    place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, true);
+              } else {
                 newPlace = new CtlSchemaPlace(
                     place.getMetaInfoId(), version, place.getScope(),
                     place.getApplicationId(), true, true);
-              } else if (place.getScope() == TENANT) {
-                newPlace = new CtlSchemaPlace(place.getMetaInfoId(), version, place.getScope(),
-                    place.getEcfId(), place.getEcfVersionId(), place.getEcfVersion(), true, true);
               }
               newPlace.setPreviousPlace(place);
               goTo(newPlace);
