@@ -78,7 +78,7 @@ If, for some reason, you do not already have `rsync` installed on your machines,
 
 #### MySQL Settings
 
-First of all, open the `"/etc/mysql/my.cnf"` file and **comment** the following lines **on all the three nodes**:
+First of all, open the `/etc/mysql/my.cnf` file and comment the following lines on all the three nodes:
 
 ```bash
   root@ubuntu-nodeX:~# nano /etc/mysql/my.cnf
@@ -216,13 +216,13 @@ To fix this, copy the contents of the maintenance file to each individual node a
      basedir  = /usr
    ```
 
-**They should be exactly the same now.** Save and close the files.
+   They should be exactly the same now. Save and close the files.
 
 ### Start MariaDB cluster
 
 To start the MariaDB cluster, do the following:
 
-> Please check ports 4444 and 4567. This ports must be free and open for connections from hosts with other nodes - this is important for ```wsrep``` communication. 
+> Please check ports 4444 and 4567. This ports must be free and open for connections from hosts with other nodes - this is important for `wsrep` communication. 
 
 1. Stop the running MariaDB service by typing the following line on each of the nodes.
 

@@ -35,11 +35,11 @@ Default environments:
     For installing docker compose use [official installation guide](https://docs.docker.com/compose/install/). 
     
 2. Download debian package from [official site](http://www.kaaproject.org/download-kaa/)
- or build your Kaa project locally (kaa-node.deb located in **server/node/target/**).
+ or build your Kaa project locally (`kaa-node.deb` located in `server/node/target/`).
  
-    Put kaa-node.deb into **server/containers/docker/** folder.
+    Put `kaa-node.deb` into `server/containers/docker/` folder.
  
-3. From server/containers/docker folder execute:
+3. From `server/containers/docker` folder execute:
 
      ```docker
      build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .
@@ -53,9 +53,9 @@ Default environments:
 
 ## Single node installation
 
-You can use some prepared files in **server/containers/docker/docker-compose-1-node** folder. 
+You can use some prepared files in `server/containers/docker/docker-compose-1-node` folder. 
 
-First of all in **server/containers/docker/docker-compose-1-node/kaa-example.env** please specify the 
+First of all in `server/containers/docker/docker-compose-1-node/kaa-example.env` please specify the 
 
 **TRANSPORT_PUBLIC_INTERFACE** 
 
@@ -73,7 +73,7 @@ for **Windows**:
   interface ip show address "Ethernet" | findstr "IP Address"
  ```
 
-Navigate into any one of the possible folders in **docker-compose-1-node** folder 
+Navigate into any one of the possible folders in `docker-compose-1-node` folder.
 
  ```cd
  docker-compose-1-node/$SQL-NoSQL/ 
@@ -100,7 +100,7 @@ or if you want run Docker container as a daemon, run
 
 ## Cluster node installation
 
-1. From server/containers/docker/using-compose folder run command:
+1. From `server/containers/docker/using-compose` folder run command:
     
      ```python
      launch-kaa.py SQL-NoSQL
@@ -139,7 +139,7 @@ or if you want run Docker container as a daemon, run
      exec -it usingcompose_KAA_SERVICE_NAME_1 /bin/bash -c "export TERM=xterm; exec bash"
      ```
             
-    KAA_SERVICE_NAME it's Kaa service name in kaa-docker-compose.yml file.
+    KAA_SERVICE_NAME it's Kaa service name in `kaa-docker-compose.yml` file.
             
     for example: 
             
@@ -147,12 +147,12 @@ or if you want run Docker container as a daemon, run
      exec -it usingcompose_kaa_0_1 /bin/bash -c "export TERM=xterm; exec bash"
      ```  
              
-    Wait a few seconds until the service kaa-node starts.
+    Wait a few seconds until the service `kaa-node` starts.
             
-    Open your browser on localhost:8080 (You can see there some error, just refresh page. It's mean that's service kaa-node does not start yet. 
-    You can verify this by looking logs of kaa-node containers.)
+    Open your browser on localhost:8080 (You can see there some error, just refresh page. It's mean that's service `kaa-node` does not start yet. 
+    You can verify this by looking logs of `kaa-node` containers.)
             
-    In this example usingcompose - it's name of folder where located kaa-docker-compose.yml and third-party-docker-compose.yml files.
+    In this example usingcompose - it's name of folder where located `kaa-docker-compose.yml` and `third-party-docker-compose.yml` files.
 
 
 # Logs
@@ -163,7 +163,7 @@ When you run your Docker container as a daemon, you won't see its output. So you
  -f kaa-docker-compose.yml -p usingcompose exec KAA_SERVICE_NAME sh /kaa/tail-node.sh
  ```
     
-KAA_SERVICE_NAME it's Kaa service name in kaa-docker-compose.yml file.
+KAA_SERVICE_NAME it's Kaa service name in `kaa-docker-compose.yml` file.
         
 Or simply run the shortcut script 'view-kaa-node-logs.sh' in the examples.
     

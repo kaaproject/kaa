@@ -262,7 +262,7 @@ Follow the instructions for your OS.
 <ul>
 	<div class="tab-content"><!---tMon46---><div id="mongo_ubuntu14" class="tab-pane fade in active" markdown="1" ><!---Mon4--->
 
-Add a MongoDB repository to the /etc/apt/sources.list.d/mongodb.list file.
+Add a MongoDB repository to the `/etc/apt/sources.list.d/mongodb.list` file.
 
 ```bash
 $ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
@@ -292,7 +292,7 @@ $ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
 
 </div><!---Mon4---><div id="mongo_ubuntu16" class="tab-pane fade" markdown="1" ><!---Mon6--->
 
-Add a MongoDB repository to the /etc/apt/sources.list.d/mongodb.list file.
+Add a MongoDB repository to the `/etc/apt/sources.list.d/mongodb.list` file.
 
 ```bash
 $ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
@@ -355,7 +355,7 @@ Follow the instructions for your OS.
 <ul>
 	<div class="tab-content"><!---tCas46---><div id="cassandra_ubuntu14" class="tab-pane fade in active" markdown="1" ><!---Cas4--->
 
-Add the DataStax Community repository to the /etc/apt/sources.list.d/cassandra.sources.list file.
+Add the DataStax Community repository to the `/etc/apt/sources.list.d/cassandra.sources.list` file.
 
 ```bash
 $ echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
@@ -371,9 +371,9 @@ $ sudo apt-get install cassandra=3.5
 
 </div><!---Cas4---><div id="cassandra_ubuntu16" class="tab-pane fade" markdown="1" ><!---Cas6--->
 
-Cassandra requires python-support.
+Cassandra requires `python-support`.
 Since this package was removed in Ubuntu 16.04, you need to install it manually.
-Download the deb package and unpack it.
+Download the `deb` package and unpack it.
 
 ```bash
 $ sudo wget "http://launchpadlibrarian.net/109052632/python-support_1.0.15_all.deb"
@@ -476,7 +476,7 @@ Kaa requires MariaDB (used by default) or PostgreSQL.
 	<div class="tab-content"><!---tMarPos---><div id="maria_centos" class="tab-pane fade in active" markdown="1" ><!---Mar--->
 
 Add MariaDB YUM repository entry for CentOS.
-Copy and paste it into a file located in the /etc/yum.repos.d/ directory (name the file MariaDB.repo or similar).
+Copy and paste it into a file located in the `/etc/yum.repos.d/` directory (name the file `MariaDB.repo` or similar).
 
 <ul>
 	<ul class="nav nav-tabs">
@@ -643,7 +643,7 @@ Connect to the postgresql-server using the psql utility.
 $ sudo -u postgres psql
 ```
 
-Specify the password for the postgres user (the default password in the kaa configuration files is "admin").
+Specify the password for the Postgres user (the default password in the Kaa configuration files is **admin**).
 
 ```bash
 postgres=# \password
@@ -662,7 +662,7 @@ CREATE DATABASE "kaa"
 	  TEMPLATE template0;
 ```
 
-Update the pg\_hba.conf file to allow local connections.
+Update the `pg\_hba.conf` file to allow local connections.
 
 ```bash
 $ sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
@@ -752,7 +752,7 @@ Connect to the postgresql-server using the psql utility.
 $ sudo -u postgres psql
 ```
 
-Specify the password for the postgres user (the default password in the kaa configuration files is "admin").
+Specify the password for the Postgres user (the default password in the Kaa configuration files is **admin**).
 
 ```bash
 postgres=# \password
@@ -771,7 +771,7 @@ CREATE DATABASE "kaa"
 	  TEMPLATE template0;
 ```
 
-Update the pg\_hba.conf file to allow local connections.
+Update the `pg\_hba.conf` file to allow local connections.
 
 ```bash
 $ sudo nano /var/lib/pgsql/9.4/data/pg_hba.conf
@@ -847,7 +847,7 @@ $ sudo rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6
 $ sudo yum install supervisor
 ```
 
-Edit the _/etc/supervisord.conf_ file and add a section about ZooKeeper to it.
+Edit the `/etc/supervisord.conf` file and add a section about ZooKeeper to it.
 
 ```bash
 $ sudo nano /etc/supervisord.conf
@@ -904,7 +904,7 @@ $ sudo rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-8
 $ sudo yum install supervisor
 ```
 
-Edit the _/etc/supervisord.conf_ file and add a section about ZooKeeper to it.
+Edit the `/etc/supervisord.conf` file and add a section about ZooKeeper to it.
 
 ```bash
 $ sudo nano /etc/supervisord.conf
@@ -1122,7 +1122,7 @@ In this guide, the pre-built packages are used.
 ### SQL database
 
 You can use MariaDB (used by default) or PostgreSQL.
-Templates for the configuration property file is locatied in the /etc/kaa-node/conf/ directory: maria-dao.properties.template, mariadb-dao.properties.template files for MariaDB database and postgre-dao.properties.template, postgresql-dao.properties.template files for PostgreSQL.
+Templates for the configuration property file is locatied in the `/etc/kaa-node/conf/` directory: `maria-dao.properties.template`, `mariadb-dao.properties.template` files for MariaDB database and `postgre-dao.properties.template`, `postgresql-dao.properties.template` files for PostgreSQL.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#maria_conf">MariaDB</a></li>

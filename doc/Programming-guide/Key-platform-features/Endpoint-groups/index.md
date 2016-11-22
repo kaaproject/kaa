@@ -202,9 +202,9 @@ This default group is created for every application and cannot be edited by user
 
 Every group has a *weight* that represents the group priority.
 Higher weight number corresponds to higher priority.
-The weight of the group *all* is *0*, which is the lowest priority.
+The weight of the group **all** is **0**, which is the lowest priority.
 
-The group *all* also has the following attributes:
+The group **all** also has the following attributes:
 
 * Name
 * Weight
@@ -214,7 +214,7 @@ The group *all* also has the following attributes:
 * [Notification topics]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#notification-topics)
 
 The associated profile filter is automatically set equal to **true** for each profile schema version in the system.
-Therefore, the group *all* contains every endpoint registered in the application.
+Therefore, the group **all** contains every endpoint registered in the application.
 You can create your custom endpoint groups using the [Administration UI](#adding-endpoint-groups) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup).
 
 >**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.

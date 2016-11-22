@@ -126,13 +126,13 @@ Public DNS and IP of your instance are available from your instance description.
 
 If your Kaa Sandbox interface does not start due to an error, you can see the error details in the Sandbox log records.
 
-The log records are stored in the **/var/log/kaa** directory.
+The log records are stored in the `var/log/kaa` directory.
 
 The log writing system is as follows:
 
-1. Kaa Sandbox Frame project writes its logs to the kaa-sandbox.log file.
-2. Kaa Avro UI writes its logs the avro-ui-sandbox.log file.0
-3. Kaa node writes its logs to the kaa-node.log file.
+1. Kaa Sandbox Frame project writes its logs to the `kaa-sandbox.log` file.
+2. Kaa Avro UI writes its logs the `avro-ui-sandbox.log` file.
+3. Kaa node writes its logs to the `kaa-node.log` file.
 This is the most important log file as it contains the most of the information required for an analysis.
 
 Also, one log file generated per each initialization and each shutdown of a Kaa node and Kaa Sandbox.
@@ -153,7 +153,7 @@ To work with your specific Kaa instance, use the Sandbox to download an [SDK lib
 To download and run your first Kaa sample application, we recommend that you open the **Data collection demos** bundle description from your Sandbox and select your [SDK type]({{root_url}}Glossary/#sdk-type).
 
 >**TIP:** For quickest possible setup, choose the Java SDK type.
->For Java SDK, you can download an executable .jar archive containing binary files.
+>For Java SDK, you can download an executable `.jar` archive containing binary files.
 >For other SDK types, you need to download and build from the source files.
 {: .tip}
 

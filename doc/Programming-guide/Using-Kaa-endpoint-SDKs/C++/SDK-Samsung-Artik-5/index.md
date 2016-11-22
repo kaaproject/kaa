@@ -124,7 +124,7 @@ Install the third-party components as follows.
 
 Now, dependencies are built and it is time to create Kaa application.
 Artik board is running regular Linux, so you can refer to [the Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#code) for detailed process of application creation.
-The [`CMAKE_CXX_COMPILER`](https://cmake.org/cmake/help/v3.0/variable/CMAKE_LANG_COMPILER.html) specifies C++ compiler to use and [`CMAKE_FIND_ROOT_PATH`](https://cmake.org/cmake/help/v3.0/variable/CMAKE_FIND_ROOT_PATH.html) tells CMake where to look for required libraries which have been installed in previous step.
+The [CMAKE_CXX_COMPILER](https://cmake.org/cmake/help/v3.0/variable/CMAKE_LANG_COMPILER.html) specifies C++ compiler to use and [CMAKE_FIND_ROOT_PATH](https://cmake.org/cmake/help/v3.0/variable/CMAKE_FIND_ROOT_PATH.html) tells CMake where to look for required libraries which have been installed in previous step.
 
         cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_CXX_COMPILER="${CROSS}"g++ -DCMAKE_FIND_ROOT_PATH="${INSTALLDIR}" ..
         make
