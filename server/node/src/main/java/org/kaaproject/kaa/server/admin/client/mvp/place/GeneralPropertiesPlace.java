@@ -16,30 +16,30 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.Prefix;
+
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class GeneralPropertiesPlace extends AbstractPropertiesPlace {
 
-    public GeneralPropertiesPlace() {
-    }
+  public GeneralPropertiesPlace() {
+  }
 
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof GeneralPropertiesPlace);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.generalSettings();
+  }
+
+  @Prefix(value = "genProps")
+  public static class Tokenizer extends AbstractPropertiesPlace.Tokenizer<GeneralPropertiesPlace> {
     @Override
-    public boolean equals(Object obj) {
-        return obj != null && (obj instanceof GeneralPropertiesPlace);
+    public GeneralPropertiesPlace getPlace(String token) {
+      return new GeneralPropertiesPlace();
     }
-
-    @Prefix(value = "genProps")
-    public static class Tokenizer extends AbstractPropertiesPlace.Tokenizer<GeneralPropertiesPlace> {
-        @Override
-        public GeneralPropertiesPlace getPlace(String token) {
-            return new GeneralPropertiesPlace();
-        }
-    }
-
-    @Override
-    public String getName() {
-        return Utils.constants.generalSettings();
-    }
+  }
 }

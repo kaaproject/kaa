@@ -79,7 +79,7 @@ public:
     }
 
     virtual std::shared_ptr<LogSyncRequest> getLogUploadRequest();
-    virtual void onLogUploadResponse(const LogSyncResponse& response);
+    virtual void onLogUploadResponse(const LogSyncResponse& response, std::size_t deliveryTime);
 
     void setTransport(LoggingTransport* transport) {
         transport_ = transport;

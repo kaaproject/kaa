@@ -16,107 +16,117 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 
-import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.common.dto.StructureRecordDto;
-import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.TabPanel;
 
-public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V> extends TabPanel implements SelectionHandler<Integer> {
+import org.kaaproject.kaa.common.dto.AbstractStructureDto;
+import org.kaaproject.kaa.common.dto.StructureRecordDto;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    protected BaseStructView<T,V> activePanel;
-    protected BaseStructView<T,V> inactivePanel;
+public abstract class AbstractRecordPanel<T extends AbstractStructureDto, V>
+    extends TabPanel
+    implements SelectionHandler<Integer> {
 
-    public AbstractRecordPanel(HasErrorMessage hasErrorMessage) {
-        activePanel = createStructView(hasErrorMessage);
-        inactivePanel = createStructView(hasErrorMessage);
-        activePanel.setBodyLabelText(bodyLabelText());
-        inactivePanel.setBodyLabelText(bodyLabelText());
-        add(activePanel, Utils.constants.active());
-        add(inactivePanel, Utils.constants.draft());
-        addSelectionHandler(this);
-    }
-    
-    protected abstract BaseStructView<T,V> createStructView(HasErrorMessage hasErrorMessage);
+  protected BaseStructView<T, V> activePanel;
+  protected BaseStructView<T, V> inactivePanel;
 
-    public void reset() {
-        activePanel.reset();
-        inactivePanel.reset();
-    }
+  /**
+   * The constructor AbstractRecordPanel.
+   */
+  public AbstractRecordPanel(HasErrorMessage hasErrorMessage) {
+    activePanel = createStructView(hasErrorMessage);
+    inactivePanel = createStructView(hasErrorMessage);
+    activePanel.setBodyLabelText(bodyLabelText());
+    inactivePanel.setBodyLabelText(bodyLabelText());
+    add(activePanel, Utils.constants.active());
+    add(inactivePanel, Utils.constants.draft());
+    addSelectionHandler(this);
+  }
 
-    public void setData(StructureRecordDto<T> record) {
-        if (record.hasActive()) {
-            activePanel.setData(record.getActiveStructureDto());
-        }
-        if (record.hasDraft()) {
-            inactivePanel.setData(record.getInactiveStructureDto());
-        }
-    }
-    
-    public void setActiveBodyValue(T struct) {
-        activePanel.setBodyValue(struct);
-    }
-    
-    public void setInactiveBodyValue(T struct) {
-        inactivePanel.setBodyValue(struct);
-    }
+  protected abstract BaseStructView<T, V> createStructView(HasErrorMessage hasErrorMessage);
 
-    public void openActive() {
-        this.selectTab(0);
-    }
+  public void reset() {
+    activePanel.reset();
+    inactivePanel.reset();
+  }
 
-    public void openDraft() {
-        this.selectTab(1);
+  /**
+   * Set data method.
+   * 
+   * @param record the structure record
+   */
+  public void setData(StructureRecordDto<T> record) {
+    if (record.hasActive()) {
+      activePanel.setData(record.getActiveStructureDto());
     }
-
-    public void fireSchemaSelected() {
-        inactivePanel.fireSchemaSelected();
+    if (record.hasDraft()) {
+      inactivePanel.setData(record.getInactiveStructureDto());
     }
+  }
 
-    public HasValue<String> getDescription() {
-        return inactivePanel.getDescription();
+  public void setActiveBodyValue(T struct) {
+    activePanel.setBodyValue(struct);
+  }
+
+  public void setInactiveBodyValue(T struct) {
+    inactivePanel.setBodyValue(struct);
+  }
+
+  public void openActive() {
+    this.selectTab(0);
+  }
+
+  public void openDraft() {
+    this.selectTab(1);
+  }
+
+  public void fireSchemaSelected() {
+    inactivePanel.fireSchemaSelected();
+  }
+
+  public HasValue<String> getDescription() {
+    return inactivePanel.getDescription();
+  }
+
+  public HasValue<V> getBody() {
+    return inactivePanel.getBody();
+  }
+
+  public HasClickHandlers getSaveButton() {
+    return inactivePanel.getSaveButton();
+  }
+
+  public HasClickHandlers getActivateButton() {
+    return inactivePanel.getActivateButton();
+  }
+
+  public HasClickHandlers getDeactivateButton() {
+    return activePanel.getDeactivateButton();
+  }
+
+  public void setActiveReadOnly() {
+    activePanel.setReadOnly();
+  }
+
+  public void setInactiveReadOnly() {
+    inactivePanel.setReadOnly();
+  }
+
+  @Override
+  public void onSelection(SelectionEvent<Integer> event) {
+    if (event.getSelectedItem() == 0) {
+      activePanel.onShown();
+    } else if (event.getSelectedItem() == 1) {
+      inactivePanel.onShown();
     }
+  }
 
-    public HasValue<V> getBody() {
-        return inactivePanel.getBody();
-    }
+  protected abstract String bodyLabelText();
 
-    public HasClickHandlers getSaveButton() {
-        return inactivePanel.getSaveButton();
-    }
-
-    public HasClickHandlers getActivateButton() {
-        return inactivePanel.getActivateButton();
-    }
-
-    public HasClickHandlers getDeactivateButton() {
-        return activePanel.getDeactivateButton();
-    }
-
-    public void setActiveReadOnly() {
-        activePanel.setReadOnly();
-    }
-
-    public void setInactiveReadOnly() {
-        inactivePanel.setReadOnly();
-    }
-    
-    @Override
-    public void onSelection(SelectionEvent<Integer> event) {
-        if (event.getSelectedItem() == 0) {
-            activePanel.onShown();
-        } else if (event.getSelectedItem() == 1) {
-            inactivePanel.onShown();
-        }
-    }
-
-    protected abstract String bodyLabelText();
-
-    public abstract void setReadOnly();
+  public abstract void setReadOnly();
 
 }

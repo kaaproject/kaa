@@ -23,48 +23,48 @@ import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterExceptio
 
 public class ValidatorTest {
 
-    @Test
-    public void isValidSqlObjectTest() {
-        HasId hasId = new HasId() {
-            private String id;
+  @Test
+  public void isValidSqlObjectTest() {
+    HasId hasId = new HasId() {
+      private String id;
 
-            @Override
-            public String getId() {
-                return id;
-            }
+      @Override
+      public String getId() {
+        return id;
+      }
 
-            @Override
-            public void setId(String id) {
-                this.id = id;
-            }
-        };
-        hasId.setId("not number");
-        boolean valid = Validator.isValidSqlObject(hasId);
-        Assert.assertFalse(valid);
-    }
+      @Override
+      public void setId(String id) {
+        this.id = id;
+      }
+    };
+    hasId.setId("not number");
+    boolean valid = Validator.isValidSqlObject(hasId);
+    Assert.assertFalse(valid);
+  }
 
-    @Test(expected = IncorrectParameterException.class)
-    public void validateSqlIdTest() {
-        Validator.validateSqlId("", "err msg");
-    }
+  @Test(expected = IncorrectParameterException.class)
+  public void validateSqlIdTest() {
+    Validator.validateSqlId("", "err msg");
+  }
 
-    @Test(expected = IncorrectParameterException.class)
-    public void validateStringTest() {
-        Validator.validateString(null, "err msg");
-    }
+  @Test(expected = IncorrectParameterException.class)
+  public void validateStringTest() {
+    Validator.validateString(null, "err msg");
+  }
 
-    @Test(expected = IncorrectParameterException.class)
-    public void validateObjectTest() {
-        Validator.validateObject(null, "err msg");
-    }
+  @Test(expected = IncorrectParameterException.class)
+  public void validateObjectTest() {
+    Validator.validateObject(null, "err msg");
+  }
 
-    @Test(expected = IncorrectParameterException.class)
-    public void validateSqlObjectTest() {
-        Validator.validateSqlObject(null, "err msg");
-    }
+  @Test(expected = IncorrectParameterException.class)
+  public void validateSqlObjectTest() {
+    Validator.validateSqlObject(null, "err msg");
+  }
 
-    @Test(expected = IncorrectParameterException.class)
-    public void validateHashTest() {
-        Validator.validateHash(null, "err msg");
-    }
+  @Test(expected = IncorrectParameterException.class)
+  public void validateHashTest() {
+    Validator.validateHash(null, "err msg");
+  }
 }

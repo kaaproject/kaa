@@ -22,8 +22,8 @@ import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 public class EventSchemaMetadataTest {
-    @Test
-    public void hashCodeEqualsTest() {
-        EqualsVerifier.forClass(EventSchemaMetadata.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(EventSchemaMetadata.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+  }
 }

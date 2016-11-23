@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.common.zk;
 
-import org.junit.Test;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
+
+import org.junit.Test;
 
 public class ConnectionInfoKeyTest {
 
-    @Test
-    public void equalsTest(){
-        EqualsVerifier.forClass(ConnectionInfoKey.class).verify();
-    }
+  @Test
+  public void equalsTest() {
+    EqualsVerifier.forClass(ConnectionInfoKey.class).verify();
+  }
 }

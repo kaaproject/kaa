@@ -16,12 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.loadbalance;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
@@ -34,70 +28,77 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class DefaultLoadBalancingService implements LoadBalancingService {
 
-    private static final long DEFAULT_STATS_UPDATE_FREQUENCY = 10 * 1000;
+  private static final long DEFAULT_STATS_UPDATE_FREQUENCY = 10 * 1000;
 
-    /**
-     * The Constant LOG.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultLoadBalancingService.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultLoadBalancingService.class);
 
-    /**
-     * The delta service.
-     */
-    @Autowired
-    private AkkaService akkaService;
+  /**
+   * The delta service.
+   */
+  @Autowired
+  private AkkaService akkaService;
 
-    @Value("#{properties[load_stats_update_frequency]}")
-    private long loadStatsUpdateFrequency = DEFAULT_STATS_UPDATE_FREQUENCY;
+  @Value("#{properties[load_stats_update_frequency]}")
+  private long loadStatsUpdateFrequency = DEFAULT_STATS_UPDATE_FREQUENCY;
 
-    private ExecutorService pool = Executors.newSingleThreadExecutor();
+  private ExecutorService pool = Executors.newSingleThreadExecutor();
 
-    private OperationsNode operationsNode;
+  private OperationsNode operationsNode;
 
-    @Override
-    public void start(OperationsNode operationsNode) {
-        LOG.info("Starting service using {} update frequency", loadStatsUpdateFrequency);
-        this.operationsNode = operationsNode;
-        akkaService.setStatusListener(new AkkaStatusListener() {
+  @Override
+  public void start(OperationsNode operationsNode) {
+    LOG.info("Starting service using {} update frequency", loadStatsUpdateFrequency);
+    this.operationsNode = operationsNode;
+    akkaService.setStatusListener(new AkkaStatusListener() {
 
-            @Override
-            public void onStatusUpdate(final AkkaServiceStatus status) {
-                pool.submit(new Runnable() {
+      @Override
+      public void onStatusUpdate(final AkkaServiceStatus status) {
+        pool.submit(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        DefaultLoadBalancingService.this.onStatusUpdate(status);
-                    }
-                });
-            }
-        }, loadStatsUpdateFrequency);
+          @Override
+          public void run() {
+            DefaultLoadBalancingService.this.onStatusUpdate(status);
+          }
+        });
+      }
+    }, loadStatsUpdateFrequency);
+  }
+
+  @Override
+  public void stop() {
+    LOG.info("Stopping service");
+    akkaService.removeStatusListener();
+    pool.shutdown();
+    try {
+      pool.awaitTermination(3, TimeUnit.SECONDS);
+    } catch (InterruptedException ex) {
+      LOG.error("Failed to terminate service", ex);
     }
+  }
 
-    @Override
-    public void stop() {
-        LOG.info("Stopping service");
-        akkaService.removeStatusListener();
-        pool.shutdown();
-        try {
-            pool.awaitTermination(3, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            LOG.error("Failed to terminate service", e);
-        }
+  @Override
+  public void onStatusUpdate(AkkaServiceStatus status) {
+    try {
+      OperationsNodeInfo nodeInfo = operationsNode.getNodeInfo();
+      OperatingSystemMXBean operatingSystemMxBean = ManagementFactory.getOperatingSystemMXBean();
+      nodeInfo.setLoadInfo(new LoadInfo(
+          status.getEndpointCount(), operatingSystemMxBean.getSystemLoadAverage()));
+      operationsNode.updateNodeData(nodeInfo);
+      LOG.info("Updated load info: {}", nodeInfo.getLoadInfo());
+    } catch (Exception ex) {
+      LOG.error("Failed to report status update to control service", ex);
     }
-
-    @Override
-    public void onStatusUpdate(AkkaServiceStatus status) {
-        try {
-            OperationsNodeInfo nodeInfo = operationsNode.getNodeInfo();
-            OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-            nodeInfo.setLoadInfo(new LoadInfo(status.getEndpointCount(), operatingSystemMXBean.getSystemLoadAverage()));
-            operationsNode.updateNodeData(nodeInfo);
-            LOG.info("Updated load info: {}", nodeInfo.getLoadInfo());
-        } catch (Exception e) {
-            LOG.error("Failed to report status update to control server", e);
-        }
-    }
+  }
 }

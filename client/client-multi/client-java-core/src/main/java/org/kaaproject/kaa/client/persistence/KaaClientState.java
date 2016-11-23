@@ -16,65 +16,81 @@
 
 package org.kaaproject.kaa.client.persistence;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.Collection;
-import java.util.Map;
-
 import org.kaaproject.kaa.client.event.EndpointAccessToken;
 import org.kaaproject.kaa.client.event.EndpointKeyHash;
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Collection;
+import java.util.Map;
+
 public interface KaaClientState {
 
-    boolean isRegistered();
-    void setRegistered(boolean registered);
+  boolean isRegistered();
 
-    PrivateKey getPrivateKey();
-    PublicKey getPublicKey();
+  void setRegistered(boolean registered);
 
-    EndpointKeyHash getEndpointKeyHash();
+  PrivateKey getPrivateKey();
 
-    void setAppStateSeqNumber(int appStateSeqNumber);
-    int getAppStateSeqNumber();
+  PublicKey getPublicKey();
 
-    void setIfNeedProfileResync(boolean needProfileResync);
-    boolean isNeedProfileResync();
+  EndpointKeyHash getEndpointKeyHash();
 
-    void setProfileHash(EndpointObjectHash hash);
-    EndpointObjectHash getProfileHash();
+  int getAppStateSeqNumber();
 
-    void addTopic(Topic topic);
-    void removeTopic(Long topicId);
-    void addTopicSubscription(Long topicId);
-    void removeTopicSubscription(Long topicId);
-    boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
-    
-    void setTopicListHash(Integer topicListHash);
-    Integer getTopicListHash();
+  void setAppStateSeqNumber(int appStateSeqNumber);
 
-    Map<Long, Integer> getNfSubscriptions();
-    Collection<Topic> getTopics();
+  void setIfNeedProfileResync(boolean needProfileResync);
 
-    void setAttachedEndpointsList(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
-    Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointsList();
+  boolean isNeedProfileResync();
 
-    void setEndpointAccessToken(String token);
-    String getEndpointAccessToken();
+  EndpointObjectHash getProfileHash();
 
-    int getAndIncrementEventSeqNum();
-    int getEventSeqNum();
-    void setEventSeqNum(int newSeqNum);
+  void setProfileHash(EndpointObjectHash hash);
 
-    boolean isAttachedToUser();
-    void setAttachedToUser(boolean isAttached);
+  void addTopic(Topic topic);
 
-    boolean isConfigurationVersionUpdated();
+  void removeTopic(Long topicId);
 
-    void persist();
+  void addTopicSubscription(Long topicId);
 
-    String refreshEndpointAccessToken();
+  void removeTopicSubscription(Long topicId);
 
-    void clean();
+  boolean updateTopicSubscriptionInfo(Long topicId, Integer sequenceNumber);
+
+  Integer getTopicListHash();
+
+  void setTopicListHash(Integer topicListHash);
+
+  Map<Long, Integer> getNfSubscriptions();
+
+  Collection<Topic> getTopics();
+
+  Map<EndpointAccessToken, EndpointKeyHash> getAttachedEndpointsList();
+
+  void setAttachedEndpointsList(Map<EndpointAccessToken, EndpointKeyHash> attachedEndpoints);
+
+  String getEndpointAccessToken();
+
+  void setEndpointAccessToken(String token);
+
+  int getAndIncrementEventSeqNum();
+
+  int getEventSeqNum();
+
+  void setEventSeqNum(int newSeqNum);
+
+  boolean isAttachedToUser();
+
+  void setAttachedToUser(boolean isAttached);
+
+  boolean isConfigurationVersionUpdated();
+
+  void persist();
+
+  String refreshEndpointAccessToken();
+
+  void clean();
 }

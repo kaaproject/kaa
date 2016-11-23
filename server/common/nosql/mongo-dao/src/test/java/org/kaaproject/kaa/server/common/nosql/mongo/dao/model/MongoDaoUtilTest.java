@@ -26,26 +26,26 @@ import java.util.List;
 
 public class MongoDaoUtilTest {
 
-    @Test
-    public void convertToModelListNullArgsListTest() {
-        List<EndpointGroupState> list = MongoDaoUtil.convertDtoToModelList(null);
-        Assert.assertNull(list);
-    }
+  @Test
+  public void convertToModelListNullArgsListTest() {
+    List<EndpointGroupState> list = MongoDaoUtil.convertDtoToModelList(null);
+    Assert.assertNull(list);
+  }
 
-    @Test
-    public void convertToModelListEmptyArgsListTest() {
-        List<EndpointGroupState> list = MongoDaoUtil.convertDtoToModelList(Collections.<EndpointGroupStateDto>emptyList());
-        Assert.assertNull(list);
-    }
+  @Test
+  public void convertToModelListEmptyArgsListTest() {
+    List<EndpointGroupState> list = MongoDaoUtil.convertDtoToModelList(Collections.<EndpointGroupStateDto>emptyList());
+    Assert.assertNull(list);
+  }
 
-    @Test
-    public void convertToModelListNullListTest(){
-        Assert.assertNull(MongoDaoUtil.convertToModelList(null));
-    }
+  @Test
+  public void convertToModelListNullListTest() {
+    Assert.assertNull(MongoDaoUtil.convertToModelList(null));
+  }
 
-    @Test
-    public void convertToModelListEmptyListTest(){
-        Assert.assertNull(MongoDaoUtil.convertToModelList(Collections.<NotificationDto>emptyList()));
-    }
+  @Test
+  public void convertToModelListEmptyListTest() {
+    Assert.assertNull(MongoDaoUtil.convertToModelList(Collections.<NotificationDto>emptyList()));
+  }
 
 }

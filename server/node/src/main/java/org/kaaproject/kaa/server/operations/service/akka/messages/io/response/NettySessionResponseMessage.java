@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.io.response;
 
-import java.util.UUID;
-
 import org.kaaproject.kaa.server.sync.ServerSync;
 import org.kaaproject.kaa.server.transport.channel.ChannelContext;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
@@ -25,73 +23,80 @@ import org.kaaproject.kaa.server.transport.message.ErrorBuilder;
 import org.kaaproject.kaa.server.transport.message.MessageBuilder;
 import org.kaaproject.kaa.server.transport.session.SessionInfo;
 
+import java.util.UUID;
+
 /**
  * The Class NettyDecodedResponseMessage.
  */
 public class NettySessionResponseMessage implements SessionResponse {
 
-    private final SessionInfo sessionInfo;
-    private final ServerSync syncResponse;
-    private final MessageBuilder messageBuilder;
-    private final ErrorBuilder errorBuilder;
-    private final Exception error;
-    
-    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, MessageBuilder messageBuilder,
-            ErrorBuilder errorBuilder) {
-        this(sessionInfo, syncResponse, null, messageBuilder, errorBuilder);
-    }
+  private final SessionInfo sessionInfo;
+  private final ServerSync syncResponse;
+  private final MessageBuilder messageBuilder;
+  private final ErrorBuilder errorBuilder;
+  private final Exception error;
 
-    public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse, Exception error, MessageBuilder messageBuilder,
-            ErrorBuilder errorBuilder) {
-        this.sessionInfo = sessionInfo;
-        this.syncResponse = syncResponse;
-        this.error = error;
-        this.messageBuilder = messageBuilder;
-        this.errorBuilder = errorBuilder;
-    }
+  public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse,
+                                     MessageBuilder messageBuilder,
+                                     ErrorBuilder errorBuilder) {
+    this(sessionInfo, syncResponse, null, messageBuilder, errorBuilder);
+  }
 
-    @Override
-    public Exception getError() {
-        return error;
-    }
+  /**
+   * Instantiates the NettySessionResponseMessage.
+   */
+  public NettySessionResponseMessage(SessionInfo sessionInfo, ServerSync syncResponse,
+                                     Exception error, MessageBuilder messageBuilder,
+                                     ErrorBuilder errorBuilder) {
+    this.sessionInfo = sessionInfo;
+    this.syncResponse = syncResponse;
+    this.error = error;
+    this.messageBuilder = messageBuilder;
+    this.errorBuilder = errorBuilder;
+  }
 
-    @Override
-    public ErrorBuilder getErrorBuilder() {
-        return errorBuilder;
-    }
+  @Override
+  public Exception getError() {
+    return error;
+  }
 
-    @Override
-    public UUID getChannelUuid() {
-        return sessionInfo.getUuid();
-    }
+  @Override
+  public ErrorBuilder getErrorBuilder() {
+    return errorBuilder;
+  }
 
-    @Override
-    public ChannelType getChannelType() {
-        return sessionInfo.getChannelType();
-    }
+  @Override
+  public UUID getChannelUuid() {
+    return sessionInfo.getUuid();
+  }
 
-    @Override
-    public ChannelContext getChannelContext() {
-        return sessionInfo.getCtx();
-    }
+  @Override
+  public ChannelType getChannelType() {
+    return sessionInfo.getChannelType();
+  }
 
-    @Override
-    public ServerSync getResponse() {
-        return syncResponse;
-    }
+  @Override
+  public ChannelContext getChannelContext() {
+    return sessionInfo.getCtx();
+  }
 
-    @Override
-    public MessageBuilder getMessageBuilder() {
-        return messageBuilder;
-    }
+  @Override
+  public ServerSync getResponse() {
+    return syncResponse;
+  }
 
-    @Override
-    public SessionInfo getSessionInfo() {
-        return sessionInfo;
-    }
+  @Override
+  public MessageBuilder getMessageBuilder() {
+    return messageBuilder;
+  }
 
-    @Override
-    public int getPlatformId() {
-        return sessionInfo.getPlatformId();
-    }
+  @Override
+  public SessionInfo getSessionInfo() {
+    return sessionInfo;
+  }
+
+  @Override
+  public int getPlatformId() {
+    return sessionInfo.getPlatformId();
+  }
 }

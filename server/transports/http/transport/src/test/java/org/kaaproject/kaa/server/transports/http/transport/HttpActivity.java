@@ -19,15 +19,16 @@ package org.kaaproject.kaa.server.transports.http.transport;
 
 /**
  * Interface to invoke http client request finish.
- * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  *
+ * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  */
 public interface HttpActivity<T> {
-    /**
-     * HTTP request complete
-     * @param e - Exception if request failed.
-     * @param id - ID of http request
-     * @param response - HTTP response 
-     */
-    public void httpRequestComplete(Exception e, int id, T response);
+  /**
+   * HTTP request complete
+   *
+   * @param e        - Exception if request failed.
+   * @param id       - ID of http request
+   * @param response - HTTP response
+   */
+  public void httpRequestComplete(Exception e, int id, T response);
 }

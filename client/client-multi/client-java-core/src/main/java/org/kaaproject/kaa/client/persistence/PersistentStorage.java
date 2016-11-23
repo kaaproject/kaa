@@ -22,13 +22,13 @@ import java.io.OutputStream;
 
 public interface PersistentStorage {
 
-    InputStream openForRead(String path) throws IOException;
+  InputStream openForRead(String path) throws IOException;
 
-    OutputStream openForWrite(String path) throws IOException;
+  OutputStream openForWrite(String path) throws IOException;
 
-    boolean renameTo(String oldPath, String newPath) throws IOException;
+  boolean renameTo(String oldPath, String newPath) throws IOException;
 
-    boolean exists(String path);
+  boolean exists(String path);
 
-    void delete(String path) throws IOException;
+  void delete(String path) throws IOException;
 }

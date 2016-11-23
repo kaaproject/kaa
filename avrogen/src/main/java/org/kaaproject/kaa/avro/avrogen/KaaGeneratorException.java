@@ -17,11 +17,11 @@
 package org.kaaproject.kaa.avro.avrogen;
 
 public class KaaGeneratorException extends Exception {
-    public KaaGeneratorException() {
-        super();
-    }
+  public KaaGeneratorException() {
+    super();
+  }
 
-    public KaaGeneratorException(String str) {
-        super(str);
-    }
+  public KaaGeneratorException(String str) {
+    super(str);
+  }
 }

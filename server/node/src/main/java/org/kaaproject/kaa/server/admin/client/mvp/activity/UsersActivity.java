@@ -16,8 +16,12 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
+import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.mvp.data.UsersDataProvider;
@@ -25,40 +29,37 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UsersPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseListView;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 
 public class UsersActivity extends AbstractListActivity<UserDto, UsersPlace> {
 
-    public UsersActivity(UsersPlace place, ClientFactory clientFactory) {
-        super(place, UserDto.class, clientFactory);
-    }
+  public UsersActivity(UsersPlace place, ClientFactory clientFactory) {
+    super(place, UserDto.class, clientFactory);
+  }
 
-    @Override
-    protected BaseListView<UserDto> getView() {
-        return clientFactory.getUsersView();
-    }
+  @Override
+  protected BaseListView<UserDto> getView() {
+    return clientFactory.getUsersView();
+  }
 
-    @Override
-    protected AbstractDataProvider<UserDto, String> getDataProvider(
-            AbstractGrid<UserDto, String> dataGrid) {
-        return new UsersDataProvider(dataGrid, listView);
-    }
+  @Override
+  protected AbstractDataProvider<UserDto, String> getDataProvider(
+      AbstractGrid<UserDto, String> dataGrid) {
+    return new UsersDataProvider(dataGrid, listView);
+  }
 
-    @Override
-    protected Place newEntityPlace() {
-        return new UserPlace("");
-    }
+  @Override
+  protected Place newEntityPlace() {
+    return new UserPlace("");
+  }
 
-    @Override
-    protected Place existingEntityPlace(String id) {
-        return new UserPlace(id);
-    }
+  @Override
+  protected Place existingEntityPlace(String id) {
+    return new UserPlace(id);
+  }
 
-    @Override
-    protected void deleteEntity(String id, AsyncCallback<Void> callback) {
-        callback.onSuccess((Void) null);
-    }
+  @Override
+  protected void deleteEntity(String id, AsyncCallback<Void> callback) {
+    KaaAdmin.getDataSource().deleteUser(id, callback);
+  }
 
 }

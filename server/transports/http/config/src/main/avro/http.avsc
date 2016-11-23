@@ -6,7 +6,7 @@
      {"name": "bindInterface", "type": "string"},
      {"name": "bindPort", "type": "int"},
      {"name": "publicInterface", "type": "string"},
-     {"name": "publicPort", "type": "int"},
+     {"name": "publicPorts", "type": "string"},
      {"name": "maxBodySize", "type": "int"}
  ]
 }

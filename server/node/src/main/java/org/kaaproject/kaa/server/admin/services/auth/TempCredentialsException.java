@@ -20,14 +20,14 @@ import org.springframework.security.authentication.AccountStatusException;
 
 public class TempCredentialsException extends AccountStatusException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public TempCredentialsException(String msg) {
-        super(msg);
-    }
+  public TempCredentialsException(String msg) {
+    super(msg);
+  }
 
-    public TempCredentialsException(String msg, Throwable t) {
-        super(msg, t);
-    }
-    
+  public TempCredentialsException(String msg, Throwable throwable) {
+    super(msg, throwable);
+  }
+
 }

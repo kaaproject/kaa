@@ -16,56 +16,56 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.Prefix;
 
-public class LogSchemaPlace extends AbstractSchemaPlace {
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    public LogSchemaPlace(String applicationId, String schemaId) {
-        super(applicationId, schemaId);
+public class LogSchemaPlace extends AbstractSchemaPlaceApplication {
+
+  public LogSchemaPlace(String applicationId, String schemaId) {
+    super(applicationId, schemaId);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Prefix(value = "logSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<LogSchemaPlace> {
-
-        @Override
-        protected LogSchemaPlace getPlaceImpl(String applicationId,
-                String schemaId) {
-            return new LogSchemaPlace(applicationId, schemaId);
-        }
+    if (obj == null) {
+      return false;
     }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    LogSchemaPlace other = (LogSchemaPlace) obj;
+    if (schemaId == null) {
+      if (other.schemaId != null) {
+        return false;
+      }
+    } else if (!schemaId.equals(other.schemaId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.logSchema();
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new LogSchemasPlace(applicationId);
+  }
+
+  @Prefix(value = "logSchema")
+  public static class Tokenizer extends AbstractSchemaPlaceApplication.Tokenizer<LogSchemaPlace> {
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        LogSchemaPlace other = (LogSchemaPlace) obj;
-        if (schemaId == null) {
-            if (other.schemaId != null) {
-                return false;
-            }
-        } else if (!schemaId.equals(other.schemaId)) {
-            return false;
-        }
-        return true;
+    protected LogSchemaPlace getPlaceImpl(String applicationId,
+                                          String schemaId) {
+      return new LogSchemaPlace(applicationId, schemaId);
     }
-
-    @Override
-    public String getName() {
-        return Utils.constants.logSchema();
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new LogSchemasPlace(applicationId);
-    }
+  }
 
 }

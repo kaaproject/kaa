@@ -41,6 +41,8 @@
 
 namespace kaa {
 
+const std::size_t mockLogDeliveryTime = 1;
+
 static KaaClientProperties tmp_properties;
 static DefaultLogger tmp_logger(tmp_properties.getClientId());
 static IKaaClientStateStoragePtr tmp_state(new MockKaaClientStateStorage);
@@ -261,7 +263,7 @@ BOOST_AUTO_TEST_CASE(SuccessDeliveryTest)
     deliveryStatus.result = SyncResponseResultType::SUCCESS;
     response.deliveryStatuses.set_array({ deliveryStatus });
 
-    logCollector.onLogUploadResponse(response);
+    logCollector.onLogUploadResponse(response, mockLogDeliveryTime);
     testSleep(1);
 
     BOOST_CHECK_EQUAL(uploadStrategy->onIsUploadNeeded_, 1);
@@ -314,7 +316,7 @@ BOOST_AUTO_TEST_CASE(FailedDeliveryTest)
     deliveryStatus.errorCode.set_LogDeliveryErrorCode(LogDeliveryErrorCode::APPENDER_INTERNAL_ERROR);
     response.deliveryStatuses.set_array({ deliveryStatus });
 
-    logCollector.onLogUploadResponse(response);
+    logCollector.onLogUploadResponse(response, mockLogDeliveryTime);
     testSleep(1);
 
     BOOST_CHECK_EQUAL(logStorage->onRollbackBucket_, 1);
@@ -438,7 +440,7 @@ BOOST_AUTO_TEST_CASE(RetryUploadTest)
 
     BOOST_CHECK_EQUAL(transport.onSync_, 0);
 
-    logCollector.onLogUploadResponse(response);
+    logCollector.onLogUploadResponse(response, mockLogDeliveryTime);
     testSleep(1);
 
     BOOST_CHECK_EQUAL(logStorage->onRollbackBucket_, 1);
@@ -517,7 +519,7 @@ BOOST_AUTO_TEST_CASE(MaxLogUploadLimitWithSyncAll)
                 }
 
                 response.deliveryStatuses.set_array(statuses);
-                logCollector.onLogUploadResponse(response);
+                logCollector.onLogUploadResponse(response, mockLogDeliveryTime);
             };
 
     testMaxParallelUpload(0);
@@ -632,7 +634,7 @@ BOOST_AUTO_TEST_CASE(RecordFuturesResult)
     status.requestId = bucketId;
     status.result = SyncResponseResultType::SUCCESS;
     response.deliveryStatuses.set_array({ status });
-    logCollector.onLogUploadResponse(response);
+    logCollector.onLogUploadResponse(response, mockLogDeliveryTime);
 
     for (auto &f : recordFutures) {
         try {

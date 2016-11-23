@@ -22,32 +22,32 @@ import org.kaaproject.kaa.server.admin.client.mvp.view.BasePropertiesView;
 import org.kaaproject.kaa.server.admin.shared.properties.PropertiesDto;
 
 public abstract class AbstractPropertiesActivity<P extends AbstractPropertiesPlace>
-        extends
-        AbstractDetailsActivity<PropertiesDto, BasePropertiesView, P> {
+    extends
+    AbstractDetailsActivity<PropertiesDto, BasePropertiesView, P> {
 
-    public AbstractPropertiesActivity(P place,
-            ClientFactory clientFactory) {
-        super(place, clientFactory);
-    }
+  public AbstractPropertiesActivity(P place,
+                                    ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
 
-    @Override
-    protected String getEntityId(P place) {
-        return "";
-    }
+  @Override
+  protected String getEntityId(P place) {
+    return "";
+  }
 
-    @Override
-    protected PropertiesDto newEntity() {
-        return null;
-    }
+  @Override
+  protected PropertiesDto newEntity() {
+    return null;
+  }
 
-    @Override
-    protected void onEntityRetrieved() {
-        detailsView.getConfiguration().setValue(entity.getConfiguration());
-    }
+  @Override
+  protected void onEntityRetrieved() {
+    detailsView.getConfiguration().setValue(entity.getConfiguration());
+  }
 
-    @Override
-    protected void onSave() {
-        entity.setConfiguration(detailsView.getConfiguration().getValue());
-    }
+  @Override
+  protected void onSave() {
+    entity.setConfiguration(detailsView.getConfiguration().getValue());
+  }
 
 }

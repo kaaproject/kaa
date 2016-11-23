@@ -20,60 +20,65 @@ import java.util.List;
 
 public class EndpointProfilesPageDto extends AbstractEndpointProfilesDto {
 
-    private static final long serialVersionUID = 6368165337840879484L;
+  private static final long serialVersionUID = 6368165337840879484L;
 
-    private List<EndpointProfileDto> endpointProfiles;
+  private List<EndpointProfileDto> endpointProfiles;
 
-    public EndpointProfilesPageDto() {
+  public EndpointProfilesPageDto() {
+  }
+
+  public EndpointProfilesPageDto(List<EndpointProfileDto> endpointProfiles) {
+    this.endpointProfiles = endpointProfiles;
+  }
+
+  public List<EndpointProfileDto> getEndpointProfiles() {
+    return endpointProfiles;
+  }
+
+  public void setEndpointProfiles(List<EndpointProfileDto> endpointProfiles) {
+    this.endpointProfiles = endpointProfiles;
+  }
+
+  /**
+   * Checks whether endpoint profiles exists.
+   *
+   * @return true if endpoint profiles exists otherwise false
+   */
+  public boolean hasEndpointProfiles() {
+    boolean result = false;
+    if (endpointProfiles != null) {
+      result = !endpointProfiles.isEmpty();
     }
+    return result;
+  }
 
-    public EndpointProfilesPageDto(List<EndpointProfileDto> endpointProfiles) {
-       this.endpointProfiles = endpointProfiles;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((endpointProfiles == null) ? 0 : endpointProfiles.hashCode());
+    return result;
+  }
 
-    public List<EndpointProfileDto> getEndpointProfiles() {
-        return endpointProfiles;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public void setEndpointProfiles(List<EndpointProfileDto> endpointProfiles) {
-        this.endpointProfiles = endpointProfiles;
+    if (!super.equals(obj)) {
+      return false;
     }
-
-    public boolean hasEndpointProfiles() {
-        boolean result = false;
-        if (endpointProfiles != null) {
-            result = !endpointProfiles.isEmpty();
-        }
-        return result;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((endpointProfiles == null) ? 0 : endpointProfiles.hashCode());
-        return result;
+    EndpointProfilesPageDto other = (EndpointProfilesPageDto) obj;
+    if (endpointProfiles == null) {
+      if (other.endpointProfiles != null) {
+        return false;
+      }
+    } else if (!endpointProfiles.equals(other.endpointProfiles)) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointProfilesPageDto other = (EndpointProfilesPageDto) obj;
-        if (endpointProfiles == null) {
-            if (other.endpointProfiles != null) {
-                return false;
-            }
-        } else if (!endpointProfiles.equals(other.endpointProfiles)) {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 }

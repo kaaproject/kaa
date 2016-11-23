@@ -17,6 +17,7 @@
 #include "kaa/logging/Log.hpp"
 #include "kaa/logging/LoggingUtils.hpp"
 #include "kaa/channel/SyncDataProcessor.hpp"
+#include <kaa/utils/TimeUtils.hpp>
 
 namespace kaa {
 
@@ -63,7 +64,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
     auto metaRequest = metaDataTransport_->createSyncRequestMetaData();
     request.syncRequestMetaData.set_SyncRequestMetaData(*metaRequest);
     KAA_LOG_DEBUG(boost::format("Compiled SyncRequestMetaData: %1%")
-                        % LoggingUtils::MetaDataSyncRequestToString(request.syncRequestMetaData));
+                        % LoggingUtils::toString(request.syncRequestMetaData));
 
     for (const auto& t : transportTypes) {
         bool isDownDirection = (t.second == ChannelDirection::DOWN);
@@ -82,7 +83,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                     KAA_LOG_WARN("Bootstrap transport was not specified.");
                 }
                 KAA_LOG_DEBUG(boost::format("Compiled BootstrapSyncRequest: %1%")
-                    % LoggingUtils::BootstrapSyncRequestToString(request.bootstrapSyncRequest));
+                    % LoggingUtils::toString(request.bootstrapSyncRequest));
             break;
             case TransportType::PROFILE :
                 if (isDownDirection) {
@@ -98,7 +99,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                     KAA_LOG_WARN("Profile transport was not specified.");
                 }
                 KAA_LOG_DEBUG(boost::format("Compiled ProfileSyncRequest: %1%")
-                    % LoggingUtils::ProfileSyncRequestToString(request.profileSyncRequest));
+                    % LoggingUtils::toString(request.profileSyncRequest));
                 break;
             case TransportType::CONFIGURATION:
 #ifdef KAA_USE_CONFIGURATION
@@ -114,7 +115,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 }
 #endif
                 KAA_LOG_DEBUG(boost::format("Compiled ConfigurationSyncRequest: %1%")
-                   % LoggingUtils::ConfigurationSyncRequestToString(request.configurationSyncRequest));
+                   % LoggingUtils::toString(request.configurationSyncRequest));
                 break;
             case TransportType::NOTIFICATION:
 #ifdef KAA_USE_NOTIFICATIONS
@@ -134,7 +135,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 }
 #endif
                 KAA_LOG_DEBUG(boost::format("Compiled NotificationSyncRequest: %1%")
-                   % LoggingUtils::NotificationSyncRequestToString(request.notificationSyncRequest));
+                   % LoggingUtils::toString(request.notificationSyncRequest));
                 break;
             case TransportType::USER:
 #ifdef KAA_USE_EVENTS
@@ -156,7 +157,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 }
 #endif
                 KAA_LOG_DEBUG(boost::format("Compiled UserSyncRequest: %1%")
-                    % LoggingUtils::UserSyncRequestToString(request.userSyncRequest));
+                    % LoggingUtils::toString(request.userSyncRequest));
                 break;
             case TransportType::EVENT:
 #ifdef KAA_USE_EVENTS
@@ -177,7 +178,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 }
 #endif
                 KAA_LOG_DEBUG(boost::format("Compiled EventSyncRequest: %1%")
-                    % LoggingUtils::EventSyncRequestToString(request.eventSyncRequest));
+                    % LoggingUtils::toString(request.eventSyncRequest));
                 break;
             case TransportType::LOGGING:
 #ifdef KAA_USE_LOGGING
@@ -198,7 +199,7 @@ std::vector<std::uint8_t> SyncDataProcessor::compileRequest(const std::map<Trans
                 }
 #endif
                 KAA_LOG_DEBUG(boost::format("Compiled LogSyncRequest: %1%")
-                    % LoggingUtils::LogSyncRequestToString(request.logSyncRequest));
+                    % LoggingUtils::toString(request.logSyncRequest));
                 break;
             default:
                 break;
@@ -217,6 +218,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         return DemultiplexerReturnCode::FAILURE;
     }
 
+    auto deliveryTime = TimeUtils::getCurrentTimeInMs();
     DemultiplexerReturnCode returnCode = DemultiplexerReturnCode::SUCCESS;
 
     try {
@@ -224,10 +226,10 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         responseConverter_.fromByteArray(response.data(), response.size(), syncResponse);
 
         KAA_LOG_INFO(boost::format("Got SyncResponse: requestId: %1%, result: %2%")
-            % syncResponse.requestId % LoggingUtils::SyncResponseResultTypeToString(syncResponse.status));
+            % syncResponse.requestId % LoggingUtils::toString(syncResponse.status));
 
         KAA_LOG_DEBUG(boost::format("Got BootstrapSyncResponse: %1%")
-            % LoggingUtils::BootstrapSyncResponseToString(syncResponse.bootstrapSyncResponse));
+            % LoggingUtils::toString(syncResponse.bootstrapSyncResponse));
 
         if (!syncResponse.bootstrapSyncResponse.is_null()) {
             if (bootstrapTransport_) {
@@ -238,7 +240,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         }
 
         KAA_LOG_DEBUG(boost::format("Got ProfileSyncResponse: %1%")
-            % LoggingUtils::ProfileSyncResponseToString(syncResponse.profileSyncResponse));
+            % LoggingUtils::toString(syncResponse.profileSyncResponse));
 
         if (!syncResponse.profileSyncResponse.is_null()) {
             if (profileTransport_) {
@@ -249,7 +251,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
         }
 
         KAA_LOG_DEBUG(boost::format("Got ConfigurationSyncResponse: %1%")
-                % LoggingUtils::ConfigurationSyncResponseToString(syncResponse.configurationSyncResponse));
+                % LoggingUtils::toString(syncResponse.configurationSyncResponse));
 
 #ifdef KAA_USE_CONFIGURATION
         if (!syncResponse.configurationSyncResponse.is_null()) {
@@ -262,7 +264,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
 #endif
 
         KAA_LOG_DEBUG(boost::format("Got EventSyncResponse: %1%")
-                % LoggingUtils::EventSyncResponseToString(syncResponse.eventSyncResponse));
+                % LoggingUtils::toString(syncResponse.eventSyncResponse));
 
 #ifdef KAA_USE_EVENTS
         if (eventTransport_) {
@@ -276,7 +278,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
 #endif
 
         KAA_LOG_DEBUG(boost::format("Got NotificationSyncResponse: %1%")
-                % LoggingUtils::NotificationSyncResponseToString(syncResponse.notificationSyncResponse));
+                % LoggingUtils::toString(syncResponse.notificationSyncResponse));
 
 #ifdef KAA_USE_NOTIFICATIONS
         if (!syncResponse.notificationSyncResponse.is_null()) {
@@ -289,7 +291,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
 #endif
 
         KAA_LOG_DEBUG(boost::format("Got UserSyncResponse: %1%")
-                % LoggingUtils::UserSyncResponseToString(syncResponse.userSyncResponse));
+                % LoggingUtils::toString(syncResponse.userSyncResponse));
 
 #ifdef KAA_USE_EVENTS
         if (!syncResponse.userSyncResponse.is_null()) {
@@ -302,12 +304,12 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
 #endif
 
         KAA_LOG_DEBUG(boost::format("Got LogSyncResponse: %1%")
-                % LoggingUtils::LogSyncResponseToString(syncResponse.logSyncResponse));
+                % LoggingUtils::toString(syncResponse.logSyncResponse));
 
 #ifdef KAA_USE_LOGGING
         if (!syncResponse.logSyncResponse.is_null()) {
             if (loggingTransport_) {
-                loggingTransport_->onLogSyncResponse(syncResponse.logSyncResponse.get_LogSyncResponse());
+                loggingTransport_->onLogSyncResponse(syncResponse.logSyncResponse.get_LogSyncResponse(), deliveryTime);
             } else {
                 KAA_LOG_ERROR("Got log upload sync response, but logging transport was not set!");
             }
@@ -315,7 +317,7 @@ DemultiplexerReturnCode SyncDataProcessor::processResponse(const std::vector<std
 #endif
 
         KAA_LOG_DEBUG(boost::format("Got RedirectSyncResponse: %1%")
-                % LoggingUtils::RedirectSyncResponseToString(syncResponse.redirectSyncResponse));
+                % LoggingUtils::toString(syncResponse.redirectSyncResponse));
 
         if (!syncResponse.redirectSyncResponse.is_null()) {
             if (redirectionTransport_) {

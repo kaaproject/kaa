@@ -204,7 +204,7 @@
         }
         
         if ([newServer serverType] == SERVER_OPERATIONS) {
-            DDLogInfo(@"%@ Adding new operations server: %@", TAG, newServer);
+            DDLogInfo(@"%@ Adding new operations service: %@", TAG, newServer);
             self.lastServers[newServer.transportId] = newServer;
         }
         
@@ -234,7 +234,7 @@
         if ([server serverType] == SERVER_BOOTSTRAP) {
             id<TransportConnectionInfo> nextConnectionInfo = [self getNextBootstrapServerForServer:server];
             if (nextConnectionInfo) {
-                DDLogVerbose(@"%@ Using next bootstrap server", TAG);
+                DDLogVerbose(@"%@ Using next bootstrap service", TAG);
                 FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:status];
                 switch (decision.failoverAction) {
                     case FailoverActionNoop:
@@ -243,7 +243,7 @@
                     case FailoverActionRetry:
                     {
                         int64_t period = [decision retryPeriod];
-                        DDLogWarn(@"%@ Reconnect to current bootstrap server will be made in %lli ms", TAG, period);
+                        DDLogWarn(@"%@ Reconnect to current bootstrap service will be made in %lli ms", TAG, period);
                         __weak typeof(self)weakSelf = self;
                         dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(period * NSEC_PER_MSEC));
                         dispatch_after(delay, [self.executorContext getSheduledExecutor], ^{
@@ -254,7 +254,7 @@
                     case FailoverActionUseNextBootstrap:
                     {
                         int64_t period = [decision retryPeriod];
-                        DDLogWarn(@"%@ Connection to next bootstrap server will be made in %lli ms", TAG, period);
+                        DDLogWarn(@"%@ Connection to next bootstrap service will be made in %lli ms", TAG, period);
                         __weak typeof(self)weakSelf = self;
                         dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(period * NSEC_PER_MSEC));
                         dispatch_after(delay, [self.executorContext getSheduledExecutor], ^{
@@ -270,7 +270,7 @@
                         break;
                 }
             } else {
-                DDLogVerbose(@"%@ Can't find next bootstrap server", TAG);
+                DDLogVerbose(@"%@ Can't find next bootstrap service", TAG);
                 FailoverDecision *decision = [self.failoverManager decisionOnFailoverStatus:FailoverStatusBootstrapServersNotAvailable];
                 switch (decision.failoverAction) {
                     case FailoverActionNoop:
@@ -279,7 +279,7 @@
                     case FailoverActionRetry:
                     {
                         int64_t period = [decision retryPeriod];
-                        DDLogWarn(@"%@ Reconnect to first bootstrap server will be made in %lli ms", TAG, period);
+                        DDLogWarn(@"%@ Reconnect to first bootstrap service will be made in %lli ms", TAG, period);
                         __weak typeof(self)weakSelf = self;
                         dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(period * NSEC_PER_MSEC));
                         dispatch_after(delay, [self.executorContext getSheduledExecutor], ^{
@@ -500,7 +500,7 @@
         }
     } else if (self.lastServers.count == 0){
         if ([channel getServerType] == SERVER_BOOTSTRAP) {
-            DDLogWarn(@"%@ Failed to find bootstrap server for channel %@ type %@",
+            DDLogWarn(@"%@ Failed to find bootstrap service for channel %@ type %@",
                       TAG, [channel getId], [channel getTransportProtocolId]);
         } else {
             DDLogInfo(@"%@ Failed to find operation server for channel %@ type %@",

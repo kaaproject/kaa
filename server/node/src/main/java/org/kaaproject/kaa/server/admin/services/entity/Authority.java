@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.services.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -23,51 +25,49 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.springframework.security.core.GrantedAuthority;
-
 @Entity
 @Table(name = "admin_authority")
 public class Authority implements GrantedAuthority {
 
-    private static final long serialVersionUID = -4410337339526155136L;
+  private static final long serialVersionUID = -4410337339526155136L;
 
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id
+  @GeneratedValue
+  private Long id;
 
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private User user;
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  @ManyToOne(optional = false)
+  private User user;
 
-    private String authority;
+  private String authority;
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public User getUser() {
-        return user;
-    }
+  public User getUser() {
+    return user;
+  }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+  public void setUser(User user) {
+    this.user = user;
+  }
 
-    public String getAuthority() {
-        return authority;
-    }
+  public String getAuthority() {
+    return authority;
+  }
 
-    public void setAuthority(String authority) {
-        this.authority = authority;
-    }
+  public void setAuthority(String authority) {
+    this.authority = authority;
+  }
 
-    @Override
-    public String toString() {
-        return "Authority [id=" + id + ", authority=" + authority + "]";
-    }
+  @Override
+  public String toString() {
+    return "Authority [id=" + id + ", authority=" + authority + "]";
+  }
 
 }

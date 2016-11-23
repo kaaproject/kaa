@@ -25,114 +25,116 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class ServerProfileServiceImplTest extends AbstractTest {
 
-    @After
-    public void afterTest() {
-        clearDBData();
-    }
+  @After
+  public void afterTest() {
+    clearDBData();
+  }
 
-    @Test
-    public void testSaveServerProfileSchema() {
-        ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
-        Assert.assertNotNull(schemaDto.getId());
-    }
+  @Test
+  public void testSaveServerProfileSchema() {
+    ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
+    Assert.assertNotNull(schemaDto.getId());
+  }
 
-    @Test
-    public void testFindLatestServerProfileSchema() {
-        ApplicationDto app = generateApplicationDto();
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        ServerProfileSchemaDto expected = generateServerProfileSchema(app.getId(), app.getTenantId());
-        ServerProfileSchemaDto last = serverProfileService.findLatestServerProfileSchema(app.getId());
-        Assert.assertEquals(expected, last);
-    }
+  @Test
+  public void testFindLatestServerProfileSchema() {
+    ApplicationDto app = generateApplicationDto();
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    ServerProfileSchemaDto expected = generateServerProfileSchema(app.getId(), app.getTenantId());
+    ServerProfileSchemaDto last = serverProfileService.findLatestServerProfileSchema(app.getId());
+    Assert.assertEquals(expected, last);
+  }
 
-    @Test
-    public void testFindServerProfileSchema() {
-        ApplicationDto app = generateApplicationDto();
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        ServerProfileSchemaDto expected = generateServerProfileSchema(app.getId(), app.getTenantId());
-        ServerProfileSchemaDto found = serverProfileService.findServerProfileSchema(expected.getId());
-        Assert.assertEquals(expected, found);
-    }
+  @Test
+  public void testFindServerProfileSchema() {
+    ApplicationDto app = generateApplicationDto();
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    ServerProfileSchemaDto expected = generateServerProfileSchema(app.getId(), app.getTenantId());
+    ServerProfileSchemaDto found = serverProfileService.findServerProfileSchema(expected.getId());
+    Assert.assertEquals(expected, found);
+  }
 
-    @Test
-    public void testFindServerProfileSchemasByAppId() {
-        ApplicationDto app = generateApplicationDto();
-        
-        List<ServerProfileSchemaDto> found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
-        Assert.assertEquals(1, found.size());
-        
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
+  @Test
+  public void testFindServerProfileSchemasByAppId() {
+    ApplicationDto app = generateApplicationDto();
 
-        List<ServerProfileSchemaDto> expected = new ArrayList<>();
-        expected.add(found.get(0));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
-        expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
+    List<ServerProfileSchemaDto> found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
+    Assert.assertEquals(1, found.size());
 
-        found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
-        Assert.assertEquals(expected, found);
-    }
+    generateServerProfileSchema(null, null);
+    generateServerProfileSchema(null, null);
+    generateServerProfileSchema(null, null);
+    generateServerProfileSchema(null, null);
 
-    @Test
-    public void testRemoveServerProfileSchemaById() {
-        ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
-        serverProfileService.removeServerProfileSchemaById(schemaDto.getId());
-        Assert.assertNull(serverProfileService.findServerProfileSchema(schemaDto.getId()));
-    }
+    List<ServerProfileSchemaDto> expected = new ArrayList<>();
+    expected.add(found.get(0));
+    expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
+    expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
+    expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
+    expected.add(generateServerProfileSchema(app.getId(), app.getTenantId()));
 
-    @Test
-    public void testRemoveServerProfileSchemaByAppId() {
-        ApplicationDto app = generateApplicationDto();
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
-        generateServerProfileSchema(null, null);
+    found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
+    Assert.assertEquals(expected, found);
+  }
 
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        generateServerProfileSchema(app.getId(), app.getTenantId());
-        serverProfileService.removeServerProfileSchemaByAppId(app.getId());
-        List<ServerProfileSchemaDto> found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
-        Assert.assertTrue(found.isEmpty());
-    }
+  @Test
+  public void testRemoveServerProfileSchemaById() {
+    ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
+    serverProfileService.removeServerProfileSchemaById(schemaDto.getId());
+    Assert.assertNull(serverProfileService.findServerProfileSchema(schemaDto.getId()));
+  }
 
-    @Test
-    public void testSaveServerProfile() {
-        ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
-        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
-        EndpointProfileDto updated = serverProfileService.saveServerProfile(ep.getEndpointKeyHash(), schemaDto.getVersion(), TEST_PROFILE_BODY);
-        Assert.assertArrayEquals(ep.getEndpointKeyHash(), updated.getEndpointKeyHash());
-        Assert.assertNotEquals(ep.getServerProfileBody(), updated.getServerProfileBody());
-        Assert.assertEquals(ep.getServerProfileVersion(), updated.getServerProfileVersion());
-    }
+  @Test
+  public void testRemoveServerProfileSchemaByAppId() {
+    ApplicationDto app = generateApplicationDto();
+    generateServerProfileSchema(null, null);
+    generateServerProfileSchema(null, null);
+    generateServerProfileSchema(null, null);
+    generateServerProfileSchema(null, null);
 
-    @Test
-    @Ignore("generateEndpointProfileDtoWithSchemaVersion() updates profile," +
-            " but it shouldn't have existed by the moment, so save must have have been invoked")
-    public void testFindServerProfileSchemaByKeyHash() {
-        ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
-        EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
-        EndpointProfileDto found = endpointService.findEndpointProfileByKeyHash(ep.getEndpointKeyHash());
-        ServerProfileSchemaDto foundSchema = serverProfileService.findServerProfileSchemaByAppIdAndVersion(found.getApplicationId(), found.getServerProfileVersion());
-        Assert.assertEquals(schemaDto, foundSchema);
-    }
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    generateServerProfileSchema(app.getId(), app.getTenantId());
+    serverProfileService.removeServerProfileSchemaByAppId(app.getId());
+    List<ServerProfileSchemaDto> found = serverProfileService.findServerProfileSchemasByAppId(app.getId());
+    Assert.assertTrue(found.isEmpty());
+  }
+
+  @Test
+  public void testSaveServerProfile() throws IOException {
+    ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
+    EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
+    EndpointProfileDto updated = serverProfileService.saveServerProfile(ep.getEndpointKeyHash(), schemaDto.getVersion(),
+        readSchemaFileAsString(TEST_PROFILE_BODY_PATH));
+    Assert.assertArrayEquals(ep.getEndpointKeyHash(), updated.getEndpointKeyHash());
+    Assert.assertNotEquals(ep.getServerProfileBody(), updated.getServerProfileBody());
+    Assert.assertEquals(ep.getServerProfileVersion(), updated.getServerProfileVersion());
+  }
+
+  @Test
+  @Ignore("generateEndpointProfileDtoWithSchemaVersion() updates profile," +
+      " but it shouldn't have existed by the moment, so save must have have been invoked")
+  public void testFindServerProfileSchemaByKeyHash() {
+    ServerProfileSchemaDto schemaDto = generateServerProfileSchema(null, null);
+    EndpointProfileDto ep = generateEndpointProfileDtoWithSchemaVersion(schemaDto.getApplicationId(), schemaDto.getVersion(), null);
+    EndpointProfileDto found = endpointService.findEndpointProfileByKeyHash(ep.getEndpointKeyHash());
+    ServerProfileSchemaDto foundSchema = serverProfileService.findServerProfileSchemaByAppIdAndVersion(found.getApplicationId(), found.getServerProfileVersion());
+    Assert.assertEquals(schemaDto, foundSchema);
+  }
 
 //    @Test
 //    public void testFindVacantSchemasByGroupId() {

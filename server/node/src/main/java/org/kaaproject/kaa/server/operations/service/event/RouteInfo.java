@@ -16,75 +16,81 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
-import java.util.List;
-
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
 
-public final class RouteInfo extends ClusterRouteInfo{
+import java.util.List;
 
-    private final List<EventClassFamilyVersion> ecfVersions;
+public final class RouteInfo extends ClusterRouteInfo {
 
-    public RouteInfo(String tenantId, String userId, RouteTableAddress address, List<EventClassFamilyVersion> ecfVersions) {
-        this(tenantId, userId, address, ecfVersions, RouteOperation.ADD);
+  private final List<EventClassFamilyVersion> ecfVersions;
+
+  public RouteInfo(String tenantId,
+                   String userId,
+                   RouteTableAddress address,
+                   List<EventClassFamilyVersion> ecfVersions) {
+    this(tenantId, userId, address, ecfVersions, RouteOperation.ADD);
+  }
+
+  public RouteInfo(String tenantId, String userId, RouteTableAddress address,
+                   List<EventClassFamilyVersion> ecfVersions, RouteOperation routeOperation) {
+    super(tenantId, userId, address, routeOperation);
+    this.ecfVersions = ecfVersions;
+  }
+
+  public static RouteInfo deleteRouteFromAddress(String tenantId,
+                                                 String userId,
+                                                 RouteTableAddress address) {
+    return new RouteInfo(tenantId, userId, address, null, RouteOperation.DELETE);
+  }
+
+  public List<EventClassFamilyVersion> getEcfVersions() {
+    return ecfVersions;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((ecfVersions == null) ? 0 : ecfVersions.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public RouteInfo(String tenantId, String userId, RouteTableAddress address, List<EventClassFamilyVersion> ecfVersions, RouteOperation routeOperation) {
-        super(tenantId, userId, address, routeOperation);
-        this.ecfVersions = ecfVersions;
+    if (!super.equals(obj)) {
+      return false;
     }
-
-    public static RouteInfo deleteRouteFromAddress(String tenantId, String userId, RouteTableAddress address){
-        return new RouteInfo(tenantId, userId, address, null, RouteOperation.DELETE);
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public List<EventClassFamilyVersion> getEcfVersions() {
-        return ecfVersions;
+    RouteInfo other = (RouteInfo) obj;
+    if (ecfVersions == null) {
+      if (other.ecfVersions != null) {
+        return false;
+      }
+    } else if (!ecfVersions.equals(other.ecfVersions)) {
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((ecfVersions == null) ? 0 : ecfVersions.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        RouteInfo other = (RouteInfo) obj;
-        if (ecfVersions == null) {
-            if (other.ecfVersions != null) {
-                return false;
-            }
-        } else if (!ecfVersions.equals(other.ecfVersions)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RouteInfo [ecfVersions=");
-        builder.append(ecfVersions);
-        builder.append(", tenantId=");
-        builder.append(tenantId);
-        builder.append(", userId=");
-        builder.append(userId);
-        builder.append(", address=");
-        builder.append(address);
-        builder.append(", routeOperation=");
-        builder.append(routeOperation);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("RouteInfo [ecfVersions=");
+    builder.append(ecfVersions);
+    builder.append(", tenantId=");
+    builder.append(tenantId);
+    builder.append(", userId=");
+    builder.append(userId);
+    builder.append(", address=");
+    builder.append(address);
+    builder.append(", routeOperation=");
+    builder.append(routeOperation);
+    builder.append("]");
+    return builder.toString();
+  }
 }

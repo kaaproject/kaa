@@ -16,89 +16,95 @@
 
 package org.kaaproject.kaa.server.admin.shared.schema;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaExportMethod;
 
+import java.io.Serializable;
+
 public class CtlSchemaExportKey implements Serializable {
-    
-    private static final long serialVersionUID = -1732926678025232971L;
-    
-    private String ctlSchemaId;
-    private CTLSchemaExportMethod exportMethod;
-    
-    public CtlSchemaExportKey() {
-        super();
-    }
-    
-    public CtlSchemaExportKey(String ctlSchemaId,
-            CTLSchemaExportMethod exportMethod) {
-        super();
-        this.ctlSchemaId = ctlSchemaId;
-        this.exportMethod = exportMethod;
-    }
 
-    public String getCtlSchemaId() {
-        return ctlSchemaId;
-    }
+  private static final long serialVersionUID = -1732926678025232971L;
 
-    public void setCtlSchemaId(String ctlSchemaId) {
-        this.ctlSchemaId = ctlSchemaId;
-    }
+  private String ctlSchemaId;
+  private CTLSchemaExportMethod exportMethod;
 
-    public CTLSchemaExportMethod getExportMethod() {
-        return exportMethod;
-    }
+  public CtlSchemaExportKey() {
+    super();
+  }
 
-    public void setExportMethod(CTLSchemaExportMethod exportMethod) {
-        this.exportMethod = exportMethod;
-    }
+  /**
+   * Create new instance of <code>CtlSchemaExportKey</code>.
+   *
+   * @param ctlSchemaId the CTL schema id
+   * @param exportMethod the export method
+   */
+  public CtlSchemaExportKey(String ctlSchemaId,
+                            CTLSchemaExportMethod exportMethod) {
+    super();
+    this.ctlSchemaId = ctlSchemaId;
+    this.exportMethod = exportMethod;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((ctlSchemaId == null) ? 0 : ctlSchemaId.hashCode());
-        result = prime * result
-                + ((exportMethod == null) ? 0 : exportMethod.hashCode());
-        return result;
-    }
+  public String getCtlSchemaId() {
+    return ctlSchemaId;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        CtlSchemaExportKey other = (CtlSchemaExportKey) obj;
-        if (ctlSchemaId == null) {
-            if (other.ctlSchemaId != null) {
-                return false;
-            }
-        } else if (!ctlSchemaId.equals(other.ctlSchemaId)) {
-            return false;
-        }
-        if (exportMethod != other.exportMethod) {
-            return false;
-        }
-        return true;
-    }
+  public void setCtlSchemaId(String ctlSchemaId) {
+    this.ctlSchemaId = ctlSchemaId;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("CtlSchemaExportKey [ctlSchemaId=");
-        builder.append(ctlSchemaId);
-        builder.append(", exportMethod=");
-        builder.append(exportMethod);
-        builder.append("]");
-        return builder.toString();
+  public CTLSchemaExportMethod getExportMethod() {
+    return exportMethod;
+  }
+
+  public void setExportMethod(CTLSchemaExportMethod exportMethod) {
+    this.exportMethod = exportMethod;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((ctlSchemaId == null) ? 0 : ctlSchemaId.hashCode());
+    result = prime * result
+        + ((exportMethod == null) ? 0 : exportMethod.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    CtlSchemaExportKey other = (CtlSchemaExportKey) obj;
+    if (ctlSchemaId == null) {
+      if (other.ctlSchemaId != null) {
+        return false;
+      }
+    } else if (!ctlSchemaId.equals(other.ctlSchemaId)) {
+      return false;
+    }
+    if (exportMethod != other.exportMethod) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("CtlSchemaExportKey [ctlSchemaId=");
+    builder.append(ctlSchemaId);
+    builder.append(", exportMethod=");
+    builder.append(exportMethod);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

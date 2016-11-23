@@ -16,75 +16,74 @@
 
 package org.kaaproject.kaa.server.control.service.loadmgmt;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Andrey Panasenko
- *
  */
 public class BootstrapThriftServiceImpl implements BootstrapThriftService.Iface {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
+  private final Object sync;
+  private Map<String, ThriftOperationsServer> opServerMap;
 
-    private Map<String, ThriftOperationsServer> opServerMap;
+  public BootstrapThriftServiceImpl() {
+    opServerMap = null;
+    sync = new Object();
+  }
 
-    private final Object sync;
+  public Map<String, ThriftOperationsServer> getOperatonsServerMap() {
+    synchronized (sync) {
+      if (opServerMap == null) {
+        try {
+          sync.wait(60000);
+        } catch (InterruptedException e) {
 
-    public BootstrapThriftServiceImpl() {
-        opServerMap = null;
-        sync = new Object();
+        }
+      }
     }
 
-    public Map<String, ThriftOperationsServer> getOperatonsServerMap() {
-        synchronized (sync) {
-            if (opServerMap == null) {
-                try {
-                    sync.wait(60000);
-                } catch (InterruptedException e) {
+    return opServerMap;
+  }
 
-                }
-            }
+  public void reset() {
+    synchronized (sync) {
+      opServerMap = null;
+      sync.notify();
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService
+   * .Iface#onOperationsServerListUpdate(java.util.List)
+   */
+  @Override
+  public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList) throws TException {
+    synchronized (sync) {
+      if (operationsServersList.size() > 0 && opServerMap == null) {
+        opServerMap = new HashMap<String, ThriftOperationsServer>();
+
+        for (ThriftOperationsServer thriftServer : operationsServersList) {
+          LOG.info("onOperationsServerListUpdate: ThriftOperationsServer {} ", thriftServer.toString());
+          opServerMap.put(thriftServer.getId(), thriftServer);
         }
 
-        return opServerMap;
+        sync.notify();
+      }
     }
-
-    public void reset() {
-        synchronized (sync) {
-            opServerMap = null;
-            sync.notify();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService
-     * .Iface#onOperationsServerListUpdate(java.util.List)
-     */
-    @Override
-    public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList) throws TException {
-        synchronized (sync) {
-            if (operationsServersList.size() > 0 && opServerMap == null) {
-                opServerMap = new HashMap<String, ThriftOperationsServer>();
-
-                for (ThriftOperationsServer thriftServer : operationsServersList) {
-                    LOG.info("onOperationsServerListUpdate: ThriftOperationsServer {} ", thriftServer.toString());
-                    opServerMap.put(thriftServer.getId(), thriftServer);
-                }
-
-                sync.notify();
-            }
-        }
-    }
+  }
 }

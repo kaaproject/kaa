@@ -19,26 +19,25 @@ package org.kaaproject.kaa.server.transports.http.transport.commands;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 
 
-
 /**
  * The Class UpdateEndpointCommand.
  */
 public class LongSyncCommand extends SyncCommand {
 
-    @Override
-    public ChannelType getChannelType() {
-        return ChannelType.SYNC_WITH_TIMEOUT;
-    }
+  /**
+   * Instantiates a new sync command.
+   */
+  public LongSyncCommand() {
+    super();
+    LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
+  }
 
-    /**
-     * Instantiates a new sync command.
-     */
-    public LongSyncCommand() {
-        super();
-        LOG.trace("CommandName: " + COMMAND_NAME + ": Created..");
-    }
+  public static String getCommandName() {
+    return LONG_SYNC_COMMAND;
+  }
 
-    public static String getCommandName() {
-        return LONG_SYNC_COMMAND;
-    }
+  @Override
+  public ChannelType getChannelType() {
+    return ChannelType.SYNC_WITH_TIMEOUT;
+  }
 }

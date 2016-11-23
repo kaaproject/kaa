@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa.client</groupId>
-        <version>0.9.0</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>client-multi</artifactId>
     </parent>
     <artifactId>client-objective-c</artifactId>
@@ -66,7 +66,7 @@
                         <exclude>**/*.template</exclude>
                         <exclude>**/Kaa.xcodeproj/**</exclude>
                         <exclude>**/Kaa.xcworkspace/**</exclude>
-                        <exclude>**/Pods/**</exclude>>
+                        <exclude>**/Pods/**</exclude>
                         <exclude>**/gcovr.log</exclude>
                         <exclude>**/gcovr-report.xml</exclude>
                         <exclude>**/.*</exclude>

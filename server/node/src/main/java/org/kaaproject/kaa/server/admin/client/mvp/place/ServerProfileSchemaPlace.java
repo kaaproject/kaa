@@ -17,54 +17,57 @@
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.Prefix;
+
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ServerProfileSchemaPlace extends AbstractSchemaPlace {
+public class ServerProfileSchemaPlace extends AbstractSchemaPlaceApplication {
 
-    public ServerProfileSchemaPlace(String applicationId, String schemaId) {
-        super(applicationId, schemaId);
+  public ServerProfileSchemaPlace(String applicationId, String schemaId) {
+    super(applicationId, schemaId);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.serverProfileSchema();
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ServerProfileSchemasPlace(applicationId);
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
     }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
+    }
+    if (!super.equals(object)) {
+      return false;
+    }
+
+    ServerProfileSchemaPlace that = (ServerProfileSchemaPlace) object;
+
+    return !(applicationId != null
+        ? !applicationId.equals(that.applicationId)
+        : that.applicationId != null);
+  }
+
+  @Override
+  public int hashCode() {
+    return applicationId != null ? applicationId.hashCode() : 0;
+  }
+
+  @Prefix(value = "serverProfSchema")
+  public static class Tokenizer
+      extends AbstractSchemaPlaceApplication.Tokenizer<ServerProfileSchemaPlace> {
 
     @Override
-    public String getName() {
-        return Utils.constants.serverProfileSchema();
+    protected ServerProfileSchemaPlace getPlaceImpl(String applicationId,
+                                                    String schemaId) {
+      return new ServerProfileSchemaPlace(applicationId, schemaId);
     }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ServerProfileSchemasPlace(applicationId);
-    }
-
-    @Prefix(value = "serverProfSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<ServerProfileSchemaPlace> {
-
-        @Override
-        protected ServerProfileSchemaPlace getPlaceImpl(String applicationId,
-                                                        String schemaId) {
-            return new ServerProfileSchemaPlace(applicationId, schemaId);
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        ServerProfileSchemaPlace that = (ServerProfileSchemaPlace) o;
-
-        return !(applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return applicationId != null ? applicationId.hashCode() : 0;
-    }
+  }
 }

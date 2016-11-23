@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.control.service.admin;
 
-import java.util.EventListener;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.kaaproject.kaa.server.node.service.initialization.AbstractInitializationService;
@@ -27,54 +25,61 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.EventListener;
+
 @Service
 public class AdminInitializationService extends AbstractInitializationService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AdminInitializationService.class);
-    
-    @Autowired
-    private AdminContextLoaderListener adminContextLoaderListener;
-    
-    @Value("#{properties[admin_port]}")
-    private int adminPort;
-    
-    private Server server;
-    private WebAppContext webAppContext;
-    
-    @Override
-    public void start() {
-        LOG.info("Starting Kaa Admin Web Server...");
-        
-        server = new Server(adminPort);
-        webAppContext = new WebAppContext();
-        webAppContext.setEventListeners(new EventListener[]{adminContextLoaderListener});
-        webAppContext.setContextPath("/");
-        String webXmlLocation = AdminInitializationService.class.getResource("/admin-web/WEB-INF/web.xml").toString();
-        webAppContext.setDescriptor(webXmlLocation);
-        String resLocation = AdminInitializationService.class.getResource("/admin-web").toString();
-        webAppContext.setResourceBase(resLocation);
-        webAppContext.setParentLoaderPriority(true);
-        
-        server.setHandler(webAppContext);
-        
-        try {
-            server.start();
-            LOG.info("Kaa Admin Web Server started.");
-        } catch (Exception e) {
-            LOG.error("Error starting Kaa Admin Web Server!", e);
-        }
-    }
+  private static final Logger LOG = LoggerFactory.getLogger(AdminInitializationService.class);
 
-    @Override
-    public void stop() {
-        try {
-            LOG.info("Stopping Kaa Admin Web Server...");
-            server.stop();
-            webAppContext.destroy();
-            LOG.info("Kaa Admin Web Server stopped.");
-        } catch (Exception e) {
-            LOG.error("Error stopping Kaa Admin Web Server!", e);
-        }
+  @Autowired
+  private AdminContextLoaderListener adminContextLoaderListener;
+
+  @Value("#{properties[admin_port]}")
+  private int adminPort;
+
+  @Value("#{properties[web_xml_file] ?: 'web.xml'}")
+  private String webXmlFile;
+
+  private Server server;
+  private WebAppContext webAppContext;
+
+  @Override
+  public void start() {
+    LOG.info("Starting Kaa Admin Web Server...");
+
+    server = new Server(adminPort);
+    webAppContext = new WebAppContext();
+    webAppContext.setEventListeners(new EventListener[]{adminContextLoaderListener});
+    webAppContext.setContextPath("/");
+    String webXmlLocation = AdminInitializationService.class.getResource("/admin-web/WEB-INF/"
+        + webXmlFile).toString();
+
+    webAppContext.setDescriptor(webXmlLocation);
+    String resLocation = AdminInitializationService.class.getResource("/admin-web").toString();
+    webAppContext.setResourceBase(resLocation);
+    webAppContext.setParentLoaderPriority(true);
+
+    server.setHandler(webAppContext);
+
+    try {
+      server.start();
+      LOG.info("Kaa Admin Web Server started.");
+    } catch (Exception ex) {
+      LOG.error("Error starting Kaa Admin Web Server!", ex);
     }
+  }
+
+  @Override
+  public void stop() {
+    try {
+      LOG.info("Stopping Kaa Admin Web Server...");
+      server.stop();
+      webAppContext.destroy();
+      LOG.info("Kaa Admin Web Server stopped.");
+    } catch (Exception ex) {
+      LOG.error("Error stopping Kaa Admin Web Server!", ex);
+    }
+  }
 
 }

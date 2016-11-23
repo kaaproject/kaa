@@ -28,25 +28,25 @@ import java.net.URL;
  */
 public class SchemaUtilTest {
 
-    private static final String VALID_SCHEMA_RESOURCE = "control/data/testLogSchema.json";
-    private static final String INVALID_SCHEMA_RESOURCE = "control/data/KAA-946.avsc";
+  private static final String VALID_SCHEMA_RESOURCE = "control/data/testLogSchema.json";
+  private static final String INVALID_SCHEMA_RESOURCE = "control/data/KAA-946.avsc";
 
-    @Test
-    public void testCompileAvroSchema_success() throws Exception {
-        URL resource = this.getClass().getClassLoader().getResource(VALID_SCHEMA_RESOURCE);
-        String avroSchemaBody = IOUtils.toString(resource);
-        this.compile(avroSchemaBody);
-    }
+  @Test
+  public void testCompileAvroSchema_success() throws Exception {
+    URL resource = this.getClass().getClassLoader().getResource(VALID_SCHEMA_RESOURCE);
+    String avroSchemaBody = IOUtils.toString(resource);
+    this.compile(avroSchemaBody);
+  }
 
-    @Test(expected = Exception.class)
-    public void testCompileAvroSchema_failure() throws Exception {
-        URL resource = this.getClass().getClassLoader().getResource(INVALID_SCHEMA_RESOURCE);
-        String avroSchemaBody = IOUtils.toString(resource);
-        this.compile(avroSchemaBody);
-    }
+  @Test(expected = Exception.class)
+  public void testCompileAvroSchema_failure() throws Exception {
+    URL resource = this.getClass().getClassLoader().getResource(INVALID_SCHEMA_RESOURCE);
+    String avroSchemaBody = IOUtils.toString(resource);
+    this.compile(avroSchemaBody);
+  }
 
-    private void compile(String avroSchemaBody) {
-        Schema avroSchema = new Schema.Parser().parse(avroSchemaBody);
-        SchemaUtil.compileAvroSchema(avroSchema);
-    }
+  private void compile(String avroSchemaBody) {
+    Schema avroSchema = new Schema.Parser().parse(avroSchemaBody);
+    SchemaUtil.compileAvroSchema(avroSchema);
+  }
 }

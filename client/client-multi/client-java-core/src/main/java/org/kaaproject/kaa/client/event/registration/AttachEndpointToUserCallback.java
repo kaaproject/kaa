@@ -24,17 +24,16 @@ package org.kaaproject.kaa.client.event.registration;
  * endpoint.
  *
  * @author Taras Lemkin
- *
  * @see EndpointRegistrationManager
  * @see EndpointRegistrationManager#setAttachedCallback(AttachEndpointToUserCallback)
  */
 public interface AttachEndpointToUserCallback {
 
-    /**
-     * Callback on current endpoint is attached to user.
-     *
-     * @param userExternalId        the user external id
-     * @param endpointAccessToken   the endpoint access token
-     */
-    void onAttachedToUser(String userExternalId, String endpointAccessToken);
+  /**
+   * Callback on current endpoint is attached to user.
+   *
+   * @param userExternalId      the user external id
+   * @param endpointAccessToken the endpoint access token
+   */
+  void onAttachedToUser(String userExternalId, String endpointAccessToken);
 }

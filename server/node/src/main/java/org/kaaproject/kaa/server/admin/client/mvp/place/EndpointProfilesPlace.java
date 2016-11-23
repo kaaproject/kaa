@@ -16,85 +16,74 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class EndpointProfilesPlace extends TreePlace {
 
-    protected String applicationId;
-    private boolean gridLoaded;
+  protected String applicationId;
 
-    public EndpointProfilesPlace(String applicationId) {
-        this.applicationId = applicationId;
-        this.gridLoaded = false;
+  public EndpointProfilesPlace(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.endpointProfiles();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public EndpointProfilesPlace(String applicationId, boolean gridLoaded) {
-        this.applicationId = applicationId;
-        this.gridLoaded = gridLoaded;
+    if (obj == null) {
+      return false;
     }
-
-    public String getApplicationId() {
-        return applicationId;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
+    EndpointProfilesPlace other = (EndpointProfilesPlace) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
+        return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
+    }
+    return true;
+  }
 
-    public boolean isGridLoaded() {
-        return gridLoaded;
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ApplicationPlace(applicationId);
+  }
+
+  @Prefix(value = "endProfile")
+  public static class Tokenizer implements PlaceTokenizer<EndpointProfilesPlace>, PlaceConstants {
+
+    @Override
+    public String getToken(EndpointProfilesPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      return PlaceParams.generateToken();
     }
 
     @Override
-    public String getName() {
-        return Utils.constants.endpointProfiles();
+    public EndpointProfilesPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new EndpointProfilesPlace(PlaceParams.getParam(APPLICATION_ID));
     }
-
-    @Prefix(value = "endProfile")
-    public static class Tokenizer implements PlaceTokenizer<EndpointProfilesPlace>, PlaceConstants {
-
-        @Override
-        public String getToken(EndpointProfilesPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
-        }
-
-        @Override
-        public EndpointProfilesPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new EndpointProfilesPlace(PlaceParams.getParam(APPLICATION_ID));
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointProfilesPlace other = (EndpointProfilesPlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
-    }
+  }
 }

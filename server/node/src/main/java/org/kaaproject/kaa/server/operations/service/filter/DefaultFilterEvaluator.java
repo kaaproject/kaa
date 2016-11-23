@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.filter;
 
-import java.io.IOException;
-
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.kaaproject.kaa.common.avro.GenericAvroConverter;
@@ -31,73 +29,80 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import java.io.IOException;
+
 /**
  * The Class DefaultFilter.
  */
 public class DefaultFilterEvaluator implements FilterEvaluator {
 
-    public static final String EP_KEYHASH_VARIABLE_NAME = "ekh";
-    public static final String SERVER_PROFILE_VARIABLE_NAME = "sp";
-    public static final String CLIENT_PROFILE_VARIABLE_NAME = "cp";
+  public static final String EP_KEYHASH_VARIABLE_NAME = "ekh";
+  public static final String SERVER_PROFILE_VARIABLE_NAME = "sp";
+  public static final String CLIENT_PROFILE_VARIABLE_NAME = "cp";
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultFilterEvaluator.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultFilterEvaluator.class);
 
-    private String epKey;
-    private GenericRecord serverProfileGenericRecord;
-    private GenericRecord clientProfileGenericRecord;
+  private String epKey;
+  private GenericRecord serverProfileGenericRecord;
+  private GenericRecord clientProfileGenericRecord;
 
-    /**
-     * Instantiates a new default filter.
-     *
-     */
-    public DefaultFilterEvaluator() {
-        super();
+  /**
+   * Instantiates a new default filter.
+   */
+  public DefaultFilterEvaluator() {
+    super();
+  }
+
+  @Override
+  public void init(EndpointProfileDto profile,
+                   String profileSchemaBody,
+                   String serverProfileSchemaBody) {
+    GenericAvroConverter<GenericRecord> endpointProfileConverter = new GenericAvroConverter<>(
+        new Schema.Parser().parse(profileSchemaBody));
+    GenericAvroConverter<GenericRecord> serverProfileConverter = new GenericAvroConverter<>(
+        new Schema.Parser().parse(serverProfileSchemaBody));
+    this.epKey = Base64Util.encode(profile.getEndpointKeyHash());
+    try {
+      if (profile.getServerProfileBody() != null) {
+        serverProfileGenericRecord = serverProfileConverter.decodeJson(
+            profile.getServerProfileBody());
+      }
+      if (profile.getClientProfileBody() != null) {
+        clientProfileGenericRecord = endpointProfileConverter.decodeJson(
+            profile.getClientProfileBody());
+      }
+    } catch (IOException ioe) {
+      LOG.error("Error decoding avro object from Json string", ioe);
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * org.kaaproject.kaa.server.operations.service.filter.Filter#matches(java
+   * .lang.String)
+   */
+  @Override
+  public boolean matches(ProfileFilterDto filter) {
+    final Expression expression = new SpelExpressionParser().parseExpression(filter.getBody());
+    StandardEvaluationContext evaluationContext;
+    if (filter.getEndpointProfileSchemaVersion() != null) {
+      evaluationContext = new StandardEvaluationContext(clientProfileGenericRecord);
+      evaluationContext.setVariable(CLIENT_PROFILE_VARIABLE_NAME, clientProfileGenericRecord);
+    } else {
+      evaluationContext = new StandardEvaluationContext();
+    }
+    evaluationContext.addPropertyAccessor(new GenericRecordPropertyAccessor());
+    evaluationContext.setVariable(EP_KEYHASH_VARIABLE_NAME, epKey);
+    if (filter.getServerProfileSchemaVersion() != null) {
+      evaluationContext.setVariable(SERVER_PROFILE_VARIABLE_NAME, serverProfileGenericRecord);
     }
 
-    @Override
-    public void init(EndpointProfileDto profile, String profileSchemaBody, String serverProfileSchemaBody) {
-        GenericAvroConverter<GenericRecord> endpointProfileConverter = new GenericAvroConverter<>(
-                new Schema.Parser().parse(profileSchemaBody));
-        GenericAvroConverter<GenericRecord> serverProfileConverter = new GenericAvroConverter<>(
-                new Schema.Parser().parse(serverProfileSchemaBody));
-        this.epKey = Base64Util.encode(profile.getEndpointKeyHash());
-        try {
-            if (profile.getServerProfileBody() != null) {
-                serverProfileGenericRecord = serverProfileConverter.decodeJson(profile.getServerProfileBody());
-            }
-            if (profile.getClientProfileBody() != null) {
-                clientProfileGenericRecord = endpointProfileConverter.decodeJson(profile.getClientProfileBody());
-            }
-        } catch (IOException ioe) {
-            LOG.error("Error decoding avro object from Json string", ioe);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.kaaproject.kaa.server.operations.service.filter.Filter#matches(java
-     * .lang.String)
-     */
-    @Override
-    public boolean matches(ProfileFilterDto filter) {
-        Expression expression = new SpelExpressionParser().parseExpression(filter.getBody());
-        StandardEvaluationContext evaluationContext;
-        if (filter.getEndpointProfileSchemaVersion() != null) {
-            evaluationContext = new StandardEvaluationContext(clientProfileGenericRecord);
-            evaluationContext.setVariable(CLIENT_PROFILE_VARIABLE_NAME, clientProfileGenericRecord);
-        } else {
-            evaluationContext = new StandardEvaluationContext();
-        }
-        evaluationContext.addPropertyAccessor(new GenericRecordPropertyAccessor());
-        evaluationContext.setVariable(EP_KEYHASH_VARIABLE_NAME, epKey);
-        if (filter.getServerProfileSchemaVersion() != null) {
-            evaluationContext.setVariable(SERVER_PROFILE_VARIABLE_NAME, serverProfileGenericRecord);
-        }
-
-        return expression.getValue(evaluationContext, Boolean.class);
-    }
+    return expression.getValue(evaluationContext, Boolean.class);
+  }
 
 }

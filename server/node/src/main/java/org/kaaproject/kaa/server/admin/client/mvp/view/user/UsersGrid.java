@@ -16,52 +16,65 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.user;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.cellview.client.DataGrid;
+
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.grid.AbstractKaaGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.DataGrid;
-
 public class UsersGrid extends AbstractKaaGrid<UserDto, String> {
 
-    public UsersGrid() {
-        super(Unit.PX, false);
+  private boolean showRole;
+
+  public UsersGrid() {
+    this(false, false);
+  }
+
+  public UsersGrid(boolean showRole) {
+    this(showRole, false);
+  }
+
+  public UsersGrid(boolean showRole, boolean embeded) {
+    super(Unit.PX, true, embeded);
+    this.showRole = showRole;
+  }
+
+  @Override
+  protected float constructColumnsImpl(DataGrid<UserDto> table) {
+    float prefWidth = 0;
+
+    prefWidth += constructStringColumn(table,
+        Utils.constants.userName(),
+        new StringValueProvider<UserDto>() {
+          @Override
+          public String getValue(UserDto item) {
+            return item.getUsername();
+          }
+        }, 160);
+
+    prefWidth += constructStringColumn(table,
+        Utils.constants.email(),
+        new StringValueProvider<UserDto>() {
+          @Override
+          public String getValue(UserDto item) {
+            return item.getMail();
+          }
+        }, 160);
+
+    if (showRole) {
+      prefWidth += constructStringColumn(table,
+          Utils.constants.role(),
+          new StringValueProvider<UserDto>() {
+            @Override
+            public String getValue(UserDto item) {
+              return Utils.constants.getString(item.getAuthority().getResourceKey());
+            }
+          }, 160);
     }
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<UserDto> table) {
-        float prefWidth = 0;
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.userName(),
-                new StringValueProvider<UserDto>() {
-                    @Override
-                    public String getValue(UserDto item) {
-                        return item.getUsername();
-                    }
-                }, 160);
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.email(),
-                new StringValueProvider<UserDto>() {
-                    @Override
-                    public String getValue(UserDto item) {
-                        return item.getMail();
-                    }
-                }, 160);
-
-        prefWidth += constructStringColumn(table,
-                Utils.constants.role(),
-                new StringValueProvider<UserDto>() {
-                    @Override
-                    public String getValue(UserDto item) {
-                        return Utils.constants.getString(item.getAuthority().getResourceKey());
-                    }
-                }, 160);
-
-        return prefWidth;
-    }
+    return prefWidth;
+  }
 
 
 }

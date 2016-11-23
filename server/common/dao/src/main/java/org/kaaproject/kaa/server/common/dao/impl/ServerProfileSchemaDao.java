@@ -21,35 +21,35 @@ import java.util.List;
 
 public interface ServerProfileSchemaDao<T> extends SqlDao<T> {
 
-    /**
-     * Find latest server profile schema for application with given identifier.
-     *
-     * @param appId the application identifier
-     * @return the latest server profile schema.
-     */
-    T findLatestByAppId(String appId);
+  /**
+   * Find latest server profile schema for application with given identifier.
+   *
+   * @param appId the application identifier
+   * @return the latest server profile schema.
+   */
+  T findLatestByAppId(String appId);
 
-    /**
-     * Find server profile schemas with given application identifier.
-     *
-     * @param appId the application identifier
-     * @return the list of server profile schemas for corresponding application.
-     */
-    List<T> findByAppId(String appId);
-    
-    /**
-     * Find server profile schema by application id and version.
-     *
-     * @param applicationId the application id
-     * @param version the version of server profile schema
-     * @return the server profile schema
-     */
-    T findByAppIdAndVersion(String applicationId, int version);
+  /**
+   * Find server profile schemas with given application identifier.
+   *
+   * @param appId the application identifier
+   * @return the list of server profile schemas for corresponding application.
+   */
+  List<T> findByAppId(String appId);
 
-    /**
-     * Remove server profile schemas for application with the given identifier.
-     *
-     * @param appId the application identifier
-     */
-    void removeByAppId(String appId);
+  /**
+   * Find server profile schema by application id and version.
+   *
+   * @param applicationId the application id
+   * @param version       the version of server profile schema
+   * @return the server profile schema
+   */
+  T findByAppIdAndVersion(String applicationId, int version);
+
+  /**
+   * Remove server profile schemas for application with the given identifier.
+   *
+   * @param appId the application identifier
+   */
+  void removeByAppId(String appId);
 }

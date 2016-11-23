@@ -24,93 +24,93 @@ import java.util.concurrent.TimeoutException;
 
 public class CancelableScheduledFuture<V> implements RunnableScheduledFuture<V> {
 
-    private final CancelableRunnable cancelableRunnable;
-    private final RunnableScheduledFuture<V> futureTask;
+  private final CancelableRunnable cancelableRunnable;
+  private final RunnableScheduledFuture<V> futureTask;
 
-    public CancelableScheduledFuture(CancelableRunnable cancelableRunnable,
-            RunnableScheduledFuture<V> futureTask) {
-        this.cancelableRunnable = cancelableRunnable;
-        this.futureTask = futureTask;
-    }
+  public CancelableScheduledFuture(CancelableRunnable cancelableRunnable,
+                                   RunnableScheduledFuture<V> futureTask) {
+    this.cancelableRunnable = cancelableRunnable;
+    this.futureTask = futureTask;
+  }
 
-    @Override
-    public void run() {
-        futureTask.run();
-    }
+  @Override
+  public void run() {
+    futureTask.run();
+  }
 
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        if (mayInterruptIfRunning) {
-            cancelableRunnable.cancel();
-        }
-        return this.futureTask.cancel(mayInterruptIfRunning);
+  @Override
+  public boolean cancel(boolean mayInterruptIfRunning) {
+    if (mayInterruptIfRunning) {
+      cancelableRunnable.cancel();
     }
+    return this.futureTask.cancel(mayInterruptIfRunning);
+  }
 
-    @Override
-    public boolean isCancelled() {
-        return futureTask.isCancelled();
-    }
+  @Override
+  public boolean isCancelled() {
+    return futureTask.isCancelled();
+  }
 
-    @Override
-    public boolean isDone() {
-        return futureTask.isDone();
-    }
+  @Override
+  public boolean isDone() {
+    return futureTask.isDone();
+  }
 
-    @Override
-    public V get() throws InterruptedException, ExecutionException {
-        return futureTask.get();
-    }
+  @Override
+  public V get() throws InterruptedException, ExecutionException {
+    return futureTask.get();
+  }
 
-    @Override
-    public V get(long timeout, TimeUnit unit) throws InterruptedException,
-            ExecutionException, TimeoutException {
-        return futureTask.get(timeout, unit);
-    }
+  @Override
+  public V get(long timeout, TimeUnit unit) throws InterruptedException,
+      ExecutionException, TimeoutException {
+    return futureTask.get(timeout, unit);
+  }
 
-    @Override
-    public long getDelay(TimeUnit unit) {
-        return futureTask.getDelay(unit);
-    }
+  @Override
+  public long getDelay(TimeUnit unit) {
+    return futureTask.getDelay(unit);
+  }
 
-    @Override
-    public int compareTo(Delayed o) {
-        return futureTask.compareTo(o);
-    }
+  @Override
+  public int compareTo(Delayed delayed) {
+    return futureTask.compareTo(delayed);
+  }
 
-	@Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((futureTask == null) ? 0 : futureTask.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((futureTask == null) ? 0 : futureTask.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        CancelableScheduledFuture other = (CancelableScheduledFuture) obj;
-        if (futureTask == null) {
-            if (other.futureTask != null) {
-                return false;
-            }
-        } else if (!futureTask.equals(other.futureTask)) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    CancelableScheduledFuture other = (CancelableScheduledFuture) obj;
+    if (futureTask == null) {
+      if (other.futureTask != null) {
+        return false;
+      }
+    } else if (!futureTask.equals(other.futureTask)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public boolean isPeriodic() {
-        return futureTask.isPeriodic();
-    }
+  @Override
+  public boolean isPeriodic() {
+    return futureTask.isPeriodic();
+  }
 
 }

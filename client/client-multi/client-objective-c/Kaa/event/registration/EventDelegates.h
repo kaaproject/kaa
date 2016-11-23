@@ -92,7 +92,7 @@
 @protocol UserAttachDelegate
 
 /**
- * Called when auth result is retrieved from operations server.
+ * Called when auth result is retrieved from operations service.
  */
 - (void)onAttachResult:(UserAttachResponse *)response;
 

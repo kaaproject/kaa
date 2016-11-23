@@ -28,110 +28,83 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
  */
 public class GetDeltaRequest {
 
-    /** The application token. */
-    private final String applicationToken;
 
-    /** Supports only configuration resync delta encoded using base schema. */
-    private final boolean resyncOnly;
+  private final String applicationToken;
 
-    /** The configuration hash. */
-    private final EndpointObjectHash configurationHash;
+  /**
+   * Supports only configuration resync delta encoded using base schema.
+   */
+  private final boolean resyncOnly;
 
-    /** The endpoint profile. */
-    private EndpointProfileDto endpointProfile;
-    
-    /**
-     * Instantiates a new delta request.
-     *
-     * @param applicationToken
-     *            the application token
-     */
-    public GetDeltaRequest(String applicationToken) {
-        this(applicationToken, null, true);
-    }
-    
-    /**
-     * Instantiates a new delta request.
-     *
-     * @param applicationToken
-     *            the application token
-     * @param configurationHash
-     *            the configuration hash
-     */
-    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash){
-        this(applicationToken, configurationHash, true);
-    }
 
-    /**
-     * Instantiates a new delta request.
-     *
-     * @param applicationToken
-     *            the application token
-     * @param configurationHash
-     *            the configuration hash
-     * @param resyncOnly
-     *            the resync only
-     */
-    public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash, boolean resyncOnly) {
-        super();
-        this.applicationToken = applicationToken;
-        this.configurationHash = configurationHash;
-        this.resyncOnly = resyncOnly;
-    }
+  private final EndpointObjectHash configurationHash;
 
-    /**
-     * Gets the application token.
-     *
-     * @return the application token
-     */
-    public String getApplicationToken() {
-        return applicationToken;
-    }
 
-    /**
-     * Gets the configuration hash.
-     *
-     * @return the configuration hash
-     */
-    public EndpointObjectHash getConfigurationHash() {
-        return configurationHash;
-    }
+  private EndpointProfileDto endpointProfile;
 
-    /**
-     * Gets the endpoint profile.
-     *
-     * @return the endpoint profile
-     */
-    public EndpointProfileDto getEndpointProfile() {
-        return endpointProfile;
-    }
 
-    /**
-     * Checks if this request represent client that is interested in
-     * configuration resyncs based on base schema.
-     *
-     * @return true, if is fetch schema
-     */
-    public boolean isResyncOnly() {
-        return resyncOnly;
-    }
+  public GetDeltaRequest(String applicationToken) {
+    this(applicationToken, null, true);
+  }
 
-    /**
-     * Sets the endpoint profile.
-     *
-     * @param endpointProfile
-     *            the new endpoint profile
-     */
-    public void setEndpointProfile(EndpointProfileDto endpointProfile) {
-        this.endpointProfile = endpointProfile;
-    }
 
-    /**
-     * Checks if is first request.
-     *
-     * @return true, if is first request
-     */
-    public boolean isFirstRequest() {
-        return getConfigurationHash() == null || getConfigurationHash().getData() == null || getConfigurationHash().getData().length == 0;
-    }
+  public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash) {
+    this(applicationToken, configurationHash, true);
+  }
+
+
+  /**
+   * Create anew instance of GetDeltaRequest.
+   *
+   * @param applicationToken  the application token
+   * @param configurationHash the configuration hash
+   * @param resyncOnly        specify if it is only resync
+   */
+  public GetDeltaRequest(String applicationToken, EndpointObjectHash configurationHash,
+                         boolean resyncOnly) {
+    super();
+    this.applicationToken = applicationToken;
+    this.configurationHash = configurationHash;
+    this.resyncOnly = resyncOnly;
+  }
+
+
+  public String getApplicationToken() {
+    return applicationToken;
+  }
+
+
+  public EndpointObjectHash getConfigurationHash() {
+    return configurationHash;
+  }
+
+
+  public EndpointProfileDto getEndpointProfile() {
+    return endpointProfile;
+  }
+
+  public void setEndpointProfile(EndpointProfileDto endpointProfile) {
+    this.endpointProfile = endpointProfile;
+  }
+
+  /**
+   * Checks if this request represent client that is interested in
+   * configuration resyncs based on base schema.
+   *
+   * @return true, if is fetch schema
+   */
+  public boolean isResyncOnly() {
+    return resyncOnly;
+  }
+
+  /**
+   * Return true if the <code>GetDeltaRequest</code> object is the first request.
+   *
+   * @return true if request is first
+   */
+  public boolean isFirstRequest() {
+    return getConfigurationHash() == null
+        || getConfigurationHash().getData() == null
+        || getConfigurationHash().getData().length == 0;
+  }
 }

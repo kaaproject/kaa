@@ -16,25 +16,31 @@
 
 package org.kaaproject.kaa.server.appenders.flume.appender.client.async;
 
-import java.util.List;
-
 import org.apache.flume.Event;
 
+import java.util.List;
+
 public class AppendBatchAsyncResultPojo {
-    public boolean isSuccessful;
-    public List<Event> events;
+  public boolean isSuccessful;
+  public List<Event> events;
 
-    public AppendBatchAsyncResultPojo(boolean isSuccessful, List<Event> events) {
-        super();
-        this.isSuccessful = isSuccessful;
-        this.events = events;
-    }
+  /**
+   * Create new instance of <code>AppendBatchAsyncResultPojo</code>.
+   *
+   * @param isSuccessful is represent successful or not the result
+   * @param events       is <code>List</code> of events
+   */
+  public AppendBatchAsyncResultPojo(boolean isSuccessful, List<Event> events) {
+    super();
+    this.isSuccessful = isSuccessful;
+    this.events = events;
+  }
 
-    public boolean isSuccessful() {
-        return isSuccessful;
-    }
+  public boolean isSuccessful() {
+    return isSuccessful;
+  }
 
-    public List<Event> getEvents() {
-        return events;
-    }
+  public List<Event> getEvents() {
+    return events;
+  }
 }

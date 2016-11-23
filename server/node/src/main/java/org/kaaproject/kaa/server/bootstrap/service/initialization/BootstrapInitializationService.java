@@ -16,12 +16,7 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.initialization;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.curator.framework.CuratorFramework;
 import org.kaaproject.kaa.server.bootstrap.service.OperationsServerListService;
 import org.kaaproject.kaa.server.bootstrap.service.security.KeyStoreService;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
@@ -36,6 +31,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * DefaultBootstrapInitializationService Class. Starts and stops all services in
  * the Bootstrap service: 1. ZooKeeper service; 2. Netty
@@ -46,140 +46,152 @@ import org.springframework.stereotype.Service;
 @Service
 public class BootstrapInitializationService extends AbstractInitializationService {
 
-    /** Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(BootstrapInitializationService.class);
+  /**
+   * Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(BootstrapInitializationService.class);
 
-    @Autowired
-    private TransportService bootstrapTransportService;
+  @Autowired
+  private TransportService bootstrapTransportService;
 
-    /** The bootstrap node. */
-    private BootstrapNode bootstrapNode;
+  /**
+   * The bootstrap node.
+   */
+  private BootstrapNode bootstrapNode;
 
-    @Autowired
-    private OperationsServerListService operationsServerListService;
+  @Autowired
+  private OperationsServerListService operationsServerListService;
 
-    /** The key store service. */
-    @Autowired
-    private KeyStoreService bootstrapKeyStoreService;
+  /**
+   * The key store service.
+   */
+  @Autowired
+  private KeyStoreService bootstrapKeyStoreService;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
-     * BootstrapInitializationService#start()
-     */
-    @Override
-    public void start() {
-        LOG.trace("Starting Bootstrap service..." + propertiesToString());
-        try {
-            LOG.trace("Bootstrap Service ZK started");
-            if (operationsServerListService == null) {
-                throw new Exception("Error initializing OperationsServerListService()"); // NOSONAR
+  @Autowired
+  private CuratorFramework zkClient;
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
+   * BootstrapInitializationService#start()
+   */
+  @Override
+  public void start() {
+    LOG.trace("Starting Bootstrap service..." + propertiesToString());
+    try {
+      LOG.trace("Bootstrap Service ZK started");
+      if (operationsServerListService == null) {
+        throw new Exception("Error initializing OperationsServerListService()"); // NOSONAR
+      }
+
+      bootstrapTransportService.lookupAndInit();
+
+      if (getNodeConfig().isZkEnabled()) {
+        startZk();
+        operationsServerListService.init(bootstrapNode);
+        bootstrapTransportService.addListener(new TransportUpdateListener() {
+
+          @Override
+          public void onTransportsStarted(List<TransportMetaData> mdList) {
+            BootstrapNodeInfo info = bootstrapNode.getNodeInfo();
+            info.setTransports(mdList);
+            try {
+              bootstrapNode.updateNodeData(info);
+            } catch (IOException ex) {
+              LOG.error("Failed to update bootstrap node info", ex);
             }
+          }
 
-            bootstrapTransportService.lookupAndInit();
+        });
+      }
 
-            if (getNodeConfig().isZkEnabled()) {
-                startZK();
-                operationsServerListService.init(bootstrapNode);
-                bootstrapTransportService.addListener(new TransportUpdateListener() {
+      bootstrapTransportService.start();
 
-                    @Override
-                    public void onTransportsStarted(List<TransportMetaData> mdList) {
-                        BootstrapNodeInfo info = bootstrapNode.getNodeInfo();
-                        info.setTransports(mdList);
-                        try {
-                            bootstrapNode.updateNodeData(info);
-                        } catch (IOException e) {
-                            LOG.error("Failed to update bootstrap node info", e);
-                        }
-                    }
-
-                });
-            }
-
-            bootstrapTransportService.start();
-            
-            LOG.info("Bootstrap Service Started.");
-        } catch (Exception e) {
-            LOG.error("Error starting Bootstrap Service", e);
-        }
-
+      LOG.info("Bootstrap Service Started.");
+    } catch (Exception ex) {
+      LOG.error("Error starting Bootstrap Service", ex);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
-     * BootstrapInitializationService#stop()
-     */
-    @Override
-    public void stop() {
-        LOG.trace("Stopping Bootstrap Service..." + propertiesToString());
+  }
 
-        if (getNodeConfig().isZkEnabled()) {
-            stopZK();
-        }
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.bootstrap.service.initialization.
+   * BootstrapInitializationService#stop()
+   */
+  @Override
+  public void stop() {
+    LOG.trace("Stopping Bootstrap Service..." + propertiesToString());
 
-        if (bootstrapTransportService != null) {
-            bootstrapTransportService.stop();
-        }
-        LOG.info("Bootstrap Service Stopped.");
+    if (getNodeConfig().isZkEnabled()) {
+      stopZk();
     }
 
-    /**
-     * Start zk.
-     *
-     * @throws Exception
-     *             in case of error
-     */
-    private void startZK() throws Exception { // NOSONAR
-        if (getNodeConfig().isZkEnabled()) {
-            LOG.info("Bootstrap service starting ZooKepper connection to {}", getNodeConfig().getZkHostPortList());
-            BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
-            ByteBuffer keyData = ByteBuffer.wrap(bootstrapKeyStoreService.getPublicKey().getEncoded());
-            LOG.trace("Bootstrap service: registering in ZK: thriftHost {}; thriftPort {}; nettyHost {}; nettyPort {}", getNodeConfig().getThriftHost(),
-                    getNodeConfig().getThriftPort());
-            nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
-            nodeInfo.setTransports(new ArrayList<TransportMetaData>());
-            nodeInfo.setTimeStarted(System.currentTimeMillis());
-            bootstrapNode = new BootstrapNode(nodeInfo, getNodeConfig().getZkHostPortList(), new RetryUntilElapsed(getNodeConfig().getZkMaxRetryTime(), getNodeConfig().getZkSleepTime()));
-            if (bootstrapNode != null) {
-                bootstrapNode.start();
-            }
-        }
+    if (bootstrapTransportService != null) {
+      bootstrapTransportService.stop();
     }
+    LOG.info("Bootstrap Service Stopped.");
+  }
 
-    /**
-     * Stop zk.
-     */
-    private void stopZK() {
-        try {
-            if (bootstrapNode != null) {
-                bootstrapNode.close();
-            }
-        } catch (IOException e) {
-            LOG.warn("Exception when closing ZK node", e);
-        } finally {
-            bootstrapNode = null;
-        }
+  /**
+   * Start zk.
+   *
+   * @throws Exception in case of error
+   */
+  private void startZk() throws Exception { // NOSONAR
+    if (getNodeConfig().isZkEnabled()) {
+      LOG.info("Bootstrap service starting ZooKepper connection to {}",
+          getNodeConfig().getZkHostPortList());
+      BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
+      ByteBuffer keyData = ByteBuffer.wrap(bootstrapKeyStoreService.getPublicKey().getEncoded());
+      LOG.trace("Bootstrap service: registering in ZK: thriftHost {}; "
+              + "thriftPort {}; nettyHost {}; nettyPort {}",
+          getNodeConfig().getThriftHost(),
+          getNodeConfig().getThriftPort());
+      nodeInfo.setConnectionInfo(new ConnectionInfo(
+          getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
+      nodeInfo.setTransports(new ArrayList<>());
+      nodeInfo.setTimeStarted(System.currentTimeMillis());
+      bootstrapNode = new BootstrapNode(nodeInfo, zkClient);
+      if (bootstrapNode != null) {
+        bootstrapNode.start();
+      }
     }
+  }
 
-    /**
-     * Return properties for printing in logs.
-     *
-     * @return String representation of properties
-     */
-    private String propertiesToString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("\nProperties: \n");
-        sb.append("thriftHost: " + getNodeConfig().getThriftHost() + "\n");
-        sb.append("thriftPort: " + getNodeConfig().getThriftPort() + "\n");
-        sb.append("zkEnabled: " + getNodeConfig().isZkEnabled() + "\n");
-        sb.append("zkHostPortList: " + getNodeConfig().getZkHostPortList() + "\n");
-        sb.append("zkMaxRetryTime: " + getNodeConfig().getZkMaxRetryTime() + "\n");
-        sb.append("zkSleepTime: " + getNodeConfig().getZkSleepTime() + "\n");
-        sb.append("zkIgnoreErrors: " + getNodeConfig().isZkIgnoreErrors() + "\n");
-        return sb.toString();
+  /**
+   * Stop zk.
+   */
+  private void stopZk() {
+    try {
+      if (bootstrapNode != null) {
+        bootstrapNode.close();
+      }
+    } catch (IOException ex) {
+      LOG.warn("Exception when closing ZK node", ex);
+    } finally {
+      bootstrapNode = null;
     }
+  }
+
+  /**
+   * Return properties for printing in logs.
+   *
+   * @return String representation of properties
+   */
+  private String propertiesToString() {
+    StringBuffer sb = new StringBuffer();
+    sb.append("\nProperties: \n");
+    sb.append("thriftHost: " + getNodeConfig().getThriftHost() + "\n");
+    sb.append("thriftPort: " + getNodeConfig().getThriftPort() + "\n");
+    sb.append("zkEnabled: " + getNodeConfig().isZkEnabled() + "\n");
+    sb.append("zkHostPortList: " + getNodeConfig().getZkHostPortList() + "\n");
+    sb.append("zkMaxRetryTime: " + getNodeConfig().getZkMaxRetryTime() + "\n");
+    sb.append("zkSleepTime: " + getNodeConfig().getZkSleepTime() + "\n");
+    sb.append("zkIgnoreErrors: " + getNodeConfig().isZkIgnoreErrors() + "\n");
+    return sb.toString();
+  }
 }

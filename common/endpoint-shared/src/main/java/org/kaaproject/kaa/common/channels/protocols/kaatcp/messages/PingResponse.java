@@ -22,42 +22,43 @@ import org.kaaproject.kaa.common.channels.protocols.kaatcp.KaaTcpProtocolExcepti
  * Kaatcp PingResponse Class.
  * A PINGRESP message is the response sent by a server to a PINGREQ message
  * and means "yes I am alive".
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 public class PingResponse extends MqttFrame {
 
-    /**
-     * Default constructor.
-     */
-    public PingResponse() {
-        super();
-        setMessageType(MessageType.PINGRESP);
-        remainingLength = 0;
-    }
+  /**
+   * Default constructor.
+   */
+  public PingResponse() {
+    super();
+    setMessageType(MessageType.PINGRESP);
+    remainingLength = 0;
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#pack(int)
-     */
-    @Override
-    protected void pack() {
-        // Do nothing
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#pack(int)
+   */
+  @Override
+  protected void pack() {
+    // Do nothing
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#decode()
-     */
-    @Override
-    protected void decode() throws KaaTcpProtocolException {
-        // Do nothing
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.mqttFrame#decode()
+   */
+  @Override
+  protected void decode() throws KaaTcpProtocolException {
+    // Do nothing
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
-     */
-    @Override
-    public boolean isNeedCloseConnection() {
-        return false;
-    }
+  /* (non-Javadoc)
+   * @see
+   * org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame#isNeedCloseConnection()
+   */
+  @Override
+  public boolean isNeedCloseConnection() {
+    return false;
+  }
 
 }

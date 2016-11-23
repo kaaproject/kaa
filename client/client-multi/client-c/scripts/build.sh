@@ -18,15 +18,16 @@
 set -e
 set -v
 
-# Stupid doxygen can't create a directory
-mkdir -p target/apidocs
-doxygen
-
 make
 
-./build.sh test
+cd build-posix
+ctest -T test
+if [ -z ${NO_MEMCHECK+x} ]; then # if unset
+    ctest -T memcheck
+fi
+ctest -T coverage
+cd ..
 
-cppcheck --quiet --enable=all --std=c99 --suppress=unusedFunction \
-         --force --error-exitcode=1 --template=gcc -I src/kaa \
-         --inline-suppr \
-         src/ test/
+make -C build-posix doxygen
+
+make -C build-posix cppcheck

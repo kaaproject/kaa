@@ -18,100 +18,115 @@ package org.kaaproject.kaa.common.dto.admin;
 
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class UserDto extends org.kaaproject.kaa.common.dto.UserDto {
 
-    private static final long serialVersionUID = 8016875668519720555L;
+  private static final long serialVersionUID = 8016875668519720555L;
 
-    private String firstName;
-    private String lastName;
-    private String mail;
-    private String tempPassword;
+  @Size(min = 1)
+  private String firstName;
+  @Size(min = 1)
+  private String lastName;
+  @Size(min = 2, max = 225)
+  @NotNull(message = "email can't be null")
+  @Pattern(
+      regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]"
+               + "+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
+      message = "email doesn't match regular expression pattern")
+  private String mail;
+  private String tempPassword;
 
-    public UserDto() {
+  public UserDto() {
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public UserDto(String externalUid,
+                 String username,
+                 String firstName,
+                 String lastName,
+                 String mail,
+                 KaaAuthorityDto authority) {
+    setExternalUid(externalUid);
+    setUsername(username);
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.mail = mail;
+    this.setAuthority(authority);
+  }
+
+  public String getFirstName() {
+    return firstName;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
+
+  public String getMail() {
+    return mail;
+  }
+
+  public void setMail(String mail) {
+    this.mail = mail;
+  }
+
+  public String getTempPassword() {
+    return tempPassword;
+  }
+
+  public void setTempPassword(String tempPassword) {
+    this.tempPassword = tempPassword;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result
+        + ((getExternalUid() == null) ? 0 : getExternalUid().hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public UserDto(String externalUid,
-            String username,
-            String firstName,
-            String lastName,
-            String mail,
-            KaaAuthorityDto authority) {
-        setExternalUid(externalUid);
-        setUsername(username);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.mail = mail;
-        this.setAuthority(authority);
+    if (!super.equals(obj)) {
+      return false;
     }
-
-    public String getFirstName() {
-        return firstName;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    UserDto other = (UserDto) obj;
+    if (getExternalUid() == null) {
+      if (other.getExternalUid() != null) {
+        return false;
+      }
+    } else if (!getExternalUid().equals(other.getExternalUid())) {
+      return false;
     }
+    return true;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public String getTempPassword() {
-        return tempPassword;
-    }
-
-    public void setTempPassword(String tempPassword) {
-        this.tempPassword = tempPassword;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((getExternalUid() == null) ? 0 : getExternalUid().hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UserDto other = (UserDto) obj;
-        if (getExternalUid() == null) {
-            if (other.getExternalUid() != null) {
-                return false;
-            }
-        } else if (!getExternalUid().equals(other.getExternalUid())) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "AuthUserDto [firstName=" + firstName
-                + ", lastName=" + lastName + ", mail=" + mail + ", toString()="
-                + super.toString() + "]";
-    }
+  @Override
+  public String toString() {
+    return "AuthUserDto [firstName=" + firstName
+        + ", lastName=" + lastName + ", mail=" + mail + ", toString()="
+        + super.toString() + "]";
+  }
 
 }

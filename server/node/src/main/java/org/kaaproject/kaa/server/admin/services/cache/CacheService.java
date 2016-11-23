@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.services.cache;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
 import org.kaaproject.kaa.common.dto.admin.SdkPlatform;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
@@ -26,97 +23,99 @@ import org.kaaproject.kaa.common.dto.file.FileData;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaExportKey;
 import org.kaaproject.kaa.server.admin.shared.services.KaaAdminServiceException;
 
+import java.io.Serializable;
+import java.util.List;
+
 public interface CacheService {
 
-    /**
-     * @author Bohdan Khablenko
-     *
-     * @since v0.8.0
-     */
-    public class SdkKey implements Serializable {
+  FileData getSdk(SdkKey key);
 
-        private static final long serialVersionUID = 8594934041188059060L;
+  FileData putSdk(SdkKey key, FileData sdkFile);
 
-        private final SdkProfileDto sdkProfile;
-        private final SdkPlatform targetPlatform;
+  void flushSdk(SdkKey key) throws KaaAdminServiceException;
 
-        public SdkKey(SdkProfileDto sdkProfileDto, SdkPlatform targetPlatform) {
-            this.sdkProfile = sdkProfileDto;
-            this.targetPlatform = targetPlatform;
-        }
+  List<SdkKey> getCachedSdkKeys(String applicationId);
 
-        public SdkProfileDto getSdkProfile() {
-            return sdkProfile;
-        }
+  byte[] uploadedFile(String key, byte[] data);
 
-        public SdkPlatform getTargetPlatform() {
-            return targetPlatform;
-        }
+  void removeUploadedFile(String key);
 
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((sdkProfile == null) ? 0 : sdkProfile.hashCode());
-            result = prime * result + ((targetPlatform == null) ? 0 : targetPlatform.hashCode());
-            return result;
-        }
+  FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException;
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (!(obj instanceof SdkKey)) {
-                return false;
-            }
-            SdkKey other = (SdkKey) obj;
-            if (sdkProfile == null) {
-                if (other.sdkProfile != null) {
-                    return false;
-                }
-            } else if (!sdkProfile.equals(other.sdkProfile)) {
-                return false;
-            }
-            if (targetPlatform != other.targetPlatform) {
-                return false;
-            }
-            return true;
-        }
+  FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException;
 
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("SdkKey [sdkProfileDto=");
-            builder.append(sdkProfile);
-            builder.append(", targetPlatform=");
-            builder.append(targetPlatform);
-            builder.append("]");
-            return builder.toString();
-        }
+  FileData getRecordData(RecordKey key) throws KaaAdminServiceException;
+
+  FileData getExportedCtlSchema(CtlSchemaExportKey key) throws KaaAdminServiceException;
+
+  /**
+   * @author Bohdan Khablenko
+   * @since v0.8.0
+   */
+  public class SdkKey implements Serializable {
+
+    private static final long serialVersionUID = 8594934041188059060L;
+
+    private final SdkProfileDto sdkProfile;
+    private final SdkPlatform targetPlatform;
+
+    public SdkKey(SdkProfileDto sdkProfileDto, SdkPlatform targetPlatform) {
+      this.sdkProfile = sdkProfileDto;
+      this.targetPlatform = targetPlatform;
     }
 
-    FileData getSdk(SdkKey key);
+    public SdkProfileDto getSdkProfile() {
+      return sdkProfile;
+    }
 
-    FileData putSdk(SdkKey key, FileData sdkFile);
+    public SdkPlatform getTargetPlatform() {
+      return targetPlatform;
+    }
 
-    void flushSdk(SdkKey key) throws KaaAdminServiceException;
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((sdkProfile == null) ? 0 : sdkProfile.hashCode());
+      result = prime * result + ((targetPlatform == null) ? 0 : targetPlatform.hashCode());
+      return result;
+    }
 
-    List<SdkKey> getCachedSdkKeys(String applicationId);
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (!(obj instanceof SdkKey)) {
+        return false;
+      }
+      SdkKey other = (SdkKey) obj;
+      if (sdkProfile == null) {
+        if (other.sdkProfile != null) {
+          return false;
+        }
+      } else if (!sdkProfile.equals(other.sdkProfile)) {
+        return false;
+      }
+      if (targetPlatform != other.targetPlatform) {
+        return false;
+      }
+      return true;
+    }
 
-    byte[] uploadedFile(String key, byte[] data);
-
-    void removeUploadedFile(String key);
-
-    FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException;
-
-    FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException;
-
-    FileData getRecordData(RecordKey key) throws KaaAdminServiceException;
-    
-    FileData getExportedCtlSchema(CtlSchemaExportKey key) throws KaaAdminServiceException;
+    @Override
+    public String toString() {
+      StringBuilder builder = new StringBuilder();
+      builder.append("SdkKey [sdkProfileDto=");
+      builder.append(sdkProfile);
+      builder.append(", targetPlatform=");
+      builder.append(targetPlatform);
+      builder.append("]");
+      return builder.toString();
+    }
+  }
 
 }

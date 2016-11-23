@@ -20,59 +20,61 @@ import java.io.Serializable;
 
 public class ChangeProfileFilterNotification implements Serializable {
 
-    private static final long serialVersionUID = -8921151682547113023L;
+  private static final long serialVersionUID = -8921151682547113023L;
 
-    private ProfileFilterDto profileFilterDto;
+  private ProfileFilterDto profileFilterDto;
 
-    private ChangeNotificationDto changeNotificationDto;
+  private ChangeNotificationDto changeNotificationDto;
 
-    public ProfileFilterDto getProfileFilterDto() {
-        return profileFilterDto;
+  public ProfileFilterDto getProfileFilterDto() {
+    return profileFilterDto;
+  }
+
+  public void setProfileFilterDto(ProfileFilterDto profileFilterDto) {
+    this.profileFilterDto = profileFilterDto;
+  }
+
+  public ChangeNotificationDto getChangeNotificationDto() {
+    return changeNotificationDto;
+  }
+
+  public void setChangeNotificationDto(ChangeNotificationDto changeNotificationDto) {
+    this.changeNotificationDto = changeNotificationDto;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof ChangeProfileFilterNotification)) {
+      return false;
+    }
+    ChangeProfileFilterNotification that = (ChangeProfileFilterNotification) obj;
+    if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) :
+            that.changeNotificationDto != null) {
+      return false;
+    }
+    if (profileFilterDto != null ? !profileFilterDto.equals(that.profileFilterDto) :
+            that.profileFilterDto != null) {
+      return false;
     }
 
-    public void setProfileFilterDto(ProfileFilterDto profileFilterDto) {
-        this.profileFilterDto = profileFilterDto;
-    }
+    return true;
+  }
 
-    public ChangeNotificationDto getChangeNotificationDto() {
-        return changeNotificationDto;
-    }
+  @Override
+  public int hashCode() {
+    int result = profileFilterDto != null ? profileFilterDto.hashCode() : 0;
+    result = 31 * result + (changeNotificationDto != null ? changeNotificationDto.hashCode() : 0);
+    return result;
+  }
 
-    public void setChangeNotificationDto(ChangeNotificationDto changeNotificationDto) {
-        this.changeNotificationDto = changeNotificationDto;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ChangeProfileFilterNotification)) {
-            return false;
-        }
-        ChangeProfileFilterNotification that = (ChangeProfileFilterNotification) o;
-        if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) : that.changeNotificationDto != null) {
-            return false;
-        }
-        if (profileFilterDto != null ? !profileFilterDto.equals(that.profileFilterDto) : that.profileFilterDto != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = profileFilterDto != null ? profileFilterDto.hashCode() : 0;
-        result = 31 * result + (changeNotificationDto != null ? changeNotificationDto.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ChangeProfileNotification{" +
-                "profileFilterDto=" + profileFilterDto +
-                ", changeNotificationDto=" + changeNotificationDto +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "ChangeProfileNotification{"
+           + "profileFilterDto=" + profileFilterDto
+           + ", changeNotificationDto=" + changeNotificationDto
+           + '}';
+  }
 }

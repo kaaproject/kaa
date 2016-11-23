@@ -21,15 +21,15 @@ package org.kaaproject.kaa.server.common.log.shared.appender;
  */
 public interface LogDeliveryCallback {
 
-    /**
-     * On successful delivery.
-     */
-    void onSuccess();
+  /**
+   * On successful delivery.
+   */
+  void onSuccess();
 
-    void onInternalError();
+  void onInternalError();
 
-    void onConnectionError();
+  void onConnectionError();
 
-    void onRemoteError();
+  void onRemoteError();
 
 }

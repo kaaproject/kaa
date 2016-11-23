@@ -20,7 +20,7 @@
 #define TYP_SMLE 1
 #define TYP_BIGE 2
 
-uint64_t htonll(uint64_t hostlonglong) {
+uint64_t kaa_htonll(uint64_t hostlonglong) {
     static int typ = TYP_INIT;
     unsigned char c;
     union {
@@ -41,7 +41,7 @@ uint64_t htonll(uint64_t hostlonglong) {
     return x.ull;
 }
 
-uint64_t ntohll(uint64_t netlonglong)
+uint64_t kaa_ntohll(uint64_t netlonglong)
 {
-    return htonll(netlonglong);
+    return kaa_htonll(netlonglong);
 }

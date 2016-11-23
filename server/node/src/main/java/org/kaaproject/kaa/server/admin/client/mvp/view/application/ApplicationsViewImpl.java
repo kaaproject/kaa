@@ -16,32 +16,32 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.application;
 
+import com.google.gwt.dom.client.Style.Unit;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
-
 public class ApplicationsViewImpl extends BaseListViewImpl<ApplicationDto> {
 
-        public ApplicationsViewImpl(boolean editable) {
-            super(editable);
-        }
+  public ApplicationsViewImpl(boolean editable) {
+    super(editable);
+  }
 
-        @Override
-        protected AbstractGrid<ApplicationDto, String> createGrid() {
-            return new ApplicationsGrid(Unit.PX);
-        }
+  @Override
+  protected AbstractGrid<ApplicationDto, String> createGrid() {
+    return new ApplicationsGrid(Unit.PX);
+  }
 
-        @Override
-        protected String titleString() {
-            return Utils.constants.applications();
-        }
+  @Override
+  protected String titleString() {
+    return Utils.constants.applications();
+  }
 
-        @Override
-        protected String addButtonString() {
-            return Utils.constants.addNewApplication();
-        }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewApplication();
+  }
 }
 

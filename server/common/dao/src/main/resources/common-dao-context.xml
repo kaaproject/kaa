@@ -57,6 +57,10 @@
     <bean id="eventSchemaProcessor"
           class="org.kaaproject.kaa.server.common.dao.schema.EventSchemaProcessorImpl"/>
 
+    <bean id="profileServiceImpl" class="org.kaaproject.kaa.server.common.dao.service.ProfileServiceImpl">
+        <property name="endpointProfileDao" ref="endpointProfileDao"/>
+    </bean>
+
     <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl">
         <property name="endpointProfileDao" ref="endpointProfileDao"/>
         <property name="endpointConfigurationDao" ref="endpointConfigurationDao"/>
@@ -80,6 +84,12 @@
 
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl">
         <property name="endpointUserConfigurationDao" ref="endpointUserConfigurationDao"/>
+        <property name="endpointUserDao" ref="endpointUserDao"/>
+    </bean>
+
+    <bean id="endpointSpecificConfigurationService"
+          class="org.kaaproject.kaa.server.common.dao.service.EndpointSpecificConfigurationServiceImpl">
+        <property name="endpointSpecificConfigurationDao" ref="endpointSpecificConfigurationDao"/>
     </bean>
 
     <bean id="serverProfileService" class="org.kaaproject.kaa.server.common.dao.service.ServerProfileServiceImpl">
@@ -95,9 +105,7 @@
     <bean id="internalCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.InternalCredentialsService">
         <property name="credentialsDao" ref="credentialsDao"/>
     </bean>
-    <alias name="internalCredentialsService" alias="Internal Credentials Service"/>
 
     <bean id="trustfulCredentialsService" class="org.kaaproject.kaa.server.common.dao.service.TrustfulCredentialsService"/>
-    <alias name="trustfulCredentialsService" alias="Trustful Credentials Service"/>
 
 </beans>

@@ -17,20 +17,28 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 import com.google.gwt.user.client.ui.Anchor;
+
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 
 public interface SdkProfileView extends BaseDetailsView {
 
-    SizedTextBox getSdkName();
-    SizedTextBox getSdkAuthor();
-    SizedTextBox getSdkDateCreated();
-    Anchor getSdkConfigurationVersion();
-    Anchor getSdkProfileVersion();
-    Anchor getSdkNotificationVersion();
-    Anchor getSdkLoggingVersion();
-    SizedTextBox getSdkProfileToken();
+  SizedTextBox getSdkName();
 
-    AbstractGrid<ApplicationEventFamilyMapDto, String> getSdkAefMapsGrid();
+  SizedTextBox getSdkAuthor();
+
+  SizedTextBox getSdkDateCreated();
+
+  Anchor getSdkConfigurationVersion();
+
+  Anchor getSdkProfileVersion();
+
+  Anchor getSdkNotificationVersion();
+
+  Anchor getSdkLoggingVersion();
+
+  SizedTextBox getSdkProfileToken();
+
+  AbstractGrid<ApplicationEventFamilyMapDto, String> getSdkAefMapsGrid();
 }

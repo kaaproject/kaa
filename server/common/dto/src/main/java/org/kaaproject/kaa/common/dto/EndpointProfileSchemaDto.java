@@ -19,14 +19,14 @@ package org.kaaproject.kaa.common.dto;
 
 public class EndpointProfileSchemaDto extends BaseSchemaDto {
 
-    private static final long serialVersionUID = 6374536574939098298L;
+  private static final long serialVersionUID = 6374536574939098298L;
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointProfileSchemaDto [");
-        builder.append(super.toString());
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointProfileSchemaDto [");
+    builder.append(super.toString());
+    builder.append("]");
+    return builder.toString();
+  }
 }

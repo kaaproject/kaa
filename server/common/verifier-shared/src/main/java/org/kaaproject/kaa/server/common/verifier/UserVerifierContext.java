@@ -22,29 +22,28 @@ import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
 /**
  * Provides a context for verifier initialization parameters and {@link MessageHandler
  * }.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 public class UserVerifierContext {
 
-    private final UserVerifierDto verifierDto;
+  private final UserVerifierDto verifierDto;
 
-    public UserVerifierContext(UserVerifierDto verifierDto) {
-        super();
-        this.verifierDto = verifierDto;
-    }
+  public UserVerifierContext(UserVerifierDto verifierDto) {
+    super();
+    this.verifierDto = verifierDto;
+  }
 
-    public UserVerifierDto getVerifierDto() {
-        return verifierDto;
-    }
+  public UserVerifierDto getVerifierDto() {
+    return verifierDto;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("UserVerifierContext [verifierDto=");
-        builder.append(verifierDto);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("UserVerifierContext [verifierDto=");
+    builder.append(verifierDto);
+    builder.append("]");
+    return builder.toString();
+  }
 }

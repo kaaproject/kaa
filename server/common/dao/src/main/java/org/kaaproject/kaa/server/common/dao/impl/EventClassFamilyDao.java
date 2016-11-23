@@ -20,51 +20,60 @@ import java.util.List;
 
 /**
  * The interface for Event Class Family Dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface EventClassFamilyDao<T> extends SqlDao<T> {
 
-    /**
-     * Find EventClassFamily by tenant id.
-     *
-     * @param id the user id
-     * @return the list of users
-     */
-    List<T> findByTenantId(String id);
+  /**
+   * Find EventClassFamily by tenant id.
+   *
+   * @param id the user id
+   * @return the list of users
+   */
+  List<T> findByTenantId(String id);
 
-    /**
-     * Find EventClassFamily by tenant id and name.
-     *
-     * @param tenantId id of tenant
-     * @param name name of EventClassFamily
-     * @return the list of users
-     */
-    T findByTenantIdAndName(String tenantId, String name);
+  /**
+   * Find EventClassFamily by tenant id and name.
+   *
+   * @param tenantId id of tenant
+   * @param name     name of EventClassFamily
+   * @return the list of users
+   */
+  T findByTenantIdAndName(String tenantId, String name);
 
-    /**
-     * Remove all EventClassFamily objects by tenant id.
-     *
-     * @param tenantId the tenant id
-     */
-    void removeByTenantId(String tenantId);
+  /**
+   * Find EventClassFamily by ECF version id.
+   *
+   * @param ecfvId id of ECF version
+   * @return EventClassFamily
+   */
+  T findByEcfvId(String ecfvId);
 
-    /**
-     * Validate event class family name for uniqueness within the tenant.
-     *
-     * @param tenantId the tenant id
-     * @param ecfId the event class family id
-     * @param name the event class family name
-     * @return true if event class family name is unique otherwise false
-     */
-    boolean validateName(String tenantId, String ecfId, String name);
+  /**
+   * Remove all EventClassFamily objects by tenant id.
+   *
+   * @param tenantId the tenant id
+   */
+  void removeByTenantId(String tenantId);
 
-    /**
-     * Validate event class family class name for uniqueness within the tenant.
-     *
-     * @param tenantId the tenant id
-     * @param ecfId the event class family id
-     * @param className the event class family class name
-     * @return true if event class family class name is unique otherwise false
-     */
-    boolean validateClassName(String tenantId, String ecfId, String className);
+  /**
+   * Validate event class family name for uniqueness within the tenant.
+   *
+   * @param tenantId the tenant id
+   * @param ecfId    the event class family id
+   * @param name     the event class family name
+   * @return true if event class family name is unique otherwise false
+   */
+  boolean validateName(String tenantId, String ecfId, String name);
+
+  /**
+   * Validate event class family class name for uniqueness within the tenant.
+   *
+   * @param tenantId  the tenant id
+   * @param ecfId     the event class family id
+   * @param className the event class family class name
+   * @return true if event class family class name is unique otherwise false
+   */
+  boolean validateClassName(String tenantId, String ecfId, String className);
 }

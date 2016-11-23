@@ -20,6 +20,6 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 
 public interface KaaDataFactory<U extends KaaSchema, T extends KaaData> {
 
-    T createData(U schema, String data);
+  T createData(U schema, String data);
 
 }

@@ -27,8 +27,6 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.server.common.dao.impl.NotificationDao;
 import org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoNotification;
@@ -36,50 +34,69 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public class NotificationMongoDao extends AbstractVersionableMongoDao<MongoNotification, String> implements NotificationDao<MongoNotification> {
+public class NotificationMongoDao extends AbstractMongoDao<MongoNotification, String>
+    implements NotificationDao<MongoNotification> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NotificationMongoDao.class);
+  private static final Logger LOG = LoggerFactory.getLogger(NotificationMongoDao.class);
 
-    @Override
-    protected String getCollectionName() {
-        return NOTIFICATION;
-    }
+  @Override
+  protected String getCollectionName() {
+    return NOTIFICATION;
+  }
 
-    @Override
-    protected Class<MongoNotification> getDocumentClass() {
-        return MongoNotification.class;
-    }
+  @Override
+  protected Class<MongoNotification> getDocumentClass() {
+    return MongoNotification.class;
+  }
 
-    @Override
-    public void removeById(String id) {
-        LOG.debug("Remove notification by id [{}]", id);
-        remove(query(where(ID).is(id)));
-    }
+  @Override
+  public void removeById(String id) {
+    LOG.debug("Remove notification by id [{}]", id);
+    remove(query(where(ID).is(id)));
+  }
 
-    @Override
-    public List<MongoNotification> findNotificationsByTopicId(String topicId) {
-        LOG.debug("Find notifications by topic id [{}]", topicId);
-        return find(query(where(NF_TOPIC_ID).is(topicId)));
-    }
+  @Override
+  public List<MongoNotification> findNotificationsByTopicId(String topicId) {
+    LOG.debug("Find notifications by topic id [{}]", topicId);
+    return find(query(where(NF_TOPIC_ID).is(topicId)));
+  }
 
-    @Override
-    public void removeNotificationsByTopicId(String topicId) {
-        LOG.debug("Remove notifications by topic id [{}]", topicId);
-        remove(query(where(NF_TOPIC_ID).is(topicId)));
-    }
+  @Override
+  public void removeNotificationsByTopicId(String topicId) {
+    LOG.debug("Remove notifications by topic id [{}]", topicId);
+    remove(query(where(NF_TOPIC_ID).is(topicId)));
+  }
 
-    @Override
-    public List<MongoNotification> findNotificationsByTopicIdAndVersionAndStartSecNum(String topicId, int seqNumber, int sysNfVersion, int userNfVersion) {
-        LOG.debug("Find notifications by topic id [{}], sequence number start [{}], system schema version [{}], user schema version [{}]",
-                topicId, seqNumber, sysNfVersion, userNfVersion);
-        return find(query(where(NF_TOPIC_ID).is(topicId).and(NF_SEQ_NUM).gt(seqNumber)
-                .orOperator(where(NF_VERSION).is(sysNfVersion).and(NF_TYPE).is(SYSTEM),
-                        where(NF_VERSION).is(userNfVersion).and(NF_TYPE).is(USER))));
-    }
+  @Override
+  public List<MongoNotification>
+      findNotificationsByTopicIdAndVersionAndStartSecNum(
+          String topicId,
+          int seqNumber,
+          int sysNfVersion,
+          int userNfVersion
+  ) {
+    LOG.debug("Find notifications by topic id [{}], sequence number start [{}], "
+            + "system schema version [{}], user schema version [{}]",
+        topicId, seqNumber, sysNfVersion, userNfVersion);
+    return find(query(where(NF_TOPIC_ID)
+        .is(topicId)
+        .and(NF_SEQ_NUM)
+        .gt(seqNumber)
+        .orOperator(where(NF_VERSION)
+                .is(sysNfVersion)
+                .and(NF_TYPE)
+                .is(SYSTEM),
+            where(NF_VERSION)
+                .is(userNfVersion)
+                .and(NF_TYPE)
+                .is(USER))));
+  }
 
-    @Override
-    public MongoNotification save(NotificationDto notification) {
-        return save(new MongoNotification(notification));
-    }
+  @Override
+  public MongoNotification save(NotificationDto notification) {
+    return save(new MongoNotification(notification));
+  }
 }

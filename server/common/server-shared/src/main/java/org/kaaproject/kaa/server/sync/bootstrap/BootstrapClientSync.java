@@ -18,72 +18,74 @@ package org.kaaproject.kaa.server.sync.bootstrap;
 
 import java.util.List;
 
-/**
- * 
- * @author Andrew Shvayka
- *
- */
+
 public final class BootstrapClientSync {
 
-    private final int requestId;
-    private final List<ProtocolVersionId> keys;
+  private final int requestId;
+  private final List<ProtocolVersionId> keys;
 
-    public BootstrapClientSync(int requestId, List<ProtocolVersionId> keys) {
-        super();
-        this.requestId = requestId;
-        this.keys = keys;
-    }
+  /**
+   * Create new instance of <code>BootstrapClientSync</code>.
+   *
+   * @param requestId is request id
+   * @param keys is <code>List</code> of protocol version ids
+   */
+  public BootstrapClientSync(int requestId, List<ProtocolVersionId> keys) {
+    super();
+    this.requestId = requestId;
+    this.keys = keys;
+  }
 
-    public int getRequestId() {
-        return requestId;
-    }
+  public int getRequestId() {
+    return requestId;
+  }
 
-    public List<ProtocolVersionId> getKeys() {
-        return keys;
-    }
+  public List<ProtocolVersionId> getKeys() {
+    return keys;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((keys == null) ? 0 : keys.hashCode());
-        result = prime * result + requestId;
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((keys == null) ? 0 : keys.hashCode());
+    result = prime * result + requestId;
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        BootstrapClientSync other = (BootstrapClientSync) obj;
-        if (keys == null) {
-            if (other.keys != null) {
-                return false;
-            }
-        } else if (!keys.equals(other.keys)) {
-            return false;
-        }
-        if (requestId != other.requestId) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    BootstrapClientSync other = (BootstrapClientSync) obj;
+    if (keys == null) {
+      if (other.keys != null) {
+        return false;
+      }
+    } else if (!keys.equals(other.keys)) {
+      return false;
+    }
+    if (requestId != other.requestId) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BootstrapClientSync [requestId=");
-        builder.append(requestId);
-        builder.append(", keys=");
-        builder.append(keys);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("BootstrapClientSync [requestId=");
+    builder.append(requestId);
+    builder.append(", keys=");
+    builder.append(keys);
+    builder.append("]");
+    return builder.toString();
+  }
 }

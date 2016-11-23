@@ -16,56 +16,57 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.Prefix;
 
-public class ConfigurationSchemaPlace extends AbstractSchemaPlace {
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    public ConfigurationSchemaPlace(String applicationId, String schemaId) {
-        super(applicationId, schemaId);
+public class ConfigurationSchemaPlace extends AbstractSchemaPlaceApplication {
+
+  public ConfigurationSchemaPlace(String applicationId, String schemaId) {
+    super(applicationId, schemaId);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Prefix(value = "confSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<ConfigurationSchemaPlace> {
-
-        @Override
-        protected ConfigurationSchemaPlace getPlaceImpl(String applicationId,
-                String schemaId) {
-            return new ConfigurationSchemaPlace(applicationId, schemaId);
-        }
+    if (obj == null) {
+      return false;
     }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    ConfigurationSchemaPlace other = (ConfigurationSchemaPlace) obj;
+    if (schemaId == null) {
+      if (other.schemaId != null) {
+        return false;
+      }
+    } else if (!schemaId.equals(other.schemaId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.configurationSchema();
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ConfigurationSchemasPlace(applicationId);
+  }
+
+  @Prefix(value = "confSchema")
+  public static class Tokenizer
+      extends AbstractSchemaPlaceApplication.Tokenizer<ConfigurationSchemaPlace> {
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ConfigurationSchemaPlace other = (ConfigurationSchemaPlace) obj;
-        if (schemaId == null) {
-            if (other.schemaId != null) {
-                return false;
-            }
-        } else if (!schemaId.equals(other.schemaId)) {
-            return false;
-        }
-        return true;
+    protected ConfigurationSchemaPlace getPlaceImpl(String applicationId,
+                                                    String schemaId) {
+      return new ConfigurationSchemaPlace(applicationId, schemaId);
     }
-
-    @Override
-    public String getName() {
-        return Utils.constants.configurationSchema();
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ConfigurationSchemasPlace(applicationId);
-    }
+  }
 
 }

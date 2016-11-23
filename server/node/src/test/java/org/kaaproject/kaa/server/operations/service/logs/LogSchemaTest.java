@@ -22,25 +22,24 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 
 public class LogSchemaTest {
-    
-    private static final String ID = "id";
-    private static final String APPLICATION_ID = "application id";  
-    private static final String SCHEMA = "schema";
-    private static final int VERSION = 3;
-    
-    
-    @Test
-    public void basicLogSchemaTest() {
-        LogSchemaDto dto = new LogSchemaDto();
-        dto.setId(ID);
-        dto.setApplicationId(APPLICATION_ID);
-        dto.setSchema(SCHEMA);
-        dto.setVersion(VERSION);
-        LogSchema logSchema = new LogSchema(dto);
-        
-        Assert.assertEquals(ID, logSchema.getId());
-        Assert.assertEquals(APPLICATION_ID, logSchema.getApplicationId());
-        Assert.assertEquals(SCHEMA, logSchema.getSchema());
-        Assert.assertEquals(VERSION, logSchema.getVersion());
-    }
+
+  private static final String ID = "id";
+  private static final String APPLICATION_ID = "application id";
+  private static final String SCHEMA = "schema";
+  private static final int VERSION = 3;
+
+
+  @Test
+  public void basicLogSchemaTest() {
+    LogSchemaDto dto = new LogSchemaDto();
+    dto.setId(ID);
+    dto.setApplicationId(APPLICATION_ID);
+    dto.setVersion(VERSION);
+    LogSchema logSchema = new LogSchema(dto, SCHEMA);
+
+    Assert.assertEquals(ID, logSchema.getId());
+    Assert.assertEquals(APPLICATION_ID, logSchema.getApplicationId());
+    Assert.assertEquals(SCHEMA, logSchema.getSchema());
+    Assert.assertEquals(VERSION, logSchema.getVersion());
+  }
 }

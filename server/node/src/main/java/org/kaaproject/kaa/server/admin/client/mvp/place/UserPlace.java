@@ -21,73 +21,85 @@ import com.google.gwt.place.shared.Prefix;
 
 public class UserPlace extends TreePlace {
 
-    private String userId;
-    private String userName;
+  private String userId;
+  private String tenId;
+  private String userName;
 
-    public UserPlace(String userId) {
-        this.userId = userId;
+  public UserPlace(String userId) {
+    this(userId, null);
+  }
+
+  public UserPlace(String userId, String tenId) {
+    this.userId = userId;
+    this.tenId = tenId;
+  }
+
+
+  public void setUserName(String name) {
+    this.userName = name;
+  }
+
+  public String getUserId() {
+    return userId;
+  }
+
+  public String getTenId() {
+    return tenId;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public void setUserName(String name) {
-        this.userName = name;
+    if (obj == null) {
+      return false;
     }
-
-    public String getUserId() {
-        return userId;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
+    UserPlace other = (UserPlace) obj;
+    if (userId == null) {
+      if (other.userId != null) {
+        return false;
+      }
+    } else if (!userId.equals(other.userId)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Prefix(value = "usr")
-    public static class Tokenizer implements PlaceTokenizer<UserPlace>, PlaceConstants {
+  @Override
+  public String getName() {
+    return userName;
+  }
 
-        @Override
-        public UserPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new UserPlace(PlaceParams.getParam(USER_ID));
-        }
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
 
-        @Override
-        public String getToken(UserPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(USER_ID, place.getUserId());
-            return PlaceParams.generateToken();
-        }
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new UsersPlace();
+  }
+
+  @Prefix(value = "usr")
+  public static class Tokenizer implements PlaceTokenizer<UserPlace>, PlaceConstants {
+
+    @Override
+    public UserPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new UserPlace(PlaceParams.getParam(USER_ID), PlaceParams.getParam(TENANT_ID));
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UserPlace other = (UserPlace) obj;
-        if (userId == null) {
-            if (other.userId != null) {
-                return false;
-            }
-        } else if (!userId.equals(other.userId)) {
-            return false;
-        }
-        return true;
+    public String getToken(UserPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(USER_ID, place.getUserId());
+      PlaceParams.putParam(TENANT_ID, place.getTenId());
+      return PlaceParams.generateToken();
     }
-
-    @Override
-    public String getName() {
-        return userName;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new UsersPlace();
-    }
+  }
 
 }

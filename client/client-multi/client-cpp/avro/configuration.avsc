@@ -1,0 +1,1 @@
+{"type":"record","name":"ConfigurationRootRecord","namespace":"org.kaaproject.kaa.schema.system","fields":[{"name":"data","type":{"type":"string","avro.java.string":"String"}}],"version":1,"displayName":"RootRecord"}

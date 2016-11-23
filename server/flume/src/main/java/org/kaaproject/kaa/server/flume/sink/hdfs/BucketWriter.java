@@ -16,15 +16,7 @@
 
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import com.google.common.base.Throwables;
 
 import org.apache.flume.Context;
 import org.apache.flume.Event;
@@ -38,7 +30,15 @@ import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Throwables;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Internal API intended for HDFSSink use.
@@ -47,15 +47,14 @@ import com.google.common.base.Throwables;
  */
 class BucketWriter {
 
-  private static final Logger LOG = LoggerFactory
-      .getLogger(BucketWriter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BucketWriter.class);
 
   private static final String IN_USE_EXT = ".tmp";
   private static final String AVRO_EXT = ".avro";
   /**
    * This lock ensures that only one thread can open a file at a time.
    */
-  private static final Integer staticLock = new Integer(1);
+  private static final Integer staticLock = 1;
 
   private final HDFSWriter writer;
   private final long rollInterval;
@@ -65,23 +64,21 @@ class BucketWriter {
   private final long defaultBlockSize;
   private final ScheduledThreadPoolExecutor timedRollerPool;
   private final UserGroupInformation user;
-
+  private final SinkCounter sinkCounter;
   private long eventCounter;
   private long processSize;
-
   private FileSystem fileSystem;
-
   private volatile String filePath;
   private volatile String bucketPath;
   private volatile long batchCounter;
   private volatile boolean isOpen;
   private volatile ScheduledFuture<Void> timedRollFuture;
-  private final SinkCounter sinkCounter;
 
-  BucketWriter(long rollInterval, long rollSize, long rollCount, long batchSize, long defaultBlockSize,
-      Context context, String filePath, HDFSWriter writer,
-      ScheduledThreadPoolExecutor timedRollerPool, UserGroupInformation user,
-      SinkCounter sinkCounter) {
+  BucketWriter(long rollInterval, long rollSize, long rollCount, long batchSize,
+               long defaultBlockSize,
+               Context context, String filePath, HDFSWriter writer,
+               ScheduledThreadPoolExecutor timedRollerPool, UserGroupInformation user,
+               SinkCounter sinkCounter) {
     this.rollInterval = rollInterval;
     this.rollSize = rollSize;
     this.rollCount = rollCount;
@@ -99,12 +96,7 @@ class BucketWriter {
   }
 
   /**
-   * Allow methods to act as another user (typically used for HDFS Kerberos)
-   * @param <T>
-   * @param action
-   * @return
-   * @throws IOException
-   * @throws InterruptedException
+   * Allow methods to act as another user (typically used for HDFS Kerberos).
    */
   private <T> T runPrivileged(final PrivilegedExceptionAction<T> action)
       throws IOException, InterruptedException {
@@ -114,11 +106,7 @@ class BucketWriter {
     } else {
       try {
         return action.run();
-      } catch (IOException ex) {
-        throw ex;
-      } catch (InterruptedException ex) {
-        throw ex;
-      } catch (RuntimeException ex) {
+      } catch (IOException | InterruptedException | RuntimeException ex) {
         throw ex;
       } catch (Exception ex) {
         throw new RuntimeException("Unexpected exception.", ex);
@@ -127,7 +115,7 @@ class BucketWriter {
   }
 
   /**
-   * Clear the class counters
+   * Clear the class counters.
    */
   private void resetCounters() {
     eventCounter = 0;
@@ -136,8 +124,7 @@ class BucketWriter {
   }
 
   /**
-   * open() is called by append()
-   * @throws IOException
+   * open() is called by append().
    */
   private void open(final long serial) throws IOException, InterruptedException {
     runPrivileged(new PrivilegedExceptionAction<Void>() {
@@ -150,8 +137,7 @@ class BucketWriter {
   }
 
   /**
-   * doOpen() must only be called by open()
-   * @throws IOException
+   * doOpen() must only be called by open().
    */
   private void doOpen(long serial) throws IOException {
     if ((filePath == null) || (writer == null)) {
@@ -164,9 +150,9 @@ class BucketWriter {
 
     long blockSize = DFSConfigKeys.DFS_BLOCK_SIZE_DEFAULT;
     if (defaultBlockSize > 0) {
-    	blockSize = defaultBlockSize;
+      blockSize = defaultBlockSize;
     }
-    config.set(DFSConfigKeys.DFS_BLOCK_SIZE_KEY, ""+blockSize);
+    config.set(DFSConfigKeys.DFS_BLOCK_SIZE_KEY, "" + blockSize);
 
     // Hadoop is not thread safe when doing certain RPC operations,
     // including getFileSystem(), when running under Kerberos.
@@ -203,8 +189,8 @@ class BucketWriter {
               bucketPath + IN_USE_EXT, rollInterval);
           try {
             close();
-          } catch(Throwable t) { //NOSONAR
-            LOG.error("Unexpected error", t);
+          } catch (Throwable throwable) { //NOSONAR
+            LOG.error("Unexpected error", throwable);
           }
           return null;
         }
@@ -219,6 +205,7 @@ class BucketWriter {
   /**
    * Close the file handle and rename the temp file to the permanent filename.
    * Safe to call multiple times. Logs HDFSWriter.close() exceptions.
+   *
    * @throws IOException On failure to rename if temp file exists.
    */
   public synchronized void close() throws IOException, InterruptedException {
@@ -233,18 +220,19 @@ class BucketWriter {
   }
 
   /**
-   * doClose() must only be called by close()
-   * @throws IOException
+   * doClose() must only be called by close().
    */
   private void doClose() throws IOException {
-	String currentBucket = bucketPath + IN_USE_EXT;
+    String currentBucket = bucketPath + IN_USE_EXT;
     LOG.debug("Closing {}", currentBucket);
     if (isOpen) {
       try {
         writer.close(); // could block
         sinkCounter.incrementConnectionClosedCount();
-      } catch (IOException e) {
-        LOG.warn("failed to close() HDFSWriter for file (" + currentBucket + "). Exception follows.", e);
+      } catch (IOException ex) {
+        LOG.warn("failed to close() HDFSWriter for file ("
+            + currentBucket
+            + "). Exception follows.", ex);
         sinkCounter.incrementConnectionFailedCount();
       }
       isOpen = false;
@@ -254,11 +242,11 @@ class BucketWriter {
 
     // NOTE: timed rolls go through this codepath as well as other roll types
     if (timedRollFuture != null) {
-        if (!timedRollFuture.isDone()) {
-            timedRollFuture.cancel(false); // do not cancel myself if running!
-        }
-        timedRollerPool.remove((Runnable)timedRollFuture);
-        timedRollFuture = null;
+      if (!timedRollFuture.isDone()) {
+        timedRollFuture.cancel(false); // do not cancel myself if running!
+      }
+      timedRollerPool.remove((Runnable) timedRollFuture);
+      timedRollFuture = null;
     }
 
     if (bucketPath != null && fileSystem != null) {
@@ -268,7 +256,7 @@ class BucketWriter {
   }
 
   /**
-   * flush the data
+   * flush the data.
    */
   public synchronized void flush() throws IOException, InterruptedException {
     if (!isBatchComplete()) {
@@ -283,8 +271,7 @@ class BucketWriter {
   }
 
   /**
-   * doFlush() must only be called by flush()
-   * @throws IOException
+   * doFlush() must only be called by flush().
    */
   private void doFlush() throws IOException {
     writer.sync(); // could block
@@ -315,17 +302,17 @@ class BucketWriter {
     try {
       sinkCounter.incrementEventDrainAttemptCount();
       writer.append(event); // could block
-    } catch (IOException e) {
-      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file (" +
-          bucketPath + IN_USE_EXT + ") and rethrowing exception.",
-          e.getMessage());
+    } catch (IOException ex) {
+      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file ("
+          + bucketPath + IN_USE_EXT + ") and rethrowing exception.",
+          ex.getMessage());
       try {
         close();
-      } catch (IOException e2) {
-        LOG.warn("Caught IOException while closing file (" +
-             bucketPath + IN_USE_EXT + "). Exception follows.", e2);
+      } catch (IOException ex2) {
+        LOG.warn("Caught IOException while closing file ("
+            + bucketPath + IN_USE_EXT + "). Exception follows.", ex2);
       }
-      throw e;
+      throw ex;
     }
 
     // update statistics
@@ -338,10 +325,11 @@ class BucketWriter {
     }
   }
 
-  public synchronized void appendBatch(List<KaaRecordEvent> events) throws IOException, InterruptedException {
-	if (events.isEmpty()) {
-		return;
-	}
+  public synchronized void appendBatch(List<KaaRecordEvent> events)
+      throws IOException, InterruptedException {
+    if (events.isEmpty()) {
+      return;
+    }
     if (!isOpen) {
       open(generateSerial(events.get(0)));
     }
@@ -356,20 +344,20 @@ class BucketWriter {
     try {
       sinkCounter.addToEventDrainAttemptCount(events.size());
       for (Event event : events) {
-    	  writer.append(event); // could block
-    	  processSize += event.getBody().length;
+        writer.append(event); // could block
+        processSize += event.getBody().length;
       }
-    } catch (IOException e) {
-      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file (" +
-          bucketPath + IN_USE_EXT + ") and rethrowing exception.",
-          e.getMessage());
+    } catch (IOException ex) {
+      LOG.warn("Caught IOException writing to HDFSWriter ({}). Closing file ("
+          + bucketPath + IN_USE_EXT + ") and rethrowing exception.",
+          ex.getMessage());
       try {
         close();
-      } catch (IOException e2) {
-        LOG.warn("Caught IOException while closing file (" +
-             bucketPath + IN_USE_EXT + "). Exception follows.", e2);
+      } catch (IOException ex2) {
+        LOG.warn("Caught IOException while closing file ("
+            + bucketPath + IN_USE_EXT + "). Exception follows.", ex2);
       }
-      throw e;
+      throw ex;
     }
 
     // update statistics
@@ -381,8 +369,9 @@ class BucketWriter {
       flush();
     }
   }
+
   /**
-   * check if time to rotate the file
+   * Check if time to rotate the file.
    */
   private boolean shouldRotate() {
     boolean doRotate = false;
@@ -406,7 +395,7 @@ class BucketWriter {
   private void renameBucket() throws IOException {
     Path srcPath = new Path(bucketPath + IN_USE_EXT);
     Path dstPath = new Path(bucketPath + AVRO_EXT);
-    if(fileSystem.exists(srcPath)) { // could block
+    if (fileSystem.exists(srcPath)) { // could block
       LOG.info("Renaming " + srcPath + " to " + dstPath);
       fileSystem.rename(srcPath, dstPath); // could block
     }
@@ -414,16 +403,20 @@ class BucketWriter {
 
   @Override
   public String toString() {
-    return "[ " + this.getClass().getSimpleName() + " filePath = " + filePath +
-        ", bucketPath = " + bucketPath + " ]";
+    return "[ " + this.getClass().getSimpleName()
+        + " filePath = " + filePath
+        + ", bucketPath = " + bucketPath
+        + " ]";
   }
 
   private boolean isBatchComplete() {
     return batchCounter == 0;
   }
 
-  private long generateSerial (Event event) {
-	  long timestamp = System.currentTimeMillis();
-	  return Arrays.hashCode(event.getBody()) + ManagementFactory.getRuntimeMXBean().getName().hashCode() + (int)(timestamp ^ (timestamp >>> 32));
+  private long generateSerial(Event event) {
+    long timestamp = System.currentTimeMillis();
+    return Arrays.hashCode(event.getBody())
+        + ManagementFactory.getRuntimeMXBean().getName().hashCode()
+        + (int) (timestamp ^ (timestamp >>> 32));
   }
 }

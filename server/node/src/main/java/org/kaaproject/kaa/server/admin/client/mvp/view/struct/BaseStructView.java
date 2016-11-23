@@ -19,22 +19,6 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.struct;
 import static org.kaaproject.kaa.server.admin.client.util.Utils.millisecondsToDateTimeString;
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gwt.user.client.Window;
-import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
-import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
-import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
-import org.kaaproject.kaa.common.dto.AbstractStructureDto;
-import org.kaaproject.kaa.common.dto.UpdateStatus;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
-import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
@@ -46,372 +30,377 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class BaseStructView<T extends AbstractStructureDto, V> extends FlexTable implements InputEventHandler {
+import org.kaaproject.avro.ui.gwt.client.input.InputEvent;
+import org.kaaproject.avro.ui.gwt.client.input.InputEventHandler;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextArea;
+import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
+import org.kaaproject.kaa.common.dto.AbstractStructureDto;
+import org.kaaproject.kaa.common.dto.UpdateStatus;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.KaaAdminSizedTextBox;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+import java.util.ArrayList;
+import java.util.List;
 
-    private HasErrorMessage hasErrorMessage;
+public abstract class BaseStructView<T extends AbstractStructureDto, V>
+    extends FlexTable
+    implements InputEventHandler {
 
-    private Label dateTimeCreatedLabel;
-    private SizedTextBox createdDateTime;
-    private Label authorLabel;
-    private SizedTextBox createdUsername;
-    private Label dateTimeModifiedLabel;
-    private SizedTextBox modifiedDateTime;
-    private Label modifiedByLabel;
-    private SizedTextBox modifiedUsername;
-    private Label dateTimeActivatedLabel;
-    private SizedTextBox activatedDateTime;
-    private Label activatedByLabel;
-    private SizedTextBox activatedUsername;
-    private Label dateTimeDeactivatedLabel;
-    private SizedTextBox deactivatedDateTime;
-    private Label deactivatedByLabel;
-    private SizedTextBox deactivatedUsername;
-    private SizedTextArea description;
-    protected HasValue<V> body;
-    private Button saveButton;
-    private Button activateButton;
-    private Button deactivateButton;
-    private Button downloadConfigurationButton;
+  private static final String REQUIRED = Utils.avroUiStyle.requiredField();
+  protected HasValue<V> body;
+  protected HorizontalPanel buttonsPanel;
+  protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
+  private HasErrorMessage hasErrorMessage;
+  private Label dateTimeCreatedLabel;
+  private SizedTextBox createdDateTime;
+  private Label authorLabel;
+  private SizedTextBox createdUsername;
+  private Label dateTimeModifiedLabel;
+  private SizedTextBox modifiedDateTime;
+  private Label modifiedByLabel;
+  private SizedTextBox modifiedUsername;
+  private Label dateTimeActivatedLabel;
+  private SizedTextBox activatedDateTime;
+  private Label activatedByLabel;
+  private SizedTextBox activatedUsername;
+  private Label dateTimeDeactivatedLabel;
+  private SizedTextBox deactivatedDateTime;
+  private Label deactivatedByLabel;
+  private SizedTextBox deactivatedUsername;
+  private SizedTextArea description;
+  private Button saveButton;
+  private Button activateButton;
+  private Button deactivateButton;
+  private boolean active;
+  private Label bodyLabel;
 
-    private boolean active;
+  public BaseStructView(HasErrorMessage hasErrorMessage) {
+    this.hasErrorMessage = hasErrorMessage;
+    init();
+  }
 
-    private Label bodyLabel;
+  protected void init() {
 
-    private HorizontalPanel buttonsPanel;
+    getColumnFormatter().setWidth(0, "400px");
+    getColumnFormatter().setWidth(1, "400px");
 
-    protected List<HandlerRegistration> registrations = new ArrayList<HandlerRegistration>();
+    // IE workaround
+    getColumnFormatter().getElement(2).setAttribute("width", "0px");
 
-    public BaseStructView(HasErrorMessage hasErrorMessage) {
-        this.hasErrorMessage = hasErrorMessage;
-        init();
+    FlexTable dateTable = new FlexTable();
+    FlexTable userTable = new FlexTable();
+
+    dateTable.getColumnFormatter().setWidth(0, "200px");
+    dateTable.getColumnFormatter().setWidth(1, "200px");
+
+    userTable.getColumnFormatter().setWidth(0, "200px");
+    userTable.getColumnFormatter().setWidth(1, "200px");
+
+    dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
+    dateTimeCreatedLabel.setWidth("200px");
+    createdDateTime = new KaaAdminSizedTextBox(-1, false, false);
+    createdDateTime.setWidth("200px");
+    dateTable.setWidget(0, 0, dateTimeCreatedLabel);
+    dateTable.setWidget(0, 1, createdDateTime);
+
+    dateTimeModifiedLabel = new Label(Utils.constants.dateTimeModified());
+    dateTimeModifiedLabel.setWidth("200px");
+    modifiedDateTime = new KaaAdminSizedTextBox(-1, false, false);
+    modifiedDateTime.setWidth("200px");
+    dateTable.setWidget(1, 0, dateTimeModifiedLabel);
+    dateTable.setWidget(1, 1, modifiedDateTime);
+
+    dateTimeActivatedLabel = new Label(Utils.constants.dateTimeActivated());
+    dateTimeActivatedLabel.setWidth("200px");
+    activatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
+    activatedDateTime.setWidth("200px");
+    dateTable.setWidget(2, 0, dateTimeActivatedLabel);
+    dateTable.setWidget(2, 1, activatedDateTime);
+
+    dateTimeDeactivatedLabel = new Label(Utils.constants.dateTimeDectivated());
+    dateTimeDeactivatedLabel.setWidth("200px");
+    deactivatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
+    deactivatedDateTime.setWidth("200px");
+    dateTable.setWidget(3, 0, dateTimeDeactivatedLabel);
+    dateTable.setWidget(3, 1, deactivatedDateTime);
+
+    authorLabel = new Label(Utils.constants.author());
+    authorLabel.setWidth("200px");
+    createdUsername = new KaaAdminSizedTextBox(-1, false, false);
+    createdUsername.setWidth("200px");
+    userTable.setWidget(0, 0, authorLabel);
+    userTable.setWidget(0, 1, createdUsername);
+
+    modifiedByLabel = new Label(Utils.constants.lastModifiedBy());
+    modifiedByLabel.setWidth("200px");
+    modifiedUsername = new KaaAdminSizedTextBox(-1, false, false);
+    modifiedUsername.setWidth("200px");
+    userTable.setWidget(1, 0, modifiedByLabel);
+    userTable.setWidget(1, 1, modifiedUsername);
+
+    activatedByLabel = new Label(Utils.constants.activatedBy());
+    activatedByLabel.setWidth("200px");
+    activatedUsername = new KaaAdminSizedTextBox(-1, false, false);
+    activatedUsername.setWidth("200px");
+    userTable.setWidget(2, 0, activatedByLabel);
+    userTable.setWidget(2, 1, activatedUsername);
+
+    deactivatedByLabel = new Label(Utils.constants.deactivatedBy());
+    deactivatedByLabel.setWidth("200px");
+    deactivatedUsername = new KaaAdminSizedTextBox(-1, false, false);
+    deactivatedUsername.setWidth("200px");
+    userTable.setWidget(3, 0, deactivatedByLabel);
+    userTable.setWidget(3, 1, deactivatedUsername);
+
+    setWidget(0, 0, dateTable);
+    setWidget(0, 1, userTable);
+
+    FlexTable detailsTable = new FlexTable();
+    setWidget(1, 0, detailsTable);
+    getFlexCellFormatter().setColSpan(1, 0, 3);
+
+    detailsTable.getColumnFormatter().setWidth(0, "200px");
+    detailsTable.getColumnFormatter().setWidth(1, "600px");
+
+    // IE workaround
+    detailsTable.getColumnFormatter().getElement(2).setAttribute("width", "0px");
+
+    description = new SizedTextArea(1024);
+    description.setWidth("600px");
+    description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
+    Label descriptionLabel = new Label(Utils.constants.description());
+    descriptionLabel.setWidth("200px");
+    detailsTable.setWidget(0, 0, descriptionLabel);
+    detailsTable.setWidget(0, 1, description);
+
+    detailsTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
+
+    body = createBody(hasErrorMessage);
+
+    if (hasLabel()) {
+      bodyLabel = new Label(Utils.constants.body());
+      bodyLabel.setWidth("200px");
+      ((Widget) body).setWidth("600px");
+      detailsTable.setWidget(1, 0, bodyLabel);
+      detailsTable.setWidget(1, 1, (Widget) body);
+      detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+    } else {
+      detailsTable.setWidget(1, 0, (Widget) body);
+      detailsTable.getFlexCellFormatter().setColSpan(1, 0, 3);
     }
 
-    private void init() {
+    buttonsPanel = new HorizontalPanel();
+    buttonsPanel.setSpacing(5);
 
-        getColumnFormatter().setWidth(0, "400px");
-        getColumnFormatter().setWidth(1, "400px");
+    detailsTable.setWidget(2, 0, buttonsPanel);
+    detailsTable.getCellFormatter().setHorizontalAlignment(
+            2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+    detailsTable.getFlexCellFormatter().setColSpan(2, 0, 2);
 
-        // IE workaround
-        getColumnFormatter().getElement(2).setAttribute("width", "0px");
+    saveButton = new Button(Utils.constants.save());
+    activateButton = new Button(Utils.constants.activate());
+    deactivateButton = new Button(Utils.constants.deactivate());
+    buttonsPanel.add(saveButton);
+    buttonsPanel.add(activateButton);
+    buttonsPanel.add(deactivateButton);
 
-        FlexTable dateTable = new FlexTable();
-        FlexTable userTable = new FlexTable();
+    description.setFocus(true);
+  }
 
-        dateTable.getColumnFormatter().setWidth(0, "200px");
-        dateTable.getColumnFormatter().setWidth(1, "200px");
+  protected void prependButton(Button button) {
+    buttonsPanel.insert(button, 0);
+  }
 
-        userTable.getColumnFormatter().setWidth(0, "200px");
-        userTable.getColumnFormatter().setWidth(1, "200px");
+  protected void addButton(Button button) {
+    buttonsPanel.add(button);
+  }
 
-        dateTimeCreatedLabel = new Label(Utils.constants.dateTimeCreated());
-        dateTimeCreatedLabel.setWidth("200px");
-        createdDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        createdDateTime.setWidth("200px");
-        dateTable.setWidget(0, 0, dateTimeCreatedLabel);
-        dateTable.setWidget(0, 1, createdDateTime);
+  protected abstract HasValue<V> createBody(HasErrorMessage hasErrorMessage);
 
-        dateTimeModifiedLabel = new Label(Utils.constants.dateTimeModified());
-        dateTimeModifiedLabel.setWidth("200px");
-        modifiedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        modifiedDateTime.setWidth("200px");
-        dateTable.setWidget(1, 0, dateTimeModifiedLabel);
-        dateTable.setWidget(1, 1, modifiedDateTime);
+  protected abstract boolean hasLabel();
 
-        dateTimeActivatedLabel = new Label(Utils.constants.dateTimeActivated());
-        dateTimeActivatedLabel.setWidth("200px");
-        activatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        activatedDateTime.setWidth("200px");
-        dateTable.setWidget(2, 0, dateTimeActivatedLabel);
-        dateTable.setWidget(2, 1, activatedDateTime);
+  protected abstract void setBodyReadOnly(boolean readOnly);
 
-        dateTimeDeactivatedLabel = new Label(Utils.constants.dateTimeDectivated());
-        dateTimeDeactivatedLabel.setWidth("200px");
-        deactivatedDateTime = new KaaAdminSizedTextBox(-1, false, false);
-        deactivatedDateTime.setWidth("200px");
-        dateTable.setWidget(3, 0, dateTimeDeactivatedLabel);
-        dateTable.setWidget(3, 1, deactivatedDateTime);
+  protected abstract void setBodyValue(T struct);
 
-        authorLabel = new Label(Utils.constants.author());
-        authorLabel.setWidth("200px");
-        createdUsername = new KaaAdminSizedTextBox(-1, false, false);
-        createdUsername.setWidth("200px");
-        userTable.setWidget(0, 0, authorLabel);
-        userTable.setWidget(0, 1, createdUsername);
+  protected abstract HandlerRegistration addBodyChangeHandler();
 
-        modifiedByLabel = new Label(Utils.constants.lastModifiedBy());
-        modifiedByLabel.setWidth("200px");
-        modifiedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        modifiedUsername.setWidth("200px");
-        userTable.setWidget(1, 0, modifiedByLabel);
-        userTable.setWidget(1, 1, modifiedUsername);
+  protected abstract boolean validateBody();
 
-        activatedByLabel = new Label(Utils.constants.activatedBy());
-        activatedByLabel.setWidth("200px");
-        activatedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        activatedUsername.setWidth("200px");
-        userTable.setWidget(2, 0, activatedByLabel);
-        userTable.setWidget(2, 1, activatedUsername);
+  protected abstract void onShown();
 
-        deactivatedByLabel = new Label(Utils.constants.deactivatedBy());
-        deactivatedByLabel.setWidth("200px");
-        deactivatedUsername = new KaaAdminSizedTextBox(-1, false, false);
-        deactivatedUsername.setWidth("200px");
-        userTable.setWidget(3, 0, deactivatedByLabel);
-        userTable.setWidget(3, 1, deactivatedUsername);
-
-        setWidget(0, 0, dateTable);
-        setWidget(0, 1, userTable);
-
-        FlexTable detailsTable = new FlexTable();
-        setWidget(1, 0, detailsTable);
-        getFlexCellFormatter().setColSpan(1, 0, 3);
-
-        detailsTable.getColumnFormatter().setWidth(0, "200px");
-        detailsTable.getColumnFormatter().setWidth(1, "600px");
-
-        // IE workaround
-        detailsTable.getColumnFormatter().getElement(2).setAttribute("width", "0px");
-
-        description = new SizedTextArea(1024);
-        description.setWidth("600px");
-        description.getTextArea().getElement().getStyle().setPropertyPx("minHeight", 100);
-        Label descriptionLabel = new Label(Utils.constants.description());
-        descriptionLabel.setWidth("200px");
-        detailsTable.setWidget(0, 0, descriptionLabel);
-        detailsTable.setWidget(0, 1, description);
-
-        detailsTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
-
-        body = createBody(hasErrorMessage);
-
-        if (hasLabel()) {
-            bodyLabel = new Label(Utils.constants.body());
-            bodyLabel.setWidth("200px");
-            ((Widget)body).setWidth("600px");
-            detailsTable.setWidget(1, 0, bodyLabel);
-            detailsTable.setWidget(1, 1, (Widget)body);
-            detailsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
-        } else {
-            detailsTable.setWidget(1, 0, (Widget)body);
-            detailsTable.getFlexCellFormatter().setColSpan(1, 0, 3);
-        }
-
-        buttonsPanel = new HorizontalPanel();
-        buttonsPanel.setSpacing(5);
-
-        detailsTable.setWidget(2, 0, buttonsPanel);
-        detailsTable.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-        detailsTable.getFlexCellFormatter().setColSpan(2, 0, 2);
-
-        saveButton = new Button(Utils.constants.save());
-        activateButton = new Button(Utils.constants.activate());
-        deactivateButton = new Button(Utils.constants.deactivate());
-        downloadConfigurationButton = new Button(Utils.constants.downloadConfiguration());
-        buttonsPanel.add(saveButton);
-        buttonsPanel.add(activateButton);
-        buttonsPanel.add(deactivateButton);
-        buttonsPanel.add(downloadConfigurationButton);
-
-        description.setFocus(true);
-
-        saveButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                updateSaveButton(false, false);
-            }
-        });
-
-        downloadConfigurationButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                String url = Window.Location.getHref();
-                Window.open("/kaaAdmin/servlet/kaaConfigurationDownloadServlet?schemaId=" + Utils.getSchemaIdFromUrl(url) +
-                                "&endGroupId=" + Utils.getEndpointGroupIdFromUrl(url),
-                        "_blank", "status=0,toolbar=0,menubar=0,location=0");
-            }
-        });
+  /**
+   * Disable Visibility.
+   */
+  public void reset() {
+    dateTimeCreatedLabel.setVisible(false);
+    createdDateTime.setVisible(false);
+    authorLabel.setVisible(false);
+    createdUsername.setVisible(false);
+    dateTimeModifiedLabel.setVisible(false);
+    modifiedDateTime.setVisible(false);
+    modifiedByLabel.setVisible(false);
+    modifiedUsername.setVisible(false);
+    dateTimeActivatedLabel.setVisible(false);
+    activatedDateTime.setVisible(false);
+    activatedByLabel.setVisible(false);
+    activatedUsername.setVisible(false);
+    dateTimeDeactivatedLabel.setVisible(false);
+    deactivatedDateTime.setVisible(false);
+    deactivatedByLabel.setVisible(false);
+    deactivatedUsername.setVisible(false);
+    description.setValue("");
+    body.setValue(null);
+    saveButton.setVisible(false);
+    activateButton.setVisible(false);
+    deactivateButton.setVisible(false);
+    if (hasLabel()) {
+      bodyLabel.removeStyleName(REQUIRED);
     }
+    description.getTextArea().setReadOnly(true);
+    setBodyReadOnly(true);
 
-    protected void prependButton(Button button) {
-        buttonsPanel.insert(button, 0);
+    updateSaveButton(false, false);
+
+    for (HandlerRegistration registration : registrations) {
+      registration.removeHandler();
     }
+    registrations.clear();
+  }
 
-    protected void addButton(Button button) {
-        buttonsPanel.add(button);
+  /**
+   * Set read only.
+   */
+  public void setReadOnly() {
+    saveButton.setVisible(false);
+    activateButton.setVisible(false);
+    deactivateButton.setVisible(false);
+    description.getTextArea().setReadOnly(true);
+    setBodyReadOnly(true);
+
+    for (HandlerRegistration registration : registrations) {
+      registration.removeHandler();
     }
+    registrations.clear();
+  }
 
-    protected abstract HasValue<V> createBody(HasErrorMessage hasErrorMessage);
-
-    protected abstract boolean hasLabel();
-
-    protected abstract void setBodyReadOnly(boolean readOnly);
-
-    protected abstract void setBodyValue(T struct);
-
-    protected abstract HandlerRegistration addBodyChangeHandler();
-
-    protected abstract boolean validateBody();
-
-    protected abstract void onShown();
-
-    public void reset() {
-        dateTimeCreatedLabel.setVisible(false);
-        createdDateTime.setVisible(false);
-        authorLabel.setVisible(false);
-        createdUsername.setVisible(false);
-        dateTimeModifiedLabel.setVisible(false);
-        modifiedDateTime.setVisible(false);
-        modifiedByLabel.setVisible(false);
-        modifiedUsername.setVisible(false);
-        dateTimeActivatedLabel.setVisible(false);
-        activatedDateTime.setVisible(false);
-        activatedByLabel.setVisible(false);
-        activatedUsername.setVisible(false);
-        dateTimeDeactivatedLabel.setVisible(false);
-        deactivatedDateTime.setVisible(false);
-        deactivatedByLabel.setVisible(false);
-        deactivatedUsername.setVisible(false);
-        description.setValue("");
-        body.setValue(null);
-        saveButton.setVisible(false);
-        activateButton.setVisible(false);
-        deactivateButton.setVisible(false);
-        if (hasLabel()) {
-            bodyLabel.removeStyleName(REQUIRED);
-        }
-        description.getTextArea().setReadOnly(true);
-        setBodyReadOnly(true);
-
-        updateSaveButton(false, false);
-
-        for (HandlerRegistration registration : registrations) {
-            registration.removeHandler();
-        }
-        registrations.clear();
+  /**
+   * Set data.
+   */
+  public void setData(T struct) {
+    this.active = struct.getStatus() != UpdateStatus.INACTIVE;
+    if (!isEmpty(struct.getCreatedUsername())) {
+      dateTimeCreatedLabel.setVisible(true);
+      createdDateTime.setVisible(true);
+      authorLabel.setVisible(true);
+      createdUsername.setVisible(true);
+      createdDateTime.setValue(millisecondsToDateTimeString(struct.getCreatedTime()));
+      createdUsername.setValue(struct.getCreatedUsername());
     }
-
-    public void setReadOnly() {
-        saveButton.setVisible(false);
-        activateButton.setVisible(false);
-        deactivateButton.setVisible(false);
-        description.getTextArea().setReadOnly(true);
-        setBodyReadOnly(true);
-
-        for (HandlerRegistration registration : registrations) {
-            registration.removeHandler();
-        }
-        registrations.clear();
+    if (!isEmpty(struct.getModifiedUsername())) {
+      dateTimeModifiedLabel.setVisible(true);
+      modifiedDateTime.setVisible(true);
+      modifiedByLabel.setVisible(true);
+      modifiedUsername.setVisible(true);
+      modifiedDateTime.setValue(millisecondsToDateTimeString(struct.getLastModifyTime()));
+      modifiedUsername.setValue(struct.getModifiedUsername());
     }
-
-    public void setData(T struct) {
-        this.active = struct.getStatus() != UpdateStatus.INACTIVE;
-        if (!isEmpty(struct.getCreatedUsername())) {
-            dateTimeCreatedLabel.setVisible(true);
-            createdDateTime.setVisible(true);
-            authorLabel.setVisible(true);
-            createdUsername.setVisible(true);
-            createdDateTime.setValue(millisecondsToDateTimeString(struct.getCreatedTime()));
-            createdUsername.setValue(struct.getCreatedUsername());
-        }
-        if (!isEmpty(struct.getModifiedUsername())) {
-            dateTimeModifiedLabel.setVisible(true);
-            modifiedDateTime.setVisible(true);
-            modifiedByLabel.setVisible(true);
-            modifiedUsername.setVisible(true);
-            modifiedDateTime.setValue(millisecondsToDateTimeString(struct.getLastModifyTime()));
-            modifiedUsername.setValue(struct.getModifiedUsername());
-        }
-        if (!isEmpty(struct.getActivatedUsername())) {
-            dateTimeActivatedLabel.setVisible(true);
-            activatedDateTime.setVisible(true);
-            activatedByLabel.setVisible(true);
-            activatedUsername.setVisible(true);
-            activatedDateTime.setValue(millisecondsToDateTimeString(struct.getActivatedTime()));
-            activatedUsername.setValue(struct.getActivatedUsername());
-        }
-        if (!isEmpty(struct.getDeactivatedUsername())) {
-            dateTimeDeactivatedLabel.setVisible(true);
-            deactivatedDateTime.setVisible(true);
-            deactivatedByLabel.setVisible(true);
-            deactivatedUsername.setVisible(true);
-            deactivatedDateTime.setValue(millisecondsToDateTimeString(struct.getDeactivatedTime()));
-            deactivatedUsername.setValue(struct.getDeactivatedUsername());
-        }
-        description.setValue(struct.getDescription());
-        setBodyValue(struct);
-
-        if (this.active) {
-            if (struct.getStatus()==UpdateStatus.ACTIVE) {
-                deactivateButton.setVisible(true);
-            }
-        } else {
-            description.getTextArea().setReadOnly(false);
-            setBodyReadOnly(false);
-            if (hasLabel()) {
-                bodyLabel.addStyleName(REQUIRED);
-            }
-            registrations.add(description.addInputHandler(this));
-            registrations.add(addBodyChangeHandler());
-            saveButton.setVisible(true);
-            if (isEmpty(struct.getId())) {
-                saveButton.setText(Utils.constants.save());
-            } else {
-                activateButton.setVisible(true);
-            }
-        }
+    if (!isEmpty(struct.getActivatedUsername())) {
+      dateTimeActivatedLabel.setVisible(true);
+      activatedDateTime.setVisible(true);
+      activatedByLabel.setVisible(true);
+      activatedUsername.setVisible(true);
+      activatedDateTime.setValue(millisecondsToDateTimeString(struct.getActivatedTime()));
+      activatedUsername.setValue(struct.getActivatedUsername());
     }
-
-    public void fireSchemaSelected() {
-        fireChanged();
+    if (!isEmpty(struct.getDeactivatedUsername())) {
+      dateTimeDeactivatedLabel.setVisible(true);
+      deactivatedDateTime.setVisible(true);
+      deactivatedByLabel.setVisible(true);
+      deactivatedUsername.setVisible(true);
+      deactivatedDateTime.setValue(millisecondsToDateTimeString(struct.getDeactivatedTime()));
+      deactivatedUsername.setValue(struct.getDeactivatedUsername());
     }
+    description.setValue(struct.getDescription());
+    setBodyValue(struct);
 
-    public void setBodyLabelText(String text) {
-        if (hasLabel()) {
-            bodyLabel.setText(text);
-        }
+    if (this.active) {
+      if (struct.getStatus() == UpdateStatus.ACTIVE) {
+        deactivateButton.setVisible(true);
+      }
+    } else {
+      description.getTextArea().setReadOnly(false);
+      setBodyReadOnly(false);
+      if (hasLabel()) {
+        bodyLabel.addStyleName(REQUIRED);
+      }
+      registrations.add(description.addInputHandler(this));
+      registrations.add(addBodyChangeHandler());
+      saveButton.setVisible(true);
+      if (isEmpty(struct.getId())) {
+        saveButton.setText(Utils.constants.save());
+      } else {
+        activateButton.setVisible(true);
+      }
     }
+  }
 
-    public HasValue<String> getDescription() {
-        return description;
-    }
+  public void fireSchemaSelected() {
+    fireChanged();
+  }
 
-    public HasValue<V> getBody() {
-        return body;
+  /**
+   * Set body label.
+   */
+  public void setBodyLabelText(String text) {
+    if (hasLabel()) {
+      bodyLabel.setText(text);
     }
+  }
 
-    public HasClickHandlers getSaveButton() {
-        return saveButton;
-    }
+  public HasValue<String> getDescription() {
+    return description;
+  }
 
-    public HasClickHandlers getActivateButton() {
-        return activateButton;
-    }
+  public HasValue<V> getBody() {
+    return body;
+  }
 
-    public HasClickHandlers getDeactivateButton() {
-        return deactivateButton;
-    }
+  public HasClickHandlers getSaveButton() {
+    return saveButton;
+  }
 
-    @Override
-    public void onInputChanged(InputEvent event) {
-        fireChanged();
-    }
+  public HasClickHandlers getActivateButton() {
+    return activateButton;
+  }
 
-    public void fireChanged() {
-        if (!this.active) {
-            boolean valid = validateBody();
-            updateSaveButton(valid, !valid);
-        }
-    }
+  public HasClickHandlers getDeactivateButton() {
+    return deactivateButton;
+  }
 
-    private void updateSaveButton(boolean enabled, boolean invalid) {
-        if (invalid) {
-            saveButton.setText(Utils.constants.save());
-        } else {
-            saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
-        }
-        saveButton.setEnabled(enabled);
-        activateButton.setEnabled(!invalid && !enabled);
+  @Override
+  public void onInputChanged(InputEvent event) {
+    fireChanged();
+  }
+
+  /**
+   * Fire changed.
+   */
+  public void fireChanged() {
+    if (!this.active) {
+      boolean valid = validateBody();
+      updateSaveButton(valid, !valid);
     }
+  }
+
+  private void updateSaveButton(boolean enabled, boolean invalid) {
+    if (invalid) {
+      saveButton.setText(Utils.constants.save());
+    } else {
+      saveButton.setText(enabled ? Utils.constants.save() : Utils.constants.saved());
+    }
+    saveButton.setEnabled(enabled);
+    activateButton.setEnabled(!invalid && !enabled);
+  }
 }

@@ -17,29 +17,29 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view.tenant;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.admin.TenantUserDto;
+import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class TenantsViewImpl extends BaseListViewImpl<TenantUserDto> {
+public class TenantsViewImpl extends BaseListViewImpl<TenantDto> {
 
-        public TenantsViewImpl() {
-            super(true);
-        }
+  public TenantsViewImpl() {
+    super(true);
+  }
 
-        @Override
-        protected AbstractGrid<TenantUserDto, String> createGrid() {
-            return new TenantsGrid();
-        }
+  @Override
+  protected AbstractGrid<TenantDto, String> createGrid() {
+    return new TenantsGrid();
+  }
 
-        @Override
-        protected String titleString() {
-            return Utils.constants.tenants();
-        }
+  @Override
+  protected String titleString() {
+    return Utils.constants.tenants();
+  }
 
-        @Override
-        protected String addButtonString() {
-            return Utils.constants.addNewTenant();
-        }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewTenant();
+  }
 }
 

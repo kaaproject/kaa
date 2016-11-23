@@ -3,11 +3,12 @@
  * 
  * DO NOT EDIT DIRECTLY
  */
+
 package org.kaaproject.kaa.server.appenders.couchbase.config.gen;  
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class CouchbaseConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CouchbaseConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.couchbase.config.gen\",\"fields\":[{\"name\":\"couchbaseServerUris\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"CouchbaseServerUri\",\"fields\":[{\"name\":\"serverUri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Server URI\",\"by_default\":\"http://127.0.0.1:8091/pools\"}]}},\"displayName\":\"Couchbase servers list\",\"minRowCount\":1},{\"name\":\"bucket\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Couchbase bucket name\",\"by_default\":\"default\"},{\"name\":\"password\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"displayName\":\"Couchbase bucket password\",\"inputType\":\"password\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CouchbaseConfig\",\"namespace\":\"org.kaaproject.kaa.server.appenders.couchbase.config.gen\",\"fields\":[{\"name\":\"couchbaseServerUris\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"CouchbaseServerUri\",\"fields\":[{\"name\":\"serverUri\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Server URI\",\"by_default\":\"http://127.0.0.1:8091\"}]}},\"displayName\":\"Couchbase servers list\",\"minRowCount\":1},{\"name\":\"bucket\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"displayName\":\"Couchbase bucket name\",\"by_default\":\"default\"},{\"name\":\"password\",\"type\":[{\"type\":\"string\",\"avro.java.string\":\"String\"},\"null\"],\"displayName\":\"Couchbase bucket password\",\"inputType\":\"password\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.util.List<org.kaaproject.kaa.server.appenders.couchbase.config.gen.CouchbaseServerUri> couchbaseServerUris;
    private java.lang.String bucket;

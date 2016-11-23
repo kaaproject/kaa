@@ -20,110 +20,119 @@ import java.io.Serializable;
 
 public class ProfileFilterRecordKey implements Serializable {
 
-    private static final long serialVersionUID = 5092336381178145561L;
-    
-    private String endpointProfileSchemaId;
-    private String serverProfileSchemaId;
-    private String endpointGroupId;
+  private static final long serialVersionUID = 5092336381178145561L;
 
-    public ProfileFilterRecordKey() {
-    }
+  private String endpointProfileSchemaId;
+  private String serverProfileSchemaId;
+  private String endpointGroupId;
 
-    public ProfileFilterRecordKey(String endpointProfileSchemaId, String serverProfileSchemaId, String endpointGroupId) {
-        this.endpointProfileSchemaId = endpointProfileSchemaId;
-        this.serverProfileSchemaId = serverProfileSchemaId;
-        this.endpointGroupId = endpointGroupId;
-    }
+  public ProfileFilterRecordKey() {
+  }
 
-    public String getEndpointProfileSchemaId() {
-        return endpointProfileSchemaId;
-    }
+  /**
+   * Create new instance of <code>ProfileFilterRecordKey</code>.
+   *
+   * @param endpointProfileSchemaId the endpoint profile schema id
+   * @param serverProfileSchemaId server profile schema id
+   * @param endpointGroupId the endpoint group id
+   */
+  public ProfileFilterRecordKey(String endpointProfileSchemaId,
+                                String serverProfileSchemaId,
+                                String endpointGroupId) {
+    this.endpointProfileSchemaId = endpointProfileSchemaId;
+    this.serverProfileSchemaId = serverProfileSchemaId;
+    this.endpointGroupId = endpointGroupId;
+  }
 
-    public void setEndpointProfileSchemaId(String endpointProfileSchemaId) {
-        this.endpointProfileSchemaId = endpointProfileSchemaId;
-    }
+  public String getEndpointProfileSchemaId() {
+    return endpointProfileSchemaId;
+  }
 
-    public String getServerProfileSchemaId() {
-        return serverProfileSchemaId;
-    }
+  public void setEndpointProfileSchemaId(String endpointProfileSchemaId) {
+    this.endpointProfileSchemaId = endpointProfileSchemaId;
+  }
 
-    public void setServerProfileSchemaId(String serverProfileSchemaId) {
-        this.serverProfileSchemaId = serverProfileSchemaId;
-    }
+  public String getServerProfileSchemaId() {
+    return serverProfileSchemaId;
+  }
 
-    public String getEndpointGroupId() {
-        return endpointGroupId;
-    }
+  public void setServerProfileSchemaId(String serverProfileSchemaId) {
+    this.serverProfileSchemaId = serverProfileSchemaId;
+  }
 
-    public void setEndpointGroupId(String endpointGroupId) {
-        this.endpointGroupId = endpointGroupId;
-    }
+  public String getEndpointGroupId() {
+    return endpointGroupId;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((endpointGroupId == null) ? 0 : endpointGroupId.hashCode());
-        result = prime
-                * result
-                + ((endpointProfileSchemaId == null) ? 0
-                        : endpointProfileSchemaId.hashCode());
-        result = prime
-                * result
-                + ((serverProfileSchemaId == null) ? 0 : serverProfileSchemaId
-                        .hashCode());
-        return result;
-    }
+  public void setEndpointGroupId(String endpointGroupId) {
+    this.endpointGroupId = endpointGroupId;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ProfileFilterRecordKey other = (ProfileFilterRecordKey) obj;
-        if (endpointGroupId == null) {
-            if (other.endpointGroupId != null) {
-                return false;
-            }
-        } else if (!endpointGroupId.equals(other.endpointGroupId)) {
-            return false;
-        }
-        if (endpointProfileSchemaId == null) {
-            if (other.endpointProfileSchemaId != null) {
-                return false;
-            }
-        } else if (!endpointProfileSchemaId
-                .equals(other.endpointProfileSchemaId)) {
-            return false;
-        }
-        if (serverProfileSchemaId == null) {
-            if (other.serverProfileSchemaId != null) {
-                return false;
-            }
-        } else if (!serverProfileSchemaId.equals(other.serverProfileSchemaId)) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((endpointGroupId == null) ? 0 : endpointGroupId.hashCode());
+    result = prime
+        * result
+        + ((endpointProfileSchemaId == null) ? 0
+        : endpointProfileSchemaId.hashCode());
+    result = prime
+        * result
+        + ((serverProfileSchemaId == null) ? 0 : serverProfileSchemaId
+        .hashCode());
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ProfileFilterRecordKey [endpointProfileSchemaId=");
-        builder.append(endpointProfileSchemaId);
-        builder.append(", serverProfileSchemaId=");
-        builder.append(serverProfileSchemaId);
-        builder.append(", endpointGroupId=");
-        builder.append(endpointGroupId);
-        builder.append("]");
-        return builder.toString();
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    ProfileFilterRecordKey other = (ProfileFilterRecordKey) obj;
+    if (endpointGroupId == null) {
+      if (other.endpointGroupId != null) {
+        return false;
+      }
+    } else if (!endpointGroupId.equals(other.endpointGroupId)) {
+      return false;
+    }
+    if (endpointProfileSchemaId == null) {
+      if (other.endpointProfileSchemaId != null) {
+        return false;
+      }
+    } else if (!endpointProfileSchemaId
+        .equals(other.endpointProfileSchemaId)) {
+      return false;
+    }
+    if (serverProfileSchemaId == null) {
+      if (other.serverProfileSchemaId != null) {
+        return false;
+      }
+    } else if (!serverProfileSchemaId.equals(other.serverProfileSchemaId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ProfileFilterRecordKey [endpointProfileSchemaId=");
+    builder.append(endpointProfileSchemaId);
+    builder.append(", serverProfileSchemaId=");
+    builder.append(serverProfileSchemaId);
+    builder.append(", endpointGroupId=");
+    builder.append(endpointGroupId);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

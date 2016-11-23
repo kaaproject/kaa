@@ -20,23 +20,25 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.Endp
 
 public interface EventServiceListener {
 
-    void onEvent(RemoteEndpointEvent event);
-    
-    void onRouteInfo(RouteInfo routeInfo);
+  void onEvent(RemoteEndpointEvent event);
 
-    void onUserRouteInfo(UserRouteInfo routeInfo);
+  void onRouteInfo(RouteInfo routeInfo);
 
-    void onServerError(String serverId);
-    
-    /**
-     * Reports information about endpoint to global user actor  
-     * @param update - information about endpoint activity
-     */
-    void onEndpointRouteUpdate(GlobalRouteInfo update);
-    
-    /**
-     * Reports update of user configuration to the endpoint user actor
-     * @param update - endpoint user configuration update
-     */
-    void onEndpointStateUpdate(EndpointUserConfigurationUpdate update);
+  void onUserRouteInfo(UserRouteInfo routeInfo);
+
+  void onServerError(String serverId);
+
+  /**
+   * Reports information about endpoint to global user actor.
+   *
+   * @param update - information about endpoint activity
+   */
+  void onEndpointRouteUpdate(GlobalRouteInfo update);
+
+  /**
+   * Reports update of user configuration to the endpoint user actor.
+   *
+   * @param update - endpoint user configuration update
+   */
+  void onEndpointStateUpdate(EndpointUserConfigurationUpdate update);
 }

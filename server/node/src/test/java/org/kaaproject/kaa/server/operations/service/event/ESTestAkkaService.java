@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
+import akka.actor.ActorSystem;
+
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaService;
@@ -24,70 +26,67 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.User
 import org.kaaproject.kaa.server.transport.message.SessionInitMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 
-import akka.actor.ActorSystem;
-
 /**
  * @author Andrey Panasenko
- *
  */
 public class ESTestAkkaService implements AkkaService {
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#getActorSystem()
-     */
-    @Override
-    public ActorSystem getActorSystem() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#getActorSystem()
+   */
+  @Override
+  public ActorSystem getActorSystem() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public void process(SessionAware message) {
-        // TODO Auto-generated method stub
+  @Override
+  public void process(SessionAware message) {
+    // TODO Auto-generated method stub
 
-    }
+  }
 
-    @Override
-    public void process(SessionInitMessage message) {
-        // TODO Auto-generated method stub
+  @Override
+  public void process(SessionInitMessage message) {
+    // TODO Auto-generated method stub
 
-    }
+  }
 
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#onRedirectionRule(org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule)
-     */
-    @Override
-    public void onRedirectionRule(RedirectionRule redirectionRule) {
-        // TODO Auto-generated method stub
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#onRedirectionRule(org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule)
+   */
+  @Override
+  public void onRedirectionRule(RedirectionRule redirectionRule) {
+    // TODO Auto-generated method stub
 
-    }
+  }
 
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#onNotification(org.kaaproject.kaa.server.common.thrift.gen.operations.Notification)
-     */
-    @Override
-    public void onNotification(Notification notification) {
-        // TODO Auto-generated method stub
+  /* (non-Javadoc)
+   * @see org.kaaproject.kaa.server.operations.service.akka.AkkaService#onNotification(org.kaaproject.kaa.server.common.thrift.gen.operations.Notification)
+   */
+  @Override
+  public void onNotification(Notification notification) {
+    // TODO Auto-generated method stub
 
-    }
+  }
 
-    @Override
-    public void onUserConfigurationUpdate(UserConfigurationUpdate update) {
-        // TODO Auto-generated method stub
-        
-    }
+  @Override
+  public void onUserConfigurationUpdate(UserConfigurationUpdate update) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void setStatusListener(AkkaStatusListener defaultLoadBalancingService, long loadStatsUpdateFrequency) {
-        // TODO Auto-generated method stub
-        
-    }
+  }
 
-    @Override
-    public void removeStatusListener() {
-        // TODO Auto-generated method stub
-        
-    }
+  @Override
+  public void setStatusListener(AkkaStatusListener defaultLoadBalancingService, long loadStatsUpdateFrequency) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void removeStatusListener() {
+    // TODO Auto-generated method stub
+
+  }
 
 }

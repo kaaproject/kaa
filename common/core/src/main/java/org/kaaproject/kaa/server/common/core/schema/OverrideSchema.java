@@ -18,10 +18,10 @@ package org.kaaproject.kaa.server.common.core.schema;
 
 public class OverrideSchema extends AbstractKaaSchema {
 
-    private static final long serialVersionUID = -1392516699682422725L;
+  private static final long serialVersionUID = -1392516699682422725L;
 
-    public OverrideSchema(String schema) {
-        super(schema);
-    }
+  public OverrideSchema(String schema) {
+    super(schema);
+  }
 
 }

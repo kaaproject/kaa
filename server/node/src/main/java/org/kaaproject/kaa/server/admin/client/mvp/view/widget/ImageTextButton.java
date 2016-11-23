@@ -25,51 +25,58 @@ import com.google.gwt.user.client.ui.Button;
 
 @SuppressWarnings("deprecation")
 public class ImageTextButton extends Button {
-         private String text;
+  private String text;
 
-         public ImageTextButton(ImageResource imageResource, String text) {
-                 this(imageResource, text, null);
-         }
+  public ImageTextButton(ImageResource imageResource, String text) {
+    this(imageResource, text, null);
+  }
 
-         public ImageTextButton(ImageResource imageResource, String text, ClickHandler clickHandler){
-          super();
-          if (clickHandler != null) {
-            addClickHandler(clickHandler);
-        }
-          String definedStyles = getElement().getAttribute("style");
-          getElement().setAttribute("style", definedStyles + "; vertical-align:middle;");
-          this.text = text;
-          Element span = DOM.createElement("span");
-          span.setInnerText(text);
-          DOM.insertChild(getElement(), span, 0);
-          Element imageSpan = DOM.createElement("span");
-          int spacing;
-          if (this.text == null || this.text.trim().equals("")) {
-                  spacing = 0;
-          } else {
-                  spacing = 16;
-          }
+  /**
+   * Instantiates a new ImageTextButton.
+   */
+  public ImageTextButton(ImageResource imageResource, String text, ClickHandler clickHandler) {
+    super();
+    if (clickHandler != null) {
+      addClickHandler(clickHandler);
+    }
+    String definedStyles = getElement().getAttribute("style");
+    getElement().setAttribute("style", definedStyles + "; vertical-align:middle;");
+    this.text = text;
+    Element span = DOM.createElement("span");
+    span.setInnerText(text);
+    DOM.insertChild(getElement(), span, 0);
+    Element imageSpan = DOM.createElement("span");
+    int spacing;
+    if (this.text == null || this.text.trim().equals("")) {
+      spacing = 0;
+    } else {
+      spacing = 16;
+    }
 
-          updateImageElementFromImageResource(imageSpan, imageResource, spacing);
-          DOM.insertBefore(getElement(), imageSpan, DOM.getFirstChild(getElement()));
-         }
+    if (imageResource != null) {
+      updateImageElementFromImageResource(imageSpan, imageResource, spacing);
+    }
+    DOM.insertBefore(getElement(), imageSpan, DOM.getFirstChild(getElement()));
+  }
 
-         @Override
-         public String getText() {
-          return this.text;
-         }
+  @Override
+  public String getText() {
+    return this.text;
+  }
 
-         private void updateImageElementFromImageResource(Element imageSpan, ImageResource res, int spacing) {
-             SafeUri url = res.getSafeUri();
-             int width = res.getWidth();
-             int height = res.getHeight();
-             int paddingRight = width + spacing;
-         String style = "url(\"" + url.asString() + "\") no-repeat scroll left center";
-         imageSpan.getStyle().setProperty("background", style);
-         imageSpan.getStyle().setPropertyPx("width", width);
-         imageSpan.getStyle().setPropertyPx("height", height);
-         imageSpan.getStyle().setPropertyPx("paddingRight", paddingRight);
-     }
+  private void updateImageElementFromImageResource(Element imageSpan,
+                                                   ImageResource res,
+                                                   int spacing) {
+    SafeUri url = res.getSafeUri();
+    int width = res.getWidth();
+    int height = res.getHeight();
+    int paddingRight = width + spacing;
+    String style = "url(\"" + url.asString() + "\") no-repeat scroll left center";
+    imageSpan.getStyle().setProperty("background", style);
+    imageSpan.getStyle().setPropertyPx("width", width);
+    imageSpan.getStyle().setPropertyPx("height", height);
+    imageSpan.getStyle().setPropertyPx("paddingRight", paddingRight);
+  }
 
 }
 

@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ProfileFilterRecordDto;
@@ -25,40 +25,52 @@ import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProv
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.shared.profile.ProfileFilterRecordKey;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class ProfileFiltersDataProvider extends AbstractDataProvider<ProfileFilterRecordDto, ProfileFilterRecordKey>{
+public class ProfileFiltersDataProvider
+    extends AbstractDataProvider<ProfileFilterRecordDto, ProfileFilterRecordKey> {
 
-    private String endpointGroupId;
-    private boolean includeDeprecated = false;
+  private String endpointGroupId;
+  private boolean includeDeprecated = false;
 
-    public ProfileFiltersDataProvider(AbstractGrid<ProfileFilterRecordDto, ProfileFilterRecordKey> dataGrid,
-                                      HasErrorMessage hasErrorMessage,
-                                      String endpointGroupId, boolean includeDeprecated) {
-        super(dataGrid, hasErrorMessage, false);
-        this.endpointGroupId = endpointGroupId;
-        this.includeDeprecated = includeDeprecated;
-        addDataDisplay();
-    }
+  /**
+   * Instantiates a new data provider.
+   *
+   * @param dataGrid           data grid
+   * @param hasErrorMessage    indicate whether it is error message
+   * @param endpointGroupId    endpoint group id
+   * @param includeDeprecated  indicate whether to include deprecated
+   */
+  public ProfileFiltersDataProvider(
+      AbstractGrid<ProfileFilterRecordDto, ProfileFilterRecordKey> dataGrid,
+      HasErrorMessage hasErrorMessage,
+      String endpointGroupId, boolean includeDeprecated) {
+    super(dataGrid, hasErrorMessage, false);
+    this.endpointGroupId = endpointGroupId;
+    this.includeDeprecated = includeDeprecated;
+    addDataDisplay();
+  }
 
-    public void setIncludeDeprecated(boolean includeDeprecated) {
-        this.includeDeprecated = includeDeprecated;
-    }
+  public void setIncludeDeprecated(boolean includeDeprecated) {
+    this.includeDeprecated = includeDeprecated;
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadProfileFilterRecords(endpointGroupId, includeDeprecated, new AsyncCallback<List<ProfileFilterRecordDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadProfileFilterRecords(
+        endpointGroupId, includeDeprecated, new AsyncCallback<List<ProfileFilterRecordDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-            }
-            @Override
-            public void onSuccess(List<ProfileFilterRecordDto> result) {
-                callback.onSuccess(result);
-            }
+          }
+
+          @Override
+          public void onSuccess(List<ProfileFilterRecordDto> result) {
+            callback.onSuccess(result);
+          }
         });
-    }
+  }
 
 }
 

@@ -90,8 +90,6 @@ public:
 
     /**
      * @brief Set a listener which receives a delivery status of each log bucket.
-     *
-     * @param   listener[in] the listener
      */
     virtual void setLogDeliveryListener(ILogDeliveryListenerPtr listener) = 0;
 
@@ -101,4 +99,3 @@ public:
 }  // namespace kaa
 
 #endif /* ILOGCOLLECTOR_HPP_ */
-

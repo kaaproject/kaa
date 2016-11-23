@@ -37,6 +37,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_BOOTSTRAP_HTTP_CHANNEL")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_DEFAULT_CONNECTIVITY_CHECKER")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_THREADSAFE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_MAX_LOG_LEVEL=6")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKAA_RUNTIME_KEY_GENERATION=ON")
 
 set ( CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../Modules/)
 
@@ -65,6 +66,7 @@ set ( KAA_TEST_SOURCES
         ../impl/KaaDefaults.cpp
         ../impl/logging/Log.cpp
         ../impl/logging/DefaultLogger.cpp
+        ../impl/logging/LoggingUtils.cpp
         ../impl/http/HttpUrl.cpp
         ../impl/http/MultipartPostHttpRequest.cpp
         ../impl/http/HttpResponse.cpp
@@ -115,6 +117,8 @@ set ( KAA_TEST_SOURCES
         ../impl/context/AbstractExecutorContext.cpp
         ../impl/KaaClientProperties.cpp
         TestRunner.cpp
+        impl/KaaTestUtils.cpp
+        impl/channel/impl/DefaultBootstrapChannelTest.cpp
         impl/common/EndpointObjectHashTest.cpp
         impl/common/AvroByteArrayConverterTest.cpp
         impl/bootstrap/BootstrapFailoverTest.cpp
@@ -124,6 +128,7 @@ set ( KAA_TEST_SOURCES
         impl/http/HttpResponseTest.cpp
         impl/http/HttpRequestTest.cpp
         impl/ClientStatusTest.cpp
+        impl/KaaClientTest.cpp
         impl/event/EndpointRegistrationManagerTest.cpp
         impl/security/KeyUtilsTest.cpp
         impl/event/EventTransportTest.cpp

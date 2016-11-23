@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,47 +26,49 @@ import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogHeaderStructureDto;
 import org.kaaproject.kaa.server.common.dao.AbstractTest;
 
+import java.util.List;
+
 @Ignore("This test should be extended and initialized with proper context in each NoSQL submodule")
 public class LogAppenderServiceImplTest extends AbstractTest {
 
-    private ApplicationDto application;
+  private ApplicationDto application;
 
-    @Before
-    public void beforeTest() {
-        application = generateApplicationDto();
-    }
+  @Before
+  public void beforeTest() {
+    application = generateApplicationDto();
+  }
 
-    @After
-    public void afterTest() {
-        clearDBData();
-    }
+  @After
+  public void afterTest() {
+    clearDBData();
+  }
 
-    @Test
-    public void findAllAppendersByAppIdTest() {
-        LogAppenderDto logAppender1 = generateLogAppenderDto(application.getId(), null);
-        Assert.assertNotNull(logAppender1);
-        LogAppenderDto logAppender2 = generateLogAppenderDto(application.getId(), null);
-        Assert.assertNotNull(logAppender2);
-        List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppId(application.getId());
-        Assert.assertNotNull(appenders);
-        Assert.assertEquals(2, appenders.size());
-    }
+  @Test
+  public void findAllAppendersByAppIdTest() {
+    LogAppenderDto logAppender1 = generateLogAppenderDto(application.getId(), null);
+    Assert.assertNotNull(logAppender1);
+    LogAppenderDto logAppender2 = generateLogAppenderDto(application.getId(), null);
+    Assert.assertNotNull(logAppender2);
+    List<LogAppenderDto> appenders = logAppendersService.findAllAppendersByAppId(application.getId());
+    Assert.assertNotNull(appenders);
+    Assert.assertEquals(2, appenders.size());
+  }
 
-    @Test
-    public void findLogAppenderByIdTest() {
-        LogAppenderDto appender = generateLogAppenderDto(application.getId(), null);
-        LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
-        Assert.assertNotNull(found);
-        Assert.assertEquals(appender, found);
-        Assert.assertArrayEquals(LogHeaderStructureDto.values(), found.getHeaderStructure().toArray(new LogHeaderStructureDto[]{}));
-    }
+  @Test
+  public void findLogAppenderByIdTest() {
+    LogAppenderDto appender = generateLogAppenderDto(application.getId(), null);
+    LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
+    Assert.assertNotNull(found);
+    Assert.assertEquals(appender, found);
+    Assert.assertArrayEquals(LogHeaderStructureDto.values(), found.getHeaderStructure().toArray(new LogHeaderStructureDto[]{}));
+  }
 
-    @Test
-    public void removeLogAppenderByIdTest() {
-        LogAppenderDto appender = generateLogAppenderDto(application.getId(), null);
-        LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
-        Assert.assertNotNull(found);
-        Assert.assertEquals(appender, found);
-        logAppendersService.removeLogAppenderById(appender.getId());
-    }
+  @Test
+  public void removeLogAppenderByIdTest() {
+    LogAppenderDto appender = generateLogAppenderDto(application.getId(), null);
+    LogAppenderDto found = logAppendersService.findLogAppenderById(appender.getId());
+    Assert.assertNotNull(found);
+    Assert.assertEquals(appender, found);
+    logAppendersService.removeLogAppenderById(appender.getId());
+  }
 }

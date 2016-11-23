@@ -16,132 +16,133 @@
 
 package org.kaaproject.kaa.common.dto;
 
-import org.kaaproject.avro.ui.shared.RecordField;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import org.kaaproject.avro.ui.shared.RecordField;
 
 @JsonIgnoreProperties({"schemaForm"})
 public abstract class AbstractSchemaDto extends VersionDto {
 
-    private static final long serialVersionUID = 6821310997907855007L;
+  private static final long serialVersionUID = 6821310997907855007L;
 
-    protected String applicationId;
-    protected String schema;
-    protected RecordField schemaForm;
-    protected String name;
-    protected String description;
-    protected String createdUsername;
-    protected long createdTime;
-    protected long endpointCount;
+  protected String applicationId;
+  protected String schema;
+  protected RecordField schemaForm;
+  protected String name;
+  protected String description;
+  protected String createdUsername;
+  protected long createdTime;
+  protected long endpointCount;
 
-    public String getApplicationId() {
-        return applicationId;
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public String getSchema() {
+    return schema;
+  }
+
+  public void setSchema(String schema) {
+    this.schema = schema;
+  }
+
+  public RecordField getSchemaForm() {
+    return schemaForm;
+  }
+
+  public void setSchemaForm(RecordField schemaForm) {
+    this.schemaForm = schemaForm;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getCreatedUsername() {
+    return createdUsername;
+  }
+
+  public void setCreatedUsername(String createdUsername) {
+    this.createdUsername = createdUsername;
+  }
+
+  public long getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(long createdTime) {
+    this.createdTime = createdTime;
+  }
+
+  public long getEndpointCount() {
+    return endpointCount;
+  }
+
+  public void setEndpointCount(long endpointCount) {
+    this.endpointCount = endpointCount;
+  }
+
+  public void editFields(AbstractSchemaDto other) {
+    this.name = other.name;
+    this.description = other.description;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof AbstractSchemaDto)) {
+      return false;
     }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    AbstractSchemaDto that = (AbstractSchemaDto) obj;
+
+    if (version != that.version) {
+      return false;
+    }
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
+      return false;
+    }
+    if (schema != null ? !schema.equals(that.schema) : that.schema != null) {
+      return false;
     }
 
-    public String getSchema() {
-        return schema;
-    }
+    return true;
+  }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-    
-    public RecordField getSchemaForm() {
-        return schemaForm;
-    }
+  @Override
+  public int hashCode() {
+    int result = applicationId != null ? applicationId.hashCode() : 0;
+    result = 31 * result + version;
+    result = 31 * result + (schema != null ? schema.hashCode() : 0);
+    return result;
+  }
 
-    public void setSchemaForm(RecordField schemaForm) {
-        this.schemaForm = schemaForm;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCreatedUsername() {
-        return createdUsername;
-    }
-
-    public void setCreatedUsername(String createdUsername) {
-        this.createdUsername = createdUsername;
-    }
-
-    public long getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public long getEndpointCount() {
-        return endpointCount;
-    }
-
-    public void setEndpointCount(long endpointCount) {
-        this.endpointCount = endpointCount;
-    }
-
-    public void editFields(AbstractSchemaDto other) {
-        this.name = other.name;
-        this.description = other.description;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AbstractSchemaDto)) {
-            return false;
-        }
-
-        AbstractSchemaDto that = (AbstractSchemaDto) o;
-
-        if (version != that.version) {
-            return false;
-        }
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
-            return false;
-        }
-        if (schema != null ? !schema.equals(that.schema) : that.schema != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = applicationId != null ? applicationId.hashCode() : 0;
-        result = 31 * result + version;
-        result = 31 * result + (schema != null ? schema.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractSchemaDto [id=" + id + ", applicationId="
-                + applicationId + ", version=" + version
-                + ", name=" + name + ", description=" + description
-                + ", createdUsername=" + createdUsername + ", createdTime="
-                + createdTime + ", endpointCount=" + endpointCount + "]";
-    }
+  @Override
+  public String toString() {
+    return "AbstractSchemaDto [id=" + id + ", applicationId="
+        + applicationId + ", version=" + version
+        + ", name=" + name + ", description=" + description
+        + ", createdUsername=" + createdUsername + ", createdTime="
+        + createdTime + ", endpointCount=" + endpointCount + "]";
+  }
 
 }

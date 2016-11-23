@@ -16,22 +16,7 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.DESCRIPTION_ROW_LENGTH;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_APPLICATION_ID;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_CREATED_TIME;
 import static org.kaaproject.kaa.server.common.dao.DaoConstants.ENDPOINT_GROUP_CREATED_USERNAME;
@@ -45,248 +30,272 @@ import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongI
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getTopic;
 import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getTopicIds;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 @Entity
 @Table(name = ENDPOINT_GROUP_TABLE_NAME, uniqueConstraints = {
-        @UniqueConstraint(columnNames = {ENDPOINT_GROUP_WEIGHT, ENDPOINT_GROUP_APPLICATION_ID}),
-        @UniqueConstraint(columnNames = {ENDPOINT_GROUP_NAME, ENDPOINT_GROUP_APPLICATION_ID})})
+    @UniqueConstraint(columnNames = {ENDPOINT_GROUP_WEIGHT, ENDPOINT_GROUP_APPLICATION_ID}),
+    @UniqueConstraint(columnNames = {ENDPOINT_GROUP_NAME, ENDPOINT_GROUP_APPLICATION_ID})})
 public class EndpointGroup extends GenericModel<EndpointGroupDto> implements Serializable {
 
-    private static final long serialVersionUID = -2160369956685033697L;
+  private static final long serialVersionUID = -2160369956685033697L;
 
-    @Column(name = ENDPOINT_GROUP_NAME)
-    private String name;
+  @Column(name = ENDPOINT_GROUP_NAME)
+  private String name;
 
-    @Column(name = ENDPOINT_GROUP_SEQUENCE_NUMBER)
-    private int sequenceNumber;
+  @Column(name = ENDPOINT_GROUP_SEQUENCE_NUMBER)
+  private int sequenceNumber;
 
-    @Column(name = ENDPOINT_GROUP_WEIGHT)
-    private int weight;
+  @Column(name = ENDPOINT_GROUP_WEIGHT)
+  private int weight;
 
-    @Column(name = ENDPOINT_GROUP_ENDPOINT_COUNT)
-    private long endpointCount;
+  @Column(name = ENDPOINT_GROUP_ENDPOINT_COUNT)
+  private long endpointCount;
 
-    @Column(name = ENDPOINT_GROUP_DESCRIPTION, length = 255)
-    private String description;
+  @Column(name = ENDPOINT_GROUP_DESCRIPTION, length = DESCRIPTION_ROW_LENGTH)
+  private String description;
 
-    @Column(name = ENDPOINT_GROUP_CREATED_USERNAME)
-    private String createdUsername;
+  @Column(name = ENDPOINT_GROUP_CREATED_USERNAME)
+  private String createdUsername;
 
-    @Column(name = ENDPOINT_GROUP_CREATED_TIME)
-    private long createdTime;
+  @Column(name = ENDPOINT_GROUP_CREATED_TIME)
+  private long createdTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = ENDPOINT_GROUP_APPLICATION_ID, nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Application application;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = ENDPOINT_GROUP_APPLICATION_ID, nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private Application application;
 
-    @ManyToMany(mappedBy = "endpointGroups")
-    private Set<Topic> topics = new HashSet<>();
+  @ManyToMany(mappedBy = "endpointGroups")
+  private Set<Topic> topics = new HashSet<>();
 
-    public EndpointGroup() {
+  public EndpointGroup() {
+  }
+
+  public EndpointGroup(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * Create instance of <code>EndpointGroup</code>.
+   *
+   * @param dto data transfer object
+   */
+  public EndpointGroup(EndpointGroupDto dto) {
+    if (dto != null) {
+      this.id = getLongId(dto);
+      this.name = dto.getName();
+      this.sequenceNumber = dto.getSequenceNumber();
+      this.weight = dto.getWeight();
+      this.description = dto.getDescription();
+      this.createdUsername = dto.getCreatedUsername();
+      this.createdTime = dto.getCreatedTime();
+      Long appId = getLongId(dto.getApplicationId());
+      this.application = appId != null ? new Application(appId) : null;
+      this.topics = getTopic(dto.getTopics());
     }
+  }
 
-    public EndpointGroup(Long id) {
-        this.id = id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public EndpointGroup(EndpointGroupDto dto) {
-        if (dto != null) {
-            this.id = getLongId(dto);
-            this.name = dto.getName();
-            this.sequenceNumber = dto.getSequenceNumber();
-            this.weight = dto.getWeight();
-            this.description = dto.getDescription();
-            this.createdUsername = dto.getCreatedUsername();
-            this.createdTime = dto.getCreatedTime();
-            Long appId = getLongId(dto.getApplicationId());
-            this.application = appId != null ? new Application(appId) : null;
-            this.topics = getTopic(dto.getTopics());
-        }
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public int getSequenceNumber() {
+    return sequenceNumber;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setSequenceNumber(int sequenceNumber) {
+    this.sequenceNumber = sequenceNumber;
+  }
 
-    public int getSequenceNumber() {
-        return sequenceNumber;
-    }
+  public int getWeight() {
+    return weight;
+  }
 
-    public void setSequenceNumber(int sequenceNumber) {
-        this.sequenceNumber = sequenceNumber;
-    }
+  public void setWeight(int weight) {
+    this.weight = weight;
+  }
 
-    public int getWeight() {
-        return weight;
-    }
+  public long getEndpointCount() {
+    return endpointCount;
+  }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
+  public void setEndpointCount(long endpointCount) {
+    this.endpointCount = endpointCount;
+  }
 
-    public long getEndpointCount() {
-        return endpointCount;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setEndpointCount(long endpointCount) {
-        this.endpointCount = endpointCount;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getCreatedUsername() {
+    return createdUsername;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setCreatedUsername(String createdUsername) {
+    this.createdUsername = createdUsername;
+  }
 
-    public String getCreatedUsername() {
-        return createdUsername;
-    }
+  public long getCreatedTime() {
+    return createdTime;
+  }
 
-    public void setCreatedUsername(String createdUsername) {
-        this.createdUsername = createdUsername;
-    }
+  public void setCreatedTime(long createdTime) {
+    this.createdTime = createdTime;
+  }
 
-    public long getCreatedTime() {
-        return createdTime;
-    }
+  public Application getApplication() {
+    return application;
+  }
 
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
-    }
+  public void setApplication(Application application) {
+    this.application = application;
+  }
 
-    public Application getApplication() {
-        return application;
-    }
+  public Set<Topic> getTopics() {
+    return topics;
+  }
 
-    public void setApplication(Application application) {
-        this.application = application;
-    }
+  public void setTopics(Set<Topic> topics) {
+    this.topics = topics;
+  }
 
-    public Set<Topic> getTopics() {
-        return topics;
-    }
+  public String getApplicationId() {
+    return application != null ? application.getStringId() : null;
+  }
 
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
-    }
+  @Override
+  public String toString() {
+    return "EndpointGroup [name=" + name + ", sequenceNumber=" + sequenceNumber + ", weight="
+            + weight + ", endpointCount=" + endpointCount + ", description=" + description
+            + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", id="
+            + id + "]";
+  }
 
-    public String getApplicationId() {
-        return application != null ? application.getStringId() : null;
-    }
+  protected EndpointGroupDto createDto() {
+    return new EndpointGroupDto();
+  }
 
-    @Override
-    public String toString() {
-        return "EndpointGroup [name=" + name + ", sequenceNumber=" + sequenceNumber + ", weight=" + weight + ", endpointCount=" + endpointCount
-                + ", description=" + description + ", createdUsername=" + createdUsername + ", createdTime=" + createdTime + ", id=" + id + "]";
-    }
+  @Override
+  protected GenericModel<EndpointGroupDto> newInstance(Long id) {
+    return new EndpointGroup(id);
+  }
 
-    protected EndpointGroupDto createDto() {
-        return new EndpointGroupDto();
+  @Override
+  public EndpointGroupDto toDto() {
+    EndpointGroupDto dto = createDto();
+    dto.setId(getStringId());
+    dto.setDescription(description);
+    dto.setCreatedUsername(createdUsername);
+    dto.setCreatedTime(createdTime);
+    if (application != null) {
+      dto.setApplicationId(application.getStringId());
     }
+    dto.setName(name);
+    dto.setSequenceNumber(sequenceNumber);
+    dto.setWeight(weight);
+    dto.setTopics(getTopicIds(topics));
+    return dto;
+  }
 
-    @Override
-    protected GenericModel<EndpointGroupDto> newInstance(Long id) {
-        return new EndpointGroup(id);
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 39;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + sequenceNumber;
+    result = prime * result + weight;
+    result = prime * result + Long.valueOf(endpointCount).hashCode();
+    result = prime * result + ((description == null) ? 0 : description.hashCode());
+    result = prime * result + ((createdUsername == null) ? 0 : createdUsername.hashCode());
+    result = prime * result + Long.valueOf(createdTime).hashCode();
+    result = prime * result + ((application == null) ? 0 : application.hashCode());
+    return result;
+  }
 
-    @Override
-    public EndpointGroupDto toDto() {
-        EndpointGroupDto dto = createDto();
-        dto.setId(getStringId());
-        dto.setDescription(description);
-        dto.setCreatedUsername(createdUsername);
-        dto.setCreatedTime(createdTime);
-        if (application != null) {
-            dto.setApplicationId(application.getStringId());
-        }
-        dto.setName(name);
-        dto.setSequenceNumber(sequenceNumber);
-        dto.setWeight(weight);
-        dto.setTopics(getTopicIds(topics));
-        return dto;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 39;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + sequenceNumber;
-        result = prime * result + weight;
-        result = prime * result + Long.valueOf(endpointCount).hashCode();
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((createdUsername == null) ? 0 : createdUsername.hashCode());
-        result = prime * result + Long.valueOf(createdTime).hashCode();
-        result = prime * result + ((application == null) ? 0 : application.hashCode());
-        return result;
+    if (obj == null) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointGroup other = (EndpointGroup) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (sequenceNumber != other.sequenceNumber) {
-            return false;
-        }
-        if (weight != other.weight) {
-            return false;
-        }
-        if (endpointCount != other.endpointCount) {
-            return false;
-        }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
-            return false;
-        }
-        if (createdUsername == null) {
-            if (other.createdUsername != null) {
-                return false;
-            }
-        } else if (!createdUsername.equals(other.createdUsername)) {
-            return false;
-        }
-        if (createdTime != other.createdTime) {
-            return false;
-        }
-        if (application == null) {
-            if (other.application != null) {
-                return false;
-            }
-        } else if (!application.equals(other.application)) {
-            return false;
-        }
-        return true;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
+    EndpointGroup other = (EndpointGroup) obj;
+    if (id == null) {
+      if (other.id != null) {
+        return false;
+      }
+    } else if (!id.equals(other.id)) {
+      return false;
+    }
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
+    if (sequenceNumber != other.sequenceNumber) {
+      return false;
+    }
+    if (weight != other.weight) {
+      return false;
+    }
+    if (endpointCount != other.endpointCount) {
+      return false;
+    }
+    if (description == null) {
+      if (other.description != null) {
+        return false;
+      }
+    } else if (!description.equals(other.description)) {
+      return false;
+    }
+    if (createdUsername == null) {
+      if (other.createdUsername != null) {
+        return false;
+      }
+    } else if (!createdUsername.equals(other.createdUsername)) {
+      return false;
+    }
+    if (createdTime != other.createdTime) {
+      return false;
+    }
+    if (application == null) {
+      if (other.application != null) {
+        return false;
+      }
+    } else if (!application.equals(other.application)) {
+      return false;
+    }
+    return true;
+  }
 }

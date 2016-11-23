@@ -20,9 +20,9 @@ import org.kaaproject.kaa.server.common.core.schema.DataSchema;
 
 public class ProfileDataFactory implements KaaDataFactory<DataSchema, ProfileData> {
 
-    @Override
-    public ProfileData createData(DataSchema schema, String data) {
-        return new ProfileData(schema, data);
-    }
+  @Override
+  public ProfileData createData(DataSchema schema, String data) {
+    return new ProfileData(schema, data);
+  }
 
 }

@@ -33,7 +33,7 @@
                     </gwt:cell>
                     <gwt:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
                         <gwt:HTMLPanel styleName="{kaaAdminStyle.bAppHeader}" width="200px" height="100%">
-                            Admin Console
+                            Administration UI
                         </gwt:HTMLPanel>
                     </gwt:cell>
                 </gwt:HorizontalPanel>

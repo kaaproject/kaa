@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
+import akka.actor.UntypedActor;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointStopMessage;
@@ -37,154 +39,151 @@ import org.kaaproject.kaa.server.transport.message.SessionPingMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import akka.actor.UntypedActor;
-
-/**
- * The Class EndpointActor.
- */
 public class LocalEndpointActor extends UntypedActor {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActor.class);
 
-    private final String actorKey;
+  private final String actorKey;
 
-    private final LocalEndpointActorMessageProcessor messageProcessor;
+  private final LocalEndpointActorMessageProcessor messageProcessor;
 
-    /**
-     * Instantiates a new endpoint actor.
-     *
-     * @param context           the context
-     * @param endpointActorKey  the endpoint actor key
-     * @param appToken          the app token
-     * @param key               the key
-     */
-    LocalEndpointActor(AkkaContext context, String endpointActorKey, String appToken, EndpointObjectHash key) {
-        this.messageProcessor = new LocalEndpointActorMessageProcessor(context, appToken, key, endpointActorKey);
-        this.actorKey = endpointActorKey;
-    }
+  /**
+   * Instantiates a new endpoint actor.
+   *
+   * @param context          the context
+   * @param endpointActorKey the endpoint actor key
+   * @param appToken         the app token
+   * @param key              the key
+   */
+  LocalEndpointActor(AkkaContext context, String endpointActorKey,
+                     String appToken, EndpointObjectHash key) {
+    this.messageProcessor = new LocalEndpointActorMessageProcessor(context,
+        appToken, key, endpointActorKey);
+    this.actorKey = endpointActorKey;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
-     */
-    @Override
-    public void onReceive(Object message) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("[{}] Received: {}", actorKey, message);
-        } else {
-            LOG.debug("[{}] Received: {}", actorKey, message.getClass().getName());
-        }
-        if (message instanceof SyncRequestMessage) {
-            processEndpointSync((SyncRequestMessage) message);
-        } else if (message instanceof EndpointActorMsg) {
-            processEndpointActorMsg((EndpointActorMsg) message);
-        } else if (message instanceof EndpointEventReceiveMessage) {
-            processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
-        } else if (message instanceof LogDeliveryMessage) {
-            processLogDeliveryMessage((LogDeliveryMessage) message);
-        } else if (message instanceof EndpointUserConfigurationUpdateMessage) {
-            processUserConfigurationUpdateMessage((EndpointUserConfigurationUpdateMessage) message);
-        } else if (message instanceof UserVerificationResponseMessage) {
-            processUserVerificationMessage((UserVerificationResponseMessage) message);
-        } else if (message instanceof SessionDisconnectMessage) {
-            processDisconnectMessage((ChannelAware) message);
-        } else if (message instanceof SessionPingMessage) {
-            processPingMessage((ChannelAware) message);
-        } else if (message instanceof ThriftNotificationMessage) {
-            processThriftNotification((ThriftNotificationMessage) message);
-        } else if (message instanceof NotificationMessage) {
-            processNotification((NotificationMessage) message);
-        } else if (message instanceof RequestTimeoutMessage) {
-            processRequestTimeoutMessage((RequestTimeoutMessage) message);
-        } else if (message instanceof ActorTimeoutMessage) {
-            processActorTimeoutMessage((ActorTimeoutMessage) message);
-        } else if (message instanceof ChannelTimeoutMessage) {
-            processChannelTimeoutMessage((ChannelTimeoutMessage) message);
-        } else if (message instanceof EndpointUserActionMessage) {
-            processEndpointUserActionMessage((EndpointUserActionMessage) message);
-        } else if (message instanceof EndpointStopMessage) {
-            LOG.debug("[{}] Received stop request from application actor", actorKey);
-            context().stop(self());
-        } else {
-            LOG.warn("[{}] Received unknown message {}", actorKey, message);
-        }
+  /*
+   * (non-Javadoc)
+   *
+   * @see akka.actor.UntypedActor#onReceive(java.lang.Object)
+   */
+  @Override
+  public void onReceive(Object message) throws Exception {
+    if (LOG.isTraceEnabled()) {
+      LOG.trace("[{}] Received: {}", actorKey, message);
+    } else {
+      LOG.debug("[{}] Received: {}", actorKey, message.getClass().getName());
     }
-    
-    private void processEndpointActorMsg(EndpointActorMsg msg) {
-        messageProcessor.processEndpointActorMsg(context(), msg);
+    if (message instanceof SyncRequestMessage) {
+      processEndpointSync((SyncRequestMessage) message);
+    } else if (message instanceof EndpointActorMsg) {
+      processEndpointActorMsg((EndpointActorMsg) message);
+    } else if (message instanceof EndpointEventReceiveMessage) {
+      processEndpointEventReceiveMessage((EndpointEventReceiveMessage) message);
+    } else if (message instanceof LogDeliveryMessage) {
+      processLogDeliveryMessage((LogDeliveryMessage) message);
+    } else if (message instanceof EndpointUserConfigurationUpdateMessage) {
+      processUserConfigurationUpdateMessage((EndpointUserConfigurationUpdateMessage) message);
+    } else if (message instanceof UserVerificationResponseMessage) {
+      processUserVerificationMessage((UserVerificationResponseMessage) message);
+    } else if (message instanceof SessionDisconnectMessage) {
+      processDisconnectMessage((ChannelAware) message);
+    } else if (message instanceof SessionPingMessage) {
+      processPingMessage((ChannelAware) message);
+    } else if (message instanceof ThriftNotificationMessage) {
+      processThriftNotification((ThriftNotificationMessage) message);
+    } else if (message instanceof NotificationMessage) {
+      processNotification((NotificationMessage) message);
+    } else if (message instanceof RequestTimeoutMessage) {
+      processRequestTimeoutMessage((RequestTimeoutMessage) message);
+    } else if (message instanceof ActorTimeoutMessage) {
+      processActorTimeoutMessage((ActorTimeoutMessage) message);
+    } else if (message instanceof ChannelTimeoutMessage) {
+      processChannelTimeoutMessage((ChannelTimeoutMessage) message);
+    } else if (message instanceof EndpointUserActionMessage) {
+      processEndpointUserActionMessage((EndpointUserActionMessage) message);
+    } else if (message instanceof EndpointStopMessage) {
+      LOG.debug("[{}] Received stop request from application actor", actorKey);
+      context().stop(self());
+    } else {
+      LOG.warn("[{}] Received unknown message {}", actorKey, message);
     }
+  }
 
-    private void processUserConfigurationUpdateMessage(EndpointUserConfigurationUpdateMessage message) {
-        messageProcessor.processUserConfigurationUpdate(context(), message);
-    }
+  private void processEndpointActorMsg(EndpointActorMsg msg) {
+    messageProcessor.processEndpointActorMsg(context(), msg);
+  }
 
-    private void processUserVerificationMessage(UserVerificationResponseMessage message) {
-        messageProcessor.processUserVerificationMessage(context(), message);
-    }
+  private void processUserConfigurationUpdateMessage(
+      EndpointUserConfigurationUpdateMessage message) {
+    messageProcessor.processUserConfigurationUpdate(context(), message);
+  }
 
-    private void processLogDeliveryMessage(LogDeliveryMessage message) {
-        messageProcessor.processLogDeliveryMessage(context(), message);
-    }
+  private void processUserVerificationMessage(UserVerificationResponseMessage message) {
+    messageProcessor.processUserVerificationMessage(context(), message);
+  }
 
-    private void processEndpointSync(SyncRequestMessage message) {
-        messageProcessor.processEndpointSync(context(), message);
-    }
+  private void processLogDeliveryMessage(LogDeliveryMessage message) {
+    messageProcessor.processLogDeliveryMessage(context(), message);
+  }
 
-    private void processEndpointEventReceiveMessage(EndpointEventReceiveMessage message) {
-        messageProcessor.processEndpointEventReceiveMessage(context(), message);
-    }
+  private void processEndpointSync(SyncRequestMessage message) {
+    messageProcessor.processEndpointSync(context(), message);
+  }
 
-    private void processDisconnectMessage(ChannelAware message) {
-        messageProcessor.processDisconnectMessage(context(), message);
-    }
+  private void processEndpointEventReceiveMessage(EndpointEventReceiveMessage message) {
+    messageProcessor.processEndpointEventReceiveMessage(context(), message);
+  }
 
-    private void processPingMessage(ChannelAware message) {
-        messageProcessor.processPingMessage(context(), message);
-    }
-    
-    private void processThriftNotification(ThriftNotificationMessage message) {
-        messageProcessor.processThriftNotification(context());
-    }
+  private void processDisconnectMessage(ChannelAware message) {
+    messageProcessor.processDisconnectMessage(context(), message);
+  }
 
-    private void processNotification(NotificationMessage message) {
-        messageProcessor.processNotification(context(), message);
-    }
+  private void processPingMessage(ChannelAware message) {
+    messageProcessor.processPingMessage(context(), message);
+  }
 
-    private void processRequestTimeoutMessage(RequestTimeoutMessage message) {
-        messageProcessor.processRequestTimeoutMessage(context(), message);
-    }
+  private void processThriftNotification(ThriftNotificationMessage message) {
+    messageProcessor.processThriftNotification(context());
+  }
 
-    private void processActorTimeoutMessage(ActorTimeoutMessage message) {
-        messageProcessor.processActorTimeoutMessage(context(), message);
-    }
+  private void processNotification(NotificationMessage message) {
+    messageProcessor.processNotification(context(), message);
+  }
 
-    private void processChannelTimeoutMessage(ChannelTimeoutMessage message) {
-        messageProcessor.processChannelTimeoutMessage(context(), message);
-    }
+  private void processRequestTimeoutMessage(RequestTimeoutMessage message) {
+    messageProcessor.processRequestTimeoutMessage(context(), message);
+  }
 
-    private void processEndpointUserActionMessage(EndpointUserActionMessage message) {
-        messageProcessor.processEndpointUserActionMessage(context(), message);
-    }
+  private void processActorTimeoutMessage(ActorTimeoutMessage message) {
+    messageProcessor.processActorTimeoutMessage(context(), message);
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see akka.actor.UntypedActor#preStart()
-     */
-    @Override
-    public void preStart() {
-        LOG.debug("[{}] Starting", actorKey);
-    }
+  private void processChannelTimeoutMessage(ChannelTimeoutMessage message) {
+    messageProcessor.processChannelTimeoutMessage(context(), message);
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see akka.actor.UntypedActor#postStop()
-     */
-    @Override
-    public void postStop() {
-        LOG.debug("[{}] Stoped", actorKey);
-    }
+  private void processEndpointUserActionMessage(EndpointUserActionMessage message) {
+    messageProcessor.processEndpointUserActionMessage(context(), message);
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see akka.actor.UntypedActor#preStart()
+   */
+  @Override
+  public void preStart() {
+    LOG.debug("[{}] Starting", actorKey);
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see akka.actor.UntypedActor#postStop()
+   */
+  @Override
+  public void postStop() {
+    LOG.debug("[{}] Stoped", actorKey);
+  }
 }

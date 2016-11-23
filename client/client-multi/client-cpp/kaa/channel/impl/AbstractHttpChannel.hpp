@@ -47,8 +47,9 @@ namespace kaa {
 
 class AbstractHttpChannel : public ImpermanentDataChannel {
 public:
-    AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context);
-    virtual ~AbstractHttpChannel() { }
+    AbstractHttpChannel(IKaaChannelManager& channelManager,
+                        const KeyPair& clientKeys,
+                        IKaaClientContext& context);
 
     virtual void sync(TransportType type);
     virtual void syncAll();
@@ -67,12 +68,15 @@ public:
     }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {}
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {}
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
+        connectivityChecker_ = checker;
+    }
 
 protected:
     typedef std::shared_ptr<IPTransportInfo> IPTransportInfoPtr;
 
     HttpDataProcessor* getHttpDataProcessor() { return &httpDataProcessor_; }
+
     virtual void processTypes(const std::map<TransportType, ChannelDirection>& types
 #ifdef KAA_THREADSAFE
                             , KAA_MUTEX_UNIQUE& lock
@@ -88,19 +92,18 @@ private:
     void onServerFailed(KaaFailoverReason reason);
 
 private:
-    KeyPair clientKeys_;
+    IKaaChannelManager&      channelManager_;
+    IKaaClientContext&       context_;
+    KeyPair                  clientKeys_;
+    IPTransportInfoPtr       currentServer_;
+    HttpDataProcessor        httpDataProcessor_;
+    HttpClient               httpClient_;
 
-    bool lastConnectionFailed_;
-
-    IKaaDataMultiplexer *multiplexer_;
-    IKaaDataDemultiplexer *demultiplexer_;
-    IKaaChannelManager *channelManager_;
-    IPTransportInfoPtr currentServer_;
-    HttpDataProcessor httpDataProcessor_;
-    HttpClient httpClient_;
     KAA_MUTEX_DECLARE(channelGuard_);
 
-    IKaaClientContext &context_;
+    IKaaDataMultiplexer      *multiplexer_   = nullptr;
+    IKaaDataDemultiplexer    *demultiplexer_ = nullptr;
+    ConnectivityCheckerPtr   connectivityChecker_;
 };
 
 }

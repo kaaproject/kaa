@@ -19,76 +19,57 @@
 #
 #  find_package(Avro)
 #
-# Variables used by this module, they can change the default behaviour and need
-# to be set before calling find_package:
-#
-#  AVRO_ROOT  Set this variable to the root installation of
-#                 Avro C++ if the module has problems finding
-#                 the proper installation path.
-#
 # Variables defined by this module:
 #
 #  AVRO_FOUND              System has Avro C++ libs/headers
 #  AVRO_LIBRARIES          The Avro C++ libraries
 #  AVRO_INCLUDE_DIRS       The location of Avro C++ headers
 
-message ("\nLooking for Avro C++ headers and libraries")
+message("\nLooking for Avro C++ headers and libraries")
 
-if (NOT "$ENV{AVRO_ROOT}" STREQUAL "")
-    set(AVRO_ROOT "$ENV{AVRO_ROOT}")
-endif(NOT "$ENV{AVRO_ROOT}" STREQUAL "")
+if(NOT WIN32)
+    include(FindPkgConfig)
+    if(PKG_CONFIG_FOUND)
+	    pkg_check_modules(PC_AVRO avro-cpp)
+	    set(AVRO_DEFINITIONS ${PC_AVRO_CFLAGS_OTHER})
+    endif(PKG_CONFIG_FOUND)
+endif(NOT WIN32)
 
-if (AVRO_ROOT)
-    message (STATUS "Root dir: ${AVRO_ROOT}")
-endif ()
-
-if (NOT WIN32)
-  include(FindPkgConfig)
-  if ( PKG_CONFIG_FOUND )
-
-	pkg_check_modules(PC_AVRO avro-cpp)
-	set(AVRO_DEFINITIONS ${PC_AVRO_CFLAGS_OTHER})
-
-  endif(PKG_CONFIG_FOUND)
-endif (NOT WIN32)
-
-find_path(AVRO_INCLUDE_DIR 
+find_path(AVRO_INCLUDE_DIR
      avro/Encoder.hh
      HINTS
-     ${AVRO_ROOT}/include
+     ${CMAKE_FIND_ROOT_PATH}/include
      ${PC_AVRO_INCLUDEDIR}
-     ${PC_AVRO_INCLUDE_DIRS}
-     ${CMAKE_INCLUDE_PATH}
-)
+     ${PC_AVRO_INCLUDE_DIRS})
 
-if (AVRO_LINK_STATIC)
-    set (AVRO_LOOK_FOR_LIB_NAMES avrocpp_s avrocpp)
-else ()
-    set (AVRO_LOOK_FOR_LIB_NAMES avrocpp)
-endif ()
-        
+if(Avro_USE_STATIC_LIBS)
+    set(AVRO_LOOK_FOR_LIB_NAMES avrocpp_s)
+else(Avro_USE_STATIC_LIBS)
+    set(AVRO_LOOK_FOR_LIB_NAMES avrocpp)
+endif(Avro_USE_STATIC_LIBS)
+
 find_library(AVRO_LIBRARY
     NAMES
     ${AVRO_LOOK_FOR_LIB_NAMES}
     PATHS
-    ${AVRO_ROOT}/lib
+    ${CMAKE_FIND_ROOT_PATH}/lib
     ${PC_AVRO_LIBDIR}
-    ${PC_AVRO_LIBRARY_DIRS}
-)
+    ${PC_AVRO_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 
-# handle the QUIETLY and REQUIRED arguments and set Avro_FOUND to TRUE
+# handle the QUIETLY and REQUIRED arguments and set AVRO_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(Avro
     DEFAULT_MSG
     AVRO_LIBRARY
+    AVRO_INCLUDE_DIR)
+
+mark_as_advanced(AVRO_FOUND
     AVRO_INCLUDE_DIR
-)
+    AVRO_LIBRARY)
 
-mark_as_advanced(AVRO_INCLUDE_DIR AVRO_LIBRARY)
-
-if (AVRO_FOUND)
+if(AVRO_FOUND)
     set(AVRO_LIBRARIES ${AVRO_LIBRARY})
     set(AVRO_INCLUDE_DIRS ${AVRO_INCLUDE_DIR})
 
@@ -97,6 +78,6 @@ if (AVRO_FOUND)
 
     mark_as_advanced(AVRO_LIBRARY_DIR AVRO_LIBRARY_NAME)
 
-    message (STATUS "Include directories: ${AVRO_INCLUDE_DIRS}")
-    message (STATUS "Libraries: ${AVRO_LIBRARIES}")
-endif ()
+    message(STATUS "Include directories: ${AVRO_INCLUDE_DIRS}")
+    message(STATUS "Libraries: ${AVRO_LIBRARIES}")
+endif(AVRO_FOUND)

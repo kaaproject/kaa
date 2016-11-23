@@ -20,16 +20,16 @@ package org.kaaproject.kaa.server.operations.service.akka.messages.core.session;
 /**
  * The Class RequestTimeoutMessage.
  */
-public class ActorTimeoutMessage implements TimeoutMessage{
+public class ActorTimeoutMessage implements TimeoutMessage {
 
-    private final long lastActivityTime;
+  private final long lastActivityTime;
 
-    public ActorTimeoutMessage(long lastActivityTime) {
-        super();
-        this.lastActivityTime = lastActivityTime;
-    }
+  public ActorTimeoutMessage(long lastActivityTime) {
+    super();
+    this.lastActivityTime = lastActivityTime;
+  }
 
-    public long getLastActivityTime() {
-        return lastActivityTime;
-    }
+  public long getLastActivityTime() {
+    return lastActivityTime;
+  }
 }

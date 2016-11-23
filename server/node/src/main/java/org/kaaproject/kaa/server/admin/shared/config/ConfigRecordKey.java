@@ -20,84 +20,84 @@ import java.io.Serializable;
 
 public class ConfigRecordKey implements Serializable {
 
-    private static final long serialVersionUID = 3302320660468092090L;
+  private static final long serialVersionUID = 3302320660468092090L;
 
-    private String schemaId;
-    private String endpointGroupId;
+  private String schemaId;
+  private String endpointGroupId;
 
-    public ConfigRecordKey() {
+  public ConfigRecordKey() {
+  }
+
+  public ConfigRecordKey(String schemaId, String endpointGroupId) {
+    this.schemaId = schemaId;
+    this.endpointGroupId = endpointGroupId;
+  }
+
+  public String getSchemaId() {
+    return schemaId;
+  }
+
+  public void setSchemaId(String schemaId) {
+    this.schemaId = schemaId;
+  }
+
+  public String getEndpointGroupId() {
+    return endpointGroupId;
+  }
+
+  public void setEndpointGroupId(String endpointGroupId) {
+    this.endpointGroupId = endpointGroupId;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((endpointGroupId == null) ? 0 : endpointGroupId.hashCode());
+    result = prime * result
+        + ((schemaId == null) ? 0 : schemaId.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public ConfigRecordKey(String schemaId, String endpointGroupId) {
-        this.schemaId = schemaId;
-        this.endpointGroupId = endpointGroupId;
+    if (obj == null) {
+      return false;
     }
-
-    public String getSchemaId() {
-        return schemaId;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setSchemaId(String schemaId) {
-        this.schemaId = schemaId;
+    ConfigRecordKey other = (ConfigRecordKey) obj;
+    if (endpointGroupId == null) {
+      if (other.endpointGroupId != null) {
+        return false;
+      }
+    } else if (!endpointGroupId.equals(other.endpointGroupId)) {
+      return false;
     }
-
-    public String getEndpointGroupId() {
-        return endpointGroupId;
+    if (schemaId == null) {
+      if (other.schemaId != null) {
+        return false;
+      }
+    } else if (!schemaId.equals(other.schemaId)) {
+      return false;
     }
+    return true;
+  }
 
-    public void setEndpointGroupId(String endpointGroupId) {
-        this.endpointGroupId = endpointGroupId;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((endpointGroupId == null) ? 0 : endpointGroupId.hashCode());
-        result = prime * result
-                + ((schemaId == null) ? 0 : schemaId.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ConfigRecordKey other = (ConfigRecordKey) obj;
-        if (endpointGroupId == null) {
-            if (other.endpointGroupId != null) {
-                return false;
-            }
-        } else if (!endpointGroupId.equals(other.endpointGroupId)) {
-            return false;
-        }
-        if (schemaId == null) {
-            if (other.schemaId != null) {
-                return false;
-            }
-        } else if (!schemaId.equals(other.schemaId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ConfigRecordKey [schemaId=");
-        builder.append(schemaId);
-        builder.append(", endpointGroupId=");
-        builder.append(endpointGroupId);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ConfigRecordKey [schemaId=");
+    builder.append(schemaId);
+    builder.append(", endpointGroupId=");
+    builder.append(endpointGroupId);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

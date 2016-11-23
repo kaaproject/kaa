@@ -20,105 +20,111 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoU
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME;
 
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
+import com.datastax.driver.mapping.annotations.Transient;
+
+import org.kaaproject.kaa.common.dto.TopicDto;
+import org.kaaproject.kaa.common.dto.TopicListEntryDto;
+import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
+import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
+
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.TopicListEntryDto;
-import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
-
-import com.datastax.driver.mapping.annotations.Column;
-import com.datastax.driver.mapping.annotations.PartitionKey;
-import com.datastax.driver.mapping.annotations.Table;
-import com.datastax.driver.mapping.annotations.Transient;
-import org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils;
-
 
 @Table(name = TOPIC_LIST_ENTRY_COLUMN_FAMILY_NAME)
 public final class CassandraTopicListEntry implements TopicListEntry, Serializable {
 
-    @Transient
-    private static final long serialVersionUID = 1812154867980435128L;
+  @Transient
+  private static final long serialVersionUID = 1812154867980435128L;
 
-    @PartitionKey
-    @Column(name = CassandraModelConstants.TOPIC_LIST_ENTRY_HASH_PROPERTY)
-    private ByteBuffer hash;
-    @Column(name = CassandraModelConstants.TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY)
-    private int simpleHash;
-    @Column(name = CassandraModelConstants.TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY)
-    private List<String> topicIds;
+  @PartitionKey
+  @Column(name = CassandraModelConstants.TOPIC_LIST_ENTRY_HASH_PROPERTY)
+  private ByteBuffer hash;
+  @Column(name = CassandraModelConstants.TOPIC_LIST_ENTRY_SIMPLE_HASH_PROPERTY)
+  private int simpleHash;
+  @Column(name = CassandraModelConstants.TOPIC_LIST_ENTRY_TOPIC_IDS_PROPERTY)
+  private List<String> topicIds;
 
-    public CassandraTopicListEntry() {
+  public CassandraTopicListEntry() {
+  }
+
+  /**
+   * Create new instance of <code>CassandraTopicListEntry</code>.
+   *
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
+  public CassandraTopicListEntry(TopicListEntryDto dto) {
+    this.hash = getByteBuffer(dto.getHash());
+    this.simpleHash = dto.getSimpleHash();
+    this.topicIds = new ArrayList<>();
+    if (dto.getTopics() != null) {
+      for (TopicDto topic : dto.getTopics()) {
+        topicIds.add(topic.getId());
+      }
+    }
+  }
+
+  public ByteBuffer getHash() {
+    return hash;
+  }
+
+  public void setHash(ByteBuffer hash) {
+    this.hash = hash;
+  }
+
+  public int getSimpleHash() {
+    return simpleHash;
+  }
+
+  public void setSimpleHash(int simpleHash) {
+    this.simpleHash = simpleHash;
+  }
+
+  public List<String> getTopicIds() {
+    return topicIds;
+  }
+
+  public void setTopicIds(List<String> topicIds) {
+    this.topicIds = topicIds;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (!(object instanceof CassandraTopicListEntry)) {
+      return false;
     }
 
-    public CassandraTopicListEntry(TopicListEntryDto dto) {
-        this.hash = getByteBuffer(dto.getHash());
-        this.simpleHash = dto.getSimpleHash();
-        this.topicIds = new ArrayList<>();
-        if (dto.getTopics() != null) {
-            for (TopicDto topic : dto.getTopics()) {
-                topicIds.add(topic.getId());
-            }
-        }
+    CassandraTopicListEntry that = (CassandraTopicListEntry) object;
+
+    if (simpleHash != that.simpleHash) {
+      return false;
+    }
+    if (hash != null ? !hash.equals(that.hash) : that.hash != null) {
+      return false;
     }
 
-    public ByteBuffer getHash() {
-        return hash;
-    }
+    return true;
+  }
 
-    public void setHash(ByteBuffer hash) {
-        this.hash = hash;
-    }
+  @Override
+  public int hashCode() {
+    int result = hash != null ? hash.hashCode() : 0;
+    result = 31 * result + simpleHash;
+    return result;
+  }
 
-    public int getSimpleHash() {
-        return simpleHash;
-    }
-
-    public void setSimpleHash(int simpleHash) {
-        this.simpleHash = simpleHash;
-    }
-
-    public List<String> getTopicIds() {
-        return topicIds;
-    }
-
-    public void setTopicIds(List<String> topicIds) {
-        this.topicIds = topicIds;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof CassandraTopicListEntry)) {
-            return false;
-        }
-
-        CassandraTopicListEntry that = (CassandraTopicListEntry) o;
-
-        if (simpleHash != that.simpleHash) {
-            return false;
-        }
-        if (hash != null ? !hash.equals(that.hash) : that.hash != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = hash != null ? hash.hashCode() : 0;
-        result = 31 * result + simpleHash;
-        return result;
-    }
-
-    @Override
-    public TopicListEntryDto toDto() {
-        List<TopicDto> topicDtos = ModelUtils.getTopicDtos(topicIds);
-        return new TopicListEntryDto(simpleHash, getBytes(hash), topicDtos);
-    }
+  @Override
+  public TopicListEntryDto toDto() {
+    List<TopicDto> topicDtos = ModelUtils.getTopicDtos(topicIds);
+    return new TopicListEntryDto(simpleHash, getBytes(hash), topicDtos);
+  }
 }

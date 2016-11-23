@@ -16,56 +16,57 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.Prefix;
 
-public class ProfileSchemaPlace extends AbstractSchemaPlace {
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    public ProfileSchemaPlace(String applicationId, String schemaId) {
-        super(applicationId, schemaId);
+public class ProfileSchemaPlace extends AbstractSchemaPlaceApplication {
+
+  public ProfileSchemaPlace(String applicationId, String schemaId) {
+    super(applicationId, schemaId);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Prefix(value = "profSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<ProfileSchemaPlace> {
-
-        @Override
-        protected ProfileSchemaPlace getPlaceImpl(String applicationId,
-                String schemaId) {
-            return new ProfileSchemaPlace(applicationId, schemaId);
-        }
+    if (obj == null) {
+      return false;
     }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    ProfileSchemaPlace other = (ProfileSchemaPlace) obj;
+    if (schemaId == null) {
+      if (other.schemaId != null) {
+        return false;
+      }
+    } else if (!schemaId.equals(other.schemaId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.profileSchema();
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ProfileSchemasPlace(applicationId);
+  }
+
+  @Prefix(value = "profSchema")
+  public static class Tokenizer
+      extends AbstractSchemaPlaceApplication.Tokenizer<ProfileSchemaPlace> {
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ProfileSchemaPlace other = (ProfileSchemaPlace) obj;
-        if (schemaId == null) {
-            if (other.schemaId != null) {
-                return false;
-            }
-        } else if (!schemaId.equals(other.schemaId)) {
-            return false;
-        }
-        return true;
+    protected ProfileSchemaPlace getPlaceImpl(String applicationId,
+                                              String schemaId) {
+      return new ProfileSchemaPlace(applicationId, schemaId);
     }
-
-    @Override
-    public String getName() {
-        return Utils.constants.profileSchema();
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ProfileSchemasPlace(applicationId);
-    }
+  }
 
 }

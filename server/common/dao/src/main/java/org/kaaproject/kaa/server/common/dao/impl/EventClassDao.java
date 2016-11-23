@@ -16,9 +16,9 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.event.EventClassType;
+
+import java.util.List;
 
 /**
  * The interface for Event Class Dao.
@@ -27,56 +27,48 @@ import org.kaaproject.kaa.common.dto.event.EventClassType;
  */
 public interface EventClassDao<T> extends SqlDao<T> {
 
-    /**
-     * Find all Event Classes by Event Class Family id.
-     *
-     * @param id the user id
-     * @return the list of users
-     */
-    List<T> findByEcfId(String id);
+  /**
+   * Find all Event Classes by Event Class Family id.
+   *
+   * @param id the user id
+   * @return the list of users
+   */
+  List<T> findByEcfvId(String id);
 
-    /**
-     * Find all Event Classes by Event Class Family id, version and type.
-     *
-     * @param ecfId   the ecf id
-     * @param version the version
-     * @param type    the type
-     * @return the list of event classes
-     */
-    List<T> findByEcfIdVersionAndType(String ecfId, int version, EventClassType type);
+  /**
+   * Find all Event Classes by Event Class Family id, version and type.
+   *
+   * @param ecfId   the ecf id
+   * @param version the version
+   * @param type    the type
+   * @return the list of event classes
+   */
+  List<T> findByEcfvIdVersionAndType(String ecfId, int version, EventClassType type);
 
-    /**
-     * Remove all Event Classes by Event Class Family id.
-     *
-     * @param tenantId the tenant id
-     */
-    void removeByEcfId(String tenantId);
+  /**
+   * Remove all Event Classes by Event Class Family id.
+   *
+   * @param tenantId the tenant id
+   */
+  void removeByEcfvId(String tenantId);
 
-    /**
-     * Find Event Class by Tenant id and FQN.
-     *
-     * @param tenantId the tenant id
-     * @param fqn      the FQN
-     * @return the list of found event classes
-     */
-    List<T> findByTenantIdAndFqn(String tenantId, String fqn);
+  /**
+   * Find Event Class by Tenant id and FQN.
+   *
+   * @param tenantId the tenant id
+   * @param fqn      the FQN
+   * @return the list of found event classes
+   */
+  List<T> findByTenantIdAndFqn(String tenantId, String fqn);
 
-    /**
-     * Validate list of FQNs for uniqueness within the tenant.
-     *
-     * @param tenantId the tenant id
-     * @param ecfId    the event class family id
-     * @param fqns     the list of FQNs
-     * @return true if FQNs are unique otherwise false
-     */
-    boolean validateFqns(String tenantId, String ecfId, List<String> fqns);
-
-    /**
-     * @param tenantId the tenant id
-     * @param fqn      the FQN
-     * @param version  the version
-     * @return the found event classes
-     */
-    T findByTenantIdAndFqnAndVersion(String tenantId, String fqn, int version);
+  /**
+   * Find Event Class by Tenant id, FQN and version.
+   *
+   * @param tenantId the tenant id
+   * @param fqn      the FQN
+   * @param version  the version
+   * @return the found event classes
+   */
+  T findByTenantIdAndFqnAndVersion(String tenantId, String fqn, int version);
 
 }

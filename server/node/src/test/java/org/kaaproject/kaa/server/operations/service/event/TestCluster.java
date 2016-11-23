@@ -16,10 +16,9 @@
 
 package org.kaaproject.kaa.server.operations.service.event;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.InstanceSpec;
 import org.apache.curator.test.TestingCluster;
@@ -32,86 +31,96 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+
 /**
  * The Class TestCluster.
  */
 public class TestCluster {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(TestCluster.class);
+  /**
+   * The Constant ENDPOINT_NODE_HOST.
+   */
+  public static final String OPERATIONS_NODE_HOST = "127.0.0.1";
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory
+      .getLogger(TestCluster.class);
+  /**
+   * The Constant BOOTSTRAP_NODE_HOST.
+   */
+  private static final String BOOTSTRAP_NODE_HOST = "192.168.0.202";
+  /**
+   * The zookeeper cluster static instance.
+   */
+  private static TestingCluster zkCluster;
 
-    /** The Constant BOOTSTRAP_NODE_HOST. */
-    private static final String BOOTSTRAP_NODE_HOST = "192.168.0.202";
+  /**
+   * The endpoint node static instance.
+   */
+  private static OperationsNode operationsNode;
 
-    /** The Constant ENDPOINT_NODE_HOST. */
-    public  static final String OPERATIONS_NODE_HOST = "127.0.0.1";
+  /**
+   * Start.
+   *
+   * @throws Exception the exception
+   */
+  public static void checkStarted() throws Exception {
+    zkCluster = new TestingCluster(new InstanceSpec(null, EventServiceThriftTestIT.ZK_PORT, -1, -1, true, -1, -1, -1));
+    zkCluster.start();
+    LOG.info("ZK Cluster started");
+    OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+    CuratorFramework zkClient = CuratorFrameworkFactory.newClient(zkCluster.getConnectString(), buildDefaultRetryPolicy());
+    operationsNode = new OperationsNode(endpointNodeInfo, zkClient);
+    operationsNode.start();
 
-    /** The zookeeper cluster static instance. */
-    private static TestingCluster zkCluster;
+  }
 
-    /** The endpoint node static instance. */
-    private static OperationsNode operationsNode;
+  /**
+   * Stop.
+   *
+   * @throws Exception the exception
+   */
+  public static void stop() throws Exception {
+    operationsNode.close();
+    zkCluster.close();
+  }
 
-    /**
-     * Start.
-     *
-     * @throws Exception the exception
-     */
-    public static void checkStarted() throws Exception {
-        zkCluster = new TestingCluster(new InstanceSpec(null, EventServiceThriftTestIT.ZK_PORT, -1, -1, true, -1, -1, -1));
-        zkCluster.start();
-        LOG.info("ZK Cluster started");
-        OperationsNodeInfo endpointNodeInfo = buildOperationsNodeInfo();
+  public static void addOperationsListener(OperationsNodeListener listener) {
+    operationsNode.addListener(listener);
+  }
 
-        operationsNode = new OperationsNode(endpointNodeInfo,
-                zkCluster.getConnectString(), buildDefaultRetryPolicy());
-        operationsNode.start();
-    
-    }
+  public static void removeOperationsListener(OperationsNodeListener listener) {
+    operationsNode.removeListener(listener);
+  }
 
-    /**
-     * Stop.
-     *
-     * @throws Exception the exception
-     */
-    public static void stop() throws Exception {
-        operationsNode.close();
-        zkCluster.close();
-    }
+  /**
+   * Builds the default retry policy.
+   *
+   * @return the retry policy
+   */
+  private static RetryPolicy buildDefaultRetryPolicy() {
+    return new ExponentialBackoffRetry(100, 1);
+  }
 
-    public static void addOperationsListener(OperationsNodeListener listener) {
-        operationsNode.addListener(listener);
-    }
+  /**
+   * Builds the endpoint node info.
+   *
+   * @return the endpoint node info
+   */
+  private static OperationsNodeInfo buildOperationsNodeInfo() {
+    OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
+    ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10, 11, 12, 45, 34, 23, 67, 89, 66, 12});
+    nodeInfo.setConnectionInfo(new ConnectionInfo(OPERATIONS_NODE_HOST, 1000, testKeyData));
+    nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
+    nodeInfo.setTimeStarted(System.currentTimeMillis());
+    nodeInfo.setTransports(new ArrayList<TransportMetaData>());
+    return nodeInfo;
+  }
 
-    public static void removeOperationsListener(OperationsNodeListener listener) {
-        operationsNode.removeListener(listener);
-    }
-    /**
-     * Builds the default retry policy.
-     *
-     * @return the retry policy
-     */
-    private static RetryPolicy buildDefaultRetryPolicy() {
-        return new ExponentialBackoffRetry(100, 1);
-    }
-
-    /**
-     * Builds the endpoint node info.
-     *
-     * @return the endpoint node info
-     */
-    private static OperationsNodeInfo buildOperationsNodeInfo() {
-        OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
-        ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10,11,12,45,34,23,67,89,66,12});
-        nodeInfo.setConnectionInfo(new ConnectionInfo(OPERATIONS_NODE_HOST, 1000,testKeyData));
-        nodeInfo.setLoadInfo(new LoadInfo(1, 1.0));
-        nodeInfo.setTimeStarted(System.currentTimeMillis());
-        nodeInfo.setTransports(new ArrayList<TransportMetaData>());
-        return nodeInfo;
-    }
-
-    public static OperationsNode getOperationsNode() {
-        return operationsNode;
-    }
+  public static OperationsNode getOperationsNode() {
+    return operationsNode;
+  }
 }

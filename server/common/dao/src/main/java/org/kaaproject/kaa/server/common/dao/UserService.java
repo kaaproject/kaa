@@ -17,128 +17,114 @@
 package org.kaaproject.kaa.server.common.dao;
 
 
-import java.util.List;
-
-import org.kaaproject.kaa.common.dto.TenantAdminDto;
 import org.kaaproject.kaa.common.dto.TenantDto;
 import org.kaaproject.kaa.common.dto.UserDto;
+
+import java.util.List;
 
 /**
  * The interface User service.
  */
 public interface UserService {
 
-    /**
-     * Save tenant.
-     *
-     * @param tenantDto the tenant dto
-     * @return the tenant dto
-     */
-    TenantDto saveTenant(TenantDto tenantDto);
+  /**
+   * Save tenant.
+   *
+   * @param tenantDto the tenant dto
+   * @return the tenant dto
+   */
+  TenantDto saveTenant(TenantDto tenantDto);
 
-    /**
-     * Remove tenant by id.
-     *
-     * @param tenantId the tenant id
-     */
-    void removeTenantById(String tenantId);
+  /**
+   * Remove tenant by id.
+   *
+   * @param tenantId the tenant id
+   */
+  void removeTenantById(String tenantId);
 
-    /**
-     * Find tenant by name.
-     *
-     * @param name the name
-     * @return the tenant dto
-     */
-    TenantDto findTenantByName(String name);
+  /**
+   * Find tenant by name.
+   *
+   * @param name the name
+   * @return the tenant dto
+   */
+  TenantDto findTenantByName(String name);
 
-    /**
-     * Find tenant by id.
-     *
-     * @param id the id
-     * @return the tenant dto
-     */
-    TenantDto findTenantById(String id);
+  /**
+   * Find tenant by id.
+   *
+   * @param id the id
+   * @return the tenant dto
+   */
+  TenantDto findTenantById(String id);
 
-    /**
-     * Save user.
-     *
-     * @param userDto the user dto
-     * @return the user dto
-     */
-    UserDto saveUser(UserDto userDto);
+  /**
+   * Save user.
+   *
+   * @param userDto the user dto
+   * @return the user dto
+   */
+  UserDto saveUser(UserDto userDto);
 
-    /**
-     * Remove user by id.
-     *
-     * @param userId the user id
-     */
-    void removeUserById(String userId);
+  /**
+   * Remove user by id.
+   *
+   * @param userId the user id
+   */
+  void removeUserById(String userId);
 
-    /**
-     * Find user by external Uid.
-     *
-     * @param externalUid the external user id
-     * @return the user dto
-     */
-    UserDto findUserByExternalUid(String externalUid);
+  /**
+   * Find user by external Uid.
+   *
+   * @param externalUid the external user id
+   * @return the user dto
+   */
+  UserDto findUserByExternalUid(String externalUid);
 
-    /**
-     * Find user by id.
-     *
-     * @param id the id
-     * @return the user dto
-     */
-    UserDto findUserById(String id);
+  /**
+   * Find user by id.
+   *
+   * @param id the id
+   * @return the user dto
+   */
+  UserDto findUserById(String id);
 
-    /**
-     * Save tenant admin.
-     *
-     * @param tenantAdminDto the tenant dto
-     * @return the tenant dto
-     */
-    TenantAdminDto saveTenantAdmin(TenantAdminDto tenantAdminDto);
 
-    /**
-     * remove tenant admin.
-     *
-     * @param tenantId the tenant id
-     */
-    void removeTenantAdminById(String tenantId);
+  /**
+   * remove tenant admin.
+   *
+   * @param tenantId the tenant id
+   */
+  void removeTenantAdminById(String tenantId);
 
-    /**
-     * Find tenant admin by id.
-     *
-     * @param id the id
-     * @return the tenant admin dto
-     */
-    TenantAdminDto findTenantAdminById(String id);
+  /**
+   * Find all tenant admin by tenant id.
+   *
+   * @param tenantId the tenant id
+   * @return the UserDto list
+   */
+  List<UserDto> findAllTenantAdminsByTenantId(String tenantId);
 
-    /**
-     * Find all tenants.
-     *
-     * @return the list of tenants
-     */
-    List<TenantDto> findAllTenants();
+  /**
+   * Find all tenants.
+   *
+   * @return the list of tenants
+   */
+  List<TenantDto> findAllTenants();
 
-    /**
-     * Find all users.
-     *
-     * @return the list of users.
-     */
-    List<UserDto> findAllUsers();
+  /**
+   * Find all users.
+   *
+   * @return the list of users.
+   */
+  List<UserDto> findAllUsers();
 
-    /**
-     * Find all tenant admins.
-     *
-     * @return the list of tenant admins
-     */
-    List<TenantAdminDto> findAllTenantAdmins();
 
-    /**
-     * Find all tenant users.
-     *
-     * @param tenantId the id of tenant the users belong to
-     * @return the list of tenant users
-     */
-    List<UserDto> findAllTenantUsers(String tenantId);
+  /**
+   * Find all tenant users.
+   *
+   * @param tenantId the id of tenant the users belong to
+   * @return the list of tenant users
+   */
+  List<UserDto> findAllTenantUsers(String tenantId);
 }

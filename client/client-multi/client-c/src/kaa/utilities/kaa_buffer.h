@@ -18,7 +18,7 @@
 #ifndef KAA_BUFFER_H_
 #define KAA_BUFFER_H_
 
-#include "../kaa_error.h"
+#include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {

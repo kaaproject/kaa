@@ -16,31 +16,36 @@
 
 package org.kaaproject.kaa.server.common.dao.service;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.kaaproject.kaa.common.dto.DtoByteMarshaller;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class SdkTokenGenerator {
-    
-    private static final String SDK_TOKEN_HASH_ALGORITHM = "SHA1";
 
-    private SdkTokenGenerator() {
-    }
+  private static final String SDK_TOKEN_HASH_ALGORITHM = "SHA1";
 
-    public static void generateSdkToken(SdkProfileDto sdkProfileDto) {
-        if (StringUtils.isEmpty(sdkProfileDto.getToken())) {
-            try {
-                MessageDigest messageDigest = MessageDigest.getInstance(SDK_TOKEN_HASH_ALGORITHM);
-                messageDigest.update(DtoByteMarshaller.toBytes(sdkProfileDto.toSdkTokenDto()));
-                sdkProfileDto.setToken(Base64.encodeBase64URLSafeString(messageDigest.digest()));
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
-        }
+  private SdkTokenGenerator() {
+  }
+
+  /**
+   * Generates the SDK token.
+   *
+   * @param sdkProfileDto SDK profile
+   */
+  public static void generateSdkToken(SdkProfileDto sdkProfileDto) {
+    if (StringUtils.isEmpty(sdkProfileDto.getToken())) {
+      try {
+        MessageDigest messageDigest = MessageDigest.getInstance(SDK_TOKEN_HASH_ALGORITHM);
+        messageDigest.update(DtoByteMarshaller.toBytes(sdkProfileDto.toSdkTokenDto()));
+        sdkProfileDto.setToken(Base64.encodeBase64URLSafeString(messageDigest.digest()));
+      } catch (NoSuchAlgorithmException ex) {
+        throw new RuntimeException(ex);
+      }
     }
-    
+  }
+
 }

@@ -16,55 +16,56 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.Prefix;
 
-public class NotificationSchemaPlace extends AbstractSchemaPlace {
+import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-    public NotificationSchemaPlace(String applicationId, String schemaId) {
-        super(applicationId, schemaId);
+public class NotificationSchemaPlace extends AbstractSchemaPlaceApplication {
+
+  public NotificationSchemaPlace(String applicationId, String schemaId) {
+    super(applicationId, schemaId);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Prefix(value = "notifSchema")
-    public static class Tokenizer extends AbstractSchemaPlace.Tokenizer<NotificationSchemaPlace> {
-
-        @Override
-        protected NotificationSchemaPlace getPlaceImpl(String applicationId,
-                String schemaId) {
-            return new NotificationSchemaPlace(applicationId, schemaId);
-        }
+    if (obj == null) {
+      return false;
     }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    NotificationSchemaPlace other = (NotificationSchemaPlace) obj;
+    if (schemaId == null) {
+      if (other.schemaId != null) {
+        return false;
+      }
+    } else if (!schemaId.equals(other.schemaId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.notificationSchema();
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new NotificationSchemasPlace(applicationId);
+  }
+
+  @Prefix(value = "notifSchema")
+  public static class Tokenizer
+      extends AbstractSchemaPlaceApplication.Tokenizer<NotificationSchemaPlace> {
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        NotificationSchemaPlace other = (NotificationSchemaPlace) obj;
-        if (schemaId == null) {
-            if (other.schemaId != null) {
-                return false;
-            }
-        } else if (!schemaId.equals(other.schemaId)) {
-            return false;
-        }
-        return true;
+    protected NotificationSchemaPlace getPlaceImpl(String applicationId,
+                                                   String schemaId) {
+      return new NotificationSchemaPlace(applicationId, schemaId);
     }
-
-    @Override
-    public String getName() {
-        return Utils.constants.notificationSchema();
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new NotificationSchemasPlace(applicationId);
-    }
+  }
 }

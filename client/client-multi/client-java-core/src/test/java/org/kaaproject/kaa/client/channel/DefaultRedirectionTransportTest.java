@@ -24,19 +24,19 @@ import org.mockito.Mockito;
 
 public class DefaultRedirectionTransportTest {
 
-    @Test
-    public void testOnRedirectionResponse() {
-        BootstrapManager manager = Mockito.mock(BootstrapManager.class);
-        RedirectionTransport transport = new DefaultRedirectionTransport();
-        RedirectSyncResponse response = new RedirectSyncResponse();
-        transport.onRedirectionResponse(response);
-        transport.setBootstrapManager(manager);
-        transport.onRedirectionResponse(response);
-        response.setAccessPointId(1);
-        transport.onRedirectionResponse(response);
-        response.setAccessPointId(2);
-        transport.onRedirectionResponse(response);
-        Mockito.verify(manager, Mockito.times(1)).useNextOperationsServerByAccessPointId(1);
-    }
+  @Test
+  public void testOnRedirectionResponse() {
+    BootstrapManager manager = Mockito.mock(BootstrapManager.class);
+    RedirectionTransport transport = new DefaultRedirectionTransport();
+    RedirectSyncResponse response = new RedirectSyncResponse();
+    transport.onRedirectionResponse(response);
+    transport.setBootstrapManager(manager);
+    transport.onRedirectionResponse(response);
+    response.setAccessPointId(1);
+    transport.onRedirectionResponse(response);
+    response.setAccessPointId(2);
+    transport.onRedirectionResponse(response);
+    Mockito.verify(manager, Mockito.times(1)).useNextOperationsServerByAccessPointId(1);
+  }
 
 }

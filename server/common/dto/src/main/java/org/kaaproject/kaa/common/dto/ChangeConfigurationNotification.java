@@ -20,60 +20,62 @@ import java.io.Serializable;
 
 public class ChangeConfigurationNotification implements Serializable {
 
-    private static final long serialVersionUID = 1787325211443607655L;
+  private static final long serialVersionUID = 1787325211443607655L;
 
-    private ConfigurationDto configurationDto;
+  private ConfigurationDto configurationDto;
 
-    private ChangeNotificationDto changeNotificationDto;
+  private ChangeNotificationDto changeNotificationDto;
 
-    public ConfigurationDto getConfigurationDto() {
-        return configurationDto;
+  public ConfigurationDto getConfigurationDto() {
+    return configurationDto;
+  }
+
+  public void setConfigurationDto(ConfigurationDto configurationDto) {
+    this.configurationDto = configurationDto;
+  }
+
+  public ChangeNotificationDto getChangeNotificationDto() {
+    return changeNotificationDto;
+  }
+
+  public void setChangeNotificationDto(ChangeNotificationDto changeNotificationDto) {
+    this.changeNotificationDto = changeNotificationDto;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof ChangeConfigurationNotification)) {
+      return false;
+    }
+    ChangeConfigurationNotification that = (ChangeConfigurationNotification) obj;
+
+    if (configurationDto != null ? !configurationDto.equals(that.configurationDto) :
+            that.configurationDto != null) {
+      return false;
+    }
+    if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) :
+            that.changeNotificationDto != null) {
+      return false;
     }
 
-    public void setConfigurationDto(ConfigurationDto configurationDto) {
-        this.configurationDto = configurationDto;
-    }
+    return true;
+  }
 
-    public ChangeNotificationDto getChangeNotificationDto() {
-        return changeNotificationDto;
-    }
+  @Override
+  public int hashCode() {
+    int result = configurationDto != null ? configurationDto.hashCode() : 0;
+    result = 31 * result + (changeNotificationDto != null ? changeNotificationDto.hashCode() : 0);
+    return result;
+  }
 
-    public void setChangeNotificationDto(ChangeNotificationDto changeNotificationDto) {
-        this.changeNotificationDto = changeNotificationDto;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ChangeConfigurationNotification)) {
-            return false;
-        }
-        ChangeConfigurationNotification that = (ChangeConfigurationNotification) o;
-
-        if (configurationDto != null ? !configurationDto.equals(that.configurationDto) : that.configurationDto != null) {
-            return false;
-        }
-        if (changeNotificationDto != null ? !changeNotificationDto.equals(that.changeNotificationDto) : that.changeNotificationDto != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = configurationDto != null ? configurationDto.hashCode() : 0;
-        result = 31 * result + (changeNotificationDto != null ? changeNotificationDto.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ChangeConfigurationNotification{" +
-                "configurationDto=" + configurationDto +
-                ", changeNotificationDto=" + changeNotificationDto +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "ChangeConfigurationNotification{"
+           + "configurationDto=" + configurationDto
+           + ", changeNotificationDto=" + changeNotificationDto
+           + '}';
+  }
 }

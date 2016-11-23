@@ -18,27 +18,23 @@ package org.kaaproject.kaa.client.transport;
 
 public class TransportException extends Exception {
 
-    private int status;
+  private static final long serialVersionUID = 4200594644236099078L;
+  private int status;
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 4200594644236099078L;
+  public TransportException(String message) {
+    super(message);
+  }
 
-    public TransportException(String message) {
-        super(message);
-    }
+  public TransportException(Exception ex) {
+    super(ex);
+  }
 
-    public TransportException(Exception e) {
-        super(e);
-    }
+  public TransportException(int status) {
+    super("Invalid response code from server: " + status);
+    this.status = status;
+  }
 
-    public TransportException(int status) {
-        super("Invalid response code from server: " + status);
-        this.status = status;
-    }
-
-    public int getStatus() {
-        return status;
-    }
+  public int getStatus() {
+    return status;
+  }
 }

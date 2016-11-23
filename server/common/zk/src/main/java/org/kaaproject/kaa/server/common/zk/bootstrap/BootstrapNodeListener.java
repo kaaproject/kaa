@@ -24,32 +24,30 @@ import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
  * The class that is interested in processing a bootstrapNode
  * event implements this interface, and the object created
  * with that class is registered with a component using the
- * component's <code>addBootstrapNodeListener<code> method. When
+ * component's <code>addBootstrapNodeListener</code> method. When
  * the bootstrapNode event occurs, that object's appropriate
  * method is invoked.
- *
- * @see BootstrapNodeEvent
  */
 public interface BootstrapNodeListener {
 
-    /**
-     * On node added.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeAdded(BootstrapNodeInfo nodeInfo);
+  /**
+   * On node added.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeAdded(BootstrapNodeInfo nodeInfo);
 
-    /**
-     * Invoked when on node update occurs.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeUpdated(BootstrapNodeInfo nodeInfo);
+  /**
+   * Invoked when on node update occurs.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeUpdated(BootstrapNodeInfo nodeInfo);
 
-    /**
-     * On node removed.
-     *
-     * @param nodeInfo the node info
-     */
-    void onNodeRemoved(BootstrapNodeInfo nodeInfo);
+  /**
+   * On node removed.
+   *
+   * @param nodeInfo the node info
+   */
+  void onNodeRemoved(BootstrapNodeInfo nodeInfo);
 }

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-#include "../platform/platform.h"
+#include <stddef.h>
+#include <stdarg.h>
+#include <string.h>
 #include "kaa_log.h"
-#include "../kaa_common.h"
-#include "../platform/ext_system_logger.h"
+#include "kaa_common.h"
+#include "platform/ext_system_logger.h"
 #include "kaa_mem.h"
 
-#include "../platform/stdio.h"
+#include <platform/stdio.h>
 
 #define KAA_LOG_PREFIX_FORMAT   "%04d/%02d/%02d %d:%02d:%02d [%s] [%s:%d] (%d) - "
 

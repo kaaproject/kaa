@@ -19,49 +19,59 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-public class TenantPlace extends UserPlace {
+public class TenantPlace extends TreePlace {
 
-    private String tenantName;
+  private String tenantName;
+  private String tenantId;
 
-    public TenantPlace(String userId) {
-        super(userId);
-    }
 
-    public void setTenantName(String name) {
-        this.tenantName = name;
-    }
+  public TenantPlace(String tenantId) {
+    this.tenantId = tenantId;
+  }
 
-    @Prefix(value = "ten")
-    public static class Tokenizer implements PlaceTokenizer<TenantPlace>, PlaceConstants {
+  public void setTenantName(String name) {
+    this.tenantName = name;
+  }
 
-        @Override
-        public TenantPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new TenantPlace(PlaceParams.getParam(USER_ID));
-        }
+  @Override
+  public String getName() {
+    return tenantName;
+  }
 
-        @Override
-        public String getToken(TenantPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(USER_ID, place.getUserId());
-            return PlaceParams.generateToken();
-        }
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new TenantsPlace();
+  }
+
+  @Prefix(value = "ten")
+  public static class Tokenizer implements PlaceTokenizer<TenantPlace>, PlaceConstants {
+
+    @Override
+    public TenantPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new TenantPlace(PlaceParams.getParam(TENANT_ID));
     }
 
     @Override
-    public String getName() {
-        return tenantName;
+    public String getToken(TenantPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(TENANT_ID, place.getTenantId());
+      return PlaceParams.generateToken();
     }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new TenantsPlace();
-    }
+  }
 
 
 }

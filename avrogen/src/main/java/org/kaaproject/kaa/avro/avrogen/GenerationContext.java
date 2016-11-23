@@ -16,56 +16,72 @@
 
 package org.kaaproject.kaa.avro.avrogen;
 
+/*
+* This feature never used, the value is always INOUT
+* */
+@Deprecated
 public class GenerationContext {
-    private enum DirectionType {
-        IN,
-        OUT,
-        INOUT
+  private final String parentName;
+  private final String fieldName;
+  private DirectionType direction;
+
+  /**
+   * Instantiates a new GenerationContext.
+   *
+   * @param parentName  the parent name
+   * @param fieldName   the field name
+   * @param direction   the direction
+   */
+  public GenerationContext(String parentName, String fieldName, String direction) {
+    this.parentName = parentName;
+    this.fieldName = fieldName;
+
+    this.direction = DirectionType.INOUT;
+
+    if (direction != null) {
+      if (direction.equalsIgnoreCase("out")) {
+        this.direction = DirectionType.OUT;
+      } else if (direction.equalsIgnoreCase("in")) {
+        this.direction = DirectionType.IN;
+      }
+
     }
+  }
 
-    private final String parentName;
-    private final String fieldName;
-    private DirectionType direction;
-
-    public GenerationContext(String parentName, String fieldName, String direction) {
-        this.parentName = parentName;
-        this.fieldName = fieldName;
-
-        this.direction = DirectionType.INOUT;
-
-        if (direction != null) {
-            if (direction.equalsIgnoreCase("out")) {
-                this.direction = DirectionType.OUT;
-            } else if (direction.equalsIgnoreCase("in")) {
-                this.direction = DirectionType.IN;
-            }
-
-        }
+  /**
+   * Update direction type of GenerationContext.
+   *
+   * @param context the GenerationContext
+   */
+  public void updateDirection(GenerationContext context) {
+    if (direction != DirectionType.INOUT && context != null && direction != context.direction) {
+      direction = DirectionType.INOUT;
     }
+  }
 
-    public void updateDirection(GenerationContext context) {
-        if (direction != DirectionType.INOUT && context != null && direction != context.direction) {
-            direction = DirectionType.INOUT;
-        }
-    }
+  public String getParentName() {
+    return parentName;
+  }
 
-    public String getParentName() {
-        return parentName;
-    }
+  public String getFieldName() {
+    return fieldName;
+  }
 
-    public String getFieldName() {
-        return fieldName;
-    }
+  public boolean isTypeOut() {
+    return direction != DirectionType.IN;
+  }
 
-    public boolean isTypeOut() {
-        return direction != DirectionType.IN;
-    }
+  public boolean isTypeIn() {
+    return direction != DirectionType.OUT;
+  }
 
-    public boolean isTypeIn() {
-        return direction != DirectionType.OUT;
-    }
+  public boolean isTypeInOut() {
+    return direction == DirectionType.INOUT;
+  }
 
-    public boolean isTypeInOut() {
-        return direction == DirectionType.INOUT;
-    }
+  private enum DirectionType {
+    IN,
+    OUT,
+    INOUT
+  }
 }

@@ -1,0 +1,57 @@
+#
+# Copyright 2014-2016 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+version: '2'
+services:
+  {{KAA_SERVICE_NAME}}:
+    image: kaa-node:0.10.0
+    env_file: kaa-example.env
+    environment:
+      - SQL_PROVIDER_NAME={{SQL_PROVIDER_NAME}}
+      - NOSQL_PROVIDER_NAME={{NOSQL_PROVIDER_NAME}}
+      - SERVICES_WAIT_TIMEOUT=-1 # Wait forever for Zookeeper and SQL
+      - ADMIN_PORT={{ADMIN_PORT}}
+      - BOOTSTRAP_TCP={{BOOTSTRAP_TCP}}
+      - BOOTSTRAP_HTTP={{BOOTSTRAP_HTTP}}
+      - OPERATIONS_TCP={{OPERATIONS_TCP}}
+      - OPERATIONS_HTTP={{OPERATIONS_HTTP}}
+    networks:
+      - back-tier
+      - front-tier
+    expose:
+      - "{{ADMIN_PORT}}"
+    ports:
+      - "{{BOOTSTRAP_TCP}}:{{BOOTSTRAP_TCP}}"
+      - "{{BOOTSTRAP_HTTP}}:{{BOOTSTRAP_HTTP}}"
+      - "{{OPERATIONS_TCP}}:{{OPERATIONS_TCP}}"
+      - "{{OPERATIONS_HTTP}}:{{OPERATIONS_HTTP}}"
+  kaa_lb:
+    image: nginx:1.7
+    volumes:
+      - ./kaa-nginx-config/kaa-nginx.conf:/etc/nginx/nginx.conf
+      - ./kaa-nginx-config/kaa-default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:8080"
+    depends_on:
+      - {{KAA_SERVICE_NAME}}
+    networks:
+      - back-tier
+      - front-tier
+networks:
+  back-tier:
+    driver: bridge
+  front-tier:
+    driver: bridge

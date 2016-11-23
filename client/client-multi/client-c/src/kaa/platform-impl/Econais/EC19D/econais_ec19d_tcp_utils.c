@@ -22,12 +22,12 @@
 #include <sndc_sock_api.h>
 #include <sndc_sdk_api.h>
 
-#include "../../../platform/sock.h"
+#include "platform/sock.h"
 
-#include "../../../platform/ext_tcp_utils.h"
-#include "../../../utilities/kaa_log.h"
-#include "../../../kaa_error.h"
-#include "../../../kaa_common.h"
+#include "platform/ext_tcp_utils.h"
+#include "utilities/kaa_log.h"
+#include "kaa_error.h"
+#include "kaa_common.h"
 
 #define START_BASE_PORT 49500
 #define PORT_RANG 10000

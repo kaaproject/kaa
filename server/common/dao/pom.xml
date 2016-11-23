@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.kaaproject.kaa.server</groupId>
-		<version>0.9.0</version>
+		<version>0.11.0-SNAPSHOT</version>
 		<artifactId>common</artifactId>
 	</parent>
 	<groupId>org.kaaproject.kaa.server.common</groupId>
@@ -299,12 +299,6 @@
 		</profile>
 		<profile>
 			<id>mariadb-dao</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.mariadb.jdbc</groupId>
-					<artifactId>mariadb-java-client</artifactId>
-				</dependency>
-			</dependencies>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -334,12 +328,6 @@
 		</profile>
 		<profile>
 			<id>postgresql-dao</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.postgresql</groupId>
-					<artifactId>postgresql</artifactId>
-				</dependency>
-			</dependencies>
 			<build>
 				<plugins>
 					<plugin>

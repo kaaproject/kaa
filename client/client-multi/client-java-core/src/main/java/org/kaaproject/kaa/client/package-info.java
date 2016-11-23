@@ -34,6 +34,6 @@
  *
  * @see org.kaaproject.kaa.client.Kaa
  * @see org.kaaproject.kaa.client.KaaClient
- *
  */
+
 package org.kaaproject.kaa.client;

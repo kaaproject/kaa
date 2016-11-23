@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.common.dao.impl;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.TopicTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
+
+import java.util.List;
 
 /**
  * The Interface TopicDao.
@@ -28,62 +28,62 @@ import org.kaaproject.kaa.server.common.dao.model.sql.Topic;
  */
 public interface TopicDao<T> extends SqlDao<T> {
 
-    /**
-     * Find topics by application id.
-     *
-     * @param appId the application id
-     * @return the list of topics
-     */
-    List<T> findTopicsByAppId(String appId);
+  /**
+   * Find topics by application id.
+   *
+   * @param appId the application id
+   * @return the list of topics
+   */
+  List<T> findTopicsByAppId(String appId);
 
-    /**
-     * Find topics by application id and type.
-     *
-     * @param appId the application id
-     * @param type  the topic type
-     * @return the list of topics
-     */
-    List<T> findTopicsByAppIdAndType(String appId, TopicTypeDto type);
+  /**
+   * Find topics by application id and type.
+   *
+   * @param appId the application id
+   * @param type  the topic type
+   * @return the list of topics
+   */
+  List<T> findTopicsByAppIdAndType(String appId, TopicTypeDto type);
 
-    /**
-     * Find topic by application id and name.
-     *
-     * @param appId the application id
-     * @param topicName the topic name
-     * @return topic by application
-     */
-    T findTopicByAppIdAndName(String appId, String topicName);
+  /**
+   * Find topic by application id and name.
+   *
+   * @param appId     the application id
+   * @param topicName the topic name
+   * @return topic by application
+   */
+  T findTopicByAppIdAndName(String appId, String topicName);
 
-    /**
-     * Find topics by ids.
-     *
-     * @param ids the ids
-     * @return the list of topics
-     */
-    List<T> findTopicsByIds(List<String> ids);
+  /**
+   * Find topics by ids.
+   *
+   * @param ids the ids
+   * @return the list of topics
+   */
+  List<T> findTopicsByIds(List<String> ids);
 
-    /**
-     * Removes the topics by application id.
-     *
-     * @param appId the application id
-     */
-    void removeTopicsByAppId(String appId);
+  /**
+   * Removes the topics by application id.
+   *
+   * @param appId the application id
+   */
+  void removeTopicsByAppId(String appId);
 
-    /**
-     * Gets the next sequence number of topic.
-     *
-     * @param topicId the topic id
-     * @return the topic with next sequence number
-     */
-    T getNextSeqNumber(String topicId);
+  /**
+   * Gets the next sequence number of topic.
+   *
+   * @param topicId the topic id
+   * @return the topic with next sequence number
+   */
+  T getNextSeqNumber(String topicId);
 
-    /**
-     * Find vacant topics for endpoint groups.
-     * This method have to return topics which not yet attached to endpoint group with specific id
-     *
-     * @param appId   the application id
-     * @param groupId the group id
-     * @return the list of vacant topics
-     */
-    List<Topic> findVacantTopicsByGroupId(String appId, String groupId);
+  /**
+   * Find vacant topics for endpoint groups.
+   * This method have to return topics which not yet attached to endpoint group with specific id
+   *
+   * @param appId   the application id
+   * @param groupId the group id
+   * @return the list of vacant topics
+   */
+  List<Topic> findVacantTopicsByGroupId(String appId, String groupId);
 }

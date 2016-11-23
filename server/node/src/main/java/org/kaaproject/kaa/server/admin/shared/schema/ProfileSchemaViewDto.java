@@ -20,20 +20,20 @@ import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 
 public class ProfileSchemaViewDto extends BaseSchemaViewDto<EndpointProfileSchemaDto> {
 
-    private static final long serialVersionUID = -5289268279407697791L;
-    
-    public ProfileSchemaViewDto() {
-        super();
-    }
+  private static final long serialVersionUID = -5289268279407697791L;
 
-    public ProfileSchemaViewDto(EndpointProfileSchemaDto schema,
-            CtlSchemaFormDto ctlSchemaForm) {
-        super(schema, ctlSchemaForm);
-    }
+  public ProfileSchemaViewDto() {
+    super();
+  }
 
-    @Override
-    protected EndpointProfileSchemaDto createEmptySchema() {
-        return new EndpointProfileSchemaDto();
-    }
+  public ProfileSchemaViewDto(EndpointProfileSchemaDto schema,
+                              CtlSchemaFormDto ctlSchemaForm) {
+    super(schema, ctlSchemaForm);
+  }
+
+  @Override
+  protected EndpointProfileSchemaDto createEmptySchema() {
+    return new EndpointProfileSchemaDto();
+  }
 
 }

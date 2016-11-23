@@ -16,101 +16,103 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.place.shared.PlaceTokenizer;
+import com.google.gwt.view.client.HasData;
+import com.google.web.bindery.event.shared.EventBus;
 
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.gwt.view.client.HasData;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EndpointUsersPlace extends TreePlace {
 
-    protected String applicationId;
+  protected String applicationId;
 
-    private EndpointUsersPlaceDataProvider dataProvider;
+  private EndpointUsersPlaceDataProvider dataProvider;
 
-    public EndpointUsersPlace(String applicationId) {
-        this.applicationId = applicationId;
+  public EndpointUsersPlace(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.users();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getApplicationId() {
-        return applicationId;
+    if (obj == null) {
+      return false;
     }
-
-    @Override
-    public String getName() {
-        return Utils.constants.users();
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public static abstract class Tokenizer<P extends EndpointUsersPlace> implements PlaceTokenizer<P>, PlaceConstants {
-
-        @Override
-        public P getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID));
-        }
-
-        protected abstract P getPlaceImpl(String applicationId);
-
-        @Override
-        public String getToken(P place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointUsersPlace other = (EndpointUsersPlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
+    EndpointUsersPlace other = (EndpointUsersPlace) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
         return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
     }
+    return true;
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return false;
+  }
+
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    if (dataProvider == null) {
+      dataProvider = new EndpointUsersPlaceDataProvider();
+    }
+    return dataProvider;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ApplicationPlace(applicationId);
+  }
+
+  public abstract static class Tokenizer<P extends EndpointUsersPlace>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        if (dataProvider == null) {
-            dataProvider = new EndpointUsersPlaceDataProvider();
-        }
-        return dataProvider;
+    public P getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID));
     }
 
-    class EndpointUsersPlaceDataProvider extends TreePlaceDataProvider {
-
-        @Override
-        protected void loadData(LoadCallback callback,
-                HasData<TreePlace> display) {
-            List<TreePlace> result = new ArrayList<TreePlace>();
-            result.add(new UpdateUserConfigPlace(applicationId));
-            callback.onSuccess(result, display);
-        }
-
-    }
+    protected abstract P getPlaceImpl(String applicationId);
 
     @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
+    public String getToken(P place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      return PlaceParams.generateToken();
     }
+  }
+
+  class EndpointUsersPlaceDataProvider extends TreePlaceDataProvider {
+
+    @Override
+    protected void loadData(LoadCallback callback,
+                            HasData<TreePlace> display) {
+      List<TreePlace> result = new ArrayList<TreePlace>();
+      result.add(new UpdateUserConfigPlace(applicationId));
+      result.add(new GetUserConfigPlace(applicationId));
+      callback.onSuccess(result, display);
+    }
+
+  }
 }

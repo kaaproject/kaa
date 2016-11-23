@@ -24,25 +24,27 @@ import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 import org.kaaproject.kaa.server.admin.shared.config.ConfigurationRecordFormDto;
 
-public class ConfigurationPanel extends AbstractRecordPanel<ConfigurationRecordFormDto, RecordField>{
+public class ConfigurationPanel
+    extends AbstractRecordPanel<ConfigurationRecordFormDto, RecordField> {
 
-    public ConfigurationPanel(HasErrorMessage hasErrorMessage) {
-        super(hasErrorMessage);
-    }
+  public ConfigurationPanel(HasErrorMessage hasErrorMessage) {
+    super(hasErrorMessage);
+  }
 
-    @Override
-    protected String bodyLabelText() {
-        return Utils.constants.configurationBody();
-    }
+  @Override
+  protected String bodyLabelText() {
+    return Utils.constants.configurationBody();
+  }
 
-    @Override
-    public void setReadOnly() {
-        this.setActiveReadOnly();
-    }
+  @Override
+  public void setReadOnly() {
+    this.setActiveReadOnly();
+  }
 
-    @Override
-    protected BaseStructView<ConfigurationRecordFormDto, RecordField> createStructView(HasErrorMessage hasErrorMessage) {
-        return new ConfigFormStructView(hasErrorMessage);
-    }
+  @Override
+  protected BaseStructView<ConfigurationRecordFormDto, RecordField> createStructView(
+      HasErrorMessage hasErrorMessage) {
+    return new ConfigFormStructView(hasErrorMessage);
+  }
 
 }

@@ -16,18 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
+import akka.actor.ActorContext;
 import org.kaaproject.kaa.common.TransportType;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.PingResponse;
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
@@ -37,6 +26,7 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.Base64Util;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.BaseLogEventPack;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
@@ -93,715 +83,963 @@ import org.kaaproject.kaa.server.transport.channel.ChannelAware;
 import org.kaaproject.kaa.server.transport.channel.ChannelType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import akka.actor.ActorContext;
 import scala.concurrent.duration.Duration;
 
-public class LocalEndpointActorMessageProcessor extends AbstractEndpointActorMessageProcessor<LocalEndpointActorState> {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(LocalEndpointActorMessageProcessor.class);
+public class LocalEndpointActorMessageProcessor
+    extends AbstractEndpointActorMessageProcessor<LocalEndpointActorState> {
 
-    private final Map<Integer, LogDeliveryMessage> logUploadResponseMap;
+  private static final Logger LOG = LoggerFactory.getLogger(
+      LocalEndpointActorMessageProcessor.class);
 
-    private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
+  private final Map<Integer, LogDeliveryMessage> logUploadResponseMap;
 
-    public LocalEndpointActorMessageProcessor(AkkaContext context, String appToken, EndpointObjectHash key, String actorKey) {
-        super(new LocalEndpointActorState(Base64Util.encode(key.getData()), actorKey), context.getOperationsService(), appToken, key,
-                actorKey, Base64Util.encode(key.getData()), context.getLocalEndpointTimeout());
-        this.logUploadResponseMap = new HashMap<>();
-        this.userAttachResponseMap = new LinkedHashMap<>();
-    }
+  private final Map<UUID, UserVerificationResponseMessage> userAttachResponseMap;
 
-    public void processEndpointSync(ActorContext context, SyncRequestMessage message) {
-        sync(context, message);
-    }
+  /**
+   * All-args constructor.
+   */
+  public LocalEndpointActorMessageProcessor(AkkaContext context,
+                                            String appToken,
+                                            EndpointObjectHash key,
+                                            String actorKey) {
+    super(new LocalEndpointActorState(Base64Util.encode(key.getData()), actorKey),
+        context.getOperationsService(), appToken,
+        key,
+        actorKey,
+        Base64Util.encode(key.getData()),
+        context.getLocalEndpointTimeout());
+    this.logUploadResponseMap = new HashMap<>();
+    this.userAttachResponseMap = new LinkedHashMap<>();
+  }
 
-    public void processEndpointEventReceiveMessage(ActorContext context, EndpointEventReceiveMessage message) {
-        EndpointEventDeliveryMessage response;
-        Set<ChannelMetaData> eventChannels = state.getChannelsByType(TransportType.EVENT);
-        if (!eventChannels.isEmpty()) {
-            for (ChannelMetaData eventChannel : eventChannels) {
-                addEventsAndReply(context, eventChannel, message);
-            }
-            response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.SUCCESS);
-        } else {
-            LOG.debug("[{}] Message ignored due to no channel contexts registered for events", actorKey, message);
-            response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
-            state.setUserRegistrationPending(false);
+  /**
+   * Process an endpoint sync.
+   *
+   * @param context actor context
+   * @param message sync request message
+   */
+  public void processEndpointSync(ActorContext context, SyncRequestMessage message) {
+    sync(context, message);
+  }
+
+  /**
+   * Process an endpoint event receive message.
+   *
+   * @param context actor context
+   * @param message endpoint event receive message
+   */
+  public void processEndpointEventReceiveMessage(ActorContext context,
+                                                 EndpointEventReceiveMessage message) {
+    EndpointEventDeliveryMessage response;
+    if (state.isValidForEvents()) {
+      Set<ChannelMetaData> eventChannels = state.getChannelsByType(TransportType.EVENT);
+      if (!eventChannels.isEmpty()) {
+        for (ChannelMetaData eventChannel : eventChannels) {
+          addEventsAndReply(context, eventChannel, message);
         }
-        tellParent(context, response);
-    }
-
-    public void processThriftNotification(ActorContext context) {
-        Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
-        LOG.debug("[{}][{}] Processing thrift norification for {} channels", endpointKey, actorKey, channels.size());
-        syncChannels(context, channels, true, true);
-    }
-
-    public void processUserConfigurationUpdate(ActorContext context, EndpointUserConfigurationUpdateMessage message) {
-        if (message.getUserConfigurationUpdate() != null) {
-            state.setUcfHash(message.getUserConfigurationUpdate().getHash());
-            syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
-        }
-    }
-
-    @Override
-    protected void processThriftMsg(ActorContext context, ThriftEndpointActorMsg<?> msg) {
-        Object thriftMsg = msg.getMsg();
-        if (thriftMsg instanceof ThriftServerProfileUpdateMessage) {
-            processServerProfileUpdateMsg(context, (ThriftServerProfileUpdateMessage) thriftMsg);
-        } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
-            processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
-        } else if (thriftMsg instanceof ThriftEndpointDeregistrationMessage) {
-            processEndpointDeregistrationMessage(context, (ThriftEndpointDeregistrationMessage) thriftMsg);
-        }
-    }
-
-    private void processServerProfileUpdateMsg(ActorContext context, ThriftServerProfileUpdateMessage thriftMsg) {
-        EndpointProfileDto endpointProfile = state.getProfile();
-        if (endpointProfile != null) {
-            state.setProfile(operationsService.refreshServerEndpointProfile(key));
-            Set<ChannelMetaData> channels = state.getChannelsByTypes(TransportType.CONFIGURATION, TransportType.NOTIFICATION);
-            LOG.debug("[{}][{}] Processing profile update for {} channels", endpointKey, actorKey, channels.size());
-            syncChannels(context, channels, true, true);
-        } else {
-            LOG.warn("[{}][{}] Can't update server profile for an empty state", endpointKey, actorKey);
-        }
-    }
-
-    private void processUnicastNotificationMsg(ActorContext context, ThriftUnicastNotificationMessage thriftMsg) {
-        processNotification(context, NotificationMessage.fromUnicastId(thriftMsg.getNotificationId()));
-    }
-
-    private void processEndpointDeregistrationMessage(ActorContext context, ThriftEndpointDeregistrationMessage thriftMsg) {
-        for (ChannelMetaData channel : state.getAllChannels()) {
-            sendReply(context, channel.request, new EndpointRevocationException());
-        }
-    }
-
-    public void processNotification(ActorContext context, NotificationMessage message) {
-        LOG.debug("[{}][{}] Processing notification message {}", endpointKey, actorKey, message);
-
-        Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.NOTIFICATION);
-        if (channels.isEmpty()) {
-            LOG.debug("[{}][{}] No channels to process notification message", endpointKey, actorKey);
-            return;
-        }
-        String unicastNotificationId = message.getUnicastNotificationId();
-        List<NotificationDto> validNfs = state.filter(message.getNotifications());
-        if (unicastNotificationId == null && validNfs.isEmpty()) {
-            LOG.debug("[{}][{}] message is no longer valid for current endpoint", endpointKey, actorKey);
-            return;
-        }
-        for (ChannelMetaData channel : channels) {
-            LOG.debug("[{}][{}] processing channel {} and response {}", endpointKey, actorKey, channel,
-                    channel.getResponseHolder().getResponse());
-            ServerSync syncResponse = operationsService.updateSyncResponse(channel.getResponseHolder().getResponse(), validNfs,
-                    unicastNotificationId);
-            if (syncResponse != null) {
-                LOG.debug("[{}][{}] processed channel {} and response {}", endpointKey, actorKey, channel, syncResponse);
-                sendReply(context, channel.getRequestMessage(), syncResponse);
-                if (!channel.getType().isAsync()) {
-                    state.removeChannel(channel);
-                }
-            }
-        }
-    }
-
-    public void processRequestTimeoutMessage(ActorContext context, RequestTimeoutMessage message) {
-        ChannelMetaData channel = state.getChannelByRequestId(message.getRequestId());
-        if (channel != null) {
-            SyncContext response = channel.getResponseHolder();
-            sendReply(context, channel.getRequestMessage(), response.getResponse());
-            if (!channel.getType().isAsync()) {
-                state.removeChannel(channel);
-            }
-        } else {
-            LOG.debug("[{}][{}] Failed to find request by id [{}].", endpointKey, actorKey, message.getRequestId());
-        }
-    }
-
-    private void sync(ActorContext context, SyncRequestMessage requestMessage) {
-        try {
-            state.setLastActivityTime(System.currentTimeMillis());
-            long start = state.getLastActivityTime();
-
-            ChannelMetaData channel = initChannel(context, requestMessage);
-
-            ClientSync request = mergeRequestForChannel(channel, requestMessage);
-
-            ChannelType channelType = channel.getType();
-            LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]", endpointKey, actorKey, request, channelType,
-                    requestMessage.getChannelUuid());
-
-            SyncContext responseHolder = sync(request);
-
-            state.setProfile(responseHolder.getEndpointProfile());
-
-            if (state.getProfile() != null) {
-                processLogUpload(context, request, responseHolder);
-                processUserAttachRequest(context, request, responseHolder);
-                updateUserConnection(context);
-                processEvents(context, request, responseHolder);
-                notifyAffectedEndpoints(context, request, responseHolder);
-            } else {
-                LOG.warn("[{}][{}] Endpoint profile is not set after request processing!", endpointKey, actorKey);
-            }
-
-            LOG.debug("[{}][{}] SyncResponseHolder {}", endpointKey, actorKey, responseHolder);
-
-            if (channelType.isAsync()) {
-                LOG.debug("[{}][{}] Adding async request from channel [{}] to map ", endpointKey, actorKey,
-                        requestMessage.getChannelUuid());
-                channel.update(responseHolder);
-                updateSubscriptionsToTopics(context, responseHolder);
-                sendReply(context, requestMessage, responseHolder.getResponse());
-            } else {
-                if (channelType.isLongPoll() && !responseHolder.requireImmediateReply()) {
-                    LOG.debug("[{}][{}] Adding long poll request from channel [{}] to map ", endpointKey, actorKey,
-                            requestMessage.getChannelUuid());
-                    channel.update(responseHolder);
-                    updateSubscriptionsToTopics(context, responseHolder);
-                    scheduleTimeoutMessage(context, requestMessage.getChannelUuid(), getDelay(requestMessage, start));
-                } else {
-                    sendReply(context, requestMessage, responseHolder.getResponse());
-                    state.removeChannel(channel);
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("[{}][{}] processEndpointRequest", endpointKey, actorKey, e);
-            sendReply(context, requestMessage, e);
-        }
-    }
-
-    private SyncContext sync(ClientSync request) throws GetDeltaException {
-        if (!request.isValid()) {
-            LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointKey);
-            return SyncContext.failure(request.getRequestId());
-        }
-        SyncContext context = new SyncContext(new ServerSync());
-        context.setEndpointProfile(state.getProfile());
-        context.setRequestId(request.getRequestId());
-        context.setStatus(SyncStatus.SUCCESS);
-        context.setEndpointKey(endpointKey);
-        context.setRequestHash(request.hashCode());
-        context.setMetaData(request.getClientSyncMetaData());
-
-        LOG.trace("[{}][{}] processing sync. Request: {}", endpointKey, context.getRequestHash(), request);
-
-        context = operationsService.syncClientProfile(context, request.getProfileSync());
-
-        if (context.getStatus() != SyncStatus.SUCCESS) {
-            return context;
-        }
-        if (state.isUcfHashRequiresIntialization()) {
-            byte[] hash = operationsService.fetchUcfHash(appToken, state.getProfile());
-            LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}", endpointKey, context.getRequestHash(),
-                    Arrays.toString(hash));
-            state.setUcfHash(hash);
-        }
-
-        context = operationsService.processEndpointAttachDetachRequests(context, request.getUserSync());
-        context = operationsService.processEventListenerRequests(context, request.getEventSync());
-
-        if (state.isUserConfigurationUpdatePending()) {
-            context = operationsService.syncUserConfigurationHash(context, state.getUcfHash());
-        }
-
-        context = operationsService.syncConfiguration(context, request.getConfigurationSync());
-
-        context = operationsService.syncNotification(context, request.getNotificationSync());
-
-        LOG.trace("[{}][{}] processed sync. Response is {}", endpointKey, request.hashCode(), context.getResponse());
-
-        return context;
-    }
-
-    private void syncChannels(ActorContext context, Set<ChannelMetaData> channels, boolean cfUpdate, boolean nfUpdate) {
-        for (ChannelMetaData channel : channels) {
-            ClientSync originalRequest = channel.getRequestMessage().getRequest();
-            ClientSync newRequest = new ClientSync();
-            newRequest.setRequestId(originalRequest.getRequestId());
-            newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
-            if (cfUpdate && originalRequest.getConfigurationSync() != null) {
-                newRequest.setForceConfigurationSync(true);
-                newRequest.setConfigurationSync(originalRequest.getConfigurationSync());
-            }
-            if (nfUpdate && originalRequest.getNotificationSync() != null) {
-                newRequest.setForceNotificationSync(true);
-                newRequest.setNotificationSync(originalRequest.getNotificationSync());
-            }
-            LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, newRequest);
-            sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest,
-                    channel.getRequestMessage().getCommand(), channel.getRequestMessage().getOriginator()));
-        }
-    }
-
-    private ClientSync mergeRequestForChannel(ChannelMetaData channel, SyncRequestMessage requestMessage) {
-        ClientSync request;
-        if (channel.getType().isAsync()) {
-            if (channel.isFirstRequest()) {
-                request = channel.getRequestMessage().getRequest();
-            } else {
-                LOG.debug("[{}][{}] Updating request for async channel {}", endpointKey, actorKey, channel);
-                request = channel.mergeRequest(requestMessage);
-                LOG.trace("[{}][{}] Updated request for async channel {} : {}", endpointKey, actorKey, channel, request);
-            }
-        } else {
-            request = channel.getRequestMessage().getRequest();
-        }
-        return request;
-    }
-
-    private void processUserAttachRequest(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
-        UserClientSync request = syncRequest.getUserSync();
-        if (request != null && request.getUserAttachRequest() != null) {
-            UserAttachRequest aRequest = request.getUserAttachRequest();
-            context.parent().tell(new UserVerificationRequestMessage(context.self(), aRequest.getUserVerifierId(),
-                    aRequest.getUserExternalId(), aRequest.getUserAccessToken()), context.self());
-            LOG.debug("[{}][{}] received and forwarded user attach request {}", endpointKey, actorKey, request.getUserAttachRequest());
-
-            if (userAttachResponseMap.size() > 0) {
-                Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet().iterator().next();
-                updateResponseWithUserAttachResults(responseHolder.getResponse(), entryToSend.getValue());
-                userAttachResponseMap.remove(entryToSend.getKey());
-            }
-        }
-    }
-
-    private void updateResponseWithUserAttachResults(ServerSync response, UserVerificationResponseMessage message) {
-        if (response.getUserSync() == null) {
-            response.setUserSync(new UserServerSync());
-        }
-        response.getUserSync().setUserAttachResponse(EntityConvertUtils.convert(message));
-    }
-
-    private void processEvents(ActorContext context, ClientSync request, SyncContext responseHolder) {
-        if (request.getEventSync() != null) {
-            EventClientSync eventRequest = request.getEventSync();
-            processSeqNumber(eventRequest, responseHolder);
-            if (state.isValidForEvents()) {
-                sendEventsIfPresent(context, eventRequest);
-            } else {
-                LOG.debug(
-                        "[{}][{}] Endpoint profile is not valid for send/receive events. Either no assigned user or no event families in sdk",
-                        endpointKey, actorKey);
-            }
-        }
-    }
-
-    private void processSeqNumber(EventClientSync request, SyncContext responseHolder) {
-        if (request.isSeqNumberRequest()) {
-            EventServerSync response = responseHolder.getResponse().getEventSync();
-            if (response == null) {
-                response = new EventServerSync();
-                responseHolder.getResponse().setEventSync(response);
-            }
-            response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(Math.max(state.getEventSeqNumber(), 0)));
-        }
-    }
-
-    private void updateUserConnection(ActorContext context) {
-        if (!state.isValidForUser()) {
-            return;
-        }
-        if (state.userIdMismatch()) {
-            sendDisconnectFromOldUser(context, state.getProfile());
-            state.setUserRegistrationPending(false);
-        }
-        if (!state.isUserRegistrationPending()) {
-            state.setUserId(state.getProfileUserId());
-            if (state.getUserId() != null) {
-                sendConnectToNewUser(context, state.getProfile());
-                state.setUserRegistrationPending(true);
-            }
-        } else {
-            LOG.trace("[{}][{}] User registration request is already sent.", endpointKey, actorKey);
-        }
-    }
-
-    private void processLogUpload(ActorContext context, ClientSync syncRequest, SyncContext responseHolder) {
-        LogClientSync request = syncRequest.getLogSync();
-        if (request != null) {
-            if (request.getLogEntries() != null && request.getLogEntries().size() > 0) {
-                LOG.debug("[{}][{}] Processing log upload request {}", endpointKey, actorKey, request.getLogEntries().size());
-                EndpointProfileDataDto profileDto = convert(responseHolder.getEndpointProfile());
-                List<LogEvent> logEvents = new ArrayList<>(request.getLogEntries().size());
-                for (LogEntry logEntry : request.getLogEntries()) {
-                    LogEvent logEvent = new LogEvent();
-                    logEvent.setLogData(logEntry.getData().array());
-                    logEvents.add(logEvent);
-                }
-                BaseLogEventPack logPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(),
-                        responseHolder.getEndpointProfile().getLogSchemaVersion(), logEvents);
-                logPack.setUserId(state.getUserId());
-                context.parent().tell(new LogEventPackMessage(request.getRequestId(), context.self(), logPack), context.self());
-            }
-            if (logUploadResponseMap.size() > 0) {
-                responseHolder.getResponse().setLogSync(EntityConvertUtils.convert(logUploadResponseMap));
-                logUploadResponseMap.clear();
-            }
-        }
-    }
-
-    private EndpointProfileDataDto convert(EndpointProfileDto profileDto) {
-        return new EndpointProfileDataDto(profileDto.getId(), endpointKey, profileDto.getClientProfileVersion(),
-                profileDto.getClientProfileBody(), profileDto.getServerProfileVersion(), profileDto.getServerProfileBody());
-    }
-
-    private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {
-        List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToECFVersions(endpointProfile.getEcfVersionStates());
-        EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(state.getUserId(), key, ecfVersions,
-                endpointProfile.getConfigurationVersion(), endpointProfile.getUserConfigurationHash(), appToken, context.self());
-        LOG.debug("[{}][{}] Sending user registration request {}", endpointKey, actorKey, userRegistrationMessage);
-        context.parent().tell(userRegistrationMessage, context.self());
-    }
-
-    private void sendDisconnectFromOldUser(ActorContext context, EndpointProfileDto endpointProfile) {
-        LOG.debug("[{}][{}] Detected user change from [{}] to [{}]", endpointKey, actorKey, state.getUserId(),
-                endpointProfile.getEndpointUserId());
-        EndpointUserDisconnectMessage userDisconnectMessage = new EndpointUserDisconnectMessage(state.getUserId(), key, appToken,
-                context.self());
-        context.parent().tell(userDisconnectMessage, context.self());
-    }
-
-    private long getDelay(SyncRequestMessage requestMessage, long start) {
-        return requestMessage.getRequest().getClientSyncMetaData().getTimeout() - (System.currentTimeMillis() - start);
-    }
-
-    private ChannelMetaData initChannel(ActorContext context, SyncRequestMessage requestMessage) {
-        ChannelMetaData channel = state.getChannelById(requestMessage.getChannelUuid());
-        if (channel == null) {
-            channel = new ChannelMetaData(requestMessage);
-
-            if (!channel.getType().isAsync() && channel.getType().isLongPoll()) {
-                LOG.debug("[{}][{}] Received request using long poll channel.", endpointKey, actorKey);
-                // Probably old long poll channels lost connection. Sending
-                // reply to them just in case
-                Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.EVENT);
-                for (ChannelMetaData oldChannel : channels) {
-                    if (!oldChannel.getType().isAsync() && channel.getType().isLongPoll()) {
-                        LOG.debug("[{}][{}] Closing old long poll channel [{}]", endpointKey, actorKey, oldChannel.getId());
-                        sendReply(context, oldChannel.getRequestMessage(), oldChannel.getResponseHolder().getResponse());
-                        state.removeChannel(oldChannel);
-                    }
-                }
-            }
-
-            long time = System.currentTimeMillis();
-
-            channel.setLastActivityTime(time);
-
-            if (channel.getType().isAsync() && channel.getKeepAlive() > 0) {
-                scheduleKeepAliveCheck(context, channel);
-            }
-
-            state.addChannel(channel);
-        }
-        return channel;
-    }
-
-    private void scheduleKeepAliveCheck(ActorContext context, ChannelMetaData channel) {
-        TimeoutMessage message = new ChannelTimeoutMessage(channel.getId(), channel.getLastActivityTime());
-        LOG.debug("Scheduling channel timeout message: {} to timeout in {}", message, channel.getKeepAlive() * 1000);
-        scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
-    }
-
-    private void notifyAffectedEndpoints(ActorContext context, ClientSync request, SyncContext responseHolder) {
-        if (responseHolder.getResponse().getUserSync() != null) {
-            List<EndpointAttachResponse> attachResponses = responseHolder.getResponse().getUserSync().getEndpointAttachResponses();
-            if (attachResponses != null && !attachResponses.isEmpty()) {
-                state.resetEventSeqNumber();
-                for (EndpointAttachResponse response : attachResponses) {
-                    if (response.getResult() != SyncStatus.SUCCESS) {
-                        LOG.debug("[{}][{}] Skipped unsuccessful attach response [{}]", endpointKey, actorKey, response.getRequestId());
-                        continue;
-                    }
-                    EndpointUserAttachMessage attachMessage = new EndpointUserAttachMessage(
-                            EndpointObjectHash.fromBytes(Base64Util.decode(response.getEndpointKeyHash())), state.getUserId(), endpointKey);
-                    context.parent().tell(attachMessage, context.self());
-                    LOG.debug("[{}][{}] Notification to attached endpoint [{}] sent", endpointKey, actorKey, response.getEndpointKeyHash());
-                }
-            }
-
-            List<EndpointDetachRequest> detachRequests = request.getUserSync() == null ? null
-                    : request.getUserSync().getEndpointDetachRequests();
-            if (detachRequests != null && !detachRequests.isEmpty()) {
-                state.resetEventSeqNumber();
-                for (EndpointDetachRequest detachRequest : detachRequests) {
-                    for (EndpointDetachResponse detachResponse : responseHolder.getResponse().getUserSync().getEndpointDetachResponses()) {
-                        if (detachRequest.getRequestId() == detachResponse.getRequestId()) {
-                            if (detachResponse.getResult() != SyncStatus.SUCCESS) {
-                                LOG.debug("[{}][{}] Skipped unsuccessful detach response [{}]", endpointKey, actorKey,
-                                        detachResponse.getRequestId());
-                                continue;
-                            }
-                            EndpointUserDetachMessage attachMessage = new EndpointUserDetachMessage(
-                                    EndpointObjectHash.fromBytes(Base64Util.decode(detachRequest.getEndpointKeyHash())), state.getUserId(),
-                                    endpointKey);
-                            context.parent().tell(attachMessage, context.self());
-                            LOG.debug("[{}][{}] Notification to detached endpoint [{}] sent", endpointKey, actorKey,
-                                    detachRequest.getEndpointKeyHash());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    protected void scheduleActorTimeout(ActorContext context) {
-        if (state.isNoChannels()) {
-            scheduleTimeoutMessage(context, new ActorTimeoutMessage(state.getLastActivityTime()), getInactivityTimeout());
-        }
-    }
-
-    /**
-     * Subscribe to topics.
-     *
-     * @param response
-     *            the response
-     */
-    private void updateSubscriptionsToTopics(ActorContext context, SyncContext response) {
-        Map<String, Integer> newStates = response.getSubscriptionStates();
-        if (newStates == null) {
-            return;
-        }
-        Map<String, Integer> currentStates = state.getSubscriptionStates();
-        // detect and remove unsubscribed topics;
-        Iterator<String> currentSubscriptionsIterator = currentStates.keySet().iterator();
-        while (currentSubscriptionsIterator.hasNext()) {
-            String subscribedTopic = currentSubscriptionsIterator.next();
-            if (!newStates.containsKey(subscribedTopic)) {
-                currentSubscriptionsIterator.remove();
-                TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(subscribedTopic, appToken, key,
-                        context.self());
-                context.parent().tell(topicSubscriptionMessage, context.self());
-            }
-        }
-        // subscribe to new topics;
-        for (Entry<String, Integer> entry : newStates.entrySet()) {
-            if (!currentStates.containsKey(entry.getKey())) {
-                TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(entry.getKey(), entry.getValue(),
-                        response.getSystemNfVersion(), response.getUserNfVersion(), appToken, key, context.self());
-                context.parent().tell(topicSubscriptionMessage, context.self());
-            }
-        }
-        state.setSubscriptionStates(newStates);
-    }
-
-    private void scheduleTimeoutMessage(ActorContext context, UUID requestId, long delay) {
-        scheduleTimeoutMessage(context, new RequestTimeoutMessage(requestId), delay);
-    }
-
-    private void scheduleTimeoutMessage(ActorContext context, TimeoutMessage message, long delay) {
-        context.system().scheduler().scheduleOnce(Duration.create(delay, TimeUnit.MILLISECONDS), context.self(), message,
-                context.dispatcher(), context.self());
-    }
-
-    private void addEventsAndReply(ActorContext context, ChannelMetaData channel, EndpointEventReceiveMessage message) {
-        SyncRequestMessage pendingRequest = channel.getRequestMessage();
-        SyncContext pendingResponse = channel.getResponseHolder();
-
-        EventServerSync eventResponse = pendingResponse.getResponse().getEventSync();
-        if (eventResponse == null) {
-            eventResponse = new EventServerSync();
-            pendingResponse.getResponse().setEventSync(eventResponse);
-        }
-
-        eventResponse.setEvents(message.getEvents());
-        sendReply(context, pendingRequest, pendingResponse.getResponse());
-        if (!channel.getType().isAsync()) {
-            state.removeChannel(channel);
-        }
-    }
-
-    private void sendReply(ActorContext context, SyncRequestMessage request, ServerSync syncResponse) {
-        sendReply(context, request, null, syncResponse);
-    }
-
-    private void sendReply(ActorContext context, SyncRequestMessage request, Exception e) {
-        sendReply(context, request, e, null);
-    }
-
-    private void sendReply(ActorContext context, SyncRequestMessage request, Exception e, ServerSync syncResponse) {
-        LOG.debug("[{}] response: {}", actorKey, syncResponse);
-
-        ServerSync copy = ServerSync.deepCopy(syncResponse);
-        ServerSync.cleanup(syncResponse);
-
-        NettySessionResponseMessage response = new NettySessionResponseMessage(request.getSession(), copy, e,
-                request.getCommand().getMessageBuilder(), request.getCommand().getErrorBuilder());
-
-        tellActor(context, request.getOriginator(), response);
-        scheduleActorTimeout(context);
-    }
-
-    protected void sendEventsIfPresent(ActorContext context, EventClientSync request) {
-        List<Event> events = request.getEvents();
-        if (state.getUserId() != null && events != null && !events.isEmpty()) {
-            LOG.debug("[{}][{}] Processing events {} with seq number > {}", endpointKey, actorKey, events, state.getEventSeqNumber());
-            List<Event> eventsToSend = new ArrayList<>(events.size());
-            int maxSentEventSeqNum = state.getEventSeqNumber();
-            for (Event event : events) {
-                if (event.getSeqNum() > state.getEventSeqNumber()) {
-                    event.setSource(endpointKey);
-                    eventsToSend.add(event);
-                    maxSentEventSeqNum = Math.max(event.getSeqNum(), maxSentEventSeqNum);
-                } else {
-                    LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}", endpointKey, actorKey, events,
-                            state.getEventSeqNumber());
-                }
-            }
-            state.setEventSeqNumber(maxSentEventSeqNum);
-            if (!eventsToSend.isEmpty()) {
-                EndpointEventSendMessage message = new EndpointEventSendMessage(state.getUserId(), eventsToSend, key, appToken,
-                        context.self());
-                context.parent().tell(message, context.self());
-            }
-        }
-    }
-
-    public void processEndpointUserActionMessage(ActorContext context, EndpointUserActionMessage message) {
-        Set<ChannelMetaData> eventChannels = state.getChannelsByTypes(TransportType.EVENT, TransportType.USER);
-        LOG.debug("[{}][{}] Current Endpoint was attached/detached from user. Need to close all current event channels {}", endpointKey,
-                actorKey, eventChannels.size());
+        response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.SUCCESS);
+      } else {
+        LOG.debug("[{}] Message ignored due to no channel contexts registered for events",
+            actorKey, message);
+        response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
         state.setUserRegistrationPending(false);
-        state.setProfile(operationsService.refreshServerEndpointProfile(key));
-        if (message instanceof EndpointUserAttachMessage) {
-            LOG.debug("[{}][{}] Updating endpoint user id to {} in profile", endpointKey, actorKey, message.getUserId());
-        } else if (message instanceof EndpointUserDetachMessage) {
-            LOG.debug("[{}][{}] Clanup endpoint user id in profile", endpointKey, actorKey, message.getUserId());
+      }
+    } else {
+      LOG.debug(
+          "[{}][{}] Endpoint profile is not valid for receiving events. "
+              + "Either no assigned user or no event families in sdk",
+          endpointKey, actorKey);
+      response = new EndpointEventDeliveryMessage(message, EventDeliveryStatus.FAILURE);
+    }
+    tellParent(context, response);
+  }
+
+  /**
+   * Process a thrift notification.
+   *
+   * @param context actor context.
+   */
+  public void processThriftNotification(ActorContext context) {
+    Set<ChannelMetaData> channels = state.getChannelsByTypes(
+        TransportType.CONFIGURATION, TransportType.NOTIFICATION);
+    LOG.debug("[{}][{}] Processing thrift norification for {} channels",
+        endpointKey, actorKey, channels.size());
+    syncChannels(context, channels, true, true);
+  }
+
+  /**
+   * Process a user configuration update message.
+   *
+   * @param context actor context
+   * @param message endpoint user configuration update message
+   */
+  public void processUserConfigurationUpdate(ActorContext context,
+                                             EndpointUserConfigurationUpdateMessage message) {
+    if (message.getUserConfigurationUpdate() != null) {
+      state.setUcfHash(message.getUserConfigurationUpdate().getHash());
+      refreshConfiguration(context);
+    }
+  }
+
+  @Override
+  protected void processThriftMsg(ActorContext context, ThriftEndpointActorMsg<?> msg) {
+    Object thriftMsg = msg.getMsg();
+    if (thriftMsg instanceof ThriftServerProfileUpdateMessage) {
+      processServerProfileUpdateMsg(context, (ThriftServerProfileUpdateMessage) thriftMsg);
+    } else if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
+      processUnicastNotificationMsg(context, (ThriftUnicastNotificationMessage) thriftMsg);
+    } else if (thriftMsg instanceof ThriftEndpointDeregistrationMessage) {
+      processEndpointDeregistrationMessage(context, (ThriftEndpointDeregistrationMessage) thriftMsg);
+    } else if (thriftMsg instanceof ThriftEndpointConfigurationRefreshMessage) {
+      processEndpointSpecificConfigurationChanged(context);
+    }
+  }
+
+  private void processEndpointSpecificConfigurationChanged(ActorContext context) {
+    if (state.getProfile() == null) {
+      state.setProfile(operationsService.refreshServerEndpointProfile(key));
+    }
+    EndpointProfileDto profile = state.getProfile();
+    state.setEpsConfigurationHash(operationsService.fetchEndpointSpecificConfigurationHash(profile));
+    refreshConfiguration(context);
+  }
+
+  private void refreshConfiguration(ActorContext context) {
+    syncChannels(context, state.getChannelsByTypes(TransportType.CONFIGURATION), true, false);
+  }
+
+  private void processServerProfileUpdateMsg(ActorContext context,
+                                             ThriftServerProfileUpdateMessage thriftMsg) {
+    EndpointProfileDto endpointProfile = state.getProfile();
+    if (endpointProfile != null) {
+      state.setProfile(operationsService.refreshServerEndpointProfile(key));
+      Set<ChannelMetaData> channels = state.getChannelsByTypes(
+          TransportType.CONFIGURATION, TransportType.NOTIFICATION);
+      LOG.debug("[{}][{}] Processing profile update for {} channels",
+          endpointKey, actorKey, channels.size());
+      syncChannels(context, channels, true, true);
+    } else {
+      LOG.warn("[{}][{}] Can't update server profile for an empty state",
+          endpointKey, actorKey);
+    }
+  }
+
+  private void processUnicastNotificationMsg(ActorContext context,
+                                             ThriftUnicastNotificationMessage thriftMsg) {
+    processNotification(context, NotificationMessage.fromUnicastId(thriftMsg.getNotificationId()));
+  }
+
+  private void processEndpointDeregistrationMessage(
+      ActorContext context, ThriftEndpointDeregistrationMessage thriftMsg) {
+    for (ChannelMetaData channel : state.getAllChannels()) {
+      sendReply(context, channel.request, new EndpointRevocationException());
+    }
+  }
+
+  /**
+   * Process a notification message.
+   *
+   * @param context actor context
+   * @param message notification message
+   */
+  public void processNotification(ActorContext context, NotificationMessage message) {
+    LOG.debug("[{}][{}] Processing notification message {}", endpointKey, actorKey, message);
+
+    Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.NOTIFICATION);
+    if (channels.isEmpty()) {
+      LOG.debug("[{}][{}] No channels to process notification message", endpointKey, actorKey);
+      return;
+    }
+    String unicastNotificationId = message.getUnicastNotificationId();
+    List<NotificationDto> validNfs = state.filter(message.getNotifications());
+    if (unicastNotificationId == null && validNfs.isEmpty()) {
+      LOG.debug("[{}][{}] message is no longer valid for current endpoint", endpointKey, actorKey);
+      return;
+    }
+    for (ChannelMetaData channel : channels) {
+      LOG.debug("[{}][{}] processing channel {} and response {}",
+          endpointKey, actorKey, channel,
+          channel.getResponseHolder().getResponse());
+      ServerSync syncResponse = operationsService.updateSyncResponse(
+          channel.getResponseHolder().getResponse(), validNfs,
+          unicastNotificationId);
+      if (syncResponse != null) {
+        LOG.debug("[{}][{}] processed channel {} and response {}",
+            endpointKey, actorKey, channel, syncResponse);
+        sendReply(context, channel.getRequestMessage(), syncResponse);
+        if (!channel.getType().isAsync()) {
+          state.removeChannel(channel);
         }
+      }
+    }
+  }
 
-        if (!eventChannels.isEmpty()) {
-            updateUserConnection(context);
-            for (ChannelMetaData channel : eventChannels) {
-                SyncRequestMessage pendingRequest = channel.getRequestMessage();
-                ServerSync pendingResponse = channel.getResponseHolder().getResponse();
+  /**
+   * Process a request timeout message.
+   *
+   * @param context actor context
+   * @param message request timeout message
+   */
+  public void processRequestTimeoutMessage(ActorContext context, RequestTimeoutMessage message) {
+    ChannelMetaData channel = state.getChannelByRequestId(message.getRequestId());
+    if (channel != null) {
+      SyncContext response = channel.getResponseHolder();
+      sendReply(context, channel.getRequestMessage(), response.getResponse());
+      if (!channel.getType().isAsync()) {
+        state.removeChannel(channel);
+      }
+    } else {
+      LOG.debug("[{}][{}] Failed to find request by id [{}].",
+          endpointKey, actorKey, message.getRequestId());
+    }
+  }
 
-                UserServerSync userSyncResponse = pendingResponse.getUserSync();
+  private void sync(ActorContext context, SyncRequestMessage requestMessage) {
+    try {
+      state.setLastActivityTime(System.currentTimeMillis());
+      long start = state.getLastActivityTime();
 
-                if (userSyncResponse == null && pendingRequest.isValid(TransportType.USER)) {
-                    userSyncResponse = new UserServerSync();
-                    pendingResponse.setUserSync(userSyncResponse);
-                }
-                if (userSyncResponse != null) {
-                    if (message instanceof EndpointUserAttachMessage) {
-                        userSyncResponse
-                                .setUserAttachNotification(new UserAttachNotification(message.getUserId(), message.getOriginator()));
-                        LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
-                    } else if (message instanceof EndpointUserDetachMessage) {
-                        userSyncResponse.setUserDetachNotification(new UserDetachNotification(message.getOriginator()));
-                        LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
-                    }
-                }
+      ChannelMetaData channel = initChannel(context, requestMessage);
 
-                LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
-                sendReply(context, pendingRequest, pendingResponse);
-                if (!channel.getType().isAsync()) {
-                    state.removeChannel(channel);
-                }
-            }
+      ClientSync request = mergeRequestForChannel(channel, requestMessage);
+
+      ChannelType channelType = channel.getType();
+      LOG.debug("[{}][{}] Processing sync request {} from {} channel [{}]",
+          endpointKey, actorKey, request, channelType,
+          requestMessage.getChannelUuid());
+
+      SyncContext responseHolder = sync(request);
+
+      state.setProfile(responseHolder.getEndpointProfile());
+
+      if (state.getProfile() != null) {
+        processLogUpload(context, request, responseHolder);
+        processUserAttachRequest(context, request, responseHolder);
+        updateUserConnection(context);
+        processEvents(context, request, responseHolder);
+        notifyAffectedEndpoints(context, request, responseHolder);
+      } else {
+        LOG.warn("[{}][{}] Endpoint profile is not set after request processing!",
+            endpointKey, actorKey);
+      }
+
+      LOG.debug("[{}][{}] SyncResponseHolder {}", endpointKey, actorKey, responseHolder);
+
+      if (channelType.isAsync()) {
+        LOG.debug("[{}][{}] Adding async request from channel [{}] to map ",
+            endpointKey, actorKey,
+            requestMessage.getChannelUuid());
+        channel.update(responseHolder);
+        updateSubscriptionsToTopics(context, responseHolder);
+        sendReply(context, requestMessage, responseHolder.getResponse());
+      } else {
+        if (channelType.isLongPoll() && !responseHolder.requireImmediateReply()) {
+          LOG.debug("[{}][{}] Adding long poll request from channel [{}] to map ",
+              endpointKey, actorKey,
+              requestMessage.getChannelUuid());
+          channel.update(responseHolder);
+          updateSubscriptionsToTopics(context, responseHolder);
+          scheduleTimeoutMessage(
+              context, requestMessage.getChannelUuid(), getDelay(requestMessage, start));
         } else {
-            LOG.debug("[{}][{}] Message ignored due to no channel contexts registered for events", endpointKey, actorKey, message);
+          sendReply(context, requestMessage, responseHolder.getResponse());
+          state.removeChannel(channel);
         }
+      }
+    } catch (Exception ex) {
+      LOG.error("[{}][{}] processEndpointRequest", endpointKey, actorKey, ex);
+      sendReply(context, requestMessage, ex);
+    }
+  }
+
+  private SyncContext sync(ClientSync request) throws GetDeltaException {
+    if (!request.isValid()) {
+      LOG.warn("[{}] Request is not valid. It does not contain profile information!", endpointKey);
+      return SyncContext.failure(request.getRequestId());
+    }
+    EndpointProfileDto profile = state.getProfile();
+    SyncContext context = new SyncContext(new ServerSync());
+    context.setNotificationVersion(state.getProfile());
+    context.setRequestId(request.getRequestId());
+    context.setStatus(SyncStatus.SUCCESS);
+    context.setEndpointKey(endpointKey);
+    context.setRequestHash(request.hashCode());
+    context.setMetaData(request.getClientSyncMetaData());
+
+    LOG.trace("[{}][{}] processing sync. Request: {}",
+        endpointKey, context.getRequestHash(), request);
+
+    context = operationsService.syncClientProfile(context, request.getProfileSync());
+    context = operationsService.syncUseConfigurationRawSchema(
+        context, request.isUseConfigurationRawSchema());
+
+    if (context.getStatus() != SyncStatus.SUCCESS) {
+      return context;
+    }
+    if (state.isUcfHashRequiresInitialization()) {
+      byte[] hash = operationsService.fetchUcfHash(appToken, profile);
+      LOG.debug("[{}][{}] Initialized endpoint user configuration hash {}", endpointKey, context.getRequestHash(),
+          Arrays.toString(hash));
+      state.setUcfHash(hash);
+    }
+    if (state.isEpsConfigurationRequiresInitialization()) {
+      state.setEpsConfigurationHash(operationsService.fetchEndpointSpecificConfigurationHash(profile));
     }
 
-    public boolean processDisconnectMessage(ActorContext context, ChannelAware message) {
-        LOG.debug("[{}][{}] Received disconnect message for channel [{}]", endpointKey, actorKey, message.getChannelUuid());
-        ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
-        if (channel != null) {
-            state.removeChannel(channel);
-            scheduleActorTimeout(context);
-            return true;
-        } else {
-            LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
-            return false;
-        }
+    context = operationsService.processEndpointAttachDetachRequests(
+        context, request.getUserSync());
+    context = operationsService.processEventListenerRequests(context, request.getEventSync());
+
+    if (state.isUserConfigurationUpdatePending() || state.isEpsConfigurationChanged()) {
+      context = operationsService.syncConfigurationHashes(context, state.getUcfHash(), state.getEpsConfigurationHash());
     }
 
-    public boolean processPingMessage(ActorContext context, ChannelAware message) {
-        LOG.debug("[{}][{}] Received ping message for channel [{}]", endpointKey, actorKey, message.getChannelUuid());
-        ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
-        if (channel != null) {
-            long lastActivityTime = System.currentTimeMillis();
-            LOG.debug("[{}][{}] Updating last activity time for channel [{}] to ", endpointKey, actorKey, message.getChannelUuid(),
-                    lastActivityTime);
-            channel.setLastActivityTime(lastActivityTime);
-            channel.getContext().writeAndFlush(new PingResponse());
-            return true;
-        } else {
-            LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
-            return false;
-        }
+    context = operationsService.syncConfiguration(context, request.getConfigurationSync());
+
+    context = operationsService.syncNotification(context, request.getNotificationSync());
+
+    LOG.trace("[{}][{}] processed sync. Response is {}",
+        endpointKey, request.hashCode(), context.getResponse());
+
+    return context;
+  }
+
+  private void syncChannels(ActorContext context,
+                            Set<ChannelMetaData> channels,
+                            boolean cfUpdate, boolean nfUpdate) {
+    for (ChannelMetaData channel : channels) {
+      ClientSync originalRequest = channel.getRequestMessage().getRequest();
+      ClientSync newRequest = new ClientSync();
+      newRequest.setRequestId(originalRequest.getRequestId());
+      newRequest.setClientSyncMetaData(originalRequest.getClientSyncMetaData());
+      newRequest.setUseConfigurationRawSchema(originalRequest.isUseConfigurationRawSchema());
+      if (cfUpdate && originalRequest.getConfigurationSync() != null) {
+        newRequest.setForceConfigurationSync(true);
+        newRequest.setConfigurationSync(originalRequest.getConfigurationSync());
+      }
+      if (nfUpdate && originalRequest.getNotificationSync() != null) {
+        newRequest.setForceNotificationSync(true);
+        newRequest.setNotificationSync(originalRequest.getNotificationSync());
+      }
+      LOG.debug("[{}][{}] Processing request {}", endpointKey, actorKey, newRequest);
+      sync(context, new SyncRequestMessage(channel.getRequestMessage().getSession(), newRequest,
+          channel.getRequestMessage().getCommand(), channel.getRequestMessage().getOriginator()));
     }
+  }
 
-    public boolean processChannelTimeoutMessage(ActorContext context, ChannelTimeoutMessage message) {
-        LOG.debug("[{}][{}] Received channel timeout message for channel [{}]", endpointKey, actorKey, message.getChannelUuid());
-        ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
-        if (channel != null) {
-            if (channel.getLastActivityTime() <= message.getLastActivityTime()) {
-                LOG.debug("[{}][{}] Timeout message accepted for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
-                        actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
-                state.removeChannel(channel);
-                scheduleActorTimeout(context);
-                return true;
-            } else {
-                LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. Last activity time {} and timeout is {} ", endpointKey,
-                        actorKey, message.getChannelUuid(), channel.getLastActivityTime(), message.getLastActivityTime());
-                scheduleKeepAliveCheck(context, channel);
-                return false;
-            }
-        } else {
-            LOG.debug("[{}][{}] Can't find channel by uuid [{}]", endpointKey, actorKey, message.getChannelUuid());
-            scheduleActorTimeout(context);
-            return false;
-        }
+  private ClientSync mergeRequestForChannel(ChannelMetaData channel,
+                                            SyncRequestMessage requestMessage) {
+    ClientSync request;
+    if (channel.getType().isAsync()) {
+      if (channel.isFirstRequest()) {
+        request = channel.getRequestMessage().getRequest();
+      } else {
+        LOG.debug("[{}][{}] Updating request for async channel {}",
+            endpointKey, actorKey, channel);
+        request = channel.mergeRequest(requestMessage);
+        LOG.trace("[{}][{}] Updated request for async channel {} : {}",
+            endpointKey, actorKey, channel, request);
+      }
+    } else {
+      request = channel.getRequestMessage().getRequest();
     }
+    return request;
+  }
 
-    public void processLogDeliveryMessage(ActorContext context, LogDeliveryMessage message) {
-        LOG.debug("[{}][{}] Received log delivery message for request [{}] with status {}", endpointKey, actorKey, message.getRequestId(),
-                message.isSuccess());
-        logUploadResponseMap.put(message.getRequestId(), message);
-        Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.LOGGING);
-        for (ChannelMetaData channel : channels) {
-            SyncRequestMessage pendingRequest = channel.getRequestMessage();
-            ServerSync pendingResponse = channel.getResponseHolder().getResponse();
+  private void processUserAttachRequest(ActorContext context,
+                                        ClientSync syncRequest,
+                                        SyncContext responseHolder) {
+    UserClientSync request = syncRequest.getUserSync();
+    if (request != null && request.getUserAttachRequest() != null) {
+      UserAttachRequest attachRequest = request.getUserAttachRequest();
+      context.parent().tell(new UserVerificationRequestMessage(
+          context.self(), attachRequest.getUserVerifierId(),
+          attachRequest.getUserExternalId(), attachRequest.getUserAccessToken()), context.self());
+      LOG.debug("[{}][{}] received and forwarded user attach request {}",
+          endpointKey, actorKey, request.getUserAttachRequest());
 
-            pendingResponse.setLogSync(EntityConvertUtils.convert(logUploadResponseMap));
-
-            LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
-            sendReply(context, pendingRequest, pendingResponse);
-            if (!channel.getType().isAsync()) {
-                state.removeChannel(channel);
-            }
-        }
-        logUploadResponseMap.clear();
-    }
-
-    public void processUserVerificationMessage(ActorContext context, UserVerificationResponseMessage message) {
-        LOG.debug("[{}][{}] Received user verification message for request [{}] with status {}", endpointKey, actorKey,
-                message.getRequestId(), message.isSuccess());
-        userAttachResponseMap.put(message.getRequestId(), message);
-        Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.USER);
-        Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet().iterator().next();
-        for (ChannelMetaData channel : channels) {
-            SyncRequestMessage pendingRequest = channel.getRequestMessage();
-            ServerSync pendingResponse = channel.getResponseHolder().getResponse();
-
-            updateResponseWithUserAttachResults(pendingResponse, entryToSend.getValue());
-
-            LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
-            sendReply(context, pendingRequest, pendingResponse);
-            if (!channel.getType().isAsync()) {
-                state.removeChannel(channel);
-            }
-        }
+      if (userAttachResponseMap.size() > 0) {
+        Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet()
+            .iterator()
+            .next();
+        updateResponseWithUserAttachResults(responseHolder.getResponse(), entryToSend.getValue());
         userAttachResponseMap.remove(entryToSend.getKey());
-        if (message.isSuccess()) {
-            state.setProfile(operationsService.attachEndpointToUser(state.getProfile(), appToken, message.getUserId()));
-            updateUserConnection(context);
-        }
+      }
     }
+  }
+
+  private void updateResponseWithUserAttachResults(ServerSync response,
+                                                   UserVerificationResponseMessage message) {
+    if (response.getUserSync() == null) {
+      response.setUserSync(new UserServerSync());
+    }
+    response.getUserSync().setUserAttachResponse(EntityConvertUtils.convert(message));
+  }
+
+  private void processEvents(ActorContext context,
+                             ClientSync request,
+                             SyncContext responseHolder) {
+    if (request.getEventSync() != null) {
+      EventClientSync eventRequest = request.getEventSync();
+      processSeqNumber(eventRequest, responseHolder);
+      if (state.isValidForEvents()) {
+        sendEventsIfPresent(context, eventRequest);
+      } else {
+        LOG.debug(
+            "[{}][{}] Endpoint profile is not valid for send/receive events. "
+                + "Either no assigned user or no event families in sdk",
+            endpointKey, actorKey);
+      }
+    }
+  }
+
+  private void processSeqNumber(EventClientSync request, SyncContext responseHolder) {
+    if (request.isSeqNumberRequest()) {
+      EventServerSync response = responseHolder.getResponse().getEventSync();
+      if (response == null) {
+        response = new EventServerSync();
+        responseHolder.getResponse().setEventSync(response);
+      }
+      response.setEventSequenceNumberResponse(new EventSequenceNumberResponse(
+          Math.max(state.getEventSeqNumber(), 0)));
+    }
+  }
+
+  private void updateUserConnection(ActorContext context) {
+    if (!state.isValidForUser()) {
+      return;
+    }
+    if (state.userIdMismatch()) {
+      sendDisconnectFromOldUser(context, state.getProfile());
+      state.setUserRegistrationPending(false);
+    }
+    if (!state.isUserRegistrationPending()) {
+      state.setUserId(state.getProfileUserId());
+      if (state.getUserId() != null) {
+        sendConnectToNewUser(context, state.getProfile());
+        state.setUserRegistrationPending(true);
+      }
+    } else {
+      LOG.trace("[{}][{}] User registration request is already sent.", endpointKey, actorKey);
+    }
+  }
+
+  private void processLogUpload(ActorContext context,
+                                ClientSync syncRequest,
+                                SyncContext responseHolder) {
+    LogClientSync request = syncRequest.getLogSync();
+    if (request != null) {
+      if (request.getLogEntries() != null && request.getLogEntries().size() > 0) {
+        LOG.debug("[{}][{}] Processing log upload request {}",
+            endpointKey, actorKey, request.getLogEntries().size());
+        EndpointProfileDataDto profileDto = convert(responseHolder.getEndpointProfile());
+        List<LogEvent> logEvents = new ArrayList<>(request.getLogEntries().size());
+        for (LogEntry logEntry : request.getLogEntries()) {
+          LogEvent logEvent = new LogEvent();
+          logEvent.setLogData(logEntry.getData().array());
+          logEvents.add(logEvent);
+        }
+        BaseLogEventPack logPack = new BaseLogEventPack(profileDto, System.currentTimeMillis(),
+            responseHolder.getEndpointProfile().getLogSchemaVersion(), logEvents);
+        logPack.setUserId(state.getUserId());
+        context.parent().tell(new LogEventPackMessage(
+            request.getRequestId(), context.self(), logPack), context.self());
+      }
+      if (logUploadResponseMap.size() > 0) {
+        responseHolder.getResponse().setLogSync(EntityConvertUtils.convert(logUploadResponseMap));
+        logUploadResponseMap.clear();
+      }
+    }
+  }
+
+  private EndpointProfileDataDto convert(EndpointProfileDto profileDto) {
+    return new EndpointProfileDataDto(
+        profileDto.getId(), endpointKey, profileDto.getClientProfileVersion(),
+        profileDto.getClientProfileBody(), profileDto.getServerProfileVersion(),
+        profileDto.getServerProfileBody());
+  }
+
+  private void sendConnectToNewUser(ActorContext context, EndpointProfileDto endpointProfile) {
+    List<EventClassFamilyVersion> ecfVersions = EntityConvertUtils.convertToEcfVersions(
+        endpointProfile.getEcfVersionStates());
+    EndpointUserConnectMessage userRegistrationMessage = new EndpointUserConnectMessage(
+        state.getUserId(), key, ecfVersions,
+        endpointProfile.getConfigurationVersion(), endpointProfile.getUserConfigurationHash(),
+        appToken, context.self());
+    LOG.debug("[{}][{}] Sending user registration request {}",
+        endpointKey, actorKey, userRegistrationMessage);
+    context.parent().tell(userRegistrationMessage, context.self());
+  }
+
+  private void sendDisconnectFromOldUser(ActorContext context,
+                                         EndpointProfileDto endpointProfile) {
+    LOG.debug("[{}][{}] Detected user change from [{}] to [{}]",
+        endpointKey, actorKey, state.getUserId(),
+        endpointProfile.getEndpointUserId());
+    EndpointUserDisconnectMessage userDisconnectMessage = new EndpointUserDisconnectMessage(
+        state.getUserId(), key, appToken,
+        context.self());
+    context.parent().tell(userDisconnectMessage, context.self());
+  }
+
+  private long getDelay(SyncRequestMessage requestMessage, long start) {
+    return requestMessage.getRequest()
+        .getClientSyncMetaData()
+        .getTimeout() - (System.currentTimeMillis() - start);
+  }
+
+  private ChannelMetaData initChannel(ActorContext context, SyncRequestMessage requestMessage) {
+    ChannelMetaData channel = state.getChannelById(requestMessage.getChannelUuid());
+    if (channel == null) {
+      channel = new ChannelMetaData(requestMessage);
+
+      if (!channel.getType().isAsync() && channel.getType().isLongPoll()) {
+        LOG.debug("[{}][{}] Received request using long poll channel.", endpointKey, actorKey);
+        // Probably old long poll channels lost connection. Sending
+        // reply to them just in case
+        Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.EVENT);
+        for (ChannelMetaData oldChannel : channels) {
+          if (!oldChannel.getType().isAsync() && channel.getType().isLongPoll()) {
+            LOG.debug("[{}][{}] Closing old long poll channel [{}]",
+                endpointKey, actorKey, oldChannel.getId());
+            sendReply(
+                context,
+                oldChannel.getRequestMessage(),
+                oldChannel.getResponseHolder().getResponse());
+            state.removeChannel(oldChannel);
+          }
+        }
+      }
+
+      long time = System.currentTimeMillis();
+
+      channel.setLastActivityTime(time);
+
+      if (channel.getType().isAsync() && channel.getKeepAlive() > 0) {
+        scheduleKeepAliveCheck(context, channel);
+      }
+
+      state.addChannel(channel);
+    }
+    return channel;
+  }
+
+  private void scheduleKeepAliveCheck(ActorContext context, ChannelMetaData channel) {
+    TimeoutMessage message = new ChannelTimeoutMessage(
+        channel.getId(), channel.getLastActivityTime());
+    LOG.debug("Scheduling channel timeout message: {} to timeout in {}",
+        message, channel.getKeepAlive() * 1000);
+    scheduleTimeoutMessage(context, message, channel.getKeepAlive() * 1000);
+  }
+
+  private void notifyAffectedEndpoints(ActorContext context, ClientSync request,
+                                       SyncContext responseHolder) {
+    if (responseHolder.getResponse().getUserSync() != null) {
+      List<EndpointAttachResponse> attachResponses = responseHolder.getResponse()
+          .getUserSync()
+          .getEndpointAttachResponses();
+      if (attachResponses != null && !attachResponses.isEmpty()) {
+        state.resetEventSeqNumber();
+        for (EndpointAttachResponse response : attachResponses) {
+          if (response.getResult() != SyncStatus.SUCCESS) {
+            LOG.debug("[{}][{}] Skipped unsuccessful attach response [{}]",
+                endpointKey, actorKey, response.getRequestId());
+            continue;
+          }
+          EndpointUserAttachMessage attachMessage = new EndpointUserAttachMessage(
+              EndpointObjectHash.fromBytes(
+                  Base64Util.decode(response.getEndpointKeyHash())),
+              state.getUserId(), endpointKey);
+          context.parent().tell(attachMessage, context.self());
+          LOG.debug("[{}][{}] Notification to attached endpoint [{}] sent",
+              endpointKey, actorKey, response.getEndpointKeyHash());
+        }
+      }
+
+      List<EndpointDetachRequest> detachRequests = request.getUserSync() == null ? null
+          : request.getUserSync().getEndpointDetachRequests();
+      if (detachRequests != null && !detachRequests.isEmpty()) {
+        state.resetEventSeqNumber();
+        for (EndpointDetachRequest detachRequest : detachRequests) {
+          List<EndpointDetachResponse> endpointDetachResponses = responseHolder.getResponse()
+              .getUserSync()
+              .getEndpointDetachResponses();
+          for (EndpointDetachResponse detachResponse : endpointDetachResponses) {
+            if (detachRequest.getRequestId() == detachResponse.getRequestId()) {
+              if (detachResponse.getResult() != SyncStatus.SUCCESS) {
+                LOG.debug("[{}][{}] Skipped unsuccessful detach response [{}]",
+                    endpointKey, actorKey,
+                    detachResponse.getRequestId());
+                continue;
+              }
+              EndpointUserDetachMessage attachMessage = new EndpointUserDetachMessage(
+                  EndpointObjectHash.fromBytes(
+                      Base64Util.decode(detachRequest.getEndpointKeyHash())), state.getUserId(),
+                  endpointKey);
+              context.parent().tell(attachMessage, context.self());
+              LOG.debug("[{}][{}] Notification to detached endpoint [{}] sent",
+                  endpointKey, actorKey,
+                  detachRequest.getEndpointKeyHash());
+            }
+          }
+        }
+      }
+    }
+  }
+
+  protected void scheduleActorTimeout(ActorContext context) {
+    if (state.isNoChannels()) {
+      scheduleTimeoutMessage(
+          context, new ActorTimeoutMessage(state.getLastActivityTime()), getInactivityTimeout());
+    }
+  }
+
+  /**
+   * Subscribe to topics.
+   *
+   * @param response the response
+   */
+  private void updateSubscriptionsToTopics(ActorContext context, SyncContext response) {
+    Map<String, Integer> newStates = response.getSubscriptionStates();
+    if (newStates == null) {
+      return;
+    }
+    Map<String, Integer> currentStates = state.getSubscriptionStates();
+    // detect and remove unsubscribed topics;
+    Iterator<String> currentSubscriptionsIterator = currentStates.keySet().iterator();
+    while (currentSubscriptionsIterator.hasNext()) {
+      String subscribedTopic = currentSubscriptionsIterator.next();
+      if (!newStates.containsKey(subscribedTopic)) {
+        currentSubscriptionsIterator.remove();
+        TopicUnsubscriptionMessage topicSubscriptionMessage = new TopicUnsubscriptionMessage(
+            subscribedTopic,
+            appToken,
+            key,
+            context.self());
+        context.parent().tell(topicSubscriptionMessage, context.self());
+      }
+    }
+    // subscribe to new topics;
+    for (Entry<String, Integer> entry : newStates.entrySet()) {
+      if (!currentStates.containsKey(entry.getKey())) {
+        TopicSubscriptionMessage topicSubscriptionMessage = new TopicSubscriptionMessage(
+            entry.getKey(), entry.getValue(),
+            response.getSystemNfVersion(),
+            response.getUserNfVersion(),
+            appToken,
+            key,
+            context.self());
+        context.parent().tell(topicSubscriptionMessage, context.self());
+      }
+    }
+    state.setSubscriptionStates(newStates);
+  }
+
+  private void scheduleTimeoutMessage(ActorContext context, UUID requestId, long delay) {
+    scheduleTimeoutMessage(context, new RequestTimeoutMessage(requestId), delay);
+  }
+
+  private void scheduleTimeoutMessage(ActorContext context, TimeoutMessage message, long delay) {
+    context.system()
+        .scheduler()
+        .scheduleOnce(
+            Duration.create(delay, TimeUnit.MILLISECONDS), context.self(), message,
+            context.dispatcher(), context.self());
+  }
+
+  private void addEventsAndReply(ActorContext context,
+                                 ChannelMetaData channel,
+                                 EndpointEventReceiveMessage message) {
+    SyncRequestMessage pendingRequest = channel.getRequestMessage();
+    SyncContext pendingResponse = channel.getResponseHolder();
+
+    EventServerSync eventResponse = pendingResponse.getResponse().getEventSync();
+    if (eventResponse == null) {
+      eventResponse = new EventServerSync();
+      pendingResponse.getResponse().setEventSync(eventResponse);
+    }
+
+    eventResponse.setEvents(message.getEvents());
+    sendReply(context, pendingRequest, pendingResponse.getResponse());
+    if (!channel.getType().isAsync()) {
+      state.removeChannel(channel);
+    }
+  }
+
+  private void sendReply(ActorContext context,
+                         SyncRequestMessage request,
+                         ServerSync syncResponse) {
+    sendReply(context, request, null, syncResponse);
+  }
+
+  private void sendReply(ActorContext context, SyncRequestMessage request, Exception ex) {
+    sendReply(context, request, ex, null);
+  }
+
+  private void sendReply(ActorContext context, SyncRequestMessage request,
+                         Exception ex, ServerSync syncResponse) {
+    LOG.debug("[{}] response: {}", actorKey, syncResponse);
+
+    ServerSync copy = ServerSync.deepCopy(syncResponse);
+    ServerSync.cleanup(syncResponse);
+
+    NettySessionResponseMessage response = new NettySessionResponseMessage(
+        request.getSession(), copy, ex,
+        request.getCommand().getMessageBuilder(), request.getCommand().getErrorBuilder());
+
+    tellActor(context, request.getOriginator(), response);
+    scheduleActorTimeout(context);
+  }
+
+  protected void sendEventsIfPresent(ActorContext context, EventClientSync request) {
+    List<Event> events = request.getEvents();
+    if (state.getUserId() != null && events != null && !events.isEmpty()) {
+      LOG.debug("[{}][{}] Processing events {} with seq number > {}",
+          endpointKey, actorKey, events, state.getEventSeqNumber());
+      List<Event> eventsToSend = new ArrayList<>(events.size());
+      int maxSentEventSeqNum = state.getEventSeqNumber();
+      for (Event event : events) {
+        if (event.getSeqNum() > state.getEventSeqNumber()) {
+          event.setSource(endpointKey);
+          eventsToSend.add(event);
+          maxSentEventSeqNum = Math.max(event.getSeqNum(), maxSentEventSeqNum);
+        } else {
+          LOG.debug("[{}][{}] Ignoring duplicate/old event {} due to seq number < {}",
+              endpointKey, actorKey, events,
+              state.getEventSeqNumber());
+        }
+      }
+      state.setEventSeqNumber(maxSentEventSeqNum);
+      if (!eventsToSend.isEmpty()) {
+        EndpointEventSendMessage message = new EndpointEventSendMessage(
+            state.getUserId(), eventsToSend, key, appToken,
+            context.self());
+        context.parent().tell(message, context.self());
+      }
+    }
+  }
+
+  /**
+   * Process an endpoint user action message.
+   *
+   * @param context actor context
+   * @param message endpoint user action message
+   */
+  public void processEndpointUserActionMessage(ActorContext context,
+                                               EndpointUserActionMessage message) {
+    Set<ChannelMetaData> eventChannels = state.getChannelsByTypes(
+        TransportType.EVENT, TransportType.USER);
+    LOG.debug("[{}][{}] Current Endpoint was attached/detached from user. "
+            + "Need to close all current event channels {}",
+        endpointKey,
+        actorKey,
+        eventChannels.size());
+    state.setUserRegistrationPending(false);
+    state.setProfile(operationsService.refreshServerEndpointProfile(key));
+    if (message instanceof EndpointUserAttachMessage) {
+      LOG.debug("[{}][{}] Updating endpoint user id to {} in profile",
+          endpointKey, actorKey, message.getUserId());
+    } else if (message instanceof EndpointUserDetachMessage) {
+      LOG.debug("[{}][{}] Clanup endpoint user id in profile",
+          endpointKey, actorKey, message.getUserId());
+    }
+
+    if (!eventChannels.isEmpty()) {
+      updateUserConnection(context);
+      for (ChannelMetaData channel : eventChannels) {
+        SyncRequestMessage pendingRequest = channel.getRequestMessage();
+        ServerSync pendingResponse = channel.getResponseHolder().getResponse();
+
+        UserServerSync userSyncResponse = pendingResponse.getUserSync();
+
+        if (userSyncResponse == null && pendingRequest.isValid(TransportType.USER)) {
+          userSyncResponse = new UserServerSync();
+          pendingResponse.setUserSync(userSyncResponse);
+        }
+        if (userSyncResponse != null) {
+          if (message instanceof EndpointUserAttachMessage) {
+            userSyncResponse
+                .setUserAttachNotification(
+                    new UserAttachNotification(message.getUserId(), message.getOriginator()));
+            LOG.debug("[{}][{}] Adding user attach notification", endpointKey, actorKey);
+          } else if (message instanceof EndpointUserDetachMessage) {
+            userSyncResponse.setUserDetachNotification(
+                new UserDetachNotification(message.getOriginator()));
+            LOG.debug("[{}][{}] Adding user detach notification", endpointKey, actorKey);
+          }
+        }
+
+        LOG.debug("[{}][{}] sending reply to [{}] channel",
+            endpointKey, actorKey, channel.getId());
+        sendReply(context, pendingRequest, pendingResponse);
+        if (!channel.getType().isAsync()) {
+          state.removeChannel(channel);
+        }
+      }
+    } else {
+      LOG.debug("[{}][{}] Message ignored due to no channel contexts registered for events",
+          endpointKey, actorKey, message);
+    }
+  }
+
+  /**
+   * Process disconnect message.
+   *
+   * @param context actor context
+   * @param message channel aware message
+   * @return        true if channel is disconnected otherwise false
+   */
+  public boolean processDisconnectMessage(ActorContext context, ChannelAware message) {
+    LOG.debug("[{}][{}] Received disconnect message for channel [{}]",
+        endpointKey, actorKey, message.getChannelUuid());
+    ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
+    if (channel != null) {
+      state.removeChannel(channel);
+      scheduleActorTimeout(context);
+      return true;
+    } else {
+      LOG.debug("[{}][{}] Can't find channel by uuid [{}]",
+          endpointKey, actorKey, message.getChannelUuid());
+      return false;
+    }
+  }
+
+  /**
+   * Process a ping message.
+   *
+   * @param context actor context
+   * @param message channel aware message
+   * @return        true if channel is found otherwise false
+   */
+  public boolean processPingMessage(ActorContext context, ChannelAware message) {
+    LOG.debug("[{}][{}] Received ping message for channel [{}]",
+        endpointKey, actorKey, message.getChannelUuid());
+    ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
+    if (channel != null) {
+      long lastActivityTime = System.currentTimeMillis();
+      LOG.debug("[{}][{}] Updating last activity time for channel [{}] to ",
+          endpointKey, actorKey, message.getChannelUuid(),
+          lastActivityTime);
+      channel.setLastActivityTime(lastActivityTime);
+      channel.getContext().writeAndFlush(new PingResponse());
+      return true;
+    } else {
+      LOG.debug("[{}][{}] Can't find channel by uuid [{}]",
+          endpointKey, actorKey, message.getChannelUuid());
+      return false;
+    }
+  }
+
+  /**
+   * Process a timeout message.
+   *
+   * @param context actor context
+   * @param message channel timeout message
+   * @return        true if channel is removed otherwise false
+   */
+  public boolean processChannelTimeoutMessage(ActorContext context,
+                                              ChannelTimeoutMessage message) {
+    LOG.debug("[{}][{}] Received channel timeout message for channel [{}]",
+        endpointKey, actorKey, message.getChannelUuid());
+    ChannelMetaData channel = state.getChannelById(message.getChannelUuid());
+    if (channel != null) {
+      if (channel.getLastActivityTime() <= message.getLastActivityTime()) {
+        LOG.debug("[{}][{}] Timeout message accepted for channel [{}]. "
+                + "Last activity time {} and timeout is {} ",
+            endpointKey, actorKey, message.getChannelUuid(),
+            channel.getLastActivityTime(), message.getLastActivityTime());
+        state.removeChannel(channel);
+        scheduleActorTimeout(context);
+        return true;
+      } else {
+        LOG.debug("[{}][{}] Timeout message ignored for channel [{}]. "
+                + "Last activity time {} and timeout is {} ",
+            endpointKey, actorKey, message.getChannelUuid(),
+            channel.getLastActivityTime(), message.getLastActivityTime());
+        scheduleKeepAliveCheck(context, channel);
+        return false;
+      }
+    } else {
+      LOG.debug("[{}][{}] Can't find channel by uuid [{}]",
+          endpointKey, actorKey, message.getChannelUuid());
+      scheduleActorTimeout(context);
+      return false;
+    }
+  }
+
+  /**
+   * Process a log delivery message.
+   *
+   * @param context actor context
+   * @param message log delivery message
+   */
+  public void processLogDeliveryMessage(ActorContext context, LogDeliveryMessage message) {
+    LOG.debug("[{}][{}] Received log delivery message for request [{}] with status {}",
+        endpointKey, actorKey, message.getRequestId(),
+        message.isSuccess());
+    logUploadResponseMap.put(message.getRequestId(), message);
+    Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.LOGGING);
+    for (ChannelMetaData channel : channels) {
+      SyncRequestMessage pendingRequest = channel.getRequestMessage();
+      ServerSync pendingResponse = channel.getResponseHolder().getResponse();
+
+      pendingResponse.setLogSync(EntityConvertUtils.convert(logUploadResponseMap));
+
+      LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
+      sendReply(context, pendingRequest, pendingResponse);
+      if (!channel.getType().isAsync()) {
+        state.removeChannel(channel);
+      }
+    }
+    logUploadResponseMap.clear();
+  }
+
+  /**
+   * Process a user verification message.
+   *
+   * @param context actor context
+   * @param message user verification response message
+   */
+  public void processUserVerificationMessage(ActorContext context,
+                                             UserVerificationResponseMessage message) {
+    LOG.debug("[{}][{}] Received user verification message for request [{}] with status {}",
+        endpointKey, actorKey,
+        message.getRequestId(), message.isSuccess());
+    userAttachResponseMap.put(message.getRequestId(), message);
+    Set<ChannelMetaData> channels = state.getChannelsByType(TransportType.USER);
+    Entry<UUID, UserVerificationResponseMessage> entryToSend = userAttachResponseMap.entrySet()
+        .iterator()
+        .next();
+    for (ChannelMetaData channel : channels) {
+      SyncRequestMessage pendingRequest = channel.getRequestMessage();
+      ServerSync pendingResponse = channel.getResponseHolder().getResponse();
+
+      updateResponseWithUserAttachResults(pendingResponse, entryToSend.getValue());
+
+      LOG.debug("[{}][{}] sending reply to [{}] channel", endpointKey, actorKey, channel.getId());
+      sendReply(context, pendingRequest, pendingResponse);
+      if (!channel.getType().isAsync()) {
+        state.removeChannel(channel);
+      }
+    }
+    userAttachResponseMap.remove(entryToSend.getKey());
+    if (message.isSuccess()) {
+      state.setProfile(
+          operationsService.attachEndpointToUser(
+              state.getProfile(), appToken, message.getUserId()));
+      updateUserConnection(context);
+    }
+  }
 }

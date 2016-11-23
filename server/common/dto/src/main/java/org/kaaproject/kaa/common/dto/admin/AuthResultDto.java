@@ -16,74 +16,77 @@
 
 package org.kaaproject.kaa.common.dto.admin;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
+
+import java.io.Serializable;
 
 public class AuthResultDto implements Serializable {
 
-    private static final long serialVersionUID = -8115478415562807295L;
+  private static final long serialVersionUID = -8115478415562807295L;
 
-    private String username;
-    private String displayName;
-    private KaaAuthorityDto authority;
-    private String tenantId;
-    private Result authResult;
+  private String username;
+  private String displayName;
+  private KaaAuthorityDto authority;
+  private String tenantId;
+  private Result authResult;
 
-    public AuthResultDto() {
-    }
+  public AuthResultDto() {
+  }
 
-    public AuthResultDto(String username, String displayName, KaaAuthorityDto authority) {
-        super();
-        this.username = username;
-        this.displayName = displayName;
-        this.authority = authority;
-    }
+  /**
+   * All-args constructor.
+   */
+  public AuthResultDto(String username, String displayName, KaaAuthorityDto authority) {
+    super();
+    this.username = username;
+    this.displayName = displayName;
+    this.authority = authority;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public String getDisplayName() {
-        return displayName;
-    }
+  public String getDisplayName() {
+    return displayName;
+  }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
 
-    public KaaAuthorityDto getAuthority() {
-        return authority;
-    }
+  public KaaAuthorityDto getAuthority() {
+    return authority;
+  }
 
-    public void setAuthority(KaaAuthorityDto authority) {
-        this.authority = authority;
-    }
-    
-    public String getTenantId() {
-        return tenantId;
-    }
+  public void setAuthority(KaaAuthorityDto authority) {
+    this.authority = authority;
+  }
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+  public String getTenantId() {
+    return tenantId;
+  }
 
-    public Result getAuthResult() {
-        return authResult;
-    }
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
 
-    public void setAuthResult(Result authResult) {
-        this.authResult = authResult;
-    }
+  public Result getAuthResult() {
+    return authResult;
+  }
 
-    public static enum Result {
-        ERROR,
-        NOT_LOGGED_IN,
-        OK,
-        KAA_ADMIN_NOT_EXISTS;
-    }
+  public void setAuthResult(Result authResult) {
+    this.authResult = authResult;
+  }
+
+  public static enum Result {
+    ERROR,
+    NOT_LOGGED_IN,
+    OK,
+    KAA_ADMIN_NOT_EXISTS;
+  }
 }

@@ -23,12 +23,11 @@ import java.lang.annotation.Target;
 
 /**
  * Represents a marker annotation for {@link TransportConfig}.
- * 
- * @author Andrew Shvayka
  *
+ * @author Andrew Shvayka
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE) 
+@Target(ElementType.TYPE)
 public @interface KaaTransportConfig {
 
 }

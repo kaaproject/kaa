@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type;
 
-import org.kaaproject.kaa.common.dto.NotificationTypeDto;
-
 import com.datastax.driver.extras.codecs.enums.EnumNameCodec;
+
+import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 
 public class NotificationTypeCodec extends EnumNameCodec<NotificationTypeDto> {
 
-    public NotificationTypeCodec() {
-        super(NotificationTypeDto.class);
-    }
+  public NotificationTypeCodec() {
+    super(NotificationTypeDto.class);
+  }
 
 }

@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -28,184 +24,149 @@ import org.kaaproject.kaa.common.dto.VersionDto;
 import org.kaaproject.kaa.common.dto.admin.SchemaVersions;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * The Class ControlServerProfileSchemaIT.
  */
 public class ControlServerProfileSchemaIT extends AbstractTestControlServer {
 
-    /**
-     * Test create profile schema.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testCreateProfileSchema() throws Exception {
-        EndpointProfileSchemaDto profileSchema = createProfileSchema();
-        Assert.assertFalse(strIsEmpty(profileSchema.getId()));
-    }
-    
-    /**
-     * Test get profile schema.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetProfileSchema() throws Exception {
-        EndpointProfileSchemaDto profileSchema = createProfileSchema();
-        
-        EndpointProfileSchemaDto storedProfileSchema = client.getProfileSchema(profileSchema.getId());
-        
-        Assert.assertNotNull(storedProfileSchema);
-        assertProfileSchemasEquals(profileSchema, storedProfileSchema);
-    }
-    
-    /**
-     * Test get profile schemas by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetProfileSchemasByApplicationId() throws Exception {
-        
-        List<EndpointProfileSchemaDto> profileSchemas  = new ArrayList<>(11);
-        ApplicationDto application = createApplication(tenantAdminDto);
-        
-        loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        
-        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+  /**
+   * Test create profile schema.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testCreateProfileSchema() throws Exception {
+    EndpointProfileSchemaDto profileSchema = createProfileSchema();
+    Assert.assertFalse(strIsEmpty(profileSchema.getId()));
+  }
 
-        List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
-        profileSchemas.addAll(defaultProfileSchemas);
+  /**
+   * Test get profile schema.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetProfileSchema() throws Exception {
+    EndpointProfileSchemaDto profileSchema = createProfileSchema();
 
-        for (int i=0;i<10;i++) {
-            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
-            profileSchemas.add(profileSchema);
-        }
-        
-        Collections.sort(profileSchemas, new IdComparator());
-        
-        List<EndpointProfileSchemaDto> storedProfileSchemas = client.getProfileSchemas(application.getId());
+    EndpointProfileSchemaDto storedProfileSchema = client.getProfileSchema(profileSchema.getId());
 
-        Collections.sort(storedProfileSchemas, new IdComparator());
-        
-        Assert.assertEquals(profileSchemas.size(), storedProfileSchemas.size());
-        for (int i=0;i<profileSchemas.size();i++) {
-            EndpointProfileSchemaDto profileSchema = profileSchemas.get(i);
-            EndpointProfileSchemaDto storedProfileSchema = storedProfileSchemas.get(i);
-            assertProfileSchemasEquals(profileSchema, storedProfileSchema);
-        }
-    }
-    
-    /**
-     * Test get profile schema versions by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetProfileSchemaVersionsByApplicationId() throws Exception {
-        
-        List<EndpointProfileSchemaDto> profileSchemas  = new ArrayList<>(11);
-        ApplicationDto application = createApplication(tenantAdminDto);
-        
-        loginTenantDeveloper(tenantDeveloperDto.getUsername());
-        
-        List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
-        profileSchemas.addAll(defaultProfileSchemas);
+    Assert.assertNotNull(storedProfileSchema);
+    assertProfileSchemasEquals(profileSchema, storedProfileSchema);
+  }
 
-        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+  /**
+   * Test get profile schemas by application id.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetProfileSchemasByApplicationToken() throws Exception {
 
-        for (int i=0;i<10;i++) {
-            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
-            profileSchemas.add(profileSchema);
-        }
-        
-        Collections.sort(profileSchemas, new IdComparator());
-        
-        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationId(application.getId());
-        
-        List<VersionDto> storedProfileSchemas = schemaVersions.getProfileSchemaVersions();
+    List<EndpointProfileSchemaDto> profileSchemas = new ArrayList<>(11);
+    ApplicationDto application = createApplication(tenantAdminDto);
 
-        Collections.sort(storedProfileSchemas, new IdComparator());
-        
-        Assert.assertEquals(profileSchemas.size(), storedProfileSchemas.size());
-        for (int i=0;i<profileSchemas.size();i++) {
-            EndpointProfileSchemaDto profileSchema = profileSchemas.get(i);
-            VersionDto storedProfileSchema = storedProfileSchemas.get(i);
-            assertSchemasEquals(profileSchema, storedProfileSchema);
-        }
+    loginTenantDeveloper(tenantDeveloperDto.getUsername());
+
+    CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+
+    List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getApplicationToken());
+    profileSchemas.addAll(defaultProfileSchemas);
+
+    for (int i = 0; i < 10; i++) {
+      EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
+      profileSchemas.add(profileSchema);
     }
 
-    /**
-     * Test get profile schema versions by application token.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetProfileSchemaVersionsByApplicationToken() throws Exception {
+    Collections.sort(profileSchemas, new IdComparator());
 
-        List<EndpointProfileSchemaDto> profileSchemas  = new ArrayList<>(11);
-        ApplicationDto application = createApplication(tenantAdminDto);
+    List<EndpointProfileSchemaDto> storedProfileSchemas = client.getProfileSchemas(application.getApplicationToken());
 
-        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+    Collections.sort(storedProfileSchemas, new IdComparator());
 
-        List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getId());
-        profileSchemas.addAll(defaultProfileSchemas);
+    Assert.assertEquals(profileSchemas.size(), storedProfileSchemas.size());
+    for (int i = 0; i < profileSchemas.size(); i++) {
+      EndpointProfileSchemaDto profileSchema = profileSchemas.get(i);
+      EndpointProfileSchemaDto storedProfileSchema = storedProfileSchemas.get(i);
+      assertProfileSchemasEquals(profileSchema, storedProfileSchema);
+    }
+  }
 
-        CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
+  /**
+   * Test get profile schema versions by application token.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetProfileSchemaVersionsByApplicationToken() throws Exception {
 
-        for (int i=0;i<10;i++) {
-            EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
-            profileSchemas.add(profileSchema);
-        }
+    List<EndpointProfileSchemaDto> profileSchemas = new ArrayList<>(11);
+    ApplicationDto application = createApplication(tenantAdminDto);
 
-        Collections.sort(profileSchemas, new IdComparator());
+    loginTenantDeveloper(tenantDeveloperDto.getUsername());
 
-        SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
+    List<EndpointProfileSchemaDto> defaultProfileSchemas = client.getProfileSchemas(application.getApplicationToken());
+    profileSchemas.addAll(defaultProfileSchemas);
 
-        List<VersionDto> storedProfileSchemas = schemaVersions.getProfileSchemaVersions();
+    CTLSchemaDto ctlSchema = this.createCTLSchema(this.ctlRandomFieldType(), CTL_DEFAULT_NAMESPACE, 1, tenantDeveloperDto.getTenantId(), null, null, null);
 
-        Collections.sort(storedProfileSchemas, new IdComparator());
-
-        Assert.assertEquals(profileSchemas.size(), storedProfileSchemas.size());
-        for (int i=0;i<profileSchemas.size();i++) {
-            EndpointProfileSchemaDto profileSchema = profileSchemas.get(i);
-            VersionDto storedProfileSchema = storedProfileSchemas.get(i);
-            assertSchemasEquals(profileSchema, storedProfileSchema);
-        }
+    for (int i = 0; i < 10; i++) {
+      EndpointProfileSchemaDto profileSchema = createEndpointProfileSchema(application.getId(), ctlSchema.getId());
+      profileSchemas.add(profileSchema);
     }
 
-    /**
-     * Test update profile schema.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testUpdateProfileSchema() throws Exception {
-        EndpointProfileSchemaDto profileSchema = createProfileSchema();
-        
-        profileSchema.setName("Test Schema 2");
-        profileSchema.setDescription("Test Desc 2");
-        
-        EndpointProfileSchemaDto updatedProfileSchema = client
-                .saveProfileSchema(profileSchema);
+    Collections.sort(profileSchemas, new IdComparator());
 
-        Assert.assertEquals(profileSchema.getApplicationId(), updatedProfileSchema.getApplicationId());
-        Assert.assertEquals(profileSchema.getName(), updatedProfileSchema.getName());
-        Assert.assertEquals(profileSchema.getDescription(), updatedProfileSchema.getDescription());
-        Assert.assertEquals(profileSchema.getCreatedTime(), updatedProfileSchema.getCreatedTime());
-        Assert.assertEquals(profileSchema.getCtlSchemaId(), updatedProfileSchema.getCtlSchemaId());
+    SchemaVersions schemaVersions = client.getSchemaVersionsByApplicationToken(application.getApplicationToken());
+
+    List<VersionDto> storedProfileSchemas = schemaVersions.getProfileSchemaVersions();
+
+    Collections.sort(storedProfileSchemas, new IdComparator());
+
+    Assert.assertEquals(profileSchemas.size(), storedProfileSchemas.size());
+    for (int i = 0; i < profileSchemas.size(); i++) {
+      EndpointProfileSchemaDto profileSchema = profileSchemas.get(i);
+      VersionDto storedProfileSchema = storedProfileSchemas.get(i);
+      assertSchemasEquals(profileSchema, storedProfileSchema);
     }
-    
-    /**
-     * Assert profile schemas equals.
-     *
-     * @param profileSchema the profile schema
-     * @param storedProfileSchema the stored profile schema
-     */
-    private void assertProfileSchemasEquals(EndpointProfileSchemaDto profileSchema, EndpointProfileSchemaDto storedProfileSchema) {
-        Assert.assertEquals(profileSchema.getId(), storedProfileSchema.getId());
-        Assert.assertEquals(profileSchema.getApplicationId(), storedProfileSchema.getApplicationId());
-        Assert.assertEquals(profileSchema.getCtlSchemaId(), storedProfileSchema.getCtlSchemaId());
-    }
- 
+  }
+
+  /**
+   * Test update profile schema.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testUpdateProfileSchema() throws Exception {
+    EndpointProfileSchemaDto profileSchema = createProfileSchema();
+
+    profileSchema.setName("Test Schema 2");
+    profileSchema.setDescription("Test Desc 2");
+
+    EndpointProfileSchemaDto updatedProfileSchema = client
+        .saveProfileSchema(profileSchema);
+
+    Assert.assertEquals(profileSchema.getApplicationId(), updatedProfileSchema.getApplicationId());
+    Assert.assertEquals(profileSchema.getName(), updatedProfileSchema.getName());
+    Assert.assertEquals(profileSchema.getDescription(), updatedProfileSchema.getDescription());
+    Assert.assertEquals(profileSchema.getCreatedTime(), updatedProfileSchema.getCreatedTime());
+    Assert.assertEquals(profileSchema.getCtlSchemaId(), updatedProfileSchema.getCtlSchemaId());
+  }
+
+  /**
+   * Assert profile schemas equals.
+   *
+   * @param profileSchema       the profile schema
+   * @param storedProfileSchema the stored profile schema
+   */
+  private void assertProfileSchemasEquals(EndpointProfileSchemaDto profileSchema, EndpointProfileSchemaDto storedProfileSchema) {
+    Assert.assertEquals(profileSchema.getId(), storedProfileSchema.getId());
+    Assert.assertEquals(profileSchema.getApplicationId(), storedProfileSchema.getApplicationId());
+    Assert.assertEquals(profileSchema.getCtlSchemaId(), storedProfileSchema.getCtlSchemaId());
+  }
+
 }

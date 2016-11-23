@@ -16,35 +16,40 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.avro.ui.gwt.client.widget.grid.event.HasRowActionEventHandlers;
-import org.kaaproject.kaa.common.dto.HasId;
-import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.MultiSelectionModel;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.avro.ui.gwt.client.widget.grid.event.HasRowActionEventHandlers;
+import org.kaaproject.kaa.common.dto.HasId;
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+
 public interface BaseListView<T extends HasId> extends IsWidget, HasErrorMessage {
 
-    HasClickHandlers getAddButton();
-    HasClickHandlers getBackButton();
+  HasClickHandlers getAddButton();
 
-    void setBackEnabled(boolean enabled);
+  HasClickHandlers getBackButton();
 
-    MultiSelectionModel<T> getSelectionModel();
-    AbstractGrid<T,String> getListWidget();
-    HasRowActionEventHandlers<String> getRowActionsSource();
+  void setBackEnabled(boolean enabled);
 
-    void clearError();
+  void setAddButtonEnabled(boolean enabled);
 
-    void setErrorMessage(String message);
+  MultiSelectionModel<T> getSelectionModel();
 
-    void setPresenter(Presenter presenter);
+  AbstractGrid<T, String> getListWidget();
 
-    public interface Presenter {
-        void goTo(Place place);
-    }
+  HasRowActionEventHandlers<String> getRowActionsSource();
+
+  void clearError();
+
+  void setErrorMessage(String message);
+
+  void setPresenter(Presenter presenter);
+
+  public interface Presenter {
+    void goTo(Place place);
+  }
 
 }

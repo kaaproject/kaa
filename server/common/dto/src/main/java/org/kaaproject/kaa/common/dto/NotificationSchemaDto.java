@@ -17,69 +17,69 @@
 package org.kaaproject.kaa.common.dto;
 
 
-public class NotificationSchemaDto extends AbstractSchemaDto {
+public class NotificationSchemaDto extends BaseSchemaDto {
 
-    private static final long serialVersionUID = -2514664251184915862L;
-    
-    private NotificationTypeDto type;
+  private static final long serialVersionUID = -2514664251184915862L;
 
+  private NotificationTypeDto type;
 
-    public NotificationTypeDto getType() {
-        return type;
+  public NotificationTypeDto getType() {
+    return type;
+  }
+
+  public void setType(NotificationTypeDto type) {
+    this.type = type;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof NotificationSchemaDto)) {
+      return false;
     }
 
-    public void setType(NotificationTypeDto type) {
-        this.type = type;
+    NotificationSchemaDto that = (NotificationSchemaDto) obj;
+
+    if (version != that.version) {
+      return false;
+    }
+    if (applicationId != null ? !applicationId.equals(that.applicationId) :
+            that.applicationId != null) {
+      return false;
+    }
+    if (ctlSchemaId != null ? !ctlSchemaId.equals(that.ctlSchemaId) : that.ctlSchemaId != null) {
+      return false;
+    }
+    if (type != that.type) {
+      return false;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof NotificationSchemaDto)) {
-            return false;
-        }
+    return true;
+  }
 
-        NotificationSchemaDto that = (NotificationSchemaDto) o;
+  @Override
+  public int hashCode() {
+    int result = applicationId != null ? applicationId.hashCode() : 0;
+    result = 31 * result + version;
+    result = 31 * result + (type != null ? type.hashCode() : 0);
+    result = 31 * result + (ctlSchemaId != null ? ctlSchemaId.hashCode() : 0);
+    return result;
+  }
 
-        if (version != that.version) {
-            return false;
-        }
-        if (applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null) {
-            return false;
-        }
-        if (schema != null ? !schema.equals(that.schema) : that.schema != null) {
-            return false;
-        }
-        if (type != that.type) {
-            return false;
-        }
+  @Override
+  public String toString() {
+    return "NotificationSchemaDto{"
+           + "id='" + id + '\''
+           + ", applicationId='" + applicationId + '\''
+           + ", majorVersion=" + version
+           + ", type=" + type
+           + ", ctlSchemaId='" + ctlSchemaId + '\''
+           + '}';
+  }
 
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = applicationId != null ? applicationId.hashCode() : 0;
-        result = 31 * result + version;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (schema != null ? schema.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "NotificationSchemaDto{" +
-                "id='" + id + '\'' +
-                ", applicationId='" + applicationId + '\'' +
-                ", majorVersion=" + version +
-                ", type=" + type +
-                ", schema='" + schema + '\'' +
-                '}';
-    }
-
-    public int incrementVersion() {
-        return ++version;
-    }
+  public int incrementVersion() {
+    return ++version;
+  }
 }

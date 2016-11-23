@@ -17,16 +17,15 @@
 package org.kaaproject.kaa.client.profile;
 
 /**
- * Profile runtime exception
+ * Profile runtime exception.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public class ProfileRuntimeException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public ProfileRuntimeException(String message) {
-        super(message);
-    }
+  public ProfileRuntimeException(String message) {
+    super(message);
+  }
 }

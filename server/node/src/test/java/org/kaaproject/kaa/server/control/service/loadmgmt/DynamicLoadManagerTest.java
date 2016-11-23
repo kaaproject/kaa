@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kaaproject.kaa.server.control.service.loadmgmt;
 
@@ -37,157 +37,156 @@ import org.kaaproject.kaa.server.control.service.zk.ControlZkService;
 
 /**
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
- *
  */
 public class DynamicLoadManagerTest {
 
-    private static LoadDistributionService ldServiceMock;
-    private static ControlZkService zkServiceMock;
-    private static ControlNode pNodeMock;
-    
-    /**
-     * @throws java.lang.Exception
-     */
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        ldServiceMock = mock(LoadDistributionService.class);
-        zkServiceMock = mock(ControlZkService.class);
-        pNodeMock = mock(ControlNode.class);
-        when(ldServiceMock.getOpsServerHistoryTTL()).thenReturn(300);
-        when(ldServiceMock.getRebalancer()).thenReturn(new EndpointCountRebalancer());
-        when(ldServiceMock.getZkService()).thenReturn(zkServiceMock);
-        when(zkServiceMock.getControlZKNode()).thenReturn(pNodeMock);
-    }
+  private static LoadDistributionService ldServiceMock;
+  private static ControlZkService zkServiceMock;
+  private static ControlNode pNodeMock;
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#DynamicLoadManager(org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService)}.
-     */
-    @Test
-    public void testDynamicLoadManager() {
-        DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
-        assertNotNull(dm);
-        assertNotNull(dm.getLoadDistributionService());
-        assertNotNull(dm.getDynamicRebalancer());
-        verify(ldServiceMock, atLeast(1)).getOpsServerHistoryTTL();
-        assertEquals(300000, dm.getOpsServerHistoryTTL());
-    }
-    
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#recalculate()}.
-     */
-    @Test
-    public void testRecalculate() {
-        DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
-        assertNotNull(dm);
-        dm.recalculate();
-    }
+  /**
+   * @throws java.lang.Exception
+   */
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
+    ldServiceMock = mock(LoadDistributionService.class);
+    zkServiceMock = mock(ControlZkService.class);
+    pNodeMock = mock(ControlNode.class);
+    when(ldServiceMock.getOpsServerHistoryTtl()).thenReturn(300);
+    when(ldServiceMock.getRebalancer()).thenReturn(new EndpointCountRebalancer());
+    when(ldServiceMock.getZkService()).thenReturn(zkServiceMock);
+    when(zkServiceMock.getControlZkNode()).thenReturn(pNodeMock);
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#registerListeners()}.
-     */
-    @Test
-    public void testRegisterListeners() {
-        DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
-        assertNotNull(dm);
-        dm.registerListeners();
-        
-        verify(pNodeMock, atLeast(1)).addListener((OperationsNodeListener)dm);
-        //verify(pNodeMock, times(1)).addListener((BootstrapNodeListener)dm);
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#DynamicLoadManager(org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService)}.
+   */
+  @Test
+  public void testDynamicLoadManager() {
+    DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
+    assertNotNull(dm);
+    assertNotNull(dm.getLoadDistributionService());
+    assertNotNull(dm.getDynamicRebalancer());
+    verify(ldServiceMock, atLeast(1)).getOpsServerHistoryTtl();
+    assertEquals(300000, dm.getOpsServerHistoryTtl());
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#deregisterListeners()}.
-     */
-    @Ignore
-    @Test
-    public void testDeregisterListeners() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#recalculate()}.
+   */
+  @Test
+  public void testRecalculate() {
+    DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
+    assertNotNull(dm);
+    dm.recalculate();
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeAdded(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo)}.
-     */
-    @Ignore
-    @Test
-    public void testOnNodeAddedBootstrapNodeInfo() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#registerListeners()}.
+   */
+  @Test
+  public void testRegisterListeners() {
+    DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
+    assertNotNull(dm);
+    dm.registerListeners();
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeUpdated(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo)}.
-     */
-    @Ignore
-    @Test
-    public void testOnNodeUpdatedBootstrapNodeInfo() {
-        fail("Not yet implemented");
-    }
+    verify(pNodeMock, atLeast(1)).addListener((OperationsNodeListener) dm);
+    //verify(pNodeMock, times(1)).addListener((BootstrapNodeListener)dm);
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeRemoved(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo)}.
-     */
-    @Ignore
-    @Test
-    public void testOnNodeRemovedBootstrapNodeInfo() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#deregisterListeners()}.
+   */
+  @Ignore
+  @Test
+  public void testDeregisterListeners() {
+    fail("Not yet implemented");
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeAdded(org.kaaproject.kaa.server.common.zk.gen.EndpointNodeInfo)}.
-     */
-    @Ignore
-    @Test
-    public void testOnNodeAddedEndpointNodeInfo() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeAdded(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo)}.
+   */
+  @Ignore
+  @Test
+  public void testOnNodeAddedBootstrapNodeInfo() {
+    fail("Not yet implemented");
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeUpdated(org.kaaproject.kaa.server.common.zk.gen.EndpointNodeInfo)}.
-     */
-    @Ignore
-    @Test
-    public void testOnNodeUpdatedEndpointNodeInfo() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeUpdated(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo)}.
+   */
+  @Ignore
+  @Test
+  public void testOnNodeUpdatedBootstrapNodeInfo() {
+    fail("Not yet implemented");
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeRemoved(org.kaaproject.kaa.server.common.zk.gen.EndpointNodeInfo)}.
-     */
-    @Ignore
-    @Test
-    public void testOnNodeRemovedEndpointNodeInfo() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeRemoved(org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo)}.
+   */
+  @Ignore
+  @Test
+  public void testOnNodeRemovedBootstrapNodeInfo() {
+    fail("Not yet implemented");
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#getLoadDistributionService()}.
-     */
-    @Ignore
-    @Test
-    public void testGetLoadDistributionService() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeAdded(org.kaaproject.kaa.server.common.zk.gen.EndpointNodeInfo)}.
+   */
+  @Ignore
+  @Test
+  public void testOnNodeAddedEndpointNodeInfo() {
+    fail("Not yet implemented");
+  }
 
-    /**
-     * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#setLoadDistributionService(org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService)}.
-     */
-    @Ignore
-    @Test
-    public void testSetLoadDistributionService() {
-        fail("Not yet implemented");
-    }
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeUpdated(org.kaaproject.kaa.server.common.zk.gen.EndpointNodeInfo)}.
+   */
+  @Ignore
+  @Test
+  public void testOnNodeUpdatedEndpointNodeInfo() {
+    fail("Not yet implemented");
+  }
+
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#onNodeRemoved(org.kaaproject.kaa.server.common.zk.gen.EndpointNodeInfo)}.
+   */
+  @Ignore
+  @Test
+  public void testOnNodeRemovedEndpointNodeInfo() {
+    fail("Not yet implemented");
+  }
+
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#getLoadDistributionService()}.
+   */
+  @Ignore
+  @Test
+  public void testGetLoadDistributionService() {
+    fail("Not yet implemented");
+  }
+
+  /**
+   * Test method for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#setLoadDistributionService(org.kaaproject.kaa.server.control.service.loadmgmt.LoadDistributionService)}.
+   */
+  @Ignore
+  @Test
+  public void testSetLoadDistributionService() {
+    fail("Not yet implemented");
+  }
 
 
-    /**
-     * Test methods for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#setOpsServerHistoryTTL(long)}.
-     * and {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#getOpsServerHistoryTTL(long)}
-     */
-    @Test
-    public void testEndpointHistoryTTL() {
-        DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
-        assertNotNull(dm);
-        long opsServerHistoryTTL = 123456;
-        dm.setOpsServerHistoryTTL(opsServerHistoryTTL );
-        assertEquals(opsServerHistoryTTL, dm.getOpsServerHistoryTTL());
-    }
+  /**
+   * Test methods for {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#setOpsServerHistoryTtl(long)}.
+   * and {@link org.kaaproject.kaa.server.control.service.loadmgmt.DynamicLoadManager#getOpsServerHistoryTTL(long)}
+   */
+  @Test
+  public void testEndpointHistoryTTL() {
+    DynamicLoadManager dm = new DynamicLoadManager(ldServiceMock);
+    assertNotNull(dm);
+    long opsServerHistoryTTL = 123456;
+    dm.setOpsServerHistoryTtl(opsServerHistoryTTL);
+    assertEquals(opsServerHistoryTTL, dm.getOpsServerHistoryTtl());
+  }
 
 }

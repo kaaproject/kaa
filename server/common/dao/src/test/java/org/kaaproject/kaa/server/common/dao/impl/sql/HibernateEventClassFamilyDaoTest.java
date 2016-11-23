@@ -16,16 +16,17 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamily;
+import org.kaaproject.kaa.server.common.dao.model.sql.EventClassFamilyVersion;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
@@ -33,54 +34,74 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class HibernateEventClassFamilyDaoTest extends HibernateAbstractTest {
 
-    @Test
-    public void removeByTenantId() {
-        List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
-        EventClassFamily eventClassFamily = eventClassFamilies.get(0);
-        EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
-        Assert.assertNotNull(dto);
-        Assert.assertNotNull(dto.getTenant());
+  @Test
+  public void removeByTenantId() {
+    List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
+    EventClassFamily eventClassFamily = eventClassFamilies.get(0);
+    EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
+    Assert.assertNotNull(dto);
+    Assert.assertNotNull(dto.getTenant());
 
-        eventClassFamilyDao.removeByTenantId(dto.getTenant().getStringId());
-        dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
-        Assert.assertNull(dto);
+    eventClassFamilyDao.removeByTenantId(dto.getTenant().getStringId());
+    dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
+    Assert.assertNull(dto);
+  }
+
+  @Test
+  public void removeById() {
+    List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
+    EventClassFamily eventClassFamily = eventClassFamilies.get(0);
+    EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
+    Assert.assertNotNull(dto);
+
+    eventClassFamilyDao.removeById(eventClassFamily.getStringId());
+    dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
+    Assert.assertNull(dto);
+  }
+
+  @Test
+  public void findByTenantIdTest() {
+    List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
+    EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamilies.get(0).getStringId());
+    Assert.assertNotNull(dto);
+    List<EventClassFamily> eventClassFamilyList = eventClassFamilyDao.findByTenantId(dto.getTenant().getStringId());
+    EventClassFamily eventClassFamily = null;
+    for (EventClassFamily found : eventClassFamilyList) {
+      if (dto.getId().equals(found.getId())) {
+        eventClassFamily = found;
+      }
     }
+    Assert.assertNotNull(eventClassFamily);
+    Assert.assertEquals(dto, eventClassFamily);
+  }
 
-    @Test
-    public void removeById() {
-        List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
-        EventClassFamily eventClassFamily = eventClassFamilies.get(0);
-        EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
-        Assert.assertNotNull(dto);
+  @Test
+  public void findByTenantIdAndNameTest() {
+    List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
+    EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamilies.get(0).getStringId());
+    Assert.assertNotNull(dto);
+    EventClassFamily eventClassFamily = eventClassFamilyDao.findByTenantIdAndName(dto.getTenant().getStringId(), dto.getName());
+    Assert.assertNotNull(eventClassFamily);
+    Assert.assertEquals(dto, eventClassFamily);
+  }
 
-        eventClassFamilyDao.removeById(eventClassFamily.getStringId());
-        dto = eventClassFamilyDao.findById(eventClassFamily.getStringId());
-        Assert.assertNull(dto);
+  @Test
+  public void findByEcfvIdTest() {
+    List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 1);
+    EventClassFamily ecf = eventClassFamilies.get(0);
+    List<EventClassFamilyVersion> ecfvList = generateEventClassFamilyVersion(ecf, 1, 1);
+    ecf.setSchemas(ecfvList);
+    ecf = eventClassFamilyDao.save(ecf);
+
+    EventClassFamilyVersion ecfv = ecfvList.get(0);
+    EventClassFamily ecfByEcfv = eventClassFamilyDao.findByEcfvId(ecfv.getStringId());
+    Assert.assertNotNull(ecfByEcfv);
+    Assert.assertEquals(ecf, ecfByEcfv);
+    Assert.assertEquals(ecfByEcfv.getSchemas().size(), 1);
+    if (ecfByEcfv.getSchemas().size() == 1) {
+      Assert.assertEquals(ecfByEcfv.getSchemas().get(0).getRecords().size(), 1);
+    } else {
+      throw new AssertionError("There should be 1 ecfv in fetched ecf, but got: " + ecfByEcfv.getSchemas().size());
     }
-
-    @Test
-    public void findByTenantIdTest() {
-        List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
-        EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamilies.get(0).getStringId());
-        Assert.assertNotNull(dto);
-        List<EventClassFamily> eventClassFamilyList = eventClassFamilyDao.findByTenantId(dto.getTenant().getStringId());
-        EventClassFamily eventClassFamily = null;
-        for (EventClassFamily found : eventClassFamilyList) {
-            if (dto.getId().equals(found.getId())) {
-                eventClassFamily = found;
-            }
-        }
-        Assert.assertNotNull(eventClassFamily);
-        Assert.assertEquals(dto, eventClassFamily);
-    }
-
-    @Test
-    public void findByTenantIdAndNameTest() {
-        List<EventClassFamily> eventClassFamilies = generateEventClassFamily(null, 2);
-        EventClassFamily dto = eventClassFamilyDao.findById(eventClassFamilies.get(0).getStringId());
-        Assert.assertNotNull(dto);
-        EventClassFamily eventClassFamily = eventClassFamilyDao.findByTenantIdAndName(dto.getTenant().getStringId(), dto.getName());
-        Assert.assertNotNull(eventClassFamily);
-        Assert.assertEquals(dto, eventClassFamily);
-    }
+  }
 }

@@ -31,19 +31,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class MongoDBConfigurationServiceImplTest extends ConfigurationServiceImplTest {
 
-    @BeforeClass
-    public static void init() throws Exception {
-        MongoDBTestRunner.setUp();
-    }
+  @BeforeClass
+  public static void init() throws Exception {
+    MongoDBTestRunner.setUp();
+  }
 
-    @AfterClass
-    public static void after() throws Exception {
-        MongoDBTestRunner.tearDown();
-    }
+  @AfterClass
+  public static void after() throws Exception {
+    MongoDBTestRunner.tearDown();
+  }
 
-    @After
-    public void afterTest() {
-        MongoDataLoader.clearDBData();
-        clearDBData();
-    }
+  @After
+  public void afterTest() {
+    MongoDataLoader.clearDBData();
+    clearDBData();
+  }
 }

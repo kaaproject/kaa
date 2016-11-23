@@ -16,16 +16,16 @@
 
 package org.kaaproject.kaa.server.common;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.support.ResourcePropertySource;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Class AbstractServerApplication provides implementation for common server
@@ -36,103 +36,116 @@ import org.springframework.core.io.support.ResourcePropertySource;
  */
 public abstract class AbstractServerApplication {
 
-    /** The Constant XML. */
-    private static final String XML = ".xml";
+  /**
+   * The Constant XML.
+   */
+  private static final String XML = ".xml";
 
-    /** The Constant PROPERTIES. */
-    private static final String PROPERTIES = ".properties";
+  /**
+   * The Constant PROPERTIES.
+   */
+  private static final String PROPERTIES = ".properties";
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractServerApplication.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractServerApplication.class);
 
-    /** The default context files. */
-    private String[] defaultContextFiles;
+  /**
+   * The default context files.
+   */
+  private String[] defaultContextFiles;
 
-    /** The default configuration files. */
-    private String[] defaultConfigurationFiles;
+  /**
+   * The default configuration files.
+   */
+  private String[] defaultConfigurationFiles;
 
-    /**
-     * Instantiates a new abstract server application.
-     * 
-     * @param defaultContextFiles
-     *            the default context files to use
-     * @param defaultConfigurationFiles
-     *            the default configuration files to use
-     */
-    public AbstractServerApplication(String[] defaultContextFiles, String[] defaultConfigurationFiles) {
-        super();
-        this.defaultContextFiles = defaultContextFiles;
-        this.defaultConfigurationFiles = defaultConfigurationFiles;
+  /**
+   * Instantiates a new abstract server application.
+   *
+   * @param defaultContextFiles       the default context files to use
+   * @param defaultConfigurationFiles the default configuration files to use
+   */
+  public AbstractServerApplication(
+          String[] defaultContextFiles,
+          String[] defaultConfigurationFiles
+  ) {
+    super();
+    this.defaultContextFiles = defaultContextFiles;
+    this.defaultConfigurationFiles = defaultConfigurationFiles;
+  }
+
+  /**
+   * Initialize {@link ApplicationContext} and populates
+   * {@link org.springframework.core.env.Environment} with values from properties files
+   *
+   * @param args arguments that overwrite default configuration and properties files
+   */
+  public void startAndWait(String[] args) {
+    LOG.info("{} application starting...", getName());
+    Environment.logState();
+
+    String[] appContextXmls = defaultContextFiles;
+    String[] appPropertiesFiles = defaultConfigurationFiles;
+    if (args.length > 0) {
+      List<String> contexts = new ArrayList<>();
+      List<String> properties = new ArrayList<>();
+      for (String arg : args) {
+        if (arg.endsWith(XML) || arg.endsWith(XML.toUpperCase())) {
+          contexts.add(arg);
+        } else if (arg.endsWith(PROPERTIES) || arg.endsWith(PROPERTIES.toUpperCase())) {
+          properties.add(arg);
+        }
+      }
+      if (!contexts.isEmpty()) {
+        appContextXmls = contexts.toArray(new String[contexts.size()]);
+      }
+      if (!properties.isEmpty()) {
+        appPropertiesFiles = properties.toArray(new String[properties.size()]);
+      }
     }
 
-    /**
-     * Initialize {@link ApplicationContext} and populates 
-     * {@link org.springframework.core.env.Environment} with values from properties files
-     * 
-     * @param args
-     *            arguments that overwrite default configuration and properties files
-     */
-    public void startAndWait(String[] args) {
-        LOG.info("{} application starting...", getName());
-        Environment.logState();
-
-        String[] appContextXmls = defaultContextFiles;
-        String[] appPropertiesFiles = defaultConfigurationFiles;
-        if (args.length > 0) {
-            List<String> contexts = new ArrayList<>();
-            List<String> properties = new ArrayList<>();
-            for (String arg : args) {
-                if (arg.endsWith(XML) || arg.endsWith(XML.toUpperCase())) {
-                    contexts.add(arg);
-                } else if (arg.endsWith(PROPERTIES) || arg.endsWith(PROPERTIES.toUpperCase())) {
-                    properties.add(arg);
-                }
-            }
-            if (!contexts.isEmpty()) {
-                appContextXmls = contexts.toArray(new String[contexts.size()]);
-            }
-            if (!properties.isEmpty()) {
-                appPropertiesFiles = properties.toArray(new String[properties.size()]);
-            }
-        }
-
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(appContextXmls, false);
+    ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(appContextXmls, false);
+    try {
+      MutablePropertySources sources = ctx.getEnvironment().getPropertySources();
+      for (String propertyFile : appPropertiesFiles) {
         try {
-            MutablePropertySources sources = ctx.getEnvironment().getPropertySources();
-            for (String propertyFile : appPropertiesFiles) {
-                try {
-                    sources.addLast(new ResourcePropertySource(propertyFile, AbstractServerApplication.class
-                            .getClassLoader()));
-                } catch (IOException e) {
-                    LOG.error("Can't load properties file {} from classpath, exception catched {}", propertyFile, e);
-                    return;
-                }
-            }
-            ctx.refresh();
-            init(ctx);
-        } catch(Exception e){
-            LOG.info("Error during initialization of context", e);
-            throw e;
-        }finally {
-            ctx.close();
+          sources.addLast(new ResourcePropertySource(propertyFile, AbstractServerApplication.class
+              .getClassLoader()));
+        } catch (IOException ioException) {
+          LOG.error(
+                  "Can't load properties file {} from classpath, exception catched {}",
+                  propertyFile,
+                  ioException
+          );
+          return;
         }
+      }
+      ctx.refresh();
+      init(ctx);
+    } catch (Exception initializationException) {
+      LOG.info("Error during initialization of context", initializationException);
+      throw initializationException;
+    } finally {
+      ctx.close();
+    }
 
-        LOG.info("{} application stopped.", getName());
-    };
+    LOG.info("{} application stopped.", getName());
+  }
 
-    /**
-     * Gets the name of the service.
-     * 
-     * @return the name
-     */
-    protected abstract String getName();
+  /**
+   * Gets the name of the service.
+   *
+   * @return the name
+   */
+  protected abstract String getName();
 
-    /**
-     * Inits custom server components based on already initialized {@link ApplicationContext}.
-     * 
-     * @param context
-     *            the context
-     */
-    protected abstract void init(ApplicationContext context);
+  /**
+   * Inits custom server components based on already initialized {@link ApplicationContext}.
+   *
+   * @param context the context
+   */
+  protected abstract void init(ApplicationContext context);
 
 }

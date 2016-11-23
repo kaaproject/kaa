@@ -16,59 +16,60 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.UserPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.UserView;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 public class UserActivity extends
-        AbstractUserActivity<UserDto, UserView, UserPlace> {
+    AbstractUserActivity<UserDto, UserView, UserPlace> {
 
-    public UserActivity(UserPlace place, ClientFactory clientFactory) {
-        super(place, clientFactory);
+  public UserActivity(UserPlace place, ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
+
+  @Override
+  protected UserView getView(boolean create) {
+    if (create) {
+      return clientFactory.getCreateUserView();
+    } else {
+      return clientFactory.getUserView();
     }
+  }
 
-    @Override
-    protected UserView getView(boolean create) {
-      if (create) {
-          return clientFactory.getCreateUserView();
-      } else {
-          return clientFactory.getUserView();
-      }
+  @Override
+  protected UserDto newEntity() {
+    return new UserDto();
+  }
+
+  @Override
+  protected void onEntityRetrieved() {
+    super.onEntityRetrieved();
+    if (!create) {
+      detailsView.setTitle(entity.getUsername());
     }
+    detailsView.getAuthority().setValue(entity.getAuthority());
+    entity.setTenantId(place.getTenId());
+  }
 
-    @Override
-    protected UserDto newEntity() {
-        return new UserDto();
-    }
+  @Override
+  protected void onSave() {
+    super.onSave();
+    entity.setAuthority(detailsView.getAuthority().getValue());
+  }
 
-      @Override
-      protected void onEntityRetrieved() {
-          super.onEntityRetrieved();
-          if (!create) {
-              detailsView.setTitle(entity.getUsername());
-          }
-          detailsView.getAuthority().setValue(entity.getAuthority());
-      }
+  @Override
+  protected void getEntity(String id, AsyncCallback<UserDto> callback) {
+    KaaAdmin.getDataSource().getUser(id, callback);
+  }
 
-      @Override
-      protected void onSave() {
-          super.onSave();
-          entity.setAuthority(detailsView.getAuthority().getValue());
-      }
-
-      @Override
-      protected void getEntity(String id, AsyncCallback<UserDto> callback) {
-          KaaAdmin.getDataSource().getUser(id, callback);
-      }
-
-      @Override
-      protected void editEntity(UserDto entity,
-              AsyncCallback<UserDto> callback) {
-          KaaAdmin.getDataSource().editUser(entity, callback);
-      }
+  @Override
+  protected void editEntity(UserDto entity,
+                            AsyncCallback<UserDto> callback) {
+    KaaAdmin.getDataSource().editUser(entity, callback);
+  }
 
 }

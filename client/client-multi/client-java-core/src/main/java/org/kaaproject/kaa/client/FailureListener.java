@@ -21,5 +21,5 @@ package org.kaaproject.kaa.client;
  * that client should not handle on its own.
  */
 public interface FailureListener {
-    void onFailure();
+  void onFailure();
 }

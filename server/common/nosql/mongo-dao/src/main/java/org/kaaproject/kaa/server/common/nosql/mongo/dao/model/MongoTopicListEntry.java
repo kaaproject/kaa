@@ -20,11 +20,6 @@ import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelC
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_SIMPLE_HASH;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.TOPIC_LIST_TOPIC_IDS;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.TopicDto;
 import org.kaaproject.kaa.common.dto.TopicListEntryDto;
 import org.kaaproject.kaa.server.common.dao.model.TopicListEntry;
@@ -33,89 +28,99 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Document(collection = TOPIC_LIST_ENTRY)
 public final class MongoTopicListEntry implements TopicListEntry, Serializable {
 
-    private static final long serialVersionUID = -5646769700581347085L;
+  private static final long serialVersionUID = -5646769700581347085L;
 
-    @Id
-    private byte[] hash;
+  @Id
+  private byte[] hash;
 
-    @Field(TOPIC_LIST_SIMPLE_HASH)
-    private int simpleHash;
+  @Field(TOPIC_LIST_SIMPLE_HASH)
+  private int simpleHash;
 
-    @Field(TOPIC_LIST_TOPIC_IDS)
-    private List<String> topicIds;
+  @Field(TOPIC_LIST_TOPIC_IDS)
+  private List<String> topicIds;
 
-    public MongoTopicListEntry() {
+  public MongoTopicListEntry() {
+  }
+
+  /**
+   * Create new instance of <code>MongoTopicListEntry</code>.
+   * @param dto data transfer object contain data that
+   *            assign on fields of new instance
+   */
+  public MongoTopicListEntry(TopicListEntryDto dto) {
+    this.hash = dto.getHash();
+    this.simpleHash = dto.getSimpleHash();
+    this.topicIds = new ArrayList<>();
+    if (dto.getTopics() != null) {
+      for (TopicDto topic : dto.getTopics()) {
+        topicIds.add(topic.getId());
+      }
+    }
+  }
+
+  public byte[] getHash() {
+    return hash;
+  }
+
+  public void setHash(byte[] hash) {
+    this.hash = hash;
+  }
+
+  public int getSimpleHash() {
+    return simpleHash;
+  }
+
+  public void setSimpleHash(int simpleHash) {
+    this.simpleHash = simpleHash;
+  }
+
+  public List<String> getTopicIds() {
+    return topicIds;
+  }
+
+  public void setTopicIds(List<String> topicIds) {
+    this.topicIds = topicIds;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (!(object instanceof MongoTopicListEntry)) {
+      return false;
     }
 
-    public MongoTopicListEntry(TopicListEntryDto dto) {
-        this.hash = dto.getHash();
-        this.simpleHash = dto.getSimpleHash();
-        this.topicIds = new ArrayList<>();
-        if (dto.getTopics() != null) {
-            for (TopicDto topic : dto.getTopics()) {
-                topicIds.add(topic.getId());
-            }
-        }
+    MongoTopicListEntry that = (MongoTopicListEntry) object;
+
+    if (simpleHash != that.simpleHash) {
+      return false;
+    }
+    if (!Arrays.equals(hash, that.hash)) {
+      return false;
     }
 
-    public byte[] getHash() {
-        return hash;
-    }
+    return true;
+  }
 
-    public void setHash(byte[] hash) {
-        this.hash = hash;
-    }
+  @Override
+  public int hashCode() {
+    int result = hash != null ? Arrays.hashCode(hash) : 0;
+    result = 31 * result + simpleHash;
+    return result;
+  }
 
-    public int getSimpleHash() {
-        return simpleHash;
-    }
-
-    public void setSimpleHash(int simpleHash) {
-        this.simpleHash = simpleHash;
-    }
-
-    public List<String> getTopicIds() {
-        return topicIds;
-    }
-
-    public void setTopicIds(List<String> topicIds) {
-        this.topicIds = topicIds;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof MongoTopicListEntry)) {
-            return false;
-        }
-
-        MongoTopicListEntry that = (MongoTopicListEntry) o;
-
-        if (simpleHash != that.simpleHash) {
-            return false;
-        }
-        if (!Arrays.equals(hash, that.hash)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = hash != null ? Arrays.hashCode(hash) : 0;
-        result = 31 * result + simpleHash;
-        return result;
-    }
-
-    @Override
-    public TopicListEntryDto toDto() {
-        List<TopicDto> topicDtos = ModelUtils.getTopicDtos(topicIds);
-        return new TopicListEntryDto(simpleHash, hash, topicDtos);
-    }
+  @Override
+  public TopicListEntryDto toDto() {
+    List<TopicDto> topicDtos = ModelUtils.getTopicDtos(topicIds);
+    return new TopicListEntryDto(simpleHash, hash, topicDtos);
+  }
 }

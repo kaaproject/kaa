@@ -23,14 +23,14 @@ import java.util.Collections;
 import java.util.Set;
 
 public class PlatformLookupTest {
-    @Test
-    public void lookupPlatformProtocolsInWrongPackageTest() {
-        Assert.assertTrue(PlatformLookup.lookupPlatformProtocols("some.wrong.package").isEmpty());
-    }
+  @Test
+  public void lookupPlatformProtocolsInWrongPackageTest() {
+    Assert.assertTrue(PlatformLookup.lookupPlatformProtocols("some.wrong.package").isEmpty());
+  }
 
-    @Test
-    public void initEmptyPlatformProtocolMap() {
-        Set<String> platformProtocols = Collections.emptySet();
-        Assert.assertTrue(PlatformLookup.initPlatformProtocolMap(platformProtocols).isEmpty());
-    }
+  @Test
+  public void initEmptyPlatformProtocolMap() {
+    Set<String> platformProtocols = Collections.emptySet();
+    Assert.assertTrue(PlatformLookup.initPlatformProtocolMap(platformProtocols).isEmpty());
+  }
 }

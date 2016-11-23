@@ -13,85 +13,89 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.flume.sink.hdfs;
 
 import org.apache.hadoop.fs.Path;
 
 public class HdfsSinkKey {
 
-    private String rootPath;
-    private KaaSinkKey kaaSinkKey;
-    
-    public HdfsSinkKey(String rootPath, KaaSinkKey kaaSinkKey) {
-        super();
-        this.rootPath = rootPath;
-        this.kaaSinkKey = kaaSinkKey;
-    }
+  private String rootPath;
+  private KaaSinkKey kaaSinkKey;
 
-    public String getRootPath() {
-        return rootPath;
-    }
+  /**
+   * Instantiates a new HdfsSinkKey.
+   */
+  public HdfsSinkKey(String rootPath, KaaSinkKey kaaSinkKey) {
+    super();
+    this.rootPath = rootPath;
+    this.kaaSinkKey = kaaSinkKey;
+  }
 
-    public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
-    }
-    
-    public KaaSinkKey getKaaSinkKey() {
-        return kaaSinkKey;
-    }
+  public String getRootPath() {
+    return rootPath;
+  }
 
-    public void setKaaSinkKey(KaaSinkKey kaaSinkKey) {
-        this.kaaSinkKey = kaaSinkKey;
-    }
+  public void setRootPath(String rootPath) {
+    this.rootPath = rootPath;
+  }
 
-    public String getPath() {
-        return rootPath + Path.SEPARATOR + kaaSinkKey.getPath();
-    }
+  public KaaSinkKey getKaaSinkKey() {
+    return kaaSinkKey;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((kaaSinkKey == null) ? 0 : kaaSinkKey.hashCode());
-        result = prime * result
-                + ((rootPath == null) ? 0 : rootPath.hashCode());
-        return result;
-    }
+  public void setKaaSinkKey(KaaSinkKey kaaSinkKey) {
+    this.kaaSinkKey = kaaSinkKey;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        HdfsSinkKey other = (HdfsSinkKey) obj;
-        if (kaaSinkKey == null) {
-            if (other.kaaSinkKey != null) {
-                return false;
-            }
-        } else if (!kaaSinkKey.equals(other.kaaSinkKey)) {
-            return false;
-        }
-        if (rootPath == null) {
-            if (other.rootPath != null) {
-                return false;
-            }
-        } else if (!rootPath.equals(other.rootPath)) {
-            return false;
-        }
-        return true;
-    }
+  public String getPath() {
+    return rootPath + Path.SEPARATOR + kaaSinkKey.getPath();
+  }
 
-    @Override
-    public String toString() {
-        return "HdfsSinkKey [rootPath=" + rootPath + ", kaaSinkKey="
-                + kaaSinkKey + "]";
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((kaaSinkKey == null) ? 0 : kaaSinkKey.hashCode());
+    result = prime * result
+        + ((rootPath == null) ? 0 : rootPath.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-    
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    HdfsSinkKey other = (HdfsSinkKey) obj;
+    if (kaaSinkKey == null) {
+      if (other.kaaSinkKey != null) {
+        return false;
+      }
+    } else if (!kaaSinkKey.equals(other.kaaSinkKey)) {
+      return false;
+    }
+    if (rootPath == null) {
+      if (other.rootPath != null) {
+        return false;
+      }
+    } else if (!rootPath.equals(other.rootPath)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "HdfsSinkKey [rootPath=" + rootPath + ", kaaSinkKey="
+        + kaaSinkKey + "]";
+  }
+
 }

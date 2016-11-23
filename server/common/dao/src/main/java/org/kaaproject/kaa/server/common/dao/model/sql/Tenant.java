@@ -16,107 +16,114 @@
 
 package org.kaaproject.kaa.server.common.dao.model.sql;
 
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_NAME;
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_TABLE_NAME;
+import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
+
 import org.kaaproject.kaa.common.dto.TenantDto;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.Serializable;
-
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_NAME;
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.TENANT_TABLE_NAME;
-import static org.kaaproject.kaa.server.common.dao.model.sql.ModelUtils.getLongId;
 
 @Entity
 @Table(name = TENANT_TABLE_NAME)
 public class Tenant extends GenericModel<TenantDto> implements Serializable {
 
-    private static final long serialVersionUID = 4800104335859412180L;
+  private static final long serialVersionUID = 4800104335859412180L;
 
-    @Column(name = TENANT_NAME, unique = true, length = 100)
-    private String name;
+  @Column(name = TENANT_NAME, unique = true, length = 100)
+  private String name;
 
-    public Tenant() {
+  public Tenant() {
+  }
+
+  public Tenant(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * Create new instance of tenant.
+   *
+   * @param dto data transfer object that used for creating new instance,
+   *            it hold id and name of new instance
+   */
+  public Tenant(TenantDto dto) {
+    if (dto != null) {
+      this.id = getLongId(dto);
+      this.name = dto.getName();
     }
+  }
 
-    public Tenant(Long id) {
-        this.id = id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Tenant(TenantDto dto) {
-        if (dto != null) {
-            this.id = getLongId(dto);
-            this.name = dto.getName();
-        }
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 67;
+    int result = 7;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    return result;
+  }
 
-    public void setName(String name) {
-        this.name = name;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    Tenant other = (Tenant) obj;
+    if (id == null) {
+      if (other.id != null) {
+        return false;
+      }
+    } else if (!id.equals(other.id)) {
+      return false;
+    }
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else if (!name.equals(other.name)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 67;
-        int result = 7;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
-    }
+  @Override
+  protected TenantDto createDto() {
+    return new TenantDto();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Tenant other = (Tenant) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  protected GenericModel<TenantDto> newInstance(Long id) {
+    return new Tenant(id);
+  }
 
-    @Override
-    protected TenantDto createDto() {
-        return new TenantDto();
-    }
+  @Override
+  public TenantDto toDto() {
+    TenantDto dto = createDto();
+    dto.setId(getStringId());
+    dto.setName(name);
+    return dto;
+  }
 
-    @Override
-    protected GenericModel<TenantDto> newInstance(Long id) {
-        return new Tenant(id);
-    }
-
-    @Override
-    public TenantDto toDto() {
-        TenantDto dto = createDto();
-        dto.setId(getStringId());
-        dto.setName(name);
-        return dto;
-    }
-
-    @Override
-    public String toString() {
-        return "Tenant [name=" + name + ", id=" + id + "]";
-    }
+  @Override
+  public String toString() {
+    return "Tenant [name=" + name + ", id=" + id + "]";
+  }
 
 }

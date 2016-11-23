@@ -29,7 +29,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kaaproject.kaa.server.common.dao.model.sql;
+
+import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_SCHEMA_TABLE_NAME;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,40 +41,38 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.LOG_SCHEMA_TABLE_NAME;
-
 @Entity
 @Table(name = LOG_SCHEMA_TABLE_NAME)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class LogSchema extends Schema<LogSchemaDto> {
+public class LogSchema extends BaseSchema<LogSchemaDto> {
 
-    private static final long serialVersionUID = 5801830095239766386L;
+  private static final long serialVersionUID = 5801830095239766386L;
 
-    public LogSchema() {
-    }
+  public LogSchema() {
+  }
 
-    public LogSchema(Long id) {
-        this.id = id;
-    }
+  public LogSchema(Long id) {
+    this.id = id;
+  }
 
-    public LogSchema(LogSchemaDto dto) {
-        super(dto);
-    }
+  public LogSchema(LogSchemaDto dto) {
+    super(dto);
+  }
 
-    @Override
-    public String toString() {
-        return "LogSchema{" + super.toString()
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return "LogSchema{" + super.toString()
+        + '}';
+  }
 
-    @Override
-    protected LogSchemaDto createDto() {
-        return new LogSchemaDto();
-    }
+  @Override
+  protected LogSchemaDto createDto() {
+    return new LogSchemaDto();
+  }
 
-    @Override
-    protected GenericModel<LogSchemaDto> newInstance(Long id) {
-        return new LogSchema(id);
-    }
+  @Override
+  protected GenericModel<LogSchemaDto> newInstance(Long id) {
+    return new LogSchema(id);
+  }
 
 }

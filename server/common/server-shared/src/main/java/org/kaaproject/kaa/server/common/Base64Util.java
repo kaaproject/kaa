@@ -21,26 +21,32 @@ import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 
 public class Base64Util {
 
-    private static final String UNKNOWN = "Unknown";
+  private static final String UNKNOWN = "Unknown";
 
-    private Base64Util() {
-    }
+  private Base64Util() {
+  }
 
-    public static String encode(byte[] data){
-        return Base64.encodeBase64String(data);
-    }
+  public static String encode(byte[] data) {
+    return Base64.encodeBase64String(data);
+  }
 
-    public static String encode(EndpointProfileDto profile){
-        if(profile != null && profile.getEndpointKeyHash() != null){
-            return encode(profile.getEndpointKeyHash());
-        }else{
-            return UNKNOWN;
-        }
+  /**
+   * Encode endpoint profile to base64.
+   *
+   * @param profile is profile for encoding
+   * @return base64 string
+   */
+  public static String encode(EndpointProfileDto profile) {
+    if (profile != null && profile.getEndpointKeyHash() != null) {
+      return encode(profile.getEndpointKeyHash());
+    } else {
+      return UNKNOWN;
     }
+  }
 
-    public static byte[] decode(String base64String) {
-        return Base64.decodeBase64(base64String);
-    }
+  public static byte[] decode(String base64String) {
+    return Base64.decodeBase64(base64String);
+  }
 
 
 }

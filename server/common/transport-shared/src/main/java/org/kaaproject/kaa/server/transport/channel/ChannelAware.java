@@ -22,29 +22,29 @@ import java.util.UUID;
  * A marker interface indicating that the class has a basic knowledge about the
  * related channel - it's {@link UUID}, {@link ChannelType} and
  * {@link ChannelContext}.
- * 
+ *
  * @author Andrew Shvayka
  */
 public interface ChannelAware {
 
-    /**
-     * Gets the channel {@link UUID}.
-     *
-     * @return the channel uuid
-     */
-    UUID getChannelUuid();
+  /**
+   * Gets the channel {@link UUID}.
+   *
+   * @return the channel uuid
+   */
+  UUID getChannelUuid();
 
-    /**
-     * Gets the {@link ChannelType}.
-     *
-     * @return the channel type
-     */
-    ChannelType getChannelType();
+  /**
+   * Gets the {@link ChannelType}.
+   *
+   * @return the channel type
+   */
+  ChannelType getChannelType();
 
-    /**
-     * Gets the channel context.
-     *
-     * @return the channel context
-     */
-    ChannelContext getChannelContext();
+  /**
+   * Gets the channel context.
+   *
+   * @return the channel context
+   */
+  ChannelContext getChannelContext();
 }

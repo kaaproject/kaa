@@ -16,72 +16,71 @@
 
 package org.kaaproject.kaa.client.common;
 
-import java.util.Arrays;
-
 import org.apache.avro.Schema;
 
+import java.util.Arrays;
+
 /**
- * Default {@link CommonFixed} implementation
+ * Default {@link CommonFixed} implementation.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public final class DefaultCommonFixed implements CommonFixed {
-    private final byte [] bytes;
-    private final Schema schema;
+  private final byte[] bytes;
+  private final Schema schema;
 
-    DefaultCommonFixed(Schema schema, byte [] bytes) {
-        this.schema = schema;
-        this.bytes = Arrays.copyOf(bytes, bytes.length);
-    }
+  DefaultCommonFixed(Schema schema, byte[] bytes) {
+    this.schema = schema;
+    this.bytes = Arrays.copyOf(bytes, bytes.length);
+  }
 
-    @Override
-    public Schema getSchema() {
-        return schema;
-    }
+  @Override
+  public Schema getSchema() {
+    return schema;
+  }
 
-    @Override
-    public byte[] getBytes() {
-        return Arrays.copyOf(bytes, bytes.length);
-    }
+  @Override
+  public byte[] getBytes() {
+    return Arrays.copyOf(bytes, bytes.length);
+  }
 
-    @Override
-    public String toString() {
-        return Arrays.toString(bytes);
-    }
+  @Override
+  public String toString() {
+    return Arrays.toString(bytes);
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(bytes);
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(bytes);
+    result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DefaultCommonFixed other = (DefaultCommonFixed) obj;
-        if (!Arrays.equals(bytes, other.bytes)) {
-            return false;
-        }
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    DefaultCommonFixed other = (DefaultCommonFixed) obj;
+    if (!Arrays.equals(bytes, other.bytes)) {
+      return false;
+    }
+    if (schema == null) {
+      if (other.schema != null) {
+        return false;
+      }
+    } else if (!schema.equals(other.schema)) {
+      return false;
+    }
+    return true;
+  }
 
 }

@@ -53,7 +53,7 @@
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="endpointService" class="org.kaaproject.kaa.server.common.dao.service.EndpointServiceImpl"/>
-    
+
     <bean id="sdkProfileService" class="org.kaaproject.kaa.server.common.dao.service.SdkProfileServiceImpl"/>
 
     <bean id="notificationService" class="org.kaaproject.kaa.server.common.dao.service.NotificationServiceImpl"/>

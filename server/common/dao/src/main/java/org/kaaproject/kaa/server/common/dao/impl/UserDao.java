@@ -20,40 +20,41 @@ import java.util.List;
 
 /**
  * The interface User dao.
- * @param <T>  the type parameter
+ *
+ * @param <T> the type parameter
  */
 public interface UserDao<T> extends SqlDao<T> {
 
-    /**
-     * Find user by external uid.
-     *
-     * @param externalUid the external user id
-     * @return the user object
-     */
-    T findByExternalUid(String externalUid);
+  /**
+   * Find user by external uid.
+   *
+   * @param externalUid the external user id
+   * @return the user object
+   */
+  T findByExternalUid(String externalUid);
 
-    /**
-     * Find user by tenant id and authority.
-     *
-     * @param id the user id
-     * @param authority the user authority
-     * @return the list of users
-     */
-    List<T> findByTenantIdAndAuthority(String id, String authority);
+  /**
+   * Find user by tenant id and authority.
+   *
+   * @param id        the user id
+   * @param authority the user authority
+   * @return the list of users
+   */
+  List<T> findByTenantIdAndAuthority(String id, String authority);
 
-    /**
-     * Find user by tenant id and authorities.
-     *
-     * @param id the user id
-     * @param authorities the user authorities
-     * @return the list of users
-     */
-    List<T> findByTenantIdAndAuthorities(String id, String... authorities);
+  /**
+   * Find user by tenant id and authorities.
+   *
+   * @param id          the user id
+   * @param authorities the user authorities
+   * @return the list of users
+   */
+  List<T> findByTenantIdAndAuthorities(String id, String... authorities);
 
-    /**
-     * Remove user by tenant id.
-     *
-     * @param tenantId the tenant id
-     */
-    void removeByTenantId(String tenantId);
+  /**
+   * Remove user by tenant id.
+   *
+   * @param tenantId the tenant id
+   */
+  void removeByTenantId(String tenantId);
 }

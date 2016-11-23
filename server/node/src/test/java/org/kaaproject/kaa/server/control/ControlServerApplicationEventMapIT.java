@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
@@ -27,207 +23,135 @@ import org.kaaproject.kaa.common.dto.event.AefMapInfoDto;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.common.dto.event.EcfInfoDto;
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
-import org.springframework.web.client.ResourceAccessException;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The Class ControlServerApplicationEventMapIT.
  */
 public class ControlServerApplicationEventMapIT extends AbstractTestControlServer {
 
-    /**
-     * Test create application event family map.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testCreateApplicationEventFamilyMap() throws Exception {
-        ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap();
-        Assert.assertFalse(strIsEmpty(applicationEventFamilyMap.getId()));
+  /**
+   * Test create application event family map.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testCreateApplicationEventFamilyMap() throws Exception {
+    ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap();
+    Assert.assertFalse(strIsEmpty(applicationEventFamilyMap.getId()));
+  }
+
+  /**
+   * Test get application event family map.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetApplicationEventFamilyMap() throws Exception {
+    ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap();
+
+    ApplicationEventFamilyMapDto storedApplicationEventFamilyMap = client.getApplicationEventFamilyMap(applicationEventFamilyMap.getId());
+
+    Assert.assertNotNull(storedApplicationEventFamilyMap);
+    Assert.assertEquals(applicationEventFamilyMap, storedApplicationEventFamilyMap);
+  }
+
+  /**
+   * Test get application event family maps by application token.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetApplicationEventFamilyMapsByApplicationToken() throws Exception {
+    List<ApplicationEventFamilyMapDto> applicationEventFamilyMaps = new ArrayList<>(10);
+    ApplicationDto application = createApplication(tenantAdminDto);
+    EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
+    for (int i = 0; i < 10; i++) {
+      ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap(
+          application.getApplicationToken(), eventClassFamily.getId(), (i + 1));
+      applicationEventFamilyMaps.add(applicationEventFamilyMap);
     }
 
-    /**
-     * Test get application event family map.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetApplicationEventFamilyMap() throws Exception {
-        ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap();
-        
-        ApplicationEventFamilyMapDto storedApplicationEventFamilyMap = client.getApplicationEventFamilyMap(applicationEventFamilyMap.getId());
-        
-        Assert.assertNotNull(storedApplicationEventFamilyMap);
-        Assert.assertEquals(applicationEventFamilyMap, storedApplicationEventFamilyMap);
-    }
+    Collections.sort(applicationEventFamilyMaps, new IdComparator());
 
-    /**
-     * Test get application event family maps by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetApplicationEventFamilyMapsByApplicationId() throws Exception {
-        List<ApplicationEventFamilyMapDto> applicationEventFamilyMaps  = new ArrayList<ApplicationEventFamilyMapDto>(10);
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        for (int i=0;i<10;i++) {
-            ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), (i+1));
-            applicationEventFamilyMaps.add(applicationEventFamilyMap);
-        }
-        
-        Collections.sort(applicationEventFamilyMaps, new IdComparator());
-        
-        loginTenantDeveloper(tenantDeveloperUser);
-        
-        List<ApplicationEventFamilyMapDto> storedApplicationEventFamilyMaps = client.getApplicationEventFamilyMapsByApplicationId(application.getId());
+    loginTenantDeveloper(tenantDeveloperUser);
 
-        Collections.sort(storedApplicationEventFamilyMaps, new IdComparator());
-        
-        Assert.assertEquals(applicationEventFamilyMaps, storedApplicationEventFamilyMaps);
-    }
+    List<ApplicationEventFamilyMapDto> storedApplicationEventFamilyMaps = client.getApplicationEventFamilyMapsByApplicationToken(
+        application.getApplicationToken());
 
-    /**
-     * Test get application event family maps by application token.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetApplicationEventFamilyMapsByApplicationToken() throws Exception {
-        List<ApplicationEventFamilyMapDto> applicationEventFamilyMaps  = new ArrayList<>(10);
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        for (int i=0;i<10;i++) {
-            ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), (i+1));
-            applicationEventFamilyMaps.add(applicationEventFamilyMap);
-        }
+    Collections.sort(storedApplicationEventFamilyMaps, new IdComparator());
 
-        Collections.sort(applicationEventFamilyMaps, new IdComparator());
+    Assert.assertEquals(applicationEventFamilyMaps, storedApplicationEventFamilyMaps);
+  }
 
-        loginTenantDeveloper(tenantDeveloperUser);
+  /**
+   * Test update application event family map.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testUpdateApplicationEventFamilyMap() throws Exception {
+    final ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap();
+    checkBadRequest(new TestRestCall() {
+      @Override
+      public void executeRestCall() throws Exception {
+        client.editApplicationEventFamilyMap(applicationEventFamilyMap);
+      }
+    });
+  }
 
-        List<ApplicationEventFamilyMapDto> storedApplicationEventFamilyMaps = client.getApplicationEventFamilyMapsByApplicationToken(
-                application.getApplicationToken());
+  /**
+   * Test get vacant event class families by application token.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetVacantEventClassFamiliesByApplicationToken() throws Exception {
+    ApplicationDto application = createApplication(tenantAdminDto);
+    EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
+    createApplicationEventFamilyMap(application.getApplicationToken(), eventClassFamily.getId(), 1);
+    loginTenantDeveloper(tenantDeveloperUser);
+    List<EcfInfoDto> vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
+    Assert.assertNotNull(vacantEcfs);
+    Assert.assertEquals(0, vacantEcfs.size());
 
-        Collections.sort(storedApplicationEventFamilyMaps, new IdComparator());
+    loginTenantAdmin(tenantAdminUser);
+    EventClassFamilyVersionDto eventClassFamilyVersion = createEventClassFamilyVersion(tenantAdminDto.getTenantId());
+    client.addEventClassFamilyVersion(eventClassFamily.getId(), eventClassFamilyVersion);
 
-        Assert.assertEquals(applicationEventFamilyMaps, storedApplicationEventFamilyMaps);
-    }
+    loginTenantDeveloper(tenantDeveloperUser);
+    vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
+    Assert.assertNotNull(vacantEcfs);
+    Assert.assertEquals(1, vacantEcfs.size());
+    Assert.assertNotNull(vacantEcfs.get(0));
+    Assert.assertEquals(eventClassFamily.getId(), vacantEcfs.get(0).getEcfId());
+    Assert.assertEquals(eventClassFamily.getName(), vacantEcfs.get(0).getEcfName());
+    Assert.assertEquals(2, vacantEcfs.get(0).getVersion());
+  }
 
-    /**
-     * Test update application event family map.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testUpdateApplicationEventFamilyMap() throws Exception {
-        final ApplicationEventFamilyMapDto applicationEventFamilyMap = createApplicationEventFamilyMap();
-        checkBadRequest(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.editApplicationEventFamilyMap(applicationEventFamilyMap);
-            }
-        });
-    }
+  /**
+   * Test get event class families by application token.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetEventClassFamiliesByApplicationToken() throws Exception {
+    ApplicationDto application = createApplication(tenantAdminDto);
+    EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
+    createApplicationEventFamilyMap(application.getApplicationToken(), eventClassFamily.getId(), 1);
 
-    /**
-     * Test get vacant event class families by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetVacantEventClassFamiliesByApplicationId() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
-        
-        loginTenantDeveloper(tenantDeveloperUser);
-        List<EcfInfoDto> vacantEcfs = client.getVacantEventClassFamiliesByApplicationId(application.getId());
-        Assert.assertNotNull(vacantEcfs);
-        Assert.assertEquals(0, vacantEcfs.size());
-        
-        loginTenantAdmin(tenantAdminUser);
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
-        
-        loginTenantDeveloper(tenantDeveloperUser);        
-        vacantEcfs = client.getVacantEventClassFamiliesByApplicationId(application.getId());
-        Assert.assertNotNull(vacantEcfs);
-        Assert.assertEquals(1, vacantEcfs.size());
-        Assert.assertNotNull(vacantEcfs.get(0));
-        Assert.assertEquals(eventClassFamily.getId(), vacantEcfs.get(0).getEcfId());
-        Assert.assertEquals(eventClassFamily.getName(), vacantEcfs.get(0).getEcfName());
-        Assert.assertEquals(2, vacantEcfs.get(0).getVersion());
-    }
+    loginTenantDeveloper(tenantDeveloperUser);
 
-    /**
-     * Test get vacant event class families by application token.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetVacantEventClassFamiliesByApplicationToken() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
-
-        loginTenantDeveloper(tenantDeveloperUser);
-        List<EcfInfoDto> vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
-        Assert.assertNotNull(vacantEcfs);
-        Assert.assertEquals(0, vacantEcfs.size());
-
-        loginTenantAdmin(tenantAdminUser);
-        client.addEventClassFamilySchema(eventClassFamily.getId(), TEST_EVENT_CLASS_FAMILY_SCHEMA);
-
-        loginTenantDeveloper(tenantDeveloperUser);
-        vacantEcfs = client.getVacantEventClassFamiliesByApplicationToken(application.getApplicationToken());
-        Assert.assertNotNull(vacantEcfs);
-        Assert.assertEquals(1, vacantEcfs.size());
-        Assert.assertNotNull(vacantEcfs.get(0));
-        Assert.assertEquals(eventClassFamily.getId(), vacantEcfs.get(0).getEcfId());
-        Assert.assertEquals(eventClassFamily.getName(), vacantEcfs.get(0).getEcfName());
-        Assert.assertEquals(2, vacantEcfs.get(0).getVersion());
-    }
-
-    /**
-     * Test get event class families by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetEventClassFamiliesByApplicationId() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
-        
-        loginTenantDeveloper(tenantDeveloperUser);
-        
-        List<AefMapInfoDto> applicationEcfs = client.getEventClassFamiliesByApplicationId(application.getId());
-        Assert.assertNotNull(applicationEcfs);
-        Assert.assertEquals(1, applicationEcfs.size());
-        Assert.assertNotNull(applicationEcfs.get(0));
-        Assert.assertEquals(eventClassFamily.getId(), applicationEcfs.get(0).getEcfId());
-        Assert.assertEquals(eventClassFamily.getName(), applicationEcfs.get(0).getEcfName());
-        Assert.assertEquals(1, applicationEcfs.get(0).getVersion());
-    }
-
-    /**
-     * Test get event class families by application token.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetEventClassFamiliesByApplicationToken() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        EventClassFamilyDto eventClassFamily = createEventClassFamily(application.getTenantId());
-        createApplicationEventFamilyMap(application.getId(), eventClassFamily.getId(), 1);
-
-        loginTenantDeveloper(tenantDeveloperUser);
-
-        List<AefMapInfoDto> applicationEcfs = client.getEventClassFamiliesByApplicationToken(application.getApplicationToken());
-        Assert.assertNotNull(applicationEcfs);
-        Assert.assertEquals(1, applicationEcfs.size());
-        Assert.assertNotNull(applicationEcfs.get(0));
-        Assert.assertEquals(eventClassFamily.getId(), applicationEcfs.get(0).getEcfId());
-        Assert.assertEquals(eventClassFamily.getName(), applicationEcfs.get(0).getEcfName());
-        Assert.assertEquals(1, applicationEcfs.get(0).getVersion());
-    }
+    List<AefMapInfoDto> applicationEcfs = client.getEventClassFamiliesByApplicationToken(application.getApplicationToken());
+    Assert.assertNotNull(applicationEcfs);
+    Assert.assertEquals(1, applicationEcfs.size());
+    Assert.assertNotNull(applicationEcfs.get(0));
+    Assert.assertEquals(eventClassFamily.getId(), applicationEcfs.get(0).getEcfId());
+    Assert.assertEquals(eventClassFamily.getName(), applicationEcfs.get(0).getEcfName());
+    Assert.assertEquals(1, applicationEcfs.get(0).getVersion());
+  }
 }

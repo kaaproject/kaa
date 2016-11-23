@@ -17,7 +17,9 @@
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
 
-import java.util.List;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Widget;
 
 import org.kaaproject.avro.ui.gwt.client.widget.SizedTextBox;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
@@ -25,28 +27,43 @@ import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.topic.TopicGrid;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
 
 public interface EndpointProfileView extends BaseDetailsView {
 
-    SizedTextBox getKeyHash();
+  SizedTextBox getKeyHash();
 
-    SizedTextBox getUserID();
-    SizedTextBox getUserExternalID();
-    List<Widget> getUserInfoList();
+  SizedTextBox getUserId();
 
-    Anchor getEndpointProfSchemaName();
-    RecordPanel getEndpointProfForm();
-    HasClickHandlers getDownloadEndpointProfileJsonButton();
+  SizedTextBox getUserExternalId();
 
-    Anchor getServerProfSchemaName();
-    RecordPanel getServerProfForm();
-    HasClickHandlers getDownloadServerProfileJsonButton();
-    HasClickHandlers getEditServerProfileButton();
+  List<Widget> getUserInfoList();
 
-    Anchor getSdkAnchor();
-    AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
-    TopicGrid getTopicsGrid();
+  Anchor getEndpointProfSchemaName();
+
+  RecordPanel getEndpointProfForm();
+
+  HasClickHandlers getDownloadEndpointProfileJsonButton();
+
+  Anchor getServerProfSchemaName();
+
+  RecordPanel getServerProfForm();
+
+  HasClickHandlers getDownloadServerProfileJsonButton();
+
+  HasClickHandlers getEditServerProfileButton();
+
+  RecordPanel getEndpointConfiguration();
+
+  HasClickHandlers getDownloadEndpointConfigurationButton();
+
+  Anchor getEndpointConfigSchemaName();
+
+  Anchor getSdkAnchor();
+
+  AbstractGrid<EndpointGroupDto, String> getGroupsGrid();
+
+  TopicGrid getTopicsGrid();
+
+
 }

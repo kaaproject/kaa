@@ -1,0 +1,35 @@
+# Dependencies
+markdown:         kramdown
+highlighter:      rouge
+
+# Permalinks
+permalink:        pretty
+#relative_permalinks: false
+
+# Setup
+title:            Kaa
+tagline:          'A Jekyll theme'
+description:      ''
+url:
+baseurl:          /kaa
+
+author:
+  name:
+  url:
+
+gems:
+- jekyll-gist
+- jekyll-sitemap
+
+# Custom vars
+version:          2.1.0
+
+kramdown:
+  input: GFM
+  auto_ids:       true
+  auto_id_stripping: true
+  toc_levels:     1..6
+  enable_coderay: false
+  entity_output:  as_char
+  hard_wrap: false
+  syntax_highlighter: rouge
