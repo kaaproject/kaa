@@ -22,7 +22,9 @@ make
 
 cd build-posix
 ctest -T test
-ctest -T memcheck
+if [ -z ${NO_MEMCHECK+x} ]; then # if unset
+    ctest -T memcheck
+fi
 ctest -T coverage
 cd ..
 

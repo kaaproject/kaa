@@ -19,7 +19,7 @@
 
     <parent>
         <groupId>org.kaaproject</groupId>
-        <version>0.10.0</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>kaa</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa</groupId>
