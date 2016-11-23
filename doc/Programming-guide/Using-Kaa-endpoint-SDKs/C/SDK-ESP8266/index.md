@@ -353,6 +353,7 @@ To invoke CMake, proceed as follows:
         cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=../kaa/toolchains/esp8266.cmake \
             -DKAA_PLATFORM=esp8266 \
+            -DBUILD_TESTING=OFF \
             -DCMAKE_BUILD_TYPE=MinSizeRel \
             -DKAA_MAX_LOG_LEVEL=3
         make

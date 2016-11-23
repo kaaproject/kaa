@@ -210,7 +210,7 @@ To do this, run the following commands in the terminal.
 
 		mkdir build
 		cd build
-		cmake ..
+		cmake -DBUILD_TESTING=OFF ..
 		make
 
 6. Check that the demo application executable file is present in the build directory.
@@ -905,7 +905,7 @@ To launch your C application:
 This will clean up the mess that can occur when debug logs are enabled.
 
         cd build
-        cmake -DKAA_MAX_LOG_LEVEL=3 ..
+        cmake -DKAA_MAX_LOG_LEVEL=3 -DBUILD_TESTING=OFF ..
         make
 
 2. Launch the executable file.
