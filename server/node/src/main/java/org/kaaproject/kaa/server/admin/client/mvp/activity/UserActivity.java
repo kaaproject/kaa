@@ -51,7 +51,9 @@ public class UserActivity extends
     if (!create) {
       detailsView.setTitle(entity.getUsername());
     }
-    detailsView.getAuthority().setValue(entity.getAuthority());
+    if (entity.getAuthority() != null) {
+      detailsView.getAuthority().setValue(entity.getAuthority());
+    }
     entity.setTenantId(place.getTenId());
   }
 
