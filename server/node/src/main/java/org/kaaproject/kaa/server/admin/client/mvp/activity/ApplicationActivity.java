@@ -80,7 +80,7 @@ public class ApplicationActivity
     }
     detailsView.getApplicationName().setValue(entity.getName());
 
-    ValueListBox<String> serviceNames = this.detailsView.getCredentialsServiceName();
+    final ValueListBox<String> serviceNames = this.detailsView.getCredentialsServiceName();
     if (serviceNames != null) {
       KaaAdmin.getDataSource().getCredentialsServiceNames(new AsyncCallback<List<String>>() {
 
@@ -91,6 +91,9 @@ public class ApplicationActivity
 
         @Override
         public void onSuccess(List<String> result) {
+          if (result != null && !result.isEmpty()) {
+            serviceNames.setValue(result.get(0));
+          }
           ApplicationActivity.this.detailsView.getCredentialsServiceName()
               .setAcceptableValues(result);
         }

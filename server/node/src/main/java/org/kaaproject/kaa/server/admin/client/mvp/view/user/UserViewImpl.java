@@ -117,11 +117,12 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
     if (KaaAdmin.getAuthInfo().getAuthority().equals(KaaAuthorityDto.TENANT_ADMIN)) {
       possibleAuthorities.add(KaaAuthorityDto.TENANT_DEVELOPER);
       possibleAuthorities.add(KaaAuthorityDto.TENANT_USER);
+      authority.setValue(KaaAuthorityDto.TENANT_DEVELOPER);
     }
     if (KaaAdmin.getAuthInfo().getAuthority().equals(KaaAuthorityDto.KAA_ADMIN)) {
       possibleAuthorities.add(KaaAuthorityDto.TENANT_ADMIN);
+      authority.setValue(KaaAuthorityDto.TENANT_ADMIN);
     }
-
     authority.setAcceptableValues(possibleAuthorities);
 
     Label authorityLabel = new Label(Utils.constants.accountRole());
@@ -134,7 +135,6 @@ public class UserViewImpl extends BaseDetailsViewImpl implements UserView {
 
   @Override
   protected void resetImpl() {
-    authority.setValue(null);
     userName.setValue("");
     email.setValue("");
   }
