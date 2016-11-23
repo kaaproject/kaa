@@ -16,12 +16,7 @@
 
 package org.kaaproject.kaa.server.operations.service.initialization;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.curator.retry.RetryUntilElapsed;
+import org.apache.curator.framework.CuratorFramework;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 import org.kaaproject.kaa.server.common.zk.gen.LoadInfo;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
@@ -44,6 +39,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The Class for Operations bootstrap process. Main methods are {@link #start()
  * start} and {@link #stop() stop} Launches Transport and ZK services
@@ -53,162 +53,183 @@ import org.springframework.stereotype.Service;
 @Service
 public class OperationsInitializationService extends AbstractInitializationService {
 
-    private static final int DEFAULT_LOAD_INDEX = 1;
+  private static final int DEFAULT_LOAD_INDEX = 1;
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(OperationsInitializationService.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(OperationsInitializationService.class);
 
-    /** The operations node. */
-    private OperationsNode operationsNode;
+  /**
+   * The operations node.
+   */
+  private OperationsNode operationsNode;
 
-    /** The key store service. */
-    @Autowired
-    private KeyStoreService operationsKeyStoreService;
+  /**
+   * The key store service.
+   */
+  @Autowired
+  private KeyStoreService operationsKeyStoreService;
 
-    /** The operations service. */
-    @Autowired
-    private OperationsService operationsService;
+  /**
+   * The operations service.
+   */
+  @Autowired
+  private OperationsService operationsService;
 
-    /** The Akka service. */
-    @Autowired
-    private AkkaService akkaService;
+  /**
+   * The Akka service.
+   */
+  @Autowired
+  private AkkaService akkaService;
 
-    @Autowired
-    private OperationsTransportService operationsTransportService;
+  @Autowired
+  private OperationsTransportService operationsTransportService;
 
-    /** The cache service. */
-    @Autowired
-    private CacheService cacheService;
-    
-    /** The operations server config. */
-    @Autowired
-    private OperationsServerConfig operationsServerConfig;
+  /**
+   * The cache service.
+   */
+  @Autowired
+  private CacheService cacheService;
 
-    /** The event service */
-    @Autowired
-    private EventService eventService;
-    
-    @Autowired
-    private ClusterService clusterService;
-    
-    @Autowired
-    private LoadBalancingService loadBalancingService;
+  /**
+   * The operations service config.
+   */
+  @Autowired
+  private OperationsServerConfig operationsServerConfig;
 
-    /**
-     * OperationsServerConfig getter
-     *
-     * @return OperationsServerConfig
-     */
-    private OperationsServerConfig getOperationsConfig() {
-        return operationsServerConfig;
-    }
+  /**
+   * The event service.
+   */
+  @Autowired
+  private EventService eventService;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.operations.service.bootstrap.
-     * OperationsBootstrapService#start()
-     */
-    @Override
-    public void start() {
-        operationsService.setPublicKey(operationsKeyStoreService.getPublicKey());
+  @Autowired
+  private ClusterService clusterService;
 
-        operationsTransportService.lookupAndInit();
+  @Autowired
+  private LoadBalancingService loadBalancingService;
 
-        if (getNodeConfig().isZkEnabled()) {
-            startZK();
-            operationsTransportService.addListener(new TransportUpdateListener() {
+  @Autowired
+  private CuratorFramework zkClient;
 
-                @Override
-                public void onTransportsStarted(List<TransportMetaData> mdList) {
-                    if (operationsNode != null) {
-                        OperationsNodeInfo info = operationsNode.getNodeInfo();
-                        info.setTransports(mdList);
-                        try {
-                            operationsNode.updateNodeData(info);
-                        } catch (IOException e) {
-                            LOG.error("Failed to update bootstrap node info", e);
-                        }
-                    }
-                }
+  /**
+   * OperationsServerConfig getter.
+   *
+   * @return OperationsServerConfig
+   */
+  private OperationsServerConfig getOperationsConfig() {
+    return operationsServerConfig;
+  }
 
-            });
-            loadBalancingService.start(operationsNode);
-        }
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.operations.service.bootstrap.
+   * OperationsBootstrapService#start()
+   */
+  @Override
+  public void start() {
+    operationsService.setPublicKey(operationsKeyStoreService.getPublicKey());
 
-        operationsTransportService.start();
-        
-        LOG.info("Operations Service Started.");
-    }
+    operationsTransportService.lookupAndInit();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.operations.service.bootstrap.
-     * OperationsBootstrapService#stop()
-     */
-    @Override
-    public void stop() {
-        if (eventService != null) {
-            eventService.shutdown();
-        }
-        if (clusterService != null) {
-            clusterService.shutdown();
-        }
-        if(loadBalancingService != null && getNodeConfig().isZkEnabled()) {
-            loadBalancingService.stop();
-        }
-        if (operationsTransportService != null) {
-            operationsTransportService.stop();
-        }
-        if (akkaService != null) {
-            akkaService.getActorSystem().shutdown();
-        }
-        
-        if (getNodeConfig().isZkEnabled()) {
-            stopZK();
-        }
-        
-        LOG.info("Operations Service Stopped.");
-    }
+    if (getNodeConfig().isZkEnabled()) {
+      startZk();
+      operationsTransportService.addListener(new TransportUpdateListener() {
 
-    /**
-     * Stop zk node.
-     */
-    private void stopZK() {
-        try {
-            operationsNode.close();
-        } catch (IOException e) {
-            LOG.warn("Error closing ZK node", e);
-        }
-    }
-
-    /**
-     * Start zk node.
-     */
-    private void startZK() {
-        OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
-        ByteBuffer keyData = ByteBuffer.wrap(operationsKeyStoreService.getPublicKey().getEncoded());
-        nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(), getNodeConfig().getThriftPort(), keyData));
-        nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX, 1.0));
-        nodeInfo.setTransports(new ArrayList<TransportMetaData>());
-        operationsNode = new OperationsNode(nodeInfo, getNodeConfig().getZkHostPortList(), new RetryUntilElapsed(getNodeConfig()
-                .getZkMaxRetryTime(), getNodeConfig().getZkSleepTime()));
-        try {
-            operationsNode.start();
-            eventService.setZkNode(operationsNode);
-            eventService.setResolver(new ConsistentHashResolver(operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
-                    .getUserHashPartitions()));
-            clusterService.setZkNode(operationsNode);
-            clusterService.setResolver(new ConsistentHashResolver(operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
-                    .getUserHashPartitions()));
-        } catch (Exception e) {
-            if (getNodeConfig().isZkIgnoreErrors()) {
-                LOG.info("Failed to register operations in ZooKeeper", e);
-            } else {
-                LOG.error("Failed to register operations in ZooKeeper", e);
-                throw new RuntimeException(e); // NOSONAR
+        @Override
+        public void onTransportsStarted(List<TransportMetaData> mdList) {
+          if (operationsNode != null) {
+            OperationsNodeInfo info = operationsNode.getNodeInfo();
+            info.setTransports(mdList);
+            try {
+              operationsNode.updateNodeData(info);
+            } catch (IOException ex) {
+              LOG.error("Failed to update bootstrap node info", ex);
             }
+          }
         }
+
+      });
+      loadBalancingService.start(operationsNode);
     }
+
+    operationsTransportService.start();
+
+    LOG.info("Operations Service Started.");
+  }
+
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.operations.service.bootstrap.
+   * OperationsBootstrapService#stop()
+   */
+  @Override
+  public void stop() {
+    if (eventService != null) {
+      eventService.shutdown();
+    }
+    if (clusterService != null) {
+      clusterService.shutdown();
+    }
+    if (loadBalancingService != null && getNodeConfig().isZkEnabled()) {
+      loadBalancingService.stop();
+    }
+    if (operationsTransportService != null) {
+      operationsTransportService.stop();
+    }
+    if (akkaService != null) {
+      akkaService.getActorSystem().shutdown();
+    }
+
+    if (getNodeConfig().isZkEnabled()) {
+      stopZk();
+    }
+
+    LOG.info("Operations Service Stopped.");
+  }
+
+  /**
+   * Stop zk node.
+   */
+  private void stopZk() {
+    try {
+      operationsNode.close();
+    } catch (IOException ex) {
+      LOG.warn("Error closing ZK node", ex);
+    }
+  }
+
+  /**
+   * Start zk node.
+   */
+  private void startZk() {
+    OperationsNodeInfo nodeInfo = new OperationsNodeInfo();
+    ByteBuffer keyData = ByteBuffer.wrap(operationsKeyStoreService.getPublicKey().getEncoded());
+    nodeInfo.setConnectionInfo(new ConnectionInfo(getNodeConfig().getThriftHost(),
+            getNodeConfig().getThriftPort(), keyData));
+    nodeInfo.setLoadInfo(new LoadInfo(DEFAULT_LOAD_INDEX, 1.0));
+    nodeInfo.setTransports(new ArrayList<TransportMetaData>());
+    operationsNode = new OperationsNode(nodeInfo, zkClient);
+    try {
+      operationsNode.start();
+      eventService.setZkNode(operationsNode);
+      eventService.setResolver(new ConsistentHashResolver(
+              operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
+          .getUserHashPartitions()));
+      clusterService.setZkNode(operationsNode);
+      clusterService.setResolver(new ConsistentHashResolver(
+              operationsNode.getCurrentOperationServerNodes(), getOperationsConfig()
+          .getUserHashPartitions()));
+    } catch (Exception ex) {
+      if (getNodeConfig().isZkIgnoreErrors()) {
+        LOG.info("Failed to register operations in ZooKeeper", ex);
+      } else {
+        LOG.error("Failed to register operations in ZooKeeper", ex);
+        throw new RuntimeException(ex); // NOSONAR
+      }
+    }
+  }
 }

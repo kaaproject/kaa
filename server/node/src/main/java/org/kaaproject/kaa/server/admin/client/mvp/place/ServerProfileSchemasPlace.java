@@ -18,60 +18,64 @@ package org.kaaproject.kaa.server.admin.client.mvp.place;
 
 import com.google.gwt.place.shared.Prefix;
 import com.google.web.bindery.event.shared.EventBus;
+
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ServerProfileSchemasPlace extends SchemasPlace {
+public class ServerProfileSchemasPlace extends SchemasPlaceApplication {
 
-    public ServerProfileSchemasPlace(String applicationId) {
-        super(applicationId);
+  public ServerProfileSchemasPlace(String applicationId) {
+    super(applicationId);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.serverProfile();
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    return null;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+      return false;
+    }
+    if (!super.equals(object)) {
+      return false;
     }
 
-    @Prefix(value = "serverProfSchemas")
-    public static class Tokenizer extends SchemasPlace.Tokenizer<ServerProfileSchemasPlace> {
+    ServerProfileSchemasPlace that = (ServerProfileSchemasPlace) object;
 
-        @Override
-        protected ServerProfileSchemasPlace getPlaceImpl(String applicationId) {
-            return new ServerProfileSchemasPlace(applicationId);
-        }
-    }
+    return !(applicationId != null
+        ? !applicationId.equals(that.applicationId)
+        : that.applicationId != null);
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
+    return result;
+  }
+
+  @Prefix(value = "serverProfSchemas")
+  public static class Tokenizer
+      extends SchemasPlaceApplication.Tokenizer<ServerProfileSchemasPlace> {
 
     @Override
-    public String getName() {
-        return Utils.constants.serverProfile();
+    protected ServerProfileSchemasPlace getPlaceImpl(String applicationId) {
+      return new ServerProfileSchemasPlace(applicationId);
     }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        ServerProfileSchemasPlace that = (ServerProfileSchemasPlace) o;
-
-        return !(applicationId != null ? !applicationId.equals(that.applicationId) : that.applicationId != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (applicationId != null ? applicationId.hashCode() : 0);
-        return result;
-    }
+  }
 }

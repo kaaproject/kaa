@@ -22,10 +22,10 @@ import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 
 public interface SchemaGenerationAlgorithm {
 
-    BaseSchema getBaseSchema() throws SchemaCreationException;
+  BaseSchema getBaseSchema() throws SchemaCreationException;
 
-    OverrideSchema getOverrideSchema() throws SchemaCreationException;
+  OverrideSchema getOverrideSchema() throws SchemaCreationException;
 
-    ProtocolSchema getProtocolSchema() throws SchemaCreationException;
+  ProtocolSchema getProtocolSchema() throws SchemaCreationException;
 
 }

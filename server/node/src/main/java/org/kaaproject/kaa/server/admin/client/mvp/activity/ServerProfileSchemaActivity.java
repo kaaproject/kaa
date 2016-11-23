@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -23,69 +25,69 @@ import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
 import org.kaaproject.kaa.server.admin.client.mvp.place.ServerProfileSchemaPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
 import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
 import org.kaaproject.kaa.server.admin.shared.schema.ServerProfileSchemaViewDto;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+public class ServerProfileSchemaActivity extends AbstractBaseCtlSchemaActivityApplication
+    <ServerProfileSchemaDto, ServerProfileSchemaViewDto, BaseCtlSchemaView,
+        ServerProfileSchemaPlace> {
 
-public class ServerProfileSchemaActivity
-        extends
-        AbstractBaseCtlSchemaActivity<ServerProfileSchemaDto, ServerProfileSchemaViewDto, BaseCtlSchemaView, ServerProfileSchemaPlace> {
+  public ServerProfileSchemaActivity(ServerProfileSchemaPlace place,
+                                     ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
 
-    public ServerProfileSchemaActivity(ServerProfileSchemaPlace place,
-            ClientFactory clientFactory) {
-        super(place, clientFactory);
+  @Override
+  protected ServerProfileSchemaViewDto newSchema() {
+    return new ServerProfileSchemaViewDto();
+  }
+
+  @Override
+  protected BaseCtlSchemaView getView(boolean create) {
+    if (create) {
+      return clientFactory.getCreateServerProfileSchemaView();
+    } else {
+      return clientFactory.getServerProfileSchemaView();
     }
+  }
 
-    @Override
-    protected ServerProfileSchemaViewDto newSchema() {
-        return new ServerProfileSchemaViewDto();
-    }
+  @Override
+  protected void getEntity(String id,
+                           AsyncCallback<ServerProfileSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().getServerProfileSchemaView(id, callback);
+  }
 
-    @Override
-    protected BaseCtlSchemaView getView(boolean create) {
-        if (create) {
-            return clientFactory.getCreateServerProfileSchemaView();
-        } else {
-            return clientFactory.getServerProfileSchemaView();
-        }
-    }
+  @Override
+  protected void editEntity(ServerProfileSchemaViewDto entity,
+                            AsyncCallback<ServerProfileSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().saveServerProfileSchemaView(entity, callback);
+  }
 
-    @Override
-    protected void getEntity(String id,
-            AsyncCallback<ServerProfileSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().getServerProfileSchemaView(id, callback);
-    }
+  @Override
+  protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null,
+        null,
+        applicationId,
+        ConverterType.FORM_AVRO_CONVERTER,
+        callback);
+  }
 
-    @Override
-    protected void editEntity(ServerProfileSchemaViewDto entity,
-            AsyncCallback<ServerProfileSchemaViewDto> callback) {
-        KaaAdmin.getDataSource().saveServerProfileSchemaView(entity, callback);
-    }
+  @Override
+  public void loadFormData(String fileItemName,
+                           AsyncCallback<RecordField> callback) {
+    KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
+  }
 
-    @Override
-    protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
-        KaaAdmin.getDataSource().createNewCTLSchemaFormInstance(null, 
-                null, 
-                applicationId, 
-                callback);
-    }
+  @Override
+  protected ServerProfileSchemaPlace existingSchemaPlace(
+      String applicationId, String schemaId) {
+    return new ServerProfileSchemaPlace(applicationId, schemaId);
+  }
 
-    @Override
-    public void loadFormData(String fileItemName,
-            AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
-    }
-
-    @Override
-    protected ServerProfileSchemaPlace existingSchemaPlace(
-            String applicationId, String schemaId) {
-        return new ServerProfileSchemaPlace(applicationId, schemaId);
-    }
-
-    @Override
-    protected SchemaType getPlaceSchemaType() {
-        return SchemaType.SERVER_PROFILE;
-    }
+  @Override
+  protected SchemaType getPlaceSchemaType() {
+    return SchemaType.SERVER_PROFILE;
+  }
 
 }

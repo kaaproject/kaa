@@ -20,69 +20,69 @@ import java.io.Serializable;
 
 public class UpdateNotificationDto<T> implements Serializable {
 
-    private static final long serialVersionUID = 2444947324481675806L;
+  private static final long serialVersionUID = 2444947324481675806L;
 
-    private String appId;
-    private int appSeqNumber;
-    private String groupId;
-    private int groupSeqNumber;
-    private String topicId;
-    private T payload;
-    private ChangeType changeType;
+  private String appId;
+  private int appSeqNumber;
+  private String groupId;
+  private int groupSeqNumber;
+  private String topicId;
+  private T payload;
+  private ChangeType changeType;
 
-    public String getAppId() {
-        return appId;
-    }
+  public String getAppId() {
+    return appId;
+  }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
+  public void setAppId(String appId) {
+    this.appId = appId;
+  }
 
-    public int getAppSeqNumber() {
-        return appSeqNumber;
-    }
+  public int getAppSeqNumber() {
+    return appSeqNumber;
+  }
 
-    public void setAppSeqNumber(int appSeqNumber) {
-        this.appSeqNumber = appSeqNumber;
-    }
+  public void setAppSeqNumber(int appSeqNumber) {
+    this.appSeqNumber = appSeqNumber;
+  }
 
-    public String getGroupId() {
-        return groupId;
-    }
+  public String getGroupId() {
+    return groupId;
+  }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
+  public void setGroupId(String groupId) {
+    this.groupId = groupId;
+  }
 
-    public int getGroupSeqNumber() {
-        return groupSeqNumber;
-    }
+  public int getGroupSeqNumber() {
+    return groupSeqNumber;
+  }
 
-    public void setGroupSeqNumber(int groupSeqNumber) {
-        this.groupSeqNumber = groupSeqNumber;
-    }
+  public void setGroupSeqNumber(int groupSeqNumber) {
+    this.groupSeqNumber = groupSeqNumber;
+  }
 
-    public String getTopicId() {
-        return topicId;
-    }
+  public String getTopicId() {
+    return topicId;
+  }
 
-    public void setTopicId(String topicId) {
-        this.topicId = topicId;
-    }
+  public void setTopicId(String topicId) {
+    this.topicId = topicId;
+  }
 
-    public T getPayload() {
-        return payload;
-    }
+  public T getPayload() {
+    return payload;
+  }
 
-    public void setPayload(T payload) {
-        this.payload = payload;
-    }
+  public void setPayload(T payload) {
+    this.payload = payload;
+  }
 
-    public ChangeType getChangeType() {
-        return changeType;
-    }
+  public ChangeType getChangeType() {
+    return changeType;
+  }
 
-    public void setChangeType(ChangeType changeType) {
-        this.changeType = changeType;
-    }
+  public void setChangeType(ChangeType changeType) {
+    this.changeType = changeType;
+  }
 }

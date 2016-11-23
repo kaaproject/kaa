@@ -34,18 +34,18 @@ import java.util.List;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class TopicListEntryCassandraDaoTest extends AbstractCassandraTest {
 
-    @Test
-    public void testFindByHash() throws Exception {
-        List<TopicDto> topics = new ArrayList<>();
-        TopicDto topicDto = new TopicDto();
-        topicDto.setId("6123");
-        topics.add(topicDto);
-        byte[] hash = "hash".getBytes();
-        int simpleHash = 123;
-        TopicListEntryDto topicListEntryDto = new TopicListEntryDto(123, hash, topics);
-        topicListEntryDao.save(topicListEntryDto);
+  @Test
+  public void testFindByHash() throws Exception {
+    List<TopicDto> topics = new ArrayList<>();
+    TopicDto topicDto = new TopicDto();
+    topicDto.setId("6123");
+    topics.add(topicDto);
+    byte[] hash = "hash".getBytes();
+    int simpleHash = 123;
+    TopicListEntryDto topicListEntryDto = new TopicListEntryDto(123, hash, topics);
+    topicListEntryDao.save(topicListEntryDto);
 
-        CassandraTopicListEntry topicListEntry = topicListEntryDao.findByHash(hash);
-        Assert.assertEquals(simpleHash, topicListEntry.getSimpleHash());
-    }
+    CassandraTopicListEntry topicListEntry = topicListEntryDao.findByHash(hash);
+    Assert.assertEquals(simpleHash, topicListEntry.getSimpleHash());
+  }
 }

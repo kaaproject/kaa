@@ -16,144 +16,109 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
 import org.kaaproject.kaa.common.dto.EndpointGroupDto;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The Class ControlServerEndpointGroupIT.
  */
 public class ControlServerEndpointGroupIT extends AbstractTestControlServer {
 
-    /**
-     * Test create endpoint group.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testCreateEndpointGroup() throws Exception {
-        EndpointGroupDto endpointGroup = createEndpointGroup();
-        Assert.assertFalse(strIsEmpty(endpointGroup.getId()));
-    }
-    
-    /**
-     * Test get endpoint group.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetEndpointGroup() throws Exception {
-        EndpointGroupDto endpointGroup = createEndpointGroup();
-        
-        EndpointGroupDto storedEndpointGroup = client.getEndpointGroup(endpointGroup.getId());
-        
-        Assert.assertNotNull(storedEndpointGroup);
-        assertEndpointGroupsEquals(endpointGroup, storedEndpointGroup);
-    }
-    
-    /**
-     * Test get endpoint groups by application id.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetEndpointGroupsByApplicationId() throws Exception {
-        
-        List<EndpointGroupDto> endpointGroups  = new ArrayList<>(11);
+  /**
+   * Test create endpoint group.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testCreateEndpointGroup() throws Exception {
+    EndpointGroupDto endpointGroup = createEndpointGroup();
+    Assert.assertFalse(strIsEmpty(endpointGroup.getId()));
+  }
 
-        ApplicationDto application = createApplication(tenantAdminDto);
-        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+  /**
+   * Test get endpoint group.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetEndpointGroup() throws Exception {
+    EndpointGroupDto endpointGroup = createEndpointGroup();
 
-        List<EndpointGroupDto> defaultEndpointGroups = client.getEndpointGroups(application.getId());
-        endpointGroups.addAll(defaultEndpointGroups);
+    EndpointGroupDto storedEndpointGroup = client.getEndpointGroup(endpointGroup.getId());
 
-        for (int i = 0; i < 10; i++) {
-            EndpointGroupDto endpointGroup = createEndpointGroup(application.getId());
-            endpointGroups.add(endpointGroup);
-        }
-        
-        Collections.sort(endpointGroups, new IdComparator());
-        
-        List<EndpointGroupDto> storedEndpointGroups = client.getEndpointGroups(application.getId());
+    Assert.assertNotNull(storedEndpointGroup);
+    assertEndpointGroupsEquals(endpointGroup, storedEndpointGroup);
+  }
 
-        Collections.sort(storedEndpointGroups, new IdComparator());
-        
-        Assert.assertEquals(endpointGroups.size(), storedEndpointGroups.size());
-        for (int i=0;i<endpointGroups.size();i++) {
-            EndpointGroupDto endpointGroup = endpointGroups.get(i);
-            EndpointGroupDto storedEndpointGroup = storedEndpointGroups.get(i);
-            assertEndpointGroupsEquals(endpointGroup, storedEndpointGroup);
-        }
+  /**
+   * Test get endpoint groups by application token.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetEndpointGroupsByApplicationToken() throws Exception {
+
+    List<EndpointGroupDto> endpointGroups = new ArrayList<>(11);
+
+    ApplicationDto application = createApplication(tenantAdminDto);
+    loginTenantDeveloper(tenantDeveloperDto.getUsername());
+
+    List<EndpointGroupDto> defaultEndpointGroups = client.getEndpointGroupsByAppToken(application.getApplicationToken());
+    endpointGroups.addAll(defaultEndpointGroups);
+
+    for (int i = 0; i < 10; i++) {
+      EndpointGroupDto endpointGroup = createEndpointGroup(application.getId());
+      endpointGroups.add(endpointGroup);
     }
 
-    /**
-     * Test get endpoint groups by application token.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetEndpointGroupsByApplicationToken() throws Exception {
+    Collections.sort(endpointGroups, new IdComparator());
 
-        List<EndpointGroupDto> endpointGroups  = new ArrayList<>(11);
+    List<EndpointGroupDto> storedEndpointGroups = client.getEndpointGroupsByAppToken(application.getApplicationToken());
 
-        ApplicationDto application = createApplication(tenantAdminDto);
-        loginTenantDeveloper(tenantDeveloperDto.getUsername());
+    Collections.sort(storedEndpointGroups, new IdComparator());
 
-        List<EndpointGroupDto> defaultEndpointGroups = client.getEndpointGroupsByAppToken(application.getApplicationToken());
-        endpointGroups.addAll(defaultEndpointGroups);
-
-        for (int i = 0; i < 10; i++) {
-            EndpointGroupDto endpointGroup = createEndpointGroup(application.getId());
-            endpointGroups.add(endpointGroup);
-        }
-
-        Collections.sort(endpointGroups, new IdComparator());
-
-        List<EndpointGroupDto> storedEndpointGroups = client.getEndpointGroupsByAppToken(application.getApplicationToken());
-
-        Collections.sort(storedEndpointGroups, new IdComparator());
-
-        Assert.assertEquals(endpointGroups.size(), storedEndpointGroups.size());
-        for (int i=0;i<endpointGroups.size();i++) {
-            EndpointGroupDto endpointGroup = endpointGroups.get(i);
-            EndpointGroupDto storedEndpointGroup = storedEndpointGroups.get(i);
-            assertEndpointGroupsEquals(endpointGroup, storedEndpointGroup);
-        }
+    Assert.assertEquals(endpointGroups.size(), storedEndpointGroups.size());
+    for (int i = 0; i < endpointGroups.size(); i++) {
+      EndpointGroupDto endpointGroup = endpointGroups.get(i);
+      EndpointGroupDto storedEndpointGroup = storedEndpointGroups.get(i);
+      assertEndpointGroupsEquals(endpointGroup, storedEndpointGroup);
     }
+  }
 
-    /**
-     * Test delete endpoint group.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testDeleteEndpointGroup() throws Exception {
-        final EndpointGroupDto endpointGroup = createEndpointGroup();
-        client.deleteEndpointGroup(endpointGroup.getId());
-        checkNotFound(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.getEndpointGroup(endpointGroup.getId());
-            }
-        });
-   }
+  /**
+   * Test delete endpoint group.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testDeleteEndpointGroup() throws Exception {
+    final EndpointGroupDto endpointGroup = createEndpointGroup();
+    client.deleteEndpointGroup(endpointGroup.getId());
+    checkNotFound(new TestRestCall() {
+      @Override
+      public void executeRestCall() throws Exception {
+        client.getEndpointGroup(endpointGroup.getId());
+      }
+    });
+  }
 
-    /**
-     * Assert endpoint groups equals.
-     *
-     * @param endpointGroup the endpoint group
-     * @param storedEndpointGroup the stored endpoint group
-     */
-    private void assertEndpointGroupsEquals(EndpointGroupDto endpointGroup, EndpointGroupDto storedEndpointGroup) {
-        Assert.assertEquals(endpointGroup.getId(), storedEndpointGroup.getId());
-        Assert.assertEquals(endpointGroup.getApplicationId(), storedEndpointGroup.getApplicationId());
-        Assert.assertEquals(endpointGroup.getName(), storedEndpointGroup.getName());
-        Assert.assertEquals(endpointGroup.getWeight(), storedEndpointGroup.getWeight());
-    }
+  /**
+   * Assert endpoint groups equals.
+   *
+   * @param endpointGroup       the endpoint group
+   * @param storedEndpointGroup the stored endpoint group
+   */
+  private void assertEndpointGroupsEquals(EndpointGroupDto endpointGroup, EndpointGroupDto storedEndpointGroup) {
+    Assert.assertEquals(endpointGroup.getId(), storedEndpointGroup.getId());
+    Assert.assertEquals(endpointGroup.getApplicationId(), storedEndpointGroup.getApplicationId());
+    Assert.assertEquals(endpointGroup.getName(), storedEndpointGroup.getName());
+    Assert.assertEquals(endpointGroup.getWeight(), storedEndpointGroup.getWeight());
+  }
 
 }

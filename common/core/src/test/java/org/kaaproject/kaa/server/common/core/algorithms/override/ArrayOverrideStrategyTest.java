@@ -21,15 +21,15 @@ import org.junit.Test;
 
 public class ArrayOverrideStrategyTest {
 
-    @Test
-    public void testGetByNameSuccessForCorrectName() {
-        ArrayOverrideStrategy arrayMergeStrategy = ArrayOverrideStrategy.getByName(ArrayOverrideStrategy.APPEND.getName());
-        Assert.assertTrue(ArrayOverrideStrategy.APPEND == arrayMergeStrategy);
-    }
+  @Test
+  public void testGetByNameSuccessForCorrectName() {
+    ArrayOverrideStrategy arrayMergeStrategy = ArrayOverrideStrategy.getByName(ArrayOverrideStrategy.APPEND.getName());
+    Assert.assertTrue(ArrayOverrideStrategy.APPEND == arrayMergeStrategy);
+  }
 
-    @Test
-    public void testGetByNameFailsForIncorrectName() {
-        ArrayOverrideStrategy arrayMergeStrategy = ArrayOverrideStrategy.getByName("incorrect_name");
-        Assert.assertNull(arrayMergeStrategy);
-    }
+  @Test
+  public void testGetByNameFailsForIncorrectName() {
+    ArrayOverrideStrategy arrayMergeStrategy = ArrayOverrideStrategy.getByName("incorrect_name");
+    Assert.assertNull(arrayMergeStrategy);
+  }
 }

@@ -30,45 +30,50 @@ import org.springframework.stereotype.Service;
  * Implementation of Kaa Node Thrift Interface.
  */
 @Service
-public class KaaNodeThriftServiceImpl extends BaseCliThriftService implements KaaNodeThriftService.Iface {
+public class KaaNodeThriftServiceImpl extends BaseCliThriftService
+        implements KaaNodeThriftService.Iface {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(KaaNodeThriftServiceImpl.class);
-    
-    /** The kaa node initialization service. */
-    @Autowired
-    private InitializationService kaaNodeInitializationService;
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(KaaNodeThriftServiceImpl.class);
 
-    @Override
-    protected String getServerShortName() {
-        return "kaa-node";
-    }
+  /**
+   * The kaa node initialization service.
+   */
+  @Autowired
+  private InitializationService kaaNodeInitializationService;
 
-    @Override
-    protected void initServiceCommands() {
-        // Do nothing
-    }
+  @Override
+  protected String getServerShortName() {
+    return "kaa-node";
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService
-     * .Iface#shutdown()
-     */
-    @Override
-    public void shutdown() throws TException {
-        LOG.info("Received shutdown command.");
+  @Override
+  protected void initServiceCommands() {
+    // Do nothing
+  }
 
-        Runnable shutdownCommmand = new Runnable() {
-            @Override
-            public void run() {
-                LOG.info("Stopping Kaa Node Server Application...");
-                kaaNodeInitializationService.stop();
-            }
-        };
+  /*
+   * (non-Javadoc)
+   *
+   * @see org.kaaproject.kaa.server.common.thrift.gen.cli.CliThriftService
+   * .Iface#shutdown()
+   */
+  @Override
+  public void shutdown() throws TException {
+    LOG.info("Received shutdown command.");
 
-        Thread shutdownThread = new Thread(shutdownCommmand);
-        shutdownThread.setName("Kaa Node Server Shutdown Thread");
-        shutdownThread.start();
-    }
+    Runnable shutdownCommmand = new Runnable() {
+      @Override
+      public void run() {
+        LOG.info("Stopping Kaa Node Server Application...");
+        kaaNodeInitializationService.stop();
+      }
+    };
+
+    Thread shutdownThread = new Thread(shutdownCommmand);
+    shutdownThread.setName("Kaa Node Server Shutdown Thread");
+    shutdownThread.start();
+  }
 }

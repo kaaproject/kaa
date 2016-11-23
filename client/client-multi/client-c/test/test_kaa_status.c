@@ -78,11 +78,10 @@ void ext_status_store(const char *buffer, size_t buffer_size)
     }
 }
 
-void ext_get_endpoint_public_key(char **buffer, size_t *buffer_size, bool *needs_deallocation)
+void ext_get_endpoint_public_key(const uint8_t **buffer, size_t *buffer_size)
 {
     *buffer = NULL;
     *buffer_size = 0;
-    *needs_deallocation = false;
 }
 
 void test_create_status(void **state)

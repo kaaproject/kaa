@@ -20,13 +20,13 @@ import org.springframework.dao.OptimisticLockingFailureException;
 
 public class KaaOptimisticLockingFailureException extends OptimisticLockingFailureException {
 
-    private static final long serialVersionUID = 1985741897367919195L;
+  private static final long serialVersionUID = 1985741897367919195L;
 
-    public KaaOptimisticLockingFailureException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
+  public KaaOptimisticLockingFailureException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
-    public KaaOptimisticLockingFailureException(String msg) {
-        super(msg);
-    }
+  public KaaOptimisticLockingFailureException(String msg) {
+    super(msg);
+  }
 }

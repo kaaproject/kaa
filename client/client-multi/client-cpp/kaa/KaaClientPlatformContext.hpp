@@ -68,7 +68,7 @@ public:
     KaaClientPlatformContext(KaaClientPlatformContext&& properties) = delete;
     KaaClientPlatformContext& operator=(KaaClientPlatformContext&& properties) = delete;
 
-    ~KaaClientPlatformContext() = default;
+    ~KaaClientPlatformContext() noexcept = default;
 
 private:
     KaaClientProperties    properties_;

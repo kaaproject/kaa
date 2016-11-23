@@ -22,18 +22,16 @@ import org.apache.avro.generic.GenericRecord;
  * Interface for subscriber to receive deltas in avro generic objects.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface GenericDeltaReceiver {
 
-    /**
-     * Called on each deserialized delta
-     *
-     * @param index Index of the current delta in the union list
-     * @param data Avro generic object with deserialized delta
-     * @param fullResync Tells if current delta is a full resync
-     *
-     */
-    void onDeltaReceived(int index, GenericRecord data, boolean fullResync);
+  /**
+   * Called on each deserialized delta.
+   *
+   * @param index      Index of the current delta in the union list
+   * @param data       Avro generic object with deserialized delta
+   * @param fullResync Tells if current delta is a full resync
+   */
+  void onDeltaReceived(int index, GenericRecord data, boolean fullResync);
 
 }

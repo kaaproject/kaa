@@ -15,36 +15,37 @@
 # limitations under the License.
 #
 
+set -e
 
 help() {
     echo "Choose one of the following: {build|install|test|clean}"
     exit 1
 }
 
-RUN_DIR=`pwd`
+RUN_DIR=$(pwd)
 TEST_DIR=$RUN_DIR/test
 TEST_RESULT=1
 TEST_BUILD_FAILED=1
 
 # Temporary solution
-if [ ! -x $RUN_DIR/gcovr ]
+if [ ! -x "$RUN_DIR/gcovr" ]
 then
-    chmod +x $RUN_DIR/gcovr
+    chmod +x "$RUN_DIR/gcovr"
 fi
 
 measure_coverage() {
     echo "Collecting coverage metrics..."
-    cd $RUN_DIR && ./gcovr -d -x -f "($RUN_DIR).*" -e ".*(test|kaa/gen).*" -o $RUN_DIR/gcovr-report.xml -v > $RUN_DIR/gcovr.log   
+    cd "$RUN_DIR" && ./gcovr -d -x -f "($RUN_DIR).*" -e ".*(test|kaa/gen).*" -o "$RUN_DIR/gcovr-report.xml" -v > "$RUN_DIR/gcovr.log"
 }
 
 run_tests() {
-    cd build && make -j4 && TEST_BUILD_FAILED=0 && ./kaatest && TEST_RESULT=0 # --report_level=detailed --report_format=xml 2>$RUN_DIR/unittest_result.xml && TEST_RESULT=0
+    cd build && make -j4 && TEST_BUILD_FAILED=0 && ./kaatest && TEST_RESULT=0 # --report_level=detailed --report_format=xml 2>"$RUN_DIR/unittest_result.xml" && TEST_RESULT=0
 }
 
 test_cleanup() {
     echo "Cleaning up..."
-    cd $TEST_DIR/build && make clean
-    echo "Cleanup done." 
+    cd "$TEST_DIR/build" && make clean
+    echo "Cleanup done."
 }
 
 if [ $# -eq 0 ]
@@ -52,32 +53,32 @@ then
     help
 fi
 
-mkdir -p build; cd build; cmake -DKAA_WITH_SQLITE_LOG_STORAGE=1 ..; cd ..
+mkdir -p build; (cd build && cmake -DKAA_WITH_SQLITE_LOG_STORAGE=1 ..)
 
-for cmd in $@
+for cmd in "$@"
 do
 
 case "$cmd" in
     build)
-    cd build && make -j4 && cd ..
+    (cd build && make -j4)
     ;;
 
     install)
-    cd build && make install && cd ..
+    (cd build && make install)
     ;;
 
     clean)
-    cd build && make clean && cd .. 
+    (cd build && make clean)
     test_cleanup
     ;;
-    
+
     test)
-    cd $TEST_DIR
-    mkdir -p build; cd build; cmake ..; cd ..
+    cd "$TEST_DIR"
+    mkdir -p build; (cd build && cmake ..)
     run_tests
     if [ $TEST_BUILD_FAILED -eq 0 ]
     then
-        measure_coverage  
+        measure_coverage
     fi
     test_cleanup
     if [ $TEST_RESULT -ne 0 ]
@@ -88,7 +89,7 @@ case "$cmd" in
         echo "Kaa C++ SDK unittests have successfully passed!"
     fi
     ;;
-    
+
     *)
     help
     ;;

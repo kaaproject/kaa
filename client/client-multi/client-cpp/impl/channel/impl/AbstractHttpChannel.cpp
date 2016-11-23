@@ -21,11 +21,24 @@
 
 namespace kaa {
 
-AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager *channelManager, const KeyPair& clientKeys, IKaaClientContext &context)
-    : clientKeys_(clientKeys), lastConnectionFailed_(false)
-    , multiplexer_(nullptr), demultiplexer_(nullptr), channelManager_(channelManager)
-    , httpDataProcessor_(context), httpClient_(context), context_(context) {}
+static KaaFailoverReason getNotAccessibleFailoverReason(ServerType type)
+{
+    return type == ServerType::BOOTSTRAP ?
+                KaaFailoverReason::CURRENT_BOOTSTRAP_SERVER_NA :
+                KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA;
+}
 
+AbstractHttpChannel::AbstractHttpChannel(IKaaChannelManager& channelManager,
+                                         const KeyPair& clientKeys,
+                                         IKaaClientContext& context)
+    : channelManager_(channelManager)
+    , context_(context)
+    , clientKeys_(clientKeys)
+    , httpDataProcessor_(context)
+    , httpClient_(context)
+{
+
+}
 
 void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDirection>& types
 #ifdef KAA_THREADSAFE
@@ -33,17 +46,17 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
 #endif
                                        )
 {
-    const auto& bodyRaw = multiplexer_->compileRequest(types);
-
-    // Creating HTTP request using the given data
-    std::shared_ptr<IHttpRequest> postRequest = createRequest(currentServer_, bodyRaw);
+    auto postRequest = createRequest(currentServer_, multiplexer_->compileRequest(types));
 
     KAA_MUTEX_UNLOCKING("channelGuard_");
     KAA_UNLOCK(lock);
     KAA_MUTEX_UNLOCKED("channelGuard_");
+
     try {
         // Sending http request
-        auto response = httpClient_.sendRequest(*postRequest);
+        EndpointConnectionInfo connection("", "", getServerType());
+        auto response = httpClient_.sendRequest(*postRequest, &connection);
+        channelManager_.onConnected(connection);
 
         KAA_MUTEX_LOCKING("channelGuard_");
         KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
@@ -51,7 +64,6 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
 
         // Retrieving the avro data from the HTTP response
         const std::string& processedResponse = retrieveResponse(*response);
-        lastConnectionFailed_ = false;
 
         KAA_MUTEX_UNLOCKING("channelGuard_");
         KAA_UNLOCK(lockInternal);
@@ -63,22 +75,38 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
                                               reinterpret_cast<const std::uint8_t *>(processedResponse.data() + processedResponse.size())));
         }
     } catch (HttpTransportException& e) {
-        KAA_LOG_WARN(boost::format("Connection failed, server %1%:%2%: %3%")
-                     % currentServer_->getHost() % currentServer_->getPort() % e.getHttpStatusCode());
+        KAA_LOG_WARN(boost::format("Channel [%1%] failed to connect %2%:%3%: %4%")
+                                                                         % getId()
+                                                                         % currentServer_->getHost()
+                                                                         % currentServer_->getPort()
+                                                                         % e.getHttpStatusCode());
 
         KaaFailoverReason reason;
         switch (e.getHttpStatusCode()) {
         case HttpStatusCode::UNAUTHORIZED:
             reason = KaaFailoverReason::ENDPOINT_NOT_REGISTERED;
-            context_.getStatus().setRegistered(false);
-            context_.getStatus().save();
             break;
         case HttpStatusCode::FORBIDDEN:
             reason = KaaFailoverReason::CREDENTIALS_REVOKED;
             break;
         default:
-            reason = KaaFailoverReason::BOOTSTRAP_SERVERS_NA;
+            reason = getNotAccessibleFailoverReason(getServerType());
             break;
+        }
+
+        onServerFailed(reason);
+    } catch (TransportException& e) {
+        KAA_LOG_WARN(boost::format("Channel [%1%] failed to connect %2%:%3%: %4%")
+                                                                     % getId()
+                                                                     % currentServer_->getHost()
+                                                                     % currentServer_->getPort()
+                                                                     % e.getErrorCode().message());
+
+        KaaFailoverReason reason = getNotAccessibleFailoverReason(getServerType());
+        if (connectivityChecker_ && !connectivityChecker_->checkConnectivity()) {
+            KAA_LOG_WARN(boost::format("Channel [%1%] detected loss of connectivity")
+                                                                          % getId());
+            reason = KaaFailoverReason::NO_CONNECTIVITY;
         }
 
         onServerFailed(reason);
@@ -88,40 +116,42 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
 
 void AbstractHttpChannel::onServerFailed(KaaFailoverReason reason)
 {
-    KAA_MUTEX_LOCKING("channelGuard_");
-    KAA_MUTEX_UNIQUE_DECLARE(lockInternal, channelGuard_);
-    KAA_MUTEX_LOCKED("channelGuard_");
+    auto server = std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
 
-    lastConnectionFailed_ = true;
+    KAA_LOG_WARN(boost::format("Channel [%1%] detected '%2%' failover for %3%")
+                                                         % getId()
+                                                         % LoggingUtils::toString(reason)
+                                                         % LoggingUtils::toString(*server));
 
-    KAA_MUTEX_UNLOCKING("channelGuard_");
-    KAA_UNLOCK(lockInternal);
-    KAA_MUTEX_UNLOCKED("channelGuard_");
-
-    channelManager_->onServerFailed(std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_), reason);
+    channelManager_.onServerFailed(server, reason);
 }
 
 void AbstractHttpChannel::sync(TransportType type)
 {
     const auto& supportedTypes = getSupportedTransportTypes();
     auto it = supportedTypes.find(type);
-    if (it != supportedTypes.end() && (it->second == ChannelDirection::UP || it->second == ChannelDirection::BIDIRECTIONAL)) {
-        KAA_MUTEX_LOCKING("channelGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
-        KAA_MUTEX_LOCKED("channelGuard_");
-        if (currentServer_) {
-            processTypes(std::map<TransportType, ChannelDirection>({ { type, it->second } })
-#ifdef KAA_THREADSAFE
-                       , lock
-#endif
-                        );
-        } else {
-            lastConnectionFailed_ = true;
-            KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
-        }
-    } else {
-        KAA_LOG_ERROR(boost::format("Unsupported transport type for channel %1%") % getId());
+    if (it == supportedTypes.end() || it->second == ChannelDirection::DOWN) {
+        KAA_LOG_ERROR(boost::format("Channel [%1%] unsupported transport type '%2%'")
+                                                        % getId()
+                                                        % LoggingUtils::toString(type));
+        return;
     }
+
+    KAA_MUTEX_LOCKING("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
+
+    if (!currentServer_) {
+        KAA_LOG_WARN(boost::format("Channel [%1%] can't sync: server is null") % getId());
+        return;
+    }
+
+    processTypes(std::map<TransportType, ChannelDirection>({ { type, it->second } })
+#ifdef KAA_THREADSAFE
+               , lock
+#endif
+                );
+
 }
 
 
@@ -130,24 +160,23 @@ void AbstractHttpChannel::syncAll()
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
     KAA_MUTEX_LOCKED("channelGuard_");
-    if (currentServer_) {
-        processTypes(getSupportedTransportTypes()
-#ifdef KAA_THREADSAFE
-                   , lock
-#endif
-                    );
-    } else {
-        lastConnectionFailed_ = true;
-        KAA_LOG_WARN(boost::format("Can't sync channel %1%. Server is null") % getId());
-    }
-}
 
+    if (!currentServer_) {
+        KAA_LOG_WARN(boost::format("Channel [%1%] can't sync: server is null") % getId());
+        return;
+    }
+
+    processTypes(getSupportedTransportTypes()
+#ifdef KAA_THREADSAFE
+               , lock
+#endif
+                );
+}
 
 void AbstractHttpChannel::syncAck(TransportType type)
 {
-    KAA_LOG_DEBUG(boost::format("Sync ack operation is not supported by channel %1%.") % getId());
+    KAA_LOG_WARN(boost::format("Channel [%1%] not support sync ACK operation") % getId());
 }
-
 
 void AbstractHttpChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
 {
@@ -157,7 +186,6 @@ void AbstractHttpChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
     multiplexer_ = multiplexer;
 }
 
-
 void AbstractHttpChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
 {
     KAA_MUTEX_LOCKING("channelGuard_");
@@ -166,27 +194,28 @@ void AbstractHttpChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
     demultiplexer_ = demultiplexer;
 }
 
-
 void AbstractHttpChannel::setServer(ITransportConnectionInfoPtr server)
 {
-    if (server->getTransportId() == getTransportProtocolId()) {
-        KAA_MUTEX_LOCKING("channelGuard_");
-        KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
-        KAA_MUTEX_LOCKED("channelGuard_");
-        currentServer_.reset(new IPTransportInfo(server));
-        std::shared_ptr<IEncoderDecoder> encDec(new RsaEncoderDecoder(clientKeys_.getPublicKey(), clientKeys_.getPrivateKey(), currentServer_->getPublicKey(), context_));
-        httpDataProcessor_.setEncoderDecoder(encDec);
-        if (lastConnectionFailed_) {
-            lastConnectionFailed_ = false;
-            processTypes(getSupportedTransportTypes()
-#ifdef KAA_THREADSAFE
-                        , lock
-#endif
-                        );
-        }
-    } else {
-        KAA_LOG_ERROR(boost::format("Invalid server info for channel %1%") % getId());
+    if (server->getTransportId() != getTransportProtocolId()) {
+        KAA_LOG_ERROR(boost::format("Channel [%1%] ignored invalid server info") % getId());
+        return;
     }
+
+    KAA_MUTEX_LOCKING("channelGuard_");
+    KAA_MUTEX_UNIQUE_DECLARE(lock, channelGuard_);
+    KAA_MUTEX_LOCKED("channelGuard_");
+
+    KAA_LOG_TRACE(boost::format("Channel [%1%] preparing to use new server %2%")
+                                                            % getId()
+                                                            % LoggingUtils::toString(*server));
+
+    currentServer_ = std::make_shared<IPTransportInfo>(server);
+
+    httpDataProcessor_.setEncoderDecoder(
+            std::make_shared<RsaEncoderDecoder>(clientKeys_.getPublicKey(),
+                                                clientKeys_.getPrivateKey(),
+                                                currentServer_->getPublicKey(),
+                                                context_));
 }
 
 }

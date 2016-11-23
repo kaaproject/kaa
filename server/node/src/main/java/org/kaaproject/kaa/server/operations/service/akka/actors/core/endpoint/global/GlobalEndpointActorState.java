@@ -20,8 +20,8 @@ import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.Ab
 
 public class GlobalEndpointActorState extends AbstractEndpointActorState {
 
-    public GlobalEndpointActorState(String endpointKey, String actorKey) {
-        super(endpointKey, actorKey);
-    }
+  public GlobalEndpointActorState(String endpointKey, String actorKey) {
+    super(endpointKey, actorKey);
+  }
 
 }

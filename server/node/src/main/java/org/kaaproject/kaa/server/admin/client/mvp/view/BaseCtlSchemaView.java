@@ -16,31 +16,31 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
-import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.HasValue;
 
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.RecordPanel;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaReferenceDto;
+
 public interface BaseCtlSchemaView extends BaseDetailsView {
 
-    public HasValue<String> getVersion();
+  public HasValue<String> getVersion();
 
-    public HasValue<String> getName();
+  public HasValue<String> getName();
 
-    public HasValue<String> getDescription();
+  public HasValue<String> getDescription();
 
-    public HasValue<String> getCreatedUsername();
+  public HasValue<String> getCreatedUsername();
 
-    public HasValue<String> getCreatedDateTime();
-    
-    public boolean useExistingCtlSchema();
-    
-    public HasConstrainedValue<CtlSchemaReferenceDto> getCtlSchemaReference();
+  public HasValue<String> getCreatedDateTime();
 
-    public RecordPanel getSchemaForm();
-    
-    public HasClickHandlers getNewCtlButton();
+  public boolean useExistingCtlSchema();
+
+  public HasConstrainedValue<CtlSchemaReferenceDto> getCtlSchemaReference();
+
+  public RecordPanel getSchemaForm();
+
+  public HasClickHandlers getNewCtlButton();
 
 }

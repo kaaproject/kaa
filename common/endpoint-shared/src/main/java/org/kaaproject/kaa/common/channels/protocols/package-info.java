@@ -16,7 +16,7 @@
 
 /**
  * Provides specific protocol implementations.
- * @author Andrey Panasenko
  *
+ * @author Andrey Panasenko
  */
 package org.kaaproject.kaa.common.channels.protocols;

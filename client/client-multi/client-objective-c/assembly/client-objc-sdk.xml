@@ -46,6 +46,7 @@
                 <include>README.md</include>
                 <include>Podfile</include>
                 <include>build.sh</include>
+                <include>Kaa.podspec</include>
             </includes>
         </fileSet>
     </fileSets>

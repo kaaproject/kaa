@@ -22,21 +22,18 @@
 , doxygen ? null
 
 , clang ? null
-, openssl ? null
 
 , cmocka ? null
 , cppcheck ? null
 , valgrind ? null
 , python ? null
 , gcc-arm-embedded ? null
-, jre ? null
 
 , gcc-xtensa-lx106 ? null
 , esp8266-rtos-sdk ? null
 , cc3200-sdk ? null
 
 , raspberrypi-tools ? null
-, raspberrypi-openssl ? null
 
 , clangSupport ? true
 , posixSupport ? true
@@ -46,15 +43,14 @@
 , testSupport ? true
 , withTooling ? true
 , withWerror ? false
+, withValgrind ? true
 }:
 
-assert clangSupport -> clang != null && openssl != null;
-assert posixSupport -> openssl != null;
-assert esp8266Support -> gcc-xtensa-lx106 != null && esp8266-rtos-sdk != null && jre != null;
-assert cc3200Support -> cc3200-sdk != null && gcc-arm-embedded != null && jre != null;
-assert raspberrypiSupport -> raspberrypi-tools != null && raspberrypi-openssl != null;
-assert testSupport -> posixSupport != null && cmocka != null && cppcheck != null &&
-                      valgrind != null && python != null;
+assert clangSupport -> clang != null;
+assert esp8266Support -> gcc-xtensa-lx106 != null && esp8266-rtos-sdk != null;
+assert cc3200Support -> cc3200-sdk != null && gcc-arm-embedded != null;
+assert raspberrypiSupport -> raspberrypi-tools != null;
+assert testSupport -> cmocka != null && cppcheck != null && python != null;
 
 let
   kaa-generic-makefile =
@@ -85,17 +81,17 @@ let
         __propagate:;
       ''
       + target posixSupport "posix"
-              "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''}"
+              "${lib.optionalString testSupport ''-DCMAKE_BUILD_TYPE=Debug -DKAA_UNITTESTS_COMPILE=on -DKAA_COLLECT_COVERAGE=1''}"
       + target posixSupport "nologs"
               "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DKAA_MAX_LOG_LEVEL=0"
       + target clangSupport "clang"
               "${lib.optionalString testSupport ''-DKAA_UNITTESTS_COMPILE=on''} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++"
       + target cc3200Support "cc3200"
-              "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake"
+              "-DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=toolchains/cc32xx.cmake -DCC32XX_SDK='${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk' -DCC32XX_TOOLCHAIN_PATH='${gcc-arm-embedded}'"
       + target esp8266Support "esp8266"
-              "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake"
+              "-DKAA_PLATFORM=esp8266 -DCMAKE_TOOLCHAIN_FILE=toolchains/esp8266.cmake -DESP8266_TOOLCHAIN_PATH='${gcc-xtensa-lx106}' -DESP8266_SDK_PATH='${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk'"
       + target raspberrypiSupport "rpi"
-              "-DCMAKE_PREFIX_PATH=${raspberrypi-openssl} -DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake";
+              "-DCMAKE_TOOLCHAIN_FILE=toolchains/rpi.cmake";
     };
 in stdenv.mkDerivation {
   name = "kaa-client-c";
@@ -108,48 +104,26 @@ in stdenv.mkDerivation {
     doxygen
   ] ++ lib.optional clangSupport [
     clang
-    openssl
-  ] ++ lib.optional posixSupport [
-    openssl
   ] ++ lib.optional testSupport [
     cmocka
     cppcheck
-    valgrind
     python
+  ] ++ lib.optional withValgrind [
+    valgrind
   ] ++ lib.optional esp8266Support [
     gcc-xtensa-lx106
     esp8266-rtos-sdk
-    jre
   ] ++ lib.optional cc3200Support [
     cc3200-sdk
     gcc-arm-embedded
-    jre
   ] ++ lib.optional raspberrypiSupport [
     raspberrypi-tools
-    raspberrypi-openssl
   ];
 
-  shellHook =
-    lib.optionalString cc3200Support ''
-      export CC32XX_SDK=${cc3200-sdk}/lib/cc3200-sdk/cc3200-sdk
-    '' +
-    lib.optionalString esp8266Support ''
-      export ESP8266_TOOLCHAIN_PATH="${gcc-xtensa-lx106}"
-      export ESP8266_SDK_BASE=${esp8266-rtos-sdk}/lib/esp8266-rtos-sdk
-    '' +
-    ''
-      export CTEST_OUTPUT_ON_FAILURE=1
+  shellHook = ''
+    export CTEST_OUTPUT_ON_FAILURE=1
 
-      cp ${kaa-generic-makefile}/Makefile .
-      chmod 644 Makefile
-
-      cat <<EOF > ./.zshrc
-      source \$HOME/.zshrc
-      PROMPT="%B%F{red}[kaa]%f%b \$PROMPT"
-      EOF
-
-      export ZDOTDIR=.;
-
-      # zsh -i; exit
-    '';
+    cp ${kaa-generic-makefile}/Makefile .
+    chmod 644 Makefile
+  '';
 }

@@ -16,120 +16,118 @@
 
 package org.kaaproject.kaa.server.operations.pojo;
 
+import org.kaaproject.kaa.common.dto.NotificationDto;
+import org.kaaproject.kaa.common.dto.TopicDto;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.kaaproject.kaa.common.dto.NotificationDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
 
 
 /**
  * The Class for modeling of delta response. It is used to communicate with
  * {@link org.kaaproject.kaa.server.operations.service.delta.DeltaService
  * DeltaService}
- * 
+ *
  * @author ashvayka
  */
 
 public class GetNotificationResponse {
 
-    /** The notifications. */
-    private List<NotificationDto> notifications;
+  private List<NotificationDto> notifications;
 
-    /** The topic list. */
-    private List<TopicDto> topicList;
+  private List<TopicDto> topicList;
 
-    /** The subscription states. */
-    private Map<String, Integer> subscriptionStates;
-    
-    private Set<String> subscriptionSet;
-    
-    private boolean subscriptionSetChanged;
+  private Map<String, Integer> subscriptionStates;
 
-    /**
-     * Instantiates a new gets the notification response.
-     */
-    public GetNotificationResponse() {
-        super();
-    }
+  private Set<String> subscriptionSet;
 
-    /**
-     * Gets the notifications.
-     *
-     * @return the notifications
-     */
-    public List<NotificationDto> getNotifications() {
-        return notifications;
-    }
+  private boolean subscriptionSetChanged;
 
-    /**
-     * Sets the notifications.
-     *
-     * @param notifications the new notifications
-     */
-    public void setNotifications(List<NotificationDto> notifications) {
-        this.notifications = notifications;
-    }
+  /**
+   * Instantiates a new gets the notification response.
+   */
+  public GetNotificationResponse() {
+    super();
+  }
 
-    /**
-     * Gets the topic list.
-     *
-     * @return the topic list
-     */
-    public List<TopicDto> getTopicList() {
-        return topicList;
-    }
+  /**
+   * Gets the notifications.
+   *
+   * @return the notifications
+   */
+  public List<NotificationDto> getNotifications() {
+    return notifications;
+  }
 
-    /**
-     * Sets the topic list.
-     *
-     * @param topicList the new topic list
-     */
-    public void setTopicList(List<TopicDto> topicList) {
-        this.topicList = topicList;
-    }
+  /**
+   * Sets the notifications.
+   *
+   * @param notifications the new notifications
+   */
+  public void setNotifications(List<NotificationDto> notifications) {
+    this.notifications = notifications;
+  }
 
-    /**
-     * Gets the subscription states.
-     *
-     * @return the subscription states
-     */
-    public Map<String, Integer> getSubscriptionStates() {
-        return subscriptionStates;
-    }
+  /**
+   * Gets the topic list.
+   *
+   * @return the topic list
+   */
+  public List<TopicDto> getTopicList() {
+    return topicList;
+  }
 
-    /**
-     * Sets the subscription states.
-     *
-     * @param subscriptionStates the subscription states
-     */
-    public void setSubscriptionStates(Map<String, Integer> subscriptionStates) {
-        this.subscriptionStates = subscriptionStates;
-    }
+  /**
+   * Sets the topic list.
+   *
+   * @param topicList the new topic list
+   */
+  public void setTopicList(List<TopicDto> topicList) {
+    this.topicList = topicList;
+  }
 
-    /**
-     * Checks for delta.
-     *
-     * @return true, if successful
-     */
-    public boolean hasDelta() {
-        return (notifications != null && !notifications.isEmpty()) || (topicList != null && !topicList.isEmpty());
-    }
+  /**
+   * Gets the subscription states.
+   *
+   * @return the subscription states
+   */
+  public Map<String, Integer> getSubscriptionStates() {
+    return subscriptionStates;
+  }
 
-    public boolean isSubscriptionListChanged() {
-        return subscriptionSetChanged;
-    }
+  /**
+   * Sets the subscription states.
+   *
+   * @param subscriptionStates the subscription states
+   */
+  public void setSubscriptionStates(Map<String, Integer> subscriptionStates) {
+    this.subscriptionStates = subscriptionStates;
+  }
 
-    public void setSubscriptionSetChanged(boolean subscriptionSetChanged) {
-        this.subscriptionSetChanged = subscriptionSetChanged;
-    }
+  /**
+   * Checks for delta.
+   *
+   * @return true, if successful
+   */
+  public boolean hasDelta() {
+    return (notifications != null && !notifications.isEmpty())
+        || (topicList != null && !topicList.isEmpty());
+  }
 
-    public Set<String> getSubscriptionSet() {
-        return subscriptionSet;
-    }
+  public boolean isSubscriptionListChanged() {
+    return subscriptionSetChanged;
+  }
 
-    public void setSubscriptionSet(Set<String> subscriptionSet) {
-        this.subscriptionSet = subscriptionSet;
-    }
+  public void setSubscriptionSetChanged(boolean subscriptionSetChanged) {
+    this.subscriptionSetChanged = subscriptionSetChanged;
+  }
+
+  public Set<String> getSubscriptionSet() {
+    return subscriptionSet;
+  }
+
+  public void setSubscriptionSet(Set<String> subscriptionSet) {
+    this.subscriptionSet = subscriptionSet;
+  }
 }

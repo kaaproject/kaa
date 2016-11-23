@@ -27,27 +27,27 @@ import org.mockito.Mockito;
 
 public class DefaultMetaDataTransportTest {
 
-    @Test
-    public void testCreateMetaDataRequest() {
-        KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
-        KaaClientState state = Mockito.mock(KaaClientState.class);
-        Mockito.when(state.getProfileHash()).thenReturn(EndpointObjectHash.fromSHA1("123"));
-        EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSHA1("567");
-        MetaDataTransport transport = new DefaultMetaDataTransport();
-        transport.createMetaDataRequest();
-        transport.setClientProperties(properties);
-        transport.createMetaDataRequest();
-        transport.setClientState(state);
-        transport.createMetaDataRequest();
-        transport.setEndpointPublicKeyhash(publicKeyHash);
-        transport.setTimeout(5);
+  @Test
+  public void testCreateMetaDataRequest() {
+    KaaClientProperties properties = Mockito.mock(KaaClientProperties.class);
+    KaaClientState state = Mockito.mock(KaaClientState.class);
+    Mockito.when(state.getProfileHash()).thenReturn(EndpointObjectHash.fromSha1("123"));
+    EndpointObjectHash publicKeyHash = EndpointObjectHash.fromSha1("567");
+    MetaDataTransport transport = new DefaultMetaDataTransport();
+    transport.createMetaDataRequest();
+    transport.setClientProperties(properties);
+    transport.createMetaDataRequest();
+    transport.setClientState(state);
+    transport.createMetaDataRequest();
+    transport.setEndpointPublicKeyhash(publicKeyHash);
+    transport.setTimeout(5);
 
-        SyncRequestMetaData request = transport.createMetaDataRequest();
+    SyncRequestMetaData request = transport.createMetaDataRequest();
 
-        Mockito.verify(state, Mockito.times(1)).getProfileHash();
-        Mockito.verify(properties, Mockito.times(1)).getSdkToken();
+    Mockito.verify(state, Mockito.times(1)).getProfileHash();
+    Mockito.verify(properties, Mockito.times(1)).getSdkToken();
 
-        Assert.assertEquals(new Long(5), request.getTimeout());
-    }
+    Assert.assertEquals(new Long(5), request.getTimeout());
+  }
 
 }

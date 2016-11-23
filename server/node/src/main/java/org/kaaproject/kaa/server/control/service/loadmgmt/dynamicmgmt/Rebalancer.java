@@ -16,24 +16,22 @@
 
 package org.kaaproject.kaa.server.control.service.loadmgmt.dynamicmgmt;
 
+import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
+
 import java.util.List;
 import java.util.Map;
 
-import org.kaaproject.kaa.server.common.thrift.gen.operations.RedirectionRule;
-
 /**
  * Dynamic Operations servers load management rebalance interface.
- *
- * @author Andrey Panasenko
- *
  */
 public interface Rebalancer {
 
-    /**
-     * Recalculate balancing
-     *
-     * @param   opsServerLoadHistory the Operations server load history
-     * @return  the map integer, redirection rule
-     */
-    public Map<Integer, List<RedirectionRule>> recalculate(Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory);
+  /**
+   * Recalculate balancing.
+   *
+   * @param opsServerLoadHistory the Operations server load history
+   * @return the map integer, redirection rule
+   */
+  Map<Integer, List<RedirectionRule>> recalculate(
+      Map<Integer, OperationsServerLoadHistory> opsServerLoadHistory);
 }

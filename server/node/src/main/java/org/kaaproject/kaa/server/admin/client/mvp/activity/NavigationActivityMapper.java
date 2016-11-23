@@ -16,29 +16,29 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.activity.shared.Activity;
+import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.place.shared.Place;
+import com.google.web.bindery.event.shared.EventBus;
+
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
 import org.kaaproject.kaa.server.admin.client.mvp.place.TreePlace;
 
-import com.google.gwt.activity.shared.Activity;
-import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.place.shared.Place;
-
 public class NavigationActivityMapper implements ActivityMapper {
 
-    private final NavigationActivity navigationActivity;
+  private final NavigationActivity navigationActivity;
 
-    public NavigationActivityMapper(ClientFactory clientFactory, EventBus eventBus) {
-        super();
-        this.navigationActivity = new NavigationActivity(clientFactory, eventBus);
-    }
+  public NavigationActivityMapper(ClientFactory clientFactory, EventBus eventBus) {
+    super();
+    this.navigationActivity = new NavigationActivity(clientFactory, eventBus);
+  }
 
-    @Override
-    public Activity getActivity(Place place) {
-        if (place instanceof TreePlace) {
-            navigationActivity.onPlaceChanged((TreePlace)place);
-            return navigationActivity;
-        }
-        return null;
+  @Override
+  public Activity getActivity(Place place) {
+    if (place instanceof TreePlace) {
+      navigationActivity.onPlaceChanged((TreePlace) place);
+      return navigationActivity;
     }
+    return null;
+  }
 }

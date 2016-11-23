@@ -16,65 +16,74 @@
 
 package org.kaaproject.kaa.server.control.service.sdk.event;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
+import org.kaaproject.kaa.common.dto.event.EventClassDto;
+
+import java.util.List;
 
 public class EventFamilyMetadata {
 
-    private String ecfName;
-    private String ecfNamespace;
-    private String ecfClassName;
-    private int version;
-    private String ecfSchema;
-    private List<ApplicationEventMapDto> eventMaps;
-    
-    public String getEcfName() {
-        return ecfName;
-    }
-    
-    public void setEcfName(String ecfName) {
-        this.ecfName = ecfName;
-    }
-    
-    public String getEcfNamespace() {
-        return ecfNamespace;
-    }
-    
-    public void setEcfNamespace(String ecfNamespace) {
-        this.ecfNamespace = ecfNamespace;
-    }
-    
-    public String getEcfClassName() {
-        return ecfClassName;
-    }
-    
-    public void setEcfClassName(String ecfClassName) {
-        this.ecfClassName = ecfClassName;
-    }
-    
-    public int getVersion() {
-        return version;
-    }
-    
-    public void setVersion(int version) {
-        this.version = version;
-    }
-    
-    public String getEcfSchema() {
-        return ecfSchema;
-    }
-    
-    public void setEcfSchema(String ecfSchema) {
-        this.ecfSchema = ecfSchema;
-    }
-    
-    public List<ApplicationEventMapDto> getEventMaps() {
-        return eventMaps;
-    }
-    
-    public void setEventMaps(List<ApplicationEventMapDto> eventMaps) {
-        this.eventMaps = eventMaps;
-    }
-    
+  private String ecfName;
+  private String ecfNamespace;
+  private String ecfClassName;
+  private int version;
+  private List<EventClassDto> records;
+  private List<String> rawCtlsSchemas;
+  private List<ApplicationEventMapDto> eventMaps;
+
+  public List<String> getRawCtlsSchemas() {
+    return rawCtlsSchemas;
+  }
+
+  public void setRawCtlsSchemas(List<String> rawCtlsSchemas) {
+    this.rawCtlsSchemas = rawCtlsSchemas;
+  }
+
+  public String getEcfName() {
+    return ecfName;
+  }
+
+  public void setEcfName(String ecfName) {
+    this.ecfName = ecfName;
+  }
+
+  public String getEcfNamespace() {
+    return ecfNamespace;
+  }
+
+  public void setEcfNamespace(String ecfNamespace) {
+    this.ecfNamespace = ecfNamespace;
+  }
+
+  public String getEcfClassName() {
+    return ecfClassName;
+  }
+
+  public void setEcfClassName(String ecfClassName) {
+    this.ecfClassName = ecfClassName;
+  }
+
+  public int getVersion() {
+    return version;
+  }
+
+  public void setVersion(int version) {
+    this.version = version;
+  }
+
+  public List<ApplicationEventMapDto> getEventMaps() {
+    return eventMaps;
+  }
+
+  public void setEventMaps(List<ApplicationEventMapDto> eventMaps) {
+    this.eventMaps = eventMaps;
+  }
+
+  public List<EventClassDto> getRecords() {
+    return records;
+  }
+
+  public void setRecords(List<EventClassDto> records) {
+    this.records = records;
+  }
 }

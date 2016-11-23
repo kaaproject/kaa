@@ -16,34 +16,38 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
+
 public interface BaseDetailsView extends IsWidget, HasErrorMessage {
 
-    void setTitle(String title);
+  void setTitle(String title);
 
-    void clearError();
+  void clearError();
 
-    void setErrorMessage(String message);
+  void setErrorMessage(String message);
 
-    void setBackEnabled(boolean enabled);
+  void setBackEnabled(boolean enabled);
 
-    void setCancelEnabled(boolean enabled);
+  void setCancelEnabled(boolean enabled);
 
-    HasClickHandlers getBackButton();
-    HasClickHandlers getSaveButton();
-    HasClickHandlers getCancelButton();
-    void reset();
-    boolean hasChanged();
+  HasClickHandlers getBackButton();
 
-    void setPresenter(Presenter presenter);
+  HasClickHandlers getSaveButton();
 
-    public interface Presenter {
-        void goTo(Place place);
-    }
+  HasClickHandlers getCancelButton();
+
+  void reset();
+
+  boolean hasChanged();
+
+  void setPresenter(Presenter presenter);
+
+  interface Presenter {
+    void goTo(Place place);
+  }
 
 }

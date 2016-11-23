@@ -16,22 +16,22 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 
+import org.kaaproject.kaa.common.dto.ProfileFilterDto;
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.VersionListBox;
+
 public interface ProfileFilterView extends BaseRecordView<ProfileFilterDto, String> {
 
-    public VersionListBox getEndpointProfileSchema();
+  public VersionListBox getEndpointProfileSchema();
 
-    public HasValue<String> getEndpointProfileSchemaVersion();
-    
-    public VersionListBox getServerProfileSchema();
+  public HasValue<String> getEndpointProfileSchemaVersion();
 
-    public HasValue<String> getServerProfileSchemaVersion();
-    
-    public HasClickHandlers getTestFilterButton();
+  public VersionListBox getServerProfileSchema();
+
+  public HasValue<String> getServerProfileSchemaVersion();
+
+  public HasClickHandlers getTestFilterButton();
 
 }

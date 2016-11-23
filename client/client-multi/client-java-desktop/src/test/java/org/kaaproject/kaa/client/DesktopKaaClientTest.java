@@ -27,70 +27,70 @@ import java.io.File;
 
 public class DesktopKaaClientTest {
 
-    @Before
-    public void cleanup() {
-        File stateFile = new File("state.properties");
-        if (stateFile.exists()) {
-            stateFile.delete();
-        }
+  @Before
+  public void cleanup() {
+    File stateFile = new File("state.properties");
+    if (stateFile.exists()) {
+      stateFile.delete();
+    }
+  }
+
+  @After
+  public void cleanupBkpFile() {
+    File stateFile = new File("state.properties");
+    if (stateFile.exists()) {
+      stateFile.delete();
+    }
+  }
+
+  @Test
+  public void testClientInit() throws Exception {
+
+    System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+    KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null, true));
+
+    ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
+    Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
+    clientSpy.setProfileContainer(profileContainerMock);
+
+    try {
+      clientSpy.start();
+    } finally {
+      clientSpy.stop();
     }
 
-    @After
-    public void cleanupBkpFile() {
-        File stateFile = new File("state.properties");
-        if (stateFile.exists()) {
-            stateFile.delete();
-        }
-    }
+  }
 
-    @Test
-    public void testClientInit() throws Exception {
+  @Test
+  public void testClientStartBeforeInit() throws Exception {
+    System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+    KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null, true));
 
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
+    ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
+    Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
+    clientSpy.setProfileContainer(profileContainerMock);
 
-        ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
-        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
-        clientSpy.setProfileContainer(profileContainerMock);
+    // does nothing before initialization;
+    clientSpy.start();
+  }
 
-        try {
-            clientSpy.start();
-        } finally {
-            clientSpy.stop();
-        }
+  @Test
+  public void testClientStartPollAfterInit() throws Exception {
 
-    }
+    System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
 
-    @Test
-    public void testClientStartBeforeInit() throws Exception {
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
-        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
+    KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null, true));
+    ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
 
-        ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
-        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
-        clientSpy.setProfileContainer(profileContainerMock);
+    clientSpy.setProfileContainer(profileContainerMock);
 
-        // does nothing before initialization;
-        clientSpy.start();
-    }
+    Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
 
-    @Test
-    public void testClientStartPollAfterInit() throws Exception {
+    clientSpy.start();
 
-        System.setProperty(KaaClientProperties.KAA_CLIENT_PROPERTIES_FILE, "client-test.properties");
+    Thread.sleep(5000L);
 
-        KaaClient clientSpy = Mockito.spy(Kaa.newClient(new DesktopKaaPlatformContext(), null));
-        ProfileContainer profileContainerMock = Mockito.mock(ProfileContainer.class);
-
-        clientSpy.setProfileContainer(profileContainerMock);
-
-        Mockito.when(profileContainerMock.getProfile()).thenReturn(new EmptyData());
-
-        clientSpy.start();
-
-        Thread.sleep(5000L);
-
-        clientSpy.stop();
-    }
+    clientSpy.stop();
+  }
 
 }

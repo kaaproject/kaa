@@ -16,134 +16,140 @@
 
 package org.kaaproject.kaa.server.admin.services.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.kaaproject.kaa.common.dto.KaaAuthorityDto;
 import org.kaaproject.kaa.common.dto.admin.UserDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class AuthUserDto extends UserDto implements UserDetails {
 
-    private static final long serialVersionUID = 8016875668519720555L;
+  private static final long serialVersionUID = 8016875668519720555L;
 
-    private String password;
-    private boolean tempPassword;
-    private boolean enabled;
+  private String password;
+  private boolean tempPassword;
+  private boolean enabled;
 
-    private Collection<GrantedAuthority> authorities;
+  private Collection<GrantedAuthority> authorities;
 
-    public AuthUserDto() {
+  public AuthUserDto() {
+  }
+
+  /**
+   * Create new instance of <code>AuthUserDto</code>.
+   *
+   * @param user is entity that contains user data
+   */
+  public AuthUserDto(User user) {
+    setExternalUid(user.getId().toString());
+    setUsername(user.getUsername());
+    setFirstName(user.getFirstName());
+    setLastName(user.getLastName());
+    setMail(user.getMail());
+    this.password = user.getPassword();
+    this.setAuthority(KaaAuthorityDto.valueOf(
+            user.getAuthorities().iterator().next().getAuthority()));
+    this.tempPassword = user.isTempPassword();
+    this.enabled = user.isEnabled();
+  }
+
+  @Override
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public boolean isTempPassword() {
+    return tempPassword;
+  }
+
+  public void setTempPassword(boolean tempPassword) {
+    this.tempPassword = tempPassword;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result
+        + ((getExternalUid() == null) ? 0 : getExternalUid().hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public AuthUserDto(User user) {
-        setExternalUid(user.getId().toString());
-        setUsername(user.getUsername());
-        setFirstName(user.getFirstName());
-        setLastName(user.getLastName());
-        setMail(user.getMail());
-        this.password = user.getPassword();
-        this.setAuthority(KaaAuthorityDto.valueOf(user.getAuthorities().iterator().next().getAuthority()));
-        this.tempPassword = user.isTempPassword();
-        this.enabled = user.isEnabled();
+    if (!super.equals(obj)) {
+      return false;
     }
-
-    @Override
-    public String getPassword() {
-        return password;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
+    AuthUserDto other = (AuthUserDto) obj;
+    if (getExternalUid() == null) {
+      if (other.getExternalUid() != null) {
+        return false;
+      }
+    } else if (!getExternalUid().equals(other.getExternalUid())) {
+      return false;
     }
+    return true;
+  }
 
-    public boolean isTempPassword() {
-        return tempPassword;
-    }
+  @Override
+  public String toString() {
+    return "AuthUserDto [password=" + password
+        + ", tempPassword=" + tempPassword + ", toString()="
+        + super.toString() + "]";
+  }
 
-    public void setTempPassword(boolean tempPassword) {
-        this.tempPassword = tempPassword;
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    if (authorities == null) {
+      authorities = new ArrayList<>();
+      GrantedAuthority authority = new GrantedAuthority() {
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((getExternalUid() == null) ? 0 : getExternalUid().hashCode());
-        return result;
-    }
+        private static final long serialVersionUID = 3750701580428140468L;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        @Override
+        public String getAuthority() {
+          return AuthUserDto.this.getAuthority().name();
         }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AuthUserDto other = (AuthUserDto) obj;
-        if (getExternalUid() == null) {
-            if (other.getExternalUid() != null) {
-                return false;
-            }
-        } else if (!getExternalUid().equals(other.getExternalUid())) {
-            return false;
-        }
-        return true;
+      };
+      authorities.add(authority);
     }
+    return authorities;
+  }
 
-    @Override
-    public String toString() {
-        return "AuthUserDto [password=" + password
-                + ", tempPassword=" + tempPassword + ", toString()="
-                + super.toString() + "]";
-    }
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (authorities == null) {
-            authorities = new ArrayList<>();
-            GrantedAuthority authority = new GrantedAuthority() {
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
 
-                private static final long serialVersionUID = 3750701580428140468L;
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
 
-                @Override
-                public String getAuthority() {
-                    return AuthUserDto.this.getAuthority().name();
-                }
-            };
-            authorities.add(authority);
-        }
-        return authorities;
-    }
+  @Override
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
 }

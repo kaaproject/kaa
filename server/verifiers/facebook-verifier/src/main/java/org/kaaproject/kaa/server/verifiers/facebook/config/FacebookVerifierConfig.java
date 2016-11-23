@@ -26,20 +26,20 @@ import org.kaaproject.kaa.server.verifiers.facebook.config.gen.FacebookAvroConfi
 @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
 public class FacebookVerifierConfig implements PluginConfig {
 
-    private static final String TRUSTFUL_VERIFIER_NAME = "Facebook verifier";
+  private static final String TRUSTFUL_VERIFIER_NAME = "Facebook verifier";
 
-    @Override
-    public String getPluginTypeName() {
-        return TRUSTFUL_VERIFIER_NAME;
-    }
+  @Override
+  public String getPluginTypeName() {
+    return TRUSTFUL_VERIFIER_NAME;
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.facebook.verifier.FacebookUserVerifier";
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.verifiers.facebook.verifier.FacebookUserVerifier";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return FacebookAvroConfig.SCHEMA$;
-    }
+  @Override
+  public Schema getPluginConfigSchema() {
+    return FacebookAvroConfig.SCHEMA$;
+  }
 }

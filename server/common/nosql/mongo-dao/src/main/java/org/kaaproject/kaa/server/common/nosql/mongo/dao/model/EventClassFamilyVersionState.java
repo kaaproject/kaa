@@ -16,94 +16,95 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ECF_ID;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EVENT_CLASS_FAMILY_VERSION;
+
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.model.ToDto;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.ECF_ID;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EVENT_CLASS_FAMILY_VERSION;
+public final class EventClassFamilyVersionState
+    implements ToDto<EventClassFamilyVersionStateDto>, Serializable {
 
-public final class EventClassFamilyVersionState implements ToDto<EventClassFamilyVersionStateDto>, Serializable {
+  private static final long serialVersionUID = 3766947955702551264L;
 
-    private static final long serialVersionUID = 3766947955702551264L;
+  @Field(ECF_ID)
+  private String ecfId;
+  @Field(EVENT_CLASS_FAMILY_VERSION)
+  private int version;
 
-    @Field(ECF_ID)
-    private String ecfId;
-    @Field(EVENT_CLASS_FAMILY_VERSION)
-    private int version;
+  public EventClassFamilyVersionState() {
+  }
 
-    public EventClassFamilyVersionState() {
+  public EventClassFamilyVersionState(EventClassFamilyVersionStateDto dto) {
+    this.ecfId = dto.getEcfId();
+    this.version = dto.getVersion();
+  }
+
+  public String getEcfId() {
+    return ecfId;
+  }
+
+  public void setEcfId(String ecfId) {
+    this.ecfId = ecfId;
+  }
+
+  public int getVersion() {
+    return version;
+  }
+
+  public void setVersion(int version) {
+    this.version = version;
+  }
+
+  @Override
+  public EventClassFamilyVersionStateDto toDto() {
+    EventClassFamilyVersionStateDto dto = new EventClassFamilyVersionStateDto();
+    dto.setEcfId(ecfId);
+    dto.setVersion(version);
+    return dto;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
+    result = prime * result + version;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public EventClassFamilyVersionState(EventClassFamilyVersionStateDto dto) {
-        this.ecfId = dto.getEcfId();
-        this.version = dto.getVersion();
+    if (obj == null) {
+      return false;
     }
-
-    public String getEcfId() {
-        return ecfId;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public void setEcfId(String ecfId) {
-        this.ecfId = ecfId;
+    EventClassFamilyVersionState other = (EventClassFamilyVersionState) obj;
+    if (ecfId == null) {
+      if (other.ecfId != null) {
+        return false;
+      }
+    } else if (!ecfId.equals(other.ecfId)) {
+      return false;
     }
-
-    public int getVersion() {
-        return version;
+    if (version != other.version) {
+      return false;
     }
+    return true;
+  }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    @Override
-    public EventClassFamilyVersionStateDto toDto() {
-        EventClassFamilyVersionStateDto dto = new EventClassFamilyVersionStateDto();
-        dto.setEcfId(ecfId);
-        dto.setVersion(version);
-        return dto;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((ecfId == null) ? 0 : ecfId.hashCode());
-        result = prime * result + version;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EventClassFamilyVersionState other = (EventClassFamilyVersionState) obj;
-        if (ecfId == null) {
-            if (other.ecfId != null) {
-                return false;
-            }
-        } else if (!ecfId.equals(other.ecfId)) {
-            return false;
-        }
-        if (version != other.version) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "EventClassFamilyVersionState [ecfId=" + ecfId + ", version=" + version + "]";
-    }
+  @Override
+  public String toString() {
+    return "EventClassFamilyVersionState [ecfId=" + ecfId + ", version=" + version + "]";
+  }
 
 
 }

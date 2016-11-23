@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  {% include head.html %}
+
+  <body>
+  <div class="row row-full row-offcanvas row-offcanvas-left">   
+    {% include sidebar.html %}
+    <div class="column col-sm-10 col-xs-11" id="main">
+      <div id="split-bar">
+        <div id="split-bar-dots">. . .</div>
+      </div>
+      <div id="page-content-wrapper">
+        <div class="container-fluid">
+          <div class="row row-full content">
+            {% if page.no_version_test %}
+            {% else %}
+                {% comment %}  HTML file can also be included for test `include test.html` {% endcomment %}
+                {% capture test_version %}{% include test.md %}{% endcapture %}
+                {{ test_version | markdownify }}
+            {% endif %}
+            {{ content }}  
+          </div>        
+        </div>   
+ 	    </div> 
+      {% include footer.html %}
+    </div>
+  </body>
+</html>

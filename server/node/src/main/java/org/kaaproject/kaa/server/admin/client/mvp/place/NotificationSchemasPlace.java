@@ -16,62 +16,63 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
+import com.google.gwt.place.shared.Prefix;
+import com.google.web.bindery.event.shared.EventBus;
+
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.gwt.place.shared.Prefix;
+public class NotificationSchemasPlace extends SchemasPlaceApplication {
 
-public class NotificationSchemasPlace extends SchemasPlace {
+  public NotificationSchemasPlace(String applicationId) {
+    super(applicationId);
+  }
 
-    public NotificationSchemasPlace(String applicationId) {
-        super(applicationId);
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    @Prefix(value = "notifSchemas")
-    public static class Tokenizer extends SchemasPlace.Tokenizer<NotificationSchemasPlace> {
-
-        @Override
-        protected NotificationSchemasPlace getPlaceImpl(String applicationId) {
-            return new NotificationSchemasPlace(applicationId);
-        }
-
+    if (obj == null) {
+      return false;
     }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    NotificationSchemasPlace other = (NotificationSchemasPlace) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
+        return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.notification();
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    return null;
+  }
+
+  @Prefix(value = "notifSchemas")
+  public static class Tokenizer
+      extends SchemasPlaceApplication.Tokenizer<NotificationSchemasPlace> {
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        NotificationSchemasPlace other = (NotificationSchemasPlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        return true;
+    protected NotificationSchemasPlace getPlaceImpl(String applicationId) {
+      return new NotificationSchemasPlace(applicationId);
     }
 
-    @Override
-    public String getName() {
-        return Utils.constants.notification();
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
-    }
+  }
 
 }

@@ -21,38 +21,21 @@ import org.kaaproject.kaa.common.dto.EndpointUserConfigurationDto;
 import java.util.List;
 
 /**
- * Provides methods to operate with {@link EndpointUserConfigurationDto} 
+ * Provides methods to operate with {@link EndpointUserConfigurationDto}.
  */
 public interface UserConfigurationService {
 
-    /**
-     *
-     * @param   dto the dto
-     * @return  the endpoint user configuration dto
-     */
-    EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto dto);
 
-    /**
-     *
-     * @param   userId          the user id
-     * @param   appToken        the app token
-     * @param   schemaVersion   the schema version
-     * @return  the endpoint user configuration dto
-     */
-    EndpointUserConfigurationDto findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
+  EndpointUserConfigurationDto saveUserConfiguration(EndpointUserConfigurationDto dto);
 
-    /**
-     *
-     * @param   userId  the user id
-     * @return  the list endpoint user configuration dto
-     */
-    List<EndpointUserConfigurationDto> findUserConfigurationByUserId(String userId);
+  EndpointUserConfigurationDto findUserConfigurationByUserIdAndAppTokenAndSchemaVersion(
+      String userId, String appToken, Integer schemaVersion);
 
-    /**
-     *
-     * @param userId        the user id
-     * @param appToken      the app token
-     * @param schemaVersion the schema version
-     */
-    void removeByUserIdAndAppTokenAndSchemaVersion(String userId, String appToken, Integer schemaVersion);
+  List<EndpointUserConfigurationDto> findUserConfigurationByUserId(String userId);
+
+  void removeByUserIdAndAppTokenAndSchemaVersion(String userId,
+                                                 String appToken, Integer schemaVersion);
+
+  EndpointUserConfigurationDto findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
+      String externalUId, String appToken, Integer schemaVersion, String tenantId);
 }

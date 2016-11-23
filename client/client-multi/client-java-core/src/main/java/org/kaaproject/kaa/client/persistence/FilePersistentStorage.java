@@ -25,33 +25,33 @@ import java.io.OutputStream;
 
 public class FilePersistentStorage implements PersistentStorage {
 
-    @Override
-    public InputStream openForRead(String path) throws IOException {
-        return new FileInputStream(new File(path));
-    }
+  @Override
+  public InputStream openForRead(String path) throws IOException {
+    return new FileInputStream(new File(path));
+  }
 
-    @Override
-    public OutputStream openForWrite(String path) throws IOException {
-        File f = new File(path);
-        if (f.getParentFile() != null && !f.getParentFile().exists()) {
-            f.getParentFile().mkdirs();
-        }
-        return new FileOutputStream(f);
+  @Override
+  public OutputStream openForWrite(String path) throws IOException {
+    File file = new File(path);
+    if (file.getParentFile() != null && !file.getParentFile().exists()) {
+      file.getParentFile().mkdirs();
     }
+    return new FileOutputStream(file);
+  }
 
-    @Override
-    public boolean exists(String path) {
-        return new File(path).exists();
-    }
-    
-    @Override
-    public void delete(String path) throws IOException {
-        new File(path).delete();
-    }
+  @Override
+  public boolean exists(String path) {
+    return new File(path).exists();
+  }
 
-    @Override
-    public boolean renameTo(String oldPath, String newPath) throws IOException {
-        return new File(oldPath).renameTo(new File(newPath));
-    }
+  @Override
+  public void delete(String path) throws IOException {
+    new File(path).delete();
+  }
+
+  @Override
+  public boolean renameTo(String oldPath, String newPath) throws IOException {
+    return new File(oldPath).renameTo(new File(newPath));
+  }
 
 }

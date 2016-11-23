@@ -22,44 +22,50 @@ package org.kaaproject.kaa.server.common.core.algorithms.override;
  */
 public enum ArrayOverrideStrategy {
 
-    /** The replace. */
-    REPLACE("replace"),
-    /** The append. */
-    APPEND("append");
+  /**
+   * The replace.
+   */
+  REPLACE("replace"),
+  /**
+   * The append.
+   */
+  APPEND("append");
 
-    /** The name. */
-    private final String name;
+  /**
+   * The name.
+   */
+  private final String name;
 
-    /**
-     * Instantiates a new array merge strategy.
-     *
-     * @param name the name
-     */
-    private ArrayOverrideStrategy(String name) {
-        this.name = name;
+  /**
+   * Instantiates a new array merge strategy.
+   *
+   * @param name the name
+   */
+  private ArrayOverrideStrategy(String name) {
+    this.name = name;
+  }
+
+  /**
+   * Gets the by name.
+   *
+   * @param name the name
+   * @return the by name
+   */
+  public static ArrayOverrideStrategy getByName(String name) {
+    for (ArrayOverrideStrategy strategy : ArrayOverrideStrategy.values()) {
+      if (strategy.getName().equalsIgnoreCase(name)) {
+        return strategy;
+      }
     }
+    return null;
+  }
 
-    /**
-     * Gets the name.
-     *
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the by name.
-     *
-     * @param name the name
-     * @return the by name
-     */
-    public static ArrayOverrideStrategy getByName(String name) {
-        for (ArrayOverrideStrategy strategy : ArrayOverrideStrategy.values()) {
-            if (strategy.getName().equalsIgnoreCase(name)) {
-                return strategy;
-            }
-        }
-        return null;
-    }
+  /**
+   * Gets the name.
+   *
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
 }

@@ -22,9 +22,9 @@ import org.junit.Test;
 
 public class EventClassFqnKeyTest {
 
-    @Test
-    public void testHashCodeAndEquals(){
-        EqualsVerifier.forClass(EventClassFqnKey.class).verify();
-    }
+  @Test
+  public void testHashCodeAndEquals() {
+    EqualsVerifier.forClass(EventClassFqnKey.class).verify();
+  }
 
 }

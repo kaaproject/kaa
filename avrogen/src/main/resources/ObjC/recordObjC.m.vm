@@ -52,7 +52,7 @@ $initstring {
     if (self) {
     #foreach ($field in $schema.getFields())
     self.$field.name() = $field.name();
-    #end
+    #end 
 }
     return self;
 }
@@ -60,6 +60,34 @@ $initstring {
 
 + (NSString *)FQN {
     return @"$schema.getFullName()";
+}
+
+- (NSString *)description {
+    NSMutableString *fieldsDescription = [NSMutableString new]; 
+
+#foreach($field in $schema.getFields())
+#set ($field_name = $StyleUtils.fixCamelHumps($field.name()))
+#set ($field_type = $TypeConverter.convertToObjCType($field.schema()))
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroBoolean($field_schema)) 
+    NSString *fieldBoolVal = ($field_name == true) ? @"true" : @"false";
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"$field_name", fieldBoolVal]];
+#elseif ($TypeConverter.isAvroInt($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroLong($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %lld\n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroFloat($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %f\n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroDouble($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %f\n", @"$field_name", self.$field.name()]];
+#elseif ($TypeConverter.isAvroEnum($field_schema))
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"$field_name", $namespacePrefix${field_type}Array(self.$field.name())]];
+#else
+    [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"$field_name", self.$field.name()]];
+#end
+#end
+
+    return fieldsDescription;
 }
 
 ###if ($TypeConverter.isTypeOut($schema))
@@ -226,21 +254,21 @@ $initstring {
     #elseif ($TypeConverter.isAvroBytes($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeBytes:) andParam:nil target:nil];
     #elseif ($TypeConverter.isAvroFixed($array_element_schema))
-        NSNumber *size = @($field_schema.getFixedSize());
+        NSNumber *size = @($array_element_schema.getFixedSize());
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeFixed:size:) andParam:size target:nil];
     #elseif ($TypeConverter.isAvroString($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeString:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroEnum($field_schema))
+    #elseif ($TypeConverter.isAvroEnum($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeEnum:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroBoolean($field_schema))
+    #elseif ($TypeConverter.isAvroBoolean($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeBoolean:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroInt($field_schema))
+    #elseif ($TypeConverter.isAvroInt($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeInt:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroLong($field_schema))
+    #elseif ($TypeConverter.isAvroLong($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeLong:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroFloat($field_schema))
+    #elseif ($TypeConverter.isAvroFloat($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeFloat:) andParam:nil target:nil];
-    #elseif ($TypeConverter.isAvroDouble($field_schema))
+    #elseif ($TypeConverter.isAvroDouble($array_element_schema))
         self.${field_name} = [self.utils deserializeArray:reader withSelector:@selector(deserializeDouble:) andParam:nil target:nil];
     #end
 #end
@@ -249,6 +277,8 @@ $initstring {
     #pragma unused(reader)
 #end
 }
+
+
 
 ## Generating serialize/deserialize/getSize methods for Unions
 

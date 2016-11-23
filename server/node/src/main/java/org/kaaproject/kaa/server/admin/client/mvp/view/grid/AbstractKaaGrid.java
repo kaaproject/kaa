@@ -16,44 +16,44 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.grid;
 
-import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.HasId;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 
-public abstract class AbstractKaaGrid<T,K> extends AbstractGrid<T,K> {
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.HasId;
 
-    private static final int DEFAULT_PAGE_SIZE = 14;
-    
-    public AbstractKaaGrid(Unit unit) {
-        super(unit, DEFAULT_PAGE_SIZE);
-    }
-    
-    public AbstractKaaGrid(Style.Unit unit, boolean enableActions) {
-        super(unit, enableActions, false, DEFAULT_PAGE_SIZE);
-    }
-    
-    public AbstractKaaGrid(Style.Unit unit, boolean enableActions, int defaultPageSize) {
-        super(unit, enableActions, defaultPageSize);
-    }
+public abstract class AbstractKaaGrid<T, K> extends AbstractGrid<T, K> {
 
-    public AbstractKaaGrid(Style.Unit unit, boolean enableActions, boolean embedded) {
-        super(unit, enableActions, embedded, DEFAULT_PAGE_SIZE, true);
-    }
+  private static final int DEFAULT_PAGE_SIZE = 14;
 
-    public AbstractKaaGrid(Style.Unit unit, boolean enableActions, boolean embedded, boolean init) {
-        super(unit, enableActions, embedded, DEFAULT_PAGE_SIZE, init);
+  public AbstractKaaGrid(Unit unit) {
+    super(unit, DEFAULT_PAGE_SIZE);
+  }
+
+  public AbstractKaaGrid(Style.Unit unit, boolean enableActions) {
+    super(unit, enableActions, false, DEFAULT_PAGE_SIZE);
+  }
+
+  public AbstractKaaGrid(Style.Unit unit, boolean enableActions, int defaultPageSize) {
+    super(unit, enableActions, defaultPageSize);
+  }
+
+  public AbstractKaaGrid(Style.Unit unit, boolean enableActions, boolean embedded) {
+    super(unit, enableActions, embedded, DEFAULT_PAGE_SIZE, true);
+  }
+
+  public AbstractKaaGrid(Style.Unit unit, boolean enableActions, boolean embedded, boolean init) {
+    super(unit, enableActions, embedded, DEFAULT_PAGE_SIZE, init);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  protected K getObjectId(T value) {
+    if (value != null && value instanceof HasId) {
+      return (K) ((HasId) value).getId();
+    } else {
+      return null;
     }
-    
-    @SuppressWarnings("unchecked")
-    @Override
-    protected K getObjectId(T value) {
-        if (value != null && value instanceof HasId) {
-            return (K) ((HasId)value).getId();
-        } else {
-            return null;
-        }
-    }
+  }
 
 }

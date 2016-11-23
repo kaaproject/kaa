@@ -16,57 +16,51 @@
 
 package org.kaaproject.kaa.server.operations.service.profile;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.pojo.RegisterProfileRequest;
 import org.kaaproject.kaa.server.operations.pojo.UpdateProfileRequest;
+import org.kaaproject.kaa.server.sync.ClientSyncMetaData;
+
+import java.util.function.BiFunction;
 
 /**
  * The interface ProfileService is used to model profile service. Profile
  * service is responsible for various profile actions: get, register, update
- * 
+ *
  * @author ashvayka
  */
 public interface ProfileService {
 
-    /**
-     * Gets the profile.
-     *
-     * @param endpointKey
-     *            the endpoint key
-     * @return the profile
-     */
-    EndpointProfileDto getProfile(EndpointObjectHash endpointKey);
+  /**
+   * Gets the profile.
+   *
+   * @param endpointKey the endpoint key
+   * @return the profile
+   */
+  EndpointProfileDto getProfile(EndpointObjectHash endpointKey);
 
-    /**
-     * Update profile.
-     *
-     * @param profile
-     *            the profile
-     * @param mergeFunction
-     *            the merge function
-     * @return the updated endpoint profile dto
-     */
-    EndpointProfileDto updateProfile(EndpointProfileDto profile, BiFunction<EndpointProfileDto, EndpointProfileDto, EndpointProfileDto> mergeFunction);
+  /**
+   * Update profile.
+   *
+   * @param profile       the profile
+   * @param mergeFunction the merge function
+   * @return the updated endpoint profile dto
+   */
+  EndpointProfileDto updateProfile(EndpointProfileDto profile, BiFunction<EndpointProfileDto,
+          EndpointProfileDto, EndpointProfileDto> mergeFunction);
 
-    /**
-     * Register profile.
-     *
-     * @param request
-     *            the request
-     * @return the endpoint profile dto
-     */
-    EndpointProfileDto registerProfile(RegisterProfileRequest request);
+  EndpointProfileDto updateProfile(UpdateProfileRequest request);
 
-    /**
-     * Update profile.
-     *
-     * @param requst
-     *            the requst
-     * @return the endpoint profile dto
-     */
-    EndpointProfileDto updateProfile(UpdateProfileRequest requst);
+
+  EndpointProfileDto updateProfile(ClientSyncMetaData metaData, EndpointObjectHash keyHash,
+                                   boolean useConfigurationRawSchema);
+
+  /**
+   * Register profile.
+   *
+   * @param request the request
+   * @return the endpoint profile dto
+   */
+  EndpointProfileDto registerProfile(RegisterProfileRequest request);
 }

@@ -16,32 +16,28 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import java.util.Map;
-
 import org.kaaproject.kaa.common.TransportType;
+
+import java.util.Map;
 
 /**
  * Multiplexer collects the info about states from different
  * services and compiles it in one request.
- *
  * Required in user implementation of any kind of data channel.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface KaaDataMultiplexer {
 
-    /**
-     * Compiles request for given transport types.
-     *
-     * @param   types the map of types to be polled.
-     * @return  the serialized request data.
-     * @throws  Exception the exception
-     *
-     * @see     TransportType
-     * @see     ChannelDirection
-     *
-     */
-    byte [] compileRequest(Map<TransportType, ChannelDirection> types) throws Exception;
+  /**
+   * Compiles request for given transport types.
+   *
+   * @param types the map of types to be polled.
+   * @return the serialized request data.
+   * @throws Exception the exception
+   * @see TransportType
+   * @see ChannelDirection
+   */
+  byte[] compileRequest(Map<TransportType, ChannelDirection> types) throws Exception;
 
 }

@@ -22,14 +22,12 @@ import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface ApplicationView extends BaseDetailsView {
 
-    HasValue<String> getApplicationName();
+  HasValue<String> getApplicationName();
 
-//    HasValue<String> getApplicationKey();
+  HasValue<String> getApplicationToken();
 
-    HasValue<String> getApplicationToken();
+  ValueListBox<String> getCredentialsServiceName();
 
-    ValueListBox<String> getCredentialsServiceName();
-
-    HasClickHandlers getGenerateSdkButton();
+  HasClickHandlers getGenerateSdkButton();
 
 }

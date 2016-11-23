@@ -18,10 +18,10 @@ package org.kaaproject.kaa.server.common.core.schema;
 
 public class BaseSchema extends AbstractKaaSchema {
 
-    private static final long serialVersionUID = -8374023019258996376L;
+  private static final long serialVersionUID = -8374023019258996376L;
 
-    public BaseSchema(String schema) {
-        super(schema);
-    }
+  public BaseSchema(String schema) {
+    super(schema);
+  }
 
 }

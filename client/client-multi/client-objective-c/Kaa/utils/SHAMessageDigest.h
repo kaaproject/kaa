@@ -15,7 +15,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <CommonCrypto/CommonDigest.h>
 
 /**
  * Class holds secure one-way hash functions that take arbitrary-sized

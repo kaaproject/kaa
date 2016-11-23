@@ -20,9 +20,9 @@ import org.kaaproject.kaa.server.common.core.schema.ProtocolSchema;
 
 public class ProtocolDataFactory implements KaaDataFactory<ProtocolSchema, ProtocolData> {
 
-    @Override
-    public ProtocolData createData(ProtocolSchema schema, String data) {
-        return new ProtocolData(schema, data);
-    }
+  @Override
+  public ProtocolData createData(ProtocolSchema schema, String data) {
+    return new ProtocolData(schema, data);
+  }
 
 }

@@ -18,66 +18,70 @@ package org.kaaproject.kaa.common.dto;
 
 public class EndpointProfileDataDto {
 
-    private final String id;
-    private final String endpointKey;
-    private final String clientProfileBody;
-    private final String serverProfileBody;
+  private final String id;
+  private final String endpointKey;
+  private final String clientProfileBody;
+  private final String serverProfileBody;
 
-    private final int clientProfileVersion;
-    private final int serverProfileVersion;
+  private final int clientProfileVersion;
+  private final int serverProfileVersion;
 
-    public EndpointProfileDataDto(String id, String endpointKey, int clientProfileVersion, String clientProfileBody,
-            int serverProfileVersion, String serverProfileBody) {
-        super();
-        this.id = id;
-        this.endpointKey = endpointKey;
-        this.clientProfileVersion = clientProfileVersion;
-        this.clientProfileBody = clientProfileBody;
-        this.serverProfileVersion = serverProfileVersion;
-        this.serverProfileBody = serverProfileBody;
-    }
+  /**
+   * All-args constructor.
+   */
+  public EndpointProfileDataDto(String id, String endpointKey, int clientProfileVersion,
+                                String clientProfileBody,
+                                int serverProfileVersion, String serverProfileBody) {
+    super();
+    this.id = id;
+    this.endpointKey = endpointKey;
+    this.clientProfileVersion = clientProfileVersion;
+    this.clientProfileBody = clientProfileBody;
+    this.serverProfileVersion = serverProfileVersion;
+    this.serverProfileBody = serverProfileBody;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getEndpointKey() {
-        return endpointKey;
-    }
+  public String getEndpointKey() {
+    return endpointKey;
+  }
 
-    public String getClientProfileBody() {
-        return clientProfileBody;
-    }
+  public String getClientProfileBody() {
+    return clientProfileBody;
+  }
 
-    public String getServerProfileBody() {
-        return serverProfileBody;
-    }
+  public String getServerProfileBody() {
+    return serverProfileBody;
+  }
 
-    public int getClientProfileVersion() {
-        return clientProfileVersion;
-    }
+  public int getClientProfileVersion() {
+    return clientProfileVersion;
+  }
 
-    public int getServerProfileVersion() {
-        return serverProfileVersion;
-    }
+  public int getServerProfileVersion() {
+    return serverProfileVersion;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EndpointProfileDataDto [id=");
-        builder.append(id);
-        builder.append(", endpointKey=");
-        builder.append(endpointKey);
-        builder.append(", clientProfileBody=");
-        builder.append(clientProfileBody);
-        builder.append(", serverProfileBody=");
-        builder.append(serverProfileBody);
-        builder.append(", clientProfileVersion=");
-        builder.append(clientProfileVersion);
-        builder.append(", serverProfileVersion=");
-        builder.append(serverProfileVersion);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("EndpointProfileDataDto [id=");
+    builder.append(id);
+    builder.append(", endpointKey=");
+    builder.append(endpointKey);
+    builder.append(", clientProfileBody=");
+    builder.append(clientProfileBody);
+    builder.append(", serverProfileBody=");
+    builder.append(serverProfileBody);
+    builder.append(", clientProfileVersion=");
+    builder.append(clientProfileVersion);
+    builder.append(", serverProfileVersion=");
+    builder.append(serverProfileVersion);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

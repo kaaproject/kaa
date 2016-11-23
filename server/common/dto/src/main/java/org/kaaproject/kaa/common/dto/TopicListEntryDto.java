@@ -22,79 +22,82 @@ import java.util.List;
 
 public final class TopicListEntryDto implements Serializable {
 
-    private static final long serialVersionUID = 2771583997490244417L;
+  private static final long serialVersionUID = 2771583997490244417L;
 
-    private int simpleHash;
+  private int simpleHash;
 
-    private byte[] hash;
+  private byte[] hash;
 
-    private List<TopicDto> topics;
+  private List<TopicDto> topics;
 
-    public TopicListEntryDto(int simpleHash, byte[] hash, List<TopicDto> topics) {
-        this.simpleHash = simpleHash;
-        this.hash = hash;
-        this.topics = topics;
+  /**
+   * All-args constructor.
+   */
+  public TopicListEntryDto(int simpleHash, byte[] hash, List<TopicDto> topics) {
+    this.simpleHash = simpleHash;
+    this.hash = hash;
+    this.topics = topics;
+  }
+
+  public int getSimpleHash() {
+    return simpleHash;
+  }
+
+  public void setSimpleHash(int simpleHash) {
+    this.simpleHash = simpleHash;
+  }
+
+  public byte[] getHash() {
+    return hash;
+  }
+
+  public void setHash(byte[] hash) {
+    this.hash = hash;
+  }
+
+  public List<TopicDto> getTopics() {
+    return topics;
+  }
+
+  public void setTopics(List<TopicDto> topics) {
+    this.topics = topics;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof TopicListEntryDto)) {
+      return false;
     }
 
-    public int getSimpleHash() {
-        return simpleHash;
+    TopicListEntryDto that = (TopicListEntryDto) obj;
+
+    if (simpleHash != that.simpleHash) {
+      return false;
+    }
+    if (!Arrays.equals(hash, that.hash)) {
+      return false;
     }
 
-    public byte[] getHash() {
-        return hash;
-    }
+    return true;
+  }
 
-    public List<TopicDto> getTopics() {
-        return topics;
-    }
+  @Override
+  public int hashCode() {
+    int result = simpleHash;
+    result = 31 * result + (hash != null ? Arrays.hashCode(hash) : 0);
+    return result;
+  }
 
-    public void setSimpleHash(int simpleHash) {
-        this.simpleHash = simpleHash;
-    }
-
-    public void setHash(byte[] hash) {
-        this.hash = hash;
-    }
-
-    public void setTopics(List<TopicDto> topics) {
-        this.topics = topics;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof TopicListEntryDto)) {
-            return false;
-        }
-
-        TopicListEntryDto that = (TopicListEntryDto) o;
-
-        if (simpleHash != that.simpleHash) {
-            return false;
-        }
-        if (!Arrays.equals(hash, that.hash)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = simpleHash;
-        result = 31 * result + (hash != null ? Arrays.hashCode(hash) : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("TopicListEntryDto{");
-        sb.append("simpleHash=").append(simpleHash);
-        sb.append(", hash=").append(Arrays.toString(hash));
-        sb.append(", topics=").append(topics);
-        sb.append('}');
-        return sb.toString();
-    }
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("TopicListEntryDto{");
+    sb.append("simpleHash=").append(simpleHash);
+    sb.append(", hash=").append(Arrays.toString(hash));
+    sb.append(", topics=").append(topics);
+    sb.append('}');
+    return sb.toString();
+  }
 }

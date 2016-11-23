@@ -16,116 +16,123 @@
 
 package org.kaaproject.kaa.server.admin.shared.plugin;
 
-import java.io.Serializable;
-
 import org.kaaproject.avro.ui.shared.RecordField;
 
+import java.io.Serializable;
+
 public class PluginInfoDto implements Serializable {
-    
-    private static final long serialVersionUID = 7749261853080648846L;
-    
-    private String pluginTypeName;
-    private RecordField fieldConfiguration;
-    private String pluginClassName;
-    
-    public PluginInfoDto() {
-        super();
-    }
 
-    public PluginInfoDto(String pluginTypeName,
-            RecordField fieldConfiguration, String pluginClassName) {
-        super();
-        this.pluginTypeName = pluginTypeName;
-        this.fieldConfiguration = fieldConfiguration;
-        this.pluginClassName = pluginClassName;
-    }
+  private static final long serialVersionUID = 7749261853080648846L;
 
-    public String getPluginTypeName() {
-        return pluginTypeName;
-    }
+  private String pluginTypeName;
+  private RecordField fieldConfiguration;
+  private String pluginClassName;
 
-    public void setPluginTypeName(String pluginTypeName) {
-        this.pluginTypeName = pluginTypeName;
-    }
+  public PluginInfoDto() {
+    super();
+  }
 
-    public RecordField getFieldConfiguration() {
-        return fieldConfiguration;
-    }
+  /**
+   * Create new instance of <code>PluginInfoDto</code>.
+   *
+   * @param pluginTypeName     the plugin type name
+   * @param fieldConfiguration the  field configuration
+   * @param pluginClassName    the plugin class name
+   */
+  public PluginInfoDto(String pluginTypeName,
+                       RecordField fieldConfiguration, String pluginClassName) {
+    super();
+    this.pluginTypeName = pluginTypeName;
+    this.fieldConfiguration = fieldConfiguration;
+    this.pluginClassName = pluginClassName;
+  }
 
-    public void setFieldConfiguration(RecordField fieldConfiguration) {
-        this.fieldConfiguration = fieldConfiguration;
-    }
+  public String getPluginTypeName() {
+    return pluginTypeName;
+  }
 
-    public String getPluginClassName() {
-        return pluginClassName;
-    }
+  public void setPluginTypeName(String pluginTypeName) {
+    this.pluginTypeName = pluginTypeName;
+  }
 
-    public void setPluginClassName(String pluginClassName) {
-        this.pluginClassName = pluginClassName;
-    }
+  public RecordField getFieldConfiguration() {
+    return fieldConfiguration;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime
-                * result
-                + ((fieldConfiguration == null) ? 0 : fieldConfiguration
-                        .hashCode());
-        result = prime * result
-                + ((pluginClassName == null) ? 0 : pluginClassName.hashCode());
-        result = prime * result
-                + ((pluginTypeName == null) ? 0 : pluginTypeName.hashCode());
-        return result;
-    }
+  public void setFieldConfiguration(RecordField fieldConfiguration) {
+    this.fieldConfiguration = fieldConfiguration;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        PluginInfoDto other = (PluginInfoDto) obj;
-        if (fieldConfiguration == null) {
-            if (other.fieldConfiguration != null) {
-                return false;
-            }
-        } else if (!fieldConfiguration.equals(other.fieldConfiguration)) {
-            return false;
-        }
-        if (pluginClassName == null) {
-            if (other.pluginClassName != null) {
-                return false;
-            }
-        } else if (!pluginClassName.equals(other.pluginClassName)) {
-            return false;
-        }
-        if (pluginTypeName == null) {
-            if (other.pluginTypeName != null) {
-                return false;
-            }
-        } else if (!pluginTypeName.equals(other.pluginTypeName)) {
-            return false;
-        }
-        return true;
-    }
+  public String getPluginClassName() {
+    return pluginClassName;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PluginInfoDto [pluginTypeName=");
-        builder.append(pluginTypeName);
-        builder.append(", fieldConfiguration=");
-        builder.append(fieldConfiguration);
-        builder.append(", pluginClassName=");
-        builder.append(pluginClassName);
-        builder.append("]");
-        return builder.toString();
+  public void setPluginClassName(String pluginClassName) {
+    this.pluginClassName = pluginClassName;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime
+        * result
+        + ((fieldConfiguration == null) ? 0 : fieldConfiguration
+        .hashCode());
+    result = prime * result
+        + ((pluginClassName == null) ? 0 : pluginClassName.hashCode());
+    result = prime * result
+        + ((pluginTypeName == null) ? 0 : pluginTypeName.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    PluginInfoDto other = (PluginInfoDto) obj;
+    if (fieldConfiguration == null) {
+      if (other.fieldConfiguration != null) {
+        return false;
+      }
+    } else if (!fieldConfiguration.equals(other.fieldConfiguration)) {
+      return false;
+    }
+    if (pluginClassName == null) {
+      if (other.pluginClassName != null) {
+        return false;
+      }
+    } else if (!pluginClassName.equals(other.pluginClassName)) {
+      return false;
+    }
+    if (pluginTypeName == null) {
+      if (other.pluginTypeName != null) {
+        return false;
+      }
+    } else if (!pluginTypeName.equals(other.pluginTypeName)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("PluginInfoDto [pluginTypeName=");
+    builder.append(pluginTypeName);
+    builder.append(", fieldConfiguration=");
+    builder.append(fieldConfiguration);
+    builder.append(", pluginClassName=");
+    builder.append(pluginClassName);
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

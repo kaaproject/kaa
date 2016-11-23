@@ -23,389 +23,304 @@ import org.kaaproject.kaa.server.sync.bootstrap.BootstrapClientSync;
  */
 public final class ClientSync {
 
-    /** The request id. */
-    private int requestId;
+  private int requestId;
 
-    /** The client sync meta data. */
-    private ClientSyncMetaData clientSyncMetaData;
+  private ClientSyncMetaData clientSyncMetaData;
 
-    /** The client sync meta data. */
-    private BootstrapClientSync bootstrapSync;
+  private BootstrapClientSync bootstrapSync;
 
-    /** The profile sync. */
-    private ProfileClientSync profileSync;
+  private ProfileClientSync profileSync;
 
-    /** The force configuration sync flag */
-    private boolean forceConfigurationSync;
+  private boolean forceConfigurationSync;
 
-    /** The configuration sync. */
-    private ConfigurationClientSync configurationSync;
+  private ConfigurationClientSync configurationSync;
 
-    /** The force notification sync flag */
-    private boolean forceNotificationSync;
+  private boolean forceNotificationSync;
 
-    /** The notification sync. */
-    private NotificationClientSync notificationSync;
+  private NotificationClientSync notificationSync;
 
-    /** The user sync. */
-    private UserClientSync userSync;
+  private UserClientSync userSync;
 
-    /** The event sync. */
-    private EventClientSync eventSync;
+  private EventClientSync eventSync;
 
-    /** The log sync. */
-    private LogClientSync logSync;
+  private LogClientSync logSync;
 
-    public ClientSync() {
+  // Kaa platform before 0.10.0 version use base scheme for configuration
+  // but since 0.10.0 one starts to use raw configuration schema
+  private boolean useConfigurationRawSchema;
+
+  public ClientSync() {
+
+  }
+
+  /**
+   * Create new instance of ClientSync.
+   *
+   * @param requestId          is request id
+   * @param clientSyncMetaData is client sSync meta data
+   * @param profileSync        is  profile sync
+   * @param configurationSync  is  configuration sync
+   * @param notificationSync   is  notification sync
+   * @param userSync           is  user sync
+   * @param eventSync          is  event sync
+   * @param logSync            is  log sync
+   */
+  public ClientSync(int requestId,
+                    ClientSyncMetaData clientSyncMetaData,
+                    ProfileClientSync profileSync,
+                    ConfigurationClientSync configurationSync,
+                    NotificationClientSync notificationSync,
+                    UserClientSync userSync,
+                    EventClientSync eventSync,
+                    LogClientSync logSync) {
+    this.requestId = requestId;
+    this.clientSyncMetaData = clientSyncMetaData;
+    this.profileSync = profileSync;
+    this.configurationSync = configurationSync;
+    this.notificationSync = notificationSync;
+    this.userSync = userSync;
+    this.eventSync = eventSync;
+    this.logSync = logSync;
+  }
+
+
+  public int getRequestId() {
+    return requestId;
+  }
+
+  public void setRequestId(int value) {
+    this.requestId = value;
+  }
+
+
+  public ClientSyncMetaData getClientSyncMetaData() {
+    return clientSyncMetaData;
+  }
+
+  public void setClientSyncMetaData(ClientSyncMetaData value) {
+    this.clientSyncMetaData = value;
+  }
+
+
+  public ProfileClientSync getProfileSync() {
+    return profileSync;
+  }
+
+  public void setProfileSync(ProfileClientSync value) {
+    this.profileSync = value;
+  }
+
+
+  public ConfigurationClientSync getConfigurationSync() {
+    return configurationSync;
+  }
+
+  public void setConfigurationSync(ConfigurationClientSync value) {
+    this.configurationSync = value;
+  }
+
+
+  public NotificationClientSync getNotificationSync() {
+    return notificationSync;
+  }
+
+  public void setNotificationSync(NotificationClientSync value) {
+    this.notificationSync = value;
+  }
+
+
+  public UserClientSync getUserSync() {
+    return userSync;
+  }
+
+  public void setUserSync(UserClientSync value) {
+    this.userSync = value;
+  }
+
+
+  public EventClientSync getEventSync() {
+    return eventSync;
+  }
+
+  public void setEventSync(EventClientSync value) {
+    this.eventSync = value;
+  }
+
+
+  public LogClientSync getLogSync() {
+    return logSync;
+  }
+
+  public void setLogSync(LogClientSync value) {
+    this.logSync = value;
+  }
+
+
+  public BootstrapClientSync getBootstrapSync() {
+    return bootstrapSync;
+  }
+
+  public void setBootstrapSync(BootstrapClientSync bootstrapSync) {
+    this.bootstrapSync = bootstrapSync;
+  }
+
+  /**
+   * Return true if client sync information is valid or false if not.
+   *
+   * @return true if valid, false if not
+   */
+  public boolean isValid() {
+    ClientSyncMetaData md = this.getClientSyncMetaData();
+    // TODO: validate if public key hash matches hash of public key during
+    // profile registration command.
+    if (md.getProfileHash() == null) {
+      ProfileClientSync profileRequest = this.getProfileSync();
+      if (profileRequest == null || profileRequest.getEndpointPublicKey() == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public boolean isForceConfigurationSync() {
+    return forceConfigurationSync;
+  }
+
+  public void setForceConfigurationSync(boolean forceConfigurationSync) {
+    this.forceConfigurationSync = forceConfigurationSync;
+  }
+
+
+  public boolean isForceNotificationSync() {
+    return forceNotificationSync;
+  }
+
+  public void setForceNotificationSync(boolean forceNotificationSync) {
+    this.forceNotificationSync = forceNotificationSync;
+  }
+
+
+  public boolean isUseConfigurationRawSchema() {
+    return useConfigurationRawSchema;
+  }
+
+  public void setUseConfigurationRawSchema(boolean useConfigurationRawSchema) {
+    this.useConfigurationRawSchema = useConfigurationRawSchema;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+      return true;
     }
 
-    /**
-     * All-args constructor.
-     *
-     * @param requestId
-     *            the request id
-     * @param syncRequestMetaData
-     *            the sync request meta data
-     * @param profileSync
-     *            the profile sync request
-     * @param configurationSyncRequest
-     *            the configuration sync request
-     * @param notificationSyncRequest
-     *            the notification sync request
-     * @param userSyncRequest
-     *            the user sync request
-     * @param eventSyncRequest
-     *            the event sync request
-     * @param logSyncRequest
-     *            the log sync request
-     */
-    public ClientSync(int requestId, ClientSyncMetaData clientSyncMetaData, ProfileClientSync profileSync,
-            ConfigurationClientSync configurationSync, NotificationClientSync notificationSync, UserClientSync userSync,
-            EventClientSync eventSync, LogClientSync logSync) {
-        this.requestId = requestId;
-        this.clientSyncMetaData = clientSyncMetaData;
-        this.profileSync = profileSync;
-        this.configurationSync = configurationSync;
-        this.notificationSync = notificationSync;
-        this.userSync = userSync;
-        this.eventSync = eventSync;
-        this.logSync = logSync;
+    if (object == null || getClass() != object.getClass()) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'requestId' field.
-     *
-     * @return the request id
-     */
-    public int getRequestId() {
-        return requestId;
+    ClientSync that = (ClientSync) object;
+
+    if (requestId != that.requestId) {
+      return false;
     }
 
-    /**
-     * Sets the value of the 'requestId' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setRequestId(int value) {
-        this.requestId = value;
+    if (forceConfigurationSync != that.forceConfigurationSync) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'clientSyncMetaData' field.
-     *
-     * @return the client sync meta data
-     */
-    public ClientSyncMetaData getClientSyncMetaData() {
-        return clientSyncMetaData;
+    if (forceNotificationSync != that.forceNotificationSync) {
+      return false;
     }
 
-    /**
-     * Sets the value of the 'clientSyncMetaData' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setClientSyncMetaData(ClientSyncMetaData value) {
-        this.clientSyncMetaData = value;
+    if (useConfigurationRawSchema != that.useConfigurationRawSchema) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'profileSync' field.
-     *
-     * @return the profile sync
-     */
-    public ProfileClientSync getProfileSync() {
-        return profileSync;
+    if (clientSyncMetaData != null
+        ? !clientSyncMetaData.equals(that.clientSyncMetaData)
+        : that.clientSyncMetaData != null) {
+      return false;
     }
 
-    /**
-     * Sets the value of the 'profileSync' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setProfileSync(ProfileClientSync value) {
-        this.profileSync = value;
+    if (bootstrapSync != null
+        ? !bootstrapSync.equals(that.bootstrapSync)
+        : that.bootstrapSync != null) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'configurationSync' field.
-     *
-     * @return the configuration sync
-     */
-    public ConfigurationClientSync getConfigurationSync() {
-        return configurationSync;
+    if (profileSync != null ? !profileSync.equals(that.profileSync) : that.profileSync != null) {
+      return false;
     }
 
-    /**
-     * Sets the value of the 'configurationSync' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setConfigurationSync(ConfigurationClientSync value) {
-        this.configurationSync = value;
+    if (configurationSync != null
+        ? !configurationSync.equals(that.configurationSync)
+        : that.configurationSync != null) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'notificationSync' field.
-     *
-     * @return the notification sync
-     */
-    public NotificationClientSync getNotificationSync() {
-        return notificationSync;
+    if (notificationSync != null
+        ? !notificationSync.equals(that.notificationSync)
+        : that.notificationSync != null) {
+      return false;
     }
 
-    /**
-     * Sets the value of the 'notificationSync' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setNotificationSync(NotificationClientSync value) {
-        this.notificationSync = value;
+    if (userSync != null ? !userSync.equals(that.userSync) : that.userSync != null) {
+      return false;
     }
 
-    /**
-     * Gets the value of the 'userSync' field.
-     *
-     * @return the user sync
-     */
-    public UserClientSync getUserSync() {
-        return userSync;
+    if (eventSync != null ? !eventSync.equals(that.eventSync) : that.eventSync != null) {
+      return false;
     }
+    return logSync != null ? logSync.equals(that.logSync) : that.logSync == null;
 
-    /**
-     * Sets the value of the 'userSync' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setUserSync(UserClientSync value) {
-        this.userSync = value;
-    }
+  }
 
-    /**
-     * Gets the value of the 'eventSync' field.
-     *
-     * @return the event sync
-     */
-    public EventClientSync getEventSync() {
-        return eventSync;
-    }
+  @Override
+  public int hashCode() {
+    int result = requestId;
+    result = 31 * result + (clientSyncMetaData != null ? clientSyncMetaData.hashCode() : 0);
+    result = 31 * result + (bootstrapSync != null ? bootstrapSync.hashCode() : 0);
+    result = 31 * result + (profileSync != null ? profileSync.hashCode() : 0);
+    result = 31 * result + (forceConfigurationSync ? 1 : 0);
+    result = 31 * result + (configurationSync != null ? configurationSync.hashCode() : 0);
+    result = 31 * result + (forceNotificationSync ? 1 : 0);
+    result = 31 * result + (notificationSync != null ? notificationSync.hashCode() : 0);
+    result = 31 * result + (userSync != null ? userSync.hashCode() : 0);
+    result = 31 * result + (eventSync != null ? eventSync.hashCode() : 0);
+    result = 31 * result + (logSync != null ? logSync.hashCode() : 0);
+    result = 31 * result + (useConfigurationRawSchema ? 1 : 0);
+    return result;
+  }
 
-    /**
-     * Sets the value of the 'eventSync' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setEventSync(EventClientSync value) {
-        this.eventSync = value;
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ClientSync [requestId=");
+    builder.append(requestId);
+    builder.append(", clientSyncMetaData=");
+    builder.append(clientSyncMetaData);
+    builder.append(", bootstrapSync=");
+    builder.append(bootstrapSync);
+    builder.append(", profileSync=");
+    builder.append(profileSync);
+    builder.append(", forceConfigurationSync=");
+    builder.append(forceConfigurationSync);
+    builder.append(", configurationSync=");
+    builder.append(configurationSync);
+    builder.append(", forceNotificationSync=");
+    builder.append(forceNotificationSync);
+    builder.append(", notificationSync=");
+    builder.append(notificationSync);
+    builder.append(", userSync=");
+    builder.append(userSync);
+    builder.append(", eventSync=");
+    builder.append(eventSync);
+    builder.append(", logSync=");
+    builder.append(logSync);
+    builder.append(", useRawSchema=");
+    builder.append(useConfigurationRawSchema);
+    builder.append("]");
+    return builder.toString();
+  }
 
-    /**
-     * Gets the value of the 'logSync' field.
-     *
-     * @return the log sync
-     */
-    public LogClientSync getLogSync() {
-        return logSync;
-    }
-
-    /**
-     * Sets the value of the 'logSync' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setLogSync(LogClientSync value) {
-        this.logSync = value;
-    }
-
-    public BootstrapClientSync getBootstrapSync() {
-        return bootstrapSync;
-    }
-
-    public void setBootstrapSync(BootstrapClientSync bootstrapSync) {
-        this.bootstrapSync = bootstrapSync;
-    }
-
-    public boolean isValid() {
-        ClientSyncMetaData md = this.getClientSyncMetaData();
-        // TODO: validate if public key hash matches hash of public key during
-        // profile registration command.
-        if (md.getProfileHash() == null) {
-            ProfileClientSync profileRequest = this.getProfileSync();
-            if (profileRequest == null || profileRequest.getEndpointPublicKey() == null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean isForceConfigurationSync() {
-        return forceConfigurationSync;
-    }
-
-    public void setForceConfigurationSync(boolean forceConfigurationSync) {
-        this.forceConfigurationSync = forceConfigurationSync;
-    }
-
-    public boolean isForceNotificationSync() {
-        return forceNotificationSync;
-    }
-
-    public void setForceNotificationSync(boolean forceNotificationSync) {
-        this.forceNotificationSync = forceNotificationSync;
-    }
-
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((bootstrapSync == null) ? 0 : bootstrapSync.hashCode());
-        result = prime * result + ((clientSyncMetaData == null) ? 0 : clientSyncMetaData.hashCode());
-        result = prime * result + ((configurationSync == null) ? 0 : configurationSync.hashCode());
-        result = prime * result + ((eventSync == null) ? 0 : eventSync.hashCode());
-        result = prime * result + (forceConfigurationSync ? 1231 : 1237);
-        result = prime * result + (forceNotificationSync ? 1231 : 1237);
-        result = prime * result + ((logSync == null) ? 0 : logSync.hashCode());
-        result = prime * result + ((notificationSync == null) ? 0 : notificationSync.hashCode());
-        result = prime * result + ((profileSync == null) ? 0 : profileSync.hashCode());
-        result = prime * result + requestId;
-        result = prime * result + ((userSync == null) ? 0 : userSync.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ClientSync other = (ClientSync) obj;
-        if (bootstrapSync == null) {
-            if (other.bootstrapSync != null) {
-                return false;
-            }
-        } else if (!bootstrapSync.equals(other.bootstrapSync)) {
-            return false;
-        }
-        if (clientSyncMetaData == null) {
-            if (other.clientSyncMetaData != null) {
-                return false;
-            }
-        } else if (!clientSyncMetaData.equals(other.clientSyncMetaData)) {
-            return false;
-        }
-        if (configurationSync == null) {
-            if (other.configurationSync != null) {
-                return false;
-            }
-        } else if (!configurationSync.equals(other.configurationSync)) {
-            return false;
-        }
-        if (eventSync == null) {
-            if (other.eventSync != null) {
-                return false;
-            }
-        } else if (!eventSync.equals(other.eventSync)) {
-            return false;
-        }
-        if (forceConfigurationSync != other.forceConfigurationSync) {
-            return false;
-        }
-        if (forceNotificationSync != other.forceNotificationSync) {
-            return false;
-        }
-        if (logSync == null) {
-            if (other.logSync != null) {
-                return false;
-            }
-        } else if (!logSync.equals(other.logSync)) {
-            return false;
-        }
-        if (notificationSync == null) {
-            if (other.notificationSync != null) {
-                return false;
-            }
-        } else if (!notificationSync.equals(other.notificationSync)) {
-            return false;
-        }
-        if (profileSync == null) {
-            if (other.profileSync != null) {
-                return false;
-            }
-        } else if (!profileSync.equals(other.profileSync)) {
-            return false;
-        }
-        if (requestId != other.requestId) {
-            return false;
-        }
-        if (userSync == null) {
-            if (other.userSync != null) {
-                return false;
-            }
-        } else if (!userSync.equals(other.userSync)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ClientSync [requestId=");
-        builder.append(requestId);
-        builder.append(", clientSyncMetaData=");
-        builder.append(clientSyncMetaData);
-        builder.append(", bootstrapSync=");
-        builder.append(bootstrapSync);
-        builder.append(", profileSync=");
-        builder.append(profileSync);
-        builder.append(", forceConfigurationSync=");
-        builder.append(forceConfigurationSync);
-        builder.append(", configurationSync=");
-        builder.append(configurationSync);
-        builder.append(", forceNotificationSync=");
-        builder.append(forceNotificationSync);
-        builder.append(", notificationSync=");
-        builder.append(notificationSync);
-        builder.append(", userSync=");
-        builder.append(userSync);
-        builder.append(", eventSync=");
-        builder.append(eventSync);
-        builder.append(", logSync=");
-        builder.append(logSync);
-        builder.append("]");
-        return builder.toString();
-    }
 }

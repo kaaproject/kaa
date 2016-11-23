@@ -20,9 +20,9 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class SystemCtlSchemasViewImpl extends CtlSchemasViewImpl {
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.systemCtlTitle();
-    }
-    
+  @Override
+  protected String titleString() {
+    return Utils.constants.systemCtlTitle();
+  }
+
 }

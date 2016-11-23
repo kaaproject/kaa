@@ -16,28 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.config;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class ConfigurationSchemaViewImpl extends BaseSchemaViewImpl {
+public class ConfigurationSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
-    public ConfigurationSchemaViewImpl(boolean create) {
-        super(create);
-    }
+  public ConfigurationSchemaViewImpl(boolean create) {
+    super(create);
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.addConfigurationSchema();
-    }
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.addConfigurationSchema();
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.configurationSchema();
-    }
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.configurationSchema();
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.configurationSchemaDetails();
-    }
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.configurationSchemaDetails();
+  }
 
 }

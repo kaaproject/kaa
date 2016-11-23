@@ -16,8 +16,6 @@
 
 package org.kaaproject.kaa.client.channel.impl.transports;
 
-import java.io.IOException;
-
 import org.kaaproject.kaa.client.channel.LogTransport;
 import org.kaaproject.kaa.client.logging.LogProcessor;
 import org.kaaproject.kaa.common.TransportType;
@@ -26,45 +24,47 @@ import org.kaaproject.kaa.common.endpoint.gen.LogSyncResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class DefaultLogTransport extends AbstractKaaTransport implements
-        LogTransport {
+    LogTransport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultLogTransport.class);
-    private LogProcessor processor;
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultLogTransport.class);
+  private LogProcessor processor;
 
-    @Override
-    public void setLogProcessor(LogProcessor processor) {
-        this.processor = processor;
+  @Override
+  public void setLogProcessor(LogProcessor processor) {
+    this.processor = processor;
+  }
+
+  @Override
+  public LogSyncRequest createLogRequest() {
+    if (processor != null) {
+      LogSyncRequest request = new LogSyncRequest();
+      processor.fillSyncRequest(request);
+      return request;
+    } else {
+      LOG.error("Can't create request. LogProcessor is null");
     }
+    return null;
+  }
 
-    @Override
-    public LogSyncRequest createLogRequest() {
-        if (processor != null) {
-            LogSyncRequest request = new LogSyncRequest();
-            processor.fillSyncRequest(request);
-            return request;
-        } else {
-            LOG.error("Can't create request. LogProcessor is null");
-        }
-        return null;
+  @Override
+  public void onLogResponse(LogSyncResponse response) {
+    if (processor != null) {
+      try {
+        processor.onLogResponse(response);
+      } catch (IOException ex) {
+        LOG.error("Failed to process Log response: {}", ex);
+      }
+    } else {
+      LOG.error("Can't process response. LogProcessor is null");
     }
+  }
 
-    @Override
-    public void onLogResponse(LogSyncResponse response) {
-        if (processor != null) {
-            try {
-                processor.onLogResponse(response);
-            } catch (IOException e) {
-                LOG.error("Failed to process Log response: {}", e);
-            }
-        } else {
-            LOG.error("Can't process response. LogProcessor is null");
-        }
-    }
-
-    @Override
-    protected TransportType getTransportType() {
-        return TransportType.LOGGING;
-    }
+  @Override
+  protected TransportType getTransportType() {
+    return TransportType.LOGGING;
+  }
 
 }

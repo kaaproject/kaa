@@ -20,7 +20,6 @@
  <ul>
     <li>\link quickstart Quick start \endlink</li>
     <li>\link programminguide Programming guide \endlink</li>
-    <li>\link demo Demo application \endlink</li>
  </ul>
 
  \section quickstart Quick start
@@ -35,7 +34,7 @@
         $ make install
     @endcode
 
-    Specific build options are described in the <a href='README'>README</a> and <a href="https://docs.kaaproject.org/display/KAA/Endpoint+platforms+integration">in the official online documentation.</a>
+   Build options for specific platforms are described in the <a href='README'>README</a> and <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Using-Kaa-endpoint-SDKs/">in the official online documentation.</a>
 
  \subsection linkage Link Kaa library to your project
 
@@ -122,8 +121,7 @@
         }
     @endcode
 
-    @note To use the log collection feature, go through
-    <a href="https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints#Collectingdatafromendpoints-Coding">additional initialization steps.</a>
+    @note If you want to use the log collection feature, see <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Key-platform-features/Data-collection">Data collection</a> documentation page.
 
     <b>To finish the Kaa C SDK initialization, execute the following command:</b>
     @code
@@ -135,23 +133,6 @@
 
  \section programminguide Programming guide
 
-    For more information about functions supported by the Kaa C SDK, see our <a href="https://docs.kaaproject.org/display/KAA/Programming+guide">Programming guide:</a>
-    <ul>
-        <li>
-            <a href="https://docs.kaaproject.org/display/KAA/Collecting+endpoint+profiles">Collecting endpoint profiles</a>
-        </li>
-        <li>
-            <a href="https://docs.kaaproject.org/display/KAA/Messaging+across+endpoints">Messaging across endpoints</a>
-        </li>
-        <li>
-            <a href="https://docs.kaaproject.org/display/KAA/Collecting+data+from+endpoints">Collecting data from endpoints</a>
-        </li>
-    </ul>
-
- \section demo Demo application
-
-    To better familiarize yourself with Kaa C SDK, you may look at our demo application.
-
-    Find the demo source code in the 'example' directory located in the root of the Kaa project.
-
+    For more information about Kaa C SDK functionality, see <a href="http://kaaproject.github.io/kaa/docs/latest/Programming-guide/Key-platform-features/">Key platform features</a> documentation page.
  */
+

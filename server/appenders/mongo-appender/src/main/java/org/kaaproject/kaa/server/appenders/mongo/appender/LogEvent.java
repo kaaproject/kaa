@@ -16,83 +16,103 @@
 
 package org.kaaproject.kaa.server.appenders.mongo.appender;
 
-import java.io.Serializable;
+import static com.mongodb.util.JSON.parse;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoDaoUtil.encodeReservedCharacteres;
+
+import com.mongodb.DBObject;
 
 import org.kaaproject.kaa.common.dto.logs.LogEventDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.data.ProfileInfo;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
+import java.io.Serializable;
 
 @Document
 public final class LogEvent implements Serializable {
 
-    private static final long serialVersionUID = -2738374699172219071L;
+  private static final long serialVersionUID = -2738374699172219071L;
 
-    @Id
-    private String id;
-    private DBObject header;
-    private DBObject event;
-    private DBObject clientProfile;
-    private DBObject serverProfile;
+  @Id
+  private String id;
+  private DBObject header;
+  private DBObject event;
+  private DBObject clientProfile;
+  private DBObject serverProfile;
 
-    public LogEvent() {
+  public LogEvent() {
 
-    }
+  }
 
-    public LogEvent(LogEventDto dto, ProfileInfo clientProfile, ProfileInfo serverProfile) {
-        this.id = dto.getId();
-        this.header = (DBObject) JSON.parse(dto.getHeader());
-        this.event = (DBObject) JSON.parse(dto.getEvent());
-        this.clientProfile = (clientProfile != null) ? (DBObject) JSON.parse(clientProfile.getBody()) : null;
-        this.serverProfile = (serverProfile != null) ? (DBObject) JSON.parse(serverProfile.getBody()) : null;
-    }
+  /**
+   * Create new instance of <code>LogEvent</code>.
+   *
+   * @param dto           data transfer object, that contain id, header and event. use these data to
+   *                      assign on appropriate field
+   * @param clientProfile the client profile info
+   * @param serverProfile the server profile info
+   */
+  public LogEvent(LogEventDto dto, ProfileInfo clientProfile, ProfileInfo serverProfile) {
+    this.id = dto.getId();
+    this.header = encodeReservedCharacteres((DBObject) parse(dto.getHeader()));
+    this.event = encodeReservedCharacteres((DBObject) parse(dto.getEvent()));
+    this.clientProfile = (clientProfile != null)
+        ? encodeReservedCharacteres((DBObject) parse(clientProfile.getBody())) : null;
 
-    public String getId() {
-        return id;
-    }
+    this.serverProfile = (serverProfile != null)
+        ? encodeReservedCharacteres((DBObject) parse(serverProfile.getBody())) : null;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public DBObject getEvent() {
-        return event;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public void setEvent(DBObject event) {
-        this.event = event;
-    }
+  public DBObject getEvent() {
+    return event;
+  }
 
-    public DBObject getHeader() {
-        return header;
-    }
+  public void setEvent(DBObject event) {
+    this.event = encodeReservedCharacteres(event);
+  }
 
-    public void setHeader(DBObject header) {
-        this.header = header;
-    }
+  public DBObject getHeader() {
+    return header;
+  }
 
-    public DBObject getClientProfile() {
-        return clientProfile;
-    }
+  public void setHeader(DBObject header) {
+    this.header = encodeReservedCharacteres(header);
+  }
 
-    public void setClientProfile(DBObject clientProfile) {
-        this.clientProfile = clientProfile;
-    }
+  public DBObject getClientProfile() {
+    return clientProfile;
+  }
 
-    public DBObject getServerProfile() {
-        return serverProfile;
-    }
+  public void setClientProfile(DBObject clientProfile) {
+    this.clientProfile = encodeReservedCharacteres(clientProfile);
+  }
 
-    public void setServerProfile(DBObject serverProfile) {
-        this.serverProfile = serverProfile;
-    }
+  public DBObject getServerProfile() {
+    return serverProfile;
+  }
 
-    @Override
-    public String toString() {
-        return "LogEvent [id=" + id + ", header=" + header + ", event=" + event + ", clientProfile=" + clientProfile + ", serverProfile=" + serverProfile + "]";
-    }
+  public void setServerProfile(DBObject serverProfile) {
+    this.serverProfile = encodeReservedCharacteres(serverProfile);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("LogEvent[");
+    sb.append("id='").append(id).append('\'');
+    sb.append(", header=").append(header);
+    sb.append(", event=").append(event);
+    sb.append(", clientProfile=").append(clientProfile);
+    sb.append(", serverProfile=").append(serverProfile);
+    sb.append(']');
+    return sb.toString();
+  }
 
 }

@@ -16,59 +16,59 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.appender;
 
+import com.google.gwt.user.cellview.client.DataGrid;
+
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.plugin.BasePluginGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.user.cellview.client.DataGrid;
-
 public class LogAppenderGrid extends BasePluginGrid<LogAppenderDto> {
 
-    public LogAppenderGrid(boolean embedded) {
-        super(embedded);
-    }
+  public LogAppenderGrid(boolean embedded) {
+    super(embedded);
+  }
 
-    @Override
-    protected float constructColumnsImpl(DataGrid<LogAppenderDto> table) {
-        float prefWidth = super.constructColumnsImpl(table);
+  @Override
+  protected float constructColumnsImpl(DataGrid<LogAppenderDto> table) {
+    float prefWidth = super.constructColumnsImpl(table);
 
-        prefWidth += constructStringColumn(table, Utils.constants.minSchemaVersion(),
-                new StringValueProvider<LogAppenderDto>() {
-            @Override
-            public String getValue(LogAppenderDto item) {
-                return String.valueOf(item.getMinLogSchemaVersion());
-            }
+    prefWidth += constructStringColumn(table, Utils.constants.minSchemaVersion(),
+        new StringValueProvider<LogAppenderDto>() {
+          @Override
+          public String getValue(LogAppenderDto item) {
+            return String.valueOf(item.getMinLogSchemaVersion());
+          }
         }, 80);
-        prefWidth += constructStringColumn(table, Utils.constants.maxVersion(),
-                new StringValueProvider<LogAppenderDto>() {
-            @Override
-            public String getValue(LogAppenderDto item) {
-                if (item.getMaxLogSchemaVersion() == Integer.MAX_VALUE) {
-                    return Utils.constants.infinite();
-                } else {
-                    return String.valueOf(item.getMaxLogSchemaVersion());
-                }
+    prefWidth += constructStringColumn(table, Utils.constants.maxVersion(),
+        new StringValueProvider<LogAppenderDto>() {
+          @Override
+          public String getValue(LogAppenderDto item) {
+            if (item.getMaxLogSchemaVersion() == Integer.MAX_VALUE) {
+              return Utils.constants.infinite();
+            } else {
+              return String.valueOf(item.getMaxLogSchemaVersion());
             }
+          }
         }, 80);
-        prefWidth += constructBooleanColumn(table,
-                Utils.constants.confirmDelivery(),
-                new BooleanValueProvider<LogAppenderDto>() {
-                    @Override
-                    public Boolean getValue(LogAppenderDto item) {
-                        return item.isConfirmDelivery();
-                    }
-                }, 40);
-        return prefWidth;
-    }
+    prefWidth += constructBooleanColumn(table,
+        Utils.constants.confirmDelivery(),
+        new BooleanValueProvider<LogAppenderDto>() {
+          @Override
+          public Boolean getValue(LogAppenderDto item) {
+            return item.isConfirmDelivery();
+          }
+        }, 40);
+    return prefWidth;
+  }
 
-    @Override
-    protected String deleteQuestion() {
-        return Utils.messages.removeLogAppenderQuestion();
-    }
+  @Override
+  protected String deleteQuestion() {
+    return Utils.messages.removeLogAppenderQuestion();
+  }
 
-    @Override
-    protected String deleteTitle() {
-        return Utils.messages.removeLogAppenderTitle();
-    }
+  @Override
+  protected String deleteTitle() {
+    return Utils.messages.removeLogAppenderTitle();
+  }
 
 }

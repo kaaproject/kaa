@@ -18,7 +18,7 @@ package org.kaaproject.kaa.server.admin.client.mvp.data;
 
 import static org.kaaproject.kaa.server.admin.shared.util.Utils.isEmpty;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.user.UserVerifierDto;
@@ -26,32 +26,37 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class UserVerifiersDataProvider  extends AbstractDataProvider<UserVerifierDto, String>{
-    private String applicationId;
+public class UserVerifiersDataProvider extends AbstractDataProvider<UserVerifierDto, String> {
+  private String applicationId;
 
-    public UserVerifiersDataProvider(AbstractGrid<UserVerifierDto, String> dataGrid,
-                                 HasErrorMessage hasErrorMessage,
-                                 String applicationId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        addDataDisplay();
+  /**
+   * All-args constructor.
+   */
+  public UserVerifiersDataProvider(AbstractGrid<UserVerifierDto, String> dataGrid,
+                                   HasErrorMessage hasErrorMessage,
+                                   String applicationId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    addDataDisplay();
+  }
+
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    if (!isEmpty(applicationId)) {
+      KaaAdmin.getDataSource().loadUserVerifiers(
+          applicationId, new AsyncCallback<List<UserVerifierDto>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+              callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(List<UserVerifierDto> result) {
+              callback.onSuccess(result);
+            }
+          });
     }
-
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        if (!isEmpty(applicationId)) {
-            KaaAdmin.getDataSource().loadUserVerifiers(applicationId, new AsyncCallback<List<UserVerifierDto>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
-                }
-                @Override
-                public void onSuccess(List<UserVerifierDto> result) {
-                    callback.onSuccess(result);
-                }
-            });
-        }
-    }
+  }
 }

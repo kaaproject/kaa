@@ -19,62 +19,61 @@ package org.kaaproject.kaa.server.sync;
 import java.nio.ByteBuffer;
 
 public final class LogEntry {
-    private ByteBuffer data;
+  private ByteBuffer data;
 
-    public LogEntry() {
-    }
+  public LogEntry() {
+  }
 
-    /**
-     * All-args constructor.
-     */
-    public LogEntry(ByteBuffer data) {
-        this.data = data;
-    }
+  /**
+   * All-args constructor.
+   */
+  public LogEntry(ByteBuffer data) {
+    this.data = data;
+  }
 
-    /**
-     * Gets the value of the 'data' field.
-     */
-    public ByteBuffer getData() {
-        return data;
-    }
+  /**
+   * Gets the value of the 'data' field.
+   */
+  public ByteBuffer getData() {
+    return data;
+  }
 
-    /**
-     * Sets the value of the 'data' field.
-     * 
-     * @param value
-     *            the value to set.
-     */
-    public void setData(ByteBuffer value) {
-        this.data = value;
-    }
+  /**
+   * Sets the value of the 'data' field.
+   *
+   * @param value the value to set.
+   */
+  public void setData(ByteBuffer value) {
+    this.data = value;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        return result;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((data == null) ? 0 : data.hashCode());
+    return result;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        LogEntry other = (LogEntry) obj;
-        if (data == null) {
-            if (other.data != null) {
-                return false;
-            }
-        } else if (!data.equals(other.data)) {
-            return false;
-        }
-        return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    LogEntry other = (LogEntry) obj;
+    if (data == null) {
+      if (other.data != null) {
+        return false;
+      }
+    } else if (!data.equals(other.data)) {
+      return false;
+    }
+    return true;
+  }
 }

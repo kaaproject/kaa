@@ -16,57 +16,63 @@
 
 package org.kaaproject.kaa.server.common.dao.schema;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaParseException;
 import org.kaaproject.kaa.common.dto.event.EventClassType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EventSchemaProcessorImpl implements EventSchemaProcessor {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(EventSchemaProcessorImpl.class);
-    
-    private static final String CLASS_TYPE = "classType";
-    
-    @Override
-    public List<EventSchemaMetadata> processSchema(String schema)
-            throws EventSchemaException {
-        Schema parsedSchema = null;
-        List<EventSchemaMetadata> eventClassSchemas = null;
-        try {
-            parsedSchema = new Schema.Parser().parse(schema);
-        } catch (SchemaParseException spe) {
-            LOG.error("Can't parse schema.", spe);
-            throw new EventSchemaException("Can't parse provided event class family schema.", spe);
-        }
-        
-        try {
-            List<Schema> parsedEventClassSchemas = parsedSchema.getTypes();
-            eventClassSchemas = new ArrayList<>(parsedEventClassSchemas.size());
-            for (Schema parsedEventClassSchema : parsedEventClassSchemas) {
-                EventSchemaMetadata eventClassSchema = new EventSchemaMetadata();
-                eventClassSchema.setFqn(parsedEventClassSchema.getFullName());
-                String strClassType = parsedEventClassSchema.getProp(CLASS_TYPE);
-                EventClassType classType = null;
-                try { //NOSONAR
-                    classType = EventClassType.valueOf(strClassType.toUpperCase());
-                } catch (Exception e) {
-                    LOG.error("Can't process provided event class family schema. Invalid classType [{}]. Exception catched: {}", strClassType, e);
-                    throw new EventSchemaException("Can't process provided event class family schema. Invalid classType: " + strClassType);
-                }
-                eventClassSchema.setType(classType);
-                eventClassSchema.setSchema(parsedEventClassSchema.toString());
-                eventClassSchemas.add(eventClassSchema);
-            }
-        } catch (Exception e) {
-            LOG.error("Invalid event class family schema.", e);
-            throw new EventSchemaException("Can't process provided event class family schema.", e);
-        }
-        return eventClassSchemas;
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(EventSchemaProcessorImpl.class);
+
+  private static final String CLASS_TYPE = "classType";
+  private static final String CTL_SCHEMA_ID = "ctlSchemaId";
+
+  @Override
+  public List<EventSchemaMetadata> processSchema(String schema)
+      throws EventSchemaException {
+    Schema parsedSchema = null;
+    List<EventSchemaMetadata> eventClassSchemas = null;
+    try {
+      parsedSchema = new Schema.Parser().parse(schema);
+    } catch (SchemaParseException spe) {
+      LOG.error("Can't parse schema.", spe);
+      throw new EventSchemaException("Can't parse provided event class family schema.", spe);
     }
+
+    try {
+      List<Schema> parsedEventClassSchemas = parsedSchema.getTypes();
+      eventClassSchemas = new ArrayList<>(parsedEventClassSchemas.size());
+      for (Schema parsedEventClassSchema : parsedEventClassSchemas) {
+        EventSchemaMetadata eventClassSchema = new EventSchemaMetadata();
+        eventClassSchema.setFqn(parsedEventClassSchema.getFullName());
+        String strClassType = parsedEventClassSchema.getProp(CLASS_TYPE);
+        EventClassType classType = null;
+        try { //NOSONAR
+          classType = EventClassType.valueOf(strClassType.toUpperCase());
+        } catch (Exception ex) {
+          LOG.error("Can't process provided event class family schema. Invalid classType [{}]. "
+                    + "Exception catched: {}", strClassType, ex);
+          throw new EventSchemaException("Can't process provided event class family schema. "
+                                         + "Invalid classType: " + strClassType);
+        }
+        String ctlSchemaId = parsedEventClassSchema.getProp(CTL_SCHEMA_ID);
+        eventClassSchema.setCtlSchemaId(ctlSchemaId);
+        eventClassSchema.setType(classType);
+        eventClassSchemas.add(eventClassSchema);
+      }
+    } catch (Exception ex) {
+      LOG.error("Invalid event class family schema.", ex);
+      throw new EventSchemaException("Can't process provided event class family schema.", ex);
+    }
+    return eventClassSchemas;
+  }
 
 }

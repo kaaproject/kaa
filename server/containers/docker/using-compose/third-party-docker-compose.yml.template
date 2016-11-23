@@ -1,0 +1,47 @@
+#
+# Copyright 2014-2016 CyberVision, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+version: '2'
+services:
+  sql:
+    image:
+    networks:
+      - back-tier
+    volumes:
+      - sql-data:/var/lib/sql
+    env_file:
+  zookeeper:
+    image: jplock/zookeeper:3.4.8
+    networks:
+      - back-tier
+    volumes:
+      - zookeeper-data:/tmp/zookeeper
+  nosql:
+    image:
+    networks:
+      - back-tier
+    volumes:
+      - nosql-data:/data/db
+networks:
+  back-tier:
+    driver: bridge # overlay for Swarm (unreleased update)
+  front-tier:
+    driver: bridge # overlay for Swarm (unreleased update)
+volumes:
+  sql-data:
+  nosql-data:
+  zookeeper-data:

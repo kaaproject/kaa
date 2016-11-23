@@ -22,11 +22,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 
-import java.util.Arrays;
-
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.MqttFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /**
  * KaaTcpEncoder Class.
@@ -34,34 +34,37 @@ import org.slf4j.LoggerFactory;
  * @author Yaroslav Zeygerman
  */
 public class KaaTcpEncoder extends ChannelOutboundHandlerAdapter {
-    private static final Logger LOG = LoggerFactory.getLogger(KaaTcpEncoder.class);
+  private static final Logger LOG = LoggerFactory.getLogger(KaaTcpEncoder.class);
 
-    @Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        if (!(msg instanceof MqttFrame)) {
-            LOG.warn("Message is not a {}", MqttFrame.class.getSimpleName());
-            super.write(ctx, msg, promise);
-        } else {
-            MqttFrame frame = (MqttFrame) msg;
-            byte[] data = frame.getFrame().array();
-            if(LOG.isTraceEnabled()){
-                LOG.trace("Sending {} data for frame {}", Arrays.toString(data), frame);
-            }
-            if(LOG.isTraceEnabled()){
-                LOG.trace("Channel promise before writeAndFlush isSuccess [{}] isDone [{}] isCancelled [{}] for frame {}", promise.isSuccess(),
-                        promise.isDone(), promise.isCancelled(), frame);
-            }            
-            ChannelFuture future = ctx.writeAndFlush(data, promise);
-            if(LOG.isTraceEnabled()){
-                LOG.trace("Returned future [{}] isSuccess [{}] isDone [{}] isCancelled [{}] cause [{}] for frame {}", future, future.isSuccess(),
-                        future.isDone(), future.isCancelled(), future.cause(), frame);
-                if (future.cause() != null) {
-                    LOG.trace("Write operation failed due to:", future.cause());
-                }
-            }            
-            if (frame.isNeedCloseConnection()) {
-                future.addListener(ChannelFutureListener.CLOSE);
-            }
+  @Override
+  public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise)
+          throws Exception {
+    if (!(msg instanceof MqttFrame)) {
+      LOG.warn("Message is not a {}", MqttFrame.class.getSimpleName());
+      super.write(ctx, msg, promise);
+    } else {
+      MqttFrame frame = (MqttFrame) msg;
+      byte[] data = frame.getFrame().array();
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("Sending {} data for frame {}", Arrays.toString(data), frame);
+      }
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("Channel promise before writeAndFlush isSuccess [{}] isDone [{}]"
+                + " isCancelled [{}] for frame {}", promise.isSuccess(),
+            promise.isDone(), promise.isCancelled(), frame);
+      }
+      ChannelFuture future = ctx.writeAndFlush(data, promise);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("Returned future [{}] isSuccess [{}] isDone [{}] isCancelled [{}] cause [{}]"
+                + " for frame {}", future, future.isSuccess(),
+            future.isDone(), future.isCancelled(), future.cause(), frame);
+        if (future.cause() != null) {
+          LOG.trace("Write operation failed due to:", future.cause());
         }
+      }
+      if (frame.isNeedCloseConnection()) {
+        future.addListener(ChannelFutureListener.CLOSE);
+      }
     }
+  }
 }

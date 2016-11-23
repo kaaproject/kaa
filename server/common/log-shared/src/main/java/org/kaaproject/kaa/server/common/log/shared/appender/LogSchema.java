@@ -20,31 +20,38 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 
 public final class LogSchema {
 
-    private final LogSchemaDto logSchemaDto;
+  private final LogSchemaDto logSchemaDto;
 
-    public LogSchema(LogSchemaDto logSchemaDto) {
-        this.logSchemaDto = logSchemaDto;
-    }
+  private final String schema;
 
-    public String getId() {
-        return logSchemaDto.getId();
-    }
+  public LogSchema(LogSchemaDto logSchemaDto, String schema) {
+    this.logSchemaDto = logSchemaDto;
+    this.schema = schema;
+  }
 
-    public String getApplicationId() {
-        return logSchemaDto.getApplicationId();
-    }
+  public String getId() {
+    return logSchemaDto.getId();
+  }
 
-    public String getSchema() {
-        return logSchemaDto.getSchema();
-    }
+  public String getApplicationId() {
+    return logSchemaDto.getApplicationId();
+  }
 
-    public int getVersion() {
-        return logSchemaDto.getVersion();
-    }
+  public String getCtlSchemaId() {
+    return logSchemaDto.getCtlSchemaId();
+  }
 
-    @Override
-    public String toString() {
-        return "LogSchema [logSchemaDto=" + logSchemaDto + "]";
-    }
+  public int getVersion() {
+    return logSchemaDto.getVersion();
+  }
+
+  public String getSchema() {
+    return schema;
+  }
+
+  @Override
+  public String toString() {
+    return "LogSchema [logSchemaDto=" + logSchemaDto + "]";
+  }
 
 }

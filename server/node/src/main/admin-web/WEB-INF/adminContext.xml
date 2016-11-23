@@ -77,7 +77,7 @@
         </property>
     </bean>
 	
-    <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingService" init-method="init" destroy-method="destroy">
+    <bean id="messagingService" class="org.kaaproject.kaa.server.admin.services.messaging.MessagingServiceImpl" init-method="init" destroy-method="destroy">
             <property name="sendPoolSize" value="10"/>
             <property name="sendTimeout" value="20"/>
     </bean>
@@ -85,10 +85,6 @@
     <bean id="kaaAdminAuthListener" class="org.kaaproject.kaa.server.admin.services.auth.KaaAdminAuthListener"/>
 	
     <bean id="kaaAuthService" class="org.kaaproject.kaa.server.admin.services.KaaAuthServiceImpl">
-            <property name="passwordEncoder" ref="encoder"/>
-    </bean>
-    
-	<bean id="kaaAdminService" class="org.kaaproject.kaa.server.admin.services.KaaAdminServiceImpl">
             <property name="passwordEncoder" ref="encoder"/>
     </bean>
 	

@@ -20,11 +20,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
 
-import java.nio.ByteBuffer;
-import java.util.UUID;
-
 import org.kaaproject.kaa.server.common.server.AbstractNettyServer;
 import org.kaaproject.kaa.server.transport.AbstractKaaTransport;
+import org.kaaproject.kaa.server.transport.RangeExpressionParser;
 import org.kaaproject.kaa.server.transport.SpecificTransportContext;
 import org.kaaproject.kaa.server.transport.TransportLifecycleException;
 import org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig;
@@ -35,83 +33,103 @@ import org.kaaproject.kaa.server.transports.tcp.transport.netty.KaaTcpDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 /**
- * Implementation of Kaa TCP transport
- * 
- * @author Andrew Shvayka
+ * Implementation of Kaa TCP transport.
  *
+ * @author Andrew Shvayka
  */
 public class TcpTransport extends AbstractKaaTransport<AvroTcpConfig> {
-    private static final Logger LOG = LoggerFactory.getLogger(TcpTransport.class);
-    private static final int SUPPORTED_VERSION = 1;
-    private AbstractNettyServer netty;
+  private static final Logger LOG = LoggerFactory.getLogger(TcpTransport.class);
+  private static final int SUPPORTED_VERSION = 1;
+  private AbstractNettyServer netty;
 
-    @Override
-    protected void init(SpecificTransportContext<AvroTcpConfig> context) throws TransportLifecycleException {
-        AvroTcpConfig configuration = context.getConfiguration();
-        configuration.setBindInterface(replaceProperty(configuration.getBindInterface(), BIND_INTERFACE_PROP_NAME, context
-                .getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
-        configuration.setPublicInterface(replaceProperty(configuration.getPublicInterface(), PUBLIC_INTERFACE_PROP_NAME, context
-                .getCommonProperties().getProperty(PUBLIC_INTERFACE_PROP_NAME, LOCALHOST)));
-        final KaaTcpCommandFactory factory = new KaaTcpCommandFactory();
-        this.netty = new AbstractNettyServer(configuration.getBindInterface(), configuration.getBindPort()) {
+  @Override
+  protected void init(SpecificTransportContext<AvroTcpConfig> context)
+      throws TransportLifecycleException {
+    AvroTcpConfig configuration = context.getConfiguration();
+    configuration.setBindInterface(replaceProperty(configuration.getBindInterface(),
+        BIND_INTERFACE_PROP_NAME,
+        context.getCommonProperties().getProperty(BIND_INTERFACE_PROP_NAME, LOCALHOST)));
 
-            @Override
-            protected ChannelInitializer<SocketChannel> configureInitializer() throws Exception {
-                return new AbstractKaaTcpServerInitializer() {
-                    @Override
-                    protected SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> getMainHandler(UUID uuid) {
-                        return new TcpHandler(uuid, TcpTransport.this.handler);
-                    }
+    configuration.setPublicInterface(replaceProperty(configuration.getPublicInterface(),
+        PUBLIC_INTERFACE_PROP_NAME,
+        context.getCommonProperties().getProperty(PUBLIC_INTERFACE_PROP_NAME, LOCALHOST)));
 
-                    @Override
-                    protected KaaTcpDecoder getDecoder() {
-                        return new KaaTcpDecoder(factory);
-                    }
-                };
-            }
+    final KaaTcpCommandFactory factory = new KaaTcpCommandFactory();
+    this.netty = new
+        AbstractNettyServer(configuration.getBindInterface(), configuration.getBindPort()) {
+
+      @Override
+      protected ChannelInitializer<SocketChannel> configureInitializer() throws Exception {
+        return new AbstractKaaTcpServerInitializer() {
+          @Override
+          protected SimpleChannelInboundHandler<AbstractKaaTcpCommandProcessor> getMainHandler(
+              UUID uuid) {
+            return new TcpHandler(uuid, TcpTransport.this.handler);
+          }
+
+          @Override
+          protected KaaTcpDecoder getDecoder() {
+            return new KaaTcpDecoder(factory);
+          }
         };
-    }
+      }
+    };
+  }
 
-    @Override
-    public void start() {
-        LOG.info("Initializing netty");
-        netty.init();
-        LOG.info("Starting netty");
-        netty.start();
-    }
+  @Override
+  public void start() {
+    LOG.info("Initializing netty");
+    netty.init();
+    LOG.info("Starting netty");
+    netty.start();
+  }
 
-    @Override
-    public void stop() {
-        LOG.info("Stopping netty");
-        netty.shutdown();
-    }
+  @Override
+  public void stop() {
+    LOG.info("Stopping netty");
+    netty.shutdown();
+  }
 
-    @Override
-    public Class<AvroTcpConfig> getConfigurationClass() {
-        return AvroTcpConfig.class;
-    }
+  @Override
+  public Class<AvroTcpConfig> getConfigurationClass() {
+    return AvroTcpConfig.class;
+  }
 
-    @Override
-    protected ByteBuffer getSerializedConnectionInfo() {
-        byte[] interfaceData = toUTF8Bytes(context.getConfiguration().getPublicInterface());
-        byte[] publicKeyData = context.getServerKey().getEncoded();
-        ByteBuffer buf = ByteBuffer.wrap(new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
-        buf.putInt(publicKeyData.length);
-        buf.put(publicKeyData);
-        buf.putInt(interfaceData.length);
-        buf.put(interfaceData);
-        buf.putInt(context.getConfiguration().getPublicPort());
-        return buf;
-    }
+  @Override
+  protected List<byte[]> getSerializedConnectionInfoList() {
+    List<byte[]> connectionInfoList = new ArrayList<>();
+    RangeExpressionParser rangeExpressionParser = new RangeExpressionParser();
+    List<Integer> publicPorts = rangeExpressionParser
+        .getNumbersFromRanges(context.getConfiguration().getPublicPorts());
+    for (int publicPort : publicPorts) {
+      byte[] interfaceData = toUtf8Bytes(context.getConfiguration().getPublicInterface());
+      byte[] publicKeyData = context.getServerKey().getEncoded();
+      ByteBuffer buf = ByteBuffer.wrap(
+          new byte[SIZE_OF_INT * 3 + interfaceData.length + publicKeyData.length]);
 
-    @Override
-    protected int getMinSupportedVersion() {
-        return SUPPORTED_VERSION;
+      buf.putInt(publicKeyData.length);
+      buf.put(publicKeyData);
+      buf.putInt(interfaceData.length);
+      buf.put(interfaceData);
+      buf.putInt(publicPort);
+      connectionInfoList.add(buf.array());
     }
+    return connectionInfoList;
+  }
 
-    @Override
-    protected int getMaxSupportedVersion() {
-        return SUPPORTED_VERSION;
-    }
+  @Override
+  protected int getMinSupportedVersion() {
+    return SUPPORTED_VERSION;
+  }
+
+  @Override
+  protected int getMaxSupportedVersion() {
+    return SUPPORTED_VERSION;
+  }
 }

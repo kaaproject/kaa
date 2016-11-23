@@ -18,57 +18,62 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class TenantDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = 330532156388681820L;
+  private static final long serialVersionUID = 330532156388681820L;
 
-    private String id;
-    private String name;
+  private String id;
+  @Size(min = 2, max = 100)
+  @NotNull(message = "tenant name can't be null")
+  private String name;
 
-    public String getId() {
-        return id;
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof TenantDto)) {
+      return false;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    TenantDto that = (TenantDto) obj;
+
+    if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
     }
 
-    public String getName() {
-        return name;
-    }
+    return true;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Override
+  public int hashCode() {
+    return name != null ? name.hashCode() : 0;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof TenantDto)) {
-            return false;
-        }
-
-        TenantDto that = (TenantDto) o;
-
-        if (name != null ? !name.equals(that.name) : that.name != null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "TenantDto{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "TenantDto{"
+           + "id='" + id + '\''
+           + ", name='" + name + '\''
+           + '}';
+  }
 }

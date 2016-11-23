@@ -18,12 +18,13 @@ package org.kaaproject.kaa.server.operations.service.event;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+
 import org.junit.Test;
 
 public class RouteInfoTest {
 
-    @Test
-    public void hashCodeEqualsTest(){
-        EqualsVerifier.forClass(RouteInfo.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(RouteInfo.class).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
+  }
 }

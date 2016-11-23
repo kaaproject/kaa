@@ -16,6 +16,16 @@
 
 package org.kaaproject.kaa.server.thrift;
 
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.thrift.KaaThriftService;
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
@@ -30,31 +40,28 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-
 public class NeighborsTest {
-    @SuppressWarnings("unchecked")
-    @Test
-    public void sendMessageTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InterruptedException {
-        ConnectionInfo connectionInfo1 = new ConnectionInfo("thriftHost", 9999, ByteBuffer.allocate(10));
-        NeighborTemplate<Event> template = (NeighborTemplate<Event>) mock(NeighborTemplate.class);
-        Neighbors<NeighborTemplate<Event>, Event> neighbors = new Neighbors<>(KaaThriftService.OPERATIONS_SERVICE, template, 1);
-        ReflectionTestUtils.setField(neighbors, "zkId", "someZkId");
-        NeighborConnection<NeighborTemplate<Event>, Event> neighborConnection = new NeighborConnection<>(connectionInfo1, 1, null);
-        LinkedBlockingQueue<Event> eventQueue = spy(new LinkedBlockingQueue<Event>());
-        ReflectionTestUtils.setField(neighborConnection, "messageQueue", eventQueue);
-        ConcurrentMap<String, NeighborConnection<NeighborTemplate<Event>, Event>> neighborMap =
-                spy((ConcurrentMap<String, NeighborConnection<NeighborTemplate<Event>, Event>>) ReflectionTestUtils.getField(neighbors, "neigbors"));
-        ReflectionTestUtils.setField(neighbors, "neigbors", neighborMap);
-        when(neighborMap.get(anyString())).thenReturn(neighborConnection);
-        Collection<Event> messages = new ArrayList<>();
-        Event e = new Event(10, "FQN", null, null, null);
-        messages.add(e);
-        Collection<Event> messagesSpy = spy(messages);
-        neighbors.sendMessages(connectionInfo1, messagesSpy);
-        verify(messagesSpy, timeout(1000)).iterator();
-        verify(eventQueue, timeout(1000)).offer(eq(e), anyLong(), any(TimeUnit.class));
-        neighbors.shutdown();
-    }
+  @SuppressWarnings("unchecked")
+  @Test
+  public void sendMessageTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InterruptedException {
+    ConnectionInfo connectionInfo1 = new ConnectionInfo("thriftHost", 9999, ByteBuffer.allocate(10));
+    NeighborTemplate<Event> template = (NeighborTemplate<Event>) mock(NeighborTemplate.class);
+    Neighbors<NeighborTemplate<Event>, Event> neighbors = new Neighbors<>(KaaThriftService.OPERATIONS_SERVICE, template, 1);
+    ReflectionTestUtils.setField(neighbors, "zkId", "someZkId");
+    NeighborConnection<NeighborTemplate<Event>, Event> neighborConnection = new NeighborConnection<>(connectionInfo1, 1, null);
+    LinkedBlockingQueue<Event> eventQueue = spy(new LinkedBlockingQueue<Event>());
+    ReflectionTestUtils.setField(neighborConnection, "messageQueue", eventQueue);
+    ConcurrentMap<String, NeighborConnection<NeighborTemplate<Event>, Event>> neighborMap =
+        spy((ConcurrentMap<String, NeighborConnection<NeighborTemplate<Event>, Event>>) ReflectionTestUtils.getField(neighbors, "neigbors"));
+    ReflectionTestUtils.setField(neighbors, "neigbors", neighborMap);
+    when(neighborMap.get(anyString())).thenReturn(neighborConnection);
+    Collection<Event> messages = new ArrayList<>();
+    Event e = new Event(10, "FQN", null, null, null);
+    messages.add(e);
+    Collection<Event> messagesSpy = spy(messages);
+    neighbors.sendMessages(connectionInfo1, messagesSpy);
+    verify(messagesSpy, timeout(1000)).iterator();
+    verify(eventQueue, timeout(1000)).offer(eq(e), anyLong(), any(TimeUnit.class));
+    neighbors.shutdown();
+  }
 }

@@ -18,8 +18,9 @@ package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
 import static org.kaaproject.kaa.server.admin.client.util.Utils.getMaxSchemaVersions;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.kaaproject.avro.ui.gwt.client.util.BusyAsyncCallback;
 import org.kaaproject.avro.ui.gwt.client.widget.BusyPopup;
@@ -35,168 +36,193 @@ import org.kaaproject.kaa.server.admin.client.mvp.place.SdkProfilesPlace;
 import org.kaaproject.kaa.server.admin.client.mvp.view.AddSdkProfileView;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AddSdkProfileActivity extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
+public class AddSdkProfileActivity
+    extends AbstractDetailsActivity<SdkProfileDto, AddSdkProfileView, AddSdkProfilePlace> {
 
-    private String applicationId;
+  private String applicationId;
 
-    public AddSdkProfileActivity(AddSdkProfilePlace place, ClientFactory clientFactory) {
-        super(place, clientFactory);
-        this.applicationId = place.getApplicationId();
-    }
+  public AddSdkProfileActivity(AddSdkProfilePlace place, ClientFactory clientFactory) {
+    super(place, clientFactory);
+    this.applicationId = place.getApplicationId();
+  }
 
-    @Override
-    public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
-        super.start(containerWidget, eventBus);
-    }
+  @Override
+  public void start(AcceptsOneWidget containerWidget, EventBus eventBus) {
+    super.start(containerWidget, eventBus);
+  }
 
-    @Override
-    protected String getEntityId(AddSdkProfilePlace place) {
-        return null;
-    }
+  @Override
+  protected String getEntityId(AddSdkProfilePlace place) {
+    return null;
+  }
 
-    @Override
-    protected AddSdkProfileView getView(boolean create) {
-        return clientFactory.getAddSdkProfileView();
-    }
+  @Override
+  protected AddSdkProfileView getView(boolean create) {
+    return clientFactory.getAddSdkProfileView();
+  }
 
-    @Override
-    protected SdkProfileDto newEntity() {
-        SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
-        sdkPropertiesDto.setApplicationId(applicationId);
-        return sdkPropertiesDto;
-    }
+  @Override
+  protected SdkProfileDto newEntity() {
+    SdkProfileDto sdkPropertiesDto = new SdkProfileDto();
+    sdkPropertiesDto.setApplicationId(applicationId);
+    return sdkPropertiesDto;
+  }
 
-    @Override
-    protected void onEntityRetrieved() {
-        BusyPopup.showPopup();
-        KaaAdmin.getDataSource().getSchemaVersionsByApplicationId(applicationId, new AsyncCallback<SchemaVersions>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                BusyPopup.hidePopup();
-                Utils.handleException(caught, detailsView);
-            }
+  @Override
+  protected void onEntityRetrieved() {
+    BusyPopup.showPopup();
+    KaaAdmin.getDataSource().getSchemaVersionsByApplicationId(applicationId,
+        new AsyncCallback<SchemaVersions>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            BusyPopup.hidePopup();
+            Utils.handleException(caught, detailsView);
+          }
 
-            @Override
-            public void onSuccess(final SchemaVersions schemaVersions) {
-                KaaAdmin.getDataSource().getAefMaps(applicationId, new AsyncCallback<List<AefMapInfoDto>>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        BusyPopup.hidePopup();
-                        Utils.handleException(caught, detailsView);
-                    }
+          @Override
+          public void onSuccess(final SchemaVersions schemaVersions) {
+            KaaAdmin.getDataSource().getAefMaps(applicationId,
+                new AsyncCallback<List<AefMapInfoDto>>() {
+                  @Override
+                  public void onFailure(Throwable caught) {
+                    BusyPopup.hidePopup();
+                    Utils.handleException(caught, detailsView);
+                  }
 
-                    @Override
-                    public void onSuccess(final List<AefMapInfoDto> ecfs) {
-                        KaaAdmin.getDataSource().loadUserVerifiers(applicationId,
-                                new AsyncCallback<List<UserVerifierDto>>() {
-                                    @Override
-                                    public void onFailure(Throwable caught) {
-                                        BusyPopup.hidePopup();
-                                        Utils.handleException(caught, detailsView);
-                                    }
+                  @Override
+                  public void onSuccess(final List<AefMapInfoDto> ecfs) {
+                    KaaAdmin.getDataSource().loadUserVerifiers(applicationId,
+                        new AsyncCallback<List<UserVerifierDto>>() {
+                          @Override
+                          public void onFailure(Throwable caught) {
+                            BusyPopup.hidePopup();
+                            Utils.handleException(caught, detailsView);
+                          }
 
-                                    @Override
-                                    public void onSuccess(
-                                            List<UserVerifierDto> userVerifiers) {
-                                        BusyPopup.hidePopup();
-                                        onInfoRetrieved(schemaVersions, ecfs, userVerifiers);
-                                    }
-                        });
-                    }
+                          @Override
+                          public void onSuccess(
+                              List<UserVerifierDto> userVerifiers) {
+                            BusyPopup.hidePopup();
+                            onInfoRetrieved(schemaVersions, ecfs, userVerifiers);
+                          }
+                        }
+                    );
+                  }
                 });
-            }
+          }
         });
-    }
+  }
 
-    private void onInfoRetrieved(SchemaVersions schemaVersions,
-            List<AefMapInfoDto> aefMaps,
-            List<UserVerifierDto> userVerifiers) {
+  private void onInfoRetrieved(SchemaVersions schemaVersions,
+                               List<AefMapInfoDto> aefMaps,
+                               List<UserVerifierDto> userVerifiers) {
 
-        List<VersionDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
-        detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions));
-        detailsView.getConfigurationSchemaVersion().setAcceptableValues(confSchemaVersions);
+    List<VersionDto> confSchemaVersions = schemaVersions.getConfigurationSchemaVersions();
+    detailsView.getConfigurationSchemaVersion().setValue(getMaxSchemaVersions(confSchemaVersions));
+    detailsView.getConfigurationSchemaVersion().setAcceptableValues(confSchemaVersions);
 
-        List<VersionDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
-        detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions));
-        detailsView.getProfileSchemaVersion().setAcceptableValues(pfSchemaVersions);
+    List<VersionDto> pfSchemaVersions = schemaVersions.getProfileSchemaVersions();
+    detailsView.getProfileSchemaVersion().setValue(getMaxSchemaVersions(pfSchemaVersions));
+    detailsView.getProfileSchemaVersion().setAcceptableValues(pfSchemaVersions);
 
-        List<VersionDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
-        detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions));
-        detailsView.getNotificationSchemaVersion().setAcceptableValues(notSchemaVersions);
+    List<VersionDto> notSchemaVersions = schemaVersions.getNotificationSchemaVersions();
+    detailsView.getNotificationSchemaVersion().setValue(getMaxSchemaVersions(notSchemaVersions));
+    detailsView.getNotificationSchemaVersion().setAcceptableValues(notSchemaVersions);
 
-        List<VersionDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
-        detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions));
-        detailsView.getLogSchemaVersion().setAcceptableValues(logSchemaVersions);
+    List<VersionDto> logSchemaVersions = schemaVersions.getLogSchemaVersions();
+    detailsView.getLogSchemaVersion().setValue(getMaxSchemaVersions(logSchemaVersions));
+    detailsView.getLogSchemaVersion().setAcceptableValues(logSchemaVersions);
 
-        detailsView.setAefMaps(aefMaps);
+    detailsView.setAefMaps(aefMaps);
 
-        detailsView.getDefaultUserVerifier().setAcceptableValues(userVerifiers);
-    }
+    detailsView.getDefaultUserVerifier().setAcceptableValues(userVerifiers);
+  }
 
-    @Override
-    protected void onSave() {
-        entity.setName(detailsView.getName().getValue());
+  @Override
+  protected void onSave() {
+    entity.setName(detailsView.getName().getValue());
 
-        entity.setConfigurationSchemaVersion(detailsView.getConfigurationSchemaVersion().
-                getValue().getVersion());
-        entity.setProfileSchemaVersion(detailsView.getProfileSchemaVersion().
-                getValue().getVersion());
-        entity.setNotificationSchemaVersion(detailsView.getNotificationSchemaVersion().
-                getValue().getVersion());
-        entity.setLogSchemaVersion(detailsView.getLogSchemaVersion().
-                getValue().getVersion());
+    entity.setConfigurationSchemaVersion(detailsView.getConfigurationSchemaVersion()
+        .getValue().getVersion());
+    entity.setProfileSchemaVersion(detailsView.getProfileSchemaVersion()
+        .getValue().getVersion());
+    entity.setNotificationSchemaVersion(detailsView.getNotificationSchemaVersion()
+        .getValue().getVersion());
+    entity.setLogSchemaVersion(detailsView.getLogSchemaVersion()
+        .getValue().getVersion());
 
+  }
+
+  @Override
+  protected void loadEntity() {
+    onEntityRetrieved();
+  }
+
+  @Override
+  protected void getEntity(String id, AsyncCallback<SdkProfileDto> callback) {
+  }
+
+
+  @Override
+  protected void doSave(final EventBus eventBus) {
+    onSave();
+
+    final List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();
+
+    final SdkProfileDto sdkProfileDto = entity;
+
+
+    KaaAdmin.getDataSource().validateEcfListInSdkProfile(aefMaps, new AsyncCallback<Void>() {
+
+      @Override
+      public void onFailure(Throwable caught) {
+        Utils.handleException(caught, detailsView);
+      }
+
+      @Override
+      public void onSuccess(Void callback) {
         List<String> aefMapIds = new ArrayList<>();
-        List<AefMapInfoDto> aefMaps = detailsView.getSelectedAefMaps().getValues();
         if (aefMaps != null) {
-            for (AefMapInfoDto aefMap : aefMaps) {
-                aefMapIds.add(aefMap.getAefMapId());
-            }
+          for (AefMapInfoDto aefMap : aefMaps) {
+            aefMapIds.add(aefMap.getAefMapId());
+          }
         }
-        entity.setAefMapIds(aefMapIds);
+        sdkProfileDto.setAefMapIds(aefMapIds);
         if (detailsView.getDefaultUserVerifier().getValue() != null) {
-            entity.setDefaultVerifierToken(detailsView.getDefaultUserVerifier()
-                    .getValue().getVerifierToken());
+          sdkProfileDto.setDefaultVerifierToken(detailsView.getDefaultUserVerifier()
+              .getValue().getVerifierToken());
         }
-    }
+        entity = sdkProfileDto;
+        if (!sdkProfileDto.getAefMapIds().isEmpty()
+            && sdkProfileDto.getDefaultVerifierToken() == null) {
 
-    @Override
-    protected void loadEntity() {
-        onEntityRetrieved();
-    }
-
-    @Override
-    protected void getEntity(String id, AsyncCallback<SdkProfileDto> callback) {}
-
-
-    @Override
-    protected void doSave(final EventBus eventBus) {
-        onSave();
-
-        if (!entity.getAefMapIds().isEmpty() && entity.getDefaultVerifierToken() == null) {
-            detailsView.setErrorMessage(Utils.constants.specifyVerifier());
+          detailsView.setErrorMessage(Utils.constants.specifyVerifier());
         } else {
 
-            KaaAdmin.getDataSource().addSdkProfile(entity, new BusyAsyncCallback<SdkProfileDto>() {
-
+          KaaAdmin.getDataSource().addSdkProfile(sdkProfileDto,
+              new BusyAsyncCallback<SdkProfileDto>() {
                 @Override
                 public void onSuccessImpl(SdkProfileDto result) {
-                    detailsView.reset();
-                    AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
+                  detailsView.reset();
+                  AddSdkProfileActivity.this.goTo(new SdkProfilesPlace(applicationId));
                 }
 
                 @Override
                 public void onFailureImpl(Throwable caught) {
-                    Utils.handleException(caught, detailsView);
+                  Utils.handleException(caught, detailsView);
                 }
-            });
+              });
         }
-    }
+      }
 
-    @Override
-    protected void editEntity(SdkProfileDto entity, final AsyncCallback<SdkProfileDto> callback) {}
+    });
+
+  }
+
+  @Override
+  protected void editEntity(SdkProfileDto entity, final AsyncCallback<SdkProfileDto> callback) {
+  }
 }

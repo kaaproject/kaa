@@ -19,16 +19,6 @@ package org.kaaproject.kaa.server.transports.http.transport.netty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,151 +37,159 @@ import org.kaaproject.kaa.server.transports.http.transport.commands.SyncCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * NettyHttpServerIT Class to test Netty HTTP Server, using serious of http
  * requests to check validity of transmission.
  *
  * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
- *
  */
 public class NettyHttpServerIT {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpServerIT.class);
+  /**
+   * Port which used to bind to for Netty HTTP
+   */
+  public static final String TEST_HOST = "localhost";
+  /**
+   * Port which used to bind to for Netty HTTP
+   */
+  public static final int TEST_PORT = 9193;
+  /**
+   * Max HTTP request size which used in Netty framework
+   */
+  public static final int MAX_HTTP_REQUEST_SIZE = 65536;
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(NettyHttpServerIT.class);
+  private static ExecutorService executor = null;
 
-    /** Port which used to bind to for Netty HTTP */
-    public static final String TEST_HOST = "localhost";
+  private static HttpTransport netty;
 
-    /** Port which used to bind to for Netty HTTP */
-    public static final int TEST_PORT = 9193;
+  /**
+   * Inits the.
+   *
+   * @throws Exception the exception
+   */
+  @BeforeClass
+  public static void init() throws Exception {
+    executor = Executors.newFixedThreadPool(5);
+    netty = new HttpTransport();
+  }
 
-    /** Max HTTP request size which used in Netty framework */
-    public static final int MAX_HTTP_REQUEST_SIZE = 65536;
+  /**
+   * After.
+   *
+   * @throws Exception the exception
+   */
+  @AfterClass
+  public static void after() throws Exception {
+    executor.shutdown();
+  }
 
-    private static ExecutorService executor = null;
+  /**
+   * Before test.
+   */
+  @Before
+  public void beforeTest() throws Exception {
+    GenericTransportContext context = new GenericTransportContext(new TransportContext(new TransportProperties(new Properties()), null,
+        new MessageHandler() {
 
-    private static HttpTransport netty;
+          @Override
+          public void process(SessionInitMessage message) {
+            // TODO Auto-generated method stub
 
-    /**
-     * Inits the.
-     *
-     * @throws Exception
-     *             the exception
-     */
-    @BeforeClass
-    public static void init() throws Exception {
-        executor = Executors.newFixedThreadPool(5);
-        netty = new HttpTransport();
-    }
+          }
 
-    /**
-     * After.
-     *
-     * @throws Exception
-     *             the exception
-     */
-    @AfterClass
-    public static void after() throws Exception {
-        executor.shutdown();
-    }
+          @Override
+          public void process(SessionAware message) {
+            // TODO Auto-generated method stub
 
-    /**
-     * Before test.
-     *
-     * @throws Exception
-     */
-    @Before
-    public void beforeTest() throws Exception {
-        GenericTransportContext context = new GenericTransportContext(new TransportContext(new TransportProperties(new Properties()), null,
-                new MessageHandler() {
+          }
+        }), getTestConfig());
+    netty.init(context);
+    netty.start();
+  }
 
-                    @Override
-                    public void process(SessionInitMessage message) {
-                        // TODO Auto-generated method stub
+  /**
+   * After test.
+   *
+   * @throws Exception the exception
+   */
+  @After
+  public void afterTest() throws Exception {
+    netty.stop();
+  }
 
-                    }
+  /**
+   * Test on incorrect URL
+   */
+  @Test
+  public void testIncorrectRequest() {
+    LOG.info("Test Incorrect request");
+    PostParameters params = new PostParameters();
+    // Incorrect command name
+    String commandName = "test";
+    try {
+      final HttpTestClient client = new HttpTestClient(params, new HttpActivity() {
 
-                    @Override
-                    public void process(SessionAware message) {
-                        // TODO Auto-generated method stub
-
-                    }
-                }), getTestConfig());
-        netty.init(context);
-        netty.start();
-    }
-
-    /**
-     * After test.
-     *
-     * @throws Exception
-     *             the exception
-     */
-    @After
-    public void afterTest() throws Exception {
-        netty.stop();
-    }
-
-    /**
-     * Test on incorrect URL
-     */
-    @Test
-    public void testIncorrectRequest() {
-        LOG.info("Test Incorrect request");
-        PostParameters params = new PostParameters();
-        // Incorrect command name
-        String commandName = "test";
-        try {
-            final HttpTestClient client = new HttpTestClient(params, new HttpActivity() {
-
-                @Override
-                public void httpRequestComplete(IOException ioe, Map<String, List<String>> header, String body) {
-                    assertNotNull(ioe);
-                    LOG.info("Test complete, Error 500 got.");
-                }
-            }, commandName);
-            executor.execute(client);
-            Thread.sleep(100);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            fail(e.toString());
+        @Override
+        public void httpRequestComplete(IOException ioe, Map<String, List<String>> header, String body) {
+          assertNotNull(ioe);
+          LOG.info("Test complete, Error 500 got.");
         }
+      }, commandName);
+      executor.execute(client);
+      Thread.sleep(100);
+    } catch (IOException | InterruptedException e) {
+      e.printStackTrace();
+      fail(e.toString());
     }
+  }
 
-    /**
-     * Test on incorrect HTTP method
-     */
-    @Test
-    public void testIncorrectMethod() {
-        LOG.info("Test Incorrect Method request");
-        try {
-            URLConnection connection = new URL("http://" + TEST_HOST + ":" + TEST_PORT + "/domain/" + SyncCommand.getCommandName())
-                    .openConnection();
-            StringBuffer b = new StringBuffer();
-            InputStreamReader r = new InputStreamReader(connection.getInputStream(), "UTF-8");
-            int c;
-            while ((c = r.read()) != -1) {
-                b.append((char) c);
-            }
-            fail("Exception not cauth");
-        } catch (IOException e) {
-            assertNotNull(e);
-            if (!e.toString().contains("HTTP response code: 400 for URL")) {
-                fail(e.toString());
-            } else {
-                LOG.info("Test for incorrect method pass");
-            }
-        }
+  /**
+   * Test on incorrect HTTP method
+   */
+  @Test
+  public void testIncorrectMethod() {
+    LOG.info("Test Incorrect Method request");
+    try {
+      URLConnection connection = new URL("http://" + TEST_HOST + ":" + TEST_PORT + "/domain/" + SyncCommand.getCommandName())
+          .openConnection();
+      StringBuffer b = new StringBuffer();
+      InputStreamReader r = new InputStreamReader(connection.getInputStream(), "UTF-8");
+      int c;
+      while ((c = r.read()) != -1) {
+        b.append((char) c);
+      }
+      fail("Exception not cauth");
+    } catch (IOException e) {
+      assertNotNull(e);
+      if (!e.toString().contains("HTTP response code: 400 for URL")) {
+        fail(e.toString());
+      } else {
+        LOG.info("Test for incorrect method pass");
+      }
     }
+  }
 
-    private byte[] getTestConfig() throws IOException {
-        AvroHttpConfig config = new AvroHttpConfig();
-        config.setBindInterface(TEST_HOST);
-        config.setBindPort(TEST_PORT);
-        config.setPublicInterface(TEST_HOST);
-        config.setPublicPort(TEST_PORT);
-        config.setMaxBodySize(MAX_HTTP_REQUEST_SIZE);
-        AvroByteArrayConverter<AvroHttpConfig> converter = new AvroByteArrayConverter<AvroHttpConfig>(AvroHttpConfig.class);
-        return converter.toByteArray(config);
-    }
+  private byte[] getTestConfig() throws IOException {
+    AvroHttpConfig config = new AvroHttpConfig();
+    config.setBindInterface(TEST_HOST);
+    config.setBindPort(TEST_PORT);
+    config.setPublicInterface(TEST_HOST);
+    config.setPublicPorts(Integer.toString(TEST_PORT));
+    config.setMaxBodySize(MAX_HTTP_REQUEST_SIZE);
+    AvroByteArrayConverter<AvroHttpConfig> converter = new AvroByteArrayConverter<AvroHttpConfig>(AvroHttpConfig.class);
+    return converter.toByteArray(config);
+  }
 }

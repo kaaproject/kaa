@@ -18,49 +18,48 @@ package org.kaaproject.kaa.common.dto.event;
 
 public class AefMapInfoDto extends EcfInfoDto {
 
-    private static final long serialVersionUID = -3070865577878738788L;
-    
-    private String aefMapId;
+  private static final long serialVersionUID = -3070865577878738788L;
 
-    public String getAefMapId() {
-        return aefMapId;
+  private String aefMapId;
+
+  public String getAefMapId() {
+    return aefMapId;
+  }
+
+  public void setAefMapId(String aefMapId) {
+    this.aefMapId = aefMapId;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result
+        + ((aefMapId == null) ? 0 : aefMapId.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public void setAefMapId(String aefMapId) {
-        this.aefMapId = aefMapId;
+    if (!super.equals(obj)) {
+      return false;
     }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((aefMapId == null) ? 0 : aefMapId.hashCode());
-        return result;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj)) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AefMapInfoDto other = (AefMapInfoDto) obj;
-        if (aefMapId == null) {
-            if (other.aefMapId != null) {
-                return false;
-            }
-        } else if (!aefMapId.equals(other.aefMapId)) {
-            return false;
-        }
-        return true;
+    AefMapInfoDto other = (AefMapInfoDto) obj;
+    if (aefMapId == null) {
+      if (other.aefMapId != null) {
+        return false;
+      }
+    } else if (!aefMapId.equals(other.aefMapId)) {
+      return false;
     }
+    return true;
+  }
 
-    
-    
+
 }

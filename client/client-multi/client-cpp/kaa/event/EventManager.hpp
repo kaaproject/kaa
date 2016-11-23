@@ -70,6 +70,7 @@ public:
 
     virtual void setTransport(EventTransport *transport);
 
+    using AbstractTransactable::beginTransaction;
     virtual TransactionIdPtr beginTransaction()
     {
         return AbstractTransactable::beginTransaction(context_);
@@ -77,6 +78,7 @@ public:
 
     virtual void commit(TransactionIdPtr trxId, IKaaClientContext &context_);
 
+    using AbstractTransactable::rollback;
     virtual void rollback(TransactionIdPtr trxId)
     {
         AbstractTransactable::rollback(trxId, context_);

@@ -16,9 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
@@ -30,54 +28,59 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class EventMapDataProvider extends AbstractDataProvider<ApplicationEventMapDto, String>{
+public class EventMapDataProvider extends AbstractDataProvider<ApplicationEventMapDto, String> {
 
-    private EcfInfoDto ecf;
-    private List<ApplicationEventMapDto> eventMaps;
-    
-    public EventMapDataProvider(AbstractGrid<ApplicationEventMapDto,String> dataGrid,
-                                    HasErrorMessage hasErrorMessage) {
-        super(dataGrid, hasErrorMessage);
-    }
-    
-    public void setEcf(EcfInfoDto ecf) {
-        this.ecf = ecf;
-    }
-    
-    public void setEventMaps(List<ApplicationEventMapDto> eventMaps) {
-        this.eventMaps = eventMaps;
-    }
+  private EcfInfoDto ecf;
+  private List<ApplicationEventMapDto> eventMaps;
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        if (this.eventMaps == null && ecf != null) {
-            KaaAdmin.getDataSource().getEventClassesByFamilyIdVersionAndType(ecf.getEcfId(), ecf.getVersion(), EventClassType.EVENT, new AsyncCallback<List<EventClassDto>>() {
+  public EventMapDataProvider(AbstractGrid<ApplicationEventMapDto, String> dataGrid,
+                              HasErrorMessage hasErrorMessage) {
+    super(dataGrid, hasErrorMessage);
+  }
+
+  public void setEcf(EcfInfoDto ecf) {
+    this.ecf = ecf;
+  }
+
+  public void setEventMaps(List<ApplicationEventMapDto> eventMaps) {
+    this.eventMaps = eventMaps;
+  }
+
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    if (this.eventMaps == null && ecf != null) {
+      KaaAdmin.getDataSource()
+          .getEventClassesByFamilyIdVersionAndType(
+              ecf.getEcfId(), ecf.getVersion(), EventClassType.EVENT,
+              new AsyncCallback<List<EventClassDto>>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
+                  callback.onFailure(caught);
                 }
-                
+
                 @Override
                 public void onSuccess(List<EventClassDto> result) {
-                    List<ApplicationEventMapDto> eventMaps = new ArrayList<>(result.size());
-                    for (EventClassDto eventClass : result) {
-                        ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
-                        eventMap.setEventClassId(eventClass.getId());
-                        eventMap.setFqn(eventClass.getFqn());
-                        eventMap.setAction(ApplicationEventAction.BOTH);
-                        eventMaps.add(eventMap);
-                    }
-                    callback.onSuccess(eventMaps);
+                  List<ApplicationEventMapDto> eventMaps = new ArrayList<>(result.size());
+                  for (EventClassDto eventClass : result) {
+                    ApplicationEventMapDto eventMap = new ApplicationEventMapDto();
+                    eventMap.setEventClassId(eventClass.getId());
+                    eventMap.setFqn(eventClass.getFqn());
+                    eventMap.setAction(ApplicationEventAction.BOTH);
+                    eventMaps.add(eventMap);
+                  }
+                  callback.onSuccess(eventMaps);
                 }
-            });
-        } else if (this.eventMaps != null) {
-            callback.onSuccess(this.eventMaps);
-        } else {
-            List<ApplicationEventMapDto> data = Collections.emptyList();
-            callback.onSuccess(data);
-        }
+              });
+    } else if (this.eventMaps != null) {
+      callback.onSuccess(this.eventMaps);
+    } else {
+      List<ApplicationEventMapDto> data = Collections.emptyList();
+      callback.onSuccess(data);
     }
+  }
 
 }

@@ -16,10 +16,10 @@
 
 package org.kaaproject.kaa.server.operations.service.cache;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
+
+import java.io.Serializable;
 
 /**
  * The Class DeltaCacheEntry is used to model cache entry for delta calculation.
@@ -29,70 +29,99 @@ import org.kaaproject.kaa.server.common.core.algorithms.delta.RawBinaryDelta;
  */
 public class ConfigurationCacheEntry implements Serializable {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+  /**
+   * The Constant serialVersionUID.
+   */
+  private static final long serialVersionUID = 1L;
 
-    /** The configuration. */
-    private final byte[] configuration;
+  /**
+   * The configuration.
+   */
+  private final byte[] configuration;
 
-    /** The delta. */
-    private final RawBinaryDelta delta;
+  /**
+   * The delta.
+   */
+  private final RawBinaryDelta delta;
 
-    /** The hash. */
-    private final EndpointObjectHash hash;
+  /**
+   * The hash.
+   */
+  private final EndpointObjectHash hash;
 
-    /** The hash. */
-    private final EndpointObjectHash userConfigurationHash;
+  /**
+   * User configuration hash.
+   */
+  private final EndpointObjectHash userConfigurationHash;
 
-    /**
-     * Instantiates a new delta cache entry.
-     *
-     * @param configuration the configuration
-     * @param delta the delta
-     * @param hash the hash
-     * @param userConfigurationHash  the user configuration hash
-     */
-    public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta, EndpointObjectHash hash, EndpointObjectHash userConfigurationHash) {
-        super();
-        this.configuration = configuration;
-        this.delta = delta;
-        this.hash = hash;
-        this.userConfigurationHash = userConfigurationHash;
-    }
+  /**
+   * Endpoint specific configuration hash.
+   */
+  private final EndpointObjectHash epsConfigurationHash;
 
-    /**
-     * Gets the configuration.
-     *
-     * @return the configuration
-     */
-    public byte[] getConfiguration() {
-        return configuration;
-    }
+  /**
+   * Instantiates a new delta cache entry.
+   *
+   * @param configuration         the configuration
+   * @param delta                 the delta
+   * @param hash                  the hash
+   * @param userConfigurationHash the user configuration hash
+   * @param epsConfigurationHash  endpoint specific configuration hash
+   */
+  public ConfigurationCacheEntry(byte[] configuration, RawBinaryDelta delta,
+                                 EndpointObjectHash hash,
+                                 EndpointObjectHash userConfigurationHash,
+                                 EndpointObjectHash epsConfigurationHash) {
+    super();
+    this.configuration = configuration;
+    this.delta = delta;
+    this.hash = hash;
+    this.userConfigurationHash = userConfigurationHash;
+    this.epsConfigurationHash = epsConfigurationHash;
+  }
 
-    /**
-     * Gets the delta.
-     *
-     * @return the delta
-     */
-    public RawBinaryDelta getDelta() {
-        return delta;
-    }
+  /**
+   * Gets the configuration.
+   *
+   * @return the configuration
+   */
+  public byte[] getConfiguration() {
+    return configuration;
+  }
 
-    /**
-     * Gets the hash.
-     *
-     * @return the hash
-     */
-    public EndpointObjectHash getHash() {
-        return hash;
-    }
+  /**
+   * Gets the delta.
+   *
+   * @return the delta
+   */
+  public RawBinaryDelta getDelta() {
+    return delta;
+  }
 
-    /**
-     * Gets the hash.
-     *
-     * @return the hash
-     */
-    public EndpointObjectHash getUserConfigurationHash() {
-        return userConfigurationHash;
-    }
+  /**
+   * Gets the hash.
+   *
+   * @return the hash
+   */
+  public EndpointObjectHash getHash() {
+    return hash;
+  }
+
+  /**
+   * Gets the hash.
+   *
+   * @return the hash
+   */
+  public EndpointObjectHash getUserConfigurationHash() {
+    return userConfigurationHash;
+  }
+
+  /**
+   * Gets the hash.
+   *
+   * @return the hash
+   */
+  public EndpointObjectHash getEpsConfigurationHash() {
+    return epsConfigurationHash;
+  }
 }

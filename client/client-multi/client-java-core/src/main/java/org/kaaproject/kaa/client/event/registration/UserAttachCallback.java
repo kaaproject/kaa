@@ -25,14 +25,13 @@ import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
  *
  * @author Taras Lemkin
  * @see EndpointRegistrationManager
- *
  */
 public interface UserAttachCallback {
-    /**
-     * Called when auth result is retrieved from operations server.
-     *
-     * @param response Result of user attaching
-     * @see UserAttachResponse
-     */
-    void onAttachResult(UserAttachResponse response);
+  /**
+   * Called when auth result is retrieved from operations service.
+   *
+   * @param response Result of user attaching
+   * @see UserAttachResponse
+   */
+  void onAttachResult(UserAttachResponse response);
 }

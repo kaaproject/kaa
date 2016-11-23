@@ -17,26 +17,32 @@
 package org.kaaproject.kaa.server.common.log.shared.appender.data;
 
 public class BaseSchemaInfo {
-    private final String schemaId;
-    private final String schema;
+  private final String schemaId;
+  private final String schema;
 
-    public BaseSchemaInfo(String schemaId, String schema) {
-        super();
-        this.schemaId = schemaId;
-        this.schema = schema;
-    }
+  /**
+   * Create new instance of <code>BaseSchemaInfo</code>.
+   *
+   * @param schemaId is schema unique id
+   * @param schema is schema (string)
+   */
+  public BaseSchemaInfo(String schemaId, String schema) {
+    super();
+    this.schemaId = schemaId;
+    this.schema = schema;
+  }
 
-    public String getSchemaId() {
-        return schemaId;
-    }
+  public String getSchemaId() {
+    return schemaId;
+  }
 
-    public String getSchema() {
-        return schema;
-    }
+  public String getSchema() {
+    return schema;
+  }
 
-    @Override
-    public String toString() {
-        return "BaseSchemaInfo [schemaId=" + schemaId + ", schema=" + schema + "]";
-    }
+  @Override
+  public String toString() {
+    return "BaseSchemaInfo [schemaId=" + schemaId + ", schema=" + schema + "]";
+  }
 
 }

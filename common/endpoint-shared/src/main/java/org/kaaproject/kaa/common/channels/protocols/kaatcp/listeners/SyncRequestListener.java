@@ -19,8 +19,7 @@ package org.kaaproject.kaa.common.channels.protocols.kaatcp.listeners;
 import org.kaaproject.kaa.common.channels.protocols.kaatcp.messages.SyncRequest;
 
 /**
- * @author Andrey Panasenko
- *
+ * @author Andrey Panasenko.
  */
 public interface SyncRequestListener extends MessageListener<SyncRequest> {
 

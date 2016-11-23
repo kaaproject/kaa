@@ -24,22 +24,22 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class ServerProfileSchemasViewImpl extends BaseListViewImpl<ServerProfileSchemaDto> {
 
-    public ServerProfileSchemasViewImpl() {
-        super(true);
-    }
+  public ServerProfileSchemasViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<ServerProfileSchemaDto, String> createGrid() {
-        return new BaseCtlSchemasGrid<ServerProfileSchemaDto>();
-    }
+  @Override
+  protected AbstractGrid<ServerProfileSchemaDto, String> createGrid() {
+    return new BaseCtlSchemasGrid<ServerProfileSchemaDto>();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.serverProfileSchemas();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.serverProfileSchemas();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewSchema();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewSchema();
+  }
 }

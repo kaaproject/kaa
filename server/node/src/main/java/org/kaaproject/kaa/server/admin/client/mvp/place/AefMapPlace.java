@@ -16,76 +16,78 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class AefMapPlace extends AefMapsPlace {
 
-    protected String aefMapId;
+  protected String aefMapId;
 
-    public AefMapPlace(String applicationId, String aefMapId) {
-        super(applicationId);
-        this.aefMapId = aefMapId;
+  public AefMapPlace(String applicationId, String aefMapId) {
+    super(applicationId);
+    this.aefMapId = aefMapId;
+  }
+
+  public String getAefMapId() {
+    return aefMapId;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.aefMap();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    AefMapPlace other = (AefMapPlace) obj;
+    if (aefMapId == null) {
+      if (other.aefMapId != null) {
+        return false;
+      }
+    } else if (!aefMapId.equals(other.aefMapId)) {
+      return false;
+    }
+    return true;
+  }
 
-    public String getAefMapId() {
-        return aefMapId;
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new AefMapsPlace(applicationId);
+  }
+
+  @Prefix(value = "aefMap")
+  public static class Tokenizer implements PlaceTokenizer<AefMapPlace>, PlaceConstants {
+
+    @Override
+    public AefMapPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new AefMapPlace(
+          PlaceParams.getParam(APPLICATION_ID),
+          PlaceParams.getParam(AEF_MAP_ID));
     }
 
     @Override
-    public String getName() {
-        return Utils.constants.aefMap();
+    public String getToken(AefMapPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      PlaceParams.putParam(AEF_MAP_ID, place.getAefMapId());
+      return PlaceParams.generateToken();
     }
-
-    @Prefix(value = "aefMap")
-    public static class Tokenizer implements PlaceTokenizer<AefMapPlace>, PlaceConstants {
-
-        @Override
-        public AefMapPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new AefMapPlace(PlaceParams.getParam(APPLICATION_ID), PlaceParams.getParam(AEF_MAP_ID));
-        }
-
-        @Override
-        public String getToken(AefMapPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(AEF_MAP_ID, place.getAefMapId());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AefMapPlace other = (AefMapPlace) obj;
-        if (aefMapId == null) {
-            if (other.aefMapId != null) {
-                return false;
-            }
-        } else if (!aefMapId.equals(other.aefMapId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new AefMapsPlace(applicationId);
-    }
+  }
 }

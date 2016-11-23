@@ -74,6 +74,7 @@
 
     <bean id="userConfigurationService" class="org.kaaproject.kaa.server.common.dao.service.UserConfigurationServiceImpl">
         <property name="endpointUserConfigurationDao" ref="endpointUserConfigurationDao"/>
+        <property name="endpointUserDao" ref="endpointUserDao"/>
     </bean>
 
     <bean id="serverProfileService" class="org.kaaproject.kaa.server.common.dao.service.ServerProfileServiceImpl">
@@ -88,4 +89,8 @@
         <property name="credentialsDao" ref="credentialsDao"/>
     </bean>
 
+    <bean id="endpointSpecificConfigurationService"
+          class="org.kaaproject.kaa.server.common.dao.service.EndpointSpecificConfigurationServiceImpl">
+        <property name="endpointSpecificConfigurationDao" ref="endpointSpecificConfigurationDao"/>
+    </bean>
 </beans>

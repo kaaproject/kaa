@@ -16,57 +16,58 @@
 
 package org.kaaproject.kaa.server.transports.http.transport.commands;
 
+import static org.mockito.Mockito.mock;
+
 import io.netty.handler.codec.http.HttpRequest;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.CommonEPConstans;
+import org.kaaproject.kaa.common.endpoint.CommonEpConstans;
 import org.kaaproject.kaa.server.transports.http.transport.messages.NettyHttpSyncMessage;
 import org.kaaproject.kaa.server.transports.http.transport.netty.AbstractCommand;
 import org.mockito.Mockito;
 
 import java.util.UUID;
 
-import static org.mockito.Mockito.mock;
-
 public class HttpCommandsTest {
-    @Test
-    public void abstractHttpSyncCommandGetSetTest() {
-        AbstractHttpSyncCommand abstractHttpSyncCommand = mock(AbstractHttpSyncCommand.class, Mockito.CALLS_REAL_METHODS);
+  @Test
+  public void abstractHttpSyncCommandGetSetTest() {
+    AbstractHttpSyncCommand abstractHttpSyncCommand = mock(AbstractHttpSyncCommand.class, Mockito.CALLS_REAL_METHODS);
 
-        byte[] responseBody = new byte[] {1, 2, 3, 4, 5};
-        byte[] responseSignature = new byte[] {5, 6, 8, 9, 10};
-        abstractHttpSyncCommand.setResponseBody(responseBody);
-        Assert.assertArrayEquals(responseBody, abstractHttpSyncCommand.getResponseBody());
-        abstractHttpSyncCommand.setResponseSignature(responseSignature);
-        Assert.assertArrayEquals(responseSignature, abstractHttpSyncCommand.getResponseSignature());
-    }
+    byte[] responseBody = new byte[]{1, 2, 3, 4, 5};
+    byte[] responseSignature = new byte[]{5, 6, 8, 9, 10};
+    abstractHttpSyncCommand.setResponseBody(responseBody);
+    Assert.assertArrayEquals(responseBody, abstractHttpSyncCommand.getResponseBody());
+    abstractHttpSyncCommand.setResponseSignature(responseSignature);
+    Assert.assertArrayEquals(responseSignature, abstractHttpSyncCommand.getResponseSignature());
+  }
 
-    @Test
-    public void abstractCommandGetSetTest() {
-        AbstractCommand abstractCommand = mock(AbstractCommand.class, Mockito.CALLS_REAL_METHODS);
-        UUID uuid = UUID.randomUUID();
-        abstractCommand.setSessionUuid(uuid);
-        Assert.assertEquals(uuid, abstractCommand.getSessionUuid());
-        long syncTime = 100342L;
-        abstractCommand.setSyncTime(syncTime);
-        Assert.assertEquals(syncTime, abstractCommand.getSyncTime());
-        int commandId = 1;
-        abstractCommand.setCommandId(commandId);
-        Assert.assertEquals(commandId, abstractCommand.getCommandId());
-        HttpRequest httpRequest = mock(HttpRequest.class);
-        abstractCommand.setRequest(httpRequest);
-        Assert.assertEquals(httpRequest, abstractCommand.getRequest());
-    }
+  @Test
+  public void abstractCommandGetSetTest() {
+    AbstractCommand abstractCommand = mock(AbstractCommand.class, Mockito.CALLS_REAL_METHODS);
+    UUID uuid = UUID.randomUUID();
+    abstractCommand.setSessionUuid(uuid);
+    Assert.assertEquals(uuid, abstractCommand.getSessionUuid());
+    long syncTime = 100342L;
+    abstractCommand.setSyncTime(syncTime);
+    Assert.assertEquals(syncTime, abstractCommand.getSyncTime());
+    int commandId = 1;
+    abstractCommand.setCommandId(commandId);
+    Assert.assertEquals(commandId, abstractCommand.getCommandId());
+    HttpRequest httpRequest = mock(HttpRequest.class);
+    abstractCommand.setRequest(httpRequest);
+    Assert.assertEquals(httpRequest, abstractCommand.getRequest());
+  }
 
-    @Test
-    public void nettyHttpSyncMessageTest() {
-        NettyHttpSyncMessage nettyHttpSyncMessage = mock(NettyHttpSyncMessage.class, Mockito.CALLS_REAL_METHODS);
-        Assert.assertEquals(0, nettyHttpSyncMessage.getKeepAlive());
-        Assert.assertTrue(nettyHttpSyncMessage.isEncrypted());
-    }
+  @Test
+  public void nettyHttpSyncMessageTest() {
+    NettyHttpSyncMessage nettyHttpSyncMessage = mock(NettyHttpSyncMessage.class, Mockito.CALLS_REAL_METHODS);
+    Assert.assertEquals(0, nettyHttpSyncMessage.getKeepAlive());
+    Assert.assertTrue(nettyHttpSyncMessage.isEncrypted());
+  }
 
-    @Test
-    public void longSyncCommandTest() {
-        Assert.assertEquals(CommonEPConstans.LONG_SYNC_COMMAND, LongSyncCommand.getCommandName());
-    }
+  @Test
+  public void longSyncCommandTest() {
+    Assert.assertEquals(CommonEpConstans.LONG_SYNC_COMMAND, LongSyncCommand.getCommandName());
+  }
 }

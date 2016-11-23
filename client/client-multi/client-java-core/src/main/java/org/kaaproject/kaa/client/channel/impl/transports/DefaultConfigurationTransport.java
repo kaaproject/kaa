@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.client.channel.impl.transports;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
 import org.kaaproject.kaa.client.channel.ConfigurationTransport;
 import org.kaaproject.kaa.client.configuration.ConfigurationHashContainer;
 import org.kaaproject.kaa.client.configuration.ConfigurationProcessor;
@@ -31,73 +28,77 @@ import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 /**
  * The default implementation of the {@link ConfigurationTransport}.
  *
  * @author Yaroslav Zeygerman
- *
  */
-public class DefaultConfigurationTransport extends AbstractKaaTransport implements ConfigurationTransport {
+public class DefaultConfigurationTransport extends AbstractKaaTransport
+        implements ConfigurationTransport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurationTransport.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultConfigurationTransport.class);
 
-    private boolean resyncOnly;
-    private ConfigurationHashContainer hashContainer;
-    private ConfigurationProcessor configProcessor;
-    private SchemaProcessor schemaProcessor;
+  private boolean resyncOnly;
+  private ConfigurationHashContainer hashContainer;
+  private ConfigurationProcessor configProcessor;
+  private SchemaProcessor schemaProcessor;
 
-    @Override
-    public void setConfigurationHashContainer(ConfigurationHashContainer container) {
-        this.hashContainer = container;
+  @Override
+  public void setConfigurationHashContainer(ConfigurationHashContainer container) {
+    this.hashContainer = container;
+  }
+
+  @Override
+  public void setConfigurationProcessor(ConfigurationProcessor processor) {
+    this.configProcessor = processor;
+  }
+
+  @Override
+  public void setSchemaProcessor(SchemaProcessor processor) {
+    this.schemaProcessor = processor;
+  }
+
+  @Override
+  public ConfigurationSyncRequest createConfigurationRequest() {
+    if (clientState != null && hashContainer != null) {
+      EndpointObjectHash hash = hashContainer.getConfigurationHash();
+      ConfigurationSyncRequest request = new ConfigurationSyncRequest();
+      if (hash != null) {
+        request.setConfigurationHash(ByteBuffer.wrap(hash.getData()));
+      }
+      request.setResyncOnly(resyncOnly);
+      return request;
     }
+    return null;
+  }
 
-    @Override
-    public void setConfigurationProcessor(ConfigurationProcessor processor) {
-        this.configProcessor = processor;
+  @Override
+  public void onConfigurationResponse(ConfigurationSyncResponse response) throws IOException {
+    if (clientState != null && configProcessor != null) {
+      ByteBuffer schemaBody = response.getConfSchemaBody();
+      if (schemaBody != null && schemaProcessor != null) {
+        schemaProcessor.loadSchema(schemaBody);
+      }
+      ByteBuffer confBody = response.getConfDeltaBody();
+      if (confBody != null) {
+        configProcessor.processConfigurationData(confBody,
+                response.getResponseStatus().equals(SyncResponseStatus.RESYNC));
+      }
+      syncAck(response.getResponseStatus());
+      LOG.info("Processed configuration response.");
     }
+  }
 
-    @Override
-    public void setSchemaProcessor(SchemaProcessor processor) {
-        this.schemaProcessor = processor;
-    }
+  @Override
+  protected TransportType getTransportType() {
+    return TransportType.CONFIGURATION;
+  }
 
-    @Override
-    public ConfigurationSyncRequest createConfigurationRequest() {
-        if (clientState != null && hashContainer != null) {
-            EndpointObjectHash hash = hashContainer.getConfigurationHash();
-            ConfigurationSyncRequest request = new ConfigurationSyncRequest();
-            if (hash != null) {
-                request.setConfigurationHash(ByteBuffer.wrap(hash.getData()));
-            }
-            request.setResyncOnly(resyncOnly);
-            return request;
-        }
-        return null;
-    }
-
-    @Override
-    public void onConfigurationResponse(ConfigurationSyncResponse response) throws IOException {
-        if (clientState != null && configProcessor != null) {
-            ByteBuffer schemaBody = response.getConfSchemaBody();
-            if (schemaBody != null && schemaProcessor != null) {
-                schemaProcessor.loadSchema(schemaBody);
-            }
-            ByteBuffer confBody = response.getConfDeltaBody();
-            if (confBody != null) {
-                configProcessor.processConfigurationData(confBody, response.getResponseStatus().equals(SyncResponseStatus.RESYNC));
-            }
-            syncAck(response.getResponseStatus());
-            LOG.info("Processed configuration response.");
-        }
-    }
-
-    @Override
-    protected TransportType getTransportType() {
-        return TransportType.CONFIGURATION;
-    }
-
-    @Override
-    public void setResyncOnly(boolean resyncOnly) {
-        this.resyncOnly = resyncOnly;
-    }
+  @Override
+  public void setResyncOnly(boolean resyncOnly) {
+    this.resyncOnly = resyncOnly;
+  }
 }

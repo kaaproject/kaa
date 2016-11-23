@@ -1,0 +1,26 @@
+---
+layout: search
+sitemap: false
+no_version_test: true
+---
+{% include variables.md %}
+<form class="form-inline" role="search" action="{{ site.baseurl }}/search/" method="get">
+      <div class="form-group">
+          <select name="version" id="search-version-select">
+          {% for item in versions %}
+             <option value="{{ item }}">
+                {{ item }}{% if item == latest_version %} (latest) {% endif %}
+             </option>
+          {% endfor %}
+          </select>
+
+          <input type="text" class="form-control" id="search-box" placeholder="Search" name="query">
+          <input type="hidden" name="baseUrl" value="{{ site.baseurl }}/{{ base_docs_path }}">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+<ul id="search-results"></ul>
+
+<script src="{{ site.baseurl }}/public/js/lunr.min.js"></script>
+<script src="{{ site.baseurl }}/public/js/search.js"></script>

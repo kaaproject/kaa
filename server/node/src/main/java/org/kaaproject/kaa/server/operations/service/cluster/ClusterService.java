@@ -16,9 +16,8 @@
 
 package org.kaaproject.kaa.server.operations.service.cluster;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointConfigurationRefreshMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEntityRouteMessage;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftServerProfileUpdateMessage;
@@ -27,131 +26,143 @@ import org.kaaproject.kaa.server.common.zk.operations.OperationsNode;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
 
+import java.util.List;
+
 public interface ClusterService {
 
-    /**
-     * Used to set ZooKepper node.
-     * 
-     * @param operationsNode
-     *            the operations node
-     */
-    void setZkNode(OperationsNode operationsNode);
+  /**
+   * Used to set ZooKepper node.
+   *
+   * @param operationsNode the operations node
+   */
+  void setZkNode(OperationsNode operationsNode);
 
-    /**
-     * Used to set {@link OperationsServerResolver}.
-     * 
-     * @param resolver
-     *            to set
-     */
-    void setResolver(OperationsServerResolver resolver);
+  /**
+   * Used to set {@link OperationsServerResolver}.
+   *
+   * @param resolver to set
+   */
+  void setResolver(OperationsServerResolver resolver);
 
-    /**
-     * Register cluster route listener, used to inform cluster engine on
-     * Operations Server thrift interface calls.
-     * 
-     * @param listener
-     *            EventServiceListener
-     */
-    void setListener(ClusterServiceListener listener);
+  /**
+   * Register cluster route listener, used to inform cluster engine on
+   * Operations Server thrift interface calls.
+   *
+   * @param listener EventServiceListener
+   */
+  void setListener(ClusterServiceListener listener);
 
-    /**
-     * Returns id of the current node
-     * @return id of the current node
-     */
-    String getNodeId();
-    
-    /**
-     * Checks if global entity actor for specified entity is located on current
-     * node
-     * 
-     * @param entityId
-     *            to check
-     * @return true if global entity actor is located on this node, false
-     *         otherwise.
-     */
-    boolean isMainEntityNode(EndpointObjectHash entityId);
-    
-    /**
-     * Checks if global entity actor for specified entity is located on current
-     * node
-     * 
-     * @param entityId
-     *            to check
-     * @return true if global entity actor is located on this node, false
-     *         otherwise.
-     */
-    boolean isMainEntityNode(byte[] entityId);
-    
-    /**
-     * Returns id of the node that should contain global entity actor
-     * 
-     * @param entityId
-     *            the entity id
-     * @return id of the global entity actor node
-     */
-    String getEntityNode(EndpointObjectHash entityId);
+  /**
+   * Returns id of the current node.
+   *
+   * @return id of the current node
+   */
+  String getNodeId();
 
-    /**
-     * Returns id of the node that should contain global entity actor
-     * 
-     * @param entityId
-     *            the entity id
-     * @return id of the global entity actor node
-     */
-    String getEntityNode(byte[] entityId);
+  /**
+   * Checks if global entity actor for specified entity is located on current
+   * node.
+   *
+   * @param entityId to check
+   * @return true if global entity actor is located on this node, false otherwise.
+   */
+  boolean isMainEntityNode(EndpointObjectHash entityId);
 
-    /**
-     * Send EndpointRouteMessage to the node that contains global entity actor.
-     * 
-     * @param msg
-     *            the endpoint route message
-     * @return id of the global entity actor node
-     */
-    String sendRouteMessage(EndpointRouteMessage msg);
-    
-    /**
-     * Send unicast notification message to specified node
-     * @param nodeId - id of the server node
-     * @param msg the unicast notification message
-     */
-    void sendUnicastNotificationMessage(String nodeId, ThriftUnicastNotificationMessage msg);
+  /**
+   * Checks if global entity actor for specified entity is located on current
+   * node.
+   *
+   * @param entityId to check.
+   * @return true if global entity actor is located on this node, false otherwise.
+   */
+  boolean isMainEntityNode(byte[] entityId);
 
-    /**
-     * Send server profile update message to specified node
-     * @param nodeId - id of the server node
-     * @param msg the unicast notification message
-     */
-    void sendServerProfileUpdateMessage(String nodeId, ThriftServerProfileUpdateMessage msg);
+  /**
+   * Returns id of the node that should contain global entity actor.
+   *
+   * @param entityId the entity id
+   * @return id of the global entity actor node
+   */
+  String getEntityNode(EndpointObjectHash entityId);
 
-    /**
-     * Process entity route messages
-     * 
-     * @param msgs
-     *            the entity route messages
-     */
-    void onEntityRouteMessages(List<ThriftEntityRouteMessage> msgs);
-    
-    /**
-     * Process unicast notification message
-     * @param msg the unicast notification message
-     */
-    void onUnicastNotificationMessage(ThriftUnicastNotificationMessage msg);
+  /**
+   * Returns id of the node that should contain global entity actor.
+   *
+   * @param entityId the entity id
+   * @return id of the global entity actor node
+   */
+  String getEntityNode(byte[] entityId);
 
-    /**
-     * Process server profile update message
-     * @param msg the server profile update message
-     */
-    void onServerProfileUpdateMessage(ThriftServerProfileUpdateMessage msg);
+  /**
+   * Send EndpointRouteMessage to the node that contains global entity actor.
+   *
+   * @param msg the endpoint route message
+   * @return id of the global entity actor node
+   */
+  String sendRouteMessage(EndpointRouteMessage msg);
 
-    /**
-     * Process endpoint de-registration message 
-     * @param msg the endpoint de-registration message
-     */
-    void onEndpointDeregistrationMessage(ThriftEndpointDeregistrationMessage msg);
+  /**
+   * Send unicast notification message to specified node.
+   *
+   * @param nodeId - id of the server node
+   * @param msg    the unicast notification message
+   */
+  void sendUnicastNotificationMessage(String nodeId, ThriftUnicastNotificationMessage msg);
 
-    /**
-     * Stops service.
-     */
-    void shutdown();
+  /**
+   * Send server profile update message to specified node.
+   *
+   * @param nodeId - id of the server node
+   * @param msg    the unicast notification message
+   */
+  void sendServerProfileUpdateMessage(String nodeId, ThriftServerProfileUpdateMessage msg);
+
+  /**
+   * Send endpoint configuration refresh message to specified node.
+   *
+   * @param nodeId id of the server node
+   * @param msg    the endpoint configuration refresh message
+   */
+  void sendEndpointConfigurationRefreshMessage(String nodeId, ThriftEndpointConfigurationRefreshMessage msg);
+
+  /**
+   * Process endpoint configuration refresh message.
+   *
+   * @param msg endpoint configuration refresh message
+   */
+  void sendEndpointConfigurationRefreshMessage(ThriftEndpointConfigurationRefreshMessage msg);
+
+  /**
+   * Process entity route messages.
+   *
+   * @param msgs the entity route messages
+   */
+  void onEntityRouteMessages(List<ThriftEntityRouteMessage> msgs);
+
+  /**
+   * Process unicast notification message.
+   *
+   * @param msg the unicast notification message
+   */
+  void onUnicastNotificationMessage(ThriftUnicastNotificationMessage msg);
+
+  /**
+   * Process server profile update message.
+   *
+   * @param msg the server profile update message
+   */
+  void onServerProfileUpdateMessage(ThriftServerProfileUpdateMessage msg);
+
+  /**
+   * Process endpoint de-registration message.
+   *
+   * @param msg the endpoint de-registration message
+   */
+  void onEndpointDeregistrationMessage(ThriftEndpointDeregistrationMessage msg);
+
+  /**
+   * Stops service.
+   */
+  void shutdown();
 
 }

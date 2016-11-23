@@ -24,6 +24,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/cassandra-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class CassandraUserConfigurationServiceImplTest  extends UserConfigurationServiceImplTest {
+public class CassandraUserConfigurationServiceImplTest extends UserConfigurationServiceImplTest {
 
 }

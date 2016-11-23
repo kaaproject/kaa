@@ -26,21 +26,21 @@ import org.kaaproject.kaa.server.verifiers.gplus.config.gen.GplusAvroConfig;
 @KaaPluginConfig(pluginType = PluginType.USER_VERIFIER)
 public class GplusVerifierConfig implements PluginConfig {
 
-    private static final String GPLUS_VERIFIER_NAME = "Google+ verifier";
+  private static final String GPLUS_VERIFIER_NAME = "Google+ verifier";
 
-    @Override
-    public String getPluginTypeName() {
-        return GPLUS_VERIFIER_NAME;
-    }
+  @Override
+  public String getPluginTypeName() {
+    return GPLUS_VERIFIER_NAME;
+  }
 
-    @Override
-    public String getPluginClassName() {
-        return "org.kaaproject.kaa.server.verifiers.gplus.verifier.GplusUserVerifier";
-    }
+  @Override
+  public String getPluginClassName() {
+    return "org.kaaproject.kaa.server.verifiers.gplus.verifier.GplusUserVerifier";
+  }
 
-    @Override
-    public Schema getPluginConfigSchema() {
-        return GplusAvroConfig.SCHEMA$;
-    }
+  @Override
+  public Schema getPluginConfigSchema() {
+    return GplusAvroConfig.SCHEMA$;
+  }
 
 }

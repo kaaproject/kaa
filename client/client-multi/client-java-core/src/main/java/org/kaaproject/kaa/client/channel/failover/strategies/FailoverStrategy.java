@@ -27,43 +27,40 @@ import java.util.concurrent.TimeUnit;
  */
 public interface FailoverStrategy {
 
-    /**
-     * Needs to be invoked to determine a decision that resolves the failover.
-     *
-     * @param failoverStatus current status of the failover.
-     *
-     * @return decision which is meant to resolve the failover.
-     *
-     * @see FailoverDecision
-     * @see FailoverStatus
-     */
-    FailoverDecision onFailover(FailoverStatus failoverStatus);
+  /**
+   * Needs to be invoked to determine a decision that resolves the failover.
+   *
+   * @param failoverStatus current status of the failover.
+   * @return decision which is meant to resolve the failover.
+   * @see FailoverDecision
+   * @see FailoverStatus
+   */
+  FailoverDecision onFailover(FailoverStatus failoverStatus);
 
-    /**
-     * Needs to be invoked once client recovered after failover.
-     *
-     * @param connectionInfo server information
-     *
-     * @see org.kaaproject.kaa.client.channel.TransportConnectionInfo
-     */
-    void onRecover(TransportConnectionInfo connectionInfo);
+  /**
+   * Needs to be invoked once client recovered after failover.
+   *
+   * @param connectionInfo server information
+   * @see org.kaaproject.kaa.client.channel.TransportConnectionInfo
+   */
+  void onRecover(TransportConnectionInfo connectionInfo);
 
-    /**
-     * Use the {@link #getTimeUnit()} method to get current time unit.
-     *
-     * @return period of time after which will be made attempt to tweak bootstrap server.
-     */
-    long getBootstrapServersRetryPeriod();
+  /**
+   * Use the {@link #getTimeUnit()} method to get current time unit.
+   *
+   * @return period of time after which will be made attempt to tweak bootstrap service.
+   */
+  long getBootstrapServersRetryPeriod();
 
-    /**
-     * Use the {@link #getTimeUnit()} method to get current time unit.
-     *
-     * @return period of time after which will be made attempt to tweak operation server.
-     */
-    long getOperationServersRetryPeriod();
+  /**
+   * Use the {@link #getTimeUnit()} method to get current time unit.
+   *
+   * @return period of time after which will be made attempt to tweak operation server.
+   */
+  long getOperationServersRetryPeriod();
 
-    /**
-     * @return time unit used within a scope of current failover strategy.
-     */
-    TimeUnit getTimeUnit();
+  /**
+   * @return time unit used within a scope of current failover strategy.
+   */
+  TimeUnit getTimeUnit();
 }

@@ -19,29 +19,29 @@ package org.kaaproject.kaa.server.admin.client.mvp.view.notification;
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemasGrid;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemasGrid;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class NotificationSchemasViewImpl extends BaseListViewImpl<NotificationSchemaDto> {
 
-    public NotificationSchemasViewImpl() {
-        super(true);
-    }
+  public NotificationSchemasViewImpl() {
+    super(true);
+  }
 
-    @Override
-    protected AbstractGrid<NotificationSchemaDto, String> createGrid() {
-        return new BaseSchemasGrid<NotificationSchemaDto>();
-    }
+  @Override
+  protected AbstractGrid<NotificationSchemaDto, String> createGrid() {
+    return new BaseCtlSchemasGrid<NotificationSchemaDto>();
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.notificationSchemas();
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.notificationSchemas();
+  }
 
-    @Override
-    protected String addButtonString() {
-        return Utils.constants.addNewSchema();
-    }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewSchema();
+  }
 
 }
 

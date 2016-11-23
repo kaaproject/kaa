@@ -20,10 +20,10 @@ import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
 
 public abstract class AbstractConfigurationData<T extends KaaSchema> extends AbstractKaaData<T> {
 
-    private static final long serialVersionUID = -2201410374570066796L;
+  private static final long serialVersionUID = -2201410374570066796L;
 
-    public AbstractConfigurationData(T schema, String data) {
-        super(schema, data);
-    }
+  public AbstractConfigurationData(T schema, String data) {
+    super(schema, data);
+  }
 
 }

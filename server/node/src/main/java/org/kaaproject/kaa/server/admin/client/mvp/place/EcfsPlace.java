@@ -16,8 +16,11 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.place.shared.PlaceTokenizer;
+import com.google.gwt.place.shared.Prefix;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.view.client.HasData;
+import com.google.web.bindery.event.shared.EventBus;
 
 import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
@@ -25,104 +28,102 @@ import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEvent;
 import org.kaaproject.kaa.server.admin.client.mvp.event.data.DataEventHandler;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.gwt.place.shared.Prefix;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.view.client.HasData;
-import com.google.web.bindery.event.shared.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EcfsPlace extends TreePlace {
 
-    private EcfPlaceDataProvider dataProvider;
+  private EcfPlaceDataProvider dataProvider;
 
-    public EcfsPlace() {
+  public EcfsPlace() {
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof EcfsPlace);
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.ecfs();
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return false;
+  }
+
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    if (dataProvider == null) {
+      dataProvider = new EcfPlaceDataProvider(eventBus);
+    }
+    return dataProvider;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return null;
+  }
+
+  @Prefix(value = "ecfs")
+  public static class Tokenizer implements PlaceTokenizer<EcfsPlace> {
+
+    @Override
+    public EcfsPlace getPlace(String token) {
+      return new EcfsPlace();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj != null && (obj instanceof EcfsPlace);
+    public String getToken(EcfsPlace place) {
+      PlaceParams.clear();
+      return PlaceParams.generateToken();
+    }
+  }
+
+  class EcfPlaceDataProvider extends TreePlaceDataProvider implements DataEventHandler {
+
+    EcfPlaceDataProvider(EventBus eventBus) {
+      eventBus.addHandler(DataEvent.getType(), this);
     }
 
-    @Prefix(value = "ecfs")
-    public static class Tokenizer implements PlaceTokenizer<EcfsPlace> {
+    @Override
+    public void onDataChanged(DataEvent event) {
+      if (event.checkClass(EventClassFamilyDto.class)) {
+        refresh();
+      }
+    }
+
+    @Override
+    protected void loadData(
+        final LoadCallback callback,
+        final HasData<TreePlace> display) {
+      KaaAdmin.getDataSource().loadEcfs(new AsyncCallback<List<EventClassFamilyDto>>() {
+        @Override
+        public void onFailure(Throwable caught) {
+          callback.onFailure(caught);
+
+        }
 
         @Override
-        public EcfsPlace getPlace(String token) {
-            return new EcfsPlace();
-        }
+        public void onSuccess(List<EventClassFamilyDto> result) {
 
-        @Override
-        public String getToken(EcfsPlace place) {
-            PlaceParams.clear();
-            return PlaceParams.generateToken();
+          callback.onSuccess(toPlaces(result), display);
         }
+      });
     }
 
-    @Override
-    public String getName() {
-        return Utils.constants.ecfs();
+    private List<TreePlace> toPlaces(List<EventClassFamilyDto> ecfs) {
+      List<TreePlace> result = new ArrayList<TreePlace>();
+      for (EventClassFamilyDto ecf : ecfs) {
+        EcfPlace place = new EcfPlace(ecf.getId());
+        place.setName(ecf.getName());
+        result.add(place);
+      }
+      return result;
     }
 
-    @Override
-    public boolean isLeaf() {
-        return false;
-    }
 
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        if (dataProvider == null) {
-            dataProvider = new EcfPlaceDataProvider(eventBus);
-        }
-        return dataProvider;
-    }
-
-    class EcfPlaceDataProvider extends TreePlaceDataProvider implements DataEventHandler {
-
-        EcfPlaceDataProvider(EventBus eventBus) {
-            eventBus.addHandler(DataEvent.getType(), this);
-        }
-
-        @Override
-        public void onDataChanged(DataEvent event) {
-            if (event.checkClass(EventClassFamilyDto.class)) {
-                refresh();
-            }
-        }
-
-        @Override
-        protected void loadData(
-                final LoadCallback callback,
-                final HasData<TreePlace> display) {
-            KaaAdmin.getDataSource().loadEcfs(new AsyncCallback<List<EventClassFamilyDto>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    callback.onFailure(caught);
-
-                }
-                @Override
-                public void onSuccess(List<EventClassFamilyDto> result) {
-
-                    callback.onSuccess(toPlaces(result), display);
-                }
-            });
-        }
-
-        private List<TreePlace> toPlaces(List<EventClassFamilyDto> ecfs) {
-            List<TreePlace> result = new ArrayList<TreePlace>();
-            for (EventClassFamilyDto ecf : ecfs) {
-                EcfPlace place = new EcfPlace(ecf.getId());
-                place.setName(ecf.getName());
-                result.add(place);
-            }
-            return result;
-        }
-
-
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return null;
-    }
+  }
 
 }

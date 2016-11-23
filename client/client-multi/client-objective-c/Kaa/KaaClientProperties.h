@@ -17,17 +17,19 @@
 #import <Foundation/Foundation.h>
 #import "KAABase64.h"
 #import "TimeCommons.h"
+#import "KaaDefaults.h"
 
-#define BUILD_VERSION_KEY           @"build.version"
-#define BUILD_COMMIT_HASH_KEY       @"build.commit_hash"
-#define TRANSPORT_POLL_DELAY_KEY    @"transport.poll.initial_delay"
-#define TRANSPORT_POLL_PERIOD_KEY   @"transport.poll.period"
-#define TRANSPORT_POLL_UNIT_KEY     @"transport.poll.unit"
-#define BOOTSTRAP_SERVERS_KEY       @"transport.bootstrap.servers"
-#define CONFIG_DATA_DEFAULT_KEY     @"config.data.default"
-#define CONFIG_SCHEMA_DEFAULT_KEY   @"config.schema.default"
-#define STATE_FILE_LOCATION_KEY     @"state.file.location"
-#define SDK_TOKEN_KEY               @"sdk_token"
+#define BUILD_VERSION_KEY           APP_PREFIX@".build.version"
+#define BUILD_COMMIT_HASH_KEY       APP_PREFIX@".build.commit_hash"
+#define TRANSPORT_POLL_DELAY_KEY    APP_PREFIX@".transport.poll.initial_delay"
+#define TRANSPORT_POLL_PERIOD_KEY   APP_PREFIX@".transport.poll.period"
+#define TRANSPORT_POLL_UNIT_KEY     APP_PREFIX@".transport.poll.unit"
+#define BOOTSTRAP_SERVERS_KEY       APP_PREFIX@".transport.bootstrap.servers"
+#define CONFIG_DATA_DEFAULT_KEY     APP_PREFIX@".config.data.default"
+#define CONFIG_SCHEMA_DEFAULT_KEY   APP_PREFIX@".config.schema.default"
+#define STATE_FILE_LOCATION_KEY     APP_PREFIX@".state.file.location"
+#define SDK_TOKEN_KEY               APP_PREFIX@".sdk_token"
+#define APPLICATION_ID_KEY          APP_PREFIX@".application_id"
 
 /**
  * Class is used to access various client properties.<br>
@@ -46,6 +48,8 @@
 - (NSString *)commitHash;
 
 - (NSString *)sdkToken;
+
+- (NSString *)applicationId;
 
 - (int32_t)pollDelay;
 

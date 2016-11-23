@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,43 +29,46 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 public class HibernateUserDaoTest extends HibernateAbstractTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateUserDaoTest.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HibernateUserDaoTest.class);
 
-    @Test
-    public void saveUserTest() {
-        Tenant tenant = generateTenant();
-        User user = generateUser(tenant, null);
-        user = userDao.save(user);
-        List<User> users = userDao.findByTenantIdAndAuthority(tenant.getId().toString(), KaaAuthorityDto.KAA_ADMIN.name());
-        LOG.debug("---> List users {} ", Arrays.toString(users.toArray()));
-        Assert.assertEquals(user, users.get(0));
-    }
+  @Test
+  public void saveUserTest() {
+    Tenant tenant = generateTenant();
+    User user = generateUser(tenant, null);
+    user = userDao.save(user);
+    List<User> users = userDao.findByTenantIdAndAuthority(tenant.getId().toString(), KaaAuthorityDto.KAA_ADMIN.name());
+    LOG.debug("---> List users {} ", Arrays.toString(users.toArray()));
+    Assert.assertEquals(user, users.get(0));
+  }
 
-    @Test
-    public void findUsersByTenantIdAndAuthoritiesTest() {
-        Tenant tenant = generateTenant();
-        generateUser(tenant, KaaAuthorityDto.TENANT_ADMIN);
-        generateUser(tenant, KaaAuthorityDto.TENANT_ADMIN);
-        generateUser(tenant, KaaAuthorityDto.KAA_ADMIN);
+  @Test
+  public void findUsersByTenantIdAndAuthoritiesTest() {
+    Tenant tenant = generateTenant();
+    generateUser(tenant, KaaAuthorityDto.TENANT_ADMIN);
+    generateUser(tenant, KaaAuthorityDto.TENANT_ADMIN);
+    generateUser(tenant, KaaAuthorityDto.KAA_ADMIN);
 
-        List<User> users = userDao.findByTenantIdAndAuthorities(tenant.getId().toString(), new String[]{ KaaAuthorityDto.TENANT_ADMIN.name()});
-        Assert.assertEquals(2, users.size());
-    }
+    List<User> users = userDao.findByTenantIdAndAuthorities(tenant.getId().toString(), new String[]{KaaAuthorityDto.TENANT_ADMIN.name()});
+    Assert.assertEquals(2, users.size());
+  }
 
-    @Test
-    public void testRemoveByTenantId() {
-        Tenant tenant = generateTenant();
-        User user = generateUser(tenant, null);
-        userDao.removeByTenantId(tenant.getId().toString());
-        User found = userDao.findById(user.getId().toString());
-        Assert.assertNull(found);
-    }
+  @Test
+  public void testRemoveByTenantId() {
+    Tenant tenant = generateTenant();
+    User user = generateUser(tenant, null);
+    userDao.removeByTenantId(tenant.getId().toString());
+    User found = userDao.findById(user.getId().toString());
+    Assert.assertNull(found);
+  }
 
 
 }

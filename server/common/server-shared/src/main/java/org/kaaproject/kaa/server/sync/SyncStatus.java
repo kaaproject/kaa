@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.sync;
 
 public enum SyncStatus {
-    SUCCESS, FAILURE, PROFILE_RESYNC, REDIRECT;
+  SUCCESS, FAILURE, PROFILE_RESYNC, REDIRECT;
 }

@@ -17,29 +17,26 @@
 package org.kaaproject.kaa.client.configuration;
 
 /**
- * Sends notifications with decoded configuration
+ * Sends notifications with decoded configuration.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface DecodedDeltaObservable {
 
-    /**
-     * Subscribes new receiver for decoded data updates
-     *
-     * @param receiver receiver to get decoded configuration updates
-     * @see GenericDeltaReceiver
-     *
-     */
-    void subscribeForUpdates(GenericDeltaReceiver receiver);
+  /**
+   * Subscribes new receiver for decoded data updates.
+   *
+   * @param receiver receiver to get decoded configuration updates
+   * @see GenericDeltaReceiver
+   */
+  void subscribeForUpdates(GenericDeltaReceiver receiver);
 
-    /**
-     * Unsubscribes receiver from decoded data updates
-     *
-     * @param receiver receiver to be unsubscribed from configuration updates
-     * @see GenericDeltaReceiver
-     *
-     */
-    void unsubscribeFromUpdates(GenericDeltaReceiver receiver);
+  /**
+   * Unsubscribes receiver from decoded data updates.
+   *
+   * @param receiver receiver to be unsubscribed from configuration updates
+   * @see GenericDeltaReceiver
+   */
+  void unsubscribeFromUpdates(GenericDeltaReceiver receiver);
 
 }

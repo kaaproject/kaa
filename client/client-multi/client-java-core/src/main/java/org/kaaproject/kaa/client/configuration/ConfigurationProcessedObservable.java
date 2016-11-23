@@ -17,29 +17,26 @@
 package org.kaaproject.kaa.client.configuration;
 
 /**
- * Notifies subscribers when all deltas have been already processed
+ * Notifies subscribers when all deltas have been already processed.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface ConfigurationProcessedObservable {
 
-    /**
-     * Subscribes observer of configuration processing finished.
-     *
-     * @param callback Receiver to be subscribed.
-     * @see ConfigurationProcessedObserver
-     *
-     */
-    void addOnProcessedCallback(ConfigurationProcessedObserver callback);
+  /**
+   * Subscribes observer of configuration processing finished.
+   *
+   * @param callback Receiver to be subscribed.
+   * @see ConfigurationProcessedObserver
+   */
+  void addOnProcessedCallback(ConfigurationProcessedObserver callback);
 
-    /**
-     * Unsubscribes observer of configuration processing finished.
-     *
-     * @param callback Receiver to be unsubscribed.
-     * @see ConfigurationProcessedObserver
-     *
-     */
-    void removeOnProcessedCallback(ConfigurationProcessedObserver callback);
+  /**
+   * Unsubscribes observer of configuration processing finished.
+   *
+   * @param callback Receiver to be unsubscribed.
+   * @see ConfigurationProcessedObserver
+   */
+  void removeOnProcessedCallback(ConfigurationProcessedObserver callback);
 
 }

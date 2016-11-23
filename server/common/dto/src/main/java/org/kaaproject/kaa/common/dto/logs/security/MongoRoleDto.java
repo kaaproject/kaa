@@ -16,61 +16,67 @@
 
 package org.kaaproject.kaa.common.dto.logs.security;
 
+import org.kaaproject.kaa.common.dto.HasId;
+
 import java.io.Serializable;
 import java.util.List;
 
-import org.kaaproject.kaa.common.dto.HasId;
-
 public class MongoRoleDto implements HasId, Serializable {
-    
-    private static final long serialVersionUID = -1178384812174668115L;
-    
-    private String id;
-    private String role;
-    private List<MongoPrivilegeDto> privileges;
-    private List<String> roles;
-    
-    public MongoRoleDto () {
-        
-    }
-    
-    public MongoRoleDto(String role, List<MongoPrivilegeDto> privileges,  List<String> roles) {
-        this.role = role;
-        this.privileges = privileges;
-        this.roles = roles;
-    }
-    
-    @Override
-    public String getId() {
-        return id;
-    }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-    
-    public void setRoleName(String role) {
-        this.role = role;
-    }
-    
-    public String getRoleName() {
-        return role;
-    }
-    
-    public void setPrivileges(List<MongoPrivilegeDto> privileges) {
-        this.privileges = privileges;
-    }
-    
-    public List<MongoPrivilegeDto> getPrivileges() {
-        return privileges;
-    }
-    
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-    
-    public List<String> getRoles() {
-        return roles;
-    }
+  private static final long serialVersionUID = -1178384812174668115L;
+
+  private String id;
+  private String role;
+  private List<MongoPrivilegeDto> privileges;
+  private List<String> roles;
+
+  /**
+   * Instantiates the MongoUserDto.
+   */
+  public MongoRoleDto() {
+
+  }
+
+  /**
+   * All-args constructor.
+   */
+  public MongoRoleDto(String role, List<MongoPrivilegeDto> privileges, List<String> roles) {
+    this.role = role;
+    this.privileges = privileges;
+    this.roles = roles;
+  }
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getRoleName() {
+    return role;
+  }
+
+  public void setRoleName(String role) {
+    this.role = role;
+  }
+
+  public List<MongoPrivilegeDto> getPrivileges() {
+    return privileges;
+  }
+
+  public void setPrivileges(List<MongoPrivilegeDto> privileges) {
+    this.privileges = privileges;
+  }
+
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
+  }
 }

@@ -21,16 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractInitializationService implements InitializationService {
 
-    @Autowired
-    private KaaNodeServerConfig kaaNodeServerConfig;
-    
-    
-    /**
-     * KaaNodeServerConfig getter
-     *
-     * @return KaaNodeServerConfig
-     */
-    protected KaaNodeServerConfig getNodeConfig() {
-        return kaaNodeServerConfig;
-    }
+  @Autowired
+  private KaaNodeServerConfig kaaNodeServerConfig;
+
+
+  protected KaaNodeServerConfig getNodeConfig() {
+    return kaaNodeServerConfig;
+  }
 }

@@ -38,7 +38,7 @@ public:
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) = 0;
 
     /**
-     * Receives the latest list of servers from the bootstrap server.
+     * Receives the latest list of servers from the bootstrap service.
      */
     virtual void receiveOperationsServerList() = 0;
 
@@ -50,7 +50,7 @@ public:
      *
      * @param failoverReason The reason why failover occured.
      */
-    virtual void useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason failoverReason) = 0;
+    virtual void onOperationsServerFailed(const TransportProtocolId& protocolId, KaaFailoverReason failoverReason) = 0;
 
     /**
      * Update the Channel Manager with endpoint's properties retrieved by its DNS.

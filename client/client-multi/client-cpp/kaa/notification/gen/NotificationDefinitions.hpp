@@ -31,7 +31,7 @@ namespace kaa {
 /**
  * @typedef The user-defined notification structure.
  */
-typedef kaa_notification::BasicNotification KaaNotification;
+typedef kaa_notification::EmptyData KaaNotification;
 
 typedef std::vector<Topic> Topics;
 typedef std::vector<Notification> Notifications;

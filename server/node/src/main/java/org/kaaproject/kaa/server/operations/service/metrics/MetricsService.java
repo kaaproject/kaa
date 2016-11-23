@@ -19,13 +19,13 @@ package org.kaaproject.kaa.server.operations.service.metrics;
 
 public interface MetricsService {
 
-    MeterClient createMeter(String name, String... names);
+  MeterClient createMeter(String name, String... names);
 
-    void setEnabled(boolean enabled);
-    
-    boolean isEnabled();
+  boolean isEnabled();
 
-    void startReport();
+  void setEnabled(boolean enabled);
 
-    void stopReport();
+  void startReport();
+
+  void stopReport();
 }

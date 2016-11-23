@@ -18,15 +18,15 @@ package org.kaaproject.kaa.common.dto;
 
 public class ServerProfileSchemaDto extends BaseSchemaDto {
 
-    private static final long serialVersionUID = -4059563981228353624L;
+  private static final long serialVersionUID = -4059563981228353624L;
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ServerProfileSchemaDto [");
-        builder.append(super.toString());
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("ServerProfileSchemaDto [");
+    builder.append(super.toString());
+    builder.append("]");
+    return builder.toString();
+  }
 
 }

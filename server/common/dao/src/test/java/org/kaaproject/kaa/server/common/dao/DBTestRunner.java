@@ -16,7 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,41 +25,43 @@ import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 public abstract class DBTestRunner {
 
-    protected static final String FORMATER = "{0}";
+  protected static final String FORMATER = "{0}";
 
-    public void truncateTables(DataSource dataSource) throws SQLException {
-        Set<String> tableNames = getTableNames(dataSource);
-        truncateTables(tableNames, dataSource);
+  public void truncateTables(DataSource dataSource) throws SQLException {
+    Set<String> tableNames = getTableNames(dataSource);
+    truncateTables(tableNames, dataSource);
+  }
+
+  private Set<String> getTableNames(DataSource dataSource) throws SQLException {
+    Set<String> tableNames = new HashSet<>();
+    try (Connection connection = dataSource.getConnection();
+         PreparedStatement preparedStatement = prepareStatement(connection);
+         ResultSet resultSet = preparedStatement.executeQuery()) {
+      while (resultSet.next()) {
+        tableNames.add(resultSet.getString(1));
+      }
     }
+    return tableNames;
+  }
 
-    private Set<String> getTableNames(DataSource dataSource) throws SQLException {
-        Set<String> tableNames = new HashSet<>();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = prepareStatement(connection);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                tableNames.add(resultSet.getString(1));
-            }
-        }
-        return tableNames;
+  protected void truncateTables(Set<String> tableNames, DataSource dataSource) throws SQLException {
+    if (tableNames == null || tableNames.isEmpty()) {
+      return;
     }
-
-    protected void truncateTables(Set<String> tableNames, DataSource dataSource) throws SQLException {
-        if (tableNames == null || tableNames.isEmpty()) {
-            return;
-        }
-        try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
-            for (String tableName : tableNames) {
-                statement.addBatch(MessageFormat.format(getTrancateSql(), tableName));
-            }
-            statement.executeBatch();
-        }
+    try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
+      for (String tableName : tableNames) {
+        statement.addBatch(MessageFormat.format(getTrancateSql(), tableName));
+      }
+      statement.executeBatch();
     }
+  }
 
-    protected abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
+  protected abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
 
-    protected abstract String getTrancateSql();
+  protected abstract String getTrancateSql();
 
 }

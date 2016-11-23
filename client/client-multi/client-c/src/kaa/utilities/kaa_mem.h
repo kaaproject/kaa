@@ -17,11 +17,11 @@
 #ifndef KAA_MEM_H_
 #define KAA_MEM_H_
 
-#include "../platform/mem.h"
+#include <platform/mem.h>
 
 #ifdef KAA_TRACE_MEMORY_ALLOCATIONS
 
-#include "../utilities/kaa_log.h"
+#include "utilities/kaa_log.h"
 
 #ifdef __cplusplus
 extern "C" {

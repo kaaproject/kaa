@@ -26,14 +26,14 @@ import java.security.PublicKey;
 
 public class KeyUtilsTest {
 
-    @Test
-    public void validateKeyPairTest() throws Exception {
-        KeyPairGenerator clientKeyGen = KeyPairGenerator.getInstance("RSA");
-        clientKeyGen.initialize(2048);
-        KeyPair kp = clientKeyGen.genKeyPair();
-        PublicKey clientPublic = kp.getPublic();
-        PrivateKey clientPrivate = kp.getPrivate();
+  @Test
+  public void validateKeyPairTest() throws Exception {
+    KeyPairGenerator clientKeyGen = KeyPairGenerator.getInstance("RSA");
+    clientKeyGen.initialize(2048);
+    KeyPair kp = clientKeyGen.genKeyPair();
+    PublicKey clientPublic = kp.getPublic();
+    PrivateKey clientPrivate = kp.getPrivate();
 
-        Assert.assertTrue(KeyUtil.validateKeyPair(new KeyPair(clientPublic, clientPrivate)));
-    }
+    Assert.assertTrue(KeyUtil.validateKeyPair(new KeyPair(clientPublic, clientPrivate)));
+  }
 }

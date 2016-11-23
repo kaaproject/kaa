@@ -18,109 +18,115 @@ package org.kaaproject.kaa.common.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class UserDto implements HasId, Serializable {
 
-    private static final long serialVersionUID = 2052580632293959408L;
+  private static final long serialVersionUID = 2052580632293959408L;
 
-    private String id;
-    private String username;
-    private String externalUid;
-    private String tenantId;
-    private KaaAuthorityDto authority;
+  private String id;
+  @Size(min = 1)
+  @NotNull(message = "username can't be null")
+  private String username;
+  private String externalUid;
+  private String tenantId;
+  @NotNull(message = "authority can't be null")
+  private KaaAuthorityDto authority;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    
-    public String getExternalUid() {
-        return externalUid;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setExternalUid(String externalUid) {
-        this.externalUid = externalUid;
-    }
+  public String getExternalUid() {
+    return externalUid;
+  }
 
-    public String getTenantId() {
-        return tenantId;
-    }
+  public void setExternalUid(String externalUid) {
+    this.externalUid = externalUid;
+  }
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+  public String getTenantId() {
+    return tenantId;
+  }
 
-    public KaaAuthorityDto getAuthority() {
-        return authority;
-    }
+  public void setTenantId(String tenantId) {
+    this.tenantId = tenantId;
+  }
 
-    public void setAuthority(KaaAuthorityDto authority) {
-        this.authority = authority;
-    }
+  public KaaAuthorityDto getAuthority() {
+    return authority;
+  }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((externalUid == null) ? 0 : externalUid.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((tenantId == null) ? 0 : tenantId.hashCode());
-        return result;
-    }
+  public void setAuthority(KaaAuthorityDto authority) {
+    this.authority = authority;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UserDto other = (UserDto) obj;
-        if (externalUid == null) {
-            if (other.externalUid != null) {
-                return false;
-            }
-        } else if (!externalUid.equals(other.externalUid)) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (tenantId == null) {
-            if (other.tenantId != null) {
-                return false;
-            }
-        } else if (!tenantId.equals(other.tenantId)) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((externalUid == null) ? 0 : externalUid.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result
+        + ((tenantId == null) ? 0 : tenantId.hashCode());
+    return result;
+  }
 
-    @Override
-    public String toString() {
-        return "UserDto [id=" + id + ", username=" + username
-                + ", externalUid=" + externalUid + ", tenantId=" + tenantId
-                + ", authority=" + authority + "]";
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-    
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    UserDto other = (UserDto) obj;
+    if (externalUid == null) {
+      if (other.externalUid != null) {
+        return false;
+      }
+    } else if (!externalUid.equals(other.externalUid)) {
+      return false;
+    }
+    if (id == null) {
+      if (other.id != null) {
+        return false;
+      }
+    } else if (!id.equals(other.id)) {
+      return false;
+    }
+    if (tenantId == null) {
+      if (other.tenantId != null) {
+        return false;
+      }
+    } else if (!tenantId.equals(other.tenantId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+    return "UserDto [id=" + id + ", username=" + username
+        + ", externalUid=" + externalUid + ", tenantId=" + tenantId
+        + ", authority=" + authority + "]";
+  }
+
 }

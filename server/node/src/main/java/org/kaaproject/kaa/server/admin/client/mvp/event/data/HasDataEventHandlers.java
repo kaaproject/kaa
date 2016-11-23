@@ -21,7 +21,7 @@ import com.google.gwt.event.shared.HasHandlers;
 
 public interface HasDataEventHandlers extends HasHandlers {
 
-    HandlerRegistration addInputHandler(DataEventHandler handler);
+  HandlerRegistration addInputHandler(DataEventHandler handler);
 
 }
 

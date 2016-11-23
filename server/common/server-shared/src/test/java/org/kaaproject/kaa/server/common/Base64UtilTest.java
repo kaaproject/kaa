@@ -22,31 +22,31 @@ import org.junit.Test;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 
 public class Base64UtilTest {
-    private static final String UNKNOWN= "Unknown";
+  private static final String UNKNOWN = "Unknown";
 
-    @Test
-    public void encodeNullProfileTest() {
-        EndpointProfileDto profileDto = null;
-        String encoded = Base64Util.encode(profileDto);
-        Assert.assertEquals(UNKNOWN, encoded);
-    }
+  @Test
+  public void encodeNullProfileTest() {
+    EndpointProfileDto profileDto = null;
+    String encoded = Base64Util.encode(profileDto);
+    Assert.assertEquals(UNKNOWN, encoded);
+  }
 
-    @Test
-    public void encodeNullEndpointKeyHashTest() {
-        EndpointProfileDto endpointProfileDto = new EndpointProfileDto();
-        String encoded = Base64Util.encode(endpointProfileDto);
-        Assert.assertEquals(UNKNOWN, encoded);
-    }
+  @Test
+  public void encodeNullEndpointKeyHashTest() {
+    EndpointProfileDto endpointProfileDto = new EndpointProfileDto();
+    String encoded = Base64Util.encode(endpointProfileDto);
+    Assert.assertEquals(UNKNOWN, encoded);
+  }
 
-    @Test
-    public void successfulEncodingTest() {
-        EndpointProfileDto endpointProfileDto = new EndpointProfileDto();
-        byte[] data = new byte[256];
-        for (int i = 0; i < data.length; i++) {
-            data[i] = (byte) i;
-        }
-        endpointProfileDto.setEndpointKeyHash(data);
-        String encoded = Base64Util.encode(endpointProfileDto);
-        Assert.assertEquals(encoded, Base64.encodeBase64String(data));
+  @Test
+  public void successfulEncodingTest() {
+    EndpointProfileDto endpointProfileDto = new EndpointProfileDto();
+    byte[] data = new byte[256];
+    for (int i = 0; i < data.length; i++) {
+      data[i] = (byte) i;
     }
+    endpointProfileDto.setEndpointKeyHash(data);
+    String encoded = Base64Util.encode(endpointProfileDto);
+    Assert.assertEquals(encoded, Base64.encodeBase64String(data));
+  }
 }

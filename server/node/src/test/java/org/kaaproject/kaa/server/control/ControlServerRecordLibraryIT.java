@@ -28,100 +28,100 @@ import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
  */
 public class ControlServerRecordLibraryIT extends AbstractTestControlServer {
 
-    /**
-     * Test generate record library.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGenerateRecordLibrary() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        LogSchemaDto logSchema = createLogSchema(application.getId());
-        FileData library = client.downloadLogRecordLibrary(new RecordKey(application.getId(), logSchema.getVersion()));
-        Assert.assertNotNull(library);
-        Assert.assertFalse(strIsEmpty(library.getFileName()));
-        Assert.assertNotNull(library.getFileData());
-    }
+  /**
+   * Test generate record library.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGenerateRecordLibrary() throws Exception {
+    ApplicationDto application = createApplication(tenantAdminDto);
+    LogSchemaDto logSchema = createLogSchema(application.getId());
+    FileData library = client.downloadLogRecordLibrary(new RecordKey(application.getId(), logSchema.getVersion()));
+    Assert.assertNotNull(library);
+    Assert.assertFalse(strIsEmpty(library.getFileName()));
+    Assert.assertNotNull(library.getFileData());
+  }
 
-    /**
-     * Test generate record library with empty app.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGenerateRecordLibraryWithEmptyApp() throws Exception {
-        loginTenantDeveloper(tenantDeveloperUser);
-        checkNotFound(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.downloadLogRecordLibrary(new RecordKey("0", 0));
-            }
-        });
-    }
+  /**
+   * Test generate record library with empty app.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGenerateRecordLibraryWithEmptyApp() throws Exception {
+    loginTenantDeveloper(tenantDeveloperUser);
+    checkNotFound(new TestRestCall() {
+      @Override
+      public void executeRestCall() throws Exception {
+        client.downloadLogRecordLibrary(new RecordKey("0", 0));
+      }
+    });
+  }
 
-    /**
-     * Test generate record library with empty log schema.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGenerateRecordLibraryWithEmptyLogSchema() throws Exception {
-        final ApplicationDto application = createApplication(tenantAdminDto);
-        loginTenantDeveloper(tenantDeveloperUser);
-        checkNotFound(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.downloadLogRecordLibrary(new RecordKey(application.getId(), 0));
-            }
-        });
-    }
+  /**
+   * Test generate record library with empty log schema.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGenerateRecordLibraryWithEmptyLogSchema() throws Exception {
+    final ApplicationDto application = createApplication(tenantAdminDto);
+    loginTenantDeveloper(tenantDeveloperUser);
+    checkNotFound(new TestRestCall() {
+      @Override
+      public void executeRestCall() throws Exception {
+        client.downloadLogRecordLibrary(new RecordKey(application.getId(), 0));
+      }
+    });
+  }
 
-    /**
-     * Test get record structure schema.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetRecordStructureSchema() throws Exception {
-        ApplicationDto application = createApplication(tenantAdminDto);
-        LogSchemaDto logSchema = createLogSchema(application.getId());
+  /**
+   * Test get record structure schema.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetRecordStructureSchema() throws Exception {
+    ApplicationDto application = createApplication(tenantAdminDto);
+    LogSchemaDto logSchema = createLogSchema(application.getId());
 
-        FileData library = client.downloadLogRecordSchema(new RecordKey(application.getId(), logSchema.getVersion()));
-        Assert.assertNotNull(library);
-        Assert.assertFalse(strIsEmpty(library.getFileName()));
-        Assert.assertNotNull(library.getFileData());
-    }
+    FileData library = client.downloadLogRecordSchema(new RecordKey(application.getId(), logSchema.getVersion()));
+    Assert.assertNotNull(library);
+    Assert.assertFalse(strIsEmpty(library.getFileName()));
+    Assert.assertNotNull(library.getFileData());
+  }
 
-    /**
-     * Test get record structure schema with empty app.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetRecordStructureSchemaWithEmptyApp() throws Exception {
-        loginTenantDeveloper(tenantDeveloperUser);
-        checkNotFound(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.downloadLogRecordSchema(new RecordKey("0", 0));
-            }
-        });
-    }
+  /**
+   * Test get record structure schema with empty app.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetRecordStructureSchemaWithEmptyApp() throws Exception {
+    loginTenantDeveloper(tenantDeveloperUser);
+    checkNotFound(new TestRestCall() {
+      @Override
+      public void executeRestCall() throws Exception {
+        client.downloadLogRecordSchema(new RecordKey("0", 0));
+      }
+    });
+  }
 
-    /**
-     * Test get record structure schema with empty log schema.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testGetRecordStructureSchemaWithEmptyLogSchema() throws Exception {
-        final ApplicationDto application = createApplication(tenantAdminDto);
-        loginTenantDeveloper(tenantDeveloperUser);
-        checkNotFound(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.downloadLogRecordSchema(new RecordKey(application.getId(), 0));
-            }
-        });
-    }
+  /**
+   * Test get record structure schema with empty log schema.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void testGetRecordStructureSchemaWithEmptyLogSchema() throws Exception {
+    final ApplicationDto application = createApplication(tenantAdminDto);
+    loginTenantDeveloper(tenantDeveloperUser);
+    checkNotFound(new TestRestCall() {
+      @Override
+      public void executeRestCall() throws Exception {
+        client.downloadLogRecordSchema(new RecordKey(application.getId(), 0));
+      }
+    });
+  }
 }

@@ -16,40 +16,49 @@
 
 #include "kaa/failover/DefaultFailoverStrategy.hpp"
 
+#include "kaa/logging/Log.hpp"
+#include "kaa/logging/LoggingUtils.hpp"
+#include "kaa/IKaaClientContext.hpp"
+
 namespace kaa {
 
-const std::size_t DefaultFailoverStrategy::DEFAULT_BOOTSTRAP_SERVERS_RETRY_PERIOD;
-const std::size_t DefaultFailoverStrategy::DEFAULT_OPERATION_SERVERS_RETRY_PERIOD;
-const std::size_t DefaultFailoverStrategy::DEFAULT_NO_OPERATION_SERVERS_RETRY_PERIOD;
-const std::size_t DefaultFailoverStrategy::DEFAULT_CURRENT_BOOTSTRAP_SERVER_NA;
-const std::size_t DefaultFailoverStrategy::DEFAULT_NO_CONNECTIVITY_RETRY_PERIOD;
+const std::size_t DefaultFailoverStrategy::DEFAULT_RETRY_PERIOD;
 
 FailoverStrategyDecision DefaultFailoverStrategy::onFailover(KaaFailoverReason failover)
 {
-        switch (failover) {
-        case KaaFailoverReason::BOOTSTRAP_SERVERS_NA:
-            return FailoverStrategyDecision(FailoverStrategyAction::RETRY,
-                                            bootstrapServersRetryPeriod_);
+    FailoverStrategyAction action = FailoverStrategyAction::NOOP;
 
-        case KaaFailoverReason::NO_OPERATION_SERVERS_RECEIVED:
-            return FailoverStrategyDecision(FailoverStrategyAction::USE_NEXT_BOOTSTRAP,
-                                            noOperationServersRetryPeriod_);
-
-        case KaaFailoverReason::OPERATION_SERVERS_NA:
-            return FailoverStrategyDecision(FailoverStrategyAction::RETRY,
-                                            operationServersRetryPeriod_);
-
+    switch (failover) {
+        case KaaFailoverReason::ALL_BOOTSTRAP_SERVERS_NA:
+        case KaaFailoverReason::CURRENT_BOOTSTRAP_SERVER_NA:
+        case KaaFailoverReason::NO_OPERATIONS_SERVERS_RECEIVED:
+        case KaaFailoverReason::ALL_OPERATIONS_SERVERS_NA:
+            action = FailoverStrategyAction::USE_NEXT_BOOTSTRAP_SERVER;
+            break;
+        case KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA:
+            action = FailoverStrategyAction::USE_NEXT_OPERATIONS_SERVER;
+            break;
         case KaaFailoverReason::NO_CONNECTIVITY:
-            return FailoverStrategyDecision(FailoverStrategyAction::RETRY,
-                                            noConnectivityRetryPeriod_);
-
-        case KaaFailoverReason::CREDENTIALS_REVOKED:
+            action = FailoverStrategyAction::RETRY_CURRENT_SERVER;
+            break;
         case KaaFailoverReason::ENDPOINT_NOT_REGISTERED:
-            return FailoverStrategyDecision(FailoverStrategyAction::RETRY);
-
+            action = FailoverStrategyAction::RETRY_CURRENT_SERVER;
+            break;
+        case KaaFailoverReason::CREDENTIALS_REVOKED:
+            action = FailoverStrategyAction::STOP_CLIENT;
+            break;
         default:
-            return FailoverStrategyDecision(FailoverStrategyAction::NOOP);
-        }
+            // Use NOOP
+            break;
+    }
+
+    FailoverStrategyDecision decision(action, retryPeriod_);
+
+    KAA_LOG_INFO(boost::format("Use '%s' decision for '%s' failover")
+                                            % LoggingUtils::toString(decision)
+                                            % LoggingUtils::toString(failover));
+
+    return decision;
 }
 
 }

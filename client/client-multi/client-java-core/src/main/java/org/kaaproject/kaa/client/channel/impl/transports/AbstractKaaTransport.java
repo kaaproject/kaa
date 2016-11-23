@@ -27,68 +27,70 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractKaaTransport implements KaaTransport {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaTransport.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractKaaTransport.class);
 
-    protected KaaChannelManager channelManager;
+  protected KaaChannelManager channelManager;
 
-    protected KaaClientState clientState;
+  protected KaaClientState clientState;
 
-    @Override
-    public void setChannelManager(KaaChannelManager channelManager) {
-        this.channelManager = channelManager;
+  @Override
+  public void setChannelManager(KaaChannelManager channelManager) {
+    this.channelManager = channelManager;
+  }
+
+  @Override
+  public void setClientState(KaaClientState state) {
+    this.clientState = state;
+  }
+
+  protected void syncByType(TransportType type) {
+    syncByType(type, false);
+  }
+
+  protected void syncByType(TransportType type, boolean ack) {
+    syncByType(type, ack, false);
+  }
+
+  protected void syncByType(TransportType type, boolean ack, boolean all) {
+    if (channelManager == null) {
+      LOG.error("Channel manager is not set during sync for type {}", type);
+      throw new ChannelRuntimeException("Failed to find channel for transport " + type.toString());
     }
-
-    @Override
-    public void setClientState(KaaClientState state) {
-        this.clientState = state;
+    if (ack) {
+      channelManager.syncAck(type);
+    } else if (all) {
+      channelManager.syncAll(type);
+    } else {
+      channelManager.sync(type);
     }
+  }
 
-    protected void syncByType(TransportType type) {
-        syncByType(type, false);
+  protected void syncAll(TransportType type) {
+    syncByType(type, false, true);
+  }
+
+  protected void syncAckByType(TransportType type) {
+    syncByType(type, true);
+  }
+
+  @Override
+  public void sync() {
+    syncByType(getTransportType());
+  }
+
+  protected void syncAck() {
+    syncAckByType(getTransportType());
+  }
+
+  protected void syncAck(SyncResponseStatus status) {
+    if (status != SyncResponseStatus.NO_DELTA) {
+      LOG.info("Sending ack due to response status: {}", status);
+      syncAck();
     }
+  }
 
-    protected void syncAckByType(TransportType type) {
-        syncByType(type, true);
-    }
-
-    protected void syncByType(TransportType type, boolean ack) {
-        syncByType(type, ack, false);
-    }
-
-    protected void syncAll(TransportType type) {
-        syncByType(type, false, true);
-    }
-
-    protected void syncByType(TransportType type, boolean ack, boolean all) {
-        if (channelManager == null) {
-            LOG.error("Channel manager is not set during sync for type {}", type);
-            throw new ChannelRuntimeException("Failed to find channel for transport " + type.toString());
-        }
-        if (ack) {
-            channelManager.syncAck(type);
-        } else if (all) {
-            channelManager.syncAll(type);
-        } else {
-            channelManager.sync(type);
-        }
-    }
-
-    @Override
-    public void sync() {
-        syncByType(getTransportType());
-    }
-
-    protected void syncAck() {
-        syncAckByType(getTransportType());
-    }
-
-    protected void syncAck(SyncResponseStatus status) {
-        if (status != SyncResponseStatus.NO_DELTA) {
-            LOG.info("Sending ack due to response status: {}", status);
-            syncAck();
-        }
-    }
-
-    abstract protected TransportType getTransportType();
+  protected abstract TransportType getTransportType();
 }

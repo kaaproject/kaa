@@ -16,106 +16,109 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class EndpointGroupPlace extends EndpointGroupsPlace {
 
-    private String endpointGroupId;
-    private boolean includeDeprecatedProfileFilters;
-    private boolean includeDeprecatedConfigurations;
+  private String endpointGroupId;
+  private boolean includeDeprecatedProfileFilters;
+  private boolean includeDeprecatedConfigurations;
 
-    public EndpointGroupPlace(String applicationId,
-            String endpointGroupId,
-            boolean includeDeprecatedProfileFilters,
-            boolean includeDeprecatedConfigurations) {
-        super(applicationId);
-        this.endpointGroupId = endpointGroupId;
-        this.includeDeprecatedProfileFilters = includeDeprecatedProfileFilters;
-        this.includeDeprecatedConfigurations = includeDeprecatedConfigurations;
+  /**
+   * Instantiates a new EndpointGroupPlace.
+   */
+  public EndpointGroupPlace(String applicationId,
+                            String endpointGroupId,
+                            boolean includeDeprecatedProfileFilters,
+                            boolean includeDeprecatedConfigurations) {
+    super(applicationId);
+    this.endpointGroupId = endpointGroupId;
+    this.includeDeprecatedProfileFilters = includeDeprecatedProfileFilters;
+    this.includeDeprecatedConfigurations = includeDeprecatedConfigurations;
+  }
+
+  public String getEndpointGroupId() {
+    return endpointGroupId;
+  }
+
+  public boolean isIncludeDeprecatedProfileFilters() {
+    return includeDeprecatedProfileFilters;
+  }
+
+  public void setIncludeDeprecatedProfileFilters(
+      boolean includeDeprecatedProfileFilters) {
+    this.includeDeprecatedProfileFilters = includeDeprecatedProfileFilters;
+  }
+
+  public boolean isIncludeDeprecatedConfigurations() {
+    return includeDeprecatedConfigurations;
+  }
+
+  public void setIncludeDeprecatedConfigurations(
+      boolean includeDeprecatedConfigurations) {
+    this.includeDeprecatedConfigurations = includeDeprecatedConfigurations;
+  }
+
+  @Override
+  public String getName() {
+    return Utils.constants.endpointGroup();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getEndpointGroupId() {
-        return endpointGroupId;
+    if (obj == null) {
+      return false;
     }
-
-    public boolean isIncludeDeprecatedProfileFilters() {
-        return includeDeprecatedProfileFilters;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
-
-    public boolean isIncludeDeprecatedConfigurations() {
-        return includeDeprecatedConfigurations;
+    EndpointGroupPlace other = (EndpointGroupPlace) obj;
+    if (endpointGroupId == null) {
+      if (other.endpointGroupId != null) {
+        return false;
+      }
+    } else if (!endpointGroupId.equals(other.endpointGroupId)) {
+      return false;
     }
+    return true;
+  }
 
-    public void setIncludeDeprecatedProfileFilters(
-            boolean includeDeprecatedProfileFilters) {
-        this.includeDeprecatedProfileFilters = includeDeprecatedProfileFilters;
-    }
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
 
-    public void setIncludeDeprecatedConfigurations(
-            boolean includeDeprecatedConfigurations) {
-        this.includeDeprecatedConfigurations = includeDeprecatedConfigurations;
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new EndpointGroupsPlace(applicationId);
+  }
+
+  @Prefix(value = "endGroup")
+  public static class Tokenizer implements PlaceTokenizer<EndpointGroupPlace>, PlaceConstants {
+
+    @Override
+    public EndpointGroupPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new EndpointGroupPlace(PlaceParams.getParam(APPLICATION_ID),
+          PlaceParams.getParam(ENDPOINT_GROUP_ID),
+          PlaceParams.getBooleanParam(INCL_DEPR_PF),
+          PlaceParams.getBooleanParam(INCL_DEPR_CS));
     }
 
     @Override
-    public String getName() {
-        return Utils.constants.endpointGroup();
+    public String getToken(EndpointGroupPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      PlaceParams.putParam(ENDPOINT_GROUP_ID, place.getEndpointGroupId());
+      PlaceParams.putBooleanParam(INCL_DEPR_PF, place.isIncludeDeprecatedProfileFilters());
+      PlaceParams.putBooleanParam(INCL_DEPR_CS, place.isIncludeDeprecatedConfigurations());
+      return PlaceParams.generateToken();
     }
-
-    @Prefix(value = "endGroup")
-    public static class Tokenizer implements PlaceTokenizer<EndpointGroupPlace>, PlaceConstants {
-
-        @Override
-        public EndpointGroupPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new EndpointGroupPlace(PlaceParams.getParam(APPLICATION_ID),
-                    PlaceParams.getParam(ENDPOINT_GROUP_ID),
-                    PlaceParams.getBooleanParam(INCL_DEPR_PF),
-                    PlaceParams.getBooleanParam(INCL_DEPR_CS));
-        }
-
-        @Override
-        public String getToken(EndpointGroupPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            PlaceParams.putParam(ENDPOINT_GROUP_ID, place.getEndpointGroupId());
-            PlaceParams.putBooleanParam(INCL_DEPR_PF, place.isIncludeDeprecatedProfileFilters());
-            PlaceParams.putBooleanParam(INCL_DEPR_CS, place.isIncludeDeprecatedConfigurations());
-            return PlaceParams.generateToken();
-        }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EndpointGroupPlace other = (EndpointGroupPlace) obj;
-        if (endpointGroupId == null) {
-            if (other.endpointGroupId != null) {
-                return false;
-            }
-        } else if (!endpointGroupId.equals(other.endpointGroupId)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new EndpointGroupsPlace(applicationId);
-    }
+  }
 }

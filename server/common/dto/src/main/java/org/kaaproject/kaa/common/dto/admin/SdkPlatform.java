@@ -18,25 +18,25 @@ package org.kaaproject.kaa.common.dto.admin;
 
 public enum SdkPlatform {
 
-    JAVA("java", "application/java-archive"),
-    ANDROID("android", "application/java-archive"),
-    CPP("cpp", "application/x-compressed"),
-    C("c", "application/x-compressed"),
-    OBJC("objc", "application/x-compressed");
+  JAVA("java", "application/java-archive"),
+  ANDROID("android", "application/java-archive"),
+  CPP("cpp", "application/x-compressed"),
+  C("c", "application/x-compressed"),
+  OBJC("objc", "application/x-compressed");
 
-    String key;
-    String contentType;
+  String key;
+  String contentType;
 
-    SdkPlatform(String key, String contentType) {
-        this.key = key;
-        this.contentType = contentType;
-    }
+  SdkPlatform(String key, String contentType) {
+    this.key = key;
+    this.contentType = contentType;
+  }
 
-    public String getResourceKey() {
-        return key;
-    }
+  public String getResourceKey() {
+    return key;
+  }
 
-    public String getContentType() {
-        return contentType;
-    }
+  public String getContentType() {
+    return contentType;
+  }
 }

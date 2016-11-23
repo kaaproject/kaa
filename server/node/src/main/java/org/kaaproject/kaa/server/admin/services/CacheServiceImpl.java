@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.admin.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sf.ehcache.Ehcache;
 
 import org.kaaproject.kaa.common.dto.admin.RecordKey;
@@ -37,121 +34,128 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CacheServiceImpl implements CacheService {
 
-    private static final String SDK_CACHE = "sdkCache";
-    private static final String RECORD_LIBRARY_CACHE = "recordLibraryCache";
-    private static final String RECORD_SCHEMA_CACHE = "recordSchemaCache";
-    private static final String RECORD_DATA_CACHE = "recordDataCache";
-    private static final String CTL_CACHE = "ctlCache";
-    private static final String FILE_UPLOAD_CACHE = "fileUploadCache";
+  private static final String SDK_CACHE = "sdkCache";
+  private static final String RECORD_LIBRARY_CACHE = "recordLibraryCache";
+  private static final String RECORD_SCHEMA_CACHE = "recordSchemaCache";
+  private static final String RECORD_DATA_CACHE = "recordDataCache";
+  private static final String CTL_CACHE = "ctlCache";
+  private static final String FILE_UPLOAD_CACHE = "fileUploadCache";
 
-    @Autowired
-    private ControlService controlService;
+  @Autowired
+  private ControlService controlService;
 
-    @Autowired
-    private CacheManager adminCacheManager;
+  @Autowired
+  private CacheManager adminCacheManager;
 
-    @Override
-    @Cacheable(value = SDK_CACHE, key = "#key", unless="#result == null")
-    public FileData getSdk(SdkKey key) {
-        return null;
-    }
+  @Override
+  @Cacheable(value = SDK_CACHE, key = "#key", unless = "#result == null")
+  public FileData getSdk(SdkKey key) {
+    return null;
+  }
 
-    @Override
-    @CachePut(value = SDK_CACHE, key = "#key")
-    public FileData putSdk(SdkKey key, FileData sdkFile) {
-        return sdkFile;
-    }
+  @Override
+  @CachePut(value = SDK_CACHE, key = "#key")
+  public FileData putSdk(SdkKey key, FileData sdkFile) {
+    return sdkFile;
+  }
 
-    @Override
-    @CacheEvict(value = SDK_CACHE, key = "#key")
-    public void flushSdk(SdkKey key) {
-        // Do nothing
-    }
+  @Override
+  @CacheEvict(value = SDK_CACHE, key = "#key")
+  public void flushSdk(SdkKey key) {
+    // Do nothing
+  }
 
-    public List<SdkKey> getCachedSdkKeys(String applicationId) {
-        List<SdkKey> keys = new ArrayList<>();
-        Ehcache cache = (Ehcache) adminCacheManager.getCache(SDK_CACHE).getNativeCache();
-        List<?> cachedKeys = cache.getKeysWithExpiryCheck();
-        for (Object cachedKey : cachedKeys) {
-            if (cachedKey instanceof SdkKey) {
-                SdkKey cachedSdkKey = (SdkKey)cachedKey;
-                if (applicationId.equals(cachedSdkKey.getSdkProfile().getApplicationId())) {
-                    keys.add(cachedSdkKey);
-                }
-            }
+  @Override
+  public List<SdkKey> getCachedSdkKeys(String applicationId) {
+    List<SdkKey> keys = new ArrayList<>();
+    Ehcache cache = (Ehcache) adminCacheManager.getCache(SDK_CACHE).getNativeCache();
+    List<?> cachedKeys = cache.getKeysWithExpiryCheck();
+    for (Object cachedKey : cachedKeys) {
+      if (cachedKey instanceof SdkKey) {
+        SdkKey cachedSdkKey = (SdkKey) cachedKey;
+        if (applicationId.equals(cachedSdkKey.getSdkProfile().getApplicationId())) {
+          keys.add(cachedSdkKey);
         }
-        return keys;
+      }
     }
+    return keys;
+  }
 
-    @Override
-    @Cacheable(RECORD_LIBRARY_CACHE)
-    public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
-        try {
-            return controlService.generateRecordStructureLibrary(key.getApplicationId(), key.getSchemaVersion());
-        } catch (ControlServiceException e) {
-            throw Utils.handleException(e);
-        }
+  @Override
+  @Cacheable(RECORD_LIBRARY_CACHE)
+  public FileData getRecordLibrary(RecordKey key) throws KaaAdminServiceException {
+    try {
+      return controlService.generateRecordStructureLibrary(
+          key.getApplicationId(), key.getSchemaVersion());
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
+  }
 
-    @Override
-    @Cacheable(RECORD_SCHEMA_CACHE)
-    public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
-        try {
-            return controlService.getRecordStructureSchema(key.getApplicationId(), key.getSchemaVersion());
-        } catch (ControlServiceException e) {
-            throw Utils.handleException(e);
-        }
+  @Override
+  @Cacheable(RECORD_SCHEMA_CACHE)
+  public FileData getRecordSchema(RecordKey key) throws KaaAdminServiceException {
+    try {
+      return controlService.getRecordStructureSchema(
+          key.getApplicationId(), key.getSchemaVersion());
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
+  }
 
-    @Override
-    @Cacheable(RECORD_DATA_CACHE)
-    public FileData getRecordData(RecordKey key) throws KaaAdminServiceException {
-        try {
-            return controlService.getRecordStructureData(key);
-        } catch (ControlServiceException e) {
-            throw Utils.handleException(e);
-        }
+  @Override
+  @Cacheable(RECORD_DATA_CACHE)
+  public FileData getRecordData(RecordKey key) throws KaaAdminServiceException {
+    try {
+      return controlService.getRecordStructureData(key);
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
-    
-    @Override
-    @Cacheable(CTL_CACHE)
-    public FileData getExportedCtlSchema(CtlSchemaExportKey key)
-            throws KaaAdminServiceException {
-        try {
-            CTLSchemaDto schemaFound = controlService.getCTLSchemaById(key.getCtlSchemaId());
-            Utils.checkNotNull(schemaFound);
-            switch (key.getExportMethod()) {
-            case SHALLOW:
-                return controlService.exportCTLSchemaShallow(schemaFound);
-            case FLAT:
-                return controlService.exportCTLSchemaFlat(schemaFound);
-            case DEEP:
-                return controlService.exportCTLSchemaDeep(schemaFound);
-            case LIBRARY:
-                return controlService.exportCTLSchemaFlatAsLibrary(schemaFound);
-            default:
-                throw new IllegalArgumentException("The export method " + key.getExportMethod().name() + " is not currently supported!");
-            }
-        } catch (ControlServiceException e) {
-            throw Utils.handleException(e);
-        }
+  }
+
+  @Override
+  @Cacheable(CTL_CACHE)
+  public FileData getExportedCtlSchema(CtlSchemaExportKey key)
+      throws KaaAdminServiceException {
+    try {
+      CTLSchemaDto schemaFound = controlService.getCtlSchemaById(key.getCtlSchemaId());
+      Utils.checkNotNull(schemaFound);
+      switch (key.getExportMethod()) {
+        case SHALLOW:
+          return controlService.exportCtlSchemaShallow(schemaFound);
+        case FLAT:
+          return controlService.exportCtlSchemaFlat(schemaFound);
+        case DEEP:
+          return controlService.exportCtlSchemaDeep(schemaFound);
+        case LIBRARY:
+          return controlService.exportCtlSchemaFlatAsLibrary(schemaFound);
+        default:
+          throw new IllegalArgumentException(
+              "The export method "
+                  + key.getExportMethod().name()
+                  + " is not currently supported!");
+      }
+    } catch (ControlServiceException ex) {
+      throw Utils.handleException(ex);
     }
+  }
 
-    @Override
-    @Cacheable(value = FILE_UPLOAD_CACHE, key = "#key")
-    public byte[] uploadedFile(String key, byte[] data) {
-        return data;
-    }
+  @Override
+  @Cacheable(value = FILE_UPLOAD_CACHE, key = "#key")
+  public byte[] uploadedFile(String key, byte[] data) {
+    return data;
+  }
 
-    @Override
-    @CacheEvict(value = FILE_UPLOAD_CACHE, key = "#key")
-    public void removeUploadedFile(String key) {
-        // Do nothing
-    }
-
-
+  @Override
+  @CacheEvict(value = FILE_UPLOAD_CACHE, key = "#key")
+  public void removeUploadedFile(String key) {
+    // Do nothing
+  }
 
 }

@@ -21,68 +21,69 @@ import com.google.web.bindery.event.shared.EventBus;
 
 public abstract class AbstractPluginsPlace extends TreePlace {
 
-    protected String applicationId;
+  protected String applicationId;
 
-    public AbstractPluginsPlace(String applicationId) {
-        this.applicationId = applicationId;
+  public AbstractPluginsPlace(String applicationId) {
+    this.applicationId = applicationId;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public String getApplicationId() {
-        return applicationId;
+    if (obj == null) {
+      return false;
     }
-
-    public static abstract class Tokenizer<P extends AbstractPluginsPlace> implements PlaceTokenizer<P>, PlaceConstants {
-
-        @Override
-        public P getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID));
-        }
-
-        protected abstract P getPlaceImpl(String applicationId);
-
-        @Override
-        public String getToken(P place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
-            return PlaceParams.generateToken();
-        }
+    if (getClass() != obj.getClass()) {
+      return false;
     }
+    AbstractPluginsPlace other = (AbstractPluginsPlace) obj;
+    if (applicationId == null) {
+      if (other.applicationId != null) {
+        return false;
+      }
+    } else if (!applicationId.equals(other.applicationId)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new ApplicationPlace(applicationId);
+  }
+
+  @Override
+  public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
+    return null;
+  }
+
+  public abstract static class Tokenizer<P extends AbstractPluginsPlace>
+      implements PlaceTokenizer<P>, PlaceConstants {
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractPluginsPlace other = (AbstractPluginsPlace) obj;
-        if (applicationId == null) {
-            if (other.applicationId != null) {
-                return false;
-            }
-        } else if (!applicationId.equals(other.applicationId)) {
-            return false;
-        }
-        return true;
+    public P getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return getPlaceImpl(PlaceParams.getParam(APPLICATION_ID));
     }
 
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
+    protected abstract P getPlaceImpl(String applicationId);
 
     @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new ApplicationPlace(applicationId);
+    public String getToken(P place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(APPLICATION_ID, place.getApplicationId());
+      return PlaceParams.generateToken();
     }
-    
-    @Override
-    public TreePlaceDataProvider getDataProvider(EventBus eventBus) {
-        return null;
-    }
+  }
 }

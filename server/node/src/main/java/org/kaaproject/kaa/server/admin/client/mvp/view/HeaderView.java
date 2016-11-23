@@ -16,24 +16,25 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsLabel;
-
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 
+import org.kaaproject.kaa.server.admin.client.mvp.view.widget.ActionsLabel;
+
 public interface HeaderView extends IsWidget {
 
-    void setPresenter(Presenter presenter);
+  void setPresenter(Presenter presenter);
 
-    public interface Presenter {
-        void goTo(Place place);
-        void goToHome();
-    }
+  public Label getUsernameLabel();
 
-    public Label getUsernameLabel();
+  public Label getSignoutLabel();
 
-    public Label getSignoutLabel();
+  public ActionsLabel getSettingsLabel();
 
-    public ActionsLabel getSettingsLabel();
+  public interface Presenter {
+    void goTo(Place place);
+
+    void goToHome();
+  }
 }

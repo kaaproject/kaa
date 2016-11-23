@@ -21,73 +21,85 @@ import com.google.gwt.place.shared.Prefix;
 
 public class EcfPlace extends TreePlace {
 
-    private String ecfId;
-    private String name;
+  private String ecfId;
+  private String ecfVersionId;
+  private String name;
 
-    public EcfPlace(String ecfId) {
-        this.ecfId = ecfId;
+  public EcfPlace(String ecfId) {
+    this.ecfId = ecfId;
+    this.ecfVersionId = "";
+  }
+
+  public EcfPlace(String ecfId, String ecfVersionId) {
+    this.ecfId = ecfId;
+    this.ecfVersionId = ecfVersionId;
+  }
+
+  public String getEcfId() {
+    return ecfId;
+  }
+
+  public String getEcfVersionId() {
+    return ecfVersionId;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
-
-    public void setName(String name) {
-        this.name = name;
+    if (obj == null) {
+      return false;
     }
-
-    public String getEcfId() {
-        return ecfId;
+    if (getClass() != obj.getClass()) {
+      return false;
     }
+    EcfPlace other = (EcfPlace) obj;
+    if (ecfId == null) {
+      if (other.ecfId != null) {
+        return false;
+      }
+    } else if (!ecfId.equals(other.ecfId)) {
+      return false;
+    }
+    return true;
+  }
 
-    @Prefix(value = "ecf")
-    public static class Tokenizer implements PlaceTokenizer<EcfPlace>, PlaceConstants {
+  @Override
+  public String getName() {
+    return name;
+  }
 
-        @Override
-        public EcfPlace getPlace(String token) {
-            PlaceParams.paramsFromToken(token);
-            return new EcfPlace(PlaceParams.getParam(ECF_ID));
-        }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-        @Override
-        public String getToken(EcfPlace place) {
-            PlaceParams.clear();
-            PlaceParams.putParam(ECF_ID, place.getEcfId());
-            return PlaceParams.generateToken();
-        }
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
+
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return new EcfsPlace();
+  }
+
+  @Prefix(value = "ecf")
+  public static class Tokenizer implements PlaceTokenizer<EcfPlace>, PlaceConstants {
+
+    @Override
+    public EcfPlace getPlace(String token) {
+      PlaceParams.paramsFromToken(token);
+      return new EcfPlace(PlaceParams.getParam(ECF_ID), PlaceParams.getParam(ECF_VERSION_ID));
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EcfPlace other = (EcfPlace) obj;
-        if (ecfId == null) {
-            if (other.ecfId != null) {
-                return false;
-            }
-        } else if (!ecfId.equals(other.ecfId)) {
-            return false;
-        }
-        return true;
+    public String getToken(EcfPlace place) {
+      PlaceParams.clear();
+      PlaceParams.putParam(ECF_ID, place.getEcfId());
+      PlaceParams.putParam(ECF_VERSION_ID, place.getEcfVersionId());
+      return PlaceParams.generateToken();
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return new EcfsPlace();
-    }
+  }
 
 }

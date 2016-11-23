@@ -16,6 +16,10 @@
 
 package org.kaaproject.kaa.client.transport;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
@@ -25,75 +29,76 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.LinkedHashMap;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.kaaproject.kaa.common.endpoint.security.MessageEncoderDecoder;
-
 public class AbstractHttpClientTest {
-    private class TestHttpClient extends AbstractHttpClient {
-        public TestHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
-            super(url, privateKey, publicKey, remotePublicKey);
-        }
+  @Test
+  public void testDisableVerification() throws GeneralSecurityException {
+    TestHttpClient client = new TestHttpClient("test_url", null, null, null);
+    client.disableVerification();
 
-        @Override
-        public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity
-                , boolean verifyResponse) throws Exception {
-            return null;
-        }
-        @Override
-        public void close() throws IOException {}
+    byte[] body = {1, 2, 3};
+    byte[] signature = {1, 2, 3};
+    Assert.assertArrayEquals(body, client.verifyResponse(body, signature));
+  }
 
-        @Override
-        public void abort() {}
+  @Test(expected = GeneralSecurityException.class)
+  public void testVerifyResponseFailure() throws NoSuchAlgorithmException, GeneralSecurityException {
+    KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+    gen.initialize(512);
 
-        @Override
-        public boolean canAbort() { return false; }
+    KeyPair clientKeyPair = gen.generateKeyPair();
+    KeyPair remoteKeyPair = gen.generateKeyPair();
+
+    TestHttpClient client = new TestHttpClient("test_url", clientKeyPair.getPrivate()
+        , clientKeyPair.getPublic(), remoteKeyPair.getPublic());
+
+    byte[] body = {1, 2, 3};
+    byte[] signature = {1, 2, 3};
+    client.verifyResponse(body, signature);
+  }
+
+  @Test
+  public void testSignature() throws NoSuchAlgorithmException, GeneralSecurityException {
+    KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+    gen.initialize(512);
+
+    KeyPair clientKeyPair = gen.generateKeyPair();
+    KeyPair remoteKeyPair = gen.generateKeyPair();
+
+    TestHttpClient client = new TestHttpClient("test_url", clientKeyPair.getPrivate()
+        , clientKeyPair.getPublic(), remoteKeyPair.getPublic());
+
+    MessageEncoderDecoder serverEncoder = new MessageEncoderDecoder(
+        remoteKeyPair.getPrivate(), remoteKeyPair.getPublic());
+
+    byte[] message = {1, 2, 3};
+    byte[] signature = serverEncoder.sign(message);
+
+    Assert.assertArrayEquals(message, client.verifyResponse(message, signature));
+    Assert.assertTrue(client.getEncoderDecoder().verify(message, signature));
+  }
+
+  private class TestHttpClient extends AbstractHttpClient {
+    public TestHttpClient(String url, PrivateKey privateKey, PublicKey publicKey, PublicKey remotePublicKey) {
+      super(url, privateKey, publicKey, remotePublicKey);
     }
 
-    @Test
-    public void testDisableVerification() throws GeneralSecurityException  {
-        TestHttpClient client = new TestHttpClient("test_url", null, null, null);
-        client.disableVerification();
-
-        byte[] body = {1, 2, 3};
-        byte[] signature = {1, 2, 3};
-        Assert.assertArrayEquals(body, client.verifyResponse(body, signature));
+    @Override
+    public byte[] executeHttpRequest(String uri, LinkedHashMap<String, byte[]> entity
+        , boolean verifyResponse) throws Exception {
+      return null;
     }
 
-    @Test(expected=GeneralSecurityException.class)
-    public void testVerifyResponseFailure() throws NoSuchAlgorithmException, GeneralSecurityException {
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(512);
-
-        KeyPair clientKeyPair = gen.generateKeyPair();
-        KeyPair remoteKeyPair = gen.generateKeyPair();
-
-        TestHttpClient client = new TestHttpClient("test_url", clientKeyPair.getPrivate()
-                , clientKeyPair.getPublic(), remoteKeyPair.getPublic());
-
-        byte[] body = {1, 2, 3};
-        byte[] signature = {1, 2, 3};
-        client.verifyResponse(body, signature);
+    @Override
+    public void close() throws IOException {
     }
 
-    @Test
-    public void testSignature() throws NoSuchAlgorithmException, GeneralSecurityException {
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        gen.initialize(512);
-
-        KeyPair clientKeyPair = gen.generateKeyPair();
-        KeyPair remoteKeyPair = gen.generateKeyPair();
-
-        TestHttpClient client = new TestHttpClient("test_url", clientKeyPair.getPrivate()
-                , clientKeyPair.getPublic(), remoteKeyPair.getPublic());
-
-        MessageEncoderDecoder serverEncoder = new MessageEncoderDecoder(
-                        remoteKeyPair.getPrivate(), remoteKeyPair.getPublic());
-
-        byte[] message = {1, 2, 3};
-        byte[] signature = serverEncoder.sign(message);
-
-        Assert.assertArrayEquals(message, client.verifyResponse(message, signature));
-        Assert.assertTrue(client.getEncoderDecoder().verify(message, signature));
+    @Override
+    public void abort() {
     }
+
+    @Override
+    public boolean canAbort() {
+      return false;
+    }
+  }
 }

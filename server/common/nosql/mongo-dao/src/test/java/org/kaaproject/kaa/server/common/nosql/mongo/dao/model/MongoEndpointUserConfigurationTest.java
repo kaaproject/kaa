@@ -18,29 +18,30 @@ package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 public class MongoEndpointUserConfigurationTest {
-    @Test
-    public void hashCodeEqualsTest() {
-        EqualsVerifier.forClass(MongoEndpointConfiguration.class).suppress(Warning.NONFINAL_FIELDS).verify();
-    }
+  @Test
+  public void hashCodeEqualsTest() {
+    EqualsVerifier.forClass(MongoEndpointConfiguration.class).suppress(Warning.NONFINAL_FIELDS).verify();
+  }
 
-    @Test
-    public void getSetTest() {
-        MongoEndpointUserConfiguration mongoEndpointUserConfiguration = new MongoEndpointUserConfiguration();
-        String appToken = "appToken";
-        String body = "body";
-        int schemaVersion = 2;
-        String userId = "userId";
-        mongoEndpointUserConfiguration.setAppToken(appToken);
-        mongoEndpointUserConfiguration.setBody(body);
-        mongoEndpointUserConfiguration.setSchemaVersion(schemaVersion);
-        mongoEndpointUserConfiguration.setUserId(userId);
-        Assert.assertEquals(appToken, mongoEndpointUserConfiguration.getAppToken());
-        Assert.assertEquals(body, mongoEndpointUserConfiguration.getBody());
-        Assert.assertTrue(schemaVersion == mongoEndpointUserConfiguration.getSchemaVersion());
-        Assert.assertEquals(userId, mongoEndpointUserConfiguration.getUserId());
-    }
+  @Test
+  public void getSetTest() {
+    MongoEndpointUserConfiguration mongoEndpointUserConfiguration = new MongoEndpointUserConfiguration();
+    String appToken = "appToken";
+    String body = "body";
+    int schemaVersion = 2;
+    String userId = "userId";
+    mongoEndpointUserConfiguration.setAppToken(appToken);
+    mongoEndpointUserConfiguration.setBody(body);
+    mongoEndpointUserConfiguration.setSchemaVersion(schemaVersion);
+    mongoEndpointUserConfiguration.setUserId(userId);
+    Assert.assertEquals(appToken, mongoEndpointUserConfiguration.getAppToken());
+    Assert.assertEquals(body, mongoEndpointUserConfiguration.getBody());
+    Assert.assertTrue(schemaVersion == mongoEndpointUserConfiguration.getSchemaVersion());
+    Assert.assertEquals(userId, mongoEndpointUserConfiguration.getUserId());
+  }
 }

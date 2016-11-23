@@ -16,19 +16,19 @@
 
 package org.kaaproject.kaa.client.channel.impl.channels.polling;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.kaaproject.kaa.client.channel.ChannelDirection;
 import org.kaaproject.kaa.client.channel.TransportConnectionInfo;
 import org.kaaproject.kaa.common.TransportType;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public interface RawDataProcessor {
 
-    LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types); //NOSONAR
+  LinkedHashMap<String, byte[]> createRequest(Map<TransportType, ChannelDirection> types); //NOSONAR
 
-    void onResponse(byte [] response);
+  void onResponse(byte[] response);
 
-    void onServerError(TransportConnectionInfo info);
+  void onServerError(TransportConnectionInfo info);
 
 }

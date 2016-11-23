@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.data;
 
-import java.util.List;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
@@ -24,32 +24,38 @@ import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.activity.grid.AbstractDataProvider;
 import org.kaaproject.kaa.server.admin.client.util.HasErrorMessage;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
-public class ServerProfileSchemasDataProvider extends AbstractDataProvider<ServerProfileSchemaDto, String> {
+public class ServerProfileSchemasDataProvider
+    extends AbstractDataProvider<ServerProfileSchemaDto, String> {
 
-    private String applicationId;
+  private String applicationId;
 
-    public ServerProfileSchemasDataProvider(AbstractGrid<ServerProfileSchemaDto, String> dataGrid,
-                                      HasErrorMessage hasErrorMessage,
-                                      String applicationId) {
-        super(dataGrid, hasErrorMessage, false);
-        this.applicationId = applicationId;
-        addDataDisplay();
-    }
+  /**
+   * All-args constructor.
+   */
+  public ServerProfileSchemasDataProvider(AbstractGrid<ServerProfileSchemaDto, String> dataGrid,
+                                          HasErrorMessage hasErrorMessage,
+                                          String applicationId) {
+    super(dataGrid, hasErrorMessage, false);
+    this.applicationId = applicationId;
+    addDataDisplay();
+  }
 
-    @Override
-    protected void loadData(final LoadCallback callback) {
-        KaaAdmin.getDataSource().loadServerProfileSchemas(applicationId, new AsyncCallback<List<ServerProfileSchemaDto>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+  @Override
+  protected void loadData(final LoadCallback callback) {
+    KaaAdmin.getDataSource().loadServerProfileSchemas(
+        applicationId, new AsyncCallback<List<ServerProfileSchemaDto>>() {
+          @Override
+          public void onFailure(Throwable caught) {
+            callback.onFailure(caught);
 
-            }
-            @Override
-            public void onSuccess(List<ServerProfileSchemaDto> result) {
-                callback.onSuccess(result);
-            }
+          }
+
+          @Override
+          public void onSuccess(List<ServerProfileSchemaDto> result) {
+            callback.onSuccess(result);
+          }
         });
-    }
+  }
 }

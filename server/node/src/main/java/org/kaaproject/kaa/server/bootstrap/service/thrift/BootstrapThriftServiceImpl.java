@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.bootstrap.service.thrift;
 
-import java.util.List;
-
 import org.apache.thrift.TException;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService;
 import org.kaaproject.kaa.server.common.thrift.gen.bootstrap.ThriftOperationsServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * BootstrapThriftServiceImpl Class.
@@ -36,19 +36,22 @@ import org.springframework.stereotype.Service;
 public class BootstrapThriftServiceImpl implements
     BootstrapThriftService.Iface {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BootstrapThriftServiceImpl.class);
 
-    /**
-     * Thrift method to receive new list of Operations servers
-     * @param operationsServersList the list of type ThriftOperationsServer
-     */
-    /* (non-Javadoc)
-     * @see org.kaaproject.kaa.server.common.thrift.gen.bootstrap.BootstrapThriftService.Iface#onOperationsServerListUpdate(java.util.List)
-     */
-    @Override
-    public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList) throws TException {
-        LOG.info("Operations server list update recived: now {} servers online:", operationsServersList.size());
-        //TODO: add usage of ops list priority in future releases.
-    }
+  /**
+   * Thrift method to receive new list of Operations servers.
+   *
+   * @param operationsServersList the list of type ThriftOperationsServer
+   *
+   * @see org.kaaproject.kaa.server.common.thrift.gen.bootstrap
+   * .BootstrapThriftService.Iface#onOperationsServerListUpdate(java.util.List)
+   */
+  @Override
+  public void onOperationsServerListUpdate(List<ThriftOperationsServer> operationsServersList)
+      throws TException {
+    LOG.info("Operations server list update recived: now {} servers online:",
+        operationsServersList.size());
+    //TODO: add usage of ops list priority in future releases.
+  }
 
 }

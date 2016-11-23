@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "../kaa_test.h"
+#include "kaa_test.h"
 
 #include "utilities/kaa_log.h"
 

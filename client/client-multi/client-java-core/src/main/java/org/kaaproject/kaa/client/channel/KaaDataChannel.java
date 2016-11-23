@@ -16,172 +16,147 @@
 
 package org.kaaproject.kaa.client.channel;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.kaaproject.kaa.client.channel.connectivity.ConnectivityChecker;
 import org.kaaproject.kaa.common.TransportType;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Channel is responsible for sending/receiving data to/from the endpoint
  * server.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface KaaDataChannel {
 
-    /**
-     * Updates the channel's state of the specific service.
-     *
-     * @param type
-     *            transport type of the service.
-     * @see TransportType
-     *
-     */
-    void sync(TransportType type);
+  /**
+   * Updates the channel's state of the specific service.
+   *
+   * @param type transport type of the service.
+   * @see TransportType
+   */
+  void sync(TransportType type);
 
-    /**
-     * Updates the channel's state of the specific service.
-     *
-     * @param types
-     *            transport types to sync.
-     * @see TransportType
-     *
-     */
-    void sync(Set<TransportType> types);
+  /**
+   * Updates the channel's state of the specific service.
+   *
+   * @param types transport types to sync.
+   * @see TransportType
+   */
+  void sync(Set<TransportType> types);
 
-    /**
-     * Updates the channel's state of all supported services.
-     */
-    void syncAll();
+  /**
+   * Updates the channel's state of all supported services.
+   */
+  void syncAll();
 
-    /**
-     * Notifies channel about successful acknowledgment of the sync only in case
-     * of smth change.
-     *
-     * @param type
-     *            transport type of the service.
-     * @see TransportType
-     *
-     */
-    void syncAck(TransportType type);
+  /**
+   * Notifies channel about successful acknowledgment of the sync only in case
+   * of smth change.
+   *
+   * @param type transport type of the service.
+   * @see TransportType
+   */
+  void syncAck(TransportType type);
 
-    /**
-     * Notifies channel about successful acknowledgment of the sync only in case
-     * of smth change.
-     *
-     * @param type
-     *            transport type to ack.
-     * @see TransportType
-     *
-     */
-    void syncAck(Set<TransportType> type);
+  /**
+   * Notifies channel about successful acknowledgment of the sync only in case
+   * of smth change.
+   *
+   * @param type transport type to ack.
+   * @see TransportType
+   */
+  void syncAck(Set<TransportType> type);
 
-    /**
-     * Retrieves the channel's id. It should be unique in existing channels
-     * scope.
-     *
-     * @return the channel's id.
-     *
-     */
-    String getId();
+  /**
+   * Retrieves the channel's id. It should be unique in existing channels
+   * scope.
+   *
+   * @return the channel's id.
+   */
+  String getId();
 
-    /**
-     * Retrieves the {@link TransportProtocolId}.
-     *
-     * @return the transport protocol id.
-     * @see TransportProtocolId
-     *
-     */
-    TransportProtocolId getTransportProtocolId();
+  /**
+   * Retrieves the {@link TransportProtocolId}.
+   *
+   * @return the transport protocol id.
+   * @see TransportProtocolId
+   */
+  TransportProtocolId getTransportProtocolId();
 
-    /**
-     * Retrieves the channel's server type (i.e. OPERATIONS or BOOTSTRAP).
-     *
-     * @return the channel's server type.
-     * @see ServerType
-     *
-     */
-    ServerType getServerType();
+  /**
+   * Retrieves the channel's server type (i.e. OPERATIONS or BOOTSTRAP).
+   *
+   * @return the channel's server type.
+   * @see ServerType
+   */
+  ServerType getServerType();
 
-    /**
-     * Sets the response demultiplexer for this channel.
-     *
-     * @param demultiplexer
-     *            demultiplexer instance to be set.
-     * @see KaaDataDemultiplexer
-     *
-     */
-    void setDemultiplexer(KaaDataDemultiplexer demultiplexer);
+  /**
+   * Sets the response demultiplexer for this channel.
+   *
+   * @param demultiplexer demultiplexer instance to be set.
+   * @see KaaDataDemultiplexer
+   */
+  void setDemultiplexer(KaaDataDemultiplexer demultiplexer);
 
-    /**
-     * Sets the request multiplexer for this channel.
-     *
-     * @param multiplexer
-     *            multiplexer instance to be set.
-     * @see KaaDataMultiplexer
-     *
-     */
-    void setMultiplexer(KaaDataMultiplexer multiplexer);
+  /**
+   * Sets the request multiplexer for this channel.
+   *
+   * @param multiplexer multiplexer instance to be set.
+   * @see KaaDataMultiplexer
+   */
+  void setMultiplexer(KaaDataMultiplexer multiplexer);
 
-    /**
-     * Sets the server's parameters for the current channel.
-     *
-     * @param server
-     *            server's parameters.
-     * @see TransportConnectionInfo
-     *
-     */
-    void setServer(TransportConnectionInfo server);
+  /**
+   * Retrieves info about current used server.
+   *
+   * @return Server info
+   */
+  TransportConnectionInfo getServer();
 
-    /**
-     * Retrieves info about current used server
-     *
-     * @return Server info
-     *
-     */
-    TransportConnectionInfo getServer();
+  /**
+   * Sets the server's parameters for the current channel.
+   *
+   * @param server server's parameters.
+   * @see TransportConnectionInfo
+   */
+  void setServer(TransportConnectionInfo server);
 
-    /**
-     * Sets connectivity checker to the current channel.
-     *
-     * @param checker
-     *            platform-dependent connectivity checker.
-     * @see ConnectivityChecker
-     *
-     */
-    void setConnectivityChecker(ConnectivityChecker checker);
+  /**
+   * Sets connectivity checker to the current channel.
+   *
+   * @param checker platform-dependent connectivity checker.
+   * @see ConnectivityChecker
+   */
+  void setConnectivityChecker(ConnectivityChecker checker);
 
-    /**
-     * Retrieves the map of transport types and their directions supported by
-     * this channel.
-     *
-     * @return the map of transport types.
-     * @see TransportType
-     * @see ChannelDirection
-     *
-     */
-    Map<TransportType, ChannelDirection> getSupportedTransportTypes();
+  /**
+   * Retrieves the map of transport types and their directions supported by
+   * this channel.
+   *
+   * @return the map of transport types.
+   * @see TransportType
+   * @see ChannelDirection
+   */
+  Map<TransportType, ChannelDirection> getSupportedTransportTypes();
 
-    /**
-     * Shuts down the channel instance. All connections and threads should be
-     * terminated. The instance can no longer be used.
-     *
-     */
-    void shutdown();
+  /**
+   * Shuts down the channel instance. All connections and threads should be
+   * terminated. The instance can no longer be used.
+   */
+  void shutdown();
 
-    /**
-     * Pauses the channel's workflow. The channel should stop all network
-     * activity.
-     *
-     */
-    void pause();
+  /**
+   * Pauses the channel's workflow. The channel should stop all network
+   * activity.
+   */
+  void pause();
 
-    /**
-     * Resumes the channel's workflow. The channel should restore previous
-     * connection.
-     *
-     */
-    void resume();
+  /**
+   * Resumes the channel's workflow. The channel should restore previous
+   * connection.
+   */
+  void resume();
 }

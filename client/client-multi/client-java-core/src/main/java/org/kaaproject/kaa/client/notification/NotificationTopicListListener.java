@@ -16,23 +16,22 @@
 
 package org.kaaproject.kaa.client.notification;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.endpoint.gen.Topic;
+
+import java.util.List;
 
 /**
  * The listener for topics' list updates.
  *
  * @author Yaroslav Zeygerman
- *
  */
 public interface NotificationTopicListListener {
 
-    /**
-     * Called on topics' list updates.
-     *
-     * @param list the new list of topic.
-     * @see Topic
-     */
-    void onListUpdated(List<Topic> list);
+  /**
+   * Called on topics' list updates.
+   *
+   * @param list the new list of topic.
+   * @see Topic
+   */
+  void onListUpdated(List<Topic> list);
 }

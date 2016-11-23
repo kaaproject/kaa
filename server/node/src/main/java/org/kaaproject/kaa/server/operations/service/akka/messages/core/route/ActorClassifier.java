@@ -17,5 +17,5 @@
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.route;
 
 public enum ActorClassifier {
-    LOCAL, GLOBAL, APPLICATION;
+  LOCAL, GLOBAL, APPLICATION;
 }

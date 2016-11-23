@@ -16,28 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.event.EventSchemaVersionDto;
-
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 
+import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
+import org.kaaproject.kaa.common.dto.event.EventClassFamilyVersionDto;
+
 public interface EcfView extends BaseDetailsView {
 
-    public HasValue<String> getName();
-    
-    public HasValue<String> getNamespace();
+  public HasValue<String> getName();
 
-    public HasValue<String> getClassName();
+  public HasValue<String> getNamespace();
 
-    public HasValue<String> getDescription();
-    
-    public HasValue<String> getCreatedUsername();
+  public HasValue<String> getClassName();
 
-    public HasValue<String> getCreatedDateTime();
+  public HasValue<String> getDescription();
 
-    public AbstractGrid<EventSchemaVersionDto, Integer> getEcfSchemasGrid();
-    
-    public HasClickHandlers getAddEcfSchemaButton();
+  public HasValue<String> getCreatedUsername();
+
+  public HasValue<String> getCreatedDateTime();
+
+  public AbstractGrid<EventClassFamilyVersionDto, Integer> getEcfVersionsGrid();
+
+  public HasClickHandlers getAddEcfVersionButton();
 
 }

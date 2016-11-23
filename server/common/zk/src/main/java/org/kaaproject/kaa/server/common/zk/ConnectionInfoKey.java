@@ -18,47 +18,47 @@ package org.kaaproject.kaa.server.common.zk;
 
 import org.kaaproject.kaa.server.common.zk.gen.ConnectionInfo;
 
-public final class ConnectionInfoKey{
-	
-	private final String host;
-	private final int port;
-	
-	public ConnectionInfoKey(ConnectionInfo connectionInfo) {
-		this.host = connectionInfo.getThriftHost().toString();
-		this.port = connectionInfo.getThriftPort().intValue();
-	}
+public final class ConnectionInfoKey {
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((host == null) ? 0 : host.hashCode());
-		result = prime * result + port;
-		return result;
-	}
+  private final String host;
+  private final int port;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		ConnectionInfoKey other = (ConnectionInfoKey) obj;
-		if (host == null) {
-			if (other.host != null) {
-				return false;
-			}
-		} else if (!host.equals(other.host)) {
-			return false;
-		}
-		if (port != other.port) {
-			return false;
-		}
-		return true;
-	}
+  public ConnectionInfoKey(ConnectionInfo connectionInfo) {
+    this.host = connectionInfo.getThriftHost().toString();
+    this.port = connectionInfo.getThriftPort().intValue();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((host == null) ? 0 : host.hashCode());
+    result = prime * result + port;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    ConnectionInfoKey other = (ConnectionInfoKey) obj;
+    if (host == null) {
+      if (other.host != null) {
+        return false;
+      }
+    } else if (!host.equals(other.host)) {
+      return false;
+    }
+    if (port != other.port) {
+      return false;
+    }
+    return true;
+  }
 }

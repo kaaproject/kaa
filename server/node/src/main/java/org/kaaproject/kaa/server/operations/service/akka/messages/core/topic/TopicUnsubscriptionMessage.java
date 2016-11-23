@@ -16,48 +16,51 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.messages.core.topic;
 
+import akka.actor.ActorRef;
+
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.EndpointAwareMessage;
-
-import akka.actor.ActorRef;
 
 
 /**
  * The Class TopicRegistrationRequestMessage.
  */
-public class TopicUnsubscriptionMessage extends EndpointAwareMessage{
+public class TopicUnsubscriptionMessage extends EndpointAwareMessage {
 
-    /** The topic id. */
-    private final String topicId;
+  /**
+   * The topic id.
+   */
+  private final String topicId;
 
-    /**
-     * Instantiates a new topic registration request message.
-     *
-     * @param topicId the topic id
-     * @param appToken the app token
-     * @param key the key
-     * @param originator the originator
-     */
-    public TopicUnsubscriptionMessage(String topicId, String appToken, EndpointObjectHash key,  ActorRef originator) {
-        super(appToken, key, originator);
-        this.topicId = topicId;
-    }
+  /**
+   * Instantiates a new topic registration request message.
+   *
+   * @param topicId    the topic id
+   * @param appToken   the app token
+   * @param key        the key
+   * @param originator the originator
+   */
+  public TopicUnsubscriptionMessage(String topicId, String appToken, EndpointObjectHash key,
+                                    ActorRef originator) {
+    super(appToken, key, originator);
+    this.topicId = topicId;
+  }
 
-    /**
-     * Gets the topic id.
-     *
-     * @return the topic id
-     */
-    public String getTopicId() {
-        return topicId;
-    }
+  /**
+   * Gets the topic id.
+   *
+   * @return the topic id
+   */
+  public String getTopicId() {
+    return topicId;
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("TopicUnsubscriptionMessage [topicId=");
-        builder.append(topicId);
-        builder.append("]");
-        return builder.toString();
-    }
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("TopicUnsubscriptionMessage [topicId=");
+    builder.append(topicId);
+    builder.append("]");
+    return builder.toString();
+  }
 }

@@ -22,16 +22,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingCluster;
 import org.apache.curator.test.Timing;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNode;
 import org.kaaproject.kaa.server.common.zk.bootstrap.BootstrapNodeListener;
@@ -42,145 +40,165 @@ import org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class BootstrapNodeIT {
 
-    private static final String UTF_8 = "UTF-8";
-    static final int TCP_ID = 73;
-    static final int HTTP_ID = 42;
-    private static final String BOOTSTRAP_NODE_HOST = "192.168.0.202";
-    private static final String CONTROL_NODE_HOST = "192.168.0.1";
+  static final int TCP_ID = 73;
+  static final int HTTP_ID = 42;
+  private static final String UTF_8 = "UTF-8";
+  private static final String BOOTSTRAP_NODE_HOST = "192.168.0.202";
+  private static final String CONTROL_NODE_HOST = "192.168.0.1";
+  private CuratorFramework zkClient;
+  private TestingCluster cluster;
 
-    @Test
-    public void boostrapListenerTest() throws Exception {
-        Timing timing = new Timing();
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
-            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+  static List<TransportMetaData> getHttpAndTcpTransportMD() {
+    List<TransportMetaData> supportedTransports = new ArrayList<>();
 
-            ControlNode controlNode = new ControlNode(controlNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
-            controlNode.addListener(mockListener);
-            controlNode.start();
-
-            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            bootstrapNode.start();
-            timing.sleepABit();
-
-            verify(mockListener).onNodeAdded(bootstrapNodeInfo);
-
-            List<TransportMetaData> transports = bootstrapNodeInfo.getTransports();
-            transports.remove(getHttpTransportMD());
-            bootstrapNode.updateNodeData(bootstrapNodeInfo);
-            timing.sleepABit();
-
-            verify(mockListener).onNodeUpdated(bootstrapNodeInfo);
-
-            bootstrapNode.close();
-            timing.sleepABit();
-
-            verify(mockListener).onNodeRemoved(bootstrapNodeInfo);
-            bootstrapNode.close();
-
-            assertTrue(controlNode.removeListener(mockListener));
-            assertFalse(controlNode.removeListener(mockListener));
-            controlNode.close();
-        } finally {
-            cluster.close();
-        }
+    try {
+      supportedTransports.add(getHttpTransportMD());
+      supportedTransports.add(getTcpTransportMD());
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
     }
 
-    @Test
-    public void outdatedRemovalTest() throws Exception {
-        Timing timing = new Timing();
-        TestingCluster cluster = new TestingCluster(3);
-        cluster.start();
-        try {
-            ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
-            BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+    return supportedTransports;
+  }
 
-            ControlNode controlNode = new ControlNode(controlNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
-            controlNode.addListener(mockListener);
-            controlNode.start();
+  static TransportMetaData getTcpTransportMD() throws UnsupportedEncodingException {
+    TransportMetaData tcp = new TransportMetaData();
+    tcp.setId(TCP_ID);
+    tcp.setMaxSupportedVersion(2);
+    tcp.setMinSupportedVersion(2);
+    tcp.setConnectionInfo(Collections.singletonList(new VersionConnectionInfoPair(2, ByteBuffer.wrap("tcp".getBytes(UTF_8)))));
+    return tcp;
+  }
 
-            BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, cluster.getConnectString(), buildDefaultRetryPolicy());
-            bootstrapNode.start();
-            timing.sleepABit();
+  static TransportMetaData getHttpTransportMD() throws UnsupportedEncodingException {
+    TransportMetaData http = new TransportMetaData();
+    http.setId(HTTP_ID);
+    http.setMaxSupportedVersion(1);
+    http.setMinSupportedVersion(1);
+    http.setConnectionInfo(Collections.singletonList(new VersionConnectionInfoPair(1, ByteBuffer.wrap("http".getBytes(UTF_8)))));
+    return http;
+  }
 
-            verify(mockListener).onNodeAdded(bootstrapNodeInfo);
-
-            BootstrapNodeInfo bootstrapNodeInfoWithGreaterTimeStarted = buildBootstrapNodeInfo();
-            BootstrapNode bootstrapNodeWithGreaterTimeStarted = new BootstrapNode(bootstrapNodeInfoWithGreaterTimeStarted, cluster.getConnectString(), buildDefaultRetryPolicy());
-
-            bootstrapNodeWithGreaterTimeStarted.start();
-            timing.sleepABit();
-            
-            bootstrapNode.close();
-            timing.sleepABit();
-            verify(mockListener, never()).onNodeRemoved(bootstrapNodeInfo);
-            
-            bootstrapNodeWithGreaterTimeStarted.close();
-            timing.sleepABit();
-            verify(mockListener).onNodeRemoved(bootstrapNodeInfoWithGreaterTimeStarted);
-
-            controlNode.close();
-        } finally {
-            cluster.close();
-        }
+  @Before
+  public void beforeTest() {
+    try {
+      cluster = new TestingCluster(3);
+      cluster.start();
+      zkClient = CuratorFrameworkFactory.newClient(cluster.getConnectString(), buildDefaultRetryPolicy());
+      zkClient.start();
+    } catch (Exception e) {
+      System.err.println("Unable to initialize cluster before test! " + e);
     }
+  }
 
-    private RetryPolicy buildDefaultRetryPolicy() {
-        return new ExponentialBackoffRetry(100, 1);
+  @After
+  public void afterTest() {
+    try {
+      zkClient.close();
+      cluster.close();
+    } catch (Exception e) {
+      System.err.println("Unable to shutdown cluster after test! " + e);
     }
+  }
 
-    private BootstrapNodeInfo buildBootstrapNodeInfo() {
-        BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
-        ByteBuffer testKeyData = ByteBuffer.wrap(new byte[] { 10, 11, 12, 45, 34, 23, 67, 89, 66, 12 });
-        nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
-        nodeInfo.setTimeStarted(System.currentTimeMillis());
-        nodeInfo.setTransports(getHttpAndTcpTransportMD());
+  @Test
+  public void boostrapListenerTest() throws Exception {
+    Timing timing = new Timing();
 
-        return nodeInfo;
-    }
+    ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+    BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
 
-    static List<TransportMetaData> getHttpAndTcpTransportMD() {
-        List<TransportMetaData> supportedTransports = new ArrayList<>();
+    ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
+    BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
+    controlNode.addListener(mockListener);
+    controlNode.start();
 
-        try {
-            supportedTransports.add(getHttpTransportMD());
-            supportedTransports.add(getTcpTransportMD());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        
-        return supportedTransports;
-    }
+    BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, zkClient);
+    bootstrapNode.start();
+    timing.sleepABit();
 
-    static TransportMetaData getTcpTransportMD() throws UnsupportedEncodingException {
-        TransportMetaData tcp = new TransportMetaData();
-        tcp.setId(TCP_ID);
-        tcp.setMaxSupportedVersion(2);
-        tcp.setMinSupportedVersion(2);
-        tcp.setConnectionInfo(Collections.singletonList(new VersionConnectionInfoPair(2, ByteBuffer.wrap("tcp".getBytes(UTF_8)))));
-        return tcp;
-    }
+    verify(mockListener).onNodeAdded(bootstrapNodeInfo);
 
-    static TransportMetaData getHttpTransportMD() throws UnsupportedEncodingException {
-        TransportMetaData http = new TransportMetaData();
-        http.setId(HTTP_ID);
-        http.setMaxSupportedVersion(1);
-        http.setMinSupportedVersion(1);
-        http.setConnectionInfo(Collections.singletonList(new VersionConnectionInfoPair(1, ByteBuffer.wrap("http".getBytes(UTF_8)))));
-        return http;
-    }
+    List<TransportMetaData> transports = bootstrapNodeInfo.getTransports();
+    transports.remove(getHttpTransportMD());
+    bootstrapNode.updateNodeData(bootstrapNodeInfo);
+    timing.sleepABit();
 
-    private ControlNodeInfo buildControlNodeInfo() {
-        ControlNodeInfo controlNodeInfo = new ControlNodeInfo();
-        controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000, null));
-        controlNodeInfo.setBootstrapServerCount(3);
-        controlNodeInfo.setOperationsServerCount(4);
-        return controlNodeInfo;
-    }
+    verify(mockListener).onNodeUpdated(bootstrapNodeInfo);
+
+    bootstrapNode.close();
+    timing.sleepABit();
+
+    verify(mockListener).onNodeRemoved(bootstrapNodeInfo);
+    bootstrapNode.close();
+
+    assertTrue(controlNode.removeListener(mockListener));
+    assertFalse(controlNode.removeListener(mockListener));
+    controlNode.close();
+  }
+
+  @Test
+  public void outdatedRemovalTest() throws Exception {
+    Timing timing = new Timing();
+
+    ControlNodeInfo controlNodeInfo = buildControlNodeInfo();
+    BootstrapNodeInfo bootstrapNodeInfo = buildBootstrapNodeInfo();
+
+    ControlNode controlNode = new ControlNode(controlNodeInfo, zkClient);
+    BootstrapNodeListener mockListener = mock(BootstrapNodeListener.class);
+    controlNode.addListener(mockListener);
+    controlNode.start();
+
+    BootstrapNode bootstrapNode = new BootstrapNode(bootstrapNodeInfo, zkClient);
+    bootstrapNode.start();
+    timing.sleepABit();
+
+    verify(mockListener).onNodeAdded(bootstrapNodeInfo);
+
+    BootstrapNodeInfo bootstrapNodeInfoWithGreaterTimeStarted = buildBootstrapNodeInfo();
+    BootstrapNode bootstrapNodeWithGreaterTimeStarted = new BootstrapNode(bootstrapNodeInfoWithGreaterTimeStarted, zkClient);
+
+    bootstrapNodeWithGreaterTimeStarted.start();
+    timing.sleepABit();
+
+    bootstrapNode.close();
+    timing.sleepABit();
+    verify(mockListener, never()).onNodeRemoved(bootstrapNodeInfo);
+
+    bootstrapNodeWithGreaterTimeStarted.close();
+    timing.sleepABit();
+    verify(mockListener).onNodeRemoved(bootstrapNodeInfoWithGreaterTimeStarted);
+
+    controlNode.close();
+  }
+
+  private RetryPolicy buildDefaultRetryPolicy() {
+    return new ExponentialBackoffRetry(100, 1);
+  }
+
+  private BootstrapNodeInfo buildBootstrapNodeInfo() {
+    BootstrapNodeInfo nodeInfo = new BootstrapNodeInfo();
+    ByteBuffer testKeyData = ByteBuffer.wrap(new byte[]{10, 11, 12, 45, 34, 23, 67, 89, 66, 12});
+    nodeInfo.setConnectionInfo(new ConnectionInfo(BOOTSTRAP_NODE_HOST, 1000, testKeyData));
+    nodeInfo.setTimeStarted(System.currentTimeMillis());
+    nodeInfo.setTransports(getHttpAndTcpTransportMD());
+
+    return nodeInfo;
+  }
+
+  private ControlNodeInfo buildControlNodeInfo() {
+    ControlNodeInfo controlNodeInfo = new ControlNodeInfo();
+    controlNodeInfo.setConnectionInfo(new ConnectionInfo(CONTROL_NODE_HOST, 1000, null));
+    controlNodeInfo.setBootstrapServerCount(3);
+    controlNodeInfo.setOperationsServerCount(4);
+    return controlNodeInfo;
+  }
 }

@@ -25,57 +25,56 @@ import java.net.URLConnection;
 
 /**
  * HTTP Test Client Class.
- * 
- * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  *
+ * @author Andrey Panasenko <apanasenko@cybervisiontech.com>
  */
 public class HttpTestClient implements Runnable {
 
-    private HttpActivity activity;
-    private URLConnection connection;
-    private PostParameters params;
+  private HttpActivity activity;
+  private URLConnection connection;
+  private PostParameters params;
 
-    public HttpTestClient(PostParameters params, HttpActivity activity, String commandName) throws MalformedURLException, IOException {
-        this.activity = activity;
-        connection = new URL("http://" + NettyHttpServerIT.TEST_HOST + ":" + NettyHttpServerIT.TEST_PORT + "/domain/" + commandName)
-                .openConnection();
-        this.params = params;
-    }
+  public HttpTestClient(PostParameters params, HttpActivity activity, String commandName) throws MalformedURLException, IOException {
+    this.activity = activity;
+    connection = new URL("http://" + NettyHttpServerIT.TEST_HOST + ":" + NettyHttpServerIT.TEST_PORT + "/domain/" + commandName)
+        .openConnection();
+    this.params = params;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Runnable#run()
-     */
-    @Override
-    public void run() {
-        IOException error = null;
-        connection.setDoOutput(true);
-        try {
-            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "ASCII");
-            out.write(params.toString());
-            out.write("\r\n");
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            error = e;
-        }
-        StringBuffer b = new StringBuffer();
-        try {
-            InputStreamReader r = new InputStreamReader(connection.getInputStream(), "UTF-8");
-            int c;
-            while ((c = r.read()) != -1) {
-                b.append((char) c);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            error = e;
-        }
-        if (activity != null) {
-            String body = b.toString();
-            activity.httpRequestComplete(error, connection.getHeaderFields(), body);
-        }
+  /*
+   * (non-Javadoc)
+   *
+   * @see java.lang.Runnable#run()
+   */
+  @Override
+  public void run() {
+    IOException error = null;
+    connection.setDoOutput(true);
+    try {
+      OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "ASCII");
+      out.write(params.toString());
+      out.write("\r\n");
+      out.flush();
+      out.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+      error = e;
     }
+    StringBuffer b = new StringBuffer();
+    try {
+      InputStreamReader r = new InputStreamReader(connection.getInputStream(), "UTF-8");
+      int c;
+      while ((c = r.read()) != -1) {
+        b.append((char) c);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      error = e;
+    }
+    if (activity != null) {
+      String body = b.toString();
+      activity.httpRequestComplete(error, connection.getHeaderFields(), body);
+    }
+  }
 
 }

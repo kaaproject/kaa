@@ -16,50 +16,50 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.place;
 
-import org.kaaproject.kaa.server.admin.client.util.Utils;
-
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import org.kaaproject.kaa.server.admin.client.util.Utils;
+
 public class SystemCtlSchemasPlace extends TreePlace {
 
-    public SystemCtlSchemasPlace() {
-    }
+  public SystemCtlSchemasPlace() {
+  }
 
-    @Prefix(value = "sysCtlSchemas")
-    public static class Tokenizer implements PlaceTokenizer<SystemCtlSchemasPlace> {
+  @Override
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof SystemCtlSchemasPlace);
+  }
 
-        @Override
-        public SystemCtlSchemasPlace getPlace(String token) {
-            return new SystemCtlSchemasPlace();
-        }
+  @Override
+  public String getName() {
+    return Utils.constants.systemCtl();
+  }
 
-        @Override
-        public String getToken(SystemCtlSchemasPlace place) {
-            PlaceParams.clear();
-            return PlaceParams.generateToken();
-        }
+  @Override
+  public boolean isLeaf() {
+    return true;
+  }
 
+  @Override
+  public TreePlace createDefaultPreviousPlace() {
+    return null;
+  }
+
+  @Prefix(value = "sysCtlSchemas")
+  public static class Tokenizer implements PlaceTokenizer<SystemCtlSchemasPlace> {
+
+    @Override
+    public SystemCtlSchemasPlace getPlace(String token) {
+      return new SystemCtlSchemasPlace();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj != null && (obj instanceof SystemCtlSchemasPlace);
+    public String getToken(SystemCtlSchemasPlace place) {
+      PlaceParams.clear();
+      return PlaceParams.generateToken();
     }
 
-    @Override
-    public String getName() {
-        return Utils.constants.systemCtl();
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return true;
-    }
-
-    @Override
-    public TreePlace createDefaultPreviousPlace() {
-        return null;
-    }
+  }
 
 }

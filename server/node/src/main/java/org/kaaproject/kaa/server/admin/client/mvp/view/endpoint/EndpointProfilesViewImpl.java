@@ -16,131 +16,116 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.endpoint;
 
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.TextBox;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.EndpointProfilesView;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.mvp.view.widget.EndpointGroupsInfoListBox;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
-import com.google.gwt.user.client.ui.Widget;
+public class EndpointProfilesViewImpl
+    extends BaseListViewImpl<EndpointProfileDto>
+    implements EndpointProfilesView {
 
-public class EndpointProfilesViewImpl extends BaseListViewImpl<EndpointProfileDto> implements EndpointProfilesView {
+  private static final int DEFAULT_PAGE_SIZE = 10;
 
-    private static final int DEFAULT_PAGE_SIZE = 10;
+  private EndpointGroupsInfoListBox listBox;
+  private TextBox endpointKeyHash;
+  private Button resetButton;
+  private Button findButton;
 
-    interface EndpointProfilesUiBinder extends UiBinder<Widget, EndpointProfilesViewImpl> { }
-    private static EndpointProfilesUiBinder uiBinder = GWT.create(EndpointProfilesUiBinder.class);
+  private RadioButton endpointGroupButton;
+  private RadioButton endpointKeyHashButton;
 
-    @UiField public HorizontalPanel filterPanel;
+  /**
+   * Instantiates a new EndpointProfilesViewImpl.
+   */
+  public EndpointProfilesViewImpl() {
+    super(false);
 
-    private EndpointGroupsInfoListBox listBox;
-    private TextBox endpointKeyHash;
-    private Button resetButton;
-    private Button findButton;
-    
-    private RadioButton endpointGroupButton;
-    private RadioButton endpointKeyHashButton;
+    supportPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+    supportPanel.setWidth("1000px");
 
-    public EndpointProfilesViewImpl() {
-        super(false);
+    resetButton = new Button(Utils.constants.reset());
+    supportPanel.add(resetButton);
 
-        int column = 0;
-        FlexTable flexTable = new FlexTable();
-        flexTable.setStyleName(Utils.avroUiStyle.fieldWidget());
+    endpointGroupButton = new RadioButton("filter", Utils.constants.endpointGroup());
+    listBox = new EndpointGroupsInfoListBox();
+    listBox.getElement().getStyle().setPropertyPx("minWidth", 100);
+    HorizontalPanel groupPanel = new HorizontalPanel();
+    groupPanel.setSpacing(15);
+    groupPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+    groupPanel.add(endpointGroupButton);
+    groupPanel.add(listBox);
+    supportPanel.add(groupPanel);
 
-        resetButton = new Button(Utils.constants.reset());
-        flexTable.setWidget(0, column, resetButton);
-        flexTable.getFlexCellFormatter().setVerticalAlignment(0, column++, HasVerticalAlignment.ALIGN_MIDDLE);
+    HorizontalPanel keyHashPanel = new HorizontalPanel();
+    keyHashPanel.setSpacing(15);
+    keyHashPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+    endpointKeyHashButton = new RadioButton("filter", Utils.constants.endpointKeyHash());
+    endpointKeyHash = new TextBox();
+    endpointKeyHash.setWidth("100%");
+    findButton = new Button(Utils.constants.find());
+    findButton.addStyleName(Utils.avroUiStyle.buttonSmall());
+    keyHashPanel.add(endpointKeyHashButton);
+    keyHashPanel.add(endpointKeyHash);
+    keyHashPanel.add(findButton);
+    supportPanel.add(keyHashPanel);
 
-        endpointGroupButton = new RadioButton("filter", Utils.constants.endpointGroup());
-        listBox = new EndpointGroupsInfoListBox();
-        listBox.getElement().getStyle().setPropertyPx("minWidth", 100);
-        HorizontalPanel groupPanel = new HorizontalPanel();
-        groupPanel.setSpacing(15);
-        groupPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        groupPanel.add(endpointGroupButton);
-        groupPanel.add(listBox);
-        flexTable.setWidget(0, column++, groupPanel);
+    endpointGroupButton.setValue(true);
+  }
 
-        HorizontalPanel keyHashPanel = new HorizontalPanel();
-        keyHashPanel.setSpacing(15);
-        keyHashPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        endpointKeyHashButton = new RadioButton("filter", Utils.constants.endpointKeyHash());
-        endpointKeyHash = new TextBox();
-        endpointKeyHash.setWidth("100%");
-        findButton = new Button(Utils.constants.find());
-        findButton.addStyleName(Utils.avroUiStyle.buttonSmall());
-        keyHashPanel.add(endpointKeyHashButton);
-        keyHashPanel.add(endpointKeyHash);
-        keyHashPanel.add(findButton);
-        flexTable.setWidget(0, column, keyHashPanel);
+  @Override
+  public EndpointGroupsInfoListBox getEndpointGroupsInfo() {
+    return listBox;
+  }
 
-        filterPanel.add(flexTable);
-        
-        endpointGroupButton.setValue(true);
-    }
-    
-    @Override
-    protected Widget createAndBindUi() {
-        return uiBinder.createAndBindUi(this);
-    }
+  @Override
+  public Button getFindEndpointButton() {
+    return findButton;
+  }
 
-    @Override
-    public ValueListBox<EndpointGroupDto> getEndpointGroupsInfo() {
-        return listBox;
-    }
+  @Override
+  public TextBox getEndpointKeyHashTextBox() {
+    return endpointKeyHash;
+  }
 
-    @Override
-    public Button getFindEndpointButton() {
-        return findButton;
-    }
+  @Override
+  protected AbstractGrid<EndpointProfileDto, String> createGrid() {
+    return new EndpointProfileGrid(DEFAULT_PAGE_SIZE);
+  }
 
-    @Override
-    public TextBox getEndpointKeyHashTextBox() {
-        return endpointKeyHash;
-    }
+  @Override
+  protected String titleString() {
+    return Utils.constants.endpointProfiles();
+  }
 
-    @Override
-    protected AbstractGrid<EndpointProfileDto, String> createGrid() {
-        return new EndpointProfileGrid(DEFAULT_PAGE_SIZE);
-    }
+  @Override
+  protected String addButtonString() {
+    return "";
+  }
 
-    @Override
-    protected String titleString() {
-        return Utils.constants.endpointProfiles();
-    }
+  @Override
+  public Button getResetButton() {
+    return resetButton;
+  }
 
-    @Override
-    protected String addButtonString() {
-        return "";
-    }
+  @Override
+  public HasValue<Boolean> getEndpointGroupButton() {
+    return endpointGroupButton;
+  }
 
-    @Override
-    public Button getResetButton() {
-        return resetButton;
-    }
-
-    @Override
-    public HasValue<Boolean> getEndpointGroupButton() {
-        return endpointGroupButton;
-    }
-
-    @Override
-    public HasValue<Boolean> getEndpointKeyHashButton() {
-        return endpointKeyHashButton;
-    }
+  @Override
+  public HasValue<Boolean> getEndpointKeyHashButton() {
+    return endpointKeyHashButton;
+  }
 
 }

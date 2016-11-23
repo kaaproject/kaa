@@ -16,11 +16,11 @@
 
 package org.kaaproject.kaa.server.common.thrift.cli.server;
 
-import java.io.PrintWriter;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+
+import java.io.PrintWriter;
 
 /**
  * The Class Command.<br>
@@ -28,93 +28,92 @@ import org.apache.commons.cli.Options;
  */
 public abstract class Command {
 
-    /** The command. */
-    private String command;
+  /**
+   * The command.
+   */
+  private String command;
 
-    /** The command description. */
-    private String desc;
+  /**
+   * The command description.
+   */
+  private String desc;
 
-    /** The command options. */
-    private Options options = new Options();
+  /**
+   * The command options.
+   */
+  private Options options = new Options();
 
-    /**
-     * Instantiates a new thrift CLI command.
-     * 
-     * @param command
-     *            the command
-     * @param desc
-     *            the command description
-     */
-    public Command(String command, String desc) {
-        this.command = command;
-        this.desc = desc;
-    }
+  /**
+   * Instantiates a new thrift CLI command.
+   *
+   * @param command the command
+   * @param desc    the command description
+   */
+  public Command(String command, String desc) {
+    this.command = command;
+    this.desc = desc;
+  }
 
-    /**
-     * Gets the command.
-     * 
-     * @return the command
-     */
-    public String getCommand() {
-        return command;
-    }
+  /**
+   * Gets the command.
+   *
+   * @return the command
+   */
+  public String getCommand() {
+    return command;
+  }
 
-    /**
-     * Sets the command.
-     * 
-     * @param command
-     *            the new command
-     */
-    public void setCommand(String command) {
-        this.command = command;
-    }
+  /**
+   * Sets the command.
+   *
+   * @param command the new command
+   */
+  public void setCommand(String command) {
+    this.command = command;
+  }
 
-    /**
-     * Gets the command description.
-     * 
-     * @return the command description
-     */
-    public String getDesc() {
-        return desc;
-    }
+  /**
+   * Gets the command description.
+   *
+   * @return the command description
+   */
+  public String getDesc() {
+    return desc;
+  }
 
-    /**
-     * Sets the command description.
-     * 
-     * @param desc
-     *            the new command description
-     */
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
+  /**
+   * Sets the command description.
+   *
+   * @param desc the new command description
+   */
+  public void setDesc(String desc) {
+    this.desc = desc;
+  }
 
-    /**
-     * Adds the command option.
-     * 
-     * @param option
-     *            the command option
-     */
-    public void addOption(Option option) {
-        options.addOption(option);
-    }
+  /**
+   * Adds the command option.
+   *
+   * @param option the command option
+   */
+  public void addOption(Option option) {
+    options.addOption(option);
+  }
 
-    /**
-     * Gets the command options.
-     * 
-     * @return the command options
-     */
-    public Options getOptions() {
-        return options;
-    }
+  /**
+   * Gets the command options.
+   *
+   * @return the command options
+   */
+  public Options getOptions() {
+    return options;
+  }
 
-    /**
-     * Run CLI command.
-     * 
-     * @param line
-     *            the command line
-     * @param writer
-     *            the writer to output command results
-     */
-    public abstract void runCommand(CommandLine line, PrintWriter writer);
+  /**
+   * Run CLI command.
+   *
+   * @param line   the command line
+   * @param writer the writer to output command results
+   */
+  public abstract void runCommand(CommandLine line, PrintWriter writer);
 
 }

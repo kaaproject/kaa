@@ -24,11 +24,11 @@ import org.kaaproject.kaa.server.common.zk.gen.ControlNodeInfo;
  */
 public interface ControlNodeAware {
 
-    /**
-     * Gets the control server info.
-     *
-     * @return the control server info
-     */
-    ControlNodeInfo getControlServerInfo();
+  /**
+   * Gets the control service info.
+   *
+   * @return the control service info
+   */
+  ControlNodeInfo getControlServerInfo();
 
 }

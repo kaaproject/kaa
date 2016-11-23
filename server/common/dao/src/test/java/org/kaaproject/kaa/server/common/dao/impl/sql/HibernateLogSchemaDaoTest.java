@@ -16,10 +16,6 @@
 
 package org.kaaproject.kaa.server.common.dao.impl.sql;
 
-import java.util.List;
-
-import javax.transaction.Transactional;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,50 +24,54 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
+import javax.transaction.Transactional;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/common-dao-test-context.xml")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 public class HibernateLogSchemaDaoTest extends HibernateAbstractTest {
 
-    @Test
-    public void findByApplicationIdTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
-        Assert.assertNotNull(logSchema);
-        List<LogSchema> schemaList = logSchemaDao.findByApplicationId(logSchema.getApplication().getStringId());
-        Assert.assertNotNull(schemaList);
-        LogSchema found = null;
-        for (LogSchema schema : schemaList) {
-            if (schema.getId().equals(logSchema.getId())) {
-                found = schema;
-            }
-        }
-        Assert.assertEquals(logSchema, found);
+  @Test
+  public void findByApplicationIdTest() {
+    LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
+    Assert.assertNotNull(logSchema);
+    List<LogSchema> schemaList = logSchemaDao.findByApplicationId(logSchema.getApplication().getStringId());
+    Assert.assertNotNull(schemaList);
+    LogSchema found = null;
+    for (LogSchema schema : schemaList) {
+      if (schema.getId().equals(logSchema.getId())) {
+        found = schema;
+      }
     }
+    Assert.assertEquals(logSchema, found);
+  }
 
-    @Test
-    public void findByAppIdAndVersionTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
-        Assert.assertNotNull(logSchema);
-        LogSchema found = logSchemaDao.findByApplicationIdAndVersion(logSchema.getApplication().getStringId(), logSchema.getVersion());
-        Assert.assertEquals(logSchema, found);
-    }
+  @Test
+  public void findByAppIdAndVersionTest() {
+    LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
+    Assert.assertNotNull(logSchema);
+    LogSchema found = logSchemaDao.findByApplicationIdAndVersion(logSchema.getApplication().getStringId(), logSchema.getVersion());
+    Assert.assertEquals(logSchema, found);
+  }
 
-    @Test
-    public void removeByApplicationIdTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
-        Assert.assertNotNull(logSchema);
-        logSchemaDao.removeByApplicationId(logSchema.getApplication().getStringId());
-        LogSchema schema = logSchemaDao.findById(logSchema.getStringId());
-        Assert.assertNull(schema);
-    }
+  @Test
+  public void removeByApplicationIdTest() {
+    LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
+    Assert.assertNotNull(logSchema);
+    logSchemaDao.removeByApplicationId(logSchema.getApplication().getStringId());
+    LogSchema schema = logSchemaDao.findById(logSchema.getStringId());
+    Assert.assertNull(schema);
+  }
 
-    @Test
-    public void removeByIdTest() {
-        LogSchema logSchema = generateLogSchema(null, null, 1).get(0);
-        Assert.assertNotNull(logSchema);
-        logSchemaDao.removeById(logSchema.getStringId());
-        LogSchema schema = logSchemaDao.findById(logSchema.getStringId());
-        Assert.assertNull(schema);
-    }
+  @Test
+  public void removeByIdTest() {
+    LogSchema logSchema = generateLogSchema(null, 1, null, 1).get(0);
+    Assert.assertNotNull(logSchema);
+    logSchemaDao.removeById(logSchema.getStringId());
+    LogSchema schema = logSchemaDao.findById(logSchema.getStringId());
+    Assert.assertNull(schema);
+  }
 }

@@ -13,42 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kaaproject.kaa.server.flume.channel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+package org.kaaproject.kaa.server.flume.channel;
 
 import org.apache.flume.Channel;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.channel.AbstractChannelSelector;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class KaaLoadChannelSelector extends AbstractChannelSelector {
 
-    private List<Channel> allChannels = null;   
-    private List<Channel> optionalChannels = new ArrayList<Channel>();
-    
-    private int currentChannel = 0;
-    
-    @Override
-    public List<Channel> getRequiredChannels(Event event) {
-        Channel channel = allChannels.get(currentChannel);
-        currentChannel++;
-        if (currentChannel == allChannels.size()) {
-            currentChannel = 0;
-        }
-        return Collections.singletonList(channel);
-    }
+  private List<Channel> allChannels = null;
+  private List<Channel> optionalChannels = new ArrayList<Channel>();
 
-    @Override
-    public List<Channel> getOptionalChannels(Event event) {
-        return optionalChannels;
-    }
+  private int currentChannel = 0;
 
-    @Override
-    public void configure(Context context) {
-        allChannels = getAllChannels();
+  @Override
+  public List<Channel> getRequiredChannels(Event event) {
+    Channel channel = allChannels.get(currentChannel);
+    currentChannel++;
+    if (currentChannel == allChannels.size()) {
+      currentChannel = 0;
     }
+    return Collections.singletonList(channel);
+  }
+
+  @Override
+  public List<Channel> getOptionalChannels(Event event) {
+    return optionalChannels;
+  }
+
+  @Override
+  public void configure(Context context) {
+    allChannels = getAllChannels();
+  }
 
 }

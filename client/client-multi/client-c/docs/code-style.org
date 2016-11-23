@@ -1,0 +1,96 @@
+#+TITLE: C/C++ Code Style
+#+AUTHOR: Alexey Shmalko
+#+OPTIONS: toc:nil
+
+# Confluence doesn't have C language highlight, so use C++ here.
+
+* Rules
+
+  - Use 4 spaces for indentation. Don't use tabs.
+
+  - Use 100-character column width.
+
+  - Use snake_case for the names (not camelCase).
+
+  - All macro names must be in UPPERCASE.
+
+  - Use [[https://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS][1TBS]] (the one true brace style).
+    #+begin_src c++
+       int main(int argc, char *argv[])
+       {
+           if (argc > 2) {
+               printf("too many args\n");
+           } else {
+               printf("too little args\n");
+           }
+
+           return 0;
+       }
+    #+end_src
+    Note brace position. The braces in control structures are required even for a single statement.
+
+  - The pointer star must be aligned to the variable name:
+    #+begin_src c++
+       int *x;
+    #+end_src
+
+  - Labels must be indented one level less than the normal indentation (except for case labels):
+    #+begin_src c++
+       int main(int argc, char *argv[])
+       {
+           switch (argc) {
+               case 3:
+                   printf("hi\n");
+
+               default:
+                   goto fail;
+           }
+           return 0;
+
+       fail:
+           return 1;
+       }
+    #+end_src
+
+  - Prefer double-indent instead of alignment in conditions and argument lists:
+    #+begin_src c++
+       int my_function(int param1, int param2,
+               int param3, int param4)
+       {
+           if (param1 > 3 && param2 > 3 &&
+                   param3 > 3 && param4 > 3) {
+               return param1 + param2 + param3 +
+                   param4;
+           } else {
+               return 0;
+           }
+       }
+    #+end_src
+
+  - Don't allow trailing spaces or lines.
+
+* Editor configurations
+** Emacs
+   
+   #+begin_src emacs-lisp
+     (require 'whitespace)
+     (setq-default whitespace-style '(face
+                                      tab-mark
+                                      empty
+                                      trailing
+                                      lines-tail))
+     (global-whitespace-mode t)
+
+     (c-add-style "kaa"
+                  '("k&r"
+                    (whitespace-line-column . 100)
+                    (indent-tabs-mode . nil)
+                    (c-basic-offset . 4)
+                    (c-label-minimum-indentation . 0)
+                    (c-offsets-alist . ((case-label . +)
+                                        (arglist-intro . ++)
+                                        (arglist-cont-nonempty . ++)
+                                        (inextern-lang . 0)))))
+
+     (setq c-default-style "kaa")
+   #+end_src

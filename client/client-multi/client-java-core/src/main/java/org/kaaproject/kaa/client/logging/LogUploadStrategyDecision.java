@@ -20,12 +20,12 @@ package org.kaaproject.kaa.client.logging;
  * Describes all possible decisions for a log upload strategy ({@link LogUploadStrategy}).
  */
 public enum LogUploadStrategyDecision {
-    /**
-     * Do nothing except adding log record to a storage.
-     */
-    NOOP,
-    /**
-     * Kaa SDK should initiate log upload on the Operation server.
-     */
-    UPLOAD
+  /**
+   * Do nothing except adding log record to a storage.
+   */
+  NOOP,
+  /**
+   * Kaa SDK should initiate log upload on the Operation server.
+   */
+  UPLOAD
 }

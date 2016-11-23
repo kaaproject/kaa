@@ -21,23 +21,23 @@ import org.kaaproject.kaa.server.admin.client.util.Utils;
 
 public class GeneralPropertiesViewImpl extends BasePropertiesViewImpl {
 
-    public GeneralPropertiesViewImpl() {
-        super(false);
-    }
+  public GeneralPropertiesViewImpl() {
+    super(false);
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return "";
-    }
+  @Override
+  protected String getCreateTitle() {
+    return "";
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.generalSettings();
-    }
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.generalSettings();
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.generalSettingsDetails();
-    }
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.generalSettingsDetails();
+  }
 
 }

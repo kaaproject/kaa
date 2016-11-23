@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.common.zk.bootstrap;
 
-import java.io.IOException;
-
-import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.kaaproject.kaa.server.common.zk.WorkerNodeTracker;
@@ -26,78 +23,89 @@ import org.kaaproject.kaa.server.common.zk.gen.BootstrapNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 
 /**
  * The Class BootstrapNode.
  */
 public class BootstrapNode extends WorkerNodeTracker {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory
-            .getLogger(BootstrapNode.class);
+  /**
+   * The Constant LOG.
+   */
+  private static final Logger LOG = LoggerFactory
+      .getLogger(BootstrapNode.class);
 
-    /** The node info. */
-    private BootstrapNodeInfo nodeInfo;
+  /**
+   * The node info.
+   */
+  private BootstrapNodeInfo nodeInfo;
 
-    /**
-     * Instantiates a new bootstrap node.
-     *
-     * @param nodeInfo the node info
-     * @param zkHostPortList the zk host port list
-     * @param retryPolicy the retry policy
-     */
-    public BootstrapNode(BootstrapNodeInfo nodeInfo, String zkHostPortList,
-            RetryPolicy retryPolicy) {
-        super(zkHostPortList, retryPolicy);
-        this.nodeInfo = nodeInfo;
-    }
+  /**
+   * Instantiates a new bootstrap node.
+   *
+   * @param nodeInfo the node info
+   */
+  public BootstrapNode(BootstrapNodeInfo nodeInfo) {
+    super();
+    this.nodeInfo = nodeInfo;
+  }
 
-    @Override
-    public boolean createZkNode() throws IOException {
-        return doZKClientAction(new ZKClientAction() {
-            @Override
-            public void doWithZkClient(CuratorFramework client) throws Exception {
-                nodePath = client
-                        .create()
-                        .creatingParentsIfNeeded()
-                        .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-                        .forPath(
-                                BOOTSTRAP_SERVER_NODE_PATH
-                                        + BOOTSTRAP_SERVER_NODE_PATH,
-                                bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
-                LOG.info("Created node with path: " + nodePath);
-            }
-        });
-    }
+  /**
+   * Instantiates a new bootstrap node.
+   *
+   * @param nodeInfo the node info
+   * @param zkClient Zookeeper client
+   */
+  public BootstrapNode(BootstrapNodeInfo nodeInfo, CuratorFramework zkClient) {
+    super(zkClient);
+    this.nodeInfo = nodeInfo;
+  }
 
-    /**
-     * Updates current ZK node data.
-     *
-     * @param currentNodeInfo the current node info
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public void updateNodeData(BootstrapNodeInfo currentNodeInfo)
-            throws IOException {
-        this.nodeInfo = currentNodeInfo;
-        doZKClientAction(new ZKClientAction() {
-            @Override
-            public void doWithZkClient(CuratorFramework client) throws Exception {
-                client.setData().forPath(nodePath,
-                        bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
-            }
-        });
-    }
+  @Override
+  public boolean createZkNode() throws IOException {
+    return doZkClientAction(new ZkClientAction() {
+      @Override
+      public void doWithZkClient(CuratorFramework client) throws Exception {
+        nodePath = client
+            .create()
+            .creatingParentsIfNeeded()
+            .withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
+            .forPath(
+                BOOTSTRAP_SERVER_NODE_PATH
+                    + BOOTSTRAP_SERVER_NODE_PATH,
+                bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
+        LOG.info("Created node with path: " + nodePath);
+      }
+    });
+  }
 
-    public BootstrapNodeInfo getNodeInfo() {
-        return nodeInfo;
-    }
+  /**
+   * Updates current ZK node data.
+   *
+   * @param currentNodeInfo the current node info
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  public void updateNodeData(BootstrapNodeInfo currentNodeInfo)
+      throws IOException {
+    this.nodeInfo = currentNodeInfo;
+    doZkClientAction(new ZkClientAction() {
+      @Override
+      public void doWithZkClient(CuratorFramework client) throws Exception {
+        client.setData().forPath(nodePath,
+            bootstrapNodeAvroConverter.get().toByteArray(nodeInfo));
+      }
+    });
+  }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BootstrapNode [nodeInfo=");
-        builder.append(nodeInfo);
-        builder.append("]");
-        return builder.toString();
-    }
+  public BootstrapNodeInfo getNodeInfo() {
+    return nodeInfo;
+  }
+
+  @Override
+  public String toString() {
+    return "BootstrapNode {" + "host =" + nodeInfo.getConnectionInfo().getThriftHost()
+        + "port =" + nodeInfo.getConnectionInfo().getThriftPort() + "timeStarted =" + nodeInfo.getTimeStarted() + '}';
+  }
 }

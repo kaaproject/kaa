@@ -16,28 +16,28 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.notification;
 
-import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseSchemaViewImpl;
+import org.kaaproject.kaa.server.admin.client.mvp.view.schema.BaseCtlSchemaViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-public class NotificationSchemaViewImpl extends BaseSchemaViewImpl {
+public class NotificationSchemaViewImpl extends BaseCtlSchemaViewImpl {
 
-    public NotificationSchemaViewImpl(boolean create) {
-        super(create);
-    }
+  public NotificationSchemaViewImpl(boolean create) {
+    super(create);
+  }
 
-    @Override
-    protected String getCreateTitle() {
-        return Utils.constants.addNotificationSchema();
-    }
+  @Override
+  protected String getCreateTitle() {
+    return Utils.constants.addNotificationSchema();
+  }
 
-    @Override
-    protected String getViewTitle() {
-        return Utils.constants.notificationSchema();
-    }
+  @Override
+  protected String getViewTitle() {
+    return Utils.constants.notificationSchema();
+  }
 
-    @Override
-    protected String getSubTitle() {
-        return Utils.constants.notificationSchemaDetails();
-    }
+  @Override
+  protected String getSubTitle() {
+    return Utils.constants.notificationSchemaDetails();
+  }
 
 }

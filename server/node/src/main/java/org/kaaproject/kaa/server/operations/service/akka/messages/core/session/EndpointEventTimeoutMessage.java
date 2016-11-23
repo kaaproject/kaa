@@ -20,15 +20,15 @@ import org.kaaproject.kaa.server.operations.service.event.EndpointEvent;
 
 public class EndpointEventTimeoutMessage {
 
-    private final EndpointEvent event;
+  private final EndpointEvent event;
 
-    public EndpointEventTimeoutMessage(EndpointEvent event) {
-        super();
-        this.event = event;
-    }
+  public EndpointEventTimeoutMessage(EndpointEvent event) {
+    super();
+    this.event = event;
+  }
 
-    public EndpointEvent getEvent() {
-        return event;
-    }
+  public EndpointEvent getEvent() {
+    return event;
+  }
 
 }

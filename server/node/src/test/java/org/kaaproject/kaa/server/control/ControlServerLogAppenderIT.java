@@ -16,70 +16,57 @@
 
 package org.kaaproject.kaa.server.control;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
+
+import java.util.List;
 
 /**
  * The Class ControlServerLogAppenderIT.
  */
 public class ControlServerLogAppenderIT extends AbstractTestControlServer {
 
-    /**
-     * Gets the log appenders by application id test.
-     *
-     * @return the log appenders by application id test
-     * @throws Exception the exception
-     */
-    @Test
-    public void getLogAppendersByApplicationIdTest() throws Exception {
-        LogAppenderDto appenderDto = createLogAppender(null, null);
-        List<LogAppenderDto> found = client.getLogAppenders(appenderDto.getApplicationId());
-        Assert.assertEquals(1, found.size());
-    }
+  /**
+   * Gets the log appenders by application token test.
+   *
+   * @return the log appenders by application token test
+   * @throws Exception the exception
+   */
+  @Test
+  public void getLogAppendersByApplicationTokenTest() throws Exception {
+    LogAppenderDto appenderDto = createLogAppender(null, null);
+    List<LogAppenderDto> found = client.getLogAppendersByAppToken(appenderDto.getApplicationToken());
+    Assert.assertEquals(1, found.size());
+  }
 
-    /**
-     * Gets the log appenders by application token test.
-     *
-     * @return the log appenders by application token test
-     * @throws Exception the exception
-     */
-    @Test
-    public void getLogAppendersByApplicationTokenTest() throws Exception {
-        LogAppenderDto appenderDto = createLogAppender(null, null);
-        List<LogAppenderDto> found = client.getLogAppendersByAppToken(appenderDto.getApplicationToken());
-        Assert.assertEquals(1, found.size());
-    }
+  /**
+   * Gets the log appenders by id test.
+   *
+   * @return the log appenders by id test
+   * @throws Exception the exception
+   */
+  @Test
+  public void getLogAppendersByIdTest() throws Exception {
+    LogAppenderDto appenderDto = createLogAppender(null, null);
+    LogAppenderDto found = client.getLogAppender(appenderDto.getId());
+    Assert.assertEquals(appenderDto, found);
+  }
 
-    /**
-     * Gets the log appenders by id test.
-     *
-     * @return the log appenders by id test
-     * @throws Exception the exception
-     */
-    @Test
-    public void getLogAppendersByIdTest() throws Exception {
-        LogAppenderDto appenderDto = createLogAppender(null, null);
-        LogAppenderDto found = client.getLogAppender(appenderDto.getId());
-        Assert.assertEquals(appenderDto, found);
-    }
-
-    /**
-     * Delete log appender test.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void deleteLogAppenderTest() throws Exception {
-        final LogAppenderDto appenderDto = createLogAppender(null, null);
-        client.deleteLogAppender(appenderDto.getId());
-        checkNotFound(new TestRestCall() {
-            @Override
-            public void executeRestCall() throws Exception {
-                client.getLogAppender(appenderDto.getId());
-            }
-        });
-    }
+  /**
+   * Delete log appender test.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  public void deleteLogAppenderTest() throws Exception {
+    final LogAppenderDto appenderDto = createLogAppender(null, null);
+    client.deleteLogAppender(appenderDto.getId());
+    checkNotFound(new TestRestCall() {
+      @Override
+      public void executeRestCall() throws Exception {
+        client.getLogAppender(appenderDto.getId());
+      }
+    });
+  }
 }

@@ -16,95 +16,108 @@
 
 package org.kaaproject.kaa.server.common.log.shared.appender.data;
 
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileDataDto;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEvent;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogSchema;
 
+import java.util.List;
+
 public class BaseLogEventPack implements LogEventPack {
 
-    private final EndpointProfileDataDto profileDto;
+  private final EndpointProfileDataDto profileDto;
 
-    private final long dateCreated;
+  private final long dateCreated;
 
-    private final List<LogEvent> events;
+  private final List<LogEvent> events;
 
-    private final int logSchemaVersion;
+  private final int logSchemaVersion;
 
-    private LogSchema logSchema;
+  private LogSchema logSchema;
 
-    private String userId;
+  private String userId;
 
-    private ProfileInfo clientProfile;
+  private ProfileInfo clientProfile;
 
-    private ProfileInfo serverProfile;
+  private ProfileInfo serverProfile;
 
-    public BaseLogEventPack(EndpointProfileDataDto profileDto, long dateCreated, int logSchemaVersion, List<LogEvent> events) {
-        this.profileDto = profileDto;
-        this.dateCreated = dateCreated;
-        this.logSchemaVersion = logSchemaVersion;
-        this.events = events;
-    }
+  /**
+   * Create new instance of <code>BaseLogEventPack</code>.
+   *
+   * @param profileDto is endpoint profile data dto
+   * @param dateCreated is date created
+   * @param logSchemaVersion is log schema version
+   * @param events is <code>List</code> of events
+   */
+  public BaseLogEventPack(
+          EndpointProfileDataDto profileDto,
+          long dateCreated,
+          int logSchemaVersion,
+          List<LogEvent> events
+  ) {
+    this.profileDto = profileDto;
+    this.dateCreated = dateCreated;
+    this.logSchemaVersion = logSchemaVersion;
+    this.events = events;
+  }
 
-    public EndpointProfileDataDto getProfileDto() {
-        return profileDto;
-    }
+  public EndpointProfileDataDto getProfileDto() {
+    return profileDto;
+  }
 
-    @Override
-    public String getEndpointKey() {
-        return profileDto.getEndpointKey();
-    }
+  @Override
+  public String getEndpointKey() {
+    return profileDto.getEndpointKey();
+  }
 
-    @Override
-    public String getUserId() {
-        return userId;
-    }
+  @Override
+  public String getUserId() {
+    return userId;
+  }
 
-    @Override
-    public long getDateCreated() {
-        return dateCreated;
-    }
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
 
-    @Override
-    public LogSchema getLogSchema() {
-        return logSchema;
-    }
+  @Override
+  public long getDateCreated() {
+    return dateCreated;
+  }
 
-    @Override
-    public List<LogEvent> getEvents() {
-        return events;
-    }
+  @Override
+  public LogSchema getLogSchema() {
+    return logSchema;
+  }
 
-    @Override
-    public ProfileInfo getClientProfile() {
-        return clientProfile;
-    }
+  public void setLogSchema(LogSchema logSchema) {
+    this.logSchema = logSchema;
+  }
 
-    @Override
-    public ProfileInfo getServerProfile() {
-        return serverProfile;
-    }
+  @Override
+  public List<LogEvent> getEvents() {
+    return events;
+  }
 
-    public void setLogSchema(LogSchema logSchema) {
-        this.logSchema = logSchema;
-    }
+  @Override
+  public ProfileInfo getClientProfile() {
+    return clientProfile;
+  }
 
-    public int getLogSchemaVersion() {
-        return logSchemaVersion;
-    }
+  public void setClientProfile(ProfileInfo clientProfile) {
+    this.clientProfile = clientProfile;
+  }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+  @Override
+  public ProfileInfo getServerProfile() {
+    return serverProfile;
+  }
 
-    public void setClientProfile(ProfileInfo clientProfile) {
-        this.clientProfile = clientProfile;
-    }
+  public void setServerProfile(ProfileInfo serverProfile) {
+    this.serverProfile = serverProfile;
+  }
 
-    public void setServerProfile(ProfileInfo serverProfile) {
-        this.serverProfile = serverProfile;
-    }
+  public int getLogSchemaVersion() {
+    return logSchemaVersion;
+  }
 
 }

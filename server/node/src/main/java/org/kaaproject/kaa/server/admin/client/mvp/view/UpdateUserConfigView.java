@@ -16,18 +16,18 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view;
 
-import org.kaaproject.avro.ui.shared.RecordField;
-import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
-
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueListBox;
 
+import org.kaaproject.avro.ui.shared.RecordField;
+import org.kaaproject.kaa.server.admin.shared.schema.SchemaInfoDto;
+
 public interface UpdateUserConfigView extends BaseDetailsView {
 
-    HasValue<String> getUserId();
-    
-    ValueListBox<SchemaInfoDto> getConfigurationSchemaInfo();
-    
-    HasValue<RecordField> getConfigurationData();
-    
+  HasValue<String> getUserId();
+
+  ValueListBox<SchemaInfoDto> getConfigurationSchemaInfo();
+
+  HasValue<RecordField> getConfigurationData();
+
 }

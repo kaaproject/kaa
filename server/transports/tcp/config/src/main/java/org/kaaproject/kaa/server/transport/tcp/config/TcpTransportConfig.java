@@ -17,51 +17,47 @@
 package org.kaaproject.kaa.server.transport.tcp.config;
 
 import org.apache.avro.Schema;
-import org.kaaproject.kaa.server.common.utils.CRC32Util;
+import org.kaaproject.kaa.server.common.utils.Crc32Util;
 import org.kaaproject.kaa.server.transport.KaaTransportConfig;
 import org.kaaproject.kaa.server.transport.TransportConfig;
 import org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig;
 
-/**
- * Configuration for TCP transport
- * 
- * @author Andrew Shvayka
- *
- */
+
 @KaaTransportConfig
 public class TcpTransportConfig implements TransportConfig {
-    private static final String TCP_TRANSPORT_NAME = "org.kaaproject.kaa.server.transport.tcp";
-    private static final int TCP_TRANSPORT_ID = CRC32Util.crc32(TCP_TRANSPORT_NAME);
-    private static final String TCP_TRANSPORT_CLASS = "org.kaaproject.kaa.server.transports.tcp.transport.TcpTransport";
-    private static final String TCP_TRANSPORT_CONFIG = "tcp-transport.config";
+  private static final String TCP_TRANSPORT_NAME = "org.kaaproject.kaa.server.transport.tcp";
+  private static final int TCP_TRANSPORT_ID = Crc32Util.crc32(TCP_TRANSPORT_NAME);
+  private static final String TCP_TRANSPORT_CLASS =
+      "org.kaaproject.kaa.server.transports.tcp.transport.TcpTransport";
+  private static final String TCP_TRANSPORT_CONFIG = "tcp-transport.config";
 
-    public TcpTransportConfig() {
-        super();
-    }
+  public TcpTransportConfig() {
+    super();
+  }
 
-    @Override
-    public int getId() {
-        return TCP_TRANSPORT_ID;
-    }
+  @Override
+  public int getId() {
+    return TCP_TRANSPORT_ID;
+  }
 
-    @Override
-    public String getName() {
-        return TCP_TRANSPORT_NAME;
-    }
+  @Override
+  public String getName() {
+    return TCP_TRANSPORT_NAME;
+  }
 
-    @Override
-    public String getTransportClass() {
-        return TCP_TRANSPORT_CLASS;
-    }
+  @Override
+  public String getTransportClass() {
+    return TCP_TRANSPORT_CLASS;
+  }
 
-    @Override
-    public Schema getConfigSchema() {
-        return AvroTcpConfig.getClassSchema();
-    }
+  @Override
+  public Schema getConfigSchema() {
+    return AvroTcpConfig.getClassSchema();
+  }
 
-    @Override
-    public String getConfigFileName() {
-        return TCP_TRANSPORT_CONFIG;
-    }
+  @Override
+  public String getConfigFileName() {
+    return TCP_TRANSPORT_CONFIG;
+  }
 
 }

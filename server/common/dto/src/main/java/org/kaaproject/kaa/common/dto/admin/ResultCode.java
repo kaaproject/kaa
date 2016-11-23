@@ -18,23 +18,24 @@ package org.kaaproject.kaa.common.dto.admin;
 
 public enum ResultCode {
 
-    OK("ok"),
-    USERNAME_EXISTS("usernameExists"),
-    EMAIL_EXISTS("emailExists"),
-    USER_NOT_FOUND("userNotFound"),
-    USER_EMAIL_NOT_FOUND("userEmailNotFound"),
-    USER_OR_EMAIL_NOT_FOUND("userOrEmailNotFound"),
-    USER_EMAIL_NOT_DEFINED("userEmailNotDefined"),
-    OLD_PASSWORD_MISMATCH("oldPasswordMismatch"),
-    BAD_PASSWORD_STRENGTH("badPasswordStrength");
+  OK("ok"),
+  USERNAME_EXISTS("usernameExists"),
+  EMAIL_EXISTS("emailExists"),
+  USER_NOT_FOUND("userNotFound"),
+  USER_EMAIL_NOT_FOUND("userEmailNotFound"),
+  USER_OR_EMAIL_NOT_FOUND("userOrEmailNotFound"),
+  USER_EMAIL_NOT_DEFINED("userEmailNotDefined"),
+  OLD_PASSWORD_MISMATCH("oldPasswordMismatch"),
+  BAD_PASSWORD_STRENGTH("badPasswordStrength"),
+  PERMISSION_DENIED("permissionDenied");
 
-    String key;
+  String key;
 
-    ResultCode(String key) {
-        this.key = key;
-    }
+  ResultCode(String key) {
+    this.key = key;
+  }
 
-    public String getResourceKey() {
-        return key;
-    }
+  public String getResourceKey() {
+    return key;
+  }
 }

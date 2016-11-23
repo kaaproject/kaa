@@ -26,15 +26,15 @@ import org.mockito.Mockito;
  */
 public class JavaDynamicCompilerTest {
 
-    /**
-     * Test compiler not found.
-     */
-    @Test(expected = JavaDynamicException.class)
-    public void testCompilerNotFound() {
-        JavaDynamicCompiler compiler = new JavaDynamicCompiler();
-        JavaDynamicCompiler compilerStubbed = Mockito.spy(compiler);
-        Mockito.doReturn(null).when(compilerStubbed).getCompiler();
-        compilerStubbed.init();
-    }
- 
+  /**
+   * Test compiler not found.
+   */
+  @Test(expected = JavaDynamicException.class)
+  public void testCompilerNotFound() {
+    JavaDynamicCompiler compiler = new JavaDynamicCompiler();
+    JavaDynamicCompiler compilerStubbed = Mockito.spy(compiler);
+    Mockito.doReturn(null).when(compilerStubbed).getCompiler();
+    compilerStubbed.init();
+  }
+
 }

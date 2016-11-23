@@ -22,7 +22,7 @@
 #ifndef EXT_SHA_H_
 #define EXT_SHA_H_
 
-#include "../kaa_error.h"
+#include "kaa_error.h"
 
 #ifdef __cplusplus
 extern "C" {

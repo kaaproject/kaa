@@ -16,14 +16,14 @@
 
 package org.kaaproject.kaa.server.common.core.configuration;
 
-import java.io.Serializable;
-
 import org.kaaproject.kaa.server.common.core.schema.KaaSchema;
+
+import java.io.Serializable;
 
 public interface KaaData<T extends KaaSchema> extends Serializable {
 
-    T getSchema();
+  T getSchema();
 
-    String getRawData();
+  String getRawData();
 
 }

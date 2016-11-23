@@ -20,103 +20,113 @@ import org.kaaproject.kaa.client.logging.RecordInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RecordFuture implements Future<RecordInfo> {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(RecordFuture.class);
 
-    private static AtomicInteger recordFutureCounter = new AtomicInteger(0);    
-    private BlockingQueue<ExecutionResult<RecordInfo>> queue = new ArrayBlockingQueue<>(1);
-    private volatile State state = State.WAITING;
-    
-    private final int recordFutureId = recordFutureCounter.getAndIncrement();
-    
-    private final long recordAddedTimestampMs;
+  private static final Logger LOG = LoggerFactory.getLogger(RecordFuture.class);
 
-    private enum State {
-        WAITING, DONE
-    }
-    
-    public RecordFuture() {
-        super();
-        recordAddedTimestampMs = System.currentTimeMillis();
-    }
-    
-    public int getRecordFutureId() {
-        return recordFutureId;
-    }
+  private static AtomicInteger recordFutureCounter = new AtomicInteger(0);
+  private final int recordFutureId = recordFutureCounter.getAndIncrement();
+  private final long recordAddedTimestampMs;
+  private BlockingQueue<ExecutionResult<RecordInfo>> queue = new ArrayBlockingQueue<>(1);
+  private volatile State state = State.WAITING;
 
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        throw new RuntimeException("Not implemented");
-    }
+  public RecordFuture() {
+    super();
+    recordAddedTimestampMs = System.currentTimeMillis();
+  }
 
-    @Override
-    public boolean isCancelled() {
-        return false;
-    }
+  public int getRecordFutureId() {
+    return recordFutureId;
+  }
 
-    @Override
-    public boolean isDone() {
-        return state == State.DONE;
-    }
-    
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + recordFutureId;
-        return result;
-    }
+  @Override
+  public boolean cancel(boolean mayInterruptIfRunning) {
+    throw new RuntimeException("Not implemented");
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        RecordFuture other = (RecordFuture) obj;
-        if (recordFutureId != other.recordFutureId) {
-            return false;
-        }
-        return true;
-    }
+  @Override
+  public boolean isCancelled() {
+    return false;
+  }
 
-    public void setValue(RecordInfo value) {
-        try {
-            value.setRecordAddedTimestampMs(recordAddedTimestampMs);
-            value.setRecordDeliveryTimeMs(System.currentTimeMillis() - recordAddedTimestampMs);
-            this.queue.put(new ExecutionResult<>(value, null));
-        } catch (InterruptedException e) {
-            LOG.warn("Failed to push value", e);
-        }
-        state = State.DONE;
-    }
+  @Override
+  public boolean isDone() {
+    return state == State.DONE;
+  }
 
-    @Override
-    public RecordInfo get() throws InterruptedException, ExecutionException {
-        ExecutionResult<RecordInfo> result = queue.take();
-        return processResult(result);
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + recordFutureId;
+    return result;
+  }
 
-    @Override
-    public RecordInfo get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        ExecutionResult<RecordInfo> result = queue.poll(timeout, unit);
-        return processResult(result);
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
     }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    RecordFuture other = (RecordFuture) obj;
+    if (recordFutureId != other.recordFutureId) {
+      return false;
+    }
+    return true;
+  }
 
-    private RecordInfo processResult(ExecutionResult<RecordInfo> result) throws ExecutionException {
-        if (result.getE() == null) {
-            return result.get();
-        } else {
-            throw new ExecutionException(result.getE());
-        }
+  /**
+   * Sets value.
+   *
+   * @param value      value
+   * @param arriveTime arrive time
+   */
+  public void setValue(RecordInfo value, Long arriveTime) {
+    try {
+      value.setRecordAddedTimestampMs(recordAddedTimestampMs);
+      value.setRecordDeliveryTimeMs(arriveTime - recordAddedTimestampMs);
+      this.queue.put(new ExecutionResult<>(value, null));
+    } catch (InterruptedException ex) {
+      LOG.warn("Failed to push value", ex);
     }
+    state = State.DONE;
+  }
+
+  @Override
+  public RecordInfo get() throws InterruptedException, ExecutionException {
+    ExecutionResult<RecordInfo> result = queue.take();
+    return processResult(result);
+  }
+
+  @Override
+  public RecordInfo get(long timeout, TimeUnit unit)
+          throws InterruptedException, ExecutionException, TimeoutException {
+    ExecutionResult<RecordInfo> result = queue.poll(timeout, unit);
+    return processResult(result);
+  }
+
+  private RecordInfo processResult(ExecutionResult<RecordInfo> result) throws ExecutionException {
+    if (result.getE() == null) {
+      return result.get();
+    } else {
+      throw new ExecutionException(result.getE());
+    }
+  }
+
+  private enum State {
+    WAITING, DONE
+  }
 }

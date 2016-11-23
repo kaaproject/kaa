@@ -42,132 +42,130 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class GplusUserVerifier extends AbstractKaaUserVerifier<GplusAvroConfig> {
-    private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
-    private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
-    private static final int HTTP_OK = 200;
-    private static final int HTTP_BAD_REQUEST = 400;
-    private static final Charset CHARSET = Charset.forName("UTF-8");
-    private GplusAvroConfig configuration;
-    private ExecutorService threadPool;
-    private volatile CloseableHttpClient httpClient;
+  private static final Logger LOG = LoggerFactory.getLogger(GplusUserVerifier.class);
+  private static final String GOOGLE_OAUTH = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
+  private static final int HTTP_OK = 200;
+  private static final int HTTP_BAD_REQUEST = 400;
+  private static final Charset CHARSET = Charset.forName("UTF-8");
+  private GplusAvroConfig configuration;
+  private ExecutorService threadPool;
+  private volatile CloseableHttpClient httpClient;
 
-    @Override
-    public void init(UserVerifierContext context, GplusAvroConfig configuration) {
-        LOG.info("Initializing user verifier with context {} and configuration {}", context, configuration);
-        this.configuration = configuration;
+  @Override
+  public void init(UserVerifierContext context, GplusAvroConfig configuration) {
+    LOG.info("Initializing user verifier with context {} and configuration {}", context, configuration);
+    this.configuration = configuration;
+  }
+
+  @Override
+  public void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback) {
+    try {
+      URI uri = new URI(GOOGLE_OAUTH + accessToken);
+      threadPool.submit(new RunnableVerifier(uri, callback, userExternalId));
+    } catch (URISyntaxException ex) {
+      LOG.warn("Internal error", ex);
+      callback.onInternalError();
+    }
+  }
+
+  protected String readResponse(InputStream is) throws IOException {
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    byte[] data = new byte[2048];
+    int len = 0;
+    while ((len = is.read(data, 0, data.length)) >= 0) {
+      bos.write(data, 0, len);
+    }
+    byte[] bytes = bos.toByteArray();
+    bos.close();
+    return new String(bytes, CHARSET);
+  }
+
+  protected CloseableHttpResponse establishConnection(URI uri) throws IOException {
+    return httpClient.execute(new HttpGet(uri));
+  }
+
+  @Override
+  public void start() {
+    LOG.info("user verifier started");
+    threadPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
+        configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+    PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+    connectionManager.setMaxTotal(configuration.getMaxParallelConnections());
+    httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
+  }
+
+  @Override
+  public void stop() {
+    threadPool.shutdown();
+    if (null != httpClient) {
+      try {
+        httpClient.close();
+      } catch (IOException ex) {
+        LOG.warn("Internal error: ", ex);
+      }
+    }
+    LOG.info("user verifier stopped");
+  }
+
+  @Override
+  public Class<GplusAvroConfig> getConfigurationClass() {
+    return GplusAvroConfig.class;
+  }
+
+  private class RunnableVerifier implements Runnable {
+
+    private final URI uri;
+    private final UserVerifierCallback callback;
+    private final String userExternalId;
+
+    public RunnableVerifier(URI uri, UserVerifierCallback callback, String userExternalId) {
+      this.uri = uri;
+      this.callback = callback;
+      this.userExternalId = userExternalId;
     }
 
     @Override
-    public void checkAccessToken(String userExternalId, String accessToken, UserVerifierCallback callback) {
-        try {
-            URI uri = new URI(GOOGLE_OAUTH + accessToken);
-            threadPool.submit(new RunnableVerifier(uri, callback, userExternalId));
-        } catch (URISyntaxException e) {
-            LOG.warn("Internal error", e);
-            callback.onInternalError();
+    public void run() {
+      CloseableHttpResponse closeableHttpResponse = null;
+      try {
+        String responseJson;
+        int responseCode;
+        closeableHttpResponse = establishConnection(uri);
+        responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
+        if (responseCode == HTTP_OK) {
+          responseJson = readResponse(closeableHttpResponse.getEntity().getContent());
+          ObjectMapper mapper = new ObjectMapper();
+          Map map = mapper.readValue(responseJson, Map.class);
+          String userId = String.valueOf(map.get("user_id"));
+          if (!userExternalId.equals(userId)) {
+            LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
+            callback.onVerificationFailure("User access token doesn't belong to the user");
+          } else {
+            LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
+            callback.onSuccess();
+          }
+        } else if (responseCode == HTTP_BAD_REQUEST) {
+          LOG.trace("Server auth error: {}", readResponse(closeableHttpResponse.getEntity().getContent()));
+          callback.onTokenInvalid();
+        } else {
+          LOG.trace("Server returned the following error code: {}", responseCode);
+          callback.onInternalError();
         }
-    }
-
-
-    private class RunnableVerifier implements Runnable {
-
-        private final URI uri;
-        private final UserVerifierCallback callback;
-        private final String userExternalId;
-
-        public RunnableVerifier(URI uri, UserVerifierCallback callback, String userExternalId) {
-            this.uri = uri;
-            this.callback = callback;
-            this.userExternalId = userExternalId;
+      } catch (IOException ex) {
+        LOG.warn("Internal error: ", ex);
+        callback.onInternalError();
+      } catch (Exception ex) {
+        LOG.warn("Internal error: ", ex);
+        callback.onInternalError();
+      } finally {
+        if (null != closeableHttpResponse) {
+          try {
+            closeableHttpResponse.close();
+          } catch (IOException ex) {
+            LOG.warn("Internal error: ", ex);
+          }
         }
-
-        @Override
-        public void run() {
-            CloseableHttpResponse closeableHttpResponse = null;
-            try {
-                String responseJson;
-                int responseCode;
-                closeableHttpResponse = establishConnection(uri);
-                responseCode = closeableHttpResponse.getStatusLine().getStatusCode();
-                if (responseCode == HTTP_OK) {
-                    responseJson = readResponse(closeableHttpResponse.getEntity().getContent());
-                    ObjectMapper mapper = new ObjectMapper();
-                    Map map = mapper.readValue(responseJson, Map.class);
-                    String userId = String.valueOf(map.get("user_id"));
-                    if (!userExternalId.equals(userId)) {
-                        LOG.trace("Input token doesn't belong to the user with {} id", userExternalId);
-                        callback.onVerificationFailure("User access token doesn't belong to the user");
-                    } else {
-                        LOG.trace("Input token is confirmed and belongs to the user with {} id", userExternalId);
-                        callback.onSuccess();
-                    }
-                }else if (responseCode == HTTP_BAD_REQUEST) {
-                    LOG.trace("Server auth error: {}", readResponse(closeableHttpResponse.getEntity().getContent()));
-                    callback.onTokenInvalid();
-                } else {
-                    LOG.trace("Server returned the following error code: {}", responseCode);
-                    callback.onInternalError();
-                }
-            } catch (IOException e) {
-                LOG.warn("Internal error: ", e);
-                callback.onInternalError();
-            } catch (Exception e){
-                LOG.warn("Internal error: ", e);
-                callback.onInternalError();
-            }finally {
-                if (null != closeableHttpResponse) {
-                    try {
-                        closeableHttpResponse.close();
-                    } catch (IOException e) {
-                        LOG.warn("Internal error: ", e);
-                    }
-                }
-            }
-        }
+      }
     }
-
-    protected String readResponse(InputStream is) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] data = new byte[2048];
-        int len = 0;
-        while ((len = is.read(data, 0, data.length)) >= 0) {
-            bos.write(data, 0, len);
-        }
-        byte[] bytes = bos.toByteArray();
-        bos.close();
-        return new String(bytes, CHARSET);
-    }
-
-
-    protected CloseableHttpResponse establishConnection(URI uri) throws IOException {
-        return httpClient.execute(new HttpGet(uri));
-    }
-
-    @Override
-    public void start() {
-        LOG.info("user verifier started");
-        threadPool = new ThreadPoolExecutor(configuration.getMinParallelConnections(), configuration.getMaxParallelConnections(),
-                configuration.getKeepAliveTimeMilliseconds(), TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(configuration.getMaxParallelConnections());
-        httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
-    }
-
-    @Override
-    public void stop() {
-        threadPool.shutdown();
-        if (null != httpClient) {
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                LOG.warn("Internal error: ", e);
-            }
-        }
-        LOG.info("user verifier stopped");
-    }
-
-    @Override
-    public Class<GplusAvroConfig> getConfigurationClass() {
-        return GplusAvroConfig.class;
-    }
+  }
 }

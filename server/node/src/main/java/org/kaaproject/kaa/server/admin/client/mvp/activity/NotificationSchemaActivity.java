@@ -16,59 +16,75 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.activity;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import org.kaaproject.avro.ui.shared.RecordField;
 import org.kaaproject.kaa.common.dto.NotificationSchemaDto;
 import org.kaaproject.kaa.server.admin.client.KaaAdmin;
 import org.kaaproject.kaa.server.admin.client.mvp.ClientFactory;
+import org.kaaproject.kaa.server.admin.client.mvp.place.CtlSchemaPlace.SchemaType;
 import org.kaaproject.kaa.server.admin.client.mvp.place.NotificationSchemaPlace;
-import org.kaaproject.kaa.server.admin.client.mvp.view.BaseSchemaView;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.kaaproject.kaa.server.admin.client.mvp.view.BaseCtlSchemaView;
+import org.kaaproject.kaa.server.admin.shared.schema.ConverterType;
+import org.kaaproject.kaa.server.admin.shared.schema.CtlSchemaFormDto;
+import org.kaaproject.kaa.server.admin.shared.schema.NotificationSchemaViewDto;
 
 public class NotificationSchemaActivity
-        extends
-        AbstractSchemaActivity<NotificationSchemaDto, BaseSchemaView, NotificationSchemaPlace> {
+    extends AbstractBaseCtlSchemaActivityApplication<NotificationSchemaDto,
+    NotificationSchemaViewDto, BaseCtlSchemaView, NotificationSchemaPlace> {
 
-    public NotificationSchemaActivity(NotificationSchemaPlace place,
-            ClientFactory clientFactory) {
-        super(place, clientFactory);
-    }
+  public NotificationSchemaActivity(NotificationSchemaPlace place,
+                                    ClientFactory clientFactory) {
+    super(place, clientFactory);
+  }
 
-    @Override
-    protected NotificationSchemaDto newSchema() {
-        return new NotificationSchemaDto();
-    }
+  @Override
+  protected NotificationSchemaViewDto newSchema() {
+    return new NotificationSchemaViewDto();
+  }
 
-    @Override
-    protected BaseSchemaView getView(boolean create) {
-        if (create) {
-            return clientFactory.getCreateNotificationSchemaView();
-        } else {
-            return clientFactory.getNotificationSchemaView();
-        }
+  @Override
+  protected BaseCtlSchemaView getView(boolean create) {
+    if (create) {
+      return clientFactory.getCreateNotificationSchemaView();
+    } else {
+      return clientFactory.getNotificationSchemaView();
     }
+  }
 
-    @Override
-    protected void getEntity(String id,
-            AsyncCallback<NotificationSchemaDto> callback) {
-        KaaAdmin.getDataSource().getNotificationSchemaForm(id, callback);
-    }
+  @Override
+  protected void getEntity(String id,
+                           AsyncCallback<NotificationSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().getNotificationSchemaView(id, callback);
+  }
 
-    @Override
-    protected void editEntity(NotificationSchemaDto entity,
-            AsyncCallback<NotificationSchemaDto> callback) {
-        KaaAdmin.getDataSource().editNotificationSchemaForm(entity, callback);
-    }
+  @Override
+  protected void editEntity(NotificationSchemaViewDto entity,
+                            AsyncCallback<NotificationSchemaViewDto> callback) {
+    KaaAdmin.getDataSource().saveNotificationSchemaView(entity, callback);
+  }
 
-    @Override
-    protected void createEmptySchemaForm(AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().createCommonEmptySchemaForm(callback);
-    }
+  @Override
+  protected void createEmptyCtlSchemaForm(AsyncCallback<CtlSchemaFormDto> callback) {
+    KaaAdmin.getDataSource().createNewCtlSchemaFormInstance(null, null, applicationId,
+        ConverterType.FORM_AVRO_CONVERTER,
+        callback);
+  }
 
-    @Override
-    public void loadFormData(String fileItemName,
-            AsyncCallback<RecordField> callback) {
-        KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
-    }
+  @Override
+  public void loadFormData(String fileItemName,
+                           AsyncCallback<RecordField> callback) {
+    KaaAdmin.getDataSource().generateCommonSchemaForm(fileItemName, callback);
+  }
+
+  @Override
+  protected NotificationSchemaPlace existingSchemaPlace(String applicationId, String schemaId) {
+    return new NotificationSchemaPlace(applicationId, schemaId);
+  }
+
+  @Override
+  protected SchemaType getPlaceSchemaType() {
+    return SchemaType.NOTIFICATION;
+  }
 
 }

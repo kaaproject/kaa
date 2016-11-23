@@ -21,26 +21,26 @@ package org.kaaproject.kaa.server.operations.service.config;
  */
 public class OperationsServerConfig {
 
-    private static final int DEFAULT_USER_HASH_PARTITIONS_SIZE = 10;
-    private static final int DEFAULT_MAX_NEIGHBOR_CONNECTIONS = 10;
+  private static final int DEFAULT_USER_HASH_PARTITIONS_SIZE = 10;
+  private static final int DEFAULT_MAX_NEIGHBOR_CONNECTIONS = 10;
 
-    private int userHashPartitions = DEFAULT_USER_HASH_PARTITIONS_SIZE;
+  private int userHashPartitions = DEFAULT_USER_HASH_PARTITIONS_SIZE;
 
-    private int maxNumberNeighborConnections = DEFAULT_MAX_NEIGHBOR_CONNECTIONS;
+  private int maxNumberNeighborConnections = DEFAULT_MAX_NEIGHBOR_CONNECTIONS;
 
-    public int getUserHashPartitions() {
-        return userHashPartitions;
-    }
+  public int getUserHashPartitions() {
+    return userHashPartitions;
+  }
 
-    public void setUserHashPartitions(int userHashPartitions) {
-        this.userHashPartitions = userHashPartitions;
-    }
+  public void setUserHashPartitions(int userHashPartitions) {
+    this.userHashPartitions = userHashPartitions;
+  }
 
-    public int getMaxNumberNeighborConnections() {
-        return maxNumberNeighborConnections;
-    }
+  public int getMaxNumberNeighborConnections() {
+    return maxNumberNeighborConnections;
+  }
 
-    public void setMaxNumberNeighborConnections(int maxNumberNeighborConnections) {
-        this.maxNumberNeighborConnections = maxNumberNeighborConnections;
-    }
+  public void setMaxNumberNeighborConnections(int maxNumberNeighborConnections) {
+    this.maxNumberNeighborConnections = maxNumberNeighborConnections;
+  }
 }

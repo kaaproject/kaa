@@ -30,10 +30,10 @@
 extern "C" {
 #endif
 
-#include "time.h"
+#include <platform/time.h>
 
-#include "../kaa_context.h"
-#include "kaa_client_properies.h"
+#include "kaa_context.h"
+#include <platform/kaa_client_properties.h>
 
 struct kaa_client_t;
 typedef struct kaa_client_t kaa_client_t;

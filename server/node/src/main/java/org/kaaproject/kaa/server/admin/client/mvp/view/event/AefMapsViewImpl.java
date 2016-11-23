@@ -16,32 +16,32 @@
 
 package org.kaaproject.kaa.server.admin.client.mvp.view.event;
 
+import com.google.gwt.dom.client.Style.Unit;
+
 import org.kaaproject.avro.ui.gwt.client.widget.grid.AbstractGrid;
 import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
 import org.kaaproject.kaa.server.admin.client.mvp.view.base.BaseListViewImpl;
 import org.kaaproject.kaa.server.admin.client.util.Utils;
 
-import com.google.gwt.dom.client.Style.Unit;
-
 public class AefMapsViewImpl extends BaseListViewImpl<ApplicationEventFamilyMapDto> {
 
-        public AefMapsViewImpl() {
-            super(true);
-        }
+  public AefMapsViewImpl() {
+    super(true);
+  }
 
-        @Override
-        protected AbstractGrid<ApplicationEventFamilyMapDto, String> createGrid() {
-            return new AefMapsGrid(Unit.PX);
-        }
+  @Override
+  protected AbstractGrid<ApplicationEventFamilyMapDto, String> createGrid() {
+    return new AefMapsGrid(Unit.PX);
+  }
 
-        @Override
-        protected String titleString() {
-            return Utils.constants.aefMaps();
-        }
+  @Override
+  protected String titleString() {
+    return Utils.constants.aefMaps();
+  }
 
-        @Override
-        protected String addButtonString() {
-            return Utils.constants.addNewAefMap();
-        }
+  @Override
+  protected String addButtonString() {
+    return Utils.constants.addNewAefMap();
+  }
 }
 

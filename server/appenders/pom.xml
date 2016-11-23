@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.kaaproject.kaa</groupId>
-        <version>0.9.0</version>
+        <version>0.11.0-SNAPSHOT</version>
         <artifactId>server</artifactId>
     </parent>
     <groupId>org.kaaproject.kaa.server</groupId>
@@ -41,31 +41,45 @@
     </modules>
     <profiles>
         <profile>
-            <id>cdap</id>
-            <modules>
-                <module>cdap-appender</module>
-            </modules>
-        </profile>
-        <profile>
             <id>oracle-nosql</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <modules>
                 <module>oracle-nosql-appender</module>
             </modules>
         </profile>
         <profile>
             <id>cassandra</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <modules>
                 <module>cassandra-appender</module>
             </modules>
         </profile>
         <profile>
             <id>kafka</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <modules>
                 <module>kafka-appender</module>
             </modules>
         </profile>        
         <profile>
             <id>couchbase</id>
+            <activation>
+                <property>
+                    <name>appenders</name>
+                </property>
+            </activation>
             <modules>
                 <module>couchbase-appender</module>
             </modules>

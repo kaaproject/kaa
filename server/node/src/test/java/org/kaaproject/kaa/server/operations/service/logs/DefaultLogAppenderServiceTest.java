@@ -16,15 +16,21 @@
 
 package org.kaaproject.kaa.server.operations.service.logs;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kaaproject.kaa.common.dto.ApplicationDto;
+import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
 import org.kaaproject.kaa.common.dto.logs.LogAppenderDto;
 import org.kaaproject.kaa.common.dto.logs.LogSchemaDto;
 import org.kaaproject.kaa.server.appenders.mongo.appender.LogEventDao;
 import org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender;
 import org.kaaproject.kaa.server.common.dao.ApplicationService;
+import org.kaaproject.kaa.server.common.dao.CtlService;
 import org.kaaproject.kaa.server.common.dao.LogAppendersService;
 import org.kaaproject.kaa.server.common.dao.LogSchemaService;
 import org.kaaproject.kaa.server.common.log.shared.appender.LogAppender;
@@ -37,148 +43,144 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class DefaultLogAppenderServiceTest {
 
-    private static final String APPENDER_NAME = "appender";
+  private static final String APPENDER_NAME = "appender";
+  private static final String APPLICATION_ID = "application_id";
+  private static final String APPENDER_ID = "appender_id";
+  private static final String APPLICATION_TOKEN = "application_token";
+  private static final String TENANT_ID = "tenant_id";
+  private static final int LOG_SCHEMA_VERSION = 3;
+  private LogAppender mongoDBLogAppender;
+  private Map<String, LogAppender> appenderMap;
+  private DefaultLogAppenderBuilder logAppenderResolver;
+  private LogAppenderService logAppenderService;
+  private ApplicationService applicationService;
+  private LogSchemaService logSchemaService;
+  private LogEventDao logEventDao;
+  private CtlService ctlService;
 
-    private LogAppender mongoDBLogAppender;
+  private LogAppendersService logAppendersService;
 
-    private Map<String, LogAppender> appenderMap;
+  @Before
+  public void beforeTest() throws IOException {
+    mongoDBLogAppender = new MongoDbLogAppender();
+    mongoDBLogAppender.setName(APPENDER_NAME);
+    appenderMap = new HashMap<>();
+    appenderMap.put(APPENDER_NAME, mongoDBLogAppender);
+    logAppenderResolver = mock(DefaultLogAppenderBuilder.class);
 
-    private DefaultLogAppenderBuilder logAppenderResolver;
+    logAppenderService = new DefaultLogAppenderService();
+    applicationService = mock(ApplicationService.class);
+    logSchemaService = mock(LogSchemaService.class);
+    ctlService = mock(CtlService.class);
+    logEventDao = mock(LogEventDao.class);
+    logAppendersService = mock(LogAppendersService.class);
 
-    private static final String APPLICATION_ID = "application_id";
-    private static final String APPENDER_ID = "appender_id";
-    private static final String APPLICATION_TOKEN = "application_token";
-    private static final String TENANT_ID = "tenant_id";
+    ReflectionTestUtils.setField(logAppenderService, "logSchemaService", logSchemaService);
+    ReflectionTestUtils.setField(logAppenderService, "logAppenderResolver", logAppenderResolver);
 
-    private static final int LOG_SCHEMA_VERSION = 3;
+    ReflectionTestUtils.setField(mongoDBLogAppender, "logEventDao", logEventDao);
 
-    private LogAppenderService logAppenderService;
-    private ApplicationService applicationService;
-    private LogSchemaService logSchemaService;
-    private LogEventDao logEventDao;
+    ReflectionTestUtils.setField(logAppenderService, "logAppendersService", logAppendersService);
+  }
 
-    private LogAppendersService logAppendersService;
+  @Test
+  public void getApplicationAppendersNoAppendersTest() {
+    ApplicationDto dto = new ApplicationDto();
+    dto.setApplicationToken(APPLICATION_TOKEN);
+    dto.setTenantId(TENANT_ID);
 
-    @Before
-    public void beforeTest() throws IOException {
-        mongoDBLogAppender = new MongoDbLogAppender();
-        mongoDBLogAppender.setName(APPENDER_NAME);
-        appenderMap = new HashMap<>();
-        appenderMap.put(APPENDER_NAME, mongoDBLogAppender);
-        logAppenderResolver = mock(DefaultLogAppenderBuilder.class);
+    when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
 
-        logAppenderService = new DefaultLogAppenderService();
-        applicationService = mock(ApplicationService.class);
-        logSchemaService = mock(LogSchemaService.class);
-        logEventDao = mock(LogEventDao.class);
-        logAppendersService = mock(LogAppendersService.class);
+    List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
 
-        ReflectionTestUtils.setField(logAppenderService, "logSchemaService", logSchemaService);
-        ReflectionTestUtils.setField(logAppenderService, "logAppenderResolver", logAppenderResolver);
+    Assert.assertEquals(0, appenders.size());
+  }
 
-        ReflectionTestUtils.setField(mongoDBLogAppender, "logEventDao", logEventDao);
+  @Test
+  public void getApplicationAppendersTest() throws ReflectiveOperationException {
+    ApplicationDto dto = new ApplicationDto();
+    dto.setApplicationToken(APPLICATION_TOKEN);
+    dto.setTenantId(TENANT_ID);
 
-        ReflectionTestUtils.setField(logAppenderService, "logAppendersService", logAppendersService);
-    }
+    when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
+    when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
 
-    @Test
-    public void getApplicationAppendersNoAppendersTest() {
-        ApplicationDto dto = new ApplicationDto();
-        dto.setApplicationToken(APPLICATION_TOKEN);
-        dto.setTenantId(TENANT_ID);
+    List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
 
-        when(applicationService.findAppById(APPLICATION_ID)).thenReturn(dto);
+    Assert.assertEquals(1, appenders.size());
+    Assert.assertEquals(mongoDBLogAppender.getName(), appenders.get(0).getName());
+  }
 
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
+  @Test
+  public void getErrorApplicationAppendersTest() throws ReflectiveOperationException {
+    ApplicationDto dto = new ApplicationDto();
+    dto.setApplicationToken(APPLICATION_TOKEN);
+    dto.setTenantId(TENANT_ID);
 
-        Assert.assertEquals(0, appenders.size());
-    }
+    when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
+    when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
 
-    @Test
-    public void getApplicationAppendersTest() throws ReflectiveOperationException {
-        ApplicationDto dto = new ApplicationDto();
-        dto.setApplicationToken(APPLICATION_TOKEN);
-        dto.setTenantId(TENANT_ID);
+    List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
 
-        when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
-        when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
+    Assert.assertEquals(0, appenders.size());
+  }
 
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
+  @Test
+  public void getApplicationAppendersWithErrorTest() {
+    List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
+    Assert.assertNotNull(appenders);
+    Assert.assertEquals(0, appenders.size());
+  }
 
-        Assert.assertEquals(1, appenders.size());
-        Assert.assertEquals(mongoDBLogAppender.getName(), appenders.get(0).getName());
-    }
-    
-    @Test
-    public void getErrorApplicationAppendersTest() throws ReflectiveOperationException {
-        ApplicationDto dto = new ApplicationDto();
-        dto.setApplicationToken(APPLICATION_TOKEN);
-        dto.setTenantId(TENANT_ID);
+  @Test
+  public void getApplicationAppenderTest() throws ReflectiveOperationException {
+    ApplicationDto dto = new ApplicationDto();
+    dto.setApplicationToken(APPLICATION_TOKEN);
+    dto.setTenantId(TENANT_ID);
 
-        when(logAppendersService.findAllAppendersByAppId(APPLICATION_ID)).thenReturn(Arrays.asList(new LogAppenderDto()));
-        when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
+    when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
+    when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
 
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
+    LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
 
-        Assert.assertEquals(0, appenders.size());
-    }
+    Assert.assertNotNull(appender);
+    Assert.assertEquals(mongoDBLogAppender.getName(), appender.getName());
+  }
 
-    @Test
-    public void getApplicationAppendersWithErrorTest() {
-        List<LogAppender> appenders = logAppenderService.getApplicationAppenders(APPLICATION_ID);
-        Assert.assertNotNull(appenders);
-        Assert.assertEquals(0, appenders.size());
-    }
+  @Test
+  public void getErrorApplicationAppenderTest() throws ReflectiveOperationException {
+    ApplicationDto dto = new ApplicationDto();
+    dto.setApplicationToken(APPLICATION_TOKEN);
+    dto.setTenantId(TENANT_ID);
 
-    @Test
-    public void getApplicationAppenderTest() throws ReflectiveOperationException {
-        ApplicationDto dto = new ApplicationDto();
-        dto.setApplicationToken(APPLICATION_TOKEN);
-        dto.setTenantId(TENANT_ID);
+    when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
+    when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
 
-        when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
-        when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenReturn(mongoDBLogAppender);
+    LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
 
-        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
+    Assert.assertNull(appender);
+  }
 
-        Assert.assertNotNull(appender);
-        Assert.assertEquals(mongoDBLogAppender.getName(), appender.getName());
-    }
-    
-    @Test
-    public void getErrorApplicationAppenderTest() throws ReflectiveOperationException {
-        ApplicationDto dto = new ApplicationDto();
-        dto.setApplicationToken(APPLICATION_TOKEN);
-        dto.setTenantId(TENANT_ID);
+  @Test
+  public void getApplicationAppenderWithErrorTest() {
+    LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
+    Assert.assertNull(appender);
+  }
 
-        when(logAppendersService.findLogAppenderById(APPENDER_ID)).thenReturn(new LogAppenderDto());
-        when(logAppenderResolver.getAppender(any(LogAppenderDto.class))).thenThrow(new IllegalArgumentException());
+  @Test
+  public void getLogSchemaTest() {
+    LogSchemaDto dto = new LogSchemaDto();
 
-        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
+    when(logSchemaService.findLogSchemaByAppIdAndVersion(APPLICATION_ID, LOG_SCHEMA_VERSION)).thenReturn(dto);
 
-        Assert.assertNull(appender);
-    }
+    CTLSchemaDto ctlSchemaDto = new CTLSchemaDto();
 
-    @Test
-    public void getApplicationAppenderWithErrorTest() {
-        LogAppender appender = logAppenderService.getApplicationAppender(APPENDER_ID);
-        Assert.assertNull(appender);
-    }
+    when(ctlService.findCtlSchemaById(dto.getCtlSchemaId())).thenReturn(ctlSchemaDto);
 
-    @Test
-    public void getLogSchemaTest() {
-        LogSchemaDto dto = new LogSchemaDto();
+    LogSchema logSchema = new LogSchema(dto, ctlSchemaDto.getBody());
 
-        when(logSchemaService.findLogSchemaByAppIdAndVersion(APPLICATION_ID, LOG_SCHEMA_VERSION)).thenReturn(dto);
-
-        LogSchema logSchema = logAppenderService.getLogSchema(APPLICATION_ID, LOG_SCHEMA_VERSION);
-
-        Assert.assertEquals(dto, ReflectionTestUtils.getField(logSchema, "logSchemaDto"));
-    }
+    Assert.assertEquals(dto, ReflectionTestUtils.getField(logSchema, "logSchemaDto"));
+  }
 }
