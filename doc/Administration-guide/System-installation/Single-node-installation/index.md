@@ -445,7 +445,7 @@ Download and install JDK rpm.
    $ sudo alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_60/bin/java 2
    $ sudo alternatives --config java
    There are 2 programs which provide 'java'.
-   
+
      Selection    Command
    -----------------------------------------------
    *  1           /usr/java/jdk1.8.0_60/jre/bin/java
@@ -476,7 +476,15 @@ Kaa requires MariaDB (used by default) or PostgreSQL.
 	<div class="tab-content"><!---tMarPos---><div id="maria_centos" class="tab-pane fade in active" markdown="1" ><!---Mar--->
 
 Add MariaDB YUM repository entry for CentOS.
-Copy and paste it into a file located in the `/etc/yum.repos.d/` directory (name the file `MariaDB.repo` or similar).
+
+Run the following command
+
+```bash
+
+sudo nano /etc/yum.repos.d/MariaDB.repo
+```
+
+Copy and paste it into this file.
 
 <ul>
 	<ul class="nav nav-tabs">
@@ -537,7 +545,7 @@ Check if MariaDB service is running.
 ```bash
 $ sudo netstat -ntlp | grep 3306
 
-tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      5476/mysqld 
+tcp        0      0 0.0.0.0:3306            0.0.0.0:*               LISTEN      5476/mysqld
 ```
 
 For more information, see the [official page](https://mariadb.org/).
@@ -825,7 +833,7 @@ $ sudo nano /opt/zookeeper-3.4.9/conf/zoo.cfg
 ```
 
 ```bash
-... 
+...
 dataDir=/var/zookeeper
 ...
 ```
@@ -1062,7 +1070,7 @@ $ cqlsh
 Connected to Test Cluster at 127.0.0.1:9042.
 [cqlsh 5.0.1 | Cassandra 3.6.0 | CQL spec 3.4.2 | Native protocol v4]
 Use HELP for help.
-cqlsh> 
+cqlsh>
 ```
 
 </div><!---Cas---></div><!---tMonCas--->
@@ -1273,12 +1281,12 @@ $ sudo service iptables save
 ```
 
 </div><div id="CentOS7__" class="tab-pane fade" markdown="1" >
-      
+
 Open TCP ports to be used by Administration UI (8080), Bootstrap service (9888, 9889), and Operations service (9997, 9999).
 
 ```bash
 $ systemctl stop firewalld
-$ systemctl mask firewalld 
+$ systemctl mask firewalld
 $ yum install iptables-services
 $ systemctl enable iptables
 $ systemctl start iptables
@@ -1290,7 +1298,7 @@ $ sudo iptables -I INPUT -p tcp -m tcp --dport 9997 -j ACCEPT
 $ sudo iptables -I INPUT -p tcp -m tcp --dport 9999 -j ACCEPT
 $ sudo service iptables save
 ```
-      
+
 </div>
 </div>
 
