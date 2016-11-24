@@ -25,7 +25,7 @@ To deploy a Kaa cluster on your machine:
 
 1. Install [Docker Engine](https://docs.docker.com/engine/installation/).
 
-	If you use Linux, you can install the Docker Engine by running the [installation script](https://docs.docker.com/engine/installation/).
+	If you use Linux, you can install the Docker Engine by running the [installation script](https://get.docker.com/).
 
 		wget -qO- https://get.docker.com/ | sh
 
@@ -39,7 +39,7 @@ Put the `kaa-node.deb` file in the `server/containers/docker/` directory.
 
 4. Run the following command from the `server/containers/docker` directory.
 
-		docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0
+		docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0.
         
 	Alternatively, you can run the following command.
         
@@ -84,12 +84,13 @@ To install a single node:
 
 To install a cluster node:
 
-1. Run the following command from the `server/containers/docker/using-compose` directory.
-
+1. Specify SQL-NoSQL databases which you want to use.
+To do this, run the following command from the `server/containers/docker/using-compose` directory.
+		
 		python launch-kaa.py SQL-NoSQL
-
-2. Specify SQL-NoSQL databases which you wan to use.
-
+	
+	See example below.
+		
 		python launch-kaa.py mariadb-mongodb
 
 	The following SQL-NoSQL databases are available:
