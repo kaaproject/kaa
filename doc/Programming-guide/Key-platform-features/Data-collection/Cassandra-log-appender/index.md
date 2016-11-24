@@ -10,7 +10,7 @@ sort_idx: 10
 * TOC
 {:toc}
 
-The Cassandra log appender is used to transfer logs from the [Operations service]({{root_url}}Glossary/#operations-service) to the Cassandra database.
+The Cassandra log appender is used to transfer logs from the [Operations service]({{root_url}}Glossary/#operations-service) to the [Cassandra](http://cassandra.apache.org/) database.
 
 ## Create Cassandra log appender
 
