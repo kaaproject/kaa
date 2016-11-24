@@ -109,7 +109,7 @@ To do this, run the following command from the `server/containers/docker/using-c
 		python launch-kaa.py mariadb-mongodb 3
 		
 
-3. Execute the following command to access the running container.
+2. Execute the following command to access the running container.
 
 		docker exec -it usingcompose_KAA_SERVICE_NAME_1 /bin/bash -c "export TERM=xterm; exec bash"
 		
@@ -121,7 +121,7 @@ To do this, run the following command from the `server/containers/docker/using-c
 
 	`usingcompose` is the name of the directory containing the `kaa-docker-compose.yml` and `third-party-docker-compose.yml` files.
 
-4. Wait a few seconds until the `kaa-node` service starts and open your browser at `localhost:8080`.
+3. Wait a few seconds until the `kaa-node` service starts and open your browser at `localhost:8080`.
 See the `kaa node` container log to check if the service has started.
 
 ## Logs
