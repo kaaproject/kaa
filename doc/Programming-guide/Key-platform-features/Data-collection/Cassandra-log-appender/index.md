@@ -40,7 +40,7 @@ The following example illustrates how to create an instance of Cassandra log app
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @cassandraLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file `cassandraLogAppender.json` contains following data.
+where file `cassandraLogAppender.json` contains the following data.
 
 ```json
 {
@@ -234,7 +234,7 @@ The following JSON example matches the above schema.
 
 To play around with the the Cassandra log appender:
 
-1. Open the Data collection demo from Kaa Sandbox and follow the application installation instuctions.
+1. Open the Data collection demo from Kaa Sandbox and follow the application installation instructions.
 
 2. Log in to the **Administration UI** as a tenant developer, open the **Log appenders** page of the **Data collection** application and click **Add log appender**.
 
