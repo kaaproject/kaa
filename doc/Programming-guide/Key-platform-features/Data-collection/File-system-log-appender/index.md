@@ -2,7 +2,6 @@
 layout: page
 title: File system log appender
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Data-collection/File-system-log-appender
 sort_idx: 40
 ---
 
@@ -11,61 +10,37 @@ sort_idx: 40
 * TOC
 {:toc}
 
-The file system log appender stores received logs into the local file system of the Operations service. This log appender may be used for test purposes
-or in pair with tools like Flume etc. Logs are stored in files under the `/$logsRootPath/tenant_$tenantId/application_$applicationId` folder,
-where `logsRootPath` is a configuration parameter, `tenantId` and `applicationId` are ids of the current tenant and
-the application respectively. Access to the logs is controlled via Linux file system permissions.
+The file system log appender stores the received logs into the local file system of the [Operations service]({{root_url}}Glossary/#operations-service).
+This log appender can be used for test purposes or in pair with tools like [Flume](https://flume.apache.org/) etc.
+Log files are stored in the `/$logsRootPath/tenant_$tenantId/application_$applicationId` folder that includes `logsRootPath` as a configuration parameter, `tenantId` and `applicationId` as the IDs of the current tenant and the application respectively.
+Access to the logs is controlled trough Linux file system permissions.
 
-You can log in to the Operations service host and browse logs using the **kaa_log_user_$applicationToken** user name and the pubic key which is created as a part of the configuration.
+You can log in to the Operations service host and browse logs using the `kaa_log_user_$applicationToken` username and the pubic key created as a part of the configuration.
 
-# Creating file system log appender in Admin UI
+## Create file system log appender
 
-The easiest way to create a file system log appender for your application is by using Admin UI.
-To create a log appender of the file system storage type, do the following:
+To create a file system log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
-1. In the **Log appenders** window, click **Add log appender**.
-2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to **File**.
-4. Fill in other fields as required.
-5. Click **Add** button. Log appender is ready and operational at this point.
+1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
 
-![File system log appender](attach/file-system-log-appender.png)
+2. Click **Applications** and open the **Log appenders** page of your application.
+Click **Add log appender**.
 
-# Creating file system log appender with Admin REST API
+3. On the **Log appender details** page, enter the necessary information and set the **Type** field to **File**.
+	
+	![File system log appender](attach/file-system-log-appender.png)
+
+4. Fill in the **Configuration** section for your log appender and click **Add**.
+See [Configure log appender](#configure-log-appender).
+
+
+
+## Creating file system log appender with Admin REST API
 
 It is also possible to create a file system log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the file system log appender via Admin REST API.
 
-## Configuration
-
-The file system log appender configuration must match to
-[this]({{github_url}}server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
-
-Parameters for defining file system log appender:
-
-|Name                   |Description                    |
-|-----------------------|-------------------------------|
-|publicKey              |Name of public key             |
-|logsRootPath           |Root path for logs             |
-|rollingFileNamePatern  |Pattern for creating file name |
-|rollingMaxHistory      |Max number for records in file |
-|triggerMaxFileSize     |Max size of file               |
-|encoderPattern         |Pattern for encoder            |
-
-An example configuration that matches to previously introduced Avro schema is as below:
-
-```json
-{
-    "publicKey":"public Key",
-    "logsRootPath":"/kaa_log_uploads",
-    "rollingFileNamePatern":"logFile.%d{yyyy-MM-dd}.log",
-    "rollingMaxHistory":30,
-    "triggerMaxFileSize":"1GB",
-    "encoderPattern":"%-4relative [%thread] %-5level %logger{35} - %msg%n"
-}
-```
-
-## Administration
+### Administration
 
 The following Admin REST API call example illustrates how to create a new file system log appender.
 
@@ -125,7 +100,37 @@ Example result:
 }
 ```
 
-# Playing with File system log appender
+### Configuration
+
+The file system log appender configuration must match to
+[this]({{github_url}}server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
+
+Parameters for defining file system log appender:
+
+|Name                   |Description                    |
+|-----------------------|-------------------------------|
+|publicKey              |Name of public key             |
+|logsRootPath           |Root path for logs             |
+|rollingFileNamePatern  |Pattern for creating file name |
+|rollingMaxHistory      |Max number for records in file |
+|triggerMaxFileSize     |Max size of file               |
+|encoderPattern         |Pattern for encoder            |
+
+An example configuration that matches to previously introduced Avro schema is as below:
+
+```json
+{
+    "publicKey":"public Key",
+    "logsRootPath":"/kaa_log_uploads",
+    "rollingFileNamePatern":"logFile.%d{yyyy-MM-dd}.log",
+    "rollingMaxHistory":30,
+    "triggerMaxFileSize":"1GB",
+    "encoderPattern":"%-4relative [%thread] %-5level %logger{35} - %msg%n"
+}
+```
+
+
+## Playing with File system log appender
 
 1. Go to Data collection demos in Sandbox. And download binary.
 ![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
