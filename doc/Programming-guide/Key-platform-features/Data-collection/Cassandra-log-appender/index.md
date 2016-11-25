@@ -135,7 +135,7 @@ Below is an example configuration that matches the mentioned Avro schema.
         }
     ],
     "cassandraCredential":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential ":{
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential":{
             "user":"user",
             "password":"password"
         }
@@ -144,29 +144,29 @@ Below is an example configuration that matches the mentioned Avro schema.
     "tableNamePattern":"logs_$app_token_$config_hash",
     "columnMapping":[
         {
-            "type ":"HEADER_FIELD",
-            "value ":{
+            "type":"HEADER_FIELD",
+            "value":{
                 "string ":"applicationToken"
             },
             "columnName":"application_token",
-            "columnType":"TEXT ",
-            "partitionKey ":false,
-            "clusteringKey ":false
+            "columnType":"TEXT",
+            "partitionKey":false,
+            "clusteringKey":false
         },
         {
             "type":"EVENT_FIELD",
-            "value ":{
-                "string ":"message"
+            "value":{
+                "string":"message"
             },
             "columnName":"message",
-            "columnType ":"TEXT ",
-            "partitionKey ":false,
-            "clusteringKey ":false
+            "columnType":"TEXT",
+            "partitionKey":false,
+            "clusteringKey":false
         },
         {
             "type":"UUID",
-            "value ":{
-                "string ":"id "
+            "value":{
+                "string":"id "
             },
             "columnName":"id",
             "columnType":"UUID",
@@ -181,17 +181,17 @@ Below is an example configuration that matches the mentioned Avro schema.
         "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType":"UNLOGGED"
     },
     "cassandraSocketOption":null,
-    "executorThreadPoolSize ":1,
-    "callbackThreadPoolSize ":2,
-    "dataTTL ":0,
-    "cassandraWriteConsistencyLevel ":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel ":"ONE "
+    "executorThreadPoolSize":1,
+    "callbackThreadPoolSize":2,
+    "dataTTL":0,
+    "cassandraWriteConsistencyLevel":{
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel":"ONE"
     },
     "cassandraCompression":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression ":"NONE "
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression":"NONE"
     },
     "cassandraExecuteRequestType":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType ":"SYNC "
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType":"SYNC"
     }
 }
 ```
