@@ -42,7 +42,7 @@ See [Configure log appender](#configure-log-appender).
 
 Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) to create or edit your Couchbase log appender.
 
-The following example illustrates how to create an instance of Cassandra log appender using the server REST API.
+The following example illustrates how to create an instance of Couchbase log appender using the server REST API.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @couchbaseLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
