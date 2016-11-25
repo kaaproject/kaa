@@ -21,6 +21,7 @@
 
 # include "kaa_common.h"
 # include "kaa_event.h"
+# include "kaa_event_private.h"
 # include "kaa_error.h"
 # include "utilities/kaa_mem.h"
 
