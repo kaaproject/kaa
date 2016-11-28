@@ -33,22 +33,15 @@ Click **Add log appender**.
 4. Fill in the **Configuration** section for your log appender and click **Add**.
 See [Configure log appender](#configure-log-appender).
 
+Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) to create or edit your Couchbase log appender.
 
-
-## Creating file system log appender with Admin REST API
-
-It is also possible to create a file system log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
-The following example illustrates how to create the file system log appender via Admin REST API.
-
-### Administration
-
-The following Admin REST API call example illustrates how to create a new file system log appender.
+The following example illustrates how to create an instance of file system log appender using the server REST API.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @fileSystemLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file `fileSystemLogAppender.json` contains following data:
+where file `fileSystemLogAppender.json` contains the following data.
 
 ```json
 {
@@ -72,7 +65,7 @@ where file `fileSystemLogAppender.json` contains following data:
 }
 ```
 
-Example result:
+Below is an example result.
 
 ```json
 {
@@ -100,23 +93,22 @@ Example result:
 }
 ```
 
-### Configuration
+## Configure log appender
 
-The file system log appender configuration must match to
-[this]({{github_url}}server/appenders/file-appender/src/main/avro/file-appender-config.avsc) Avro schema.
+The configuration of file system log appender must match [this Avro schema]({{github_url}}server/appenders/file-appender/src/main/avro/file-appender-config.avsc).
 
-Parameters for defining file system log appender:
+Use the following parameters to configure your file system log appender.
 
 |Name                   |Description                    |
 |-----------------------|-------------------------------|
-|publicKey              |Name of public key             |
-|logsRootPath           |Root path for logs             |
-|rollingFileNamePatern  |Pattern for creating file name |
-|rollingMaxHistory      |Max number for records in file |
-|triggerMaxFileSize     |Max size of file               |
-|encoderPattern         |Pattern for encoder            |
+|`publicKey`              |Name of public key.             |
+|`logsRootPath`           |Root path for logs.             |
+|`rollingFileNamePatern`  |Pattern for creating file name. |
+|`rollingMaxHistory`      |Maximum number of records in file. |
+|`triggerMaxFileSize`     |Maximum file size of file.          |
+|`encoderPattern`         |Encoder pattern.               |
 
-An example configuration that matches to previously introduced Avro schema is as below:
+Below is an example configuration that matches the mentioned Avro schema.
 
 ```json
 {
@@ -130,7 +122,7 @@ An example configuration that matches to previously introduced Avro schema is as
 ```
 
 
-## Playing with File system log appender
+## Playing with file system log appender
 
 1. Go to Data collection demos in Sandbox. And download binary.
 ![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
@@ -175,4 +167,4 @@ An example configuration that matches to previously introduced Avro schema is as
     ...
     ```
 
-If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
+If you don't get the desired output or experience other problems, see [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting).
