@@ -124,47 +124,35 @@ Below is an example configuration that matches the mentioned Avro schema.
 
 ## Playing with file system log appender
 
-1. Go to Data collection demos in Sandbox. And download binary.
-![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
-2. Follow **Installation** instructions.
-3. In the Admin UI follow to **Data collection demo** application.
-4. Go to application's **Log appenders** configuration and add a new one.
-![Add log appender](attach/data-collection-demo-application.png)
-5. Enter name of the new appender (we use “Sample File system log appender”).
-6. Add Log metadata fields.
-7. Select **File** appender type.
+The example below uses the **Data collection demo** from [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
 
-    See [Creating file system log appender in Admin UI](#creating-file-system-log-appender-in-admin-ui) section for details.
+To play around with the the Couchbase log appender:
 
-8. Verify that newly created appender has appeared in list.
-![Verify newly created log appender](attach/verify-created-appender.png)
-9. Use instructions from Sandbox to run Data collection demo application.
-10. After this you should see something like below:
+1. Open the Data collection demo from Kaa Sandbox, follow the application installation instructions, and run the application.
 
-    ```bash
-    Data collection demo started
-    Received new sample period: 1
-    Sampled temperature 28 1474622330
-    Sampled temperature 31 1474622331
-    Sampled temperature 32 1474622332
-    Sampled temperature 30 1474622333
-    Sampled temperature 28 1474622334
-    ...
-    ```
+2. Create a file system log appender as described [above](#create-file-system-log-appender).
 
-11. Let's verify that our logs have been persisted in the local file system. Go to Sandbox VM and open the file
-        `/kaa_log_uploads/tenant_'number_of_tenant'/application_'your_application_token'/application.log`.
-        In this example path to file `application.log` is `/kaa_log_uploads/tenant_1/application_24212667430286144698/`.
+3. Your running Data collection demo application will display the output similar to the example below.
 
-     Your `application.log` file should contain similar content:
+		Data collection demo started
+		Received new sample period: 1
+		Sampled temperature 28 1474622330
+		Sampled temperature 31 1474622331
+		Sampled temperature 32 1474622332
+		Sampled temperature 30 1474622333
+		Sampled temperature 28 1474622334
+		...
+		
+4. Verify that your logs have been persisted to the local file system.
+Go to the Sandbox VM and open the file  `/kaa_log_uploads/tenant_<number_of_tenant>/application_<your_application_token>/application.log`.
+This file should contain the following data.
 
-    ```bash
-    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":28,"timeStamp":1474622330}}
-    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":31,"timeStamp":1474622331}}
-    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":32,"timeStamp":1474622332}}
-    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":30,"timeStamp":1474622333}}
-    643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":28,"timeStamp":1474622334}}
-    ...
-    ```
-
+		
+		643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":28,"timeStamp":1474622330}}
+		643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":31,"timeStamp":1474622331}}
+		643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":32,"timeStamp":1474622332}}
+		643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":30,"timeStamp":1474622333}}
+		643854 [EPS-log-dispatcher-10] INFO  1.24212667430286144698 - {"Log Header": "{"endpointKeyHash":{"string":"tqoeo8S49HgakOV/2DfiEZLjGls="},"applicationToken":{"string":"24212667430286144698"},"headerVersion":{"int":1},"timestamp":{"long":1474622333932},"logSchemaVersion":{"int":2}}", "Event": {"temperature":28,"timeStamp":1474622334}}
+		...
+		
 If you don't get the desired output or experience other problems, see [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting).
