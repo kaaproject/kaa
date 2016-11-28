@@ -131,7 +131,7 @@ Below is an example configuration that matches the mentioned Avro schema.
     "cassandraServers":[
         {
             "host":"localhost",
-            "port ":9042
+            "port":9042
         }
     ],
     "cassandraCredential":{
@@ -146,7 +146,7 @@ Below is an example configuration that matches the mentioned Avro schema.
         {
             "type":"HEADER_FIELD",
             "value":{
-                "string ":"applicationToken"
+                "string":"applicationToken"
             },
             "columnName":"application_token",
             "columnType":"TEXT",
