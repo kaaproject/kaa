@@ -2,7 +2,6 @@
 layout: page
 title: Cassandra log appender
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender
 sort_idx: 10
 ---
 
@@ -11,144 +10,37 @@ sort_idx: 10
 * TOC
 {:toc}
 
-The Cassandra log appender is responsible for transferring logs from the Operations service to the Cassandra database.
+The Cassandra log appender is used to transfer logs from the [Operations service]({{root_url}}Glossary/#operations-service) to the [Cassandra](http://cassandra.apache.org/) database.
 
-# Creating Cassandra log appender with Admin UI
+## Create Cassandra log appender
 
-The easiest way to create a Cassandra log appender for your application is by using Admin UI.
+To create a Cassandra log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
-To create a log appender do the following:
+1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
 
-1. In the **Log appenders** window, click **Add log appender**.
-2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
-3. Set the log appender type to _Cassandra_. <br/>
-![Create cassandra log appender](attach/create-cassandra-log-appender-admin-ui.png)
-4. Fill in the Cassandra log appender [Configuration](#configuration) form. <br/>
-![Cassandra log appender configuration](attach/cassandra-log-appender-config1.png) <br/>
-![](attach/cassandra-log-appender-config2.png) <br/>
-![](attach/cassandra-log-appender-config3.png) <br/>
-5. Click **Add** button. Log appender is ready and operational at this point.
+2. Click **Applications** and open the **Log appenders** page of your application.
+Click **Add log appender**.
 
+3. On the **Log appender details** page, enter the necessary information and set the **Type** field to **Cassandra**.
+	
+	![Create cassandra log appender](attach/create-cassandra-log-appender-admin-ui.png)
 
-# Creating Cassandra log appender with Admin REST API
+5. Fill in the **Configuration** section for your log appender and click **Add**.
+See [Configure log appender](#configure-log-appender).
+	
+	![Cassandra log appender configuration](attach/cassandra-log-appender-config1.png)
+	![](attach/cassandra-log-appender-config2.png)
+	![](attach/cassandra-log-appender-config3.png)
 
-It is also possible to create a Cassandra log appender instance by using
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
-The following example illustrates how to create the Cassandra log appender via Admin REST API.
+Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) to create or edit your Cassandra log appender.
 
-## Configuration
-
-The Cassandra log appender configuration must match to
-[this]({{github_url}}server/appenders/cassandra-appender/src/main/avro/cassandra-appender-config.avsc) Avro schema.
-
-* **Cassandra nodes** - list of Cassandra hosts.
-* **Authentication credentials** - credentials used to authenticate on Cassandra cluster.
-* **Keyspace name** – Cassandra keyspace used to prefix the data table.
-* **Table name pattern** – pattern used to create table name (for example: **logs_$app_token** adds the application token at the end of the table name).
-* **Column Mapping** - section that handles data mapping configuration. It can map specific log data to appropriate columns.
-* **Clustering** - section that handles clustering key configuration.
-
-|Type           |Example value                                                                  |Example column type|Description                                                                                                            |
-|---------------|-------------------------------------------------------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------|
-|HEADER_FIELD   |endpointKeyHash, applicationToken, headerVersion,timestamp, logSchemaVersion   |TEXT               |Maps a header variable to the specified column                                                                         |
-|EVENT_FIELD    |telemetry                                                                      |DOUBLE             |Maps a log schema field to the specified column                                                                        |
-|CLIENT_FIELD   |clientField                                                                    |TEXT               |Maps a client-side endpoint profile field to the specified column                                                      |
-|SERVER_FIELD   |serverField                                                                    |TEXT               |Maps a server-side endpoint profile field to the specified column                                                      |
-|${TYPE}_JSON   |                                                                               |TEXT               |Maps one of the fields listed above as a corresponding JSON                                                            |
-|${TYPE}_BINARY |                                                                               |BLOB               |Maps one of the fields listed above in binary format                                                                   |
-|UUID           |                                                                               |UUID               |Maps a UUID generated by Kaa to the specified field                                                                    |
-|TS             |yyyy-MM-dd-'Time:'HH:mm:ss.SS                                                  |TEXT               |Maps a timestamp generated by Kaa to the specified field. Timestamp pattern is handled by java.text.SimpleDateFormat   |
-
-Any field can be made a partition and/or clustering key with using corresponding checkboxes.
-
-Key clustering is configured by **Clustering** section, by adding column names and setting their order (**DESC** or **ASC**).
-
->**NOTE:**  
-> Cassandra driver settings can be specified in log appender configuration. Consult the official 
-[documentation](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html) for reference.
-
-An example configuration that matches to previously introduced Avro schema is as below:
-
-```json
-{
-    "cassandraServers":[
-        {
-            "host":"localhost",
-            "port ":9042
-        }
-    ],
-    "cassandraCredential":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential ":{
-            "user":"user",
-            "password":"password"
-        }
-    },
-    "keySpace":"kaa",
-    "tableNamePattern":"logs_$app_token_$config_hash",
-    "columnMapping":[
-        {
-            "type ":"HEADER_FIELD",
-            "value ":{
-                "string ":"applicationToken"
-            },
-            "columnName":"application_token",
-            "columnType":"TEXT ",
-            "partitionKey ":false,
-            "clusteringKey ":false
-        },
-        {
-            "type":"EVENT_FIELD",
-            "value ":{
-                "string ":"message"
-            },
-            "columnName":"message",
-            "columnType ":"TEXT ",
-            "partitionKey ":false,
-            "clusteringKey ":false
-        },
-        {
-            "type":"UUID",
-            "value ":{
-                "string ":"id "
-            },
-            "columnName":"id",
-            "columnType":"UUID",
-            "partitionKey":true,
-            "clusteringKey":false
-        }
-    ],
-    "clusteringMapping":[
-
-    ],
-    "cassandraBatchType":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType":"UNLOGGED"
-    },
-    "cassandraSocketOption":null,
-    "executorThreadPoolSize ":1,
-    "callbackThreadPoolSize ":2,
-    "dataTTL ":0,
-    "cassandraWriteConsistencyLevel ":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel ":"ONE "
-    },
-    "cassandraCompression":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression ":"NONE "
-    },
-    "cassandraExecuteRequestType":{
-        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType ":"SYNC "
-    }
-}
-```
-
-
-## Administration
-
-The following Admin REST API call example illustrates how to create an instance of the Cassandra log appender.
+The following example illustrates how to create an instance of Cassandra log appender using the server REST API.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @cassandraLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file `cassandraLogAppender.json` contains following data:
+where file `cassandraLogAppender.json` contains the following data.
 
 ```json
 {
@@ -172,7 +64,7 @@ where file `cassandraLogAppender.json` contains following data:
 }
 ```
 
-Example result:
+Below is an example result.
 
 ```json
 {
@@ -200,12 +92,117 @@ Example result:
 }
 ```
 
-# Playing with Cassandra log appender
+## Configure log appender
 
-We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) from Kaa Sandbox. Our example will send data
-to Kaa and then persist it to Cassandra. Also, we'll do selection queries on persisted data.
+The Cassandra log appender configuration must match [this Avro schema]({{github_url}}server/appenders/cassandra-appender/src/main/avro/cassandra-appender-config.avsc).
 
-We have next log schema:
+You can configure the following log appender settings:
+
+* **Cassandra nodes** -- list of Cassandra hosts.
+* **Authentication credentials** -- credentials used to authenticate on Cassandra cluster.
+* **Keyspace name** -- Cassandra keyspace used to prefix the data table.
+* **Table name pattern** -- pattern used to create table name (e.g. `logs_$app_token` adds the application token at the end of the table name).
+* **Column mapping** -- mapping of specific log data to appropriate columns.
+* **Clustering** -- clustering key configuration.
+
+|Type           |Example value                                                                  |Example column type|Description                                                         |
+|---------------|-------------------------------------------------------------------------------|-------------------|--------------------------------------------------------------------|
+|`HEADER_FIELD`   |`endpointKeyHash`, `applicationToken`, `headerVersion`, `timestamp`, `logSchemaVersion`   |TEXT               |Maps a header variable to the specified column.                   |
+|`EVENT_FIELD`    |`telemetry`                                                                      |DOUBLE             |Maps a log schema field to the specified column.                  |
+|`CLIENT_FIELD`   |`clientField`                                                                    |TEXT               |Maps a client-side endpoint profile field to the specified column.|
+|`SERVER_FIELD`   |`serverField`                                                                    |TEXT               |Maps a server-side endpoint profile field to the specified column.|
+|`${TYPE}_JSON`   |                                                                               |TEXT               |Maps one of the fields listed above as a corresponding JSON.      |
+|`${TYPE}_BINARY` |                                                                               |BLOB               |Maps one of the fields listed above in binary format.             |
+|`UUID`           |                                                                               |UUID               |Maps a UUID generated by Kaa to the specified field.              |
+|`TS`             |yyyy-MM-dd-'Time:'HH:mm:ss.SS                                                  |TEXT               |Maps a timestamp generated by Kaa to the specified field. Timestamp pattern is handled by `java.text.SimpleDateFormat` |
+
+Use the checkboxes to make any field a partition and/or clustering key.
+
+Configure the key clustering in the **Clustering** section by adding column names and setting their order (**DESC** or **ASC**).
+
+>**NOTE:** You can specify Cassandra driver settings in the log appender configuration.
+>See [official documentation](http://docs.datastax.com/en/landing_page/doc/landing_page/current.html).
+{:.note}
+
+Below is an example configuration that matches the mentioned Avro schema.
+
+```json
+{
+    "cassandraServers":[
+        {
+            "host":"localhost",
+            "port":9042
+        }
+    ],
+    "cassandraCredential":{
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCredential":{
+            "user":"user",
+            "password":"password"
+        }
+    },
+    "keySpace":"kaa",
+    "tableNamePattern":"logs_$app_token_$config_hash",
+    "columnMapping":[
+        {
+            "type":"HEADER_FIELD",
+            "value":{
+                "string":"applicationToken"
+            },
+            "columnName":"application_token",
+            "columnType":"TEXT",
+            "partitionKey":false,
+            "clusteringKey":false
+        },
+        {
+            "type":"EVENT_FIELD",
+            "value":{
+                "string":"message"
+            },
+            "columnName":"message",
+            "columnType":"TEXT",
+            "partitionKey":false,
+            "clusteringKey":false
+        },
+        {
+            "type":"UUID",
+            "value":{
+                "string":"id "
+            },
+            "columnName":"id",
+            "columnType":"UUID",
+            "partitionKey":true,
+            "clusteringKey":false
+        }
+    ],
+    "clusteringMapping":[
+
+    ],
+    "cassandraBatchType":{
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraBatchType":"UNLOGGED"
+    },
+    "cassandraSocketOption":null,
+    "executorThreadPoolSize":1,
+    "callbackThreadPoolSize":2,
+    "dataTTL":0,
+    "cassandraWriteConsistencyLevel":{
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraWriteConsistencyLevel":"ONE"
+    },
+    "cassandraCompression":{
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraCompression":"NONE"
+    },
+    "cassandraExecuteRequestType":{
+        "org.kaaproject.kaa.server.appenders.cassandra.config.gen.CassandraExecuteRequestType":"SYNC"
+    }
+}
+```
+
+## Playing with Cassandra log appender
+
+The example below uses the **Data collection demo** from [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
+The log appender will send data to Kaa and then persist it to Cassandra.
+Some selection queries will be demonstrated using the persisted data.
+
+Below is the log schema for the application.
 
 ```json
 {
@@ -226,7 +223,7 @@ We have next log schema:
 }
 ```
 
-The following JSON example matches the previous schema.
+The following JSON example matches the above schema.
 
 ```json
 {
@@ -235,57 +232,57 @@ The following JSON example matches the previous schema.
 }
 ```
 
-1. Go to Data collection demos in Sandbox.
-![Data collection demo in Sandbox](attach/data-collection-demo-in-sandbox.png)
-2. Follow **Installation** instructions.
-3. In the Admin UI follow to **Data collection demo** application.
-4. Go to application's **Log appenders** configuration and add a new one.
-![Add log appender](attach/data-collection-demo-application.png)
-5. Enter name of the new appender (we'll use "Cassandra")
-6. Add application token and Timestamp as Log metadata.
-7. Select **Cassandra** appender type.
-![Select Cassandra appender type](attach/cassandra-appender-type.png)
-8. Add new node in the **Configuration** section (localhost:9042)
-![Add new node](attach/configuration-section.png)
-9. Add auth details if needed (for Sandbox it's empty)
-10. Fill **Keyspace name**. "kaa" is used in this example, because it's already created on a Sandbox machine.
-11. "logs_example" is used as the **Table name pattern**.
-![Keyspace configuration](attach/configuration-section-keyspace.png)
-12. The important part of configuration is **Column Mapping**:
-![Column mapping](attach/column-mapping.png)
-13. Other configuration:
-![Other configuration](attach/other-configuration.png)
-14. Click **Add** button on the top of the screen to create and deploy appender.
-![Add button](attach/add-button.png)
-15. Verify that newly created appender has appeared in list.
-![Verify newly created appender](attach/verify-created-appender.png)
-16. Use instructions from Sandbox to run Data collection demo application.
-17. After this you should see something like below:
+To play around with the the Cassandra log appender:
 
-    ```bash
-    Data collection demo started
-    Received new sample period: 1
-    Sampled temperature 28 1474366979
-    Sampled temperature 31 1474366980
-    Sampled temperature 32 1474366981
-    Sampled temperature 30 1474366982
-    Sampled temperature 28 1474366983
-    ...
-    ```
+1. Open the Data collection demo from Kaa Sandbox and follow the application installation instructions.
 
-18. Let's verify that our logs have been persisted in Cassandra. Go to Sandbox VM and run next command to connect Cassandra:
+2. Log in to the **Administration UI** as a tenant developer, open the **Log appenders** page of the **Data collection** application and click **Add log appender**.
+
+3. Enter the log appender name.
+Add **Application token** and **Timestamp** in the **Log metadata** field.
+Set the **Type** field to **Cassandra**.
+	![Select Cassandra appender type](attach/cassandra-appender-type.png)
+
+4. In the **Configuration** section, add a new node.
+Set **Host** to **localhost** and **Port** to **9042**.
+	![Add new node](attach/configuration-section.png)
+	
+5. Add authentication credentials if needed.
+In this example, **kaa** is used as the **Keyspace name** because it's already created on the Sandbox machine.
+	![Keyspace configuration](attach/configuration-section-keyspace.png)
+	
+6. Set up the column mapping.
+	![Column mapping](attach/column-mapping.png)
+	
+7. Configure other settings as necessary and click the **Add** button.
+	![Other configuration](attach/other-configuration.png)
+	
+8. Run the Data collection demo application from Kaa Sandbox.
+
+9. The console will display the following messages.
+
+		Data collection demo started
+		Received new sample period: 1
+		Sampled temperature 28 1474366979
+		Sampled temperature 31 1474366980
+		Sampled temperature 32 1474366981
+		Sampled temperature 30 1474366982
+		Sampled temperature 28 1474366983
+		...
+		
+10. To verify that your logs have been persisted to Cassandra, open the Sandbox VM and run the following command.
 
     ```bash
     cqlsh
     ```
 
-19. Then:
+    Then run
 
     ```bash
     SELECT * FROM kaa.logs_example;
     ```
 
-20. You should observe similar output:
+11. The following output will be displayed.
 
     ```bash
      date                         | timestamp_field | id                                   | application_token    | temperature_field
@@ -299,4 +296,4 @@ The following JSON example matches the previous schema.
 (5 rows)
     ```
 
-If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
+If you don't get the desired output or experience other problems, see [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting).
