@@ -10,221 +10,183 @@ sort_idx: 40
 * TOC
 {:toc}
 
-This guide explains how to deploy Kaa in Docker.
+This guide explains how to deploy a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) using the [Docker](https://www.docker.com/) containerization platform.
 
-Default environments:
+The deployed cluster will include:
+	
+- Kaa nodes
+- One Zookeeper node
+- One SQL Database node -- MariaDB/PostgreSQL
+- One NoSQL Database node -- MongoDB/Cassandra
 
-  - Fully functional Kaa cluster (Nx Kaa nodes, 1x Zookeeper node, 1x Database SQL node, 1x Database NoSQL node)
-    - Kaa node
-    - Zookeeper node
-    - MariaDB/PostgreSQL
-    - MongoDB/Cassandra
+## Deployment process
 
-# Steps to deploy
+To deploy a Kaa cluster on your machine:
 
-1. Install docker and docker compose. If you use Windows you also need to install python.
-    
-    For installing docker use [official site](https://docs.docker.com/engine/installation/) or
-     [docker installation script](https://get.docker.com/)(only for Linux). 
-     Just run:
-     
-     ```wget
-      -qO- https://get.docker.com/ | sh
-     ```
-    
-    For installing docker compose use [official installation guide](https://docs.docker.com/compose/install/). 
-    
-2. Download debian package from [official site](http://www.kaaproject.org/download-kaa/)
- or build your Kaa project locally (`kaa-node.deb` located in `server/node/target/`).
- 
-    Put `kaa-node.deb` into `server/containers/docker/` folder.
- 
-3. From `server/containers/docker` folder execute:
+1. Install [Docker Engine](https://docs.docker.com/engine/installation/).
 
-     ```docker
-     build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .
-     ```
+	If you use Linux, you can install the Docker Engine by running the [installation script](https://get.docker.com/).
+
+		wget -qO- https://get.docker.com/ | sh
+
+	>**IMPORTANT:** If you use Windows, you must also have [Python](https://www.python.org/downloads/) installed.
+	{:.important}
+
+2. Install [Docker Сompose](https://docs.docker.com/compose/install/).
+
+3. Download Kaa debian package from the [official site](http://www.kaaproject.org/download-kaa/) or build your Kaa project locally (use `kaa-node.deb` located in `server/node/target/`).
+Put the `kaa-node.deb` file in the `server/containers/docker/` directory.
+
+4. Run the following command from the `server/containers/docker` directory.
+
+		docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .
         
-    or
+	Alternatively, you can run the following command.
         
-     ```sh
-     build.sh
-     ```
+		build.sh
 
-## Single node installation
 
-You can use some prepared files in `server/containers/docker/docker-compose-1-node` folder. 
+### Single node installation
 
-First of all in `server/containers/docker/docker-compose-1-node/kaa-example.env` please specify the 
+To install a single node:
 
-**TRANSPORT_PUBLIC_INTERFACE** 
+1. Get your public host by specifying the `TRANSPORT_PUBLIC_INTERFACE` parameter in the `server/containers/docker/docker-compose-1-node/kaa-example.env` file.
 
-For getting your public host just run
+	* Linux / macOS
 
-for **Linux** or **Mac OS**:
+			ip route get 8.8.8.8 | awk '{print $NF; exit}'
 
- ```ip
-  route get 8.8.8.8 | awk '{print $NF; exit}'
- ```
+	* Windows
+
+			netsh interface ip show address "Ethernet" | findstr "IP Address"
+
+2. Open any directory in the `docker-compose-1-node` directory.
+
+		cd docker-compose-1-node/$SQL-NoSQL/
+
+	The following SQL-NoSQL databases are available:
+	
+	 * mariadb-mongodb
+	 * mariadb-cassandra
+	 * postgresql-mongodb
+	 * postgresql-cassandra
+
+3. Run the following command.
+
+		docker-compose up
+
+	If you want to run Docker container as a daemon, run
+
+		docker-compose up -d
+
+
+### Cluster node installation
+
+To install a cluster node:
+
+1. Specify SQL-NoSQL databases which you want to use.
+To do this, run the following command from the `server/containers/docker/using-compose` directory.
+		
+		python launch-kaa.py SQL-NoSQL
+	
+	See example below.
+		
+		python launch-kaa.py mariadb-mongodb
+
+	The following SQL-NoSQL databases are available:
+
+	 * mariadb-mongodb
+	 * mariadb-cassandra
+	 * postgresql-mongodb
+	 * postgresql-cassandra
+
+	If you want deploy Kaa in cluster mode, run the previous command with an additional option.
+
+		python launch-kaa.py SQL-NoSQL NODE_COUNT
+
+    See example below.
+			
+		python launch-kaa.py mariadb-mongodb 3
+		
+
+2. Execute the following command to access the running container.
+
+		docker exec -it usingcompose_KAA_SERVICE_NAME_1 /bin/bash -c "export TERM=xterm; exec bash"
+		
+	`KAA_SERVICE_NAME` is the Kaa service name specified in the `kaa-docker-compose.yml` file.
+            
+    See example below.
+
+		docker exec -it usingcompose_kaa_0_1 /bin/bash -c "export TERM=xterm; exec bash"
+
+	`usingcompose` is the name of the directory containing the `kaa-docker-compose.yml` and `third-party-docker-compose.yml` files.
+
+3. Wait a few seconds until the `kaa-node` service starts and open your browser at `localhost:8080`.
+See the `kaa node` container log to check if the service has started.
+
+## Logs
+
+When you run your Docker container as a daemon, its output is not displayed.
+To access it, run
+    
+	docker-compose -f kaa-docker-compose.yml -p usingcompose exec KAA_SERVICE_NAME sh /kaa/tail-node.sh
+
+`KAA_SERVICE_NAME` is the Kaa service name specified in the `kaa-docker-compose.yml` file.
+
+Alternatively, you can run the `view-kaa-node-logs.sh` to obtain the same result.
+    
+You can also use the command below.
+    
+	docker logs DOCKER_SERVICE_NAME
+    
+To get the names of all Docker containers, run
+    
+	docker ps -a
+
+To get the names of all Docker containers that are running, execute the following command.
+    
+	docker ps
+	
+## Base image configuration
+
+ Base image configuration is done using the following environment variables.
  
-for **Windows**:
-
- ```netsh
-  interface ip show address "Ethernet" | findstr "IP Address"
- ```
-
-Navigate into any one of the possible folders in `docker-compose-1-node` folder.
-
- ```cd
- docker-compose-1-node/$SQL-NoSQL/ 
- ```
- 
- where all available options of SQL-NoSQL databases:
- 
- * mariadb-mongodb
- * mariadb-cassandra
- * postgresql-mongodb
- * postgresql-cassandra 
- 
- and execute
-
- ```docker-compose
- up 
- ```
-    
-or if you want run Docker container as a daemon, run
-
- ```docker-compose
- up -d
- ```
-
-## Cluster node installation
-
-1. From `server/containers/docker/using-compose` folder run command:
-    
-     ```python
-     launch-kaa.py SQL-NoSQL
-     ```
-            
-    And specify SQL-NoSQL databases which you wan to use
-            
-    for example: 
-            
-     ```python
-     launch-kaa.py mariadb-mongodb
-     ```
-            
-    All available options of SQL-NoSQL databases:
-            
-     * mariadb-mongodb
-     * mariadb-cassandra
-     * postgresql-mongodb
-     * postgresql-cassandra 
-                
-    If you want deploy Kaa in cluster mode, run previous command with additional optional
-            
-     ```python
-     launch-kaa.py SQL-NoSQL NODE_COUNT
-     ```
-            
-    or example: 
-            
-     ```python
-     launch-kaa.py mariadb-mongodb 3
-     ```
-
-2. Execute following command to get into running container:
-
-     ```docker
-     exec -it usingcompose_KAA_SERVICE_NAME_1 /bin/bash -c "export TERM=xterm; exec bash"
-     ```
-            
-    KAA_SERVICE_NAME it's Kaa service name in `kaa-docker-compose.yml` file.
-            
-    for example: 
-            
-     ```docker
-     exec -it usingcompose_kaa_0_1 /bin/bash -c "export TERM=xterm; exec bash"
-     ```  
-             
-    Wait a few seconds until the service `kaa-node` starts.
-            
-    Open your browser on localhost:8080 (You can see there some error, just refresh page. It's mean that's service `kaa-node` does not start yet. 
-    You can verify this by looking logs of `kaa-node` containers.)
-            
-    In this example usingcompose - it's name of folder where located `kaa-docker-compose.yml` and `third-party-docker-compose.yml` files.
-
-
-# Logs
-
-When you run your Docker container as a daemon, you won't see its output. So you can use:
-    
- ```docker-compose
- -f kaa-docker-compose.yml -p usingcompose exec KAA_SERVICE_NAME sh /kaa/tail-node.sh
- ```
-    
-KAA_SERVICE_NAME it's Kaa service name in `kaa-docker-compose.yml` file.
-        
-Or simply run the shortcut script 'view-kaa-node-logs.sh' in the examples.
-    
-Also you can use
-    
- ```docker
- logs DOCKER_SERVICE_NAME
- ```
-    
-For getting names of all Docker running containers, just run:
-    
- ```docker
- ps
- ```
-    
-For getting names of all Docker containers, run:
-    
- ```docker
- ps -a
- ```
- 
-# Base image configuration
-
- Base image configuration is done using the following environment variables:
- 
- | VARIABLE         		       	|   DEFAULT					| NOTE / POSSIBLE VALUES
+ | Variable         		       	|   Default					| Note / Possible values
  |-----------------------------|--------------------------|----------------------------
- | SERVICES_WAIT_TIMEOUT			| -1 (forever)				| Seconds (integer) before timeout while waiting for ZK/SQL/NoSQL to be ready, otherwise abort.<br>10: wait 10 seconds.<br>0: don't wait<br>-1: wait forever.
+ | `SERVICES_WAIT_TIMEOUT`			| -1 (forever)				| Seconds (integer) before timeout while waiting for ZK/SQL/NoSQL to be ready, otherwise abort.<br>10: wait 10 seconds.<br>0: don't wait<br>-1: wait forever.
  |								|							|
- | ZOOKEEPER_NODE_LIST			| localhost:2181			| <i>comma separated list</i>
+ | `ZOOKEEPER_NODE_LIST`			| localhost:2181			| <i>comma separated list</i>
  | 								| 							|
- | SQL_PROVIDER_NAME				| mariadb 					| mariadb , postgresql
- | JDBC_HOST						| localhost					|
- | JDBC_PORT						| if mariadb: 3306<br>if postgresql: 5432|
- | JDBC_USERNAME					| sqladmin					|
- | JDBC_PASSWORD					| admin						|
- | JDBC_DB_NAME					| kaa 						|
+ | `SQL_PROVIDER_NAME`				| mariadb 					| mariadb , postgresql
+ | `JDBC_HOST`						| localhost					|
+ | `JDBC_PORT`						| if mariadb: 3306<br>if postgresql: 5432|
+ | `JDBC_USERNAME`					| sqladmin					|
+ | `JDBC_PASSWORD`					| admin						|
+ | `JDBC_DB_NAME`					| kaa 						|
   								| 							|
- | CASSANDRA_CLUSTER_NAME		| Kaa Cluster 				|
- | CASSANDRA_KEYSPACE_NAME		| kaa 						|
- | CASSANDRA_NODE_LIST			| localhost:9042 			| <i>comma separated list</i>
- | CASSANDRA_USE_SSL				| false 					|
- | CASSANDRA_USE_JMX				| true 						|
- | CASSANDRA_USE_CREDENTIALS		| false 					|
- | CASSANDRA_USERNAME 			| (empty) 					|
- | CASSANDRA_PASSWORD 			| (empty) 					| 
+ | `CASSANDRA_CLUSTER_NAME`		| Kaa Cluster 				|
+ | `CASSANDRA_KEYSPACE_NAME`		| kaa 						|
+ | `CASSANDRA_NODE_LIST`			| localhost:9042 			| <i>comma separated list</i>
+ | `CASSANDRA_USE_SSL`				| false 					|
+ | `CASSANDRA_USE_JMX`				| true 						|
+ | `CASSANDRA_USE_CREDENTIALS`		| false 					|
+ | `CASSANDRA_USERNAME` 			| (empty) 					|
+ | `CASSANDRA_PASSWORD` 			| (empty) 					| 
  | 								| 							| 
- | MONGODB_NODE_LIST 			| localhost:27017 			| 
- | MONGODB_DB_NAME				| kaa 						| 
- | MONGODB_WRITE_CONCERN 		| acknowledged 				| 
+ | `MONGODB_NODE_LIST` 			| localhost:27017 			| 
+ | `MONGODB_DB_NAME`				| kaa 						| 
+ | `MONGODB_WRITE_CONCERN` 		| acknowledged 				| 
  | 								| 							| 
- | NOSQL_PROVIDER_NAME			| mongodb 					| mongodb , cassandra
+ | `NOSQL_PROVIDER_NAME`			| mongodb 					| mongodb , cassandra
  |								|							|
- | CONTROL_SERVER_ENABLED		| true						| true/false
- | BOOTSTRAP_SERVER_ENABLED		| true						| true/false
- | OPERATIONS_SERVER_ENABLED		| true						| true/false
- | THRIFT_HOST					| localhost					| 
- | THRIFT_PORT					| 9090						| 
- | ADMIN_PORT					| 8080						| 
- | SUPPORT_UNENCRYPTED_CONNECTION| true						| true/false
- | TRANSPORT_BIND_INTERFACE		| 0.0.0.0					| 
- | TRANSPORT_PUBLIC_INTERFACE	| current public host					|
- | METRICS_ENABLED				| true 						| true/false
+ | `CONTROL_SERVER_ENABLED`		| true						| true/false
+ | `BOOTSTRAP_SERVER_ENABLED`		| true						| true/false
+ | `OPERATIONS_SERVER_ENABLED`		| true						| true/false
+ | `THRIFT_HOST`					| localhost					| 
+ | `THRIFT_PORT`					| 9090						| 
+ | `ADMIN_PORT`					| 8080						| 
+ | `SUPPORT_UNENCRYPTED_CONNECTION`| true						| true/false
+ | `TRANSPORT_BIND_INTERFACE`		| 0.0.0.0					| 
+ | `TRANSPORT_PUBLIC_INTERFACE`	| current public host					|
+ | `METRICS_ENABLED`				| true 						| true/false
   
