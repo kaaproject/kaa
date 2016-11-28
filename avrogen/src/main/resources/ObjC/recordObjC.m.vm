@@ -63,14 +63,24 @@ $initstring {
 }
 
 - (NSString *)description {
-    NSMutableString *fieldsDescription = [NSMutableString new]; 
+    NSMutableString *fieldsDescription = [NSMutableString new];
+
+#foreach($field in $schema.getFields())
+#set ($field_name = $StyleUtils.fixCamelHumps($field.name()))
+#set ($field_type = $TypeConverter.convertToObjCType($field.schema()))
+#set ($field_schema = $field.schema())
+#if ($TypeConverter.isAvroBoolean($field_schema))
+    NSString *fieldBoolVal;
+    #break
+#end
+#end
 
 #foreach($field in $schema.getFields())
 #set ($field_name = $StyleUtils.fixCamelHumps($field.name()))
 #set ($field_type = $TypeConverter.convertToObjCType($field.schema()))
 #set ($field_schema = $field.schema())
 #if ($TypeConverter.isAvroBoolean($field_schema)) 
-    NSString *fieldBoolVal = ($field_name == true) ? @"true" : @"false";
+    fieldBoolVal = (_$field.name() == true) ? @"true" : @"false";
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %@\n", @"$field_name", fieldBoolVal]];
 #elseif ($TypeConverter.isAvroInt($field_schema))
     [fieldsDescription appendString:[NSString stringWithFormat:@"%@: %d\n", @"$field_name", self.$field.name()]];
