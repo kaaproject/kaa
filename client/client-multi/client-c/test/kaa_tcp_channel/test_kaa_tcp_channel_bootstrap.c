@@ -627,7 +627,7 @@ kaatcp_error_t kaatcp_get_request_connect(const kaatcp_connect_t *message
     if (message->protocol_version != PROTOCOL_VERSION) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (message->next_ptorocol_id != 0x3553c66f) {
+    if (message->next_ptorocol_id != 0x0231ad61) {
         return KAATCP_ERR_BAD_PARAM;
     }
     if (message->connect_flags != KAA_CONNECT_FLAGS) {
@@ -659,7 +659,7 @@ kaatcp_error_t kaatcp_fill_connect_message(uint16_t keepalive, uint32_t next_pro
     if (keepalive != KAA_TCP_CHANNEL_MAX_TIMEOUT) {
         return KAATCP_ERR_BAD_PARAM;
     }
-    if (next_protocol_id != 0x3553c66f) {
+    if (next_protocol_id != 0x0231ad61) {
         return KAATCP_ERR_BAD_PARAM;
     }
 

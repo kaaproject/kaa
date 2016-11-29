@@ -37,7 +37,7 @@ void test_kaatcp_connect(void **state)
     char *session_key = "session_key";
     char *signature = "signature";
     char *payload = "payload";
-    kaatcp_error_t rval = kaatcp_fill_connect_message(200, 0x3553c66f, payload, strlen(payload), session_key, strlen(session_key), signature, strlen(signature), &connect);
+    kaatcp_error_t rval = kaatcp_fill_connect_message(200, 0x0231ad61, payload, strlen(payload), session_key, strlen(session_key), signature, strlen(signature), &connect);
     ASSERT_EQUAL(rval, KAATCP_ERR_NONE);
 
     char connect_buf[1024];
@@ -45,7 +45,7 @@ void test_kaatcp_connect(void **state)
     rval = kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size);
     ASSERT_EQUAL(rval, KAATCP_ERR_NONE);
 
-    unsigned char checkConnectHeader[] = { 0x10, 0x2D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x35, 0x53, 0xC6, 0x6F, 0x11, 0x01, 0x00, 0xC8 };
+    unsigned char checkConnectHeader[] = { 0x10, 0x2D, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x02, 0x31, 0xad, 0x61, 0x11, 0x01, 0x00, 0xC8 };
 
     ASSERT_EQUAL(connect_buf_size, 47);
     ASSERT_EQUAL(memcmp(connect_buf, checkConnectHeader, 20), 0);
@@ -60,7 +60,7 @@ void test_kaatcp_connect_without_key(void **state)
 
     kaatcp_connect_t connect;
     char *payload = "payload";
-    kaatcp_error_t rval = kaatcp_fill_connect_message(200, 0x3553c66f, payload, strlen(payload), NULL, 0, NULL, 0, &connect);
+    kaatcp_error_t rval = kaatcp_fill_connect_message(200, 0x0231ad61, payload, strlen(payload), NULL, 0, NULL, 0, &connect);
     ASSERT_EQUAL(rval, KAATCP_ERR_NONE);
 
     char connect_buf[1024];
@@ -68,7 +68,7 @@ void test_kaatcp_connect_without_key(void **state)
     rval = kaatcp_get_request_connect(&connect, connect_buf, &connect_buf_size);
     ASSERT_EQUAL(rval, KAATCP_ERR_NONE);
 
-    unsigned char checkConnectHeader[] = { 0x10, 0x19, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x35, 0x53, 0xC6, 0x6F, 0x00, 0x00, 0x00, 0xC8 };
+    unsigned char checkConnectHeader[] = { 0x10, 0x19, 0x00, 0x06, 'K', 'a', 'a', 't', 'c', 'p', 0x01, 0x02, 0x02, 0x31, 0xad, 0x61, 0x00, 0x00, 0x00, 0xC8 };
 
     ASSERT_EQUAL(connect_buf_size, 27);
     ASSERT_EQUAL(memcmp(connect_buf, checkConnectHeader, 20), 0);
