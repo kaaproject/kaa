@@ -14,7 +14,7 @@ The [Flume](https://flume.apache.org/) log appender encapsulates the received lo
 
 ## Create Flume log appender
 
-To create a file system log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
+To create a Flume log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
 1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
 
@@ -375,3 +375,29 @@ The Kaa flume sink detects the logs data schema and stores the log data into HDF
 
 `${record_data_schema}` is a variable substituted at run time by Kaa HDFS Sink with the Avro schema of the actual logs.
 This Avro schema is obtained trough the [server REST API call]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/getLogSchemaByApplicationTokenAndVersion) to Kaa.
+
+## Playing with Flume log appender
+
+The example below uses the **Data collection demo** from [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
+
+To play around with the  log appender:
+
+1. Open the Data collection demo from Kaa Sandbox, follow the application installation instructions, and run the application.
+
+2. Create a Flume log appender as described [above](#create-flume-log-appender).
+
+3. Your running Data collection demo application will display the output similar to the example below.
+
+		Data collection demo started
+		Received new sample period: 1
+		Sampled temperature 28 1474622330
+		Sampled temperature 31 1474622331
+		Sampled temperature 32 1474622332
+		Sampled temperature 30 1474622333
+		Sampled temperature 28 1474622334
+		...
+
+
+The logs are stored within the HDFS path defined during **Kaa Flume sink** setup.
+
+If you don't get the desired output or experience other problems, see [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting).
