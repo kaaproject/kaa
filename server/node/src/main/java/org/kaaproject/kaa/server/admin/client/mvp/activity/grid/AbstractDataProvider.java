@@ -132,6 +132,7 @@ public abstract class AbstractDataProvider<T, K> extends AsyncDataProvider<T>
 
   @Override
   public void onColumnFilter(ColumnFilterEvent event) {
+    dataGrid.getDataGrid().setPageStart(0);
     updateData();
   }
 
