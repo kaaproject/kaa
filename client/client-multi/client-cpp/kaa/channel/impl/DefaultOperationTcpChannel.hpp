@@ -126,7 +126,7 @@ private:
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
 
     static const std::uint16_t THREADPOOL_SIZE = 2;
-    static const std::uint32_t KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xf291f2d4;
+    static const std::uint32_t KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xe0c0c178;
 
     static const std::uint16_t CHANNEL_TIMEOUT = 200;
     static const std::uint16_t PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
