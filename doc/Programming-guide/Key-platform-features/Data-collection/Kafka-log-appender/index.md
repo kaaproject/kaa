@@ -153,7 +153,7 @@ Example result:
 
 # Playing with Kafka log appender
 
-To check out Kafka log appender you can play with [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source).
+To check out Kafka log appender you can play with [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollection/source).
 Download [Kaa Sandbox](http://www.kaaproject.org/download-kaa/) then set up it and go to Data collection demo application.
 
 >**NOTE:**

@@ -159,7 +159,7 @@ Example result:
 
 # Playing with MongoDB log appender
 
-We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollectiondemo/source) from Kaa Sandbox. Our example will send data
+We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollection/source) from Kaa Sandbox. Our example will send data
 to Kaa and then persist it to MongoDB. Also, we'll do selection queries on persisted data.
 
 We have next log schema:
