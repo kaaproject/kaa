@@ -82,3 +82,14 @@ kaa_failover_decision_t kaa_failover_strategy_on_failover(void *self, kaa_failov
     }
     return strategy->decision;
 }
+
+kaa_error_t kaa_failover_strategy_set(kaa_failover_strategy_t *strategy,
+        kaa_failover_decision_t *decision)
+{
+    if (strategy == NULL || decision == NULL) {
+        return KAA_ERR_BADPARAM;
+    }
+    strategy->decision = *decision;
+
+    return KAA_ERR_NONE;
+}
