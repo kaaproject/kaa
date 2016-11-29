@@ -17,7 +17,7 @@ This page provides guidance on how to set up the Sandbox and run your first [Kaa
 The setup instructions are also available as a video tutorial below.
 
 <p align="center">
-  <iframe width="800" height="500" src="https://www.youtube.com/embed/ynbxcRdgXFU">
+  <iframe width="800" height="500" src="https://www.youtube.com/embed/AM-4qaAuCoY">
   </iframe>
 </p>
 
