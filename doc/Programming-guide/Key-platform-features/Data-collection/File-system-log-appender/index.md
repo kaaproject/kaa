@@ -33,7 +33,7 @@ Click **Add log appender**.
 4. Fill in the **Configuration** section for your log appender and click **Add**.
 See [Configure log appender](#configure-log-appender).
 
-Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) to create or edit your Couchbase log appender.
+Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) to create or edit your log appender.
 
 The following example illustrates how to create an instance of file system log appender using the server REST API.
 
@@ -126,7 +126,7 @@ Below is an example configuration that matches the mentioned Avro schema.
 
 The example below uses the **Data collection demo** from [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
 
-To play around with the the Couchbase log appender:
+To play around with the file system log appender:
 
 1. Open the Data collection demo from Kaa Sandbox, follow the application installation instructions, and run the application.
 
