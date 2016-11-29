@@ -2,7 +2,6 @@
 layout: page
 title: Flume log appender
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Data-collection/Flume-log-appender
 sort_idx: 50
 ---
 
@@ -11,13 +10,16 @@ sort_idx: 50
 * TOC
 {:toc}
 
-The Flume log appender encapsulates received logs into Flume events and sends these events to external Flume sources via Avro RPC.
+The [Flume](https://flume.apache.org/) log appender encapsulates received logs into Flume events and sends them to external Flume sources via [Avro RPC](https://github.com/phunt/avro-rpc-quickstart).
 
-# Creating Flume log appender in Admin UI
+## Create Flume log appender
 
-The easiest way to create a Flume log appender for your application is by using Admin UI.
+To create a file system log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
-To create a log appender do the following:
+1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
+
+2. Click **Applications** and open the **Log appenders** page of your application.
+Click **Add log appender**.
 
 1. In the **Log appenders** window, click **Add log appender**. <br/>
 2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields. <br/>
@@ -39,16 +41,79 @@ To create a log appender do the following:
 
 6.  Click **Add** button. Log appender is ready and operational at this point.
 
-# Creating Flume log appender with Admin REST API
+## Creating Flume log appender with Admin REST API
 
 It is also possible to create a Flume log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
 The following example illustrates how to create the Flume log appender via Admin REST API.
 
-## Formats
+### Administration
+
+The following Admin REST API call example illustrates how to create a new Flume log appender.
+
+```bash
+curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @flumeLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+```
+
+where file `flumeLogAppender.json` contains following data:
+
+```json
+{
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender",
+    "pluginTypeName":"Flume",
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "name":"Sample Flume log appender",
+    "description":"Sample Flume log appender",
+    "headerStructure":[
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "maxLogSchemaVersion":2147483647,
+    "minLogSchemaVersion":1,
+    "tenantId":"1",
+    "jsonConfiguration":"{\"executorThreadPoolSize\":1,\"callbackThreadPoolSize\":2,\"clientsThreadPoolSize\":2,\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false},\"flumeEventFormat\":\"RECORDS_CONTAINER\",\"hostsBalancing\":{\"org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes\":{\"flumeNodes\":[{\"host\":\"10.2.3.93\",\"port\":7070,\"priority\":1},{\"host\":\"10.1.5.67\",\"port\":8070,\"priority\":2},{\"host\":\"10.2.6.44\",\"port\":7090,\"priority\":3}]}}}"
+}
+```
+
+Example result:
+
+```json
+{
+    "applicationId": "5",
+    "applicationToken": "82635305199158071549",
+    "confirmDelivery": true,
+    "createdTime": 1466496979110,
+    "createdUsername": "devuser",
+    "description": "Sample Flume log appender",
+    "headerStructure": [
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "id": "131074",
+    "jsonConfiguration": "{\"executorThreadPoolSize\":1,\"callbackThreadPoolSize\":2,\"clientsThreadPoolSize\":2,\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false},\"flumeEventFormat\":\"RECORDS_CONTAINER\",\"hostsBalancing\":{\"org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes\":{\"flumeNodes\":[{\"host\":\"10.2.3.93\",\"port\":7070,\"priority\":1},{\"host\":\"10.1.5.67\",\"port\":8070,\"priority\":2},{\"host\":\"10.2.6.44\",\"port\":7090,\"priority\":3}]}}}",
+    "maxLogSchemaVersion": 2147483647,
+    "minLogSchemaVersion": 1,
+    "name": "Sample Flume log appender",
+    "pluginClassName": "org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender",
+    "pluginTypeName": "Flume",
+    "tenantId": "1"
+}
+```
+
+If you want to use Flume agents together with the Flume log appender, create necessary Kaa Flume agents as described in
+[Installing Kaa flume agents](#TODO Add link to Installing Kaa flume agents).
+
+### Formats
 
 The Flume log appender can be configured to produce flume events using either _Records container_ or _Generic_ format.
 
-### Records container
+#### Records container
 
 In case of the Records container format, log records are serialized by the following RecordData schema as a binary Avro file and stored in a Flume event raw body.
 
@@ -190,7 +255,7 @@ parsing of the binary data.
 }
 ```
 
-### Generic
+#### Generic
 
 In case of the Generic format, every log record is represented as a separate Flume event. The Flume event body contains a log record serialized by 
 the log schema in the Avro binary format. The Flume event header contains the log schema definition mapped by the **flume.avro.schema.literal** key.
@@ -277,7 +342,7 @@ of the log records data schema and stores log data into HDFS as Avro Sequence fi
 `${record_data_schema}` - is a variable which is substituted at run time by Kaa HDFS Sink with the Avro schema of the actual logs. 
 This Avro schema is obtained via [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/getLogSchemaByApplicationTokenAndVersion) call to Kaa.
 
-## Configuration
+### Configuration
 
 The Flume log appender configuration must match to
 [this]({{github_url}}server/appenders/flume-appender/src/main/avro/flume-appender-config.avsc) Avro schema.
@@ -332,70 +397,7 @@ to which to save logs, an endpoint will send requests to the servers starting fr
 will send requests to the servers according to the round robin algorithm. <br/>
 * You can include client-side and/or server-side endpoint profile data into persisted data via corresponding check-boxes.
 
-## Administration
-
-The following Admin REST API call example illustrates how to create a new Flume log appender.
-
-```bash
-curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @flumeLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
-```
-
-where file `flumeLogAppender.json` contains following data:
-
-```json
-{
-    "pluginClassName":"org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender",
-    "pluginTypeName":"Flume",
-    "applicationId":"5",
-    "applicationToken":"82635305199158071549",
-    "name":"Sample Flume log appender",
-    "description":"Sample Flume log appender",
-    "headerStructure":[
-        "KEYHASH",
-        "VERSION",
-        "TIMESTAMP",
-        "TOKEN",
-        "LSVERSION"
-    ],
-    "maxLogSchemaVersion":2147483647,
-    "minLogSchemaVersion":1,
-    "tenantId":"1",
-    "jsonConfiguration":"{\"executorThreadPoolSize\":1,\"callbackThreadPoolSize\":2,\"clientsThreadPoolSize\":2,\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false},\"flumeEventFormat\":\"RECORDS_CONTAINER\",\"hostsBalancing\":{\"org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes\":{\"flumeNodes\":[{\"host\":\"10.2.3.93\",\"port\":7070,\"priority\":1},{\"host\":\"10.1.5.67\",\"port\":8070,\"priority\":2},{\"host\":\"10.2.6.44\",\"port\":7090,\"priority\":3}]}}}"
-}
-```
-
-Example result:
-
-```json
-{
-    "applicationId": "5",
-    "applicationToken": "82635305199158071549",
-    "confirmDelivery": true,
-    "createdTime": 1466496979110,
-    "createdUsername": "devuser",
-    "description": "Sample Flume log appender",
-    "headerStructure": [
-        "KEYHASH",
-        "VERSION",
-        "TIMESTAMP",
-        "TOKEN",
-        "LSVERSION"
-    ],
-    "id": "131074",
-    "jsonConfiguration": "{\"executorThreadPoolSize\":1,\"callbackThreadPoolSize\":2,\"clientsThreadPoolSize\":2,\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false},\"flumeEventFormat\":\"RECORDS_CONTAINER\",\"hostsBalancing\":{\"org.kaaproject.kaa.server.appenders.flume.config.gen.PrioritizedFlumeNodes\":{\"flumeNodes\":[{\"host\":\"10.2.3.93\",\"port\":7070,\"priority\":1},{\"host\":\"10.1.5.67\",\"port\":8070,\"priority\":2},{\"host\":\"10.2.6.44\",\"port\":7090,\"priority\":3}]}}}",
-    "maxLogSchemaVersion": 2147483647,
-    "minLogSchemaVersion": 1,
-    "name": "Sample Flume log appender",
-    "pluginClassName": "org.kaaproject.kaa.server.appenders.flume.appender.FlumeLogAppender",
-    "pluginTypeName": "Flume",
-    "tenantId": "1"
-}
-```
-
-If you want to use Flume agents together with the Flume log appender, create necessary Kaa Flume agents as described in
-[Installing Kaa flume agents](#TODO Add link to Installing Kaa flume agents).
-
-# Setting up Flume log appender
+## Setting up Flume log appender
 
 1. As a tenant admin, go to your application >> Log appenders, then click **Add log appender**.
 ![Add log appender](attach/add-log-appender.jpg)
