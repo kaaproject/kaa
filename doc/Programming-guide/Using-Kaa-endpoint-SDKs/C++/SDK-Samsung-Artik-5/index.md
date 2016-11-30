@@ -45,7 +45,7 @@ The following third-party components must be installed before building the C++ S
 - Avro (1.7.5).
 - Botan (1.11).
 
-Before installing the components for a target, install the dependencies for the [host machine]({{root_url}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#Dependencies).
+Before installing the components for a target, install the dependencies for the [host machine]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#Dependencies).
 
 To build Avro version higher than 1.7.5, you will need Boost with the iostream library.
 To build Boost with iostreams, you will need to build the zlib and the libbz2 libraries as described below.
