@@ -28,7 +28,7 @@
 
 namespace kaa {
 
-const char * const BUILD_VERSION = "0.10.0-SNAPSHOT";
+const char * const BUILD_VERSION = "0.11.0-SNAPSHOT";
 
 const char * const BUILD_COMMIT_HASH = "";
 

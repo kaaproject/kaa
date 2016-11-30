@@ -53,7 +53,7 @@ Below is an example of Maven project POM file:
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.domain.sample.appenders</groupId>
     <artifactId>custom-appender</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Custom Log Appender</name>
