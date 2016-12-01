@@ -353,6 +353,22 @@ Separate the code block from the list item with an empty line.
 ```
 {% endraw %}
 
+* Refer to Sample Apps using `sample_apps_url`, e.g., [Sample Apps]({{sample_apps_url}})
+
+{% raw %}
+  ```
+[Sample Apps]({{sample_apps_url}})
+```
+{% endraw %}
+
+* Refer to Sandbox Frame using `sandbox_frame_url`, e.g., [Sandbox Frame]({{sandbox_frame_url}})
+
+{% raw %}
+  ```
+[Sandbox Frame]({{sandbox_frame_url}})
+```
+{% endraw %}
+
 * Use tabs to describe same instructions/code examples for different platforms/languages.
 Click the **Src** tab to see the source code used to generate the tabs.
 <ul>
