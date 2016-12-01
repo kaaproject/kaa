@@ -77,6 +77,7 @@ public class ApplicationViewImpl extends BaseDetailsViewImpl implements Applicat
       applicationToken = new KaaAdminSizedTextBox(DEFAULT_TEXTBOX_SIZE * 2, false);
       applicationToken.setWidth("100%");
       applicationToken.setEnabled(false);
+      applicationToken.setReadOnly(true);
 
       Label tokenLabel = new Label(Utils.constants.appToken());
       detailsTable.setWidget(2, 0, tokenLabel);
