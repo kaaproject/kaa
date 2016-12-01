@@ -40,7 +40,7 @@
 
 #define ACCESS_POINT_SOCKET_FD 5
 #define EXPECTED_KEEPALIVE              200
-#define EXPECTED_PROTOCOL_ID            0x3553c66f
+#define EXPECTED_PROTOCOL_ID            0x0231ad61
 #define EXPECTED_PROTOCOL_VERSION       1
 
 
