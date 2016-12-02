@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 
-{ stdenv, wine, requireFile, xvfb_run
+{ stdenv, wineMinimal, requireFile, xvfb_run
 }:
 stdenv.mkDerivation rec {
 
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
     url = "http://www.ti.com/tool/cc3200sdk";
   };
 
-  nativeBuildInputs = [ xvfb_run wine ];
+  nativeBuildInputs = [ xvfb_run wineMinimal ];
 
   unpackPhase = ":";
 

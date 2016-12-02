@@ -21,18 +21,18 @@ let
   # - go to https://github.com/NixOS/nixpkgs-channels
   # - select branch you want to track
   # - get latest commit hash -- this goes to `rev` field
-  # - execute `nix-prefetch-url --unpack https://github.com/NixOS/nixpkgs-channels/<rev>.tar.gz`
+  # - execute `nix-prefetch-url --unpack https://github.com/NixOS/nixpkgs-channels/archive/<rev>.tar.gz`
   # - output of the previous command goes to `sha256` field
-  nixpkgs-16_03 = import (nixpkgs-bootstrap.fetchFromGitHub {
+  nixpkgs-16_09 = import (nixpkgs-bootstrap.fetchFromGitHub {
     owner = "NixOS";
     repo = "nixpkgs-channels";
-    rev = "baf46b99e33005348fdbd083366c330be4b373f3";
-    sha256 = "19wq2ayn9l5qd2s6s07sjh49kc6qlpadyy098zzayxj6nprvwzmb";
+    rev = "b833b10f81bee30c634802afbe06d9d0630c2709";
+    sha256 = "01sdf85fb99vmfk2xnjm7ii7ac0vf112ywhkmi1v5dln1x2cxps7";
   }) { };
 
 in
 
-{ pkgs ? nixpkgs-16_03
+{ pkgs ? nixpkgs-16_09
 , pkgs-tools ? nixpkgs-bootstrap
 }:
 
@@ -49,8 +49,6 @@ let
   callPackage = pkgs.lib.callPackageWith (pkgs // tools // self);
 
   self = rec {
-    avro-cpp = callPackage ./avro-c++ { };
-
     gcc-xtensa-lx106 = callPackage ./gcc-xtensa-lx106 { };
 
     esp8266-rtos-sdk = callPackage ./esp8266-rtos-sdk { };
@@ -70,17 +68,8 @@ let
       patchFlags = "--directory=../.. -p1";
     });
 
-    cmocka = pkgs.cmocka.overrideDerivation (oldAttrs: {
-      patches = [
-        (pkgs-tools.fetchpatch {
-          url = "https://git.cryptomilk.org/projects/cmocka.git/patch/?id=1b595a80934fa95234fb290913cfe533f740d965";
-          sha256 = "1fg8xwb1mrrmw4dqa65ghnvgfdkpi0lv4j2gq0lm9ayvsi3v00vp";
-        })
-      ];
-    });
-
     # cmake-2.8 doesn't work on Darwin
-    test-cmake = if pkgs.stdenv.isDarwin then pkgs.cmake else pkgs.cmake-2_8;
+    test-cmake = if pkgs.stdenv.isDarwin then pkgs.cmake else pkgs.cmake_2_8;
 
     kaa-client-c = callPackage ./kaa-client-c { cmake = test-cmake; };
 

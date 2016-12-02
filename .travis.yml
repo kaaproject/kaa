@@ -49,3 +49,5 @@ matrix:
         - travis_retry nix-shell -Q --pure --run true
       script:
         - nix-shell --pure --run './build.sh test'
+  allow_failures:
+    - os: osx
