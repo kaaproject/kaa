@@ -5,174 +5,142 @@ permalink: /:path/
 sort_idx: 220
 ---
 
- 
 {% include variables.md %}
- 
+
 * TOC
 {:toc}
 
-After [Kaa installation]({{root_url}}Administration-guide/System-installation/), configuration files for each Kaa 
-component will be extracted into the
-`/etc/kaa-node/` conf directory.
- 
-`admin-dao.properties`, `sql-dao.properties` and `nosql-dao.properties` files are responsible for database configuration.
- 
->**NOTE:**
-> After changing properties in any file from this folder, you must restart the node for changes to take effect, 
-by executing following command:
->
+When you complete [Kaa installation]({{root_url}}Administration-guide/System-installation/), the configuration files for each Kaa component will be extracted into the `/etc/kaa-node/` directory.
+
+Use the following files to configure your database:
+
+* `admin-dao.properties`
+* `sql-dao.properties`
+* `nosql-dao.properties`
+	
+After you changed the properties in the configuration files, restart the node for the changes to take effect.
+
 ```bash
 $ sudo service kaa-node restart
 ```
- 
-# SQL database configuration
- 
-> **Note:** Kaa requires one of possible options:
-> [MariaDB 5.5](https://mariadb.com/)
-> [PostgreSQL 9.4](http://www.postgresql.org/download/).
-> **MariaDB** is the default choice.
- 
-For more information about installing MariaDB and PostgreSQL databases use
-[Third party components installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/#third-party-components-installation)
- 
-You can find SQL database configuration property file templates in `/etc/kaa-node/conf/` folder: `maria-dao.properties.template`, 
-`mariadb-dao.properties.template` files for MariaDB database and `postgre-dao.properties.template`, 
-`postgresql-dao.properties.template` files for PostgreSQL.
- 
-`admin-dao.properties` and `sql-dao.properties` consist of the following parameters:
- 
-**Database name**
 
-db_name=kaa
- 
-**Specific configurations for DAO layer
-Max wait time in seconds for history dao class. Custom property for Kaa History Service.**
+## SQL database configuration
 
-dao_max_wait_tim
-Default: _5_
- 
-**Specify hibernate sql dialect**
+You can use one of the following databases:
 
-hibernate_dialect
- 
-**Specify if hibernate will format sql request**
+* [MariaDB 5.5](https://mariadb.com/)
+* [PostgreSQL 9.4](http://www.postgresql.org/download/)
 
-hibernate_format_sql
-Default: _false_
- 
-**Specify if show hibernate sql request**
+By default, MariaDB database is used.
 
-hibernate_show_sql
-Default: _false_
- 
-**Specify hibernate hbm2ddl strategy**
+For database installation instructions, see [Third party components]({{root_url}}Administration-guide/System-installation/Single-node-installation/#third-party-components).
 
-hibernate_hbm2ddl_auto
-Default: _update_
- 
-**Specify jdbc driver class**
+The following templates of the configuration property file for SQL database are located in the `/etc/kaa-node/conf/` directory:
 
-jdbc_driver_className
- 
-**Specify jdbc database user name**
+* `maria-dao.properties.template`, `mariadb-dao.properties.template` -- for MariaDB.
+* `postgre-dao.properties.template`, `postgresql-dao.properties.template` -- for PostgreSQL.
 
-jdbc_username
- 
-**Specify jdbc mariaDB database password root**
+See the table below for configuration parameters contained in the `admin-dao.properties` and `sql-dao.properties` files.
 
-jdbc_password
- 
-**Specify jdbc database hosts and ports**
+|Parameter name|Default value|Description|
+|--------------|-------------|-----------|
+|`db_name=kaa`||Database name.|
+|`dao_max_wait_tim`|5|Maximum wait time in seconds for DAO history class. Custom property for Kaa **History service**.|
+|`hibernate_dialect`||Specifies hibernate sql dialect.|
+|`hibernate_format_sql`|false|Specifies if hibernate will format sql request.|
+|`hibernate_show_sql`|false|Shows hibernate sql request.|
+|`hibernate_hbm2ddl_auto`|update|Specifies hibernate `hbm2ddl` strategy.|
+|`jdbc_driver_className`||Specifies the `jdbc` driver class.|
+|`jdbc_username`||Specifies `jdbc` database user name.|
+|`jdbc_password`||Specifies `jdbc` mariaDB database password root.|
+|`jdbc_host_port`||Specifies `jdbc` database hosts and ports.|
+|`sql_provider_name`||Specifies `jdbc` database provider name.|
 
-jdbc_host_port
- 
-**Specify jdbc database provider name**
 
-sql_provider_name
- 
-## MariaDB configuration
- 
-Check that the MariaDB login and password is up to date in the server configuration files.
- 
+<ul class="nav nav-tabs">
+     <li class="active"><a data-toggle="tab" href="#MariaDB">MariaDB</a></li>
+     <li><a data-toggle="tab" href="#PostgreSQL">PostgreSQL</a></li>
+</ul>
+
+<div class="tab-content"><div id="MariaDB" class="tab-pane fade in active" markdown="1">
+
+Check that the MariaDB username and password is up to date in the server configuration files.
+
 ```bash
 $ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_username
 jdbc_username=sqladmin
- 
+
 $ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_password
 jdbc_password=admin
- 
+
 $ cat /etc/kaa-node/conf/sql-dao.properties | grep jdbc_username
 jdbc_username=sqladmin
- 
+
 $ cat /etc/kaa-node/conf/sql-dao.properties | grep jdbc_password
 jdbc_password=admin
 ```
 
-In case of the password or username mismatch, edit the configuration file to set a new password.
- 
+In case of the password or username mismatch, edit the configuration file.
+
 ```bash
 $ sudo nano /etc/kaa-node/conf/admin-dao.properties
- 
+
 $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 ```
- 
-If you wish to switch from PostgreSQL to MariaDB you should copy content 
-of MariaDB config files to Kaa DB config files:
- 
+
+To switch from PostgreSQL to MariaDB, copy the contents of MariaDB configuration files to the Kaa database configuration files.
+
 ```bash
 $ sudo bash -c "cat /etc/kaa-node/conf/maria-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties"
 $ sudo bash -c "cat /etc/kaa-node/conf/mariadb-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties"
 ```
- 
-## PostgreSQL configuration
- 
+
+</div><div id="PostgreSQL" class="tab-pane fade" markdown="1">
+
 Check that the PostgreSQL password is up to date in the server configuration files.
- 
+
 ```bash
 $ cat /etc/kaa-node/conf/admin-dao.properties | grep jdbc_password
 jdbc_password=admin
- 
+
 $ cat /etc/kaa-node/conf/sql-dao.properties | grep jdbc_password
 jdbc_password=admin
 ```
-In case of the password or username mismatch, edit the configuration file to set a new password.
- 
+
+In case of the password or username mismatch, edit the configuration file.
+
 ```bash
 $ sudo nano /etc/kaa-node/conf/admin-dao.properties
- 
+
 $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 ```
- 
-If you wish to switch from MariaDB to PostgreSQL you should copy content 
-of PostgreSQL config files to Kaa DB config files:
- 
+
+To switch from MariaDB to PostgreSQL, copy the contents of MariaDB configuration files to the Kaa database configuration files.
+
 ```bash
 $ sudo bash -c "cat /etc/kaa-node/conf/postgre-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties"
 $ sudo bash -c "cat /etc/kaa-node/conf/postgresql-dao.properties.template > /etc/kaa-node/conf/admin-dao.properties"
 ```
- 
-# NoSQL database configuration
- 
-> **Note:** Kaa requires one of possible options: 
-> [MongoDB 2.6.9](http://www.mongodb.org/downloads) and
-> [Cassandra 3.5](http://cassandra.apache.org/download/).
-> **MongoDB** is the default choice.
- 
-For more information about installing MongoDB and Cassandra databases use
-[Third party components installation]({{root_url}}Administration-guide/System-installation/Single-node-installation/#third-party-components-installation)
- 
-You can find NoSQL database configuration property file `nosql-dao.properties` in `/etc/kaa-node/conf/`.
- 
-The nosql-dao.properties consist of the following parameters:
- 
-**NoSQL database provider name.**
-**Possible options: mongodb, cassandra**
 
-nosql_db_provider_name
-Default: _mongodb_
- 
-In case you are going to use Cassandra, execute the following commands.
- 
+</div></div>
+
+## NoSQL database configuration
+
+You can use one of the following databases:
+
+* [MongoDB 2.6.9](http://www.mongodb.org/downloads)
+* [Cassandra 3.5](http://cassandra.apache.org/download/)
+
+By default, MongoDB database is used.
+
+For database installation instructions, see [Third party components]({{root_url}}Administration-guide/System-installation/Single-node-installation/#third-party-components).
+
+The `nosql-dao.properties` template of the configuration property file for SQL database is located in the `/etc/kaa-node/conf/` directory.
+
+The `nosql-dao.properties` file contains the `nosql_db_provider_name` parameter that can be set to **mongodb** (default) or **cassandra** consist of the following parameters:
+
+If you use Cassandra, run the following commands.
+
 ```bash
 $ sudo cqlsh -f /etc/kaa-node/conf/cassandra.cql
 $ sudo nano /etc/kaa-node/conf/nosql-dao.properties
