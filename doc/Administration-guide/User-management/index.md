@@ -13,45 +13,44 @@ sort_idx: 50
 
 This section explains how to manage users in Kaa [Administration UI]({{root_url}}Glossary/#administration-ui).
 
-This guide assumes that Kaa has already been installed and Admin UI is available from the web. If it's not the case, look at the
-[Installation guide]({{root_url}}Programming-guide/Getting-started/#installation) for more info.
+To follow the guidelines, you need to have Kaa already installed with the Administration UI available from the web.
+For installation instructions, see [Getting started]({{root_url}}Getting-started/).
 
 ## Managing tenants
 
-The **Tenants** window, which is the starting window for a Kaa admin, displays a list of tenants. The Kaa admin can add/edit/delete a tenant and add a tenant admin to it.
+To manage tenants, log in to the Administration UI as [Kaa administrator]({{root_url}}Glossary/#kaa-administrator).
+Click **Tenants** to unfold the list of tenants.
 
-<img src="attach/tenants.png" width="600" height="250">
+![tenants](attach/tenants.png)
 
-## Managing tenant admins
+To view tenant details, select the tenant either from the list or from the navigation panel on the left side.
 
-To view a tenant details, select the tenant either from the list or from the navigation panel on the left side.
+![tenant](attach/tenant.png)
 
-<img src="attach/tenant.png" width="600" height="250">
-
-
-To create a new tenant admin, click **Add user** and then fill in all the required fields. Click **Add** to apply the changes.
+As a Kaa administrator, you can add, edit, and delete tenants, as well as create [tenant administrators]({{root_url}}Glossary/#tenant-administrator).
+To create a new tenant administrator, click **Add user**, fill in all the required fields and click **Add** to apply the changes.
 
 <img src="attach/tenant_admin.png" width="600" height="350">
 
-The newly created tenant admin will receive an e-mail with his or her login to Kaa web UI credentials window.
+The newly created tenant administrator will receive an e-mail with their credentials to log in to the Kaa Administration UI.
 
 ## Managing users
 
-The tenant admin can add, edit and delete users.
+Tenant administrators can add, edit, and delete users.
 
-To add a user, do the following:
+To add a user:
 
-1. Open to the **Users** window and click **Add user**.
+1. Log in to the Administration UI as tenant administrator.
 
-    <img src="attach/image2015-3-4%2016-54-48.png" width="850" height="200">
+2. Open the **Users** page and click **Add user**.
 
-2. In the **Add user** window, enter the username and email.
-3. In the **Account role** field, select _Tenant developer_.
+	![users](attach/image2015-3-4%2016-54-48.png)
 
-   <img src="attach/image2015-3-4%2016-54-1.png" width="500" height="300">
+3. On the **Add user** page, enter the username and email.
 
-To edit a user's profile, open the **User details** window by clicking the user's name either on the navigation panel or in the list in the **Users** window.
+4. In the **Account role** field, select **Tenant developer**.
+Click **Add** to apply the changes.
 
-To delete a user, open the **Users** window and click **Delete** next to the user's name.
+To edit a user profile, open the **User details** page by selecting the user on the **Users** page.
 
-<img src="attach/image2015-3-4%2016-54-48.png" width="850" height="200">
+To delete a user, open the **Users** page and click the corresponding **Delete** icon.
