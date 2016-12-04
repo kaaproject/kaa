@@ -1,0 +1,12 @@
+{
+ "namespace": "org.kaaproject.kaa.server.transport.coap.config.gen",
+ "type": "record",
+ "name": "AvroCoapConfig",
+ "fields": [
+     {"name": "bindInterface", "type": "string"},
+     {"name": "bindPort", "type": "int"},
+     {"name": "publicInterface", "type": "string"},
+     {"name": "publicPort", "type": "int"},
+     {"name": "maxBodySize", "type": "int"}
+ ]
+}
