@@ -36,5 +36,6 @@
     <modules>
         <module>http</module>
         <module>tcp</module>
+          <module>coap</module>
     </modules>
 </project>
