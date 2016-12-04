@@ -1439,5 +1439,10 @@ Copyright 2014-2016 CyberVision, Inc.
             <id>repository.kaaproject.snapshots</id>
             <url>http://repository.kaaproject.org/repository/snapshots/</url>
         </repository>
+        <repository>
+            <id>repo.eclipse.org</id>
+            <name>Californium Repository</name>
+            <url>https://repo.eclipse.org/content/repositories/californium/</url>
+        </repository>
     </repositories>
 </project>
