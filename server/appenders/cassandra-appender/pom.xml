@@ -19,7 +19,7 @@ Copyright 2014-2016 CyberVision, Inc.
     <parent>
         <groupId>org.kaaproject.kaa.server</groupId>
         <artifactId>appenders</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
