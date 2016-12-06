@@ -24,7 +24,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Generated;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked"})
@@ -543,7 +542,7 @@ public class EndpointEvent implements org.apache.thrift.TBase<EndpointEvent, End
     if (this.sender == null) {
       sb.append("null");
     } else {
-      sb.append(this.sender);
+      sb.append(this.sender.array());
     }
     first = false;
     if (!first) sb.append(", ");

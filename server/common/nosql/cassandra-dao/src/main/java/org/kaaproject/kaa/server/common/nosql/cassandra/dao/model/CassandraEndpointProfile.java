@@ -56,6 +56,7 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
 
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EventClassFamilyVersionStateDto;
 import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
@@ -591,24 +592,24 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
   @Override
   public String toString() {
     return "CassandraEndpointProfile{"
-        + "endpointKeyHash=" + endpointKeyHash
+        + "endpointKeyHash=" + (endpointKeyHash != null ? Hex.encodeHexString(endpointKeyHash.array()) : "")
         + ", id='" + id + '\''
-        + ", endpointProfileKey=" + endpointProfileKey
+        + ", endpointProfileKey=" + (endpointProfileKey != null ? Hex.encodeHexString(endpointProfileKey.array()) : "")
         + ", applicationId='" + applicationId + '\''
         + ", endpointUserId='" + endpointUserId + '\''
         + ", accessToken='" + accessToken + '\''
         + ", groupStates=" + groupStates
         + ", sequenceNumber=" + sequenceNumber
         + ", profile='" + profile + '\''
-        + ", profileHash=" + profileHash
+        + ", profileHash=" + (profileHash != null ? Hex.encodeHexString(profileHash.array()) : "")
         + ", profileVersion=" + profileVersion
         + ", serverProfileVersion=" + serverProfileVersion
-        + ", configurationHash=" + configurationHash
-        + ", userConfigurationHash=" + userConfigurationHash
+        + ", configurationHash=" + (configurationHash != null ? Hex.encodeHexString(configurationHash.array()) : "")
+        + ", userConfigurationHash=" + (userConfigurationHash != null ? Hex.encodeHexString(userConfigurationHash.array()) : "")
         + ", configurationVersion=" + configurationVersion
         + ", notificationVersion=" + notificationVersion
         + ", subscriptions=" + subscriptions
-        + ", topicHash=" + topicHash
+        + ", topicHash=" + (topicHash != null ? Hex.encodeHexString(topicHash.array()) : "")
         + ", simpleTopicHash=" + simpleTopicHash
         + ", systemNfVersion=" + systemNfVersion
         + ", userNfVersion=" + userNfVersion

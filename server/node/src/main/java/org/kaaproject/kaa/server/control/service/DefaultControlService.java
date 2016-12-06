@@ -122,6 +122,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotif
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.kaaproject.kaa.server.control.service.schema.SchemaLibraryGenerator;
@@ -158,7 +160,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import javax.annotation.PreDestroy;
 
 /**
@@ -993,19 +994,22 @@ public class DefaultControlService implements ControlService {
           zkNode.addListener(new OperationsNodeListener() {
             @Override
             public void onNodeUpdated(OperationsNodeInfo node) {
-              LOG.info("Update of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Update of node {} is pushed to resolver {}",
+                  node, resolver);
               resolver.onNodeUpdated(node);
             }
 
             @Override
             public void onNodeRemoved(OperationsNodeInfo node) {
-              LOG.info("Remove of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Remove of node {} is pushed to resolver {}",
+                  node, resolver);
               resolver.onNodeRemoved(node);
             }
 
             @Override
             public void onNodeAdded(OperationsNodeInfo node) {
-              LOG.info("Add of node {} is pushed to resolver {}", node, resolver);
+              writeLogWithoutByteBuffer("Add of node {} is pushed to resolver {}",
+                  node, resolver);
               resolver.onNodeAdded(node);
             }
           });
@@ -1013,6 +1017,59 @@ public class DefaultControlService implements ControlService {
       }
     }
     return resolver.getNode(entityId);
+  }
+
+  /**
+   * Use when one need to write an OperationsNodeInfo instance to logs. The OperationsNodeInfo
+   * instance has ByteBuffer fields which should be represented in log files as null because their
+   * values are unrepresentative and redundant.
+   *
+   * @param format   the format string
+   * @param node     the instance of OperationsNodeInfo
+   * @param resolver the instance of OperationsServerResolver
+   */
+  private void writeLogWithoutByteBuffer(String format,
+                                         OperationsNodeInfo node,
+                                         OperationsServerResolver resolver) {
+    //temporary set connection info of transports to null
+    Map<TransportMetaData, Map<VersionConnectionInfoPair, ByteBuffer>> transportMetaData =
+        new HashMap<>();
+    for (TransportMetaData transport : node.getTransports()) {
+      HashMap<VersionConnectionInfoPair, ByteBuffer> innerMap;
+      innerMap = new HashMap<>();
+      for (VersionConnectionInfoPair connectionInfoPair : transport.getConnectionInfo()) {
+        // save ByteBuffer field value
+        innerMap.put(connectionInfoPair, connectionInfoPair.getConenctionInfo());
+        // temporary remove ByteBuffer field value
+        connectionInfoPair.setConenctionInfo(null);
+      }
+      transportMetaData.put(transport, innerMap);
+    }
+    //temporary set public key of connection info to null
+    ByteBuffer publicKey = node.getConnectionInfo().getPublicKey();
+    node.getConnectionInfo().setPublicKey(null);
+
+    LOG.info(format, node, resolver);
+
+    //set fields on previous values (recover fields values)
+    node.getConnectionInfo().setPublicKey(publicKey);
+    for (TransportMetaData transport : node.getTransports()) {
+      Map<VersionConnectionInfoPair, ByteBuffer> connectionInfoPreviousValue =
+          transportMetaData.get(transport);
+      if (connectionInfoPreviousValue != null) {
+        //use loop instead map.get(), because we call '==' operator instead 'equals()'
+        for (VersionConnectionInfoPair conInfo : transport.getConnectionInfo()) {
+          for (Map.Entry<VersionConnectionInfoPair, ByteBuffer> pair :
+              connectionInfoPreviousValue.entrySet()) {
+            // '==' instead '.equals()' because we don't compare objects, we found the same object
+            if (pair.getKey() == conInfo) {
+              conInfo.setConenctionInfo(pair.getValue());
+              break;
+            }
+          }
+        }
+      }
+    }
   }
 
   /*
@@ -1148,7 +1205,7 @@ public class DefaultControlService implements ControlService {
       throws ControlServiceException {
     EndpointProfileSchemaDto profileSchema = profileService
         .findProfileSchemaByAppIdAndVersion(sdkProfile.getApplicationId(),
-        sdkProfile.getProfileSchemaVersion());
+            sdkProfile.getProfileSchemaVersion());
     if (profileSchema == null) {
       throw new NotFoundException("Profile schema not found!");
     }
@@ -1293,7 +1350,7 @@ public class DefaultControlService implements ControlService {
           .generateRecordWrapperSchema(getFlatSchemaByCtlSchemaId(logCtlSchema.getId()));
 
       String fileName = MessageFormatter.arrayFormat(LOG_SCHEMA_LIBRARY_NAME_PATTERN,
-          new Object[]{logSchemaVersion}).getMessage();
+          new Object[] {logSchemaVersion}).getMessage();
 
       return SchemaLibraryGenerator.generateSchemaLibrary(recordWrapperSchema, fileName);
     } catch (Exception ex) {
@@ -2172,7 +2229,7 @@ public class DefaultControlService implements ControlService {
       throw new ControlServiceException(ex);
     }
     String libraryFileName = MessageFormatter
-        .arrayFormat(SCHEMA_NAME_PATTERN, new Object[]{logSchemaVersion}).getMessage();
+        .arrayFormat(SCHEMA_NAME_PATTERN, new Object[] {logSchemaVersion}).getMessage();
     String schemaInJson = recordWrapperSchema.toString(true);
     byte[] schemaData = schemaInJson.getBytes(StandardCharsets.UTF_8);
 
@@ -2214,7 +2271,7 @@ public class DefaultControlService implements ControlService {
           checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_BASE_SCHEMA);
           schema = confSchemaDto.getBaseSchema();
           fileName = MessageFormatter
-              .arrayFormat(DATA_NAME_PATTERN, new Object[]{
+              .arrayFormat(DATA_NAME_PATTERN, new Object[] {
                   "configuration-base",
                   key.getSchemaVersion()
               })
@@ -2226,7 +2283,7 @@ public class DefaultControlService implements ControlService {
           checkSchema(confSchemaDto, RecordFiles.CONFIGURATION_OVERRIDE_SCHEMA);
           schema = confSchemaDto.getOverrideSchema();
           fileName = MessageFormatter
-              .arrayFormat(DATA_NAME_PATTERN, new Object[]{
+              .arrayFormat(DATA_NAME_PATTERN, new Object[] {
                   "configuration-override",
                   key.getSchemaVersion()})
               .getMessage();
@@ -2589,7 +2646,7 @@ public class DefaultControlService implements ControlService {
     } catch (CredentialsServiceException cause) {
       String message = MessageFormat
           .format("An unexpected exception occured while revoking credentials by ID [{0}]",
-                  credentialsId);
+              credentialsId);
       LOG.error(message, cause);
       throw new ControlServiceException(cause);
     }
@@ -2670,7 +2727,7 @@ public class DefaultControlService implements ControlService {
       Integer schemaVersion,
       String tenantId) {
     return userConfigurationService.findUserConfigurationByExternalUIdAndAppTokenAndSchemaVersion(
-            externalUId, appToken, schemaVersion, tenantId);
+        externalUId, appToken, schemaVersion, tenantId);
   }
 
   @Override

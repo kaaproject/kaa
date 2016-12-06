@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Generated;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked"})
@@ -503,7 +502,7 @@ public class RouteInfo implements org.apache.thrift.TBase<RouteInfo, RouteInfo._
     if (this.endpointId == null) {
       sb.append("null");
     } else {
-      sb.append(this.endpointId);
+      sb.append(this.endpointId.array());
     }
     first = false;
     sb.append(")");

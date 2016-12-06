@@ -20,6 +20,7 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+import org.apache.commons.codec.binary.Hex;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -95,7 +96,7 @@ public class CassandraEpByAccessToken implements Serializable {
   public String toString() {
     return "CassandraEpByAccessToken{"
             + "accessToken='" + accessToken + '\''
-            + ", endpointKeyHash=" + endpointKeyHash
+            + ", endpointKeyHash=" + (endpointKeyHash != null ? Hex.encodeHexString(endpointKeyHash.array()) : "")
             + '}';
   }
 }

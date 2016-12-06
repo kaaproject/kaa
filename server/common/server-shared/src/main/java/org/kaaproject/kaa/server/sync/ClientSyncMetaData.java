@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.nio.ByteBuffer;
 
 public class ClientSyncMetaData {
@@ -167,9 +169,9 @@ public class ClientSyncMetaData {
     builder.append(", sdkToken=");
     builder.append(sdkToken);
     builder.append(", endpointPublicKeyHash=");
-    builder.append(endpointPublicKeyHash);
+    builder.append(endpointPublicKeyHash != null ? Hex.encodeHexString(endpointPublicKeyHash.array()) : "");
     builder.append(", profileHash=");
-    builder.append(profileHash);
+    builder.append(profileHash != null ? Hex.encodeHexString(profileHash.array()) : "");
     builder.append(", timeout=");
     builder.append(timeout);
     builder.append("]");

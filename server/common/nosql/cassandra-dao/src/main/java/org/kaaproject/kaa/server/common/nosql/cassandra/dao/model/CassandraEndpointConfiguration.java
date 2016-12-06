@@ -28,6 +28,7 @@ import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
 
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
 
@@ -121,8 +122,8 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
   @Override
   public String toString() {
     return "EndpointConfiguration{"
-        + "configurationHash=" + configurationHash
-        + ", configuration=" + configuration
+        + "configurationHash=" + (configurationHash != null ? Hex.encodeHexString(configurationHash.array()) : "")
+        + ", configuration=" + (configuration != null ? Hex.encodeHexString(configuration.array()) : "")
         + '}';
   }
 

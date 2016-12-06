@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.nio.ByteBuffer;
 
 public final class Event {
@@ -186,7 +188,7 @@ public final class Event {
     builder.append(", eventClassFqn=");
     builder.append(eventClassFqn);
     builder.append(", eventData=");
-    builder.append(eventData);
+    builder.append(eventData != null ? Hex.encodeHexString(eventData.array()) : "");
     builder.append(", source=");
     builder.append(source);
     builder.append(", target=");

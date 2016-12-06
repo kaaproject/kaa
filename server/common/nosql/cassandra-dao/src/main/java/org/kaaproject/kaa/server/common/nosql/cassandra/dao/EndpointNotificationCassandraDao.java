@@ -28,6 +28,7 @@ import com.datastax.driver.core.Statement;
 import com.datastax.driver.core.querybuilder.QueryBuilder;
 import com.datastax.driver.core.querybuilder.Select;
 
+import org.apache.commons.codec.binary.Hex;
 import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAppIdDao;
@@ -99,7 +100,7 @@ public class EndpointNotificationCassandraDao
     CassandraEndpointNotification endpointNotification =
         new CassandraEndpointNotification(dto);
     LOG.debug("Save endpoint notification for endpoint profile {}",
-        endpointNotification.getEndpointKeyHash());
+        (endpointNotification.getEndpointKeyHash() != null ? Hex.encodeHexString(endpointNotification.getEndpointKeyHash().array()) : null));
     save(new CassandraEndpointNotification(dto));
     LOG.trace("Saved endpoint notification {}", endpointNotification);
     return endpointNotification;

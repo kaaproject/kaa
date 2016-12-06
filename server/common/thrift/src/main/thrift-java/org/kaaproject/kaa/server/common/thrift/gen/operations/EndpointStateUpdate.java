@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Generated;
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked"})
@@ -556,7 +555,7 @@ public class EndpointStateUpdate implements org.apache.thrift.TBase<EndpointStat
     if (this.endpointKey == null) {
       sb.append("null");
     } else {
-      sb.append(this.endpointKey);
+      sb.append(this.endpointKey.array());
     }
     first = false;
     if (!first) sb.append(", ");
