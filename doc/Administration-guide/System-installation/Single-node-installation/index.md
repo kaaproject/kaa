@@ -218,6 +218,12 @@ Install [Zookeeper 3.4.8](http://zookeeper.apache.org/doc/r3.4.8/).
 $ sudo apt-get install zookeeper
 ```
 
+Start Zookeeper.
+
+```bash
+$ sudo /usr/share/zookeeper/bin/zkServer.sh start
+```
+
 Check if Zookeeper service is running.
 
 ```bash
@@ -285,7 +291,7 @@ $ sudo service mongod start
 Verify that MongoDB started successfully.
 
 ```bash
-$ sudo systemctl status mongodb
+$ sudo service mongod status
 $ cat /var/log/mongodb/mongod.log | grep "waiting for connections on port"
 2015-09-23T16:39:35.455+0300 [initandlisten] waiting for connections on port 27017
 ```
@@ -1103,7 +1109,7 @@ In this guide, the pre-built packages are used.
 3. Install the Node service.
 
    ```bash
-   $ sudo dpkg -i kaa-node.deb
+   $ sudo dpkg -i kaa-node-*.deb
    ```
 
 </div><div id="CentOS_" class="tab-pane fade" markdown="1" >
