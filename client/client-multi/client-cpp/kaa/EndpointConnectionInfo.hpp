@@ -27,11 +27,17 @@ struct EndpointConnectionInfo {
     std::string endpointIp_; /**< The ip address of the endpoint. */
     std::string serverIp_; /**< The ip address of the server */
     ServerType serverType_; /**< The type of server, see @c ServerType */
+    /** Server confirmed that credentials are valid and approved the connection on an application level */
+    bool connectionAccepted_;
 
-    EndpointConnectionInfo(const std::string& endpointIp, const std::string& serverIp, const ServerType serverType)
+    EndpointConnectionInfo() = default;
+    EndpointConnectionInfo(const std::string& endpointIp, const std::string& serverIp,
+        const ServerType serverType, bool connectionAccepted = false)
         : endpointIp_(endpointIp),
           serverIp_(serverIp),
-          serverType_(serverType) {}
+          serverType_(serverType),
+          connectionAccepted_(connectionAccepted){}
+
 };
 
 };
