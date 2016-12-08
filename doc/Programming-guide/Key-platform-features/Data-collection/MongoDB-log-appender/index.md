@@ -10,33 +10,90 @@ sort_idx: 70
 * TOC
 {:toc}
 
-The MongoDB log appender is used to transfer logs from the Operations service to the MongoDB database.
-The logs are stored in the table named `logs\_$applicationToken`, where `$applicationToken` matches the [token of the current application]({{root_url}}Glossary/#application-token).
+The MongoDB log appender is used to transfer logs from the [Operations service]({{root_url}}Glossary/#operations-service) to the [MongoDB](https://www.mongodb.com/) database.
+The logs are stored in the `logs\_$applicationToken` table, where `$applicationToken` matches the [token of the current application]({{root_url}}Glossary/#application-token).
 
-# Creating MongoDB log appender in Admin UI
+## Create MongoDB log appender
 
-The easiest way to create a MongoDB log appender for your application is by using Admin UI.
+To create a MongoDB log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
-To create a log appender of the MongoDB storage type, do the following:
+1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
 
-1. In the **Log appenders** window, click **Add log appender**.
-2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to _MongoDB_.
+2. Click **Applications** and open the **Log appenders** page of your application.
+Click **Add log appender**.
+
+3. On the **Log appender details** page, enter the necessary information and set the **Type** field to **MongoDB**.
 ![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
-4. Fill in the MongoDB log appender [configuration](#configuration) form.
-5. Click **Add** button. Log appender is ready and operational at this point.
-![MongoDB log appender configuration part 1](attach/MongoDB-log-appender-configuration1.png)
-![MongoDB log appender configuration part 2](attach/MongoDB-log-appender-configuration2.png)
 
-# Creating MongoDB log appender with Admin REST API
+4. Fill in the **Configuration** section for your log appender and click **Add**.
+See [Configure log appender](#configure-log-appender).
 
-It is also possible to create a MongoDB log appender for your application by using [Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
-The following example illustrates how to create the MongoDB log appender via Admin Rest API.
+	![MongoDB log appender configuration part 1](attach/MongoDB-log-appender-configuration1.png)
+	![MongoDB log appender configuration part 2](attach/MongoDB-log-appender-configuration2.png)
 
-## Configuration
+Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) to create or edit your MongoDB log appender.	
 
-The MongoDB log appender configuration must match to
- [this]({{github_url}}server/appenders/mongo-appender/src/main/avro/mongodb-appender-config.avsc) Avro schema.
+The following example illustrates how to create an instance of MongoDB log appender using the server REST API.
+
+```bash
+curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @mongoDBLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
+```
+
+where file `mongoDBLogAppender.json` contains the following data.
+
+```
+{
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender",
+    "pluginTypeName":"MongoDB",
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "name":"Sample MongoDB log appender",
+    "description":"Sample MngoDB log appender",
+    "headerStructure":[
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "maxLogSchemaVersion":2147483647,
+    "minLogSchemaVersion":1,
+    "tenantId":"1",
+    "jsonConfiguration":"{\"mongoServers\":[{\"host\":\"localhost\",\"port\":27017}],\"mongoCredentials\":[],\"dbName\":\"kaa\",\"connectionsPerHost\":{\"int\":30},\"maxWaitTime\":{\"int\":120000},\"connectionTimeout\":{\"int\":5000},\"socketTimeout\":{\"int\":0},\"socketKeepalive\":{\"boolean\":false},\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false}}"
+}
+```
+
+Below is an example result.
+
+```json
+{
+    "applicationId":"5",
+    "applicationToken":"82635305199158071549",
+    "confirmDelivery":true,
+    "createdTime":1466504475844,
+    "createdUsername":"devuser",
+    "description":"Sample MongoDB log appender",
+    "headerStructure":[
+        "KEYHASH",
+        "VERSION",
+        "TIMESTAMP",
+        "TOKEN",
+        "LSVERSION"
+    ],
+    "id":"163840",
+    "jsonConfiguration":"{\"mongoServers\":[{\"host\":\"localhost\",\"port\":27017}],\"mongoCredentials\":[],\"dbName\":\"kaa\",\"connectionsPerHost\":{\"int\":30},\"maxWaitTime\":{\"int\":120000},\"connectionTimeout\":{\"int\":5000},\"socketTimeout\":{\"int\":0},\"socketKeepalive\":{\"boolean\":false},\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false}}",
+    "maxLogSchemaVersion":2147483647,
+    "minLogSchemaVersion":1,
+    "name":"Sample MngoDB log appender",
+    "pluginClassName":"org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender",
+    "pluginTypeName":"MongoDB",
+    "tenantId":"1"
+}
+```
+
+## Configure log appender
+
+The MongoDB log appender configuration must match [this Avro schema]({{github_url}}server/appenders/mongo-appender/src/main/avro/mongodb-appender-config.avsc).
 
 Fields of avro schema:
 
@@ -96,67 +153,7 @@ An example configuration that matches to previously introduced Avro schema is as
 }
 ```
 
-## Administration
-
-The following Admin REST API call example illustrates how to create a new MongoDB log appender.
-
-```bash
-curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @mongoDBLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
-```
-
-where file `mongoDBLogAppender.json` contains the following data:
-
-```
-{
-    "pluginClassName":"org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender",
-    "pluginTypeName":"MongoDB",
-    "applicationId":"5",
-    "applicationToken":"82635305199158071549",
-    "name":"Sample MongoDB log appender",
-    "description":"Sample MngoDB log appender",
-    "headerStructure":[
-        "KEYHASH",
-        "VERSION",
-        "TIMESTAMP",
-        "TOKEN",
-        "LSVERSION"
-    ],
-    "maxLogSchemaVersion":2147483647,
-    "minLogSchemaVersion":1,
-    "tenantId":"1",
-    "jsonConfiguration":"{\"mongoServers\":[{\"host\":\"localhost\",\"port\":27017}],\"mongoCredentials\":[],\"dbName\":\"kaa\",\"connectionsPerHost\":{\"int\":30},\"maxWaitTime\":{\"int\":120000},\"connectionTimeout\":{\"int\":5000},\"socketTimeout\":{\"int\":0},\"socketKeepalive\":{\"boolean\":false},\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false}}"
-}
-```
-
-Example result:
-
-```json
-{
-    "applicationId":"5",
-    "applicationToken":"82635305199158071549",
-    "confirmDelivery":true,
-    "createdTime":1466504475844,
-    "createdUsername":"devuser",
-    "description":"Sample MongoDB log appender",
-    "headerStructure":[
-        "KEYHASH",
-        "VERSION",
-        "TIMESTAMP",
-        "TOKEN",
-        "LSVERSION"
-    ],
-    "id":"163840",
-    "jsonConfiguration":"{\"mongoServers\":[{\"host\":\"localhost\",\"port\":27017}],\"mongoCredentials\":[],\"dbName\":\"kaa\",\"connectionsPerHost\":{\"int\":30},\"maxWaitTime\":{\"int\":120000},\"connectionTimeout\":{\"int\":5000},\"socketTimeout\":{\"int\":0},\"socketKeepalive\":{\"boolean\":false},\"includeClientProfile\":{\"boolean\":false},\"includeServerProfile\":{\"boolean\":false}}",
-    "maxLogSchemaVersion":2147483647,
-    "minLogSchemaVersion":1,
-    "name":"Sample MngoDB log appender",
-    "pluginClassName":"org.kaaproject.kaa.server.appenders.mongo.appender.MongoDbLogAppender",
-    "pluginTypeName":"MongoDB",
-    "tenantId":"1"
-}
-```
-
-# Playing with MongoDB log appender
+## Playing with MongoDB log appender
 
 We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollection/source) from Kaa Sandbox. Our example will send data
 to Kaa and then persist it to MongoDB. Also, we'll do selection queries on persisted data.
