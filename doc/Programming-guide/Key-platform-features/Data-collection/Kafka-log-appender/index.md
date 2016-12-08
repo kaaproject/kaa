@@ -2,7 +2,6 @@
 layout: page
 title: Kafka log appender
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender
 sort_idx: 60
 ---
 
