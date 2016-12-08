@@ -1,3 +1,18 @@
+/*
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kaaproject.kaa.client.channel.impl.channels;
 
 import org.eclipse.californium.core.CoapClient;
@@ -27,13 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: root
- * Date: 10/24/16
- * Time: 10:52 AM
- * To change this template use File | Settings | File Templates.
- */
+
 public class CoapChannel implements KaaDataChannel {
 
   public static final Logger LOG = LoggerFactory // NOSONAR
@@ -50,7 +59,6 @@ public class CoapChannel implements KaaDataChannel {
   private static final String CHANNEL_ID = "default_coap_channel";
   private KaaDataDemultiplexer demultiplexer;
   private KaaDataMultiplexer multiplexer;
-  //    private volatile State channelState = State.CLOSED;
   private IpTransportInfo currentServer;
 
   @Override
@@ -61,18 +69,6 @@ public class CoapChannel implements KaaDataChannel {
   @Override
   public void sync(Set<TransportType> types) {
 
-    //        if (channelState == State.SHUTDOWN) {
-    //            LOG.info("Can't sync. Channel [{}] is down", getId());
-    //            return;
-    //        }
-    //        if (channelState == State.PAUSE) {
-    //            LOG.info("Can't sync. Channel [{}] is paused", getId());
-    //            return;
-    //        }
-    //        if (channelState != State.OPENED) {
-    //            LOG.info("Can't sync. Channel [{}] is waiting for CONNACK message + KAASYNC message", getId());
-    //            return;
-    //        }
     if (multiplexer == null) {
       LOG.warn("Can't sync. Channel {} multiplexer is not set", getId());
       return;
@@ -81,11 +77,7 @@ public class CoapChannel implements KaaDataChannel {
       LOG.warn("Can't sync. Channel {} demultiplexer is not set", getId());
       return;
     }
-    //        if (currentServer == null || socket == null) {
-    //            LOG.warn("Can't sync. Server is {}, socket is \"{}\"", currentServer, socket);
-    //            return;
-    //        }
-
+  
     Map<TransportType, ChannelDirection> typeMap = new HashMap<>(getSupportedTransportTypes().size());
     for (TransportType type : types) {
       LOG.info("Processing sync {} for channel [{}]", type, getId());
@@ -101,18 +93,11 @@ public class CoapChannel implements KaaDataChannel {
         }
       }
     }
-    //        try {
-    //            sendKaaSyncRequest(typeMap);
-    //        } catch (Exception e) {
-    //            LOG.error("Failed to sync channel [{}]", getId(), e);
-    //        }
-
 
   }
 
   @Override
   public void syncAll() {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
@@ -123,7 +108,6 @@ public class CoapChannel implements KaaDataChannel {
 
   @Override
   public void syncAck(Set<TransportType> type) {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
@@ -166,9 +150,7 @@ public class CoapChannel implements KaaDataChannel {
 
     IpTransportInfo oldServer = currentServer;
     this.currentServer = new IpTransportInfo(server);
-    //this.encDec = new MessageEncoderDecoder(state.getPrivateKey(), state.getPublicKey(), currentServer.getPublicKey());
-    //uncompelete!
-
+    
   }
 
   @Override
@@ -179,7 +161,6 @@ public class CoapChannel implements KaaDataChannel {
 
   @Override
   public void setConnectivityChecker(ConnectivityChecker checker) {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
@@ -217,7 +198,6 @@ public class CoapChannel implements KaaDataChannel {
         uri = new URI(myUri);
       } catch (URISyntaxException exception) {
         LOG.info("Invalid URI: " + exception.getMessage());
-        // System.exit(-1);
       }
 
       CoapClient client = new CoapClient(uri);
@@ -254,8 +234,7 @@ public class CoapChannel implements KaaDataChannel {
       return response;
     } else {
       // display help
-      LOG.info("Californium (Cf) GET Client");
-      LOG.info("(c) 2014, Institute for Pervasive Computing, ETH Zurich");
+      LOG.info("Californium  Client");
       String simpleName = CoapChannel.class.getSimpleName();
       LOG.info("Usage: " + simpleName + " URI");
       LOG.info("URI: The CoAP URI of the remote resource to GET");
