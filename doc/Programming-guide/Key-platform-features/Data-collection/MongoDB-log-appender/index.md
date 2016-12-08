@@ -11,8 +11,8 @@ sort_idx: 70
 * TOC
 {:toc}
 
-The MongoDB log appender is responsible for transferring logs from the Operations service to the MongoDB database. The logs are stored in the table named
-_logs\_$[applicationToken]({{root_url}}Glossary)_, where _$[applicationToken]({{root_url}}Glossary)_ matches the token of the current application.
+The MongoDB log appender is responsible for transferring logs from the Operations service to the MongoDB database.
+The logs are stored in the table named `logs\_$applicationToken`, where `$applicationToken` matches the [token of the current application]({{root_url}}Glossary/#application-token).
 
 # Creating MongoDB log appender in Admin UI
 

@@ -128,7 +128,7 @@ cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake -D
 make
 ```
 
-Refer to [C SDK Linux page]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for more details.
+Refer to [C SDK Linux page]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for more details.
 
 ### Building C SDK on Windows
 
@@ -143,7 +143,7 @@ make
 
 ## Example
 
-To quickly start with the Kaa IoT platform, you can download one of the Kaa demo applications from the [Kaa Sandbox]({{root_url}}/Getting-started/) and run it on the CC3200 board. We recommend you to start with the ConfigurationDemo.
+To quickly start with the Kaa IoT platform, you can download one of the Kaa demo applications from the [Kaa Sandbox]({{root_url}}Getting-started/) and run it on the CC3200 board. We recommend you to start with the ConfigurationDemo.
 
 Connect CC3200 LaunchPad to your PC through a micro-USB connector and execute the following in your terminal:
 
