@@ -2,7 +2,6 @@
 layout: page
 title: MongoDB log appender
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender
 sort_idx: 70
 ---
 
@@ -11,7 +10,7 @@ sort_idx: 70
 * TOC
 {:toc}
 
-The MongoDB log appender is responsible for transferring logs from the Operations service to the MongoDB database.
+The MongoDB log appender is used to transfer logs from the Operations service to the MongoDB database.
 The logs are stored in the table named `logs\_$applicationToken`, where `$applicationToken` matches the [token of the current application]({{root_url}}Glossary/#application-token).
 
 # Creating MongoDB log appender in Admin UI
@@ -244,4 +243,4 @@ The following JSON example matches the previous schema.
     ...
     ```
 
-If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
+If you don't get the desired output or experience other problems, see [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting).
