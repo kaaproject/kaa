@@ -30,4 +30,4 @@ The UDOO platform allows building the source code directly on the board. The onl
 
 ## Creating an application
 
-Since UDOO board is powerful enough to run Linux and build applications directly on it, you can follow [the C SDK Linux guide]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) to create Kaa client application for this target.
+Since UDOO board is powerful enough to run Linux and build applications directly on it, you can follow [the C SDK Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) to create Kaa client application for this target.

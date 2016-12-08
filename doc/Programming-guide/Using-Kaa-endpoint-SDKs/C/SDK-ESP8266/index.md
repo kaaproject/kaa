@@ -377,4 +377,4 @@ That will take some time to flash, and, eventually, when the firmware starts, yo
 
 ## What's next?
 
-This guide shows just the basic part of setting up Kaa on ESP8266. To actually make something useful with it, take a look at [Data Collection]({{root_url}}/Programming-guide/Key-platform-features/Data-collection/) demo.
+This guide shows just the basic part of setting up Kaa on ESP8266. To actually make something useful with it, take a look at [Data Collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/) demo.

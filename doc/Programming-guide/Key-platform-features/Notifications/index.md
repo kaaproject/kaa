@@ -12,13 +12,13 @@ sort_idx: 70
 
 The Kaa **Notification subsystem** is used to deliver messages from [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) to [endpoints]({{root_url}}Glossary/#endpoint-ep).
 Unlike configuration data that represents the desired endpoint state, notifications are used as calls for a dynamic endpoint action.
-For example, a notification can cause a [Kaa client]({{root_url}}/#kaa-client) to display a UI message (a user notification).
+For example, a notification can cause a [Kaa client]({{root_url}}Glossary/#kaa-client) to display a UI message (a user notification).
 
 ## Prerequisites
 
 To use the examples below, you need to first set up either a [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) or a full-blown [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).
 After that, you need to create a tenant with tenant admin, and an application.
-To do this, you can use the server REST API ([tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [tenant admin]({{root_url}}/Programming-guide/Server-REST-APIs/#!/User/editUser), [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application)).
+To do this, you can use the server REST API ([tenant]({{root_url}}Programming-guide/Server-REST-APIs/#/Tenant), [tenant admin]({{root_url}}Programming-guide/Server-REST-APIs/#!/User/editUser), [application]({{root_url}}Programming-guide/Server-REST-APIs/#/Application)).
 
 It is strongly recommended that you first read the [Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection) and [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) sections before you proceed.
 
@@ -35,7 +35,7 @@ The following diagram illustrates the basic entities and data flows in scope of 
 
 The Kaa notifications functionality allows transferring any data to endpoints.
 The structure of the notification data is defined by the notification schema selected and configured on the [Kaa server]({{root_url}}Glossary/#kaa-server).
-The notification schema is defined similarly to the [endpoint profile]({{root_url}}/Programming-guide/Key-platform-features/Endpoint-profiles) schema.
+The notification schema is defined similarly to the [endpoint profile]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles) schema.
 For more information about using schemas in Kaa, see [Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library).
 
 In addition to the [common type]({{root_url}}Glossary/#common-type-ct) schema and its version, notifications are characterized by type that can be either **system** or **user**.

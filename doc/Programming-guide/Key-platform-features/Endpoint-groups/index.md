@@ -331,7 +331,7 @@ To add a profile filter for an endpoint group:
 
 3. On the **Profile filter** page, select the schema version.
 
-4. Switch to the **Draft** tab, enter a description (optional) and a [filter body](#profile-filters).
+4. Switch to the **Draft** tab, enter a description (optional) and enter the filter conditions in the **Filter body** section.
 
     ![profile-filter-details](admin-ui/profile-filter-details.png "profile-filter-details.png")
 

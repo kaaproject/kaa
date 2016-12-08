@@ -86,7 +86,7 @@ The `by_default` parameter defines the default sampling period value which is se
 			]
 		}
 		
-3. Use the **Upload from file** section to [create CT schemas]({{root_url}}/Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the `data-schema.json` and `configuration-schema.json` files.
+3. Use the **Upload from file** section to [create CT schemas]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the `data-schema.json` and `configuration-schema.json` files.
 		
 4. On the Sandbox main page, click **Administration UI** and log in as a [tenant developer]({{root_url}}Glossary/#tenant-developer) using default **devuser** username and **devuser123** password.
 
@@ -224,7 +224,7 @@ To do this, run the following commands in the terminal.
 
 Before using the C++ application code, be sure to complete the following steps:
 
-1. Install the required libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites).
+1. Install the required libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites).
 
 2. Create a `kaa` directory and unpack the C++ SDK into it.
 
@@ -266,7 +266,7 @@ Before using the Java application code, be sure to complete the following steps:
 
 2. Create a `demo_app` directory.
 
-3. Use the Administration UI to [generate Java SDK]({{root_url}}/Programming-guide/Your-first-Kaa-application/#generate-sdk) into the `demo_app` directory.
+3. Use the Administration UI to [generate Java SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk) into the `demo_app` directory.
 
 </div>
 
@@ -451,7 +451,7 @@ int main(void)
     return EXIT_SUCCESS;
 }
 ```
->**NOTE:** Use the links to the [code]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/kaa_demo.c) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/CMakeLists.txt) files of the example.
+>**NOTE:** Use the links to the [code]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-c/kaa_demo.c) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/CMakeLists.txt) files of the example.
 {:.note}
 
 </div>
@@ -570,7 +570,7 @@ int main()
 }
 ```
 
->**NOTE:** Use the links to the [code]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-cpp/KaaDemo.cpp) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-cpp/CMakeLists.txt) files of the example.
+>**NOTE:** Use the links to the [code]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-cpp/KaaDemo.cpp) and a [CMake]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-cpp/CMakeLists.txt) files of the example.
 {:.note}
 
 </div>
