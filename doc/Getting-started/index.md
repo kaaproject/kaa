@@ -131,7 +131,7 @@ The log records are stored in the `var/log/kaa` directory.
 The log writing system is as follows:
 
 1. Kaa Sandbox Frame project writes its logs to the `kaa-sandbox.log` file.
-2. Kaa Avro UI writes its logs the `avro-ui-sandbox.log` file.
+2. Kaa Avro UI form writes its logs to the `avro-ui-sandbox.log` file.
 3. Kaa node writes its logs to the `kaa-node.log` file.
 This is the most important log file as it contains the most of the information required for an analysis.
 
@@ -150,7 +150,7 @@ To work with your specific Kaa instance, use the Sandbox to download an [SDK lib
 
 ![Demo projects view](attach/sandbox_demo_projects.png)
 
-To download and run your first Kaa sample application, we recommend that you open the **Data collection demos** bundle description from your Sandbox and select your [SDK type]({{root_url}}Glossary/#sdk-type).
+To download and run your first Kaa sample application, we recommend that you open the **Data collection demos** bundle description from your Sandbox and select your [SDK type]({{root_url}}Glossary/#kaa-sdk-type).
 
 >**TIP:** For quickest possible setup, choose the Java SDK type.
 >For Java SDK, you can download an executable `.jar` archive containing binary files.
@@ -186,11 +186,11 @@ You can log in using the default pre-configured accounts as listed below:
 | Tenant developer      | devuser  | devuser123       |
 
 
-### Avro UI
+### Avro UI form
 
-The [Avro UI]({{root_url}}Glossary/#avro-ui) is an online service that you can use to create schema structure templates.
+The [Avro UI form]({{root_url}}Glossary/#avro-ui-form) is an online service that you can use to create schema structure templates.
 This is helpful when you want to reuse and modify your schemas used within the Kaa platform.
-To access Avro UI, click the **Avro UI** button on the Sandbox main page.
+To access Avro UI form, click the **Avro UI form** button on the Sandbox main page.
 
 ### Advanced Sandbox configuration
 

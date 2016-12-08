@@ -7,8 +7,8 @@ sort_idx: 40
 
 {% include variables.md %}
 
-In order to save developers' time, allow users concentrate on important business logic, and thus minimize the time to production, [Kaa platform]({{root_url}}) offers endpoint SDKs.
-An endpoint SDK is a library that provides communication, data marshaling, persistence, and other functions available in Kaa for a specific [SDK type]({{root_url}}Glossary/#sdk-type).
+In order to save developers' time, allow users concentrate on important business logic, and thus minimize the time to production, [Kaa platform]({{root_url}}Glossary/#kaa-platform) offers endpoint SDKs.
+An endpoint SDK is a library that provides communication, data marshaling, persistence, and other functions available in Kaa for a specific [SDK type]({{root_url}}Glossary/#kaa-sdk-type).
 Each SDK type is designed to be embedded into your [client application]({{root_url}}Glossary/#kaa-client) and works in conjunction with [Kaa cluster]({{root_url}}Glossary/#kaa-cluster) that serves as a cloud-based middleware for a particular IoT solution.
 
 The following table provides platforms that were verified to support at least one type of the Kaa SDK.

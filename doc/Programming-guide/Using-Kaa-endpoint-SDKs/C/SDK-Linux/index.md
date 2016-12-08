@@ -68,7 +68,7 @@ After you generated archive with C SDK, proceed as follows:
 
 This section is about how to build your Kaa application using C SDK.
 
-If you want to master writing application code go to the [Programming guide]({{root_url}}/Programming-guide) page.
+If you want to master writing application code go to the [Programming guide]({{root_url}}Programming-guide) page.
 Before continuing, make sure that all [dependencies](#dependencies) are installed.
 
 1. The directories determine the build structure.
@@ -182,7 +182,7 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
         cmake -DKAA_MAX_LOG_LEVEL=3 ..
         make
 
-    `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution.
+    `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution.
     Now run your application.
 
         ./kaa-app
