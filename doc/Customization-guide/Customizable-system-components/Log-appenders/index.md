@@ -340,5 +340,4 @@ For example provided in this article: `additional_plugins_scan_package=org.domai
 
 		$ sudo service kaa-node restart
 
-5. Use Admin UI or REST API to create/update/delete your log appender instances as described in one of the
-[Default log appenders]({{root_url}}Programming-guide/Key-platform-features/Data-collection#default-log-appenders).
+5. Use Admin UI or REST API to create/update/delete your log appender instances as described in [Existing log appender implementation]({{root_url}}Programming-guide/Key-platform-features/Data-collection/#existing-log-appender-implementations).
