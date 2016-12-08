@@ -13,7 +13,7 @@ sort_idx: 30
 In this section, you can learn how to create [endpoint groups]({{root_url}}Glossary/#endpoint-group).
 
 Endpoint grouping is a Kaa feature that allows you to aggregate your [endpoints]({{root_url}}Glossary/#endpoint-ep) into endpoint groups within an [application]({{root_url}}Glossary/#kaa-application).
-The membership of an endpoint in a group is based on matching the [endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) to the [profile filter]({{root_url}}Glossary/#profile filter) assigned to that group.
+The membership of an endpoint in a group is based on matching the [endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) to the [profile filter]({{root_url}}Glossary/#profile-filter) assigned to that group.
 This means that those endpoints whose profiles match the profile filters of a specific endpoint group become automatically registered as members of that group.
 Endpoint group is an independently managed entity defined by the profile filter assigned to it.
 
