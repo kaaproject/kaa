@@ -37,7 +37,7 @@ The endpoint registration process is illustrated in the picture below.
 
 For security and load-balancing reasons, Kaa endpoint SDKs do not include any information about Operations services.
 Instead, a [Control service]({{root_url}}Glossary/#control-service) embeds a list of available Bootstrap services into the SDK during the SDK generation process.
-This list is saved as a properties file in case with Java SDK, and as a header file in case with other [SDK types]({{root_url}}Glossary/#sdk-type).
+This list is saved as a properties file in case with Java SDK, and as a header file in case with other [SDK types]({{root_url}}Glossary/#kaa-sdk-type).
 The endpoint selects a random Bootstrap service from the list and sends a resolution request to the selected Bootstrap service.
 The resolution request contains the [application token]({{root_url}}Glossary/#application-token) that can be used by the Bootstrap service in specific load-balancing strategies.
 The resolution response from the Bootstrap service contains a prioritized list of Operations services with their connectivity details and is signed with the Bootstrap service private key.

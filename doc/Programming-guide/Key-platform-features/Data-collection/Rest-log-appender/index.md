@@ -153,7 +153,7 @@ Example result:
 
     > **NOTE:**
     > If you open the Application details window of the newly created application (by clicking this application on either the Applications menu on the
-    navigation panel or the Applications window), you will notice that the [Application Token]({{root_url}}Glossary) field has been filled in automatically. <br/>
+    navigation panel or the Applications window), you will notice that the [Application token]({{root_url}}Glossary/#application-token) field has been filled in automatically. <br/>
 
 5.  Log in as a tenant developer and create log schema in your previously created application: yourApp->Schemas->Log->Add schema
     ![Add log schema](attach/rest-log-appender1.png)

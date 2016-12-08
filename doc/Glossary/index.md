@@ -58,7 +58,7 @@ sort_idx: 50
 ### Control service
 >One of the three main service types in Kaa.
 >The other two are [Bootstrap service]({{root_url}}Glossary/#bootstrap-service) and [Operations service]({{root_url}}Glossary/#operations-service).
->Control service manages the system data, processes API calls from the [web UI]({{root_url}}Glossary/#web-ui) and external integrated systems, delivers notifications to Operations services.  
+>Control service manages the system data, processes API calls from the [Administration UI]({{root_url}}Glossary/#administration-ui) and external integrated systems, delivers notifications to Operations services.  
 >See [Architecture overview]({{root_url}}Architecture-overview/) documentation section.
 
 ## E
@@ -86,7 +86,7 @@ sort_idx: 50
 ### Endpoint SDK
 >A library used for communication, data marshaling, persistence, and other functions performed between an endpoint and [Kaa server]({{root_url}}Glossary/#kaa-server).
 >An SDK is used to create [Kaa clients]({{root_url}}Glossary/#kaa-client) on the connected endpoints of the same [Kaa application]({{root_url}}Glossary/#kaa-application) within a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).  
->See [SDK type]({{root_url}}Glossary/#sdk-type) and [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) documentation sections.
+>See [SDK type]({{root_url}}Glossary/#kaa-sdk-type) and [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) documentation sections.
 
 ## G
 

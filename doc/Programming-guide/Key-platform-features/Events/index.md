@@ -113,7 +113,7 @@ The FQN of the event is **com.company.project.ComplexEvent**, the <code>classTyp
 ## Event class families
 
 ECs are grouped into event class families (ECF) by subject areas.
-ECFs are registered within the [Kaa tenant]({{root_url}}Glossary/#kaa-tenant).
+ECFs are registered within the Kaa tenant.
 Once an event class family is saved in the [Kaa application]({{root_url}}Glossary/#kaa-application), the [Control service]({{root_url}}Glossary/#control-service) automatically assigns a version number to that ECF.
 The user can define new versions of the ECF that contain different ECs.
 ECF versions are used for grouping ECs that belong to a certain ECF.

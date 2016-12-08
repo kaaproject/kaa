@@ -211,7 +211,7 @@ Kaa provides several default implementations of log appenders but you can also d
 
 ### Confirm delivery option
 
-Every [Kaa client]({{root_url}}Glossary/#kaa-client) stores logs in a special log storage before sending them to the [Kaa server]({{root_url}}/Glossary/#kaa-server) node.
+Every [Kaa client]({{root_url}}Glossary/#kaa-client) stores logs in a special log storage before sending them to the [Kaa server]({{root_url}}Glossary/#kaa-server) node.
 By default, when a log appender on the Kaa server side receives a log from the Kaa client, it will send a delivery confirmation back to the Kaa client.
 In case of a successful delivery, the Kaa client deletes the log copies from its local storage.
 In case of a delivery error, Kaa client receives the error code and either sends the log to the same server node again or sends it to a different node.
@@ -265,7 +265,7 @@ To learn how to create and integrate custom log appenders, see [Log appenders se
 
 ### Log delivery
 
-The logging subsystem API varies depending on the [SDK type]({{root_url}}Glossary/#sdk-type). However, the general approach is the same.
+The logging subsystem API varies depending on the [SDK type]({{root_url}}Glossary/#kaa-sdk-type). However, the general approach is the same.
 
 To transfer logs to the Kaa Operations service, the Kaa client application uses the following code.
 

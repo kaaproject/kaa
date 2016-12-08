@@ -12,7 +12,7 @@ sort_idx: 15
 
 This section discusses fundamental concepts behind Kaa architecture and logical design.
 
-[Kaa IoT platform]({{root_url}}Glossary/#kaa-platform) consists of [Kaa server]({{root_url}}Glossary/#kaa-server), [Kaa extensions]({{root_url}}Glossary/#kaa-extensions), and the [endpoint SDKs]({{root_url}}Glossary/#endpoint-sdk).
+[Kaa IoT platform]({{root_url}}Glossary/#kaa-platform) consists of [Kaa server]({{root_url}}Glossary/#kaa-server), [Kaa extensions]({{root_url}}Glossary/#kaa-extension), and the [endpoint SDKs]({{root_url}}Glossary/#endpoint-sdk).
 
 * Kaa server is the back-end part of the platform.
 It is used to manage tenants, applications, users and devices.
@@ -26,7 +26,7 @@ Kaa server exposes integration interfaces and offers administrative capabilities
 * Endpoint SDK is a library that provides client-side APIs for various [Kaa platform features]({{root_url}}Programming-guide/Key-platform-features/) and handles communication, data marshalling, persistence, etc.
 Kaa SDKs are designed to facilitate the creation of client [applications]({{root_url}}Glossary/#kaa-application) to be run on various connected devices.
 However, client applications that do not use Kaa endpoint SDK are also possible.
-There are several endpoint [SDK types]({{root_url}}Glossary/#sdk-type) available in different programming languages.
+There are several endpoint [SDK types]({{root_url}}Glossary/#kaa-sdk-type) available in different programming languages.
 
 ## Kaa cluster
 

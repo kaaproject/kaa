@@ -655,7 +655,7 @@ Loading is done for the group in question independently of any other groups and 
 
 To define and apply the resulting configuration update for the endpoint, the [Operations service]({{root_url}}Glossary/#operations-service) proceeds as follows:
 
-1. Evaluates the [endpoint group]({{root_url}}Glossary/#endpoint-group) membership according to the [endpoint profile]({{root_url}}Glossary/#endpoint-profile).
+1. Evaluates the [endpoint group]({{root_url}}Glossary/#endpoint-group) membership according to the [endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side).
 
 2. Merges all configuration data sets assigned to the groups the endpoint belongs to, starting with the one that has the lowest weight (group "all").
 If conflicting field values are found, the field is assigned the value from the group with the highest weight.
@@ -681,7 +681,7 @@ To ensure data consistency, Kaa compares the configuration hash on the endpoint 
 The configuration management API varies depending on the target SDK platform.
 However, the general approach is the same.
 
-Below are examples for different [SDK types]({{root_url}}Glossary/#sdk-type) of Kaa client application.
+Below are examples for different [SDK types]({{root_url}}Glossary/#kaa-sdk-type) of Kaa client application.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java-1">Java</a></li>
