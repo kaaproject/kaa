@@ -199,7 +199,7 @@ The following JSON example matches the schema above.
 
 ```
 
-To play around with the the Kafka log appender:
+To play around with the Kafka log appender:
 
 1. Open the Data collection demo from Kaa Sandbox, follow the application installation instructions, and run the application.
 
