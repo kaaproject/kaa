@@ -95,7 +95,7 @@ Below is an example result.
 
 ## Configure log appender
 
-The Cassandra log appender configuration must match [this Avro schema]({{github_url}}server/appenders/kafka-appender/src/main/avro/kafka-appender-config.avsc) Avro schema.
+The Cassandra log appender configuration must match [this Avro schema]({{github_url}}server/appenders/kafka-appender/src/main/avro/kafka-appender-config.avsc).
 
 You can configure the following log appender settings:
 
