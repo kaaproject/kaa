@@ -48,7 +48,7 @@ where file `mongoDBLogAppender.json` contains the following data.
     "applicationId":"5",
     "applicationToken":"82635305199158071549",
     "name":"Sample MongoDB log appender",
-    "description":"Sample MngoDB log appender",
+    "description":"Sample MongoDB log appender",
     "headerStructure":[
         "KEYHASH",
         "VERSION",
@@ -95,24 +95,25 @@ Below is an example result.
 
 The MongoDB log appender configuration must match [this Avro schema]({{github_url}}server/appenders/mongo-appender/src/main/avro/mongodb-appender-config.avsc).
 
-Fields of avro schema:
+You can configure the following log appender settings:
 
-* MongoDB nodes - list of MongoDB hosts.
-* Authentication credentials - credentials used to authenticate on MongoDB cluster.
-* Other fields which configure of connection to MongoDB.
+* **MongoDB nodes** -- list of MongoDB hosts.
+* **Authentication credentials** -- credentials used to authenticate on MongoDB cluster.
 
-|name                   |description                                                            |
+The rest of the connection settings are described in the table below.
+
+|Name                   |Description                                                            |
 |-----------------------|-----------------------------------------------------------------------|
-|dbName                 |Name of the database                                                   |
-|connectionsPerHost     |Max number of connections per host                                     |
-|maxWaitTime            |Max wait time for connection in milliseconds                           |
-|connectionTimeout      |Connection timeout in milliseconds                                     |
-|socketTimeout          |Socket timeout in milliseconds                                         |
-|socketKeepalive        |Turn on socket keep alive (boolean value)                              |
-|includeClientProfile   |Whether to include client-side endpoint profile data (boolean value)   |
-|includeServerProfile   |Whether to include server-side endpoint profile data (boolean value)   |
+|`dbName`                 |Database name.                                                  |
+|`connectionsPerHost`     |Maximum number of connections per host.                                     |
+|`maxWaitTime`            |Maximum wait time for connection in milliseconds.                           |
+|`connectionTimeout`      |Connection timeout in milliseconds.                                     |
+|`socketTimeout`          |Socket timeout in milliseconds.                                         |
+|`socketKeepalive`        |Turn on socket keep alive (boolean value).                              |
+|`includeClientProfile`   |Specifies whether to include client-side endpoint profile data (boolean value).   |
+|`includeServerProfile`   |Whether to include server-side endpoint profile data (boolean value).   |
 
-An example configuration that matches to previously introduced Avro schema is as below:
+Below is an example configuration that matches the mentioned Avro schema.
 
 ```json
 {
@@ -155,10 +156,11 @@ An example configuration that matches to previously introduced Avro schema is as
 
 ## Playing with MongoDB log appender
 
-We'll use [Data collection demo](https://github.com/kaaproject/sample-apps/tree/master/datacollection/source) from Kaa Sandbox. Our example will send data
-to Kaa and then persist it to MongoDB. Also, we'll do selection queries on persisted data.
+The example below uses the **Data collection demo** from [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
+The log appender will send data to Kaa and then persist it to MongoDB.
+Some selection queries will be demonstrated using the persisted data.
 
-We have next log schema:
+Below is the log schema for the application.
 
 ```json
 {
@@ -179,7 +181,7 @@ We have next log schema:
 }
 ```
 
-The following JSON example matches the previous schema.
+The following JSON example matches the above schema.
 
 ```json
 {
