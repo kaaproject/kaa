@@ -68,7 +68,6 @@ DefaultOperationTcpChannel::DefaultOperationTcpChannel(IKaaChannelManager& chann
     , channelManager_(channelManager)
     , clientKeys_(clientKeys)
     , work_(io_)
-    /*, sock_(io_) */
     , pingTimer_(io_)
     , connAckTimer_(io_)
     , responseProcessor(context)
@@ -96,6 +95,8 @@ void DefaultOperationTcpChannel::onConnack(const ConnackMessage& message)
 
     switch (message.getReturnCode()) {
         case ConnackReturnCode::ACCEPTED:
+            currentConnection_.connectionAccepted_ = true;
+            channelManager_.onConnected(currentConnection_);
             break;
         case ConnackReturnCode::REFUSE_VERIFICATION_FAILED:
         case ConnackReturnCode::REFUSE_BAD_CREDENTIALS:
@@ -252,7 +253,12 @@ void DefaultOperationTcpChannel::openConnection()
         return;
     }
 
-    channelManager_.onConnected({sock_->local_endpoint().address().to_string(), ep.address().to_string(), getServerType()});
+    currentConnection_.endpointIp_ = sock_->local_endpoint().address().to_string();
+    currentConnection_.serverIp_ = ep.address().to_string();
+    currentConnection_.serverType_ = getServerType();
+    currentConnection_.connectionAccepted_ = false;
+
+    channelManager_.onConnected(currentConnection_);
 
     KAA_MUTEX_LOCKING("channelGuard_");
     KAA_LOCK(channelGuard_);

@@ -169,6 +169,8 @@ private:
     std::shared_ptr<IPTransportInfo> currentServer_;
     ConnectivityCheckerPtr connectivityChecker_;
     IFailoverStrategyPtr failoverStrategy_;
+
+    EndpointConnectionInfo currentConnection_;
 };
 
 }
