@@ -423,8 +423,14 @@ public class BinaryEncDec implements PlatformEncDec {
 
   private void encode(GrowingByteBuffer buf, ConfigurationServerSync configurationSync) {
     int option = 0;
-    boolean confSchemaPresent = configurationSync.getConfSchemaBody() != null;
-    boolean confBodyPresent = configurationSync.getConfDeltaBody() != null;
+    ByteBuffer confSchemaBody = configurationSync.getConfSchemaBody();
+    ByteBuffer confDeltaBody = configurationSync.getConfDeltaBody();
+    boolean confSchemaPresent = confSchemaBody != null
+        && confSchemaBody.hasArray()
+        && confSchemaBody.array().length != 0;
+    boolean confBodyPresent = confDeltaBody != null
+        && confDeltaBody.hasArray()
+        && confDeltaBody.array().length != 0;
     if (confSchemaPresent) {
       option |= 0x01;
     }
@@ -435,16 +441,16 @@ public class BinaryEncDec implements PlatformEncDec {
     final int extPosition = buf.position();
 
     if (confSchemaPresent) {
-      buf.putInt(configurationSync.getConfSchemaBody().array().length);
+      buf.putInt(confSchemaBody.array().length);
     }
     if (confBodyPresent) {
-      buf.putInt(configurationSync.getConfDeltaBody().array().length);
+      buf.putInt(confDeltaBody.array().length);
     }
     if (confSchemaPresent) {
-      put(buf, configurationSync.getConfSchemaBody().array());
+      put(buf, confSchemaBody.array());
     }
     if (confBodyPresent) {
-      put(buf, configurationSync.getConfDeltaBody().array());
+      put(buf, confDeltaBody.array());
     }
 
     buf.putInt(extPosition - SIZE_OF_INT, buf.position() - extPosition);
