@@ -27,7 +27,7 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
 
         tar -xvf edison-toolchain-20150120-linux64.tar.bz2
 
-2. Install toolchain.
+1. Install the toolchain.
 
         cd i686
         ./install_script.sh
@@ -36,7 +36,11 @@ Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs
 
         sed -i 's:+111:/111:' install_script.sh
 
-    The cross compilation toolchain is installed to `/opt/poky-edison/1.6.1/` directory by default. On some configurations the script installs the toolchain only to its working directory.
+    The cross compilation toolchain is installed to the current directory by default. On some configurations the script installs the toolchain to `/opt/poky-edison/1.6.1/`.
+
+1. Install [Cmake](https://cmake.org/):
+
+        sudo apt-get install cmake
 
 # Create application
 
@@ -44,8 +48,11 @@ Now, dependencies are installed and it is time to create Kaa application.
 Since Edison is running Linux, you can refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) for detailed process of application creation.
 But remember, you must specify correct compiler when compiling your Kaa application for Intel Edison:
 
-        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_TOOLCHAIN_FILE=PATH_TO_KAA_SDK/toolchains/edison.cmake -DBUILD_TESTING=OFF ..
-        make 
+        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_TOOLCHAIN_FILE=PATH_TO_KAA_SDK/toolchains/edison.cmake -DEDISON_SDK_ROOT=PATH_TO_EDISON_SDK -DBUILD_TESTING=OFF ..
+        make
+
+>**NOTE:** `PATH_TO_KAA_SDK` should be replaced with the path to Kaa C SDK relative to the `build` directory
+and `PATH_TO_EDISON_SDK` should be replaced with the absolute path to the Edison SDK installation directory (see above).
 
 For more details on how to build, upload and run your application on Edison board, you may refer to official [user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
 
