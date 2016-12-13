@@ -63,7 +63,11 @@
             <groupId>com.oracle.kv</groupId>
             <artifactId>kvstore</artifactId>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
+        <dependency>
+          <groupId>com.sleepycat</groupId>
+          <artifactId>je</artifactId>
+        </dependency>   
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
