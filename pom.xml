@@ -140,6 +140,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <javax.el>2.2.4</javax.el>
         <org.glassfish.web>2.2.6</org.glassfish.web>
         <hibernate-validator>5.2.4.Final</hibernate-validator>
+        <sleepycat.je.version>7.0.6</sleepycat.je.version>
     </properties>
 
     <modules>
@@ -1091,6 +1092,14 @@ Copyright 2014-2016 CyberVision, Inc.
                 <scope>test</scope>
             </dependency>
             <dependency>
+              <!-- a test BerkleyDB Java Edition dependency for com.oracle.kv:kvstore 
+                artifact. See http://www.oracle.com/technetwork/products/berkeleydb/downloads/index-098622.html -->
+              <groupId>com.sleepycat</groupId>
+              <artifactId>je</artifactId>
+              <version>${sleepycat.je.version}</version>
+              <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
                 <version>${commons.dbcp.version}</version>
@@ -1430,6 +1439,12 @@ Copyright 2014-2016 CyberVision, Inc.
         <repository>
             <id>twitter-twttr</id>
             <url>http://maven.twttr.com/</url>
+        </repository>
+        <repository>        
+          <id>oracleReleases</id>
+          <name>Oracle Released Java Packages</name>
+          <url>http://download.oracle.com/maven</url>
+          <layout>default</layout>
         </repository>
         <repository>
             <id>repository.kaaproject</id>
