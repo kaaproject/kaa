@@ -62,6 +62,7 @@ public class ApplicationCtlSchemasActivity extends CtlSchemasActivity<Applicatio
 
   @Override
   protected CTLSchemaScopeDto getCurrentScope() {
+    listView.getListWidget().getDataGrid().setPageStart(0);
     return CTLSchemaScopeDto.APPLICATION;
   }
 
