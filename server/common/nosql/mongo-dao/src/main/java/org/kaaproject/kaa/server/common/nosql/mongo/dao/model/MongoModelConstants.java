@@ -135,7 +135,7 @@ public class MongoModelConstants {
    */
   public static final String EP_SPECIFIC_CONFIGURATION = "endpoint_specific_configuration";
   public static final String EP_SPECIFIC_CONFIGURATION_KEY_HASH = EP_ENDPOINT_KEY_HASH;
-  public static final String EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION = EP_CONFIGURATION_VERSION;
+  public static final String EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION = "endpoint_specific_configuration_version";
   public static final String EP_SPECIFIC_CONFIGURATION_CONFIGURATION = BODY;
 
   private MongoModelConstants() {

@@ -24,7 +24,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointSpecificConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -72,7 +71,7 @@ public class EndpointSpecificConfigurationMongoDaoTest extends AbstractMongoTest
     Assert.assertNull(found4);
   }
 
-  @Test(expected = KaaOptimisticLockingFailureException.class)
+  @Test
   public void testLocking() throws Exception {
     saved1 = generateEndpointSpecificConfigurationDto(KEY, 1, BODY, 8L);
     saved2 = generateEndpointSpecificConfigurationDto(KEY, 1, BODY, 8L);

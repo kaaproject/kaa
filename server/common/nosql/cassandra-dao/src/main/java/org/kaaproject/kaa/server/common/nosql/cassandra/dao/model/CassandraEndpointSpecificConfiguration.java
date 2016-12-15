@@ -20,8 +20,8 @@ import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getBytes;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_CONFIGURATION_BODY_PROPERTY;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
 
 import com.datastax.driver.mapping.annotations.ClusteringColumn;
 import com.datastax.driver.mapping.annotations.Column;
@@ -48,7 +48,7 @@ public final class CassandraEndpointSpecificConfiguration implements EndpointSpe
   @Column(name = EPS_CONFIGURATION_KEY_HASH_PROPERTY)
   private ByteBuffer endpointKeyHash;
   @ClusteringColumn
-  @Column(name = EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY)
+  @Column(name = EP_CONFIGURATION_VERSION_PROPERTY)
   private Integer configurationVersion;
   @Column(name = EPS_CONFIGURATION_CONFIGURATION_BODY_PROPERTY)
   private String configuration;
@@ -68,7 +68,7 @@ public final class CassandraEndpointSpecificConfiguration implements EndpointSpe
     this.endpointKeyHash = getByteBuffer(dto.getEndpointKeyHash());
     this.configurationVersion = dto.getConfigurationSchemaVersion();
     this.configuration = dto.getConfiguration();
-    this.version = dto.getVersion();
+    this.version = dto.getSpecificConfigurationVersion();
   }
 
   @Override
@@ -77,7 +77,7 @@ public final class CassandraEndpointSpecificConfiguration implements EndpointSpe
     dto.setEndpointKeyHash(getBytes(this.getEndpointKeyHash()));
     dto.setConfiguration(this.getConfiguration());
     dto.setConfigurationSchemaVersion(this.getConfigurationVersion());
-    dto.setVersion(this.getVersion());
+    dto.setSpecificConfigurationVersion(this.getVersion());
     return dto;
   }
 

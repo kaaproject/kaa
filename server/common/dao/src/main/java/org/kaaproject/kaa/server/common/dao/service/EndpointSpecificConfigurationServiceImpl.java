@@ -85,8 +85,8 @@ public class EndpointSpecificConfigurationServiceImpl implements EndpointSpecifi
   public Optional<EndpointSpecificConfigurationDto> deleteActiveConfigurationByEndpointKeyHash(byte[] endpointKeyHash) {
     Optional<EndpointSpecificConfigurationDto> configuration = findActiveConfigurationByEndpointKeyHash(endpointKeyHash);
     if (configuration.isPresent()) {
-      int confSchemaVersion = configuration.get().getConfigurationSchemaVersion();
-      endpointSpecificConfigurationDao.removeByEndpointKeyHashAndConfigurationVersion(endpointKeyHash, confSchemaVersion);
+      int profileSchemaVersion = configuration.get().getConfigurationSchemaVersion();
+      endpointSpecificConfigurationDao.removeByEndpointKeyHashAndConfigurationVersion(endpointKeyHash, profileSchemaVersion);
     }
     return configuration;
   }

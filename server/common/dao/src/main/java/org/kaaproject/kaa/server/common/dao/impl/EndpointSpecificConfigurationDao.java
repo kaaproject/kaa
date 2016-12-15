@@ -23,7 +23,7 @@ public interface EndpointSpecificConfigurationDao<T extends EndpointSpecificConf
 
   void removeByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, Integer confSchemaVersion);
 
-  EndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, int configurationVersion);
+  EndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, int configurationSchemaVersion);
 
   EndpointSpecificConfiguration save(EndpointSpecificConfigurationDto endpointSpecificConfigurationDto);
 

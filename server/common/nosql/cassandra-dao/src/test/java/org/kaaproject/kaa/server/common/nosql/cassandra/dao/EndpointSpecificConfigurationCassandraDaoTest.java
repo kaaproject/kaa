@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
-import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointSpecificConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -61,7 +60,7 @@ public class EndpointSpecificConfigurationCassandraDaoTest extends AbstractCassa
     Assert.assertNull(found4);
   }
 
-  @Test(expected = KaaOptimisticLockingFailureException.class)
+  @Test
   public void testLocking() throws Exception {
     saved1 = generateEpsConfigurationDto(KEY, 1, BODY, 9L);
     saved2 = generateEpsConfigurationDto(KEY, 1, BODY, 9L);

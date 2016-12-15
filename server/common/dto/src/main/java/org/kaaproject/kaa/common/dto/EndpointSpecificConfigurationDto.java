@@ -26,7 +26,7 @@ public class EndpointSpecificConfigurationDto implements Serializable {
   private byte[] endpointKeyHash;
   private Integer configurationSchemaVersion;
   private String configuration;
-  private Long version;
+  private Long specificConfigurationVersion;
 
   public EndpointSpecificConfigurationDto() {
   }
@@ -34,11 +34,11 @@ public class EndpointSpecificConfigurationDto implements Serializable {
   /**
    * All-args constructor.
    */
-  public EndpointSpecificConfigurationDto(byte[] endpointKeyHash, Integer configurationSchemaVersion, String configuration, Long version) {
+  public EndpointSpecificConfigurationDto(byte[] endpointKeyHash, Integer configurationSchemaVersion, String configuration, Long specificConfigurationVersion) {
     this.endpointKeyHash = endpointKeyHash;
     this.configurationSchemaVersion = configurationSchemaVersion;
     this.configuration = configuration;
-    this.version = version;
+    this.specificConfigurationVersion = specificConfigurationVersion;
   }
 
   public Integer getConfigurationSchemaVersion() {
@@ -65,12 +65,12 @@ public class EndpointSpecificConfigurationDto implements Serializable {
     this.endpointKeyHash = endpointKeyHash;
   }
 
-  public Long getVersion() {
-    return version;
+  public Long getSpecificConfigurationVersion() {
+    return specificConfigurationVersion;
   }
 
-  public void setVersion(Long version) {
-    this.version = version;
+  public void setSpecificConfigurationVersion(Long specificConfigurationVersion) {
+    this.specificConfigurationVersion = specificConfigurationVersion;
   }
 
   @Override
