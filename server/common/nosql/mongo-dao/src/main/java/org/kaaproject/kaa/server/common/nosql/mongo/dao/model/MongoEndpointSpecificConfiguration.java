@@ -64,7 +64,7 @@ public class MongoEndpointSpecificConfiguration implements EndpointSpecificConfi
     this.endpointKeyHash = dto.getEndpointKeyHash();
     this.configurationVersion = dto.getConfigurationSchemaVersion();
     this.configuration = dto.getConfiguration();
-    this.version = dto.getSpecificConfigurationVersion();
+    this.version = dto.getVersion();
     generateId();
   }
 
@@ -74,7 +74,7 @@ public class MongoEndpointSpecificConfiguration implements EndpointSpecificConfi
     dto.setEndpointKeyHash(this.getEndpointKeyHash());
     dto.setConfiguration(this.getConfiguration());
     dto.setConfigurationSchemaVersion(this.getConfigurationVersion());
-    dto.setSpecificConfigurationVersion(this.getVersion());
+    dto.setVersion(this.getVersion());
     return dto;
   }
 

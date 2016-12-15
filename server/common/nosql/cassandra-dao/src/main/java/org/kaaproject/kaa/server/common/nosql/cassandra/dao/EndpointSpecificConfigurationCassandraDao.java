@@ -89,13 +89,9 @@ public class EndpointSpecificConfigurationCassandraDao extends AbstractVersionab
     CassandraEndpointSpecificConfiguration configuration =
             findByEndpointKeyHashAndConfigurationVersion(dto.getEndpointKeyHash(), dto.getConfigurationSchemaVersion());
     if (configuration != null) {
-      configuration.setConfiguration(dto.getConfiguration());
-      configuration.setConfigurationVersion(dto.getConfigurationSchemaVersion());
-      configuration.setEndpointKeyHash(getByteBuffer(dto.getEndpointKeyHash()));
-      save(configuration);
-    } else {
-      configuration = save(new CassandraEndpointSpecificConfiguration(dto));
+      dto.setVersion(configuration.getVersion());
     }
+    configuration = save(new CassandraEndpointSpecificConfiguration(dto));
     if (LOG.isTraceEnabled()) {
       LOG.trace("Saved: {}", configuration);
     } else {

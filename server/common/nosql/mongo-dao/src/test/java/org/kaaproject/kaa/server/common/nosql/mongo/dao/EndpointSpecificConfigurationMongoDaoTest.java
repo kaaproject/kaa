@@ -24,10 +24,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kaaproject.kaa.common.dto.EndpointSpecificConfigurationDto;
+import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointSpecificConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/mongo-dao-test-context.xml")
@@ -39,6 +47,7 @@ public class EndpointSpecificConfigurationMongoDaoTest extends AbstractMongoTest
   private EndpointSpecificConfigurationDto saved1;
   private EndpointSpecificConfigurationDto saved2;
   private EndpointSpecificConfigurationDto saved3;
+  private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
   @BeforeClass
   public static void init() throws Exception {
@@ -71,10 +80,21 @@ public class EndpointSpecificConfigurationMongoDaoTest extends AbstractMongoTest
     Assert.assertNull(found4);
   }
 
-  @Test
-  public void testLocking() throws Exception {
-    saved1 = generateEndpointSpecificConfigurationDto(KEY, 1, BODY, 8L);
-    saved2 = generateEndpointSpecificConfigurationDto(KEY, 1, BODY, 8L);
+  @Test(expected = KaaOptimisticLockingFailureException.class)
+  public void testLocking() throws Throwable {
+    List<Future<?>> tasks = new ArrayList<>();
+    for (int i = 0; i < 100; i++) {
+      tasks.add(executorService.submit((Runnable) () -> {
+        endpointSpecificConfigurationDao.save(saved1);
+      }));
+    }
+    for (Future future : tasks) {
+      try {
+        future.get();
+      } catch (ExecutionException ex) {
+        throw ex.getCause();
+      }
+    }
   }
 
   @Before

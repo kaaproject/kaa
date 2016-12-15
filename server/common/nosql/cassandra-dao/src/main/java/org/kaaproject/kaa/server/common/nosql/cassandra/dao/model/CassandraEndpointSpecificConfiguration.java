@@ -68,7 +68,7 @@ public final class CassandraEndpointSpecificConfiguration implements EndpointSpe
     this.endpointKeyHash = getByteBuffer(dto.getEndpointKeyHash());
     this.configurationVersion = dto.getConfigurationSchemaVersion();
     this.configuration = dto.getConfiguration();
-    this.version = dto.getSpecificConfigurationVersion();
+    this.version = dto.getVersion();
   }
 
   @Override
@@ -77,7 +77,7 @@ public final class CassandraEndpointSpecificConfiguration implements EndpointSpe
     dto.setEndpointKeyHash(getBytes(this.getEndpointKeyHash()));
     dto.setConfiguration(this.getConfiguration());
     dto.setConfigurationSchemaVersion(this.getConfigurationVersion());
-    dto.setSpecificConfigurationVersion(this.getVersion());
+    dto.setVersion(this.getVersion());
     return dto;
   }
 
