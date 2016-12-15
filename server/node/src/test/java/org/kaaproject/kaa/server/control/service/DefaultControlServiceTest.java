@@ -34,10 +34,8 @@ import java.util.List;
 
 public class DefaultControlServiceTest {
 
-  @Autowired
   private DefaultControlService service;
 
-  @Autowired
   private OperationsNodeInfo node;
 
   @Test
