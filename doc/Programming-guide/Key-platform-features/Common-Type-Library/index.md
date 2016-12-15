@@ -83,22 +83,22 @@ You can manage CTs using the [Server REST API]({{root_url}}Programming-guide/Ser
 
 ### Get the list of CTs
 
-As [Kaa administrator]({{root_url}}Glossary/#kaa-administrator), you can get the list of available system CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getSystemLevelCTLSchemas) call or by clicking **System CTL** on the **Administration UI** page.
+As [Kaa administrator]({{root_url}}Glossary/#kaa-administrator), you can get the list of available system CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getSystemLevelCtlSchemas) call or by clicking **System CTL** on the **Administration UI** page.
 
 ![System CTL](attach/system_ctl.png)
 
-As [Tenant administrator]({{root_url}}Glossary/#tenant-administrator), you can get the list of available Tenant CTs and System CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getTenantLevelCTLSchemas) call or by clicking **Tenant CTL** on the **Administration UI** page.
+As [Tenant administrator]({{root_url}}Glossary/#tenant-administrator), you can get the list of available Tenant CTs and System CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getTenantLevelCtlSchemas) call or by clicking **Tenant CTL** on the **Administration UI** page.
 Use the **Display higher scopes** checkbox to toggle visibility of the System CTs.
 
 As [Tenant developer]({{root_url}}Glossary/#tenant-developer), you can get the list of available Tenant CTs and System CTs in the same way as Tenant administrator.
-In addition, Tenant developer can get the list of available application CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getApplicationLevelCTLSchemasByAppToken) call or by clicking **Application CTL** on the **Administration UI** page.
+In addition, Tenant developer can get the list of available application CTs using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getApplicationLevelCtlSchemasByAppToken) call or by clicking **Application CTL** on the **Administration UI** page.
 Use the **Display higher scopes** checkbox to toggle visibility of the system and tenant CTs.
 
 ### View CT details
 
 To view the CT details:
 
-- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getCTLSchemaById) call.
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/getCtlSchemaById) call.
 
 OR
 
@@ -114,7 +114,7 @@ To create a new version of the CT, click **Create new version**.
 
 To create a new CT:
 
-- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCTLSchemaWithAppToken) call.
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/saveCtlSchemaWithAppToken) call.
 
 OR
 
@@ -137,7 +137,7 @@ In the **Add new type** window, fill in all the required fields and click **Add*
 
 To delete a schema:
 
-- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/deleteCTLSchemaByFqnVersionTenantIdAndApplicationToken) call.
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/deleteCtlSchemaByFqnVersionTenantIdAndApplicationToken) call.
 
 OR
 
@@ -170,7 +170,7 @@ The CT (including all its versions) is now available in the **Tenant** scope.
 
 To export a CT schema:
 
-- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/exportCTLSchemaByAppToken) call.
+- Use the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Common_Type_Library/exportCtlSchemaByAppToken) call.
 
 OR
 
