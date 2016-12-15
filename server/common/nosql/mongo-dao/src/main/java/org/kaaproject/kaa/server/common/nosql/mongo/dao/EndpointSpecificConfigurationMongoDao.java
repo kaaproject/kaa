@@ -46,10 +46,10 @@ public class EndpointSpecificConfigurationMongoDao extends AbstractVersionableMo
   }
 
   @Override
-  public EndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, int configurationSchemaVersion) {
-    LOG.debug("Try to find endpoint specific configuration by endpointKeyHash {} and configurationVersion {}", endpointKeyHash, configurationSchemaVersion);
+  public EndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, int configurationVersion) {
+    LOG.debug("Try to find endpoint specific configuration by endpointKeyHash {} and configurationVersion {}", endpointKeyHash, configurationVersion);
     EndpointSpecificConfiguration configuration = findOne(query(where(EP_SPECIFIC_CONFIGURATION_KEY_HASH).is(endpointKeyHash)
-        .and(EP_CONFIGURATION_VERSION).is(configurationSchemaVersion)));
+        .and(EP_CONFIGURATION_VERSION).is(configurationVersion)));
     LOG.trace("Found {}  endpoint specific configuration", configuration);
     return configuration;
   }
