@@ -16,8 +16,8 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao;
 
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION;
-import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION_KEY_HASH;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -42,14 +42,14 @@ public class EndpointSpecificConfigurationMongoDao extends AbstractVersionableMo
     LOG.debug("Remove endpoint specific configuration by endpoint key hash [{}] ", endpointKeyHash);
     mongoTemplate.remove(
         query(where(EP_SPECIFIC_CONFIGURATION_KEY_HASH).is(endpointKeyHash)
-            .and(EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION).is(confSchemaVersion)), getCollectionName());
+            .and(EP_CONFIGURATION_VERSION).is(confSchemaVersion)), getCollectionName());
   }
 
   @Override
   public EndpointSpecificConfiguration findByEndpointKeyHashAndConfigurationVersion(byte[] endpointKeyHash, int configurationVersion) {
     LOG.debug("Try to find endpoint specific configuration by endpointKeyHash {} and configurationVersion {}", endpointKeyHash, configurationVersion);
     EndpointSpecificConfiguration configuration = findOne(query(where(EP_SPECIFIC_CONFIGURATION_KEY_HASH).is(endpointKeyHash)
-        .and(EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION).is(configurationVersion)));
+        .and(EP_CONFIGURATION_VERSION).is(configurationVersion)));
     LOG.trace("Found {}  endpoint specific configuration", configuration);
     return configuration;
   }
@@ -57,7 +57,12 @@ public class EndpointSpecificConfigurationMongoDao extends AbstractVersionableMo
   @Override
   public EndpointSpecificConfiguration save(EndpointSpecificConfigurationDto dto) {
     LOG.debug("Saving endpoint specific configuration {}", dto);
-    MongoEndpointSpecificConfiguration configuration = save(new MongoEndpointSpecificConfiguration(dto));
+    MongoEndpointSpecificConfiguration configuration =
+            (MongoEndpointSpecificConfiguration) findByEndpointKeyHashAndConfigurationVersion(dto.getEndpointKeyHash(), dto.getConfigurationSchemaVersion());
+    if (configuration != null) {
+      dto.setVersion(configuration.getVersion());
+    }
+    configuration = save(new MongoEndpointSpecificConfiguration(dto));
     if (LOG.isTraceEnabled()) {
       LOG.trace("Saved: {}", configuration);
     } else {

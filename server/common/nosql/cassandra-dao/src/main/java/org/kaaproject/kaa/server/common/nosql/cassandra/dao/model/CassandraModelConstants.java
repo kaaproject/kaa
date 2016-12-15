@@ -213,7 +213,6 @@ public class CassandraModelConstants {
    */
   public static final String EPS_CONFIGURATION_COLUMN_FAMILY_NAME = "ep_specific_conf";
   public static final String EPS_CONFIGURATION_KEY_HASH_PROPERTY = ENDPOINT_KEY_HASH_PROPERTY;
-  public static final String EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY = EP_CONFIGURATION_VERSION_PROPERTY;
   public static final String EPS_CONFIGURATION_CONFIGURATION_BODY_PROPERTY = BODY_PROPERTY;
 
   /**

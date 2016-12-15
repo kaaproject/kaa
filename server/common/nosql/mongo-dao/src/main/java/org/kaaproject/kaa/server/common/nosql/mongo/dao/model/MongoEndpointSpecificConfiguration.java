@@ -16,7 +16,7 @@
 
 package org.kaaproject.kaa.server.common.nosql.mongo.dao.model;
 
-import static org.kaaproject.kaa.server.common.dao.DaoConstants.OPT_LOCK;
+import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_CONFIGURATION_VERSION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION_CONFIGURATION;
 import static org.kaaproject.kaa.server.common.nosql.mongo.dao.model.MongoModelConstants.EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION;
@@ -46,12 +46,12 @@ public class MongoEndpointSpecificConfiguration implements EndpointSpecificConfi
   @Indexed
   @Field(EP_SPECIFIC_CONFIGURATION_KEY_HASH)
   private byte[] endpointKeyHash;
-  @Field(EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION)
+  @Field(EP_CONFIGURATION_VERSION)
   private Integer configurationVersion;
   @Field(EP_SPECIFIC_CONFIGURATION_CONFIGURATION)
   private String configuration;
   @Version
-  @Field(OPT_LOCK)
+  @Field(EP_SPECIFIC_CONFIGURATION_CONFIGURATION_VERSION)
   private Long version;
 
   public MongoEndpointSpecificConfiguration() {

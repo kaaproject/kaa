@@ -21,8 +21,8 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.CassandraDaoUtil.getByteBuffer;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_COLUMN_FAMILY_NAME;
-import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY;
 import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EPS_CONFIGURATION_KEY_HASH_PROPERTY;
+import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraModelConstants.EP_CONFIGURATION_VERSION_PROPERTY;
 
 import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Select;
@@ -66,7 +66,7 @@ public class EndpointSpecificConfigurationCassandraDao extends AbstractVersionab
     LOG.debug("Remove endpoint specific configuration by endpointKeyHash {} and confSchemaVersion {}", endpointKeyHash, confSchemaVersion);
     Delete.Where deleteQuery = delete().from(getColumnFamilyName())
         .where(eq(EPS_CONFIGURATION_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash)))
-        .and(eq(EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY, confSchemaVersion));
+        .and(eq(EP_CONFIGURATION_VERSION_PROPERTY, confSchemaVersion));
     LOG.trace("Remove endpoint specific configuration by endpointKeyHash and confSchemaVersion query {}", deleteQuery);
     execute(deleteQuery);
   }
@@ -76,7 +76,7 @@ public class EndpointSpecificConfigurationCassandraDao extends AbstractVersionab
     LOG.debug("Try to find endpoint specific configuration by endpointKeyHash {} and configurationVersion {}", endpointKeyHash, configurationVersion);
     Select.Where where = select().from(getColumnFamilyName())
         .where(eq(EPS_CONFIGURATION_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash)))
-        .and(eq(EPS_CONFIGURATION_CONFIGURATION_VERSION_PROPERTY, configurationVersion));
+        .and(eq(EP_CONFIGURATION_VERSION_PROPERTY, configurationVersion));
     LOG.trace("Try to find endpoint specific configuration by cql select {}", where);
     CassandraEndpointSpecificConfiguration configuration = findOneByStatement(where);
     LOG.trace("Found {} endpoint specific configuration", configuration);
@@ -86,7 +86,12 @@ public class EndpointSpecificConfigurationCassandraDao extends AbstractVersionab
   @Override
   public EndpointSpecificConfiguration save(EndpointSpecificConfigurationDto dto) {
     LOG.debug("Saving endpoint specific configuration {}", dto);
-    EndpointSpecificConfiguration configuration = save(new CassandraEndpointSpecificConfiguration(dto));
+    CassandraEndpointSpecificConfiguration configuration =
+            findByEndpointKeyHashAndConfigurationVersion(dto.getEndpointKeyHash(), dto.getConfigurationSchemaVersion());
+    if (configuration != null) {
+      dto.setVersion(configuration.getVersion());
+    }
+    configuration = save(new CassandraEndpointSpecificConfiguration(dto));
     if (LOG.isTraceEnabled()) {
       LOG.trace("Saved: {}", configuration);
     } else {
