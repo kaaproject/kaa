@@ -73,6 +73,7 @@ import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByA
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpByEndpointGroupId;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEpBySdkToken;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
+import org.kaaproject.kaa.server.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,15 +223,15 @@ public class EndpointProfileCassandraDao
 
   @Override
   public CassandraEndpointProfile findByKeyHash(byte[] endpointKeyHash) {
-    LOG.debug("Try to find endpoint profile by key hash [{}]", endpointKeyHash);
+    LOG.debug("Try to find endpoint profile by key hash [{}]", Utils.encodeHexString(endpointKeyHash));
     CassandraEndpointProfile endpointProfile = getMapper().get(getByteBuffer(endpointKeyHash));
-    LOG.debug("[{}] Found endpoint profile {}", endpointKeyHash, endpointProfile);
+    LOG.debug("[{}] Found endpoint profile {}", Utils.encodeHexString(endpointKeyHash), endpointProfile);
     return endpointProfile;
   }
 
   @Override
   public EndpointProfileBodyDto findBodyByKeyHash(byte[] endpointKeyHash) {
-    LOG.debug("Try to find endpoint profile body by key hash [{}]", endpointKeyHash);
+    LOG.debug("Try to find endpoint profile body by key hash [{}]", Utils.encodeHexString(endpointKeyHash));
     String profile = null;
     String serverSideProfile = null;
     String appId = null;
@@ -256,7 +257,7 @@ public class EndpointProfileCassandraDao
             + "with client-side endpoint profile version {} "
             + "and server-side endpoint profile body {} "
             + "with server-side endpoint profile version {} and application id {}",
-        endpointKeyHash, profile, clientSideProfileVersion, serverSideProfile,
+        Utils.encodeHexString(endpointKeyHash), profile, clientSideProfileVersion, serverSideProfile,
         serverSideProfileVersion, appId);
     return new EndpointProfileBodyDto(
         endpointKeyHash, profile, serverSideProfile,
@@ -265,7 +266,7 @@ public class EndpointProfileCassandraDao
 
   @Override
   public CassandraEndpointProfile findEndpointIdByKeyHash(byte[] endpointKeyHash) {
-    LOG.debug("Try to check if endpoint profile exists with key hash [{}]", endpointKeyHash);
+    LOG.debug("Try to check if endpoint profile exists with key hash [{}]", Utils.encodeHexString(endpointKeyHash));
     CassandraEndpointProfile profile = null;
     ResultSet resultSet = execute(select(EP_ENDPOINT_ID_PROPERTY).from(getColumnFamilyName())
         .where(eq(EP_EP_KEY_HASH_PROPERTY, getByteBuffer(endpointKeyHash))));
@@ -274,7 +275,7 @@ public class EndpointProfileCassandraDao
       profile = new CassandraEndpointProfile();
       profile.setId(row.getString(EP_ENDPOINT_ID_PROPERTY));
     }
-    LOG.debug("{} endpoint profile exists with key hash [{}]", endpointKeyHash, profile);
+    LOG.debug("{} endpoint profile exists with key hash [{}]", Utils.encodeHexString(endpointKeyHash), profile);
     return profile;
   }
 
@@ -308,7 +309,7 @@ public class EndpointProfileCassandraDao
 
   @Override
   public void removeByKeyHash(byte[] endpointKeyHash) {
-    LOG.debug("Remove endpoint profile by key hash [{}]", endpointKeyHash);
+    LOG.debug("Remove endpoint profile by key hash [{}]", Utils.encodeHexString(endpointKeyHash));
     CassandraEndpointProfile storedProfile = findByKeyHash(endpointKeyHash);
     removeByKeyHashFromEpByEndpointGroupId(endpointKeyHash);
     String appId = storedProfile.getApplicationId();
@@ -364,7 +365,7 @@ public class EndpointProfileCassandraDao
       if (profile != null) {
         cassandraEndpointProfileList.add(getDto(profile));
       } else {
-        LOG.debug("Can't find endpoint profile by id {}", keyHash);
+        LOG.debug("Can't find endpoint profile by id {}", Utils.encodeHexString(keyHash));
       }
     }
     return cassandraEndpointProfileList;
@@ -381,7 +382,7 @@ public class EndpointProfileCassandraDao
       if (endpointProfileBodyDto != null) {
         endpointProfilesBodyDto.add(endpointProfileBodyDto);
       } else {
-        LOG.debug("Can't find endpoint profile by id {}", keyHash);
+        LOG.debug("Can't find endpoint profile by id {}", Utils.encodeHexString(keyHash));
       }
     }
     return endpointProfilesBodyDto;
@@ -451,7 +452,7 @@ public class EndpointProfileCassandraDao
 
   @Override
   public CassandraEndpointProfile findById(ByteBuffer key) {
-    LOG.debug("Try to find endpoint profiles by key [{}]", key);
+    LOG.debug("Try to find endpoint profiles by key [{}]", Utils.encodeHexString(key));
     CassandraEndpointProfile profile = null;
     if (key != null) {
       profile = findByKeyHash(key.array());
@@ -462,7 +463,7 @@ public class EndpointProfileCassandraDao
 
   @Override
   public void removeById(ByteBuffer key) {
-    LOG.debug("Remove endpoint profiles by key [{}]", key);
+    LOG.debug("Remove endpoint profiles by key [{}]", Utils.encodeHexString(key));
     if (key != null) {
       removeByKeyHash(key.array());
     }
@@ -484,7 +485,7 @@ public class EndpointProfileCassandraDao
                                                       String serverProfile) {
     LOG.debug("Updating server profile for endpoint profile with key hash [{}] "
             + "with schema version [{}]",
-        keyHash, version);
+        Utils.encodeHexString(keyHash), version);
     ByteBuffer key = ByteBuffer.wrap(keyHash);
     Statement update = QueryBuilder.update(EP_COLUMN_FAMILY_NAME)
         .with(set(EP_SERVER_PROFILE_PROPERTY, serverProfile))

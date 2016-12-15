@@ -33,6 +33,7 @@ import com.datastax.driver.mapping.annotations.Transient;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsDto;
 import org.kaaproject.kaa.common.dto.credentials.CredentialsStatus;
 import org.kaaproject.kaa.server.common.dao.model.Credentials;
+import org.kaaproject.kaa.server.common.utils.Utils;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -158,7 +159,7 @@ public class CassandraCredentials implements Credentials, Serializable {
     return "CassandraCredentials{"
         + "applicationId='" + applicationId + '\''
         + ", id='" + id + '\''
-        + ", credentialsBody=" + cassandraCredentialsBody
+        + ", credentialsBody=" + Utils.encodeHexString(cassandraCredentialsBody)
         + ", status='" + cassandraCredentialsStatus + '\''
         + '}';
   }

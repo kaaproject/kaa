@@ -62,6 +62,7 @@ import org.kaaproject.kaa.server.common.dao.impl.DaoUtil;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEndpointGroupState;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.CassandraEventClassFamilyVersionState;
+import org.kaaproject.kaa.server.common.utils.Utils;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -605,25 +606,25 @@ public final class CassandraEndpointProfile implements EndpointProfile, Serializ
   @Override
   public String toString() {
     return "CassandraEndpointProfile{"
-        + "endpointKeyHash=" + endpointKeyHash
+        + "endpointKeyHash=" + Utils.encodeHexString(endpointKeyHash)
         + ", id='" + id + '\''
-        + ", endpointProfileKey=" + endpointProfileKey
+        + ", endpointProfileKey=" + Utils.encodeHexString(endpointProfileKey)
         + ", applicationId='" + applicationId + '\''
         + ", endpointUserId='" + endpointUserId + '\''
         + ", accessToken='" + accessToken + '\''
         + ", groupStates=" + groupStates
         + ", sequenceNumber=" + sequenceNumber
         + ", profile='" + profile + '\''
-        + ", profileHash=" + profileHash
+        + ", profileHash=" + Utils.encodeHexString(profileHash)
         + ", profileVersion=" + profileVersion
         + ", serverProfileVersion=" + serverProfileVersion
-        + ", configurationHash=" + configurationHash
-        + ", userConfigurationHash=" + userConfigurationHash
-        + ", epsConfigurationHash=" + epsConfigurationHash
+        + ", configurationHash=" + Utils.encodeHexString(configurationHash)
+        + ", userConfigurationHash=" + Utils.encodeHexString(userConfigurationHash)
+        + ", epsConfigurationHash=" + Utils.encodeHexString(epsConfigurationHash)
         + ", configurationVersion=" + configurationVersion
         + ", notificationVersion=" + notificationVersion
         + ", subscriptions=" + subscriptions
-        + ", topicHash=" + topicHash
+        + ", topicHash=" + Utils.encodeHexString(topicHash)
         + ", simpleTopicHash=" + simpleTopicHash
         + ", systemNfVersion=" + systemNfVersion
         + ", userNfVersion=" + userNfVersion

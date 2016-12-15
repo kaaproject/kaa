@@ -125,6 +125,8 @@ import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotif
 import org.kaaproject.kaa.server.common.thrift.gen.operations.UserConfigurationUpdate;
 import org.kaaproject.kaa.server.common.zk.control.ControlNode;
 import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
+import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
+import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.common.zk.operations.OperationsNodeListener;
 import org.kaaproject.kaa.server.control.service.exception.ControlServiceException;
 import org.kaaproject.kaa.server.control.service.schema.SchemaLibraryGenerator;
@@ -1076,6 +1078,58 @@ public class DefaultControlService implements ControlService {
       }
     }
     return resolver.getNode(entityId);
+  }
+
+  /**
+   * Use when one need to write an OperationsNodeInfo instance to logs. The OperationsNodeInfo
+   * instance has ByteBuffer fields which should be represented in log files as null because their
+   * values are unrepresentative and redundant.
+   *
+   * @param format   the format string
+   * @param node     the instance of OperationsNodeInfo
+   * @param resolver the instance of OperationsServerResolver
+   */
+  private void writeLogWithoutByteBuffer(String format,
+                                         OperationsNodeInfo node,
+                                         OperationsServerResolver resolver) {
+
+    // Temporary remove connection info for transports
+    Map<TransportMetaData, Map<VersionConnectionInfoPair, ByteBuffer>> transportMetaData = new HashMap<>();
+    node.getTransports().forEach(transport -> transportMetaData.put(transport, removeTransportConnectionInfo(transport)));
+
+    // Temporary remove public key
+    final ByteBuffer publicKey = node.getConnectionInfo().getPublicKey();
+    node.getConnectionInfo().setPublicKey(null);
+
+    LOG.info(format, node, resolver);
+
+    // Restore connection info for transports
+    node.getTransports().forEach(transport -> restoreTransportConnectionInfo(transport, transportMetaData.get(transport)));
+
+    // Restore public key
+    node.getConnectionInfo().setPublicKey(publicKey);
+  }
+
+  private Map<VersionConnectionInfoPair, ByteBuffer> removeTransportConnectionInfo(TransportMetaData transport) {
+    Map<VersionConnectionInfoPair, ByteBuffer> infoMap = new HashMap<>();
+    transport.getConnectionInfo().forEach(connectionInfoPair -> {
+      infoMap.put(connectionInfoPair, connectionInfoPair.getConenctionInfo());
+      connectionInfoPair.setConenctionInfo(null);
+    });
+    return infoMap;
+  }
+
+  private void restoreTransportConnectionInfo(TransportMetaData transport, Map<VersionConnectionInfoPair, ByteBuffer> connectionInfoMap) {
+    transport.getConnectionInfo()
+        .forEach(connectionInfoPair -> connectionInfoPair.setConenctionInfo(getConnectionInfo(connectionInfoPair, connectionInfoMap)));
+  }
+
+  private ByteBuffer getConnectionInfo(VersionConnectionInfoPair connectionInfoPair, Map<VersionConnectionInfoPair, ByteBuffer> connectionInfoMap) {
+    return connectionInfoMap.entrySet().stream()
+        .filter(entry -> entry.getKey() == connectionInfoPair)
+        .findFirst()
+        .get()
+        .getValue();
   }
 
   /*

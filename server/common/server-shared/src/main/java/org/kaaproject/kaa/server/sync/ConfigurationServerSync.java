@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.kaaproject.kaa.server.common.utils.Utils;
+
 import java.nio.ByteBuffer;
 
 public final class ConfigurationServerSync {
@@ -132,9 +134,9 @@ public final class ConfigurationServerSync {
     builder.append("ConfigurationServerSync [responseStatus=");
     builder.append(responseStatus);
     builder.append(", confSchemaBody=");
-    builder.append(confSchemaBody);
+    builder.append(Utils.encodeHexString(confSchemaBody));
     builder.append(", confDeltaBody=");
-    builder.append(confDeltaBody);
+    builder.append(Utils.encodeHexString(confDeltaBody));
     builder.append("]");
     return builder.toString();
   }
