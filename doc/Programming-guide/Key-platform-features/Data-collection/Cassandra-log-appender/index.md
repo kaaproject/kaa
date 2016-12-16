@@ -25,7 +25,7 @@ Click **Add log appender**.
 	
 	![Create cassandra log appender](attach/create-cassandra-log-appender-admin-ui.png)
 
-5. Fill in the **Configuration** section for your log appender and click **Add**.
+4. Fill in the **Configuration** section for your log appender and click **Add**.
 See [Configure log appender](#configure-log-appender).
 	
 	![Cassandra log appender configuration](attach/cassandra-log-appender-config1.png)
