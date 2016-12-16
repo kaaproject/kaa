@@ -24,7 +24,6 @@ import org.kaaproject.kaa.server.common.zk.gen.OperationsNodeInfo;
 import org.kaaproject.kaa.server.common.zk.gen.TransportMetaData;
 import org.kaaproject.kaa.server.common.zk.gen.VersionConnectionInfoPair;
 import org.kaaproject.kaa.server.resolve.OperationsServerResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;

@@ -35,6 +35,6 @@ public final class Utils {
   }
 
   public static String encodeHexString(ByteBuffer buf) {
-    return buf != null ? Hex.encodeHexString(buf.array()) : "";
+    return buf != null && buf.hasArray() ? Hex.encodeHexString(buf.array()) : "";
   }
 }
