@@ -380,7 +380,7 @@ This Avro schema is obtained trough the [server REST API call]({{root_url}}Progr
 
 The example below uses the **Data collection demo** from [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
 
-To play around with the  log appender:
+To play around with the log appender:
 
 1. Open the Data collection demo from Kaa Sandbox, follow the application installation instructions, and run the application.
 
