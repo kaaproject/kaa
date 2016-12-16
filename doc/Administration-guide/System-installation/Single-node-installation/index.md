@@ -478,14 +478,12 @@ Kaa requires MariaDB (used by default) or PostgreSQL.
 Add MariaDB YUM repository entry for CentOS.
 Copy and paste it into a file located in the `/etc/yum.repos.d/` directory (name the file `MariaDB.repo` or similar).
 
-Run the following command
-
 ```bash
 
 sudo nano /etc/yum.repos.d/MariaDB.repo
 ```
 
-Copy and paste it into this file.
+Copy the contents below to the `/etc/yum.repos.d/MariaDB.repo` file.
 
 <ul>
 	<ul class="nav nav-tabs">
