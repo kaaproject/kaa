@@ -195,7 +195,7 @@ To play around with the MongoDB log appender:
 
 1. Open the Data collection demo from Kaa Sandbox, follow the application installation instructions, and run the application.
 
-2. Create a MongoDB log appender as described [above](#create-mongodb-log-appender).
+2. Create a MongoDB log appender as described [above](#create-mongodb-log-appender) or use the one pre-installed in the sample application.
 
 3. Your running Data collection demo application will display the output similar to the example below.
 
