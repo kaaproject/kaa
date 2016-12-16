@@ -95,7 +95,7 @@ Below is an example result.
 
 ## Configure log appender
 
-The Cassandra log appender configuration must match [this Avro schema]({{github_url}}server/appenders/kafka-appender/src/main/avro/kafka-appender-config.avsc).
+The Kafka log appender configuration must match [this Avro schema]({{github_url}}server/appenders/kafka-appender/src/main/avro/kafka-appender-config.avsc).
 
 You can configure the following log appender settings:
 
@@ -123,30 +123,20 @@ Below is an example configuration that matches the mentioned Avro schema.
         }
     ],
     "topic":"kaa",
-    "useDefaultPartitioner":{
-        "boolean":true
-    },
-    "partitionCount":{
-        "int":1
-    },
+    "useDefaultPartitioner":true,
+    "partitionCount":1,
     "kafkaKeyType":{
         "org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaKeyType":"NULL"
     },
-    "executorThreadPoolSize":{
-        "int":1
-    },
-    "bufferMemorySize":{
-        "long":33554432
-    },
+    "executorThreadPoolSize":1,
+    "bufferMemorySize":33554432,
     "kafkaCompression":{
         "org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaCompression":"NONE"
     },
     "kafkaAcknowledgement":{
         "org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaAcknowledgement":"ONE"
     },
-    "retries":{
-        "int":0
-    }
+    "retries":0
 }
 ```
 
@@ -160,13 +150,11 @@ Before proceeding with the example below:
 
 2. Change Zookeeper to use some other port than 2181 (e.g. 2183).
 
-3. Edit the following property files:
-
 	* `config/zookeeper.properties`: set `clientPort=2183`
 	* `config/server.properties`: set `zookeeper.connect=localhost:2183`
 	* `config/consumer.properties`: set `zookeeper.connect=127.0.0.1:2183`
 
-4. Launch Kafka.
+3. Launch Kafka.
 
 Below is the log schema for the application.
 
@@ -201,7 +189,7 @@ The following JSON example matches the schema above.
 
 To play around with the Kafka log appender:
 
-1. Open the Data collection demo from Kaa Sandbox, follow the application installation instructions, and run the application.
+1. Open the Data collection demo from Kaa Sandbox, follow the instructions to install the application.
 
 2. Create a Kafka log appender as described [above](#create-kafka-log-appender).
 
