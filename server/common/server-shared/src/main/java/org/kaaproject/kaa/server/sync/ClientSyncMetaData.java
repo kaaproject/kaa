@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.kaaproject.kaa.server.common.utils.Utils;
+
 import java.nio.ByteBuffer;
 
 public class ClientSyncMetaData {
@@ -167,9 +169,9 @@ public class ClientSyncMetaData {
     builder.append(", sdkToken=");
     builder.append(sdkToken);
     builder.append(", endpointPublicKeyHash=");
-    builder.append(endpointPublicKeyHash);
+    builder.append(Utils.encodeHexString(endpointPublicKeyHash));
     builder.append(", profileHash=");
-    builder.append(profileHash);
+    builder.append(Utils.encodeHexString(profileHash));
     builder.append(", timeout=");
     builder.append(timeout);
     builder.append("]");

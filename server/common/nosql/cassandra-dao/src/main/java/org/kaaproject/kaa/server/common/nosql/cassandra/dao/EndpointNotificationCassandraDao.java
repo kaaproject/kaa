@@ -32,6 +32,7 @@ import org.kaaproject.kaa.common.dto.EndpointNotificationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointNotificationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.filter.CassandraEpByAppIdDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointNotification;
+import org.kaaproject.kaa.server.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,7 @@ public class EndpointNotificationCassandraDao
 
   @Override
   public List<CassandraEndpointNotification> findNotificationsByKeyHash(byte[] keyHash) {
-    LOG.debug("Try to find endpoint notifications by endpoint key hash {}", keyHash);
+    LOG.debug("Try to find endpoint notifications by endpoint key hash {}", Utils.encodeHexString(keyHash));
     List<CassandraEndpointNotification> cassandraEndpointNotifications =
         Collections.emptyList();
     if (keyHash != null) {
@@ -77,7 +78,7 @@ public class EndpointNotificationCassandraDao
 
   @Override
   public void removeNotificationsByKeyHash(byte[] keyHash) {
-    LOG.debug("Remove endpoint notifications by endpoint key hash {}", keyHash);
+    LOG.debug("Remove endpoint notifications by endpoint key hash {}", Utils.encodeHexString(keyHash));
     execute(delete().from(getColumnFamilyName())
         .where(eq(ET_NF_ENDPOINT_KEY_HASH_PROPERTY, getByteBuffer(keyHash))));
   }
@@ -99,7 +100,7 @@ public class EndpointNotificationCassandraDao
     CassandraEndpointNotification endpointNotification =
         new CassandraEndpointNotification(dto);
     LOG.debug("Save endpoint notification for endpoint profile {}",
-        endpointNotification.getEndpointKeyHash());
+        Utils.encodeHexString(endpointNotification.getEndpointKeyHash()));
     save(new CassandraEndpointNotification(dto));
     LOG.trace("Saved endpoint notification {}", endpointNotification);
     return endpointNotification;
