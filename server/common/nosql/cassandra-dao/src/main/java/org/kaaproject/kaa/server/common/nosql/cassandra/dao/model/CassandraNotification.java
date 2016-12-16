@@ -43,6 +43,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.Notification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
+import org.kaaproject.kaa.server.common.utils.Utils;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -279,7 +280,7 @@ public final class CassandraNotification implements Notification, Serializable {
             + ", nfVersion=" + nfVersion
             + ", seqNum=" + seqNum
             + ", lastModifyTime=" + lastModifyTime
-            + ", body=" + body
+            + ", body=" + Utils.encodeHexString(body)
             + ", expiredAt=" + expiredAt
             + '}';
   }

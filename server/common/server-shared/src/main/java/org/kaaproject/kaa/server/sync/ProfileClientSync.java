@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.kaaproject.kaa.server.common.utils.Utils;
+
 import java.nio.ByteBuffer;
 
 public class ProfileClientSync {
@@ -120,9 +122,9 @@ public class ProfileClientSync {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("ProfileClientSync [endpointPublicKey=");
-    builder.append(endpointPublicKey);
+    builder.append(Utils.encodeHexString(endpointPublicKey));
     builder.append(", profileBody=");
-    builder.append(profileBody);
+    builder.append(Utils.encodeHexString(profileBody));
     builder.append(", endpointAccessToken=");
     builder.append(endpointAccessToken);
     builder.append("]");

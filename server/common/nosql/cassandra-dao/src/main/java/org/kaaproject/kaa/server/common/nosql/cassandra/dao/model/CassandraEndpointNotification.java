@@ -32,6 +32,7 @@ import org.kaaproject.kaa.common.dto.NotificationDto;
 import org.kaaproject.kaa.common.dto.NotificationTypeDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointNotification;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.type.NotificationTypeCodec;
+import org.kaaproject.kaa.server.common.utils.Utils;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -296,7 +297,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
   @Override
   public String toString() {
     return "CassandraEndpointNotification{"
-        + "endpointKeyHash=" + endpointKeyHash
+        + "endpointKeyHash=" + Utils.encodeHexString(endpointKeyHash)
         + ", seqNum=" + seqNum
         + ", id='" + id + '\''
         + ", type=" + type
@@ -304,7 +305,7 @@ public final class CassandraEndpointNotification implements EndpointNotification
         + ", schemaId='" + schemaId + '\''
         + ", nfVersion=" + nfVersion
         + ", lastModifyTime=" + lastModifyTime
-        + ", body=" + body
+        + ", body=" + Utils.encodeHexString(body)
         + ", expiredAt=" + expiredAt
         + '}';
   }

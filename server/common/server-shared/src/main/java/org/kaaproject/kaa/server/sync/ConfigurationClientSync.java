@@ -16,6 +16,8 @@
 
 package org.kaaproject.kaa.server.sync;
 
+import org.kaaproject.kaa.server.common.utils.Utils;
+
 import java.nio.ByteBuffer;
 
 public final class ConfigurationClientSync {
@@ -103,7 +105,7 @@ public final class ConfigurationClientSync {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     builder.append("ConfigurationClientSync [configurationHash=");
-    builder.append(configurationHash);
+    builder.append(Utils.encodeHexString(configurationHash));
     builder.append(", resyncOnly=");
     builder.append(resyncOnly);
     builder.append("]");

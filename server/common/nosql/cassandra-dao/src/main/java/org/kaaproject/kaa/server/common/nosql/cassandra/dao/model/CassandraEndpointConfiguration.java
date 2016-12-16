@@ -30,6 +30,7 @@ import com.datastax.driver.mapping.annotations.Transient;
 
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.model.EndpointConfiguration;
+import org.kaaproject.kaa.server.common.utils.Utils;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -121,8 +122,8 @@ public final class CassandraEndpointConfiguration implements EndpointConfigurati
   @Override
   public String toString() {
     return "EndpointConfiguration{"
-        + "configurationHash=" + configurationHash
-        + ", configuration=" + configuration
+        + "configurationHash=" + Utils.encodeHexString(configurationHash)
+        + ", configuration=" + Utils.encodeHexString(configuration)
         + '}';
   }
 

@@ -24,6 +24,7 @@ import com.datastax.driver.mapping.annotations.Column;
 import com.datastax.driver.mapping.annotations.PartitionKey;
 import com.datastax.driver.mapping.annotations.Table;
 import com.datastax.driver.mapping.annotations.Transient;
+import org.kaaproject.kaa.server.common.utils.Utils;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -123,7 +124,7 @@ public class CassandraEpBySdkToken implements Serializable {
     builder.append("CassandraEpBySdkToken [sdkToken=");
     builder.append(sdkToken);
     builder.append(", endpointKeyHash=");
-    builder.append(endpointKeyHash);
+    builder.append(Utils.encodeHexString(endpointKeyHash));
     builder.append("]");
 
     return builder.toString();

@@ -23,6 +23,7 @@ import static org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.Cassand
 import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
 import org.kaaproject.kaa.server.common.dao.impl.EndpointConfigurationDao;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointConfiguration;
+import org.kaaproject.kaa.server.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -67,12 +68,12 @@ public class EndpointConfigurationCassandraDao
 
   @Override
   public CassandraEndpointConfiguration findById(ByteBuffer key) {
-    LOG.debug("Try to find endpoint configuration by hash [{}] ", key);
+    LOG.debug("Try to find endpoint configuration by hash [{}] ", Utils.encodeHexString(key));
     CassandraEndpointConfiguration configuration = null;
     if (key != null) {
       configuration = findByHash(getBytes(key));
     }
-    LOG.debug("[{}] Found endpoint configuration by hash {} ", key, configuration);
+    LOG.debug("[{}] Found endpoint configuration by hash {} ", Utils.encodeHexString(key), configuration);
     return configuration;
   }
 
