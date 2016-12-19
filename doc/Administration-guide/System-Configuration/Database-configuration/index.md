@@ -10,7 +10,7 @@ sort_idx: 220
 * TOC
 {:toc}
 
-When you complete [Kaa installation]({{root_url}}Administration-guide/System-installation/), the configuration files for each Kaa component will be extracted into the `/etc/kaa-node/` directory.
+When you complete [Kaa installation]({{root_url}}Administration-guide/System-installation/), the configuration files for each Kaa component will be extracted into the `/etc/kaa-node/conf/` directory.
 
 Use the following files to configure your database:
 
@@ -45,7 +45,7 @@ See the table below for configuration parameters contained in the `admin-dao.pro
 |Parameter name|Default value|Description|
 |--------------|-------------|-----------|
 |`db_name=kaa`||Database name.|
-|`dao_max_wait_tim`|5|Maximum wait time in seconds for DAO history class. Custom property for Kaa **History service**.|
+|`dao_max_wait_time`|5|Maximum wait time in seconds for DAO history class. Custom property for Kaa **History service**.|
 |`hibernate_dialect`||Specifies hibernate sql dialect.|
 |`hibernate_format_sql`|false|Specifies if hibernate will format sql request.|
 |`hibernate_show_sql`|false|Shows hibernate sql request.|
@@ -115,7 +115,7 @@ $ sudo nano /etc/kaa-node/conf/admin-dao.properties
 $ sudo nano /etc/kaa-node/conf/sql-dao.properties
 ```
 
-To switch from MariaDB to PostgreSQL, copy the contents of MariaDB configuration files to the Kaa database configuration files.
+To switch from MariaDB to PostgreSQL, copy the contents of PostgreSQL configuration files to the Kaa database configuration files.
 
 ```bash
 $ sudo bash -c "cat /etc/kaa-node/conf/postgre-dao.properties.template > /etc/kaa-node/conf/sql-dao.properties"
@@ -137,7 +137,7 @@ For database installation instructions, see [Third party components]({{root_url}
 
 The `nosql-dao.properties` template of the configuration property file for SQL database is located in the `/etc/kaa-node/conf/` directory.
 
-The `nosql-dao.properties` file contains the `nosql_db_provider_name` parameter that can be set to **mongodb** (default) or **cassandra** consist of the following parameters:
+The `nosql-dao.properties` file contains the `nosql_db_provider_name` parameter that can be set to **mongodb** (default) or **cassandra**.
 
 If you use Cassandra, run the following commands.
 
