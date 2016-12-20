@@ -58,7 +58,6 @@ public abstract class AbstractBaseCtlSchemasActivity<T extends BaseSchemaDto, P 
         exportSchema(schemaId, CTLSchemaExportMethod.LIBRARY);
         break;
       default:
-        exportSchema(schemaId, CTLSchemaExportMethod.SHALLOW); // shallow is default export
         break;
     }
   }
