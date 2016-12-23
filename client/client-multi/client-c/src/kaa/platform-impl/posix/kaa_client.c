@@ -31,6 +31,7 @@
 #include <platform/time.h>
 #include "kaa_context.h"
 #include <platform/kaa_client.h>
+#include <platform/kaa_client_properties.h>
 #include "platform/ext_transport_channel.h"
 #include "platform-impl/common/kaa_tcp_channel.h"
 #include "platform-impl/common/ext_log_upload_strategies.h"
@@ -129,13 +130,15 @@ kaa_error_t on_kaa_tcp_channel_event(void *context, kaa_tcp_channel_event_t even
 
 kaa_error_t kaa_client_create(kaa_client_t **kaa_client, kaa_client_props_t *props)
 {
-    (void)props;
     KAA_RETURN_IF_NIL(kaa_client, KAA_ERR_BADPARAM);
-
+    kaa_error_t error_code = kaa_client_props_set(props);
+    if (error_code) {
+        return error_code;
+    }
     kaa_client_t *self = KAA_CALLOC(1, sizeof(kaa_client_t));
     KAA_RETURN_IF_NIL(self, KAA_ERR_NOMEM);
 
-    kaa_error_t error_code = kaa_init(&self->kaa_context);
+    error_code = kaa_init(&self->kaa_context);
     if (error_code) {
         kaa_client_destroy(self);
         return error_code;

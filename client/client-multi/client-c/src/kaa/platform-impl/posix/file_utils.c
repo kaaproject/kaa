@@ -17,20 +17,39 @@
 #include <platform/file_utils.h>
 #include <stdint.h>
 #include <platform/stdio.h>
+#include <string.h>
+#include <platform/kaa_client_properties.h>
 #include "utilities/kaa_mem.h"
 #include "kaa_common.h"
 
+static FILE *binary_file_open(const char *filename, const char *mode)
+{
+    const char *working_directory = kaa_client_props_get()->working_directory;
+    size_t path_size = strlen(working_directory) + strlen(filename) + 2; // 2 bytes for directory separator and null-terminator
+    char full_file_path[path_size];
+
+    int error_code = snprintf(full_file_path, path_size, "%s/%s", working_directory, filename);
+    if (error_code < 0 || error_code >= (int)path_size) {
+        return NULL;
+    }
+
+    return fopen(full_file_path, mode);
+}
 
 int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_size, bool *needs_deallocation)
 {
-    KAA_RETURN_IF_NIL4(file_name, buffer, buffer_size, needs_deallocation, -1);
+    if (file_name == NULL || buffer == NULL || buffer_size == NULL || needs_deallocation == NULL) {
+        return -1;
+    }
+
     *buffer = NULL;
     *buffer_size = 0;
     *needs_deallocation = true;
 
-    FILE* file = fopen(file_name, "rb");
-    KAA_RETURN_IF_NIL(file, -1);
-
+    FILE *file = binary_file_open(file_name, "rb");
+    if (file == NULL) {
+        return -1;
+    }
     fseek(file, 0, SEEK_END);
     long result_size = ftell(file);
     if (result_size <= 0) {
@@ -38,7 +57,7 @@ int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_
         return -1;
     }
     char *result_buffer = KAA_MALLOC(result_size * sizeof(char));
-    if (!result_buffer) {
+    if (result_buffer == NULL) {
         fclose(file);
         return -1;
     }
@@ -59,10 +78,12 @@ int posix_binary_file_read(const char *file_name, char **buffer, size_t *buffer_
 
 int posix_binary_file_store(const char *file_name, const char *buffer, size_t buffer_size)
 {
-    KAA_RETURN_IF_NIL3(file_name, buffer, buffer_size, -1);
+    if (file_name == NULL || buffer == NULL || buffer_size == 0) {
+        return -1;
+    }
 
-    FILE* status_file = fopen(file_name, "wb");
-    if (status_file) {
+    FILE *status_file = binary_file_open(file_name, "wb");
+    if (status_file != NULL) {
         fwrite(buffer, buffer_size, 1, status_file);
         fclose(status_file);
         return 0;
@@ -72,10 +93,24 @@ int posix_binary_file_store(const char *file_name, const char *buffer, size_t bu
 
 int posix_binary_file_delete(const char *file_name)
 {
-    FILE *file = fopen(file_name, "r");
-    if (file) {
+    if (file_name == NULL) {
+        return -1;
+    }
+    const char* working_directory = kaa_client_props_get()->working_directory;
+    size_t kaa_path_size = strlen(working_directory) +
+        strlen(file_name) + 2; // 2 bytes for directory separator and null-terminator
+    char kaa_binary_file_path[kaa_path_size];
+
+    int error_code = snprintf(kaa_binary_file_path, kaa_path_size, "%s/%s",
+        working_directory, file_name);
+    if (error_code < 0 || error_code >= (int)kaa_path_size) {
+        return KAA_ERR_BADPARAM;
+    }
+
+    FILE *file = fopen(kaa_binary_file_path, "r");
+    if (file != NULL) {
         fclose(file);
-        return remove(file_name);
+        return remove(kaa_binary_file_path);
     }
     return -1;
 }

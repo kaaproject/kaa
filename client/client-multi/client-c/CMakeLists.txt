@@ -179,6 +179,7 @@ set(KAA_SOURCE_FILES
         ${KAA_SRC_FOLDER}/kaa.c
         ${KAA_SRC_FOLDER}/kaa_extension.c
         ${KAA_SRC_FOLDER}/platform-impl/common/kaa_htonll.c
+        ${KAA_SRC_FOLDER}/platform-impl/common/kaa_client_properties.c
 )
 
 if(WITH_ENCRYPTION)

@@ -24,8 +24,30 @@
 #ifndef POSIX_KAA_CLIENT_PROPERIES_H_
 #define POSIX_KAA_CLIENT_PROPERIES_H_
 
+#include <kaa_error.h>
+
 typedef struct {
-        unsigned long max_update_time;
+    const char *working_directory;
 } kaa_client_props_t;
+
+/**
+ * @brief      Sets the client kaa properties struct by the user-defined struct
+ *
+ * @param[in]  self  A pointer to the user-defined structure
+ * 
+ * @note       since kaa_client_start() is called, the memory allocated for kaa_client_props_t
+ *             shouldn't be freed and any of structure fields shouldn't be modified
+ *             until kaa_client_stop() is called
+ * 
+ * @return     An error code
+ */
+kaa_error_t kaa_client_props_set(const kaa_client_props_t *self);
+
+/**
+ * @brief      Gets kaa properties struct
+ *
+ * @return     The pointer to kaa properties struct
+ */
+const kaa_client_props_t *kaa_client_props_get(void);
 
 #endif /* POSIX_KAA_CLIENT_PROPERIES_H_ */
