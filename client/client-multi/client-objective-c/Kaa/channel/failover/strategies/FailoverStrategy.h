@@ -29,6 +29,7 @@
 
 @property (nonatomic, readonly) int64_t bootstrapServersRetryPeriod;
 @property (nonatomic, readonly) int64_t operationsServersRetryPeriod;
+@property (nonatomic, readonly) int64_t noConnectivityRetryPeriod;
 @property (nonatomic, readonly) TimeUnit timeUnit;
 
 /**
