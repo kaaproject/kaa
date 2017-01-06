@@ -186,5 +186,14 @@ var COLLAPSING_CODE_BLOCS = (function () {
 }());
 
 $(document).ready(function(){/* off-canvas sidebar toggle */
+  $(document).on('mousedown', function() {
+    var scrollPosition = $('#lg-menu .sidebar-navigation-container').scrollTop();
+    if (window.sessionStorage) {
+      window.sessionStorage.setItem('sidebarScrollPosition', scrollPosition);
+    }
+  })
   COLLAPSING_CODE_BLOCS.getInstance().processAllCodeBlocs();
+  if (window.sessionStorage) {
+    $('#lg-menu .sidebar-navigation-container').scrollTop(window.sessionStorage.getItem('sidebarScrollPosition'));
+  }
 });
