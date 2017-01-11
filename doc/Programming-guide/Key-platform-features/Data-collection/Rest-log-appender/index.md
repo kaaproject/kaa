@@ -16,8 +16,6 @@ The REST log appender is used to transfer logs from the [Operations service]({{r
 
 To create a REST log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
-To create a log appender, do the following:
-
 1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
 
 2. Click **Applications** and open the **Log appenders** page of your application.
