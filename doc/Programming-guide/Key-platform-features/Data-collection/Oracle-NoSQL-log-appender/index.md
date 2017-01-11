@@ -2,7 +2,6 @@
 layout: page
 title: Oracle NoSQL log appender
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender
 sort_idx: 80
 ---
 
@@ -11,7 +10,29 @@ sort_idx: 80
 * TOC
 {:toc}
 
-The Oracle NoSQL log appender is responsible for transferring logs from the Operations service to the Oracle NoSQL key/value storage.
+The Oracle NoSQL log appender is used to transfer logs from the [Operations service]({{root_url}}Glossary/#operations-service) to the [Oracle NoSQL](https://www.oracle.com/database/nosql/index.html) key/value storage.
+
+## Create Oracle NoSQL log appender
+
+The easiest way to create an instance of the Oracle NoSQL log appender for the application is by using Admin UI.
+
+To create a log appender of the Oracle NoSQL key/value storage type, do the following:
+
+1. In the **Log appenders** window, click **Add log appender**.
+2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
+3. Set the log appender type to _Oracle NoSQL_.
+4. Fill in the Oracle NoSQL log appender configuration form.
+5. Click **Add** button. Log appender is ready and operational at this point.
+
+![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
+
+## Creating Oracle NoSQL log appender with Admin REST API
+
+It is also possible to create an instance of the Oracle NoSQL log appender for the application by using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender). 
+The following example illustrates how to create the Oracle NoSQL log appender via the Admin REST API.
+
+### Configure log appender
+
 Logs are stored in the storage using the following key path:
 
 ```bash
@@ -29,27 +50,6 @@ The path variables used are:
 |count              |The log record ID                                              |
 
 Values are stored as serialized generic records using record wrapper Avro schema.
-
-# Creating Oracle NoSQL log appender with Admin UI
-
-The easiest way to create an instance of the Oracle NoSQL log appender for the application is by using Admin UI.
-
-To create a log appender of the Oracle NoSQL key/value storage type, do the following:
-
-1. In the **Log appenders** window, click **Add log appender**.
-2. Enter the log appender name and description, select the minimum and maximum supported schema version, select necessary log metadata fields.
-3. Set the log appender type to _Oracle NoSQL_.
-4. Fill in the Oracle NoSQL log appender configuration form.
-5. Click **Add** button. Log appender is ready and operational at this point.
-
-![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
-
-# Creating Oracle NoSQL log appender with Admin REST API
-
-It is also possible to create an instance of the Oracle NoSQL log appender for the application by using the [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender). 
-The following example illustrates how to create the Oracle NoSQL log appender via the Admin REST API.
-
-## Configuration
 
 The Oracle NoSQL log appender configuration must match to
 [this]({{github_url}}server/appenders/oracle-nosql-appender/src/main/avro/oracle-nosql-appender-config.avsc) Avro schema.
@@ -79,7 +79,7 @@ An example configuration that matches to previously introduced Avro schema is as
 }
 ```
 
-## Administration
+### Administration
 
 The following Admin REST API call example illustrates how to create a new instance of the Oracle NoSQL log appender:
 
@@ -139,7 +139,7 @@ Example result:
 }
 ```
 
-# Playing with Oracle NoSQL log appender
+## Playing with Oracle NoSQL log appender
 
 1. Download archive with [Oracle nosql database](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/downloads/index.html)
 and install it to your Kaa server.
@@ -211,4 +211,4 @@ and install it to your Kaa server.
     }
     ```
 
-If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
+If you don't get the desired output or experience other problems, see [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting).
