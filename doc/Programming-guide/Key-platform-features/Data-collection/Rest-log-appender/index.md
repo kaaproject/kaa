@@ -14,7 +14,7 @@ The REST log appender is used to transfer logs from the [Operations service]({{r
 
 ## Create REST log appender
 
-To create a Cassandra log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
+To create a REST log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
 To create a log appender, do the following:
 
@@ -147,64 +147,56 @@ To play around with the REST log appender:
 To do this, select your application in the list and click **Schemas** > **Log** > **Add schema**.
 	![Add log schema](attach/rest-log-appender1.png)
 
-3. Upload the following configuration schema.
+	Upload the following configuration schema.
 
 		{
-			"name":"recordData",
-			"type":[
-				{
-					"type":"record",
-					"name":"Data",
-					"namespace":"org.kaaproject.kaa.example.mobile.log",
-					"fields":[
-						{
-							"name":"timestamp",
-							"type":[
-								"long",
-								"null"
-							]
-						},
-						{
-							"name":"data",
-							"type":[
-								"bytes",
-								"null"
-							]
-						},
-						{
-							"name":"endpointKeyHash",
-							"type":[
-								{
-									"type":"string",
-									"avro.java.string":"String"
-								},
-								"null"
-							]
-						},
-						{
-							"name":"hashFunction",
-							"type":[
-								{
-									"type":"string",
-									"avro.java.string":"String"
-								},
-								"null"
-							]
-						}
-					]
-				},
-				"null"
-			]
-		}
+             "type":"record",
+             "name":"Data",
+             "namespace":"org.kaaproject.kaa.example.mobile.log",
+             "fields":[
+                 {
+                     "name":"timestamp",
+                     "type":[
+                         "long",
+                         "null"
+                     ]
+                 },
+                 {
+                     "name":"data",
+                     "type":[
+                         "bytes",
+                         "null"
+                     ]
+                 },
+                 {
+                     "name":"endpointKeyHash",
+                     "type":[
+                         {
+                             "type":"string",
+                             "avro.java.string":"String"
+                         },
+                         "null"
+                     ]
+                 },
+                 {
+                     "name":"hashFunction",
+                     "type":[
+                         {
+                             "type":"string",
+                             "avro.java.string":"String"
+                         },
+                         "null"
+                     ]
+                 }
+             ]
+         }
 
-4. Add your custom log appender to your new application.
+3. Add your custom log appender to your new application.
 To do this, open the **Log appenders** page of your application and click **Add log appender**.
 Set up your log appender configuration and click **Add**.
 	![Add log appender](attach/rest-log-appender2.png)
 
-5. Generate an [SDK for your platform]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/) and add the downloaded SDK to your project directory.
-
-6. Run a sample application from the [Kaa Sandbox]({{root_url}}Glossary/kaa-sandbox) to test your new log appender.
+4. Generate an [SDK for your platform]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/) and add the downloaded SDK to your project directory.
 
 The following code snippet illustrates handling POST request from Kaa server.
 
@@ -235,7 +227,7 @@ client.addLogRecord(data);
 ...
 ```
 
-After sending logs from [Kaa client]({{root_url}}Glossary/kaa-client), [Kaa server]({{root_url}}Glossary/kaa-server) will use previously created REST log appender which will send data to your custom service based on above code.
+After sending logs from [Kaa client]({{root_url}}Glossary/#kaa-client), [Kaa server]({{root_url}}Glossary/#kaa-server) will use previously created REST log appender which will send data to your custom service based on above code.
 You should see output similar to the one below.
 
 ```
