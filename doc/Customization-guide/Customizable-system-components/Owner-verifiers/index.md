@@ -23,7 +23,7 @@ The process comprises the following steps.
 
 4. Provision the owner verifier.
 
-It is recommended that you use one of the existing [existing owner verifier implementations]({{github_url}}server/verifiers) as a reference.
+It is recommended that you use one of the [existing owner verifier implementations]({{github_url}}server/verifiers) as a reference.
 
 ## Configuration schema
 
@@ -68,7 +68,7 @@ See also [Compiling the schema](http://avro.apache.org/docs/current/gettingstart
 
 ## Owner verifier implementation
 
-All Kaa owner verifiers extend generic abstract class `org.kaaproject.kaa.server.common.verifier.AbstractUserVerifier`.
+All Kaa owner verifiers extend generic abstract class `org.kaaproject.kaa.server.common.verifier.AbstractKaaUserVerifier`.
 The following code example illustrates implementation of a custom owner verifier.
 
 ```java
