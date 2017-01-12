@@ -26,7 +26,7 @@ It is recommended that you use one of the existing [log appender implementations
 
 ## Example Maven project structure
 
-Your can create an [Apache Maven](https://maven.apache.org/) project with the following structure.
+You can create an [Apache Maven](https://maven.apache.org/) project with the following structure.
 
 ```
 custom-log-appender
