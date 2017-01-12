@@ -34,7 +34,6 @@
 #
 #	Extensions' names:
 #
-#	- PROFILE
 #	- CONFIGURATION
 #	- EVENT
 #	- LOGGING
@@ -75,7 +74,6 @@ project(Kaa-c C)
 
 include(ExternalProject)
 
-option(WITH_EXTENSION_PROFILE "Enable profile extension" ON)
 option(WITH_EXTENSION_CONFIGURATION "Enable configuration extension" ON)
 option(WITH_EXTENSION_EVENT "Enable event extension" ON)
 option(WITH_EXTENSION_LOGGING "Enable logging extension" ON)
@@ -219,14 +217,9 @@ message("BOOTSTRAP ENABLED")
 include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/bootstrap/CMakeLists.txt)
 target_link_libraries(kaac PUBLIC extension_bootstrap)
 
-if(WITH_EXTENSION_PROFILE)
-    message("PROFILE ENABLED")
-
-    include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/profile/CMakeLists.txt)
-    target_link_libraries(kaac PUBLIC extension_profile)
-else()
-    add_definitions(-DKAA_DISABLE_FEATURE_PROFILE)
-endif()
+message("PROFILE ENABLED")
+include(${CMAKE_CURRENT_LIST_DIR}/src/extensions/profile/CMakeLists.txt)
+target_link_libraries(kaac PUBLIC extension_profile)
 
 if(WITH_EXTENSION_USER)
     message("USER EXTENSION ENABLED")
