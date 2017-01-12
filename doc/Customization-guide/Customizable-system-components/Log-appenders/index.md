@@ -217,7 +217,7 @@ See also [Compiling the schema](http://avro.apache.org/docs/current/gettingstart
 All Kaa log appenders extend generic abstract class `org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender`.
 The following code example illustrates implementation of a custom log appender.
 
-```bash
+```java
 package org.domain.sample.appenders.custom.appender;
 
 import org.domain.sample.appenders.custom.config.gen.CustomAppenderConfiguration;
@@ -282,7 +282,7 @@ This annotation is used by Kaa [Administration UI]({{root_url}}Glossary/#adminis
 
 The following code example illustrates the implementation of a log appender descriptor.
 
-```
+```java
 package org.domain.sample.appenders.custom.config;
 
 import org.apache.avro.Schema;
