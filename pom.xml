@@ -322,8 +322,6 @@ Copyright 2014-2016 CyberVision, Inc.
                                 <cvm>PHP</cvm>
                                 <hvm>PHP</hvm>
                                 <java>PHP</java>
-                                <bat_template>BATCH</bat_template>
-                                <sh_template>SCRIPT_STYLE</sh_template>
                                 <template>PHP</template>
                             </mapping>
                             <includes>
@@ -347,8 +345,7 @@ Copyright 2014-2016 CyberVision, Inc.
                                 <include>**/*.cvm</include>
                                 <include>**/*.hvm</include>
                                 <include>**/*.template</include>
-                                <include>**/*.sh_template</include>
-                                <include>**/*.bat_template</include>
+                                <include>**/*.cmake_template</include>
                                 <include>**/sonar-project.properties</include>
                             </includes>
                             <excludes>
