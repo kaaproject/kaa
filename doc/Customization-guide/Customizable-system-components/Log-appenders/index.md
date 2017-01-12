@@ -278,7 +278,7 @@ A log appender descriptor provides Kaa with the information on how to locate and
 To implement a log appender descriptor, implement the `PluginConfig` interface first.
 
 It is important to provide your class with the `@KaaPluginConfig` annotation.
-This annotation is used by Kaa [Administration UI]({{root_url}}Glossary/#administration-ui) service to scan avaliable log appenders in the class path.
+This annotation is used by Kaa [Administration UI]({{root_url}}Glossary/#administration-ui) service to scan available log appenders in the class path.
 
 The following code example illustrates the implementation of a log appender descriptor.
 
