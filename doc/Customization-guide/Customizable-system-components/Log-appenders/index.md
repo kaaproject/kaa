@@ -51,7 +51,7 @@ custom-log-appender
 
 Below is an example of Maven project POM file.
 
-```
+```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -217,7 +217,7 @@ See also [Compiling the schema](http://avro.apache.org/docs/current/gettingstart
 All Kaa log appenders extend generic abstract class `org.kaaproject.kaa.server.common.log.shared.appender.AbstractLogAppender`.
 The following code example illustrates implementation of a custom log appender.
 
-```
+```bash
 package org.domain.sample.appenders.custom.appender;
 
 import org.domain.sample.appenders.custom.config.gen.CustomAppenderConfiguration;
