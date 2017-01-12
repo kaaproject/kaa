@@ -10,29 +10,32 @@ sort_idx: 40
 
 {% include variables.md %}
 
-This guide contains information about how to create custom owner verifiers and add them to existed. Please refer to [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership) for information about default owner verifiers
-and access token flow.
+This guide explains how you can create and implement custom owner verifiers in addition to the existing ones.
+See [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership) for information about default owner verifiers and access token flow.
 
-
-To implement a custom owner verifier, you need to complete the following steps.
+The process comprises the following steps.
 
 1. Design and compile a configuration schema.
-2. Implement the owner verifier based on AbstractKaaUserVerifier.
+
+2. Implement the owner verifier based on the [AbstractKaaUserVerifier]({{github_url}}server/common/verifier-shared/src/main/java/org/kaaproject/kaa/server/common/verifier/AbstractKaaUserVerifier.java) class.
+
 3. Develop the owner verifier descriptor.
+
 4. Provision the owner verifier.
 
-We recommend that you use one of the [existing owner verifier implementations]({{github_url}}server/verifiers) as a reference.
+It is recommended that you use one of the existing [existing owner verifier implementations]({{github_url}}server/verifiers) as a reference.
 
 ## Configuration schema
 
-A owner verifier configuration schema is an Avro compatible schema that defines configuration parameters of the owner verifier. The following parameters in the schema affect Kaa Admin UI layout.
+Owner verifier configuration schema is an Avro compatible schema that defines configuration parameters of the owner verifier.
+Use the following schema parameters to configure Kaa [Administration UI]({{root_url}}Glossary/#administration-ui):
 
-* displayName - displays the name of the field on UI
-* by_default - displays the default value of the field on UI  
-  
+* `displayName` -- displays the UI field name.
+* `by_default` -- displays the UI field default value.
+
 ```json
     {
-     "namespace": "org.kaaproject.kaa.sample.verifier.config.gen", 
+     "namespace": "org.kaaproject.kaa.sample.verifier.config.gen",
      "type": "record",
      "name": "CustomOwnerVerifierConfiguration",
      "fields": [
@@ -54,17 +57,19 @@ A owner verifier configuration schema is an Avro compatible schema that defines 
      ]
     }
 ```
-Once you have prepared your schema, you can compile it using the following command.  
+
+Once you prepared your schema, compile it using the following command.
 
 ```
 java -jar /path/to/avro-tools-1.7.7.jar compile schema <schema file> <destination>
 ```
 
-Please refer to [Compiling the schema](http://avro.apache.org/docs/current/gettingstartedjava.html#Compiling+the+schema) for more information. It is also possible to integrate the schema compilation with [avro-maven-plugin](http://avro.apache.org/docs/current/gettingstartedjava.html).
+See also [Compiling the schema](http://avro.apache.org/docs/current/gettingstartedjava.html#Compiling+the+schema). You can also integrate the schema compilation using the [avro-maven-plugin](http://avro.apache.org/docs/current/gettingstartedjava.html).
 
 ## Owner verifier implementation
 
-All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.common.verifier.AbstractUserVerifier<T>. The following code example illustrates the implementation of a custom owner verifier.
+All Kaa owner verifiers extend generic abstract class `org.kaaproject.kaa.server.common.verifier.AbstractUserVerifier`.
+The following code example illustrates implementation of a custom owner verifier.
 
 ```java
     package org.kaaproject.kaa.sample.verifier;
@@ -141,13 +146,15 @@ All Kaa owner verifiers extend generic abstract class org.kaaproject.kaa.server.
 
 ## Owner verifier descriptor
 
-A owner verifier descriptor provides Kaa with the information on how to locate and configure your custom owner verifier. To implement a owner verifier descriptor, you need to implement the PluginConfig interface at first.
+An owner verifier descriptor provides Kaa with the information on how to locate and configure your custom owner verifier.
+To implement an owner verifier descriptor, implement the `PluginConfig` interface first.
 
-It is also important to provide your class with the @KaaPluginConfig annotation. This annotation helps Kaa Admin UI to find all available owner verifiers in the class path.
+It is also important to provide your class with the `@KaaPluginConfig` annotation. This annotation helps Kaa Administration UI to find all available owner verifiers in the class path.
 
->**NOTE:** A owner verifier descriptor is optional if you are going to configure your owner verifiers using only REST API.
+>**NOTE:** If you are going to configure your owner verifiers using REST API only, the owner verifier descriptor is optional.
+{:.note}
 
-The following code example illustrates the implementation of a owner verifier descriptor. 
+The following code example illustrates the implementation of an owner verifier descriptor.
 
 ```java
     package org.kaaproject.kaa.sample.verifier.config;
@@ -196,20 +203,25 @@ The following code example illustrates the implementation of a owner verifier de
 
 ## Owner verifier provisioning
 
-To provision your owner verifier, do the following:
+To provision your owner verifier:
 
-1. Create maven project. You can use this [pom]({{github_url}}server/verifiers/trustful-verifier/pom.xml) as an example.
+1. Create a maven project.
+You can use this [pom]({{github_url}}server/verifiers/trustful-verifier/pom.xml) as an example.
+
 2. Create similar classes as defined above and put them in appropriate packages.
-3. Add your verification logic to methods of `CustomOwnerVerifier` and build your project using next command.
+
+3. Add your verification logic to methods of `CustomOwnerVerifier` and build your project using the command below.
 
 		$ mvn clean install
-		
-4. Place created jar file into `/usr/lib/kaa-node/lib`.
-5. If you using different package than `org.kaaproject.kaa.server.verifiers.*`  you need to edit `kaa-node.properties` file in `/usr/lib/kaa-node/conf` folder. Specify additional package to scan kaa plugins configuration in parameter `additional_plugins_scan_package`, in our case -- `org.kaaproject.kaa.sample`.
-6. Restart `kaa-node` service.
+
+4. Move the `*.jar` file containing the owner verifier to the `/usr/lib/kaa-node/lib` folder.
+
+5. If you use other package than `org.kaaproject.kaa.server.verifiers.*`, edit the `kaa-node.properties` file in the `/usr/lib/kaa-node/conf` folder.
+Use the parameter `additional_plugins_scan_package` to specify additional package to scan for Kaa plugins configuration.
+In this case, it is `org.kaaproject.kaa.sample`.
+
+6. Restart the `kaa-node` service.
 
 		$ sudo service kaa-node restart
-		
-7. Use [Administration UI]({{root_url}}Glossary/#administration-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) to create/update/delete your owner verifier instances.
 
----
+7. Use the [Administration UI]({{root_url}}Glossary/#administration-ui) or [REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Verifiers/editUserVerifier) to create/update/delete your owner verifier instances.
