@@ -51,8 +51,6 @@
             <directory>${project.basedir}</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>avrogen.bat</include>
-                <include>avrogen.sh</include>
                 <include>CMakeLists.txt</include>
                 <include>README</include>
             </includes>
