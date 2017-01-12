@@ -36,6 +36,7 @@ import org.kaaproject.kaa.server.common.dao.exception.IncorrectParameterExceptio
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +44,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -263,6 +265,107 @@ public class EndpointServiceImplTest extends AbstractTest {
     Assert.assertNotNull(endpointIds);
     Assert.assertEquals(1, endpointIds.size());
     Assert.assertEquals(endpointProfileDto.getId(), endpointIds.get(0));
+  }
+  
+
+  @Test
+  public void attachEndpointToNewUserByExternalIdTest() {
+    TenantDto tenant = generateTenantDto();
+    String endpointGroupId = "124";
+    EndpointProfileDto endpointProfile = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+    String userExternalId = UUID.randomUUID().toString();
+    String tenantId = tenant.getId();
+
+    EndpointProfileDto savedEndpointProfile = endpointService.attachEndpointToUser(userExternalId, tenantId, endpointProfile);
+
+    Assert.assertNotNull(savedEndpointProfile);
+    Assert.assertNotNull(savedEndpointProfile.getEndpointUserId());
+    EndpointUserDto attachedEndpointUser = endpointService.findEndpointUserById(savedEndpointProfile.getEndpointUserId());
+    Assert.assertNotNull(attachedEndpointUser);
+    Assert.assertEquals(userExternalId, attachedEndpointUser.getExternalId());
+    Assert.assertEquals(userExternalId, attachedEndpointUser.getUsername());
+    Assert.assertEquals(tenantId, attachedEndpointUser.getTenantId());
+    List<String> endpointIds = attachedEndpointUser.getEndpointIds();
+    Assert.assertNotNull(endpointIds);
+    Assert.assertEquals(1, endpointIds.size());
+    Assert.assertEquals(endpointProfile.getId(), endpointIds.get(0));
+  }
+
+  @Test
+  public void attachEndpointToExistingUserByExternalIdTest() {
+    TenantDto tenant = generateTenantDto();
+    String endpointGroupId = "124";
+    EndpointProfileDto endpointProfile = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+    String tenantId = tenant.getId();
+    EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantId);
+    String userExternalId = endpointUserDto.getExternalId();
+
+    EndpointProfileDto savedEndpointProfile = endpointService.attachEndpointToUser(userExternalId, tenantId, endpointProfile);
+
+    Assert.assertNotNull(savedEndpointProfile);
+    Assert.assertNotNull(savedEndpointProfile.getEndpointUserId());
+    EndpointUserDto attachedEndpointUser = endpointService.findEndpointUserById(savedEndpointProfile.getEndpointUserId());
+    Assert.assertNotNull(attachedEndpointUser);
+    Assert.assertEquals(userExternalId, attachedEndpointUser.getExternalId());
+    Assert.assertEquals(tenantId, attachedEndpointUser.getTenantId());
+    List<String> endpointIds = attachedEndpointUser.getEndpointIds();
+    Assert.assertNotNull(endpointIds);
+    Assert.assertEquals(1, endpointIds.size());
+    Assert.assertEquals(endpointProfile.getId(), endpointIds.get(0));
+  }
+
+  @Test
+  public void attachEndpointToAlreadyAttachedUserByExternalIdTest() {
+    TenantDto tenant = generateTenantDto();
+    String endpointGroupId = "124";
+    EndpointProfileDto endpointProfile = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+    String tenantId = tenant.getId();
+    EndpointUserDto endpointUserDto = generateEndpointUserDto(tenantId);
+    String userExternalId = endpointUserDto.getExternalId();
+
+    EndpointProfileDto savedEndpointProfile = endpointService.attachEndpointToUser(userExternalId, tenantId, endpointProfile);
+    savedEndpointProfile = endpointService.attachEndpointToUser(userExternalId, tenantId, savedEndpointProfile);
+
+    Assert.assertNotNull(savedEndpointProfile);
+    Assert.assertNotNull(savedEndpointProfile.getEndpointUserId());
+    EndpointUserDto attachedEndpointUser = endpointService.findEndpointUserById(savedEndpointProfile.getEndpointUserId());
+    Assert.assertNotNull(attachedEndpointUser);
+    Assert.assertEquals(userExternalId, attachedEndpointUser.getExternalId());
+    Assert.assertEquals(tenantId, attachedEndpointUser.getTenantId());
+    List<String> endpointIds = attachedEndpointUser.getEndpointIds();
+    Assert.assertNotNull(endpointIds);
+    Assert.assertEquals(1, endpointIds.size());
+    Assert.assertEquals(endpointProfile.getId(), endpointIds.get(0));
+  }
+
+  @Test
+  public void attachEndpointAlreadyAttachedToAnotherUserByExternalIdTest() {
+    TenantDto tenant = generateTenantDto();
+    String endpointGroupId = "124";
+    EndpointProfileDto endpointProfile = generateEndpointProfileWithGroupIdDto(endpointGroupId);
+    String tenantId = tenant.getId();
+    EndpointUserDto endpointUser1 = generateEndpointUserDto(tenantId);
+    String userExternalId1 = endpointUser1.getExternalId();
+
+    EndpointUserDto endpointUser2 = generateEndpointUserDto(tenantId);
+    String userExternalId2 = endpointUser2.getExternalId();
+
+
+    EndpointProfileDto savedEndpointProfile = endpointService.attachEndpointToUser(userExternalId1, tenantId, endpointProfile);
+    savedEndpointProfile = endpointService.attachEndpointToUser(userExternalId2, tenantId, savedEndpointProfile);
+
+    EndpointUserDto attachedUser = endpointService.findEndpointUserById(savedEndpointProfile.getEndpointUserId());
+    endpointUser1 = endpointService.findEndpointUserByExternalIdAndTenantId(userExternalId1, tenantId);
+    endpointUser2 = endpointService.findEndpointUserByExternalIdAndTenantId(userExternalId2, tenantId);
+    Assert.assertNotNull(attachedUser);
+    Assert.assertEquals(endpointUser2, attachedUser);
+    List<String> user1EndpointIds = endpointUser1.getEndpointIds();
+    List<String> user2EndpointIds = endpointUser2.getEndpointIds();
+    Assert.assertTrue(CollectionUtils.isEmpty(user1EndpointIds));
+    Assert.assertFalse(CollectionUtils.isEmpty(user2EndpointIds));
+    Assert.assertEquals(1, user2EndpointIds.size());
+    Assert.assertEquals(endpointProfile.getId(), user2EndpointIds.get(0));
+    Assert.assertEquals(endpointUser2.getId(), savedEndpointProfile.getEndpointUserId());
   }
 
   @Test
