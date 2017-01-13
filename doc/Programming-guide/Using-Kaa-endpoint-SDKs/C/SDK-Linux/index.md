@@ -164,7 +164,7 @@ Before continuing, make sure that all [dependencies](#dependencies) are installe
 1. Now your directory structure should look like this:
 
          - my-kaa-application
-         - CMakeLists.txt
+           - CMakeLists.txt
            - kaa
              - Unpacked C SDK
            - src
