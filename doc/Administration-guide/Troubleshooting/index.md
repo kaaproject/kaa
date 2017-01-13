@@ -4,22 +4,15 @@ title: Troubleshooting
 permalink: /:path/
 sort_idx: 888888880
 ---
+
 {% include variables.md %}
 
-- [How to's](#how-tos)
-  - [How to change the service logging level](#how-to-change-the-service-logging-level)
-    - [Supported log levels](#supported-log-levels)
-  - [How to clear the Kaa logs](#how-to-clear-the-kaa-logs)
-  - [How to download the Kaa logs from the Sandbox](#how-to-download-the-kaa-logs-from-the-sandbox)
-- [Errors](#errors)
-  - [ERROR when assembling binary for a Kaa applicaton demo from the Sandbox](#error-when-assembling-binary-for-a-kaa-applicaton-demo-from-the-sandbox)
-- [Reporting issues to the Kaa Crew](#reporting-issues-to-the-kaa-crew)
+* TOC
+{:toc}
 
 This guide explains how to resolve some common issues while using Kaa as well as how to report issues to the Kaa Crew for getting help.
 
-# How to's
-
-## How to change the service logging level
+## Change service logging level
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Sandbox-web-ui">Sandbox web UI</a></li>
@@ -88,7 +81,7 @@ Use the following log levels according to the log purpose.
 | DEBUG     | Logs same as previous, plus detailed information according to the logical work flow of the system                                 |
 | TRACE     | Logs same as previous, plus the most detailed information intended for development and debugging purposes only                    |
 
-## How to clear the Kaa logs
+## Clear Kaa logs
 
 1. Connect to your Kaa Sandbox via ssh:
 
@@ -115,7 +108,7 @@ Use the following log levels according to the log purpose.
     $ sudo service kaa-node start
 ```
 
-## How to download the Kaa logs from the Sandbox
+## Download Kaa logs from Sandbox
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Sandbox-web-ui2">Sandbox web UI</a></li>
@@ -210,15 +203,15 @@ How to restart Kaa service
 
 </div></div>
 
-# Errors
+## Errors
 
-## ERROR when assembling binary for a Kaa applicaton demo from the Sandbox
+### ERROR when assembling binary for a Kaa applicaton demo from Sandbox
 
 | Error description                                                                                     | Possible cause                                                                   | Solution                                                                                                                           | Related documentation    |
 |-------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
-| Unexpected error occurred: 500 Server ErrorUnexpected service error occurred: 500 Server ErrorFailed! | By default, the Kaa Sandbox components are not accessible from the host network. | Change the Sandbox host/IP on web UI or execute the following script in the Sandbox: `$ sudo /usr/lib/kaa-sandbox/change_kaa_host.sh` | [Kaa Sandbox - Networking]({{root_url}}Programming-guide/Getting-started/#networking) |
+| Unexpected error occurred: 500 Server ErrorUnexpected service error occurred: 500 Server ErrorFailed! | By default, the Kaa Sandbox components are not accessible from the host network. | Change the Sandbox host/IP on web UI or execute the following script in the Sandbox: `$ sudo /usr/lib/kaa-sandbox/change_kaa_host.sh` | [Kaa Sandbox - Networking]({{root_url}}Getting-started/#networking) |
 
-# Reporting issues to the Kaa Crew
+## Report issues to Kaa Crew
 
 You may seek help at the [Kaa community at Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) by participating in existing topic discussions or, if no relevant topic was found, by starting a new topic, describing your issue and attaching logs. Please make sure the issue has not been yet addressed in other topics on the forum or in this guide.
 
