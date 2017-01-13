@@ -36,9 +36,7 @@
 
 #include <kaa_extension.h>
 
-#ifndef KAA_DISABLE_FEATURE_PROFILE
 #include "kaa_profile_private.h"
-#endif
 
 static kaa_error_t kaa_context_destroy(kaa_context_t *context);
 
@@ -231,12 +229,10 @@ kaa_error_t kaa_check_readiness(kaa_context_t *kaa_context)
 {
     KAA_RETURN_IF_NIL(kaa_context, KAA_ERR_BADPARAM);
 
-#ifndef KAA_DISABLE_FEATURE_PROFILE
     if (!kaa_profile_manager_is_profile_set(kaa_context->profile_manager)) {
         KAA_LOG_ERROR(kaa_context->logger, KAA_ERR_PROFILE_IS_NOT_SET, "Profile isn't set");
         return KAA_ERR_PROFILE_IS_NOT_SET;
     }
-#endif
 
     return KAA_ERR_NONE;
 }

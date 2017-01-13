@@ -52,7 +52,9 @@ static kaa_extension_id BOOTSTRAP_SERVICE[] = { KAA_EXTENSION_BOOTSTRAP };
 static const int BOOTSTRAP_SERVICE_COUNT = sizeof(BOOTSTRAP_SERVICE) / sizeof(kaa_extension_id);
 
 static kaa_extension_id OPERATIONS_SERVICES[] = { KAA_EXTENSION_PROFILE
+#ifndef KAA_DISABLE_FEATURE_USER
                                              , KAA_EXTENSION_USER
+#endif
 #ifndef KAA_DISABLE_FEATURE_CONFIGURATION
                                              , KAA_EXTENSION_CONFIGURATION
 #endif
