@@ -1191,7 +1191,7 @@
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>prepare-properties</id>
+                                <id>prepare-properties-mariadb-dao</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>run</goal>
@@ -1217,7 +1217,7 @@
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>prepare-properties</id>
+                                <id>prepare-properties-postgresql-dao</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>run</goal>
