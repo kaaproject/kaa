@@ -148,8 +148,10 @@ To build and run a Kaa C++ demo, proceed as follows:
 and run the following commands:
 
    ```
-   KAA_BUILD_DIR\env.bat
+   KAA_BUILD_DIR\tools\env.bat
+   KAA_BUILD_DIR\avrogen.bat
    mkdir build
    cd build
    cmake -G "NMake Makefiles" -DCMAKE_FIND_ROOT_PATH=%ROOT_PATH% ..
+   nmake
    ```
