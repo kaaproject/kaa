@@ -2,94 +2,40 @@
 layout: page
 title: REST log appender
 permalink: /:path/
-nav: /:path/Programming-guide/Key-platform-features/Data-collection/Rest-log-appender
 sort_idx: 90
 ---
 
 {% include variables.md %}
 
-
-
 * TOC
 {:toc}
 
-The REST log appender is responsible for transferring logs from Operations service to your custom service.
+The REST log appender is used to transfer logs from the [Operations service]({{root_url}}Glossary/#operations-service) to your custom service.
 
-# Creating REST log appender with Admin UI
+## Create REST log appender
 
-The easiest way to create REST log appender for your application is by using Admin UI.
+To create a REST log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
-To create a log appender, do the following:
+1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
 
-1. In the **Log appenders** window, click **Add log appender**.
-2. Enter the log appender name and description, select the minimum and maximum supported log schema version, and select necessary log metadata fields.
-3. Set the log appender type to _REST_.
-4. Fill in other fields as required.
-5. Click **Add** button. Log appender is ready and operational at this point.
+2. Click **Applications** and open the **Log appenders** page of your application.
+Click **Add log appender**.
 
-![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
+3. On the **Log appender details** page, enter the necessary information and set the **Type** field to **REST**.
 
-# Creating REST log appender with Admin REST API
+4. Fill in other fields as required and click **Add**.
+See [Configure log appender](#configure-log-appender).
+	![Add log appender in Admin UI](attach/add-log-appender-in-admin-ui.png)
 
-It is also possible to create a REST log appender instance by using
-[Admin REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender).
-The following example illustrates how to create the REST log appender via Admin REST API.
+Alternatively, you can use the [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Logging/editLogAppender) to create or edit your log appender.
 
-## Configuration
-
-The Admin REST log appender configuration must match to
-[this]({{github_url}}server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc) Avro schema.
-
-Parameters for defining REST log appender:
-
-|parameter          |description                                                                                                                    |
-|-------------------|-------------------------------------------------------------------------------------------------------------------------------|
-|connectionPoolSize |number of threads that can simultaneously perform operations with your service                                                 |
-|header             |boolean value that define whether to use a Kaa header                                                                          |
-|host               |an IP address of your custom service that will receive logs                                                                    |
-|method             |define a HTTP method that will be used for sending data (POST or PUT available)                                                |
-|mimeType           |mime type the appender will use for sending data                                                                               |
-|password           |password for user of service (if authentication required)                                                                      |
-|path               |define the URI path that will be used to receive logs from REST appender                                                       |
-|port               |port of service                                                                                                                |
-|ssl                |boolean value that defines whether to use a SSL communication                                                                  |
-|username           |name of user of your service (if authentication required)                                                                      |
-|verifySslCert      |boolean value that defines whether to do verification of SSL Certificate (this might be not applicable in case of ssl = false) |
-
-An example configuration that matches to previously introduced Avro schema is as below:
-
-```json
-{
-    "host":"10.2.2.65",
-    "port":9000,
-    "ssl":false,
-    "verifySslCert":false,
-    "username":{
-        "string":""
-    },
-    "password":{
-        "string":""
-    },
-    "connectionPoolSize":1,
-    "header":false,
-    "path":"/encrypt",
-    "method":"POST",
-    "mimeType":"JSON"
-}
-```
-
-Based on this configuration, you should be able to perform "POST" requests to the service URL http://10.2.2.65:9000/encrypt. Let's look at more definitive
-example.
-
-## Administration
-
-The following Admin REST API call example illustrates how to create an instance of the REST log appender.
+The following example illustrates how to create an instance of REST log appender using the server REST API.
 
 ```bash
 curl -v -S -u devuser:devuser123 -X POST -H 'Content-Type: application/json' -d @restLogAppender.json "http://localhost:8080/kaaAdmin/rest/api/logAppender" | python -mjson.tool
 ```
 
-where file `restLogAppender.json` contains following data:
+where file `restLogAppender.json` contains the following data.
 
 ```json
 {
@@ -113,7 +59,7 @@ where file `restLogAppender.json` contains following data:
 }
 ```
 
-Example result:
+Below is an example result.
 
 ```json
 {
@@ -142,114 +88,148 @@ Example result:
 
 ```
 
-# Playing with REST log appender
+## Configure log appender
 
-1. Log in Admin UI as admin and create an application as described below:
-2. Open the Applications window by clicking the corresponding link on the navigation panel.
-![Add application](attach/add-application1.png) <br/>
-3. Click **Add application** at the top of the window.
-4.  Enter the title of your application, select Trustful credentials service type and then click **Add**.
-    ![Enter application title](attach/add-application2.png)
+The REST log appender configuration must match [this Avro schema]({{github_url}}server/appenders/rest-appender/src/main/avro/rest-appender-config.avsc).
 
-    > **NOTE:**
-    > If you open the Application details window of the newly created application (by clicking this application on either the Applications menu on the
-    navigation panel or the Applications window), you will notice that the [Application token]({{root_url}}Glossary/#application-token) field has been filled in automatically. <br/>
+You can configure the following log appender parameters.
 
-5.  Log in as a tenant developer and create log schema in your previously created application: yourApp->Schemas->Log->Add schema
-    ![Add log schema](attach/rest-log-appender1.png)
-    Upload the following configuration schema:
+|Parameter          |Description|
+|---------------------|------------|
+|`connectionPoolSize` |Number of threads that can simultaneously perform operations with your service.|
+|`header`             |Boolean value that defines whether to use a Kaa header.      |
+|`host`               |IP address of your custom service that will receive logs.  |
+|`method`             |HTTP method for sending data (POST or PUT available).|
+|`mimeType`           |Mime type the appender will use for sending data.|
+|`password`           |Service user password (if authentication required).|
+|`path`               |URI path that used to receive logs from REST appender.|
+|`port`               |Service port.|
+|`ssl`                |Boolean value that defines whether to use an SSL communication.|
+|`username`           |Service user name (if authentication required).|
+|`verifySslCert`      |Boolean value that defines whether to verify the SSL Certificate (this may not be applicable if ssl = false). |
 
-    ```json
-    {
-        "name":"recordData",
-        "type":[
-            {
-                "type":"record",
-                "name":"Data",
-                "namespace":"org.kaaproject.kaa.example.mobile.log",
-                "fields":[
-                    {
-                        "name":"timestamp",
-                        "type":[
-                            "long",
-                            "null"
-                        ]
-                    },
-                    {
-                        "name":"data",
-                        "type":[
-                            "bytes",
-                            "null"
-                        ]
-                    },
-                    {
-                        "name":"endpointKeyHash",
-                        "type":[
-                            {
-                                "type":"string",
-                                "avro.java.string":"String"
-                            },
-                            "null"
-                        ]
-                    },
-                    {
-                        "name":"hashFunction",
-                        "type":[
-                            {
-                                "type":"string",
-                                "avro.java.string":"String"
-                            },
-                            "null"
-                        ]
-                    }
-                ]
-            },
-            "null"
-        ]
-    }
-    ```
+Below is an example configuration that matches the mentioned Avro schema.
 
-6. Go to **Log appenders** menu and add **REST log appender** to your app using your custom configuration:
-your app-> Log appenders -> Add log appender.
-![Add log appender](attach/rest-log-appender2.png)
-7. Write appropriate configuration for your appender and save results.
-8. Then **generate SDK** appropriate to your platform.
-9. Add downloaded sdk to your project directory.
+```json
+{
+    "host":"10.2.2.65",
+    "port":9000,
+    "ssl":false,
+    "verifySslCert":false,
+    "username":{
+        "string":""
+    },
+    "password":{
+        "string":""
+    },
+    "connectionPoolSize":1,
+    "header":false,
+    "path":"/encrypt",
+    "method":"POST",
+    "mimeType":"JSON"
+}
+```
 
-10. The following code snippet illustrates handling POST request from Kaa server:
+Based on this configuration, you can make "POST" requests to the [http://10.2.2.65:9000/encrypt](http://10.2.2.65:9000/encrypt) service URL.
 
-    ```
-    @Controller
-    @RequestMapping("/")
-    public class  SampleController {
+## Playing with REST log appender
 
-        final static Logger LOGGER = LoggerFactory.getLogger(SampleController.class);
+To play around with the REST log appender:
 
-        @ResponseBody
-        @RequestMapping(method = RequestMethod.POST, value = "encrypt")
-        public void encryptFile(@RequestBody String json) throws Exception {
-            LOGGER.info(json);
-        }
-    }
-    ```
+1. Log in to the **Administration UI** as a tenant administrator and create an application that uses a trustful credentials service.
+	![Enter application title](attach/add-application2.png)
 
-11. The client code that sends logs to server might look like below:
+    >**NOTE:** To see the [Application token]({{root_url}}Glossary/#application-token) generated for your new application, open the **Application details** window containing the application token.<br/>
 
-    ```
-    ...
-    private KaaClient client;
-    client = ... ;
+2.  Log in to the **Administration UI** as a tenant developer and create a log schema for your new application.
+To do this, select your application in the list and click **Schemas** > **Log** > **Add schema**.
+	![Add log schema](attach/rest-log-appender1.png)
 
-    Data data = new Data(...);
-    client.addLogRecord(data);
-    ...
-    ```
+	Upload the following configuration schema.
 
-12. After sending logs from client, Kaa server will use previously created REST log appender which will send data to your custom service based on above code.
-    You will see something like below:
+		{
+             "type":"record",
+             "name":"Data",
+             "namespace":"org.kaaproject.kaa.example.mobile.log",
+             "fields":[
+                 {
+                     "name":"timestamp",
+                     "type":[
+                         "long",
+                         "null"
+                     ]
+                 },
+                 {
+                     "name":"data",
+                     "type":[
+                         "bytes",
+                         "null"
+                     ]
+                 },
+                 {
+                     "name":"endpointKeyHash",
+                     "type":[
+                         {
+                             "type":"string",
+                             "avro.java.string":"String"
+                         },
+                         "null"
+                     ]
+                 },
+                 {
+                     "name":"hashFunction",
+                     "type":[
+                         {
+                             "type":"string",
+                             "avro.java.string":"String"
+                         },
+                         "null"
+                     ]
+                 }
+             ]
+         }
 
-    ```
-    INFO 19797 --- [nio-9000-exec-1] o.k.k.e.controller.SampleController   : {"timestamp":{"long":1456165449702},"data":{"bytes":"hello world!\n"},"endpointKeyHash":{"string":"7xVRbtqcs6EySlgzqVr34SujpeY=\n"},"hashFunction":{"string":"SHA1"}}
-    ```
+3. Add your custom log appender to your new application.
+To do this, open the **Log appenders** page of your application and click **Add log appender**.
+Set up your log appender configuration and click **Add**.
+	![Add log appender](attach/rest-log-appender2.png)
 
-If your output doesn't match above one, please follow our [troubleshooting guide]({{root_url}}Administration-guide/Troubleshooting).
+4. Generate an [SDK for your platform]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/) and add the downloaded SDK to your project directory.
+
+The following code snippet illustrates handling POST request from Kaa server.
+
+```
+@Controller
+@RequestMapping("/")
+public class  SampleController {
+
+	final static Logger LOGGER = LoggerFactory.getLogger(SampleController.class);
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, value = "encrypt")
+	public void encryptFile(@RequestBody String json) throws Exception {
+		LOGGER.info(json);
+	}
+}
+```
+
+The client code that sends logs to server looks like this.
+
+```
+...
+private KaaClient client;
+client = ... ;
+
+Data data = new Data(...);
+client.addLogRecord(data);
+...
+```
+
+After sending logs from [Kaa client]({{root_url}}Glossary/#kaa-client), [Kaa server]({{root_url}}Glossary/#kaa-server) will use previously created REST log appender which will send data to your custom service based on above code.
+You should see output similar to the one below.
+
+```
+INFO 19797 --- [nio-9000-exec-1] o.k.k.e.controller.SampleController   : {"timestamp":{"long":1456165449702},"data":{"bytes":"hello world!\n"},"endpointKeyHash":{"string":"7xVRbtqcs6EySlgzqVr34SujpeY=\n"},"hashFunction":{"string":"SHA1"}}
+```
+
+If you don't get the desired output or experience other problems, see [Troubleshooting]({{root_url}}Administration-guide/Troubleshooting).
