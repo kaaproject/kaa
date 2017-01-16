@@ -164,12 +164,23 @@ To launch the application, execute the following:
 
 NOTE: If you want to see the debug output in the terminal, make sure to get connected to `/dev/ttyUSB{0,1}.`
 
-## Flashing (Windows only)
+## Flashing
 
 Jumpers on the CC3200 board should be connected as shown below.
 
 ![Jumpers](attach/jumpers_debug_mode_400.png)
 
-To run an application, remove SOP2 and J8 jumpers, and then connect J2 and J3 jumpers.
+Install UniFlash for [Linux](http://software-dl.ti.com/dsps/forms/self_cert_export.html?prod_no=uniflash_3.4.1.00012_linux.tar.gz&ref_url=http://software-dl.ti.com/ccs/esd/uniflash/) or [Windows](http://software-dl.ti.com/dsps/forms/self_cert_export.html?prod_no=uniflash_3.4.1.00012_win32.zip&ref_url=http://software-dl.ti.com/ccs/esd/uniflash/).
+
+   >**NOTE:** UniFlash v3.4.1 or later is needed. Starting from v4.0.0 UniFlash doesn't support CC32XX/CC31XX.
+
+If you are using Linux you need to permit execution of the installation file:
+
+```sh
+chmod +x uniflash_setup_3.4.1.*.bin
+./uniflash_setup_3.4.1.*.bin
+```
 
 For more information, see the official [UniFlash Quick Start Guide](http://processors.wiki.ti.com/index.php/CC31xx_%26_CC32xx_UniFlash_Quick_Start_Guide).
+
+To run an application, remove SOP2 and J8 jumpers, and then connect J2 and J3 jumpers.
