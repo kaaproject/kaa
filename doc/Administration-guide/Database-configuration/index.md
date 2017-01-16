@@ -1,8 +1,8 @@
----
+﻿---
 layout: page
 title: Database configuration
 permalink: /:path/
-sort_idx: 220
+sort_idx: 15
 ---
 
 {% include variables.md %}
