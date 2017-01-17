@@ -1,4 +1,4 @@
-﻿---
+---
 layout: page
 title: Database configuration
 permalink: /:path/
