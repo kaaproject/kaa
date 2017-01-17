@@ -74,6 +74,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -385,36 +386,44 @@ public class EndpointServiceImpl implements EndpointService {
   }
 
   @Override
-  public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId,
-                                                 EndpointProfileDto profile) {
-    validateString(userExternalId, "Incorrect userExternalId "
-                                   + userExternalId);
-    EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId,
-            tenantId);
-    if (endpointUser
-        == null) {
-      LOG.info("Creating new endpoint user with external id: [{}] in context of [{}] tenant",
-              userExternalId, tenantId);
+  public EndpointProfileDto attachEndpointToUser(String userExternalId, String tenantId, EndpointProfileDto profile) {
+    validateString(userExternalId, "Incorrect userExternalId " + userExternalId);
+    EndpointUser endpointUser = endpointUserDao.findByExternalIdAndTenantId(userExternalId, tenantId);
+    String currentEndpointUserId = profile.getEndpointUserId();
+    String endpointId = profile.getId();
+    if (endpointUser == null) {
+      LOG.info("Creating new endpoint user with external id: [{}] in context of [{}] tenant", userExternalId, tenantId);
       EndpointUserDto endpointUserDto = new EndpointUserDto();
       endpointUserDto.setTenantId(tenantId);
       endpointUserDto.setExternalId(userExternalId);
       endpointUserDto.setUsername(userExternalId);
       endpointUser = endpointUserDao.save(endpointUserDto);
     }
+    
     List<String> endpointIds = endpointUser.getEndpointIds();
-    if (endpointIds
-        == null) {
+    if (endpointIds == null) {
       endpointIds = new ArrayList<>();
       endpointUser.setEndpointIds(endpointIds);
-    } else if (endpointIds
-               != null
-               && endpointIds.contains(profile.getId())) {
-      LOG.warn("Endpoint is already assigned to current user {}.", profile.getEndpointUserId());
+    } else if (endpointIds.contains(endpointId)) {
+      LOG.warn("Endpoint is already assigned to current user {}.", currentEndpointUserId);
       return profile;
     }
-    endpointIds.add(profile.getId());
+    endpointIds.add(endpointId);
+    
+    if (currentEndpointUserId != null) {
+      // Remove the endpoint ID from current user collection
+      EndpointUser currentEndpointUser = endpointUserDao.findById(currentEndpointUserId);
+      if (currentEndpointUser != null) {
+        Collection<String> currentUserEndpointIds = currentEndpointUser.getEndpointIds();
+        if (currentUserEndpointIds != null && currentUserEndpointIds.remove(endpointId)) {
+          endpointUserDao.save(currentEndpointUser);
+        }
+      }
+    }
+    
     endpointUser = endpointUserDao.save(endpointUser);
-    profile.setEndpointUserId(endpointUser.getId());
+    String newEndpointUserId = endpointUser.getId();
+    profile.setEndpointUserId(newEndpointUserId);
     while (true) {
       try {
         LOG.trace("Save endpoint user {} and endpoint profile {}", endpointUser, profile);
@@ -423,7 +432,7 @@ public class EndpointServiceImpl implements EndpointService {
         LOG.warn("Optimistic lock detected in endpoint profile ", Arrays.toString(profile
                 .getEndpointKey()), ex);
         profile = findEndpointProfileByKeyHash(profile.getEndpointKeyHash());
-        profile.setEndpointUserId(endpointUser.getId());
+        profile.setEndpointUserId(newEndpointUserId);
       }
     }
   }
