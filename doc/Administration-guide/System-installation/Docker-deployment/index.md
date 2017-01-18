@@ -34,7 +34,7 @@ To deploy a Kaa cluster on your machine:
 
 2. Install [Docker Сompose](https://docs.docker.com/compose/install/).
 
-3. Download Kaa debian package from the [official site](http://www.kaaproject.org/download-kaa/) or build your Kaa project locally (use `kaa-node.deb` located in `server/node/target/`).
+3. Download Kaa debian package from the [official site](http://www.kaaproject.org/download-kaa/) or [build your Kaa project locally]({{root_url}}Administration-guide/System-installation/Building-Kaa-server-from-source-code/) (use `kaa-node.deb` located in `server/node/target/`).
 Put the `kaa-node.deb` file in the `server/containers/docker/` directory.
 
 4. Run the following command from the `server/containers/docker` directory.
