@@ -85,7 +85,7 @@ You are free to set it to whatever you like.
 <!-- TODO: KAA-928 -->
 
         cd $ESPRESSIF_HOME
-        git clone -b lx106 git://github.com/jcmvbkbc/crosstool-NG.git
+        git clone -b lx106-g++ git://github.com/jcmvbkbc/crosstool-NG.git
         cd crosstool-NG
         ./bootstrap && ./configure --prefix=$(pwd)
         make
@@ -112,7 +112,7 @@ You are free to set it to whatever you like.
 6. Install esptool.py
 
         cd $ESPRESSIF_HOME
-        git clone https://github.com/RostakaGmfun/esptool.git
+        git clone https://github.com/espressif/esptool.git
         cd esptool
         python setup.py install --user
 
