@@ -11,7 +11,7 @@ sort_idx: 70
 {% include variables.md %}
 
 [Nix](http://nixos.org/nix/) is a powerful Linux package manager.
-Kaa team uses it to improve development environment for Kaa [C]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/)/[C++]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/) SDKs, and to manage all third-party dependencies including the ones required for Kaa document generator. <!--TODO: link to Jekver repository when ready-->
+Kaa team uses it to improve development environment for Kaa [C]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/)/[C++]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/) SDKs, and to manage all third-party dependencies including the ones required for Kaa documentation generator. <!--TODO: link to Jekver repository when ready-->
 
 ## Set up Nix
 
