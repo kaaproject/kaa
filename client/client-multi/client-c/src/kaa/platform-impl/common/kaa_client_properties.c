@@ -15,28 +15,26 @@
  */
 
 #include <platform/kaa_client_properties.h>
-#include <platform/stdio.h>
-#include <string.h>
-#include <platform/mem.h>
-#include "utilities/kaa_mem.h"
+#include <stddef.h>
 
-#define KAA_DEFAULT_WORKING_DIRECTORY "./"
-
-static const kaa_client_props_t kaa_default_props = {.working_directory = KAA_DEFAULT_WORKING_DIRECTORY};
+static const kaa_client_props_t kaa_default_props = {
+    .working_directory = "./",
+};
 
 static const kaa_client_props_t *kaa_client_props = &kaa_default_props;
 
-kaa_error_t kaa_client_props_set(const kaa_client_props_t *self)
+kaa_error_t kaa_client_props_set(const kaa_client_props_t *properties)
 {
-    if (self == NULL) {
+    if (properties == NULL) {
         kaa_client_props = &kaa_default_props;
         return KAA_ERR_NONE;
     }
 
-    if (self->working_directory == NULL) {
+    if (properties->working_directory == NULL) {
         return KAA_ERR_BADPARAM;
     }
-    kaa_client_props = self;
+
+    kaa_client_props = properties;
 
     return KAA_ERR_NONE;
 }

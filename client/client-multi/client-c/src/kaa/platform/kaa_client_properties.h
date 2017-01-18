@@ -13,41 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * @file posix_kaa_client_properies.h
- *
- *  Created on: Apr 16, 2015
- *      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
- */
-
-#ifndef POSIX_KAA_CLIENT_PROPERIES_H_
-#define POSIX_KAA_CLIENT_PROPERIES_H_
+#ifndef PLATFORM_KAA_CLIENT_PROPERIES_H_
+#define PLATFORM_KAA_CLIENT_PROPERIES_H_
 
 #include <kaa_error.h>
 
 typedef struct {
+    /**
+     * The directory to place client files into.
+     *
+     * Must not be @c NULL.
+     */
     const char *working_directory;
 } kaa_client_props_t;
 
 /**
- * @brief      Sets the client kaa properties struct by the user-defined struct
+ * Set the current Kaa client properties to @p properties.
  *
- * @param[in]  self  A pointer to the user-defined structure
- * 
- * @note       since kaa_client_start() is called, the memory allocated for kaa_client_props_t
- *             shouldn't be freed and any of structure fields shouldn't be modified
- *             until kaa_client_stop() is called
- * 
- * @return     An error code
+ * If @p properties is @c NULL, resets properties to the default
+ * value.
+ *
+ * @note Since kaa_client_start() is called, the memory allocated for
+ * @p properties must not be freed and any of structure fields
+ * must not be modified until kaa_client_stop() is called.
+ *
+ * @retval KAA_ERR_NONE     Success
+ * @retval KAA_ERR_BADPARAM One of @c kaa_client_props_t conditions is
+ *                          not satisfied
  */
-kaa_error_t kaa_client_props_set(const kaa_client_props_t *self);
+kaa_error_t kaa_client_props_set(const kaa_client_props_t *properties);
 
 /**
- * @brief      Gets kaa properties struct
- *
- * @return     The pointer to kaa properties struct
+ * Return current client properties.
  */
 const kaa_client_props_t *kaa_client_props_get(void);
 
-#endif /* POSIX_KAA_CLIENT_PROPERIES_H_ */
+#endif /* PLATFORM_KAA_CLIENT_PROPERIES_H_ */
