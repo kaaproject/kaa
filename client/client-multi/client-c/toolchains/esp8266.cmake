@@ -23,6 +23,7 @@ set(CMAKE_SYSTEM_NAME "Generic")
 include(CMakeForceCompiler)
 
 set(XTENSA_GCC_COMPILER "xtensa-lx106-elf-gcc${CMAKE_EXECUTABLE_SUFFIX}")
+set(XTENSA_GXX_COMPILER "xtensa-lx106-elf-g++${CMAKE_EXECUTABLE_SUFFIX}")
 
 if(NOT DEFINED ESP8266_TOOLCHAIN_PATH)
     # Check if GCC is reachable.
@@ -38,6 +39,7 @@ else()
 endif()
 
 cmake_force_c_compiler(${ESP8266_TOOLCHAIN_PATH}/bin/${XTENSA_GCC_COMPILER} GNU)
+cmake_force_cxx_compiler(${ESP8266_TOOLCHAIN_PATH}/bin/${XTENSA_GXX_COMPILER} GNU)
 
 set(CMAKE_OBJCOPY ${ESP8266_TOOLCHAIN_PATH}/bin/xtensa-lx106-elf-objcopy CACHE PATH "")
 
