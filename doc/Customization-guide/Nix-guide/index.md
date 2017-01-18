@@ -11,7 +11,7 @@ sort_idx: 70
 {% include variables.md %}
 
 [Nix](http://nixos.org/nix/) is a powerful Linux package manager.
-Kaa team uses it to improve development environment for the [Kaa C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/) and to manage all third-party dependencies.
+Kaa team uses it to improve development environment for Kaa [C]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/)/[C++]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/) SDKs, and to manage all third-party dependencies including the ones required for Kaa document generator. <!--TODO: link to Jekver repository when ready-->
 
 ## Set up Nix
 
@@ -40,19 +40,18 @@ Each time you enter shell you should execute the following command.
 ```sh
 nix-shell
 ```
-{:.note}
 
 Since CC3200 SDK is not freely available, `nix-shell` will stop the first time you enter and ask you to download the SDK file manually and add it to `nix-store`.
 Follow the on-screen instructions, then run the above command again.
 
 ## Use shell
 After you installed the dependencies, you will be switched to the custom bash shell.
-You can enter it any time it using `nix-shell`.
+You can enter it any time using `nix-shell`.
 
 From there, you can use all your development tools, such as `./build.sh` and `cmake`.
 A custom top-level Makefile, provided by default, propagates your commands to all targets.
 It also configures all targets appropriately.
-To build the Kaa C SDK for any supported platform, run `make` .
+To build the Kaa C SDK for any supported platform, run `make`.
 
 If you want to run a single command within a shell, use the `--run` option.
 
