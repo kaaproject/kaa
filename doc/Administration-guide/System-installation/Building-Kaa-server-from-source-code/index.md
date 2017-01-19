@@ -24,7 +24,12 @@ To download Kaa repository, run the command below.
 $ git clone https://github.com/kaaproject/kaa.git
 ```
 
-To build Kaa node Debian/RPM packages, run the following command.
+To build Kaa node Debian/RPM packages, change the current directory after cloning.
+
+```
+cd kaa
+```
+And run the following command.
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#debian1">Debian</a></li>
@@ -46,7 +51,7 @@ $ mvn -P compile-gwt,mongo-dao,mariadb-dao,build-rpm clean install verify
 </div>
 </div>
 
-The Debian build will work correctly on both Linux and Windows operation systems, while the RPM build will only work on Linux with the RPM tool installed.
+The Debian build will work correctly on both Linux and Windows operation systems, while the RPM build will only work on Linux.
 
 For the `mvn` command, the build number and git commit variables are set to emulate [Jenkins](https://jenkins.io/) build variables that are substituted automatically on the build machine.
 
@@ -56,7 +61,7 @@ Add the `-DskipTests` suffix to the `mvn` command to skip execution of tests and
 
 | Maven profile | Description |
 |--------------|-----------|
-| `build-rpm` |As implied in the profile name, it will force to generate `.rpm` packages. This is useful if you are going to install Kaa on `.rpm` based Linux distribution (Red Hat Linux, Oracle Linux, etc.). |
+| `build-rpm` |As implied in the profile name, it will force to generate `.rpm` packages. This is useful if you are going to install Kaa on RPM-based Linux distribution (Red Hat Linux, Oracle Linux, etc.). |
 | `cassandra` |Compiles [Cassandra log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/). |
 | `cassandra-dao` |Forces Kaa to use Cassandra NoSQL storage. If none is set, [MongoDB](https://www.mongodb.com/) used by default. |
 | `compile-client-c` |Compiles endpoint [C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/) and runs tests. |
