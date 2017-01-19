@@ -63,7 +63,7 @@ sudo apt-get install mariadb-galera-server galera
 
 ![alt MariaDB root user password](attach/mariadb_galera_password.png)
 
->**Important:** During the installation process, you will be asked to configure the root password for MariaDB.
+>**IMPORTANT:** During the installation process, you will be asked to configure the root password for MariaDB.
 >Make sure that you configured the same root password on all the three nodes.
 {:.important}
 
