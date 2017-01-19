@@ -10,11 +10,10 @@ sort_idx: 30
 * TOC
 {:toc}
 
-> **Verified against host OS:**
-> 
-> * Ubuntu 14.04 LTS Desktop 64 bit
+This section describes how to set up a [MariaDB](https://mariadb.org/) cluster.
 
-## MariaDB cluster setup
+>**NOTE:** This guide is verified against Ubuntu 14.04 LTS Desktop 64-bit.
+{:.note}
 
 We need at least 3 hosts running together with Ubuntu 14.04 Operating system to form a reliable cluster. 
 The following is the hosts list that we had setup for this article, where we will deploy the MariaDB Galera cluster:
@@ -27,7 +26,7 @@ The following is the hosts list that we had setup for this article, where we wil
 
 Now we will install the required packages `rsync`, `galera` and `mariadb-galera-server` that need to be installed on all the three nodes.
 
-### Add the MariaDB Repositories
+## Add the MariaDB Repositories
 
 The MariaDB and Galera packages are not available in the default Ubuntu repositories. 
 However, the MariaDB project maintains its own repositories for Ubuntu, which contain all the packages that we need.
@@ -53,7 +52,7 @@ On each of the three servers that will be configured for this cluster, do the fo
      sudo add-apt-repository 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu precise main'
    ```
 
-### Install MariaDB with Galera Patches
+## Install MariaDB with Galera Patches
 
 You can now install the Galera patches through the apt interface.
 
@@ -74,9 +73,9 @@ If, for some reason, you do not already have `rsync` installed on your machines,
   sudo apt-get install rsync
 ```
 
-### Configuring MariaDB Cluster
+## Configuring MariaDB Cluster
 
-#### MySQL Settings
+### MySQL Settings
 
 First of all, open the `/etc/mysql/my.cnf` file and comment the following lines on all the three nodes:
 
@@ -106,11 +105,11 @@ Add the following lines under `[mysqld]`.
   lower_case_table_names=1
 ```
 
-#### WSRep providers configurations
+### WSRep providers configurations
 
 Proceed to set the `wsrep` configurations on each node under the `[mysqld]`, using the specific hostname, root password and IP address of each node.
 
-##### Configurations for `ubuntu-node1`
+#### Configurations for `ubuntu-node1`
 
 ```bash
   [mysqld]
@@ -126,7 +125,7 @@ Proceed to set the `wsrep` configurations on each node under the `[mysqld]`, usi
   wsrep_slave_threads=16
 ```
 
-##### Configurations for `ubuntu-node2`
+#### Configurations for `ubuntu-node2`
 
 ```bash
   [mysqld]
@@ -142,7 +141,7 @@ Proceed to set the `wsrep` configurations on each node under the `[mysqld]`, usi
   wsrep_slave_threads=16
 ```
 
-##### Configurations for `ubuntu-node3`
+#### Configurations for `ubuntu-node3`
 
 ```bash
   [mysqld]
@@ -160,7 +159,7 @@ Proceed to set the `wsrep` configurations on each node under the `[mysqld]`, usi
 
 To finish, save and close the file `"/etc/mysql/my.cnf"` on all the three nodes.
 
-### Copying Debian Maintenance Configuration
+## Copying Debian Maintenance Configuration
 
 Currently, Ubuntu and Debian's MariaDB servers use a special maintenance user to do routine maintenance. 
 Some tasks that fall outside of the maintenance category are also executed by this user, including some important functions such as stopping MySQL.
@@ -218,7 +217,7 @@ To fix this, copy the contents of the maintenance file to each individual node a
 
    They should be exactly the same now. Save and close the files.
 
-### Start MariaDB cluster
+## Start MariaDB cluster
 
 To start the MariaDB cluster, do the following:
 
@@ -256,7 +255,7 @@ The cluster size will be also displayed in the output of this command.
   root@ubuntu-node3:~# mysql -u root -pmariadb_admin_password -e 'SHOW STATUS LIKE "wsrep_cluster_size"'
 ```
 
-### Create new user
+## Create new user
 
 If you want to create a new user, do as follows:
 
