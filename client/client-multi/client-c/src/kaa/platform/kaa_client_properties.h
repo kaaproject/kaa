@@ -13,19 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef PLATFORM_KAA_CLIENT_PROPERIES_H_
+#define PLATFORM_KAA_CLIENT_PROPERIES_H_
 
-/*
- * @file posix_kaa_client_properies.h
- *
- *  Created on: Apr 16, 2015
- *      Author: Andriy Panasenko <apanasenko@cybervisiontech.com>
- */
-
-#ifndef POSIX_KAA_CLIENT_PROPERIES_H_
-#define POSIX_KAA_CLIENT_PROPERIES_H_
+#include <kaa_error.h>
 
 typedef struct {
-        unsigned long max_update_time;
+    /**
+     * The directory to place client files into.
+     *
+     * Must not be @c NULL.
+     */
+    const char *working_directory;
 } kaa_client_props_t;
 
-#endif /* POSIX_KAA_CLIENT_PROPERIES_H_ */
+/**
+ * Set the current Kaa client properties to @p properties.
+ *
+ * If @p properties is @c NULL, resets properties to the default
+ * value.
+ *
+ * @note Since kaa_client_start() is called, the memory allocated for
+ * @p properties must not be freed and any of structure fields
+ * must not be modified until kaa_client_stop() is called.
+ *
+ * @retval KAA_ERR_NONE     Success
+ * @retval KAA_ERR_BADPARAM One of @c kaa_client_props_t conditions is
+ *                          not satisfied
+ */
+kaa_error_t kaa_client_props_set(const kaa_client_props_t *properties);
+
+/**
+ * Return current client properties.
+ */
+const kaa_client_props_t *kaa_client_props_get(void);
+
+#endif /* PLATFORM_KAA_CLIENT_PROPERIES_H_ */
