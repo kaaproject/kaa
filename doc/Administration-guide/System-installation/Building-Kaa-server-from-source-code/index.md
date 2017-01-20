@@ -51,7 +51,7 @@ $ mvn -P compile-gwt,mongo-dao,mariadb-dao,build-rpm clean install verify
 </div>
 </div>
 
-The Debian build will work correctly on both Linux and Windows operation systems, while the RPM build will only work on Linux.
+The Debian build will work correctly on both Linux and Windows operation systems, while the RPM build will only work on Linux with the RPM package manager installed.
 
 For the `mvn` command, the build number and git commit variables are set to emulate [Jenkins](https://jenkins.io/) build variables that are substituted automatically on the build machine.
 
