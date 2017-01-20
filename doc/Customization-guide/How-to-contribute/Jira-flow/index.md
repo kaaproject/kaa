@@ -74,7 +74,7 @@ A Bug may be filed under an Epic if the affected functionality was related to th
 After you submitted an issue, it will appear in the selected project space for the Kaa team members to spot.
 The work on the issue can begin after the team lead included it in a sprint and a person is assigned to the issue.
 
-When there is a pull request on GitHub related to your issue, the relevant information will appear under the **Development** section of the issue.
+When there is a pull request on GitHub related to your issue, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 
 ![Development section](attach/development_section.png)
 
