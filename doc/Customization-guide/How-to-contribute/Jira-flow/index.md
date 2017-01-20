@@ -11,7 +11,7 @@ sort_idx: 20
 {% include variables.md %}
 
 The Kaa project team uses [Atlassian Jira](https://www.atlassian.com/software/jira) for issue tracking in the development process.
-This section describes when and how you can create Jira issues at [http://jira.kaaproject.org/](http://jira.kaaproject.org/) is you decided to contribute to Kaa project.
+This section describes when and how you can create Jira issues at [http://jira.kaaproject.org/](http://jira.kaaproject.org/) if you decided to contribute to Kaa project.
 
 ## When to create issues
 
