@@ -11,21 +11,13 @@ sort_idx: 20
 {% include variables.md %}
 
 The Kaa project team uses [Atlassian Jira](https://www.atlassian.com/software/jira) for issue tracking in the development process.
-This section describes when and how you can create Jira issues at [http://jira.kaaproject.org/](http://jira.kaaproject.org/) if you decided to contribute to Kaa project.
+This section assumes you already have a Jira account and describes how you can create issues at [http://jira.kaaproject.org/](http://jira.kaaproject.org/) if you decided to contribute to Kaa project.
+See also [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
 
-## When to create issues
+## Creating issues
 
-To decide whether you should create a Jira issue, use [Kaa Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) to consult with Kaa team and find out whether your issue:
-
-* Is indeed an issue by nature.
-* Is reproducible.
-* Has not been spotted by other contributors yet.
-
-If you confirmed all above statements to be true, proceed to the next section to find out which information you should provide when creating a Jira issue.
-
-## Information to provide
-
-To create a Jira issue, go to [http://jira.kaaproject.org/](http://jira.kaaproject.org/), click the **Create** button.
+When you want to report a bug, request a feature, improve code/documentation, search Jira in case there are similar issues reported.
+If the searh did not return needed results, go to [http://jira.kaaproject.org/](http://jira.kaaproject.org/), click the **Create** button.
 In the **Create Issue** pop-up, provide the following information about the issue:
 
 | Field | Description |
@@ -72,9 +64,30 @@ A Bug may be filed under an Epic if the affected functionality was related to th
 ## Working on issues
 
 After you submitted an issue, it will appear in the selected project space for the Kaa team members to spot.
-The work on the issue can begin after the team lead included it in a sprint and a person is assigned to the issue.
+Now you can start contributing on [GitHub](https://github.com/kaaproject/).
 
-When there is a pull request on GitHub related to your issue, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
+When you make a pull request (PR), make sure you follow these two rules:
+
+1. Every PR must have one or more Jira issues to it.
+Do not make a PR if there is no corresponding Jira issue(s) yet.
+Create the issue(s) first.
+
+2. Follow this PR naming convention: _ticket number_(, _ticket n number_)*: _brief change summary_
+
+	Good examples:
+	
+			KAA-1123: Migration instructions from Kaa 0.9.0 to 0.10.0
+			APP-144: [Android] Notification Sample Sdk Bug
+			KAA-1, KAA-2: [Documentation] Create pages for log appender instructions
+
+	Bad examples:
+	
+			Kaa 123 blah
+			KAA234 - blah
+			whatevs KAA-345
+
+
+If you named your PR as per above related to your issue, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 
 ![Development section](attach/development_section.png)
 
