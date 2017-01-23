@@ -72,7 +72,7 @@ When you make a pull request (PR), make sure you follow these two rules:
 Do not make a PR if there is no corresponding Jira issue(s) yet.
 Create the issue(s) first.
 
-2. Follow this PR naming convention: _ticket number_(, _ticket n number_)*: _brief change summary_
+2. Follow this convention when entering description for your PRs and commits: _Jira issue number_(, _issue n number_)*: _brief change summary_
 
 	Good examples:
 	
@@ -85,7 +85,6 @@ Create the issue(s) first.
 			Kaa 123 fix
 			KAA234 - update
 			whatevs KAA-345
-
 
 If you named your PR as per above, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 

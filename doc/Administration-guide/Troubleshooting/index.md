@@ -10,7 +10,7 @@ sort_idx: 888888880
 * TOC
 {:toc}
 
-This guide explains how to resolve some common issues while using Kaa as well as how to report issues to the Kaa Crew for getting help.
+This guide explains how to resolve some common issues while using Kaa as well as how to report issues to the Kaa crew for getting help.
 
 ## Change service logging level
 
@@ -205,17 +205,19 @@ How to restart Kaa service
 
 ## Errors
 
-### ERROR when assembling binary for a Kaa applicaton demo from Sandbox
+### ERROR when assembling binary for a Kaa application demo from Sandbox
 
 | Error description                                                                                     | Possible cause                                                                   | Solution                                                                                                                           | Related documentation    |
 |-------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
 | Unexpected error occurred: 500 Server ErrorUnexpected service error occurred: 500 Server ErrorFailed! | By default, the Kaa Sandbox components are not accessible from the host network. | Change the Sandbox host/IP on web UI or execute the following script in the Sandbox: `$ sudo /usr/lib/kaa-sandbox/change_kaa_host.sh` | [Kaa Sandbox - Networking]({{root_url}}Getting-started/#networking) |
 
-## Report issues to Kaa Crew
+## Report issues to Kaa crew
 
-You may seek help at the [Kaa community at Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) by participating in existing topic discussions or, if no relevant topic was found, by starting a new topic, describing your issue and attaching logs. Please make sure the issue has not been yet addressed in other topics on the forum or in this guide.
+You may seek help at the [Kaa community at Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) by participating in existing topic discussions or, if no relevant topic was found, by starting a new topic, describing your issue and attaching logs.
+Please make sure the issue has not been yet addressed in other topics on the forum or in this guide.
+See [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
 
-Before sending logs to the Kaa forum follow these steps:
+Before sending logs to the Kaa forum:
 
 1. [Change the log level for the Kaa service to “TRACE”](#how-to-change-the-service-logging-level).
 2. [Clear the Kaa logs](#how-to-clear-the-kaa-logs).

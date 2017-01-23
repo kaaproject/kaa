@@ -17,10 +17,14 @@ We would love to see you mastering the Kaa source code; however, writing code is
 
 Feel free to use all of the contribution options:
 
-- Join [Kaa Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) to find answers to common user questions, ask your own Kaa-related questions, and help others in the community.
-- Use [Jira](http://jira.kaaproject.org/) to provide feedback, make features and functionality suggestions, and help other community members.
-When reporting bugs, issues, and other problems you have come across using Kaa, please make sure you provide as much detail as possible so that the reported issue can be resolved effectively. See [Jira flow]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/).
+- Join [Kaa Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) to find answers to technical Kaa-related questions, and help others in the community.
+Make sure to include the `kaa` tag in your post.
+- Join [Kaa forum](https://www.kaaproject.org/forum/) to find answers to common user questions, give your feedback, ideas and suggestions, as well as for general discussions.
+- Use [Jira](http://jira.kaaproject.org/) to report issues and request new features.
+When reporting issues, please make sure you provide as much detail as possible so that the reported issue can be resolved effectively.
+See [Jira flow]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/).
 - Contribute to Kaa project repositories on [GitHub](https://github.com/kaaproject/).
+See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 
 ## Contribute to source code
 
