@@ -213,14 +213,4 @@ How to restart Kaa service
 
 ## Report issues to Kaa crew
 
-You may seek help at the [Kaa community at Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) by participating in existing topic discussions or, if no relevant topic was found, by starting a new topic, describing your issue and attaching logs.
-Please make sure the issue has not been yet addressed in other topics on the forum or in this guide.
-See [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
-
-Before sending logs to the Kaa forum:
-
-1. [Change the log level for the Kaa service to “TRACE”](#how-to-change-the-service-logging-level).
-2. [Clear the Kaa logs](#how-to-clear-the-kaa-logs).
-3. Reproduce your issue.
-4. [Download the Kaa logs from the Sandbox](#how-to-download-the-kaa-logs-from-the-sandbox).
-5. Create an archive file with your logs.
+If you cannot resolve an issue, you can [report it]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/) or [seek assistance from the community]({{root_url}}Customization-guide/How-to-contribute/).

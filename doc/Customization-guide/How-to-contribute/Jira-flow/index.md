@@ -61,6 +61,21 @@ Useful additions may include a reference to the test scenario, links to the docu
 It is allowed to check-in code directly in the Bug type issues.
 A Bug may be filed under an Epic if the affected functionality was related to the scope of that Epic.
 
+## Sending error logs
+
+You may want to send some Kaa error logs to help resolve an issue.
+To do this:
+
+1. [Change the log level for the Kaa service to “TRACE”]({{root_url}}Administration-guide/Troubleshooting/#how-to-change-the-service-logging-level).
+
+2. [Clear the Kaa logs]({{root_url}}Administration-guide/Troubleshooting/#how-to-clear-the-kaa-logs).
+
+3. Reproduce your issue.
+
+4. [Download the Kaa logs from the Sandbox]({{root_url}}Administration-guide/Troubleshooting/#how-to-download-the-kaa-logs-from-the-sandbox).
+
+5. Create an archive file with your logs and attach it to your Jira issue.
+
 ## Working on issues
 
 After you submitted an issue, it will appear in the selected project space for the Kaa team members to spot.
