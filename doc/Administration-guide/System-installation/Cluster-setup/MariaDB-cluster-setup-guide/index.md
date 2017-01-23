@@ -247,3 +247,4 @@ MariaDB>FLUSH PRIVILEGES;
 
 >**IMPORTANT:** Do not use **ALL PRIVILEGES** when you create a user for your database.
 >[More information about MySQL privileges](http://dev.mysql.com/doc/refman/5.7/en/privileges-provided.html).
+{:.important}
