@@ -16,7 +16,7 @@ See also [How to contribute]({{root_url}}Customization-guide/How-to-contribute/)
 
 ## Creating issues
 
-When you want to report a bug, request a feature, improve code/documentation, search Jira in case there are similar issues reported.
+When you want to report a bug, request a feature, improve code/documentation -- search Jira in case there are similar issues reported.
 If the search did not return needed results, go to [http://jira.kaaproject.org/](http://jira.kaaproject.org/), click the **Create** button.
 In the **Create Issue** pop-up, provide the following information about the issue:
 
