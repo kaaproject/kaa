@@ -82,12 +82,12 @@ Create the issue(s) first.
 
 	Bad examples:
 	
-			Kaa 123 blah
-			KAA234 - blah
+			Kaa 123 fix
+			KAA234 - update
 			whatevs KAA-345
 
 
-If you named your PR as per above related to your issue, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
+If you named your PR as per above, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 
 ![Development section](attach/development_section.png)
 
