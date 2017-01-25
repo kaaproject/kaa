@@ -4,34 +4,31 @@ title: Linux
 permalink: /:path/
 sort_idx: 10
 ---
+
 {% include variables.md %}
 
 * TOC
 {:toc}
 
-This page describes Kaa C++ SDK build process on Linux system.
+This section describes how to build [Kaa C++ SDK]({{root_url}}Glossary/#kaa-sdk-type) on a Linux-based machine and install a [Kaa application]({{root_url}}Glossary/#kaa-application).
 
-## Installing prerequisites
+>**NOTE:** This guide is verified against:
+>
+> * Ubuntu 14.04 LTS Desktop 64-bit
+> * Ubuntu 16.04 LTS Desktop 64-bit
+{:.note}
 
->**NOTE:** Instead of manually installing all required components and libraries, you can follow [the quick way to build C/C++ endpoint SDK](#quick-way-to-build-sdk).
-(Only applicable for x86\_64 platform.)
+## Prerequisites
 
-**All steps described in this guide were tested on:**
+To build Kaa C++ SDK, make sure to install the following components:
 
- - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
- - **Host OS:** Ubuntu 16.04 LTS Desktop 64-bit
-
-### Dependencies
-
-Before building the C++ endpoint SDK, install the following components on your machine:
-
-1. Install g++, [CMake](https://cmake.org/download/), [Boost](http://www.boost.org/users/download/) and [SQLite3](https://sqlite.org/download.html):
+1. Install g++, [CMake](https://cmake.org/download/), and [SQLite3](https://sqlite.org/download.html).
 
    ```
    sudo apt-get install g++ cmake python libsqlite3-0 libsqlite3-dev
    ```
 
-2. Install Boost:
+2. Install [Boost](http://www.boost.org/users/download/).
 
 <ul>
 <li style="list-style-type: none;">
@@ -62,8 +59,7 @@ sudo ./bjam cxxflags=-std=c++11 install
 </ul>
 
 {: start="3"}
-3. Install the [AvroC++](http://avro.apache.org/docs/1.7.5/api/cpp/html/index.html) library manually:
-
+3. Install the [Avro C++](http://avro.apache.org/docs/1.7.5/api/cpp/html/index.html) library manually.
 
    ```
    wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
@@ -73,9 +69,9 @@ sudo ./bjam cxxflags=-std=c++11 install
    sudo make install
    ```
 
-4. Install the [Botan](http://botan.randombit.net/) 1.11 library. The stock 1.10 version is not recommended for C++11 projects,
+4. Install the [Botan](http://botan.randombit.net/) 1.11 library.
+The stock 1.10 version is not recommended for C++11 projects,
 so the newer 1.11 version is used in Kaa C++ SDK.
-To install, proceed as follows:
 
    ```
    wget https://github.com/randombit/botan/archive/1.11.28.tar.gz
@@ -84,58 +80,70 @@ To install, proceed as follows:
    ./configure.py
    sudo make install
    ```
-5. After all the dependencies have been installed, dynamic loader's links (and, selectively, its cache) should be updated. That's the way for the loader to know where libraries are located. To update links, proceed as follows:
+
+5. After dependencies are installed, dynamic loader's links (and, optionally, its cache) will be updated.
+This is required so that loader knows where the libraries are located.
+Run the command below to update the links.
 
    ```
    sudo ldconfig
    ```
 
-## Compiling SDK
+## Build C++ SDK
 
 To build the C++ endpoint SDK, do the following:
 
-<!-- TODO: KAA-700 -->
-1. Generate the C++ endpoint SDK using the [Administration UI]({{root_url}}Glossary/#administration-ui).
-2. Download and untar the Kaa C++ SDK archive.
+1. [Generate your C++ SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk).
+
+2. Unpack the C++ SDK archive.
 
    ```
-   tar xfv kaa-cpp-ep-sdk.tar.gz
-   ```
-**Note: the archive name may be different in your case**
-
-3. Run the following commands.
-
-   ```
-   mkdir build
-   cd build
-   cmake ..
-   make
+   tar xfv cpp-sdk-archive-name.tar.gz
    ```
 
-There are a lot of parameters which can be passed to cmake to customize build. [C++ SDK page]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/) gives a detailed description.
+3. Create a directory where the SDK will be built.
 
-## Quick way to build SDK
+		mkdir build
+		cd build
 
-### Build in Docker container
-If you want to build the endpoint SDK quickly or build and run Kaa C/C++ demo applications, you can use a [docker](https://www.docker.com/) container with all necessary environment preinstalled.
-**NOTE:** Docker natively supports amd64 architecture only.
+4. Configure the build via CMake.
 
-1. Follow [docker installation guide](http://docs.docker.com/index.html) depends on your OS.
-2. Download the docker container.
+		cmake ..
+
+5. Perform build.
+
+		make
+
+## Other ways to build C++ SDK
+
+There are alternative ways to build Kaa C++ SDK, such as using [Docker](https://www.docker.com/) container and [Nix](http://nixos.org/nix/) shell.
+
+### Docker container
+
+You can use Docker containers to build your C++ SDK and run Kaa C/C++ demo applications with all necessary environment pre-installed.
+
+>**NOTE:** Docker natively supports x86-64 architecture only.
+{:.note}
+
+To build Kaa C++ SDK using Docker:
+
+1. Follow the [official docker installation guide](http://docs.docker.com/index.html) for your operating system.
+
+2. Download the Docker container.
 
    ```
    docker pull kaaproject/demo_c_cpp_environment
    ```
 
-3. Get inside container and compile what you need: SDK, demo applications, etc.
+3. Compile SDK, demo applications, etc. for your container.
 
    ```
    docker run -it kaaproject/demo_c_cpp_environment bash
    ```
 
-    **NOTE:**
-    To mount a host directory to the container's filesystem, add the following flag to the previous command: `-v FOLDER_WITH_DEMO:FOLDER_INSIDE_CONTAINER`.
-    For example, the following command will build a demo project and direct you to the container's shell, where you can test immediately:
+    To mount a host directory to the container file system, add this flag to the previous command: `-v FOLDER_WITH_DEMO:FOLDER_INSIDE_CONTAINER`.
+    
+    For example, the following command will build a demo project and direct you to the container shell where you can run tests immediately.
 
    ```
    docker run -v FOLDER_WITH_DEMO:/opt/demo
@@ -143,27 +151,34 @@ If you want to build the endpoint SDK quickly or build and run Kaa C/C++ demo ap
      chmod +x build.sh && ./build.sh clean build && bash'
    ```
 
-4. After the compilation, launch the demo binary located at `/opt/demo/build/` in the container's filesystem.
-**NOTE:**
-If you would like to run a compiled binary on some other host, you should have all third-party libraries like boost, etc. preinstalled.
+4. After the compilation, launch the demo binary located in the `/opt/demo/build/` directory of the container file system.
 
-### Build in Nix shell
-[Nix](https://nixos.org/nix) is a package manager which is used to manage Kaa C and C++ SDKs build environment for CI purposes. You can use it to build Kaa C++ SDK quickly.
-Just install Nix on your system and execute the following command from the [root directory]({{github_url}}client/client-multi/client-cpp) of Kaa C++ SDK:
+	>**NOTE:** To run a compiled binary on some other host, you need to have all third-party libraries like `boost`, etc. pre-installed.
+	{:.note}
+
+	See also [Docker deployment]({{root_url}}Administration-guide/System-installation/Docker-deployment/).
+	
+### Nix shell
+
+Kaa C and C++ SDK build environments use the [Nix](https://nixos.org/nix) package manager for CI purposes.
+
+To build Kaa C++ SDK, install Nix as described in the [Nix guide]({{root_url}}Customization-guide/Nix-guide/).
+
+After you installed Nix on your system, run the following command from the [root directory]({{github_url}}client/client-multi/client-cpp) of Kaa C++ SDK.
 
 ```
 nix-shell
 ```
 
 Nix will download and compile all SDK dependencies and prepare your environment for development.
-For more details on using Nix in C and C++ SDKs refer to [Nix guide]({{root_url}}Customization-guide/Nix-guide/).
 
-## Minimal example
-This section describes application development with Kaa C++ SDK.
+## Build Kaa application
+
+After you installed the required dependencies and built the C++ SDK, you can build and run your Kaa application.
 
 ### Directory structure
 
-The recommended directory structure for applications using Kaa C++ SDK is as follows:
+The recommended directory structure for applications using Kaa C++ SDK is as follows.
 
 ```
 CMakeLists.txt
@@ -172,53 +187,52 @@ src/
 kaa/
 ```
 
-* `CMakeLists.txt` describes your application to CMake build system (see below).
-* `src/KaaDemo.cpp` is the actual application source code.
-* `kaa/` is a directory where the Kaa SDK should be placed.
-<!-- TODO: KAA-700 -->
-Download generated SDK archive from [Administration UI]({{root_url}}Glossary/#administration-ui) and unpack it to `kaa/` directory.
+* `CMakeLists.txt` -- file describing your application for the CMake [build system](#build-system-overview).
+* `src/KaaDemo.cpp` -- file containing the application source code.
+* `kaa/` -- directory where you unpack the Kaa SDK archive.
 
+### Build system
 
-### Build system overview
-Kaa C++ SDK uses CMake as a build system. Although you are not limited to any particular build system,
-it is recommended to use CMake, which allows you to integrate your applications tightly with Kaa C++ SDK.
+Although you can use other build systems, it is recommended that you use CMake to tie application code together with the C++ SDK.
 
-The step-by-step explanation of CMakeLists.txt follows.
+Below is an example how to configure the `CMakeLists.txt` file for the application.
 
-Firstly, the minimum required CMake  version is specified:
+1. Specify minimum CMake version required.
 
-```CMake
-cmake_minimum_required(VERSION 2.8.12)
-```
+   ```bash
+   cmake_minimum_required(VERSION 2.8.12)
+   ```
 
-Next, we tell CMake about our project and enable C++11 standard:
+2. Specify the project name and enable C++11 standard.
 
-```CMake
-project(kaa-demo CXX)
+   ```bash
+   project(kaa-demo CXX)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-```
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+   ```
 
-Here we add kaa-demo executable and specify the source file, `src/KaaDemo.cpp`:
+3. Add `kaa-demo` executable file and specify the source file `src/KaaDemo.cpp`.
 
-```CMake
-add_executable(kaa-demo src/KaaDemo.cpp)
-```
+   ```bash
+   add_executable(kaa-demo src/KaaDemo.cpp)
+   ```
 
-We also add Kaa SDK subdirectory and specify Kaa SDK as a dependency for our application.
+4. Add Kaa SDK subdirectory and specify Kaa SDK as a dependency for your application.
 As a result, the SDK will be built before building the application.
 
-```CMake
-add_subdirectory(kaa)
+   ```bash
+   add_subdirectory(kaa)
 
-target_link_libraries(kaa-demo kaacpp)
-```
+   target_link_libraries(kaa-demo kaacpp)
+   ```
 
 ### Code
 
-The code for this demo is simple and straightforward. It just initializes and starts Kaa client,
-which involves connecting to Kaa server. After the `kaaClient->start();` line, Kaa client is up and running in a dedicated thread.
-Finally, the Endpoint access token is printed to `stdout` and Kaa client stops its execution.
+Below is a simple and straightforward example of the application code.
+
+The application will just initializes and starts Kaa client, which involves connecting to [Kaa server]({{root_url}}Glossary/#kaa-server).
+After the `kaaClient->start();` line, Kaa client is up and running in a dedicated thread.
+Finally, the endpoint access token is printed to `stdout` and stop running.
 
 ```c++
 #include <iostream>
@@ -239,17 +253,17 @@ int main()
 }
 ```
 
-### Building
+### Build
 
-To build the example, proceed as follows:
+To build the example application above, run these commands.
 
-```
+```bash
 mkdir build
 cd build
 cmake -DKAA_MAX_LOG_LEVEL=3 ..
 make
 ```
 
-First, we generate `Makefile` in `build/` directory with CMake, then we invoke `make` to build the application.
-We pass `KAA_MAX_LOG_LEVEL=3` option to avoid messing up application output with Kaa SDK info level messages.
-The build can be configured in a numerous ways, see [this]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/) page for detailed description.
+As a result, CMake will generate `Makefile` in the `build/` directory.
+Using the `KAA_MAX_LOG_LEVEL=3` will prevent mixing up the application output with Kaa SDK info level messages.
+The `make` command builds the application.
