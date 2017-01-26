@@ -191,9 +191,14 @@ See [Generate SDK](Programming-guide/Your-first-Kaa-application/#generate-sdk).
    cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/edison.cmake ..
    make
    ```
-   
-Now you can cross-compile your [Kaa application]({{root_url}}Glossary/#kaa-application).
-Make sure to use proper toolchain.
 
-Creating a Kaa C++ SDK application for Linux is the same as for Intel Edison platform.
-See [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux#quick-way-to-build-sdk).
+## Build Kaa application
+
+After you installed the required dependencies and built the C++ SDK, you can build and run your [Kaa application]({{root_url}}Glossary/#kaa-application).
+
+Since Edison runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#c-sdk-build) to build and run your application.
+
+>**NOTE:** Make sure to specify correct compiler name when compiling your Kaa application for Edison
+{:.note}
+
+For more information on how to build, upload and run your application on Edison board, see [official user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
