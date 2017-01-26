@@ -10,7 +10,7 @@ sort_idx: 60
 * TOC
 {:toc}
 
-This guide explains how to cross-compile [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Raspberry PI](https://www.raspberrypi.org/).
+This guide explains how to cross-compile [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Raspberry Pi](https://www.raspberrypi.org/).
 Alternatively, you can build the Kaa C SDK directly on the Raspberry Pi board.
 For more information, see [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for Kaa C SDK.
 
