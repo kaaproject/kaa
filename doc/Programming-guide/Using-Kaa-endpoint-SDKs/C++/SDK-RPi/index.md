@@ -136,8 +136,8 @@ Avro depends on some Boost components, therefore it is critical that you install
    rm -r ${INSTALLDIR}/include/botan-1.11
    ```
 
-7. Download Kaa C++ SDK and compile it.
-See also [Generate SDK](Programming-guide/Your-first-Kaa-application/#generate-sdk).
+7. Download Kaa C++ SDK from your [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment) and compile it.
+See [Generate SDK](Programming-guide/Your-first-Kaa-application/#generate-sdk).
 
    ```bash
    mkdir kaa-cpp
