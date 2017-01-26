@@ -58,7 +58,7 @@ Unpack the downloaded archive. <!--(don't forget to change the file name to prop
 
 After you installed the required dependencies and built the C SDK, you can build and run your [Kaa application]({{root_url}}Glossary/#kaa-application).
 
-Since Edison runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) to build and run your application.
+Since Edison runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#build-c-sdk) to build and run your application.
 
 >**NOTE:** Make sure to specify correct compiler name when compiling your Kaa application for Edison:
 >
