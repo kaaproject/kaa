@@ -24,7 +24,7 @@ This guide is focused on the details of the [CMake](https://cmake.org/)-based bu
 
 To build Kaa C SDK, make sure to install the following components:
 
- - CMake (minimum required version is 3.5.2).
+ - CMake (minimum required version is 2.8.12).
  - C99 compatible compiler (e.g. GCC).
 
 To install dependencies on Ubuntu, execute the following command:
@@ -68,19 +68,24 @@ For example, you can create the following directories:
     - `my-kaa-application/kaa` -- contains the C SDK source files;
     - `my-kaa-application/src` -- contains the application code.
 
-
-            mkdir my-kaa-application
-            mkdir my-kaa-application/kaa
-            mkdir my-kaa-application/src
-            cd my-kaa-application
+   ```bash
+   mkdir my-kaa-application
+   mkdir my-kaa-application/kaa
+   mkdir my-kaa-application/src
+   cd my-kaa-application
+   ```
 
 2. Generate C SDK and unpack it to the `my-kaa-application/kaa` directory.
 
-        tar -xvf c-sdk-archive.tar.gz -C my-kaa-application/kaa
+   ```bash
+   tar -xvf c-sdk-archive.tar.gz -C my-kaa-application/kaa
+   ```
 
 3. In `my-kaa-application/src` directory, create a `kaa-application.c` file that will contain the application code.
 
-        touch src/kaa-application.c
+   ```bash
+   touch src/kaa-application.c
+   ```
 
     Open the `kaa-application.c` file and write the application code in it.
     For the sake of example, a very simple application will be built that displays a string: *Hello, I am a Kaa Application!\n*.
@@ -122,60 +127,73 @@ For example, you can create the following directories:
 4. Create a `CMakeLists.txt` file in the `my-kaa-application` directory.
 It is a top-level CMake file handling the application build.
 
-        touch CMakeLists.txt
+   ```bash
+   touch CMakeLists.txt
+   ```
 
     Add the following code to the `CMakeLists.txt` file.
     The first line sets the minimum CMake version required to build a `kaa-application` project.
     The second line sets project name and language.
 
-        cmake_minimum_required(VERSION 3.5.2)
-        project(kaa-application C)
+   ```bash
+   cmake_minimum_required(VERSION 2.8.12)
+   project(kaa-application C)
+   ```
 
     Some compilers flags are set, and C SDK project is included as a subproject to the kaa-application project.
     That is a clue.
     The parameter contains a path to the C SDK's `CMakeLists.txt`.
 
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
-
-        add_subdirectory(kaa)
-
+   ```bash
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
+   add_subdirectory(kaa)
+   ```
     Compile the executable file `kaa-app` using `src/kaa-application.c`, and link it with `kaac`.
 
-        add_executable(kaa-app src/kaa-application.c)
-        target_link_libraries(kaa-app kaac)
+   ```bash
+   add_executable(kaa-app src/kaa-application.c)
+   target_link_libraries(kaa-app kaac)
+   ```
 
     See the full `CMakeLists.txt` code below.
 
-        cmake_minimum_required(VERSION 3.5.2)
-        project(kaa-application C)
-
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
-
-        add_subdirectory(kaa)
-
-        add_executable(kaa-app src/kaa-application.c)
-        target_link_libraries(kaa-app kaac)
+   ```bash
+   cmake_minimum_required(VERSION 2.8.12)
+   project(kaa-application C)
+   
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")
+   
+   add_subdirectory(kaa)
+   
+   add_executable(kaa-app src/kaa-application.c)
+   target_link_libraries(kaa-app kaac)
+   ```
 
 5. Now your directory structure should look like this.
 
-         - my-kaa-application
-           - CMakeLists.txt
-           - kaa
-             - Unpacked C SDK
-           - src
-             - kaa-application.c
+   ```
+   - my-kaa-application
+     - CMakeLists.txt
+     - kaa
+       - Unpacked C SDK
+     - src
+       - kaa-application.c
+   ```
 
 6. Finally, you can build the application.
 Create a build directory.
 
-        mkdir build
-        cd build
+   ```bash
+   mkdir build
+   cd build
+   ```
 
 7. Configure the build via CMake and run the `make` command.
 
-        cmake -DKAA_MAX_LOG_LEVEL=3 -DBUILD_TESTING=OFF ..
-        make
-
+   ```bash
+   cmake -DKAA_MAX_LOG_LEVEL=3 -DBUILD_TESTING=OFF ..
+   make
+   ```
     `KAA_MAX_LOG_LEVEL` [parameter]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C) is used here to decrease log level which is set by default to eliminate output pollution.
 
     `BUILD_TESTING` is **ON** by default.
@@ -183,11 +201,15 @@ Create a build directory.
 
 8. Run your application.
 
-        ./kaa-app
+   ```bash
+   ./kaa-app
+   ```
 
     You should observe the following output.
 
-        Hello, I am a Kaa Application!
+   ```
+   Hello, I am a Kaa Application!
+   ```
 
 See full [source code on GitHub]({{github_url}}client/client-multi/client-c/examples/my-kaa-application).
 
