@@ -16,7 +16,7 @@ To follow this guide, you need to have your [Kaa platform installed]({{root_url}
 
 The first time you log in to Administration UI, it is required that you register as a Kaa administrator user.
 
-![](attach/image2015-5-28%2017-7-0.png)
+![](attach/PleaseLogIn.png)
 
 The following three user types are available in Kaa:
 
@@ -31,16 +31,14 @@ The following three user types are available in Kaa:
 
 Kaa administrator is the highest level administrator of Kaa.
 This user can create, edit, and delete tenant administrators.
-To log in to the Administration UI as a Kaa administrator, use the username and password previously created for the Kaa administrator.
-
-![](attach/image2014-12-22%2016-22-58.png)
+To log in to the Administration UI as a Kaa administrator, use the username and password previously created for the Kaa administrator or [default credentials]({{root_url}}Getting-started/#administration-ui).
 
 To customize the account:
 
 1. Click **Settings** > **Profile**.
 
 2. On the **Account profile** page, enter your first name, last name and email address.
-	![](attach/image2014-11-12%2013-3-23.png)
+	![](attach/AccountProfile.png)
 
 3. If you want to change password, click the **Change password** button.
 	![](attach/image2014-11-10%2017-31-31.png)
@@ -56,7 +54,7 @@ For more information about multitenancy, see [Wikipedia](https://en.wikipedia.or
 
 Tenant administrator is a Kaa user that manages applications, users, and [event class families]({{root_url}}Programming-guide/Key-platform-features/Events/#event-class-families).
 
-To log in to the Administration UI as a tenant administrator, use the previously generated username and password.
+To log in to the Administration UI as a tenant administrator, use the previously generated username and password or [default credentials]({{root_url}}Getting-started/#administration-ui).
 To customize the account, follow the same procedure as described in the [Kaa administrator](#kaa-administrator) section.
 
 As a tenant administrator, you can create new applications.
@@ -77,7 +75,7 @@ If you open the **Application details** page of the newly created application, i
 
 Tenant developer can create SDKs based on customer requirements, set the Kaa schemas, create [endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups/), control the [notification]({{root_url}}Programming-guide/Key-platform-features/Notifications/) processes, etc.
 
-To log in to the Administration UI as a tenant developer, use the previously generated credentials.
+To log in to the Administration UI as a tenant developer, use the previously generated credentials or [default credentials]({{root_url}}Getting-started/#administration-ui).
 
 To customize the account, follow the same procedure as described in the [Kaa administrator](#kaa-administrator) section.
 
