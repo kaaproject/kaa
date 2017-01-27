@@ -66,7 +66,7 @@ A Bug may be filed under an Epic if the affected functionality was related to th
 You may want to send some Kaa error logs to help resolve an issue.
 To do this:
 
-1. [Change the log level for the Kaa service to “TRACE”]({{root_url}}Administration-guide/Troubleshooting/#supported-log-levels).
+1. [Change the log level for the Kaa service to “TRACE”]({{root_url}}Administration-guide/Troubleshooting/#change-service-logging-level).
 
 2. [Clear the Kaa logs]({{root_url}}Administration-guide/Troubleshooting/#clear-kaa-logs).
 
@@ -89,17 +89,21 @@ Create the issue(s) first.
 
 2. Follow this convention when entering description for your PRs and commits: _Jira issue number_(, _issue n number_)*: _brief change summary_
 
-	Good examples:
-	
-			KAA-1123: Migration instructions from Kaa 0.9.0 to 0.10.0
-			APP-144: [Android] Notification Sample Sdk Bug
-			KAA-1, KAA-2: [Documentation] Create pages for log appender instructions
+    Good examples:
 
-	Bad examples:
-	
-			Kaa 123 fix
-			KAA234 - update
-			whatevs KAA-345
+   ```
+   KAA-1123: Migration instructions from Kaa 0.9.0 to 0.10.0
+   APP-144: [Android] Notification Sample Sdk Bug
+   KAA-1, KAA-2: [Documentation] Create pages for log appender instructions
+   ```
+
+   Bad examples:
+
+   ```
+   Kaa 123 fix
+   KAA234 - update
+   whatevs KAA-345
+```
 
 If you named your PR as per above, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 
