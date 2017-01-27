@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Beaglebone
+title: BeagleBone
 permalink: /:path/
 sort_idx: 70
 ---
