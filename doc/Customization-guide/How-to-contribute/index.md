@@ -17,16 +17,20 @@ We would love to see you mastering the Kaa source code; however, writing code is
 
 Feel free to use all of the contribution options:
 
-- Join [Kaa Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) to find answers to common user questions, ask your own Kaa-related questions, and help others in the community.
-- Use [Jira](http://jira.kaaproject.org/browse/KAA/) to provide feedback, make features and functionality suggestions, and help other community members.
-When reporting bugs, issues, and other problems you have come across using Kaa, please make sure you provide as much detail as possible so that the reported issue can be resolved effectively.
-- Contribute to Kaa project on [GitHub](https://github.com/kaaproject/kaa).
+- Join [Kaa Stack Overflow](http://stackoverflow.com/questions/tagged/kaa) to find answers to technical Kaa-related questions, and help others in the community.
+Make sure to include the `kaa` tag in your post.
+- Join [Kaa forum](https://www.kaaproject.org/forum/) to find answers to common user questions, give your feedback, ideas and suggestions, as well as for general discussions.
+- Use [Jira](http://jira.kaaproject.org/) to report issues and request new features.
+When reporting issues, please make sure you provide as much detail as possible so that the reported issue can be resolved effectively.
+See [Jira flow]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/).
+- Contribute to Kaa project repositories on [GitHub](https://github.com/kaaproject/).
+See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
 
 ## Contribute to source code
 
 If you are willing to contribute to the Kaa code base, or submit sample [applications]({{root_url}}Glossary/#kaa-application) for [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox):
 
-1. Register at [Kaa public Jira](http://jira.kaaproject.org/browse/KAA/).
+1. Register at [Kaa public Jira](http://jira.kaaproject.org/).
 
 2. Fill out and sign the [Individual Contributor Licensing Agreement](http://www.kaaproject.org/Uploads/ICLA.pdf) (ICLA).
 
@@ -37,7 +41,7 @@ If you are willing to contribute to the Kaa code base, or submit sample [applica
 3. Create a Jira ticket describing your finding and/or the proposed change.
 
 	>**NOTE:** When you contribute to Kaa project on GitHub, make sure you post your [pull request](https://help.github.com/articles/using-pull-requests/) link in the comments section of the related Jira ticket and change the ticket status to **In review**.
-	>See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
+	>See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/) and [Jira flow]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/).
 	{:.note}
 
 ## Contribute to documentation
@@ -48,7 +52,7 @@ This means that the contribution process is the same for both the source code an
 
 Contributing to the Kaa documentation, make sure to complete the following:
 
-* Select `Component: Documentation` in the corresponding [Jira](http://jira.kaaproject.org/) ticket.
+* Select `Component: Documentation` in the corresponding Jira ticket.
 * Generate and check documentation locally before committing.
 See [Preview documentation]({{root_url}}Customization-guide/How-to-contribute/#preview-documentation).
 * Check with the [Documentation style guide]({{root_url}}Customization-guide/How-to-contribute/Style-guide/) to make sure your contribution complies with the Kaa requirements.
