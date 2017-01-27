@@ -41,20 +41,28 @@ To build Kaa C SDK:
 
 2. Unpack the C SDK archive.
 
-		tar -xvf c-sdk-archive-name.tar.gz
-
+   ```bash
+   tar -xvf c-sdk-archive-name.tar.gz
+   ```
+   
 3. Create a directory where the SDK will be built.
 
-		mkdir build
-		cd build
+   ```bash
+   mkdir build
+   cd build
+   ```
 
 4. Configure the build via CMake.
 
-		cmake ..
+   ```bash
+   cmake ..
+   ```
 
 5. Perform build.
 
-		make
+   ```bash
+   make
+   ```
 
 ## Build Kaa application
 
