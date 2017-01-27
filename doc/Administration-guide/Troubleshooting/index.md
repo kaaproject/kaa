@@ -19,52 +19,52 @@ This guide explains how to resolve some common issues while using Kaa as well as
   <li><a data-toggle="tab" href="#Console">Console</a></li>
 </ul>
 
-<div class="tab-content">
+<div class="tab-content"><div id="Sandbox-web-ui" class="tab-pane fade in active" markdown="1">
 
-<div id="Sandbox-web-ui" class="tab-pane fade in active" markdown="1">
-
-Go to Kaa Sandbox web UI and select "Management" menu item in the upper right corner. In the "Kaa server logs" section you will see combo-box with current log-level for server logs.
+Go to Kaa Sandbox web UI and select **Management** menu item in the upper right corner.
+In the **Kaa server logs** section you will see combo-box with current log-level for server logs.
 
 <img src="attach/managment_tab.png" width="800" height="500">
 
-Select the required log level and click the "Update" button. If you want to delete old log files, mark the "clean up old logfiles" checkbox.
+Select the required log level and click the **Update** button.
+If you want to delete old log files, mark the **clean up old logfiles** checkbox.
 
 </div><div id="Console" class="tab-pane fade" markdown="1">
 
-1. Connect to your Kaa Sandbox via ssh:
+1. Connect to your [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox) via ssh:
 
-```
-    $ ssh kaa@<YOUR-SANDBOX-IP>   
-    password: kaa
-```
+   ```bash
+   $ ssh kaa@<YOUR-SANDBOX-IP>
+   password: kaa
+   ```
 
-2. Stop the Kaa service:
+2. Stop the Kaa service.
 
-```
-    $ sudo service kaa-node stop
-```
+   ```bash
+   $ sudo service kaa-node stop
+   ```
 
-3. Change the log level for the Kaa service:
+3. Change the log level for the Kaa service.
 
-```
-    $ sudo nano /usr/lib/kaa-node/conf/logback.xml
-```
+   ```bash
+   $ sudo nano /usr/lib/kaa-node/conf/logback.xml
+   ```
 
-In the lines:
+    In the lines:
 
-```
-    <logger name="org.kaaproject.kaa" level="INFO"/>
-    <logger name="org.kaaproject.kaa.server.common.Environment" level="INFO"/>
-```
+   ```bash
+   <logger name="org.kaaproject.kaa" level="INFO"/>
+   <logger name="org.kaaproject.kaa.server.common.Environment" level="INFO"/>
+   ```
 
-replace "INFO" with the required log level, for example "TRACE";
-then save the changes: press Ctrl+X, enter "y" in a dialog line and press Enter.
+    replace "INFO" with the required log level, for example "TRACE";
+    then save the changes: press **Ctrl+X**, enter **y** in the dialog line and press **Enter**.
 
-4. Start the Kaa service:
+4. Start the Kaa service.
 
-```
-    $ sudo service kaa-node start
-```
+   ```bash
+   $ sudo service kaa-node start
+   ```
 
 </div></div>
 
@@ -75,38 +75,38 @@ Use the following log levels according to the log purpose.
 | Log level | Description                                                                                                                       |
 |-----------|-----------------------------------------------------------------------------------------------------------------------------------|
 | OFF       | Turns off logging                                                                                                                 |
-| ERROR     | Logs run time errors or unexpected conditions that the program can gracefully recover from                                        |
-| WARNING   | Logs same as previous, plus unexpected or undesirable run time conditions that are not necessarily affecting the program          |
-| INFO      | Logs same as previous, plus important or interesting run time events that help understand what the program is doing at the moment |
-| DEBUG     | Logs same as previous, plus detailed information according to the logical work flow of the system                                 |
-| TRACE     | Logs same as previous, plus the most detailed information intended for development and debugging purposes only                    |
+| ERROR     | Logs run time errors or unexpected conditions that the program can gracefully recover from.                                        |
+| WARNING   | Logs same as previous, plus unexpected or undesirable run time conditions that are not necessarily affecting the program.          |
+| INFO      | Logs same as previous, plus important or interesting run time events that help understand what the program is doing at the moment. |
+| DEBUG     | Logs same as previous, plus detailed information according to the logical work flow of the system.                                 |
+| TRACE     | Logs same as previous, plus the most detailed information intended for development and debugging purposes only.                    |
 
 ## Clear Kaa logs
 
-1. Connect to your Kaa Sandbox via ssh:
+1. Connect to your Kaa Sandbox via ssh.
 
-```
-    $ ssh kaa@<YOUR-SANDBOX-IP>
-    password: kaa
-```
+   ```bash
+   $ ssh kaa@<YOUR-SANDBOX-IP>
+   password: kaa
+   ```
 
-2. Stop the Kaa service:
+2. Stop the Kaa service.
 
-```
-    $ sudo service kaa-node stop
-```
+   ```bash
+   $ sudo service kaa-node stop
+   ```
 
-3. Clear the Kaa logs:
+3. Clear the Kaa logs.
 
-```
-    $ sudo rm -rf /var/log/kaa/*
-```
+   ```bash
+   $ sudo rm -rf /var/log/kaa/*
+   ```
 
-4. Start the Kaa service:
+4. Start the Kaa service.
 
-```
-    $ sudo service kaa-node start
-```
+   ```bash
+   $ sudo service kaa-node start
+   ```
 
 ## Download Kaa logs from Sandbox
 
@@ -115,97 +115,97 @@ Use the following log levels according to the log purpose.
   <li><a data-toggle="tab" href="#Console2">Console</a></li>
 </ul>
 
-<div class="tab-content">
+<div class="tab-content"><div id="Sandbox-web-ui2" class="tab-pane fade in active" markdown="1">
 
-<div id="Sandbox-web-ui2" class="tab-pane fade in active" markdown="1">
-
-Go to Kaa Sandbox web UI and in a upper right corner select "Management" menu item. Click the "Download logs" button in the "Kaa server logs" section.
+Go to Kaa Sandbox web UI and in a upper right corner select **Management** menu item.
+Click the **Download logs** button in the **Kaa server logs** section.
 
 <img src="attach/managment_tab.png" width="800" height="500">
 
-How to restart Kaa service
+To restart Kaa service:
 
-1. Connect to your Kaa Sandbox via ssh:
+1. Connect to your Kaa Sandbox via ssh.
 
-```
-$ ssh kaa@<YOUR-SANDBOX-IP>
-password: kaa
-```
+   ```bash
+   $ ssh kaa@<YOUR-SANDBOX-IP>
+   password: kaa
+   ```
 
-2. Restart Kaa service:
+2. Restart Kaa service.
 
-```
-$ sudo service kaa-node restart
-```
+   ```bash
+   $ sudo service kaa-node restart
+   ```
 
 </div><div id="Console2" class="tab-pane fade" markdown="1">
 
-The Kaa service logs can be found under `/var/log/kaa`:
-
-- `kaa-node.*` files contain log information from the Kaa service component.
+The Kaa service logs can be found in the `/var/log/kaa` directory where `kaa-node.*` files contain log information from the Kaa service component.
 
 You can download logs from the Sandbox guest machine to the host machine as follows:
 
+<ul>
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Linux">Linux</a></li>
   <li><a data-toggle="tab" href="#Windows">Windows</a></li>
 </ul>
 
-<div class="tab-content">
+<div class="tab-content"><div id="Linux" class="tab-pane fade in active" markdown="1">
 
-<div id="Linux" class="tab-pane fade in active" markdown="1">
+If the host OS is Linux, run the following command.
 
-If the host OS is Linux, run the following in the terminal:
-
-```
-  $ scp kaa@<YOUR-SANDBOX-IP>:/var/log/kaa/* /home/<YOUR-HOST-USERNAME>/
+```bash
+$ scp kaa@<YOUR-SANDBOX-IP>:/var/log/kaa/* /home/<YOUR-HOST-USERNAME>/
 ```
 
-How to restart Kaa service
+To restart Kaa service:
 
-1. Connect to your Kaa Sandbox via ssh:
+1. Connect to your Kaa Sandbox via ssh.
 
-```
-    $ ssh kaa@<YOUR-SANDBOX-IP>
-      password: kaa
-```
+   ```bash
+   $ ssh kaa@<YOUR-SANDBOX-IP>
+   password: kaa
+   ```
 
-2. Restart Kaa service:
+2. Restart Kaa service.
 
-```
-    $ sudo service kaa-node restart
-```
+   ```bash
+   $ sudo service kaa-node restart
+   ```
 
 </div><div id="Windows" class="tab-pane fade" markdown="1">
 
 If the host OS is Windows, do the following:
 
 1. Install WinSCP.
-2. Connect to <YOUR-SANDBOX-IP> via WinSCP. User: kaa. Password: kaa.
-3. Copy logs from /var/log/kaa/ to your PC.
 
-How to restart Kaa service
+2. Connect to *YOUR-SANDBOX-IP* via WinSCP.
+User: **kaa**.
+Password: **kaa**.
 
-1. Connect to your Kaa Sandbox via ssh:
+3. Copy logs from `/var/log/kaa/` to your PC.
 
-```
-    $ ssh kaa@<YOUR-SANDBOX-IP>
-    password: kaa
-```
+To restart Kaa service:
 
-2. Restart Kaa service:
+1. Connect to your Kaa Sandbox via ssh.
 
-```
-    $ sudo service kaa-node restart
-```
+   ```bash
+   $ ssh kaa@<YOUR-SANDBOX-IP>
+   password: kaa
+   ```
+
+2. Restart Kaa service.
+
+   ```bash
+   $ sudo service kaa-node restart
+   ```
 
 </div></div>
-
+</ul>
 </div></div>
 
 ## Errors
 
-### ERROR when assembling binary for a Kaa application demo from Sandbox
+### Error when assembling binary files for Kaa application demo from Sandbox
 
 | Error description                                                                                     | Possible cause                                                                   | Solution                                                                                                                           | Related documentation    |
 |-------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|--------------------------|

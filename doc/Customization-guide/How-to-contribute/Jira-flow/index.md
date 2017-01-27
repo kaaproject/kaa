@@ -66,13 +66,13 @@ A Bug may be filed under an Epic if the affected functionality was related to th
 You may want to send some Kaa error logs to help resolve an issue.
 To do this:
 
-1. [Change the log level for the Kaa service to “TRACE”]({{root_url}}Administration-guide/Troubleshooting/#how-to-change-the-service-logging-level).
+1. [Change the log level for the Kaa service to “TRACE”]({{root_url}}Administration-guide/Troubleshooting/#supported-log-levels).
 
-2. [Clear the Kaa logs]({{root_url}}Administration-guide/Troubleshooting/#how-to-clear-the-kaa-logs).
+2. [Clear the Kaa logs]({{root_url}}Administration-guide/Troubleshooting/#clear-kaa-logs).
 
 3. Reproduce your issue.
 
-4. [Download the Kaa logs from the Sandbox]({{root_url}}Administration-guide/Troubleshooting/#how-to-download-the-kaa-logs-from-the-sandbox).
+4. [Download the Kaa logs from the Sandbox]({{root_url}}Administration-guide/Troubleshooting/#download-kaa-logs-from-sandbox).
 
 5. Create an archive file with your logs and attach it to your Jira issue.
 
