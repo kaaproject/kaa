@@ -107,7 +107,7 @@ Avro depends on some Boost components, therefore it is critical that you install
    sudo make install
    ```
 
-    Patch and and install Avro for target machine.
+    Patch and install Avro for target machine.
 
    ```bash
    cd $RPI_ROOT
