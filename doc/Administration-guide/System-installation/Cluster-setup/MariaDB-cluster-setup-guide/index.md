@@ -120,7 +120,6 @@ To do this, set the `wsrep` configurations on each node under the `[mysqld]`, us
    wsrep_cluster_name="MariaDB_Cluster"
    wsrep_node_address="ubuntu-node1"
    wsrep_node_name="ubuntu-node1"
-   wsrep_sst_auth="root:'your password'"
    wsrep_node_incoming_address=172.1.1.1
    wsrep_sst_receive_address=172.1.1.1
    wsrep_slave_threads=16
@@ -136,7 +135,6 @@ To do this, set the `wsrep` configurations on each node under the `[mysqld]`, us
    wsrep_cluster_name="MariaDB_Cluster"
    wsrep_node_address="ubuntu-node2"
    wsrep_node_name="ubuntu-node2"
-   wsrep_sst_auth="root:'your password'"
    wsrep_node_incoming_address=172.2.2.2
    wsrep_sst_receive_address=172.2.2.2
    wsrep_slave_threads=16
@@ -152,7 +150,6 @@ To do this, set the `wsrep` configurations on each node under the `[mysqld]`, us
    wsrep_cluster_name="MariaDB_Cluster"
    wsrep_node_address="ubuntu-node3"
    wsrep_node_name="ubuntu-node3"
-   wsrep_sst_auth="root:'your password'"
    wsrep_node_incoming_address=172.3.3.3
    wsrep_sst_receive_address=172.3.3.3
    wsrep_slave_threads=16
