@@ -121,7 +121,7 @@ ECF versions are used for grouping ECs that belong to a certain ECF.
 This means that an ECF contains the list of ECF versions, and each ECF version contains a list of ECs.
 While ECFs and ECF versions are lists, the actual CT schemas are contained in the ECs.
 
-To change the list of ECs for an ECF, you need to create a new version of that ECF.
+To change the list of ECs for an ECF, you need to create a new version of that ECF (see [Managing event class families](#managing-event-class-families)).
 
 An ECF is uniquely identified by its name and/or class name, and tenant.
 There cannot be two ECFs with the same name or same class name within a single tenant.
