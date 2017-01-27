@@ -30,8 +30,6 @@ tar xf gcc-linaro-5.3-2016.02-x86_64_arm-linux-gnueabihf.tar.xz
 export TOOLCHAIN_PATH=$(pwd)/gcc-linaro-5.3-2016.02-x86_64_arm-linux-gnueabihf/bin
 ```
 
-## Create application
-
 After you installed the required dependencies and built the C SDK, you can build and run your [Kaa application]({{root_url}}Glossary/#kaa-application).
 
 Since BeagleBone (BeagleBone Black) runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#build-c-sdk) to build and run your application.
