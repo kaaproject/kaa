@@ -1,6 +1,6 @@
 ---
 layout: page
-title: MariaDB cluster setup guide
+title: MariaDB cluster setup
 permalink: /:path/
 sort_idx: 30
 ---
