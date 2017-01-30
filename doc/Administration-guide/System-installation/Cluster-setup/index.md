@@ -1,6 +1,6 @@
----
+﻿---
 layout: page
-title: Cluster setup guide
+title: Cluster setup
 permalink: /:path/
 sort_idx: 30
 ---
