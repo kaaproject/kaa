@@ -196,9 +196,9 @@ See [Generate SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#gen
 
 After you installed the required dependencies and built the C++ SDK, you can build and run your [Kaa application]({{root_url}}Glossary/#kaa-application).
 
-Since Edison runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#build-c-sdk) to build and run your application.
+Since Edison runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#build-kaa-application) to build and run your application.
 
->**NOTE:** Make sure to specify correct compiler name when compiling your Kaa application for Edison
+>**NOTE:** Make sure to specify correct compiler name when compiling your Kaa application for Edison.
 {:.note}
 
 For more information on how to build, upload and run your application on Edison board, see [official user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
