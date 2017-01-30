@@ -12,7 +12,7 @@ If you decided to go with a full-scale Kaa and not Kaa Sandbox, make sure you ha
 
 | Feature | Description |
 |-------|----------------|
-| **Active load balancing** | Kaa implements a number of load balancing strategies and automatically uses them at run time to achieve more or less equal load for each node in the Kaa cluster. Also, this feature ensures that endpoints get instantly redirected to other nodes in case their current node goes down.
+| **[Active load balancing]({{root_url}}Architecture-overview/#active-load-balancing)** | Kaa implements a number of load balancing strategies and automatically uses them at run time to achieve more or less equal load for each node in the Kaa cluster. Also, this feature ensures that endpoints get instantly redirected to other nodes in case their current node goes down.
 | **[Common type library]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/)** | A repository of data type schemas used for all Kaa modules. As more schema types and versions are created, they are recorded in the CTL for future use.
 | **[Configuration management]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/)** | Allows you to create and distribute configuration data to endpoints.
 | **[Data collection]({{root_url}}Programming-guide/Key-platform-features/Data-collection/)** | Allows you to collect data records (logs) from endpoints, store them in specific data processing systems, or submit to immediate stream analysis. 
