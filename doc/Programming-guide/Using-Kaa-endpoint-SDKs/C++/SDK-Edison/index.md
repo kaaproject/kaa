@@ -23,7 +23,7 @@ If this is the first time you use Intel Edison technology, see official instruct
 ## Prerequisites
 
 To install all required third-party components, perform the instructions below directly on the Edison board.
-Some steps requre root permissions.
+Some steps require root permissions.
 
 1. Connect to the board either though serial terminal or ssh client.
 See [official Edison getting started guide](https://software.intel.com/en-us/iot/library/edison-getting-started).
@@ -180,7 +180,7 @@ Avro depends on some Boost components, therefore it is critical that you install
     Copy Botan object files `${SDKTARGETSYSROOT}/usr/lib/libbotan*` to `/usr/lib` directory of Edison board.
 
 8. Download Kaa C++ SDK from your [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment) and compile it.
-See [Generate SDK](Programming-guide/Your-first-Kaa-application/#generate-sdk).
+See [Generate SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk).
 
    ```bash
    mkdir kaa-cpp
