@@ -89,7 +89,7 @@ Perform the following instructions on the host machine:
    ./bjam install toolset=gcc-arm --prefix=${INSTALLDIR}
    ```
 
-5. Install [Apache Avro](https://avro.apache.org/) for the host and target machnies.
+5. Install [Apache Avro](https://avro.apache.org/) for the host and target machines.
 Avro depends on some Boost components, therefore it is critical that you install them as described in the previous step.
 
     Install Avro for host machine.
@@ -137,7 +137,7 @@ Avro depends on some Boost components, therefore it is critical that you install
    ```
 
 7. Download Kaa C++ SDK from your [Kaa instance]({{root_url}}Glossary/#kaa-instance-kaa-deployment) and compile it.
-See [Generate SDK](Programming-guide/Your-first-Kaa-application/#generate-sdk).
+See [Generate SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk).
 
    ```bash
    mkdir kaa-cpp
