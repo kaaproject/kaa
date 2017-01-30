@@ -76,7 +76,7 @@ Perform the following instructions on the host machine:
    ./b2 install --prefix="${SYSROOT}"
    ```
 
-6. Install [Apache Avro](https://avro.apache.org/) for the host and target machnies.
+6. Install [Apache Avro](https://avro.apache.org/) for the host and target machines.
 Avro depends on some Boost components, therefore it is critical that you install them as described in the previous step.
 
     Install Avro for host machine.
@@ -95,7 +95,7 @@ Avro depends on some Boost components, therefore it is critical that you install
    sudo make install
    ```
    
-    Patch and and install Avro for target machine.
+    Patch and install Avro for target machine.
 
    ```bash
    cd "${BB_ROOT}"
@@ -125,7 +125,7 @@ Avro depends on some Boost components, therefore it is critical that you install
 
 After you installed the required dependencies and built the C++ SDK, you can build and run your [Kaa application]({{root_url}}Glossary/#kaa-application).
 
-Since BeagleBone (BeagleBone Black) runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#build-c-sdk) to build and run your application.
+Since BeagleBone (BeagleBone Black) runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#build-kaa-application) to build and run your application.
 
 >**NOTE**: The [CMAKE_CXX_COMPILER](https://cmake.org/cmake/help/v3.0/variable/CMAKE_LANG_COMPILER.html) specifies C++ compiler to use and [CMAKE_FIND_ROOT_PATH](https://cmake.org/cmake/help/v3.0/variable/CMAKE_FIND_ROOT_PATH.html) tells CMake where to look for required libraries installed in the previous step.
 >
