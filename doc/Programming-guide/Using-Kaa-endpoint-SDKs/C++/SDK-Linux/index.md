@@ -187,7 +187,7 @@ src/
 kaa/
 ```
 
-* `CMakeLists.txt` -- file describing your application for the CMake [build system](#build-system-overview).
+* `CMakeLists.txt` -- file describing your application for the CMake [build system](#build-system).
 * `src/KaaDemo.cpp` -- file containing the application source code.
 * `kaa/` -- directory where you unpack the Kaa SDK archive.
 
@@ -230,7 +230,7 @@ As a result, the SDK will be built before building the application.
 
 Below is a simple and straightforward example of the application code.
 
-The application will just initializes and starts Kaa client, which involves connecting to [Kaa server]({{root_url}}Glossary/#kaa-server).
+The application will initialize and start Kaa client, which involves connecting to [Kaa server]({{root_url}}Glossary/#kaa-server).
 After the `kaaClient->start();` line, Kaa client is up and running in a dedicated thread.
 Finally, the endpoint access token is printed to `stdout` and stop running.
 
