@@ -10,8 +10,8 @@ sort_idx: 60
 * TOC
 {:toc}
 
-This guide explains how to cross-compile [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Raspberry Pi](https://www.raspberrypi.org/).
-Alternatively, you can build the Kaa C SDK directly on the Raspberry Pi board.
+This guide explains how to cross-compile [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Intel Edison](https://software.intel.com/en-us/iot/hardware/edison).
+Alternatively, you can build the Kaa C SDK directly on the Intel Edison board.
 For more information, see [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for Kaa C SDK.
 
 >**NOTE:** This guide is verified against:
@@ -38,7 +38,7 @@ Unpack the downloaded archive. <!--(don't forget to change the file name to prop
    ./install_script.sh
    ```
    
-    While running the installation script, you may get an error message: `find: invalid mode '+111'`
+    While running the installation script, you may get an error message: `find: invalid mode '+111'`.
     Fix it by running the command below.
 
    ```bash
@@ -70,4 +70,3 @@ Since Edison runs on Linux, you can use the [Linux guide]({{root_url}}Programmin
 {:.note}
 
 For more information on how to build, upload and run your application on Edison board, see [official user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
-
