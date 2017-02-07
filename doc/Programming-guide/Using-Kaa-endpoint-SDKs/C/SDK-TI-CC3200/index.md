@@ -10,144 +10,182 @@ sort_idx: 30
 * TOC
 {:toc}
 
-This guide explains how to build applications for Texas Instruments CC3200 LaunchPad (further, CC3200) based on the Kaa C SDK.
+This guide explains how to build a [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Texas Instruments CC3200 LaunchPad](http://www.ti.com/tool/cc3200-Launchxl) (hereinafter, CC3200) and install [Kaa applications]({{root_url}}Glossary/#kaa-application) on it.
 
-## Installing necessary components for Linux (Ubuntu)
+## Prerequisites
 
-**All steps described in this guide were tested on:**
+Prior to building Kaa C SDK for the CC3200 platform, install the prerequisites for your operating system.
 
- - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit.
- - **Device:** [TI CC3200 LaunchPad](http://www.ti.com/tool/cc3200-launchxl)
- - **SDK version:** [CC3200 SDK v1.2.0 release](http://www.ti.com/tool/cc3200sdk)
+<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#linux1">Linux</a></li>
+<li><a data-toggle="tab" href="#windows1">Windows</a></li>
+</ul>
 
-Before building the C SDK for the CC3200 platform on Linux, you need to perform the next installation steps.
+<div class="tab-content"><div id="linux1" class="tab-pane fade in active" markdown="1" >
 
-1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded)
+>**NOTE:** This guide is verified against:
+>
+> * **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
+> * **Device:** TI CC3200 LaunchPad
+> * **SDK version:** [CC3200 SDK v1.2.0 release](http://www.ti.com/tool/cc3200sdk)
+{:.note}
 
-        wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q2-update/+download/gcc-arm-none-eabi-4_9-2015q2-20150609-linux.tar.bz2
-        tar -xjf gcc-arm-none-eabi-4_9-2015q2-20150609-linux.tar.bz2
-        sudo mkdir /opt/kaa
-        sudo chown <username>:<usergroup> /opt/kaa
-        mv gcc-arm-none-eabi-4_9-2015q2 /opt/kaa/gcc-arm-none-eabi
-1. Install and configure OpenOCD, which is needed for running and debugging applications.
+1. Install the GNU ARM toolchain [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded).
 
-   Install OpenOCD.
+   ```bash
+   wget https://launchpad.net/gcc-arm-embedded/4.9/4.9-2015-q2-update/+download/gcc-arm-none-eabi-4_9-2015q2-20150609-linux.tar.bz2
+   tar -xjf gcc-arm-none-eabi-4_9-2015q2-20150609-linux.tar.bz2
+   sudo mkdir /opt/kaa
+   sudo chown <username>:<usergroup> /opt/kaa
+   mv gcc-arm-none-eabi-4_9-2015q2 /opt/kaa/gcc-arm-none-eabi
+   ```
+   
+2. Install and configure [OpenOCD](http://www.openocd.net/) required for running and debugging applications.
 
-        sudo apt-get install openocd
+   ```bash
+   sudo apt-get install openocd
+```
 
-   Add a rule file.
+3. Add a rule file.
 
-        cd /etc/udev/rules.d/
-        sudo nano 98-usbftdi.rules
+   ```bash
+   cd /etc/udev/rules.d/
+   sudo nano 98-usbftdi.rules
+   ```
+   
+    Write the following code into the added rule file and then save the file.
 
-   Write the following code into the added rule file and then save the file.
+   ```bash
+   SUBSYSTEM=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="c32a", MODE="0660", GROUP="dialout",
+   RUN+="/sbin/modprobe ftdi-sio" RUN+="/bin/sh -c '/bin/echo 0451 c32a > /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"
+   ```
 
-        SUBSYSTEM=="usb", ATTRS{idVendor}=="0451", ATTRS{idProduct}=="c32a", MODE="0660", GROUP="dialout",
-        RUN+="/sbin/modprobe ftdi-sio" RUN+="/bin/sh -c '/bin/echo 0451 c32a > /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"
+4. Reload the rules.
 
-   Reload the rules.
+   ```bash
+   sudo udevadm control --reload-rules
+   ```
 
-        sudo udevadm control --reload-rules
+5. To use OpenOCD as a regular user, add yourself to the dialout group.
 
-   To use OpenOCD as a regular user, add yourself to the dialout group.
-
-        sudo usermod -a -G dialout <username>
-
+   ```bash
+   sudo usermod -a -G dialout <username>
+   ```
+   
    Log out and log in to finish the process.
 
-   >**NOTE:** The board should be enumerated as `/dev/ttyUSB{0,1}`. Use ttyUSB1 for UART.
+   >**NOTE:** The board must be enumerated as `/dev/ttyUSB{0,1}`.
+   >Use ttyUSB1 for UART.
+   {:.note}
 
-1. Install CC3200 SDK.
+6. Install [Wine](https://www.winehq.org/).
 
-   Install [Wine](https://www.winehq.org/).
+   ```bash
+   sudo apt-get install wine
+   ```
 
-        sudo apt-get install wine
+7. [Download](http://www.ti.com/tool/cc3200sdk) and unpack CC3200 SDK.
+Change the configuration file for debug interface.
 
-   [Download](http://www.ti.com/tool/cc3200sdk) and unpack CC3200 SDK. Change the configuration file for the debug interface. In `/opt/kaa/cc3200-sdk/tools/gcc_scripts/cc3200.cfg` replace the following few lines:
+    In the `/opt/kaa/cc3200-sdk/tools/gcc_scripts/cc3200.cfg` file, replace the following lines:
 
-            interface ft2232
-            ft2232_layout luminary_icdi
-            ft2232_device_desc "USB <-> JTAG/SWD"
-            ft2232_vid_pid 0x0451 0xc32a
+   ```bash
+   interface ft2232
+   ft2232_layout luminary_icdi
+   ft2232_device_desc "USB <-> JTAG/SWD"
+   ft2232_vid_pid 0x0451 0xc32a
+   ```
 
-   with
+    with the ones below:
 
-            interface ftdi
-            ftdi_device_desc "USB <-> JTAG/SWD"
-            ftdi_vid_pid 0x0451 0xc32a
-            ftdi_layout_init 0x00a8 0x00eb
-            ftdi_layout_signal nSRST -noe 0x0020
-   Edit GDB configuration.
+   ```bash
+   interface ftdi
+   ftdi_device_desc "USB <-> JTAG/SWD"
+   ftdi_vid_pid 0x0451 0xc32a
+   ftdi_layout_init 0x00a8 0x00eb
+   ftdi_layout_signal nSRST -noe 0x0020
+   ```
 
-            sed -i 's#-f cc3200.cfg#-f /opt/kaa/cc3200-sdk/tools/gcc_scripts/cc3200.cfg#g' /opt/kaa/cc3200-sdk/tools/gcc_scripts/gdbinit
+8. Edit GDB configuration.
 
+   ```bash
+   sed -i 's#-f cc3200.cfg#-f /opt/kaa/cc3200-sdk/tools/gcc_scripts/cc3200.cfg#g' /opt/kaa/cc3200-sdk/tools/gcc_scripts/gdbinit
+   ```
 
-## Installing necessary components for Windows
+</div><div id="windows1" class="tab-pane fade" markdown="1" >
 
-Before building the C SDK for the CC3200 platform on Windows, you need to perform the following installation.
-
-1. Install [Cygwin](https://www.cygwin.com/) with the additional following packages:
-    * `Archive/unzip`
-    * `Archive/zip`
-    * `Devel/autoconf`
-    * `Devel/automake`
-    * `Devel/libtool`
-    * `Devel/subversion` (Note: if using TortoiseSVN/Windows7, skip this file)
-    * `Devel/make`
-    * `Devel/gcc-core`
-    * `Devel/gcc-g++`
-    * `Devel/mingw-gcc-core`
-    * `Devel/mingw-gcc-g++`
-    * `Devel/mingw-runtime`
+1. Install [Cygwin](https://www.cygwin.com/) with the following additional packages:
+  * `Archive/unzip`
+  * `Archive/zip`
+  * `Devel/autoconf`
+  * `Devel/automake`
+  * `Devel/libtool`
+  * `Devel/subversion` (Note: if using TortoiseSVN/Windows7, skip this file)
+  * `Devel/make`
+  * `Devel/gcc-core`
+  * `Devel/gcc-g++`
+  * `Devel/mingw-gcc-core`
+  * `Devel/mingw-gcc-g++`
+  * `Devel/mingw-runtime`
 
 
     Refer to [SO question page](http://superuser.com/questions/304541/how-to-install-new-packages-on-cygwin) for details how to install packages on Cygwin.
-1. Install the GNU ARM toolchain: [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded) to the `opt\kaa` directory under the Cygwin root folder (default is `C:\cygwin`).
-1. Install [CC3200 SDK](http://www.ti.com/tool/cc3200sdk) to the `opt\kaa` (if the directory doesn't exist, create it) directory under the Cygwin root folder.
-1. Install [cmake](http://www.cmake.org/) and add it bin directory to the system environment.
 
-To enable debugging for your CC3200 applications, you will also need to build OpenOCD as described in [the official CC3200-Getting_Started_Guide][cc3200-getting-started-guide] (item 3.3.3).
+2. Install the GNU ARM toolchain [gcc-arm-none-eabi](https://launchpad.net/gcc-arm-embedded) to the `opt\kaa` directory under the Cygwin root folder (default is `C:\cygwin`).
 
-For more information, please refer to [the official CC3200 Getting Started Guide][cc3200-getting-started-guide].
+3. Install [CC3200 SDK](http://www.ti.com/tool/cc3200sdk) to the `opt\kaa` directory (if it doesn't exist, create it) under the Cygwin root folder.
 
-[cc3200-getting-started-guide]: http://www.ti.com/lit/ug/swru376d/swru376d.pdf
+4. Install [CMake](http://www.cmake.org/) and add its bin directory to the system environment.
 
-## Creating applications based on C SDK
+To enable debugging for your CC3200 applications, you will also need to build OpenOCD as described in [the official CC3200-Getting_Started_Guide](http://www.ti.com/lit/ug/swru376d/swru376d.pdf) (item 3.3.3).
 
-Before creating applications based on the C SDK, you should obtain the C SDK and build a static library from it.
-To do so, generate the C SDK in [Administration UI]({{root_url}}Glossary/#administration-ui), then extract the archive.
+</div>
+</div>
 
-### Building C SDK on Linux
+## Build C SDK
 
-Change directory to where SDK was unpacked and execute the following:
+Before creating applications based on Kaa C SDK, download the C SDK from the [Administration UI]({{root_url}}Glossary/#administration-ui) and extract the archive.
 
-```
+<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#linux2">Linux</a></li>
+<li><a data-toggle="tab" href="#windows2">Windows</a></li>
+</ul>
+
+<div class="tab-content"><div id="linux2" class="tab-pane fade in active" markdown="1" >
+
+Change directory to where SDK was unpacked and run:
+
+```bash
 mkdir -p build
 cd build
-cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake ..
+cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake -DBUILD_TESTING=OFF ..
 make
 ```
 
 Refer to [C SDK Linux page]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for more details.
 
-### Building C SDK on Windows
+</div><div id="windows2" class="tab-pane fade" markdown="1" >
 
-Open the Cygwin terminal and execute the following:
+Open the Cygwin terminal and run:
 
-```
+```bash
 mkdir -p build
 cd build
-cmake.exe -G "Unix Makefiles" -DKAA_PLATFORM=cc32xx -DCC32XX_TOOLCHAIN_PATH=c:/cygwin/opt/kaa -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake ..
+cmake.exe -G "Unix Makefiles" -DKAA_PLATFORM=cc32xx -DCC32XX_TOOLCHAIN_PATH=c:/cygwin/opt/kaa -DCMAKE_TOOLCHAIN_FILE=../toolchains/cc32xx.cmake -DBUILD_TESTING=OFF ..
 make
 ```
 
-## Example
+</div>
+</div>
 
-To quickly start with the Kaa IoT platform, you can download one of the Kaa demo applications from the [Kaa Sandbox]({{root_url}}Getting-started/) and run it on the CC3200 board. We recommend you to start with the ConfigurationDemo.
+## Build Kaa application
 
-Connect CC3200 LaunchPad to your PC through a micro-USB connector and execute the following in your terminal:
+To build and run your Kaa application on the CC3200 board, you can download one of the Kaa demo applications from [Kaa Sandbox]({{root_url}}Glossary/#kaa-sandbox).
+It is recommended that you start with the Configuration Demo application.
 
-```
+Connect CC3200 LaunchPad to your PC using a micro-USB connector and run the following commands:
+
+```bash
 tar -xzf configuration_demo.tar.gz
 cd CConfigurationDemo
 tar -zxf libs/kaa/kaa-* -C libs/kaa
@@ -156,31 +194,37 @@ cd build
 cmake -DKAA_PLATFORM=cc32xx -DCMAKE_TOOLCHAIN_FILE=../libs/kaa/toolchains/cc32xx.cmake ..
 ```
 
-To launch the application, execute the following:
+To launch the application, run:
 
-```
+```bash
 /opt/kaa/gcc-arm-none-eabi/bin/arm-none-eabi-gdb -x /opt/kaa/cc3200-sdk/tools/gcc_scripts/gdbinit build/demo_client.afx
 ```
 
-NOTE: If you want to see the debug output in the terminal, make sure to get connected to `/dev/ttyUSB{0,1}.`
+>**NOTE:** If you want to see the debug output in the terminal, make sure to connect to `/dev/ttyUSB{0,1}.`
+{:.note}
 
 ## Flashing
 
-Jumpers on the CC3200 board should be connected as shown below.
+To flash the application to CC3200:
 
-![Jumpers](attach/jumpers_debug_mode_400.png)
+1. Connect the jumpers on your CC3200 board as follows.
 
-Install UniFlash for [Linux](http://software-dl.ti.com/dsps/forms/self_cert_export.html?prod_no=uniflash_3.4.1.00012_linux.tar.gz&ref_url=http://software-dl.ti.com/ccs/esd/uniflash/) or [Windows](http://software-dl.ti.com/dsps/forms/self_cert_export.html?prod_no=uniflash_3.4.1.00012_win32.zip&ref_url=http://software-dl.ti.com/ccs/esd/uniflash/).
+    ![Jumpers](attach/jumpers_debug_mode_400.png)
+
+2. Install UniFlash for [Linux](http://software-dl.ti.com/dsps/forms/self_cert_export.html?prod_no=uniflash_3.4.1.00012_linux.tar.gz&ref_url=http://software-dl.ti.com/ccs/esd/uniflash/) or [Windows](http://software-dl.ti.com/dsps/forms/self_cert_export.html?prod_no=uniflash_3.4.1.00012_win32.zip&ref_url=http://software-dl.ti.com/ccs/esd/uniflash/).
 
    >**NOTE:** UniFlash v3.4.1 or later is needed. Starting from v4.0.0 UniFlash doesn't support CC32XX/CC31XX.
+   {:.note}
 
-If you are using Linux you need to permit execution of the installation file:
+3. If you are using Linux, allow execution of the installation file.
 
-```sh
-chmod +x uniflash_setup_3.4.1.*.bin
-./uniflash_setup_3.4.1.*.bin
-```
+   ```sh
+   chmod +x uniflash_setup_3.4.1.*.bin
+   ./uniflash_setup_3.4.1.*.bin
+   ```
 
-For more information, see the official [UniFlash Quick Start Guide](http://processors.wiki.ti.com/index.php/CC31xx_%26_CC32xx_UniFlash_Quick_Start_Guide).
+4. To run the application, remove SOP2 and J8 jumpers, then connect J2 and J3 jumpers.
 
-To run an application, remove SOP2 and J8 jumpers, and then connect J2 and J3 jumpers.
+For more information, see [UniFlash Quick Start Guide](http://processors.wiki.ti.com/index.php/CC31xx_%26_CC32xx_UniFlash_Quick_Start_Guide).
+
+
