@@ -24,7 +24,7 @@ To build Kaa C++ SDK, make sure to install the following components:
 
 1. Install g++, [CMake](https://cmake.org/download/), and [SQLite3](https://sqlite.org/download.html).
 
-   ```
+   ```bash
    sudo apt-get install g++ cmake python libsqlite3-0 libsqlite3-dev
    ```
 
@@ -61,7 +61,7 @@ sudo ./bjam cxxflags=-std=c++11 install
 {: start="3"}
 3. Install the [Avro C++](http://avro.apache.org/docs/1.7.5/api/cpp/html/index.html) library manually.
 
-   ```
+   ```bash
    wget http://archive.apache.org/dist/avro/avro-1.7.5/cpp/avro-cpp-1.7.5.tar.gz
    tar -zxf avro-cpp-1.7.5.tar.gz
    cd avro-cpp-1.7.5/
@@ -73,7 +73,7 @@ sudo ./bjam cxxflags=-std=c++11 install
 The stock 1.10 version is not recommended for C++11 projects,
 so the newer 1.11 version is used in Kaa C++ SDK.
 
-   ```
+   ```bash
    wget https://github.com/randombit/botan/archive/1.11.28.tar.gz
    tar -zxf 1.11.28.tar.gz
    cd botan-1.11.28/
@@ -85,7 +85,7 @@ so the newer 1.11 version is used in Kaa C++ SDK.
 This is required so that loader knows where the libraries are located.
 Run the command below to update the links.
 
-   ```
+   ```bash
    sudo ldconfig
    ```
 
@@ -97,23 +97,29 @@ To build the C++ endpoint SDK, do the following:
 
 2. Unpack the C++ SDK archive.
 
-   ```
+   ```bash
    tar xfv cpp-sdk-archive-name.tar.gz
    ```
 
 3. Create a directory where the SDK will be built.
 
-		mkdir build
-		cd build
+   ```bash
+   mkdir build
+   cd build
+   ```
 
 4. Configure the build via CMake.
 
-		cmake ..
+   ```bash
+   cmake ..
+   ```
 
 5. Perform build.
 
-		make
-
+   ```bash
+   make
+   ```
+   
 ## Other ways to build C++ SDK
 
 There are alternative ways to build Kaa C++ SDK, such as using [Docker](https://www.docker.com/) container and [Nix](http://nixos.org/nix/) shell.
@@ -131,13 +137,13 @@ To build Kaa C++ SDK using Docker:
 
 2. Download the Docker container.
 
-   ```
+   ```bash
    docker pull kaaproject/demo_c_cpp_environment
    ```
 
 3. Compile SDK, demo applications, etc. for your container.
 
-   ```
+   ```bash
    docker run -it kaaproject/demo_c_cpp_environment bash
    ```
 
@@ -145,7 +151,7 @@ To build Kaa C++ SDK using Docker:
     
     For example, the following command will build a demo project and direct you to the container shell where you can run tests immediately.
 
-   ```
+   ```bash
    docker run -v FOLDER_WITH_DEMO:/opt/demo
      -it kaaproject/demo_c_cpp_environment bash -c 'cd /opt/demo/ &&
      chmod +x build.sh && ./build.sh clean build && bash'
@@ -166,13 +172,13 @@ To build Kaa C++ SDK, install Nix as described in the [Nix guide]({{root_url}}Cu
 
 After you installed Nix on your system, run the following command from the [root directory]({{github_url}}client/client-multi/client-cpp) of Kaa C++ SDK.
 
-```
+```bash
 nix-shell
 ```
 
 Nix will download and compile all SDK dependencies and prepare your environment for development.
 
-## Build Kaa application
+## Creating Kaa applications
 
 After you installed the required dependencies and built the C++ SDK, you can build and run your Kaa application.
 
@@ -230,7 +236,7 @@ As a result, the SDK will be built before building the application.
 
 Below is a simple and straightforward example of the application code.
 
-The application will initialize and start Kaa client, which involves connecting to [Kaa server]({{root_url}}Glossary/#kaa-server).
+The application will initialize and start [Kaa client]({{root_url}}Glossary/#kaa-client), which involves connecting to [Kaa server]({{root_url}}Glossary/#kaa-server).
 After the `kaaClient->start();` line, Kaa client is up and running in a dedicated thread.
 Finally, the endpoint access token is printed to `stdout` and stop running.
 
@@ -253,7 +259,7 @@ int main()
 }
 ```
 
-### Build
+### Build application
 
 To build the example application above, run these commands.
 
