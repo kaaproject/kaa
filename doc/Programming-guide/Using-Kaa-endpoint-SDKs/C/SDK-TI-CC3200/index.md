@@ -10,7 +10,7 @@ sort_idx: 30
 * TOC
 {:toc}
 
-This guide explains how to build a [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Texas Instruments CC3200 LaunchPad](http://www.ti.com/tool/cc3200-Launchxl) (hereinafter, CC3200) and install [Kaa applications]({{root_url}}Glossary/#kaa) on it.
+This guide explains how to build a [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Texas Instruments CC3200 LaunchPad](http://www.ti.com/tool/cc3200-Launchxl) (hereinafter, CC3200) and install [Kaa applications]({{root_url}}Glossary/#kaa-application) on it.
 
 ## Prerequisites
 
@@ -137,7 +137,7 @@ Change the configuration file for debug interface.
 
 4. Install [CMake](http://www.cmake.org/) and add its bin directory to the system environment.
 
-To enable debugging for your CC3200 applications, you will also need to build OpenOCD as described in [the official CC3200-Getting_Started_Guide][http://www.ti.com/lit/ug/swru376d/swru376d.pdf] (item 3.3.3).
+To enable debugging for your CC3200 applications, you will also need to build OpenOCD as described in [the official CC3200-Getting_Started_Guide](http://www.ti.com/lit/ug/swru376d/swru376d.pdf) (item 3.3.3).
 
 </div>
 </div>
