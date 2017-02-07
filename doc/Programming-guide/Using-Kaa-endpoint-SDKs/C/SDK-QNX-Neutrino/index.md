@@ -10,46 +10,55 @@ sort_idx: 90
 
 {% include variables.md %}
 
-The guide explains how to cross-compile applications for [QNX Neutrino RTOS 6.6](http://www.qnx.com/products/neutrino-rtos/neutrino-rtos.html) based on the Kaa C endpoint SDK.
+The guide explains how to cross-compile [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [QNX Neutrino RTOS 6.6](http://www.qnx.com/products/neutrino-rtos/neutrino-rtos.html) and create [Kaa applications]({{root_url}}Glossary/#kaa-application).
 
-**NOTE:** The further instructions are expected to be executed on the host machine.
 
-All steps described here were tested on::
+>**NOTE:** This guide is verified against:
+>
+> * **Target OS:** QNX Neutrino RTOS 6.6.
+{:.note}
 
-<!--
-- **Host OS:** **TODO:** [KAA-1241](http://jira.kaaproject.org/browse/KAA-1241) retest this guide against Ubuntu 14.04 LTS 64-bit and Kaa C SDK v.0.10.0.
--->
-- **Target OS:** QNX Neutrino RTOS 6.6.
+## Prerequisites
 
-## Installing QNX Software Development Platform
-
-To install QNX *Software Development Platform (SDP)*, proceed as follows:
+Prior to building Kaa C SDK, install [QNX Software Development Platform (SDP)](http://www.qnx.com/download/group.html?programid=26071).
+To do this:
 
 1. [Register](https://www.qnx.com/account/login.html) as a developer and download the following components:
-    - [QNX Software Development Platform 6.6](http://www.qnx.com/download/feature.html?programid=26114)
-    - [QNX Software Development Platform 6.6 Applypatch Patch [Patch ID 4024]](http://www.qnx.com/download/feature.html?programid=26817)
-    - [QNX Software Development Platform 6.6 Header Files Patch [Patch ID 3851]](http://www.qnx.com/download/feature.html?programid=26447)
+  * [QNX Software Development Platform 6.6](http://www.qnx.com/download/feature.html?programid=26114)
+  * [QNX Software Development Platform 6.6 Applypatch Patch [Patch ID 4024]](http://www.qnx.com/download/feature.html?programid=26817)
+  * [QNX Software Development Platform 6.6 Header Files Patch [Patch ID 3851]](http://www.qnx.com/download/feature.html?programid=26447)
 
-1. Install [SDP](http://www.qnx.com/developers/articles/inst_5847_9.html). Note: It is recommended to install SDP in the default directory (for Linux platforms, it is `/opt/qnx660`).
-1. Install [Applypatch](http://www.qnx.com/developers/articles/inst_6085_3.html) and [Header Files Patch](http://www.qnx.com/developers/articles/inst_5946_5.html).
+2. Install [SDP](http://www.qnx.com/developers/articles/inst_5847_9.html).
 
-## Configuring the environment
+   >**NOTE:** It is recommended that you install SDP in the default directory (`/opt/qnx660` for Linux platforms).
+   {:.note}
+
+3. Install [Applypatch](http://www.qnx.com/developers/articles/inst_6085_3.html) and [Header Files Patch](http://www.qnx.com/developers/articles/inst_5946_5.html).
+
+## Configure build environment
+
+To configure your build environment:
 
 1. Install build dependencies.
 
-        sudo apt-get install cmake build-essential
+   ```bash
+   sudo apt-get install cmake build-essential
+   ```
 
-1. Set the path to the root directory of SDP.
+2. Set the path to the root directory of SDP.
 
-        export QNX_SDK_HOME="<path_to_qnx_sdk_home>"
+   ```bash
+   export QNX_SDK_HOME="<path_to_qnx_sdk_home>"
+   ```
+    Default value: `/opt/qnx660`
 
-    **Default:** `/opt/qnx660`
+3. Set the target architecture.
 
-1. Set the target architecture.
+   ```bash
+   export QNX_TARGET_ARCH=<architecture>
+   ```
 
-        export QNX_TARGET_ARCH=<architecture>
-
-    **Supported architectures:**
+    Supported architectures:
 
     - `gcc_ntoarmv7le_cpp-ne`
     - `gcc_ntox86_cpp-ne`
@@ -60,19 +69,24 @@ To install QNX *Software Development Platform (SDP)*, proceed as follows:
     - `gcc_ntoarmv7le_gpp`
     - `gcc_ntox86_cpp`
 
-    **Default:** `gcc_ntox86`
+    Default value: `gcc_ntox86`
 
-1. Set paths to host and target SDP files.
+4. Set paths to host and target SDP files.
 
-        export QNX_HOST="$QNX_SDK_HOME/host/linux/x86"
-        export QNX_TARGET="$QNX_SDK_HOME/target/qnx6"
-        export PATH="$QNX_HOST/usr/bin:$PATH"
+   ```bash
+   export QNX_HOST="$QNX_SDK_HOME/host/linux/x86"
+   export QNX_TARGET="$QNX_SDK_HOME/target/qnx6"
+   export PATH="$QNX_HOST/usr/bin:$PATH"
+   ```
 
-## Creating applications based on C SDK
+## Build Kaa application
 
-Since QNX is a POSIX-compliant system, [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) can be followed to create applications based on C SDK.
-During CMake configuration and building step, make sure [proper CMake toolchain is used](https://cmake.org/cmake/help/v3.0/manual/cmake-toolchains.7.html).
-Kaa C SDK already provides the toolchain file for QNX as shown below.
+Since QNX is a POSIX-compliant system, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#build-c-sdk) to build and run your application.
+
+>**NOTE:** During CMake configuration and building step, make sure to use [proper CMake toolchain](https://cmake.org/cmake/help/v3.0/manual/cmake-toolchains.7.html).
+{:.note}
+
+Kaa C SDK provides the toolchain file for QNX as shown below.
 
 ```bash
 mkdir -p build
@@ -81,9 +95,9 @@ cmake -DCMAKE_TOOLCHAIN_FILE=../toolchains/qnx.cmake -DBUILD_TESTING=OFF ..
 make
 ````
 
-## Exporting application (if SSH is enabled)
+### Exporting application
 
-If present, you can use SSH on a QNX-running device to transfer the application.
+If you have SSH enabled, you can use it on a QNX-running device to transfer your application.
 
 ```bash
 scp <app_name> <user>@<ip_of_target_machine>:<app_name>
