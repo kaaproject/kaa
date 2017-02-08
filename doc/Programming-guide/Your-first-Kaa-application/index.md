@@ -87,7 +87,7 @@ The `by_default` parameter defines the default sampling period value which is se
 		}
 		
 3. Use the **Upload from file** section to [create CT schemas]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the `data-schema.json` and `configuration-schema.json` files.
-		
+
 4. On the Sandbox main page, click **Administration UI** and log in as a [tenant developer]({{root_url}}Glossary/#tenant-developer) using default **devuser** username and **devuser123** password.
 
 5. Click the **Applications** arrow to unfold the list and click the arrow of the application you created in [Add application](#add-application), then click **Schemas** > **Log** and click the **Add schema** button.
@@ -188,35 +188,55 @@ To do this, run the following commands in the terminal.
 
 3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
-		cmake_minimum_required(VERSION 2.8.12)
-		project(kaa-application C)
-		
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
-		
-		add_subdirectory(kaa)
-		
-		add_executable(kaa-app main.c)
-		
-		target_link_libraries(kaa-app kaac)
-		
+   ```bash
+   cmake_minimum_required(VERSION 2.8.12)
+   project(kaa-application C)
+
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
+
+   add_subdirectory(kaa)
+
+   add_executable(kaa-app main.c)
+
+   target_link_libraries(kaa-app kaac)
+   ```
+
 4. Create a `main.c` source file containing empty main routine (for now).
 
-		int main(void)
-		{
-		
-		}
+   ```c
+   int main(void)
+   {
+
+   }
+   ```
 
 5. To validate your build, run the following commands.
 
-		mkdir build
-		cd build
-		cmake ..
-		make
+   ```bash
+   mkdir build
+   cd build
+   cmake -DBUILD_TESTING=OFF ..
+   make
+   ```
 
 6. Check that the demo application executable file is present in the build directory.
 
-		$ ls -l kaa-app
-		-rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```bash
+   $ ls -l kaa-app
+   -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```
+
+Your application directory structure should look like this:
+
+```
+./my-kaa-application/
+	CMakeLists.txt
+	kaa/
+		<unpacked SDK should be placed here>
+	src/
+		kaa-application.c
+	<other sources related to the Kaa application>
+```
 
 </div>
 
@@ -230,38 +250,58 @@ Before using the C++ application code, be sure to complete the following steps:
 
 3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
-        cmake_minimum_required(VERSION 2.8.12)
-        project(Cpp-SDK-your-first-Kaa-application CXX)
-        
-        add_subdirectory(kaa)
-        add_executable(kaa-app main.cpp)
-        target_link_libraries(kaa-app kaacpp)
+   ```bash
+   cmake_minimum_required(VERSION 2.8.12)
+   project(Cpp-SDK-your-first-Kaa-application CXX)
+   
+   add_subdirectory(kaa)
+   add_executable(kaa-app main.cpp)
+   target_link_libraries(kaa-app kaacpp)
+   ```
 
 4. Create a `main.cpp` source file with empty main routine (for now).
 
-        int main()
-        {
-            return 0;
-        }
+   ```cpp
+   int main()
+   {
+       return 0;
+   }
+   ```
 
 5. Validate that build system works as expected by triggering a build.
 
-        mkdir build
-        cd build
-        cmake ..
-        make
+   ```bash
+   mkdir build
+   cd build
+   cmake ..
+   make
+   ```
 
 6. Check that demo application executable is present in the build directory.
 
-        $ ls -l kaa-app
-        -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```bash
+   $ ls -l kaa-app
+   -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```
+
+Your application directory structure should look like this:
+
+```
+./my-kaa-application/
+	CMakeLists.txt
+	kaa/
+		<unpacked SDK should be placed here>
+	src/
+		kaa-application.cpp
+	<other sources related to the Kaa application>
+```
 
 </div>
 
 <div id="prep-java" class="tab-pane fade" markdown="1" >
 
 Before using the Java application code, be sure to complete the following steps:
- 
+
 1. Install [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) for your OS.
 
 2. Create a `demo_app` directory.
@@ -275,13 +315,20 @@ Before using the Java application code, be sure to complete the following steps:
 Before using the Objective-C application code, be sure to complete the following steps:
 
 1. Install CocoaPods.
+
 2. Extract Kaa SDK, open a terminal from the extraction directory, and run the following command.
 
-        sh build.sh compile
+   ```bash
+   sh build.sh compile
+   ```
+
 3. Go to xCode and choose a template of the iOS Single View Application.
 Name it "My First Kaa Application", choose Objective-C language and leave all other fields unchanged.
+
 4. Link the SDK to your project as described in [Objective-C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C/).
+
 5. Make sure that your application builds successfully.
+
 6. Replace code in the `ViewController.m` file with the code from the [Application code](#application-code) section.
 
 </div>
@@ -570,7 +617,7 @@ int main()
 }
 ```
 
->**NOTE:** Use the links to the [code]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-cpp/KaaDemo.cpp) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-cpp/CMakeLists.txt) files of the example.
+>**NOTE:** Use the links to the [code]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-cpp/KaaDemo.cpp) and a [CMake]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-cpp/CMakeLists.txt) files of the example.
 {:.note}
 
 </div>
@@ -904,13 +951,17 @@ To launch your C application:
 1. Rebuild application with decreased log level.
 This will clean up the mess that can occur when debug logs are enabled.
 
-        cd build
-        cmake -DKAA_MAX_LOG_LEVEL=3 ..
-        make
+   ```bash
+   cd build
+   cmake -DKAA_MAX_LOG_LEVEL=3 -DBUILD_TESTING=OFF ..
+   make
+   ```
 
 2. Launch the executable file.
 
-        ./kaa-app
+   ```bash
+   ./kaa-app
+   ```
 
 </div>
 
@@ -921,13 +972,17 @@ To launch your C++ application:
 1. Rebuild application with decreased log level.
 This will clean up the mess that can occur when debug logs are enabled.
 
-        cd build
-        cmake -DKAA_MAX_LOG_LEVEL=3 ..
-        make
+   ```bash
+   cd build
+   cmake -DKAA_MAX_LOG_LEVEL=3 ..
+   make
+   ```
 
 2. Launch the executable file.
 
-        ./kaa-app
+   ```bash
+   ./kaa-app
+   ```
 
 </div>
 
@@ -940,35 +995,51 @@ To launch your Java application:
 2. Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) and save it to the `demo_app` directory.
 In Linux terminal, run the following command from the `demo_app` directory.
 
-		wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar
+   ```bash
+   wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar
+   ```
 
 3. Build the application by running the following command from the `demo_app` directory.
-		
-		javac -cp *.jar *.java
+
+   ```bash
+   javac -cp *.jar *.java
+   ```
 
 4. Launch the application.
 
-	* Unix-based OS
-		
-			java -cp '.:./*' FirstKaaDemo
-	
-	* Windows OS
-	
-			java -cp '.;.\*' FirstKaaDemo
+<ul>
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#un">Unix</a></li>
+  <li><a data-toggle="tab" href="#win">Windows</a></li>
+</ul>
+
+<div class="tab-content"><div id="un" class="tab-pane fade in active" markdown="1" >
+
+```
+java -cp '.:./*' FirstKaaDemo
+```
+
+</div><div id="win" class="tab-pane fade" markdown="1" >
+
+```
+java -cp '.;.\*' FirstKaaDemo
+```
 
 </div>
+</div>
 
-<div id="run-obj-c" class="tab-pane fade" markdown="1" >
+</ul>
+
+</div><div id="run-obj-c" class="tab-pane fade" markdown="1" >
 
 To launch your Objective-C application:
 
 1. Select **My First Kaa Application** as target.
+
 2. Click **Play**.
 
 </div>
-
 </div>
-
 
 ### Expected output
 
