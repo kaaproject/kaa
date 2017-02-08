@@ -900,6 +900,9 @@ Select an existing [CT schema]({{root_url}}Programming-guide/Key-platform-featur
 
 	![](images/admin_ui/event_class_family/ecf8.png)
 
+	>**NOTE:** To create a new CT, you can only use the existing schemas from other event families, not from other versions of the same event family.
+	{:.note}
+
 ### Adding event family mappings
 
 Event family mappings are used by tenant developers to set event class families for the application and define the actions for each class family -- whether an application should be a source, a sink, or both.
