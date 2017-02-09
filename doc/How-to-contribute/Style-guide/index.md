@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Documentation style guide
+title: Documentation style
 permalink: /:path/
 sort_idx: 30
 ---

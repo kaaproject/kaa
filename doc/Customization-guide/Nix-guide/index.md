@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Nix guide
+title: Nix package manager
 permalink: /:path/
 sort_idx: 70
 ---
