@@ -52,7 +52,7 @@ See table below.
 |`date_pattern`|'.'yyyy-MM-dd-HH-mm|Date pattern for the [file system log appender]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/).|
 |`layout_pattern`|%m%n|Layout pattern for the file system log appender.|
 |`load_stats_update_frequency`|10000|Frequency of load status check in milliseconds for the load balancing feature.|
-|`additional_plugins_scan_package`|empty|Specifies additional package to scan for Kaa plugins configuration. See [Log appender provisioning]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders#log-appender-provisioning) and [Owner verifier provisioning]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/#owner-verifier-provisioning).|
+|`additional_plugins_scan_package`|empty|Specifies additional package to scan for Kaa plugins configuration. See [Log appender provisioning]({{root_url}}Customization-guide/Log-appenders#log-appender-provisioning) and [Owner verifier provisioning]({{root_url}}Customization-guide/Owner-verifiers/#owner-verifier-provisioning).|
 
 After you changed the properties in the `kaa-node.properties` file, restart the node for the changes to take effect.
 

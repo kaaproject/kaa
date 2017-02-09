@@ -250,7 +250,7 @@ However, do not use ending punctuation for lists where all entries are three wor
 
 ### Code examples
 
-* Code examples should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
+* Code examples should follow [Code style]({{root_url}}How-to-contribute/Code-style/) for the given language.
 * When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.).
 See [Jekyll formatting](#jekyll-formatting).
 * Enable the syntax highlight for the language of the code example whenever available.
