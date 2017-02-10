@@ -1,8 +1,8 @@
 ---
 layout: page
-title: How to contribute
+title: Contribution guide
 permalink: /:path/
-sort_idx: 50
+sort_idx: 45
 ---
 
 {% include variables.md %}

@@ -207,7 +207,7 @@ Below is the list of available record header fields:
 Log appender is a service utility that operates on the [Operations service]({{root_url}}Glossary/#operations-service) side.
 The logs received by the Operations service from the endpoints are recorded by the log appender in the specific storage place depending on the log appender type.
 You can have several log appenders working simultaneously.
-Kaa provides several default implementations of log appenders but you can also develop and integrate [custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+Kaa provides several default implementations of log appenders but you can also develop and integrate [custom log appenders]({{root_url}}Customization-guide/Log-appenders).
 
 ### Confirm delivery option
 
@@ -259,7 +259,7 @@ For more information about architecture, configuration and administration of a p
 
 ### Custom log appender implementations
 
-To learn how to create and integrate custom log appenders, see [Log appenders section in the Customization guide]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+To learn how to create and integrate custom log appenders, see [Log appenders section in the Customization guide]({{root_url}}Customization-guide/Log-appenders).
 
 ## Data collection API
 

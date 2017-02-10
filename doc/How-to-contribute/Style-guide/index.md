@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Documentation style guide
+title: Documentation style
 permalink: /:path/
 sort_idx: 30
 ---
@@ -250,7 +250,7 @@ However, do not use ending punctuation for lists where all entries are three wor
 
 ### Code examples
 
-* Code examples should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
+* Code examples should follow [Code style]({{root_url}}How-to-contribute/Code-style/) for the given language.
 * When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.).
 See [Jekyll formatting](#jekyll-formatting).
 * Enable the syntax highlight for the language of the code example whenever available.
@@ -350,6 +350,22 @@ Separate the code block from the list item with an empty line.
 {% raw %}
   ```
 [README.md]({{github_url_raw}}README.md)
+```
+{% endraw %}
+
+* Refer to Sample Apps using `sample_apps_url`, e.g., [Sample Apps]({{sample_apps_url}})
+
+{% raw %}
+  ```
+[Sample Apps]({{sample_apps_url}})
+```
+{% endraw %}
+
+* Refer to Sandbox Frame using `sandbox_frame_url`, e.g., [Sandbox Frame]({{sandbox_frame_url}})
+
+{% raw %}
+  ```
+[Sandbox Frame]({{sandbox_frame_url}})
 ```
 {% endraw %}
 

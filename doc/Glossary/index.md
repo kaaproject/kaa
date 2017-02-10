@@ -75,7 +75,7 @@ sort_idx: 50
 >Any endpoint can be a member of multiple groups at the same time.  
 >See [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) documentation section.
 
-### Endpoint profile (client-side, server-side)  
+### Endpoint profile (client-side, server-side)
 >A structured set of data that describes specific characteristics of an [endpoint]({{root_url}}Glossary/#endpoint-ep).
 >Endpoint profiles are used to classify endpoints into [endpoint groups]({{root_url}}Glossary/#endpoint-group).
 >The values for the client-side endpoint profiles are specified by [Kaa client]({{root_url}}Glossary/#kaa-client).  
@@ -86,7 +86,7 @@ sort_idx: 50
 ### Endpoint SDK
 >A library used for communication, data marshaling, persistence, and other functions performed between an endpoint and [Kaa server]({{root_url}}Glossary/#kaa-server).
 >An SDK is used to create [Kaa clients]({{root_url}}Glossary/#kaa-client) on the connected endpoints of the same [Kaa application]({{root_url}}Glossary/#kaa-application) within a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).  
->See [SDK type]({{root_url}}Glossary/#kaa-sdk-type) and [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) documentation sections.
+>See [Kaa SDK type]({{root_url}}Glossary/#kaa-sdk-type) and [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) documentation sections.
 
 ## G
 
@@ -153,7 +153,7 @@ sort_idx: 50
 >Operations service receives logs from the [endpoints]({{root_url}}Glossary/#endpoint-ep) and sends them to the log appender.
 >Log appender writes the logs to a specific single storage as defined by the log appender type and configuration.
 >Kaa provides several default implementations of log appenders.
->You can [create custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+>You can [create custom log appenders]({{root_url}}Customization-guide/Log-appenders).
 
 ## O
 
@@ -165,7 +165,7 @@ sort_idx: 50
 
 ### Owner verifier
 >A server component that handles verification of [endpoint owners]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/).  
->See [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers) documentation section.
+>See [Owner verifiers]({{root_url}}Customization-guide/Owner-verifiers) documentation section.
 
 ## P
 
