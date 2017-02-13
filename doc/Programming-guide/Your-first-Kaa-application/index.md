@@ -1129,6 +1129,6 @@ Use the following guides and references to learn more about Kaa features.
 | **[Key platform features]({{root_url}}Programming-guide/Key-platform-features)** | Learn about Kaa key features, such as [endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [logging]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), and others. |
 | **[Using endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs)** | Create advanced applications using Kaa SDKs. |
 | **[Installation guide]({{root_url}}Administration-guide/System-installation)** | Learn how to install, configure and manage Kaa platform. |
-| **[Contribute To Kaa]({{root_url}}Customization-guide/How-to-contribute)** | Learn how to contribute to Kaa project and which code/documentation style conventions we adhere to. |
+| **[Contribute to Kaa]({{root_url}}How-to-contribute)** | Learn how to contribute to Kaa project and which code/documentation style conventions we adhere to. |
 
 ---
