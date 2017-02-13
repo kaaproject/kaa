@@ -16,7 +16,7 @@ Alternatively, you can [deploy Kaa into your own environment](http://kaaproject.
 
 # Getting help
 
-If you face some troubles with Kaa platform check out [Troubleshooting guide](http://kaaproject.github.io/kaa/docs/v0.10.0/Administration-guide/Troubleshooting/) and [Frequently asked questions](http://docs.kaaproject.org/display/KAA/Frequently+asked+questions) first and if you can't find the solution we welcome you to post your questions at the Kaa project [Google group](http://www.kaaproject.org/forum/).
+If you face some troubles with Kaa platform check out [Troubleshooting guide](http://kaaproject.github.io/kaa/docs/v0.10.0/Administration-guide/Troubleshooting/) and [Frequently asked questions](http://stackoverflow.com/questions/tagged/kaa?sort=frequent&pageSize=15) first and if you can't find the solution we welcome you to post your questions at the Kaa project [Google group](http://www.kaaproject.org/forum/).
 
 # Documentation
 
@@ -28,7 +28,7 @@ To contribute to Kaa IoT platform, please visit [How to contribute](http://kaapr
 
 # Where to report issues
 
-You can report an issue by creating a corresponding ticket in [Kaa task tracker](http://jira.kaaproject.org/browse/KAA/), check out [Jira guide](http://kaaproject.github.io/kaa/docs/v0.10.0/Customization-guide/How-to-contribute/Jira-guide/) before submitting one.
+You can report an issue by creating a corresponding ticket in [Kaa task tracker](http://jira.kaaproject.org/browse/KAA/).
 
 # License
 
