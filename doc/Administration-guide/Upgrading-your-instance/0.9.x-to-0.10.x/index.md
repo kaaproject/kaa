@@ -35,7 +35,7 @@ Follow these steps to run the upgrade script:
 5. Execute the command below:
 
 ```bash
- sudo ./upgradeKaa090to0100.sh
+sudo ./upgradeKaa090to0100.sh
 ```
 
 >**IMPORTANT:** During the installation of the Debian package, the script may ask you to resolve conflicts in the `/usr/lib/kaa-node/conf/` folder.
