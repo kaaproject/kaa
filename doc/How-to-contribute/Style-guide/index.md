@@ -374,12 +374,12 @@ Click the **Src** tab to see the source code used to generate the tabs.
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Preview1">Preview</a></li>
-  <li><a data-toggle="tab" href="#Src1">Src</a></li>
+  <li class="active"><a data-toggle="tab" href="#Preview2">Preview</a></li>
+  <li><a data-toggle="tab" href="#Src2">Src</a></li>
 </ul>
 
 <div class="tab-content">
-<div id="Preview1" class="tab-pane fade in active" markdown="1" >
+<div id="Preview2" class="tab-pane fade in active" markdown="1" >
 
 <div class="well">
 <ul class="nav nav-tabs">
@@ -409,7 +409,7 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 
 </div></div></div>
 
-</div><div id="Src1" class="tab-pane fade " markdown="1" >
+</div><div id="Src2" class="tab-pane fade " markdown="1" >
 
 ```
 <ul class="nav nav-tabs">
