@@ -35,7 +35,7 @@ Follow these steps to run the upgrade script:
 5. Execute the command below:
 
 ```bash
- sudo ./upgradeKaa081to090.sh
+sudo ./upgradeKaa081to090.sh
 ```
 
 >**Note:**
