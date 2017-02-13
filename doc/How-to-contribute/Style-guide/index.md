@@ -195,7 +195,7 @@ For example, when you write from the user's point of view.
 * Use _italic_ for:
   * Emphasis.
   * Placeholders and parameter names.
-* Use [link]({{root_url}}Customization-guide/How-to-contribute/Style-guide/#text-formatting) formatting for:
+* Use [link]({{root_url}}How-to-contribute/Style-guide/#text-formatting) formatting for:
   * Technical terms that are in the Glossary, on their first mention.
   * Reference to Kaa documentation pages.
   * External web pages.
