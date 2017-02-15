@@ -12,7 +12,7 @@ sort_idx: 20
 
 The Kaa project team uses [Atlassian Jira](https://www.atlassian.com/software/jira) for issue tracking in the development process.
 This section assumes you already have a Jira account and describes how you can create issues at [http://jira.kaaproject.org/](http://jira.kaaproject.org/) if you decided to contribute to Kaa project.
-See also [How to contribute]({{root_url}}Customization-guide/How-to-contribute/).
+See also [Contribution guide]({{root_url}}How-to-contribute/).
 
 ## Creating issues
 
@@ -105,7 +105,7 @@ Create the issue(s) first.
    whatevs KAA-345
 ```
 
-If you named your PR as per above, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
+If you named your PR as per above, the relevant information will appear under the **Development** section of the issue. See also [Git flow]({{root_url}}How-to-contribute/Git-flow/).
 
 ![Development section](attach/development_section.png)
 
