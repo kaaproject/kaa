@@ -57,6 +57,7 @@ public class CoapHandler extends CoapServer {
     add(new HelloWorldResource());
     COAP_PORT = port;
     addEndpoints();
+    LOG.info("New Resource and endpoints added.");
   }
 
   /*
@@ -71,6 +72,9 @@ public class CoapHandler extends CoapServer {
 
       // set display name
       getAttributes().setTitle("Kaa-Coap Resource");
+      LOG.info("Resource identifier and display name is set.");
+
+
     }
 
 
@@ -79,6 +83,7 @@ public class CoapHandler extends CoapServer {
       //sample respond to the request is like this:
 
       // exchange.respond("Hello World! This is a response from Kaa Coap Server!");
+      LOG.info("GET method handler.");
 
     }
 
@@ -89,6 +94,7 @@ public class CoapHandler extends CoapServer {
       //sample respond to the request is like this:
 
       // exchange.respond("Hello World! This is a response from Kaa Coap Server!");
+      LOG.info("POST method handler.");
 
 
     }
