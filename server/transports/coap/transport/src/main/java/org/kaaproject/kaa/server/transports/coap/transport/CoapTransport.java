@@ -30,6 +30,7 @@ import java.util.List;
 public class CoapTransport extends AbstractKaaTransport<AvroCoapConfig> {
 
   private static final Logger LOG = LoggerFactory.getLogger(CoapTransport.class);
+  private static final int SUPPORTED_VERSION = 1;
 
   private CoapHandler server;
 
@@ -37,7 +38,7 @@ public class CoapTransport extends AbstractKaaTransport<AvroCoapConfig> {
    * Initialize a transport instance with a particular configuration and
    * common transport properties that are accessible via the context. The configuration is an Avro
    * object. The serializaion/deserialization is done using the schema specified in
-   * {@link KaaTransportConfig}.
+   * {@link org.kaaproject.kaa.server.transport.KaaTransportConfig}.
    * @param context the transport initialization context
    * @throws TransportLifecycleException  is socket exception.
    */
@@ -71,9 +72,9 @@ public class CoapTransport extends AbstractKaaTransport<AvroCoapConfig> {
   @Override
   public void start() {
 
-    LOG.info(" server is going to start");
+    LOG.info("CoAP server is going to start");
     server.start();
-    LOG.info(" server is started!");
+    LOG.info("CoAP server is started!");
 
   }
 
@@ -86,10 +87,10 @@ public class CoapTransport extends AbstractKaaTransport<AvroCoapConfig> {
   public void stop() {
 
 
-    LOG.info(" server is going to stop");
+    LOG.info("CoAP server is going to stop");
     server.stop();
 
-    LOG.info(" server is stopped");
+    LOG.info("CoAP server is stopped");
 
   }
 
@@ -99,8 +100,7 @@ public class CoapTransport extends AbstractKaaTransport<AvroCoapConfig> {
    */
   @Override
   protected int getMinSupportedVersion() {
-    // TODO Auto-generated method stub
-    return 1;
+    return SUPPORTED_VERSION;
   }
 
   /**
@@ -109,13 +109,11 @@ public class CoapTransport extends AbstractKaaTransport<AvroCoapConfig> {
    */
   @Override
   protected int getMaxSupportedVersion() {
-    // TODO Auto-generated method stub
-    return 1;
+    return SUPPORTED_VERSION;
   }
 
   @Override
   public Class<AvroCoapConfig> getConfigurationClass() {
-    // TODO Auto-generated method stub
     return AvroCoapConfig.class;
   }
 
