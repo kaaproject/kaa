@@ -227,8 +227,12 @@ test_docs() {
   fi
   cd $jekyll_root
   generate_jekyll_data "$latest"
-  echo_green "Serving the site"
-  jekyll serve "$@"
+  if [ -z $JEKYLL_NOSERVE ]; then
+    echo_green "Serving the site"
+    jekyll serve "$@"
+  else
+    jekyll build
+  fi
 }
 
 # Main
