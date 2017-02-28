@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .
+docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.1 .

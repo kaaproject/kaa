@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.kaaproject.kaa.server</groupId>
     <artifactId>common</artifactId>
-    <version>0.10.0</version>
+    <version>0.10.1</version>
   </parent>
 
   <artifactId>admin-rest-client</artifactId>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-        </dependency>                               
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

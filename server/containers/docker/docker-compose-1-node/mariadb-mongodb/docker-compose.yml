@@ -36,7 +36,7 @@ services:
     volumes:
       - nosql-data:/data/db
   kaa_0:
-    image: kaa-node:0.10.0
+    image: kaa-node:0.10.1
     env_file: ../kaa-example.env
     environment:
       - SQL_PROVIDER_NAME=mariadb

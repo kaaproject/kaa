@@ -17,7 +17,7 @@
 version: '2'
 services:
   {{KAA_SERVICE_NAME}}:
-    image: kaa-node:0.10.0
+    image: kaa-node:0.10.1
     env_file: kaa-example.env
     environment:
       - SQL_PROVIDER_NAME={{SQL_PROVIDER_NAME}}

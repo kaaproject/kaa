@@ -39,7 +39,7 @@ Put the `kaa-node.deb` file in the `server/containers/docker/` directory.
 
 4. Run the following command from the `server/containers/docker` directory.
 
-		docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .
+		docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.1 .
         
 	Alternatively, you can run the following command.
         
