@@ -39,7 +39,7 @@ services:
       - ./../../using-compose/cassandra-image/initKeySpaceCassandra.sh:/initKeySpaceCassandra.sh
     command: bash -c "/initKeySpaceCassandra.sh & /docker-entrypoint.sh cassandra -f"
   kaa_0:
-    image: kaa-node:0.10.0
+    image: kaa-node:0.10.1
     env_file: ../kaa-example.env
     environment:
       - SQL_PROVIDER_NAME=postgresql

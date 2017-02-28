@@ -65,7 +65,7 @@ Below is an example of Maven project POM file.
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.dir>${basedir}</main.dir>
-        <kaa.version>0.10.0</kaa.version>
+        <kaa.version>0.10.1</kaa.version>
         <avro.version>1.7.5</avro.version>
         <slf4j.version>1.7.7</slf4j.version>
         <logback.version>1.1.2</logback.version>
