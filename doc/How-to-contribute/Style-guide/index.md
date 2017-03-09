@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Documentation style guide
+title: Documentation style
 permalink: /:path/
 sort_idx: 30
 ---
@@ -195,7 +195,7 @@ For example, when you write from the user's point of view.
 * Use _italic_ for:
   * Emphasis.
   * Placeholders and parameter names.
-* Use [link]({{root_url}}Customization-guide/How-to-contribute/Style-guide/#text-formatting) formatting for:
+* Use [link]({{root_url}}How-to-contribute/Style-guide/#text-formatting) formatting for:
   * Technical terms that are in the Glossary, on their first mention.
   * Reference to Kaa documentation pages.
   * External web pages.
@@ -250,7 +250,7 @@ However, do not use ending punctuation for lists where all entries are three wor
 
 ### Code examples
 
-* Code examples should follow [Code style]({{root_url}}Customization-guide/Code-style/) for the given language.
+* Code examples should follow [Code style]({{root_url}}How-to-contribute/Code-style/) for the given language.
 * When a code example is available in several programming languages (as with SDK usage examples), represent the alternatives using a tabbed container with tab names presenting the language name ("Java", "C++", etc.).
 See [Jekyll formatting](#jekyll-formatting).
 * Enable the syntax highlight for the language of the code example whenever available.
@@ -374,12 +374,12 @@ Click the **Src** tab to see the source code used to generate the tabs.
 <ul>
 <li style="list-style-type: none;">
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Preview1">Preview</a></li>
-  <li><a data-toggle="tab" href="#Src1">Src</a></li>
+  <li class="active"><a data-toggle="tab" href="#Preview2">Preview</a></li>
+  <li><a data-toggle="tab" href="#Src2">Src</a></li>
 </ul>
 
 <div class="tab-content">
-<div id="Preview1" class="tab-pane fade in active" markdown="1" >
+<div id="Preview2" class="tab-pane fade in active" markdown="1" >
 
 <div class="well">
 <ul class="nav nav-tabs">
@@ -409,7 +409,7 @@ Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dic
 
 </div></div></div>
 
-</div><div id="Src1" class="tab-pane fade " markdown="1" >
+</div><div id="Src2" class="tab-pane fade " markdown="1" >
 
 ```
 <ul class="nav nav-tabs">

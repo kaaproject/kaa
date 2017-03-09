@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Nix guide
+title: Nix package manager
 permalink: /:path/
 sort_idx: 70
 ---
@@ -23,6 +23,7 @@ To quickly set up Nix:
    curl https://nixos.org/nix/install | sh
    source $HOME/.nix-profile/etc/profile.d/nix.sh
    ```
+
 2. Add `source $HOME/.nix-profile/etc/profile.d/nix.sh` to your `.bashrc`.
 
    ```sh

@@ -1,8 +1,8 @@
 ---
 layout: page
-title: How to contribute
+title: Contribution guide
 permalink: /:path/
-sort_idx: 50
+sort_idx: 45
 ---
 
 {% include variables.md %}
@@ -22,9 +22,9 @@ Make sure to include the `kaa` tag in your post.
 - Join [Kaa forum](https://www.kaaproject.org/forum/) to find answers to common user questions, give your feedback, ideas and suggestions, as well as for general discussions.
 - Use [Jira](http://jira.kaaproject.org/) to report issues and request new features.
 When reporting issues, please make sure you provide as much detail as possible so that the reported issue can be resolved effectively.
-See [Jira flow]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/).
+See [Jira flow]({{root_url}}How-to-contribute/Jira-flow/).
 - Contribute to Kaa project repositories on [GitHub](https://github.com/kaaproject/).
-See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/).
+See [Git flow]({{root_url}}How-to-contribute/Git-flow/).
 
 ## Contribute to source code
 
@@ -41,7 +41,7 @@ If you are willing to contribute to the Kaa code base, or submit sample [applica
 3. Create a Jira ticket describing your finding and/or the proposed change.
 
 	>**NOTE:** When you contribute to Kaa project on GitHub, make sure you post your [pull request](https://help.github.com/articles/using-pull-requests/) link in the comments section of the related Jira ticket and change the ticket status to **In review**.
-	>See [Git flow]({{root_url}}Customization-guide/How-to-contribute/Git-flow/) and [Jira flow]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/).
+	>See [Git flow]({{root_url}}How-to-contribute/Git-flow/) and [Jira flow]({{root_url}}How-to-contribute/Jira-flow/).
 	{:.note}
 
 ## Contribute to documentation
@@ -54,8 +54,8 @@ Contributing to the Kaa documentation, make sure to complete the following:
 
 * Select `Component: Documentation` in the corresponding Jira ticket.
 * Generate and check documentation locally before committing.
-See [Preview documentation]({{root_url}}Customization-guide/How-to-contribute/#preview-documentation).
-* Check with the [Documentation style guide]({{root_url}}Customization-guide/How-to-contribute/Style-guide/) to make sure your contribution complies with the Kaa requirements.
+See [Preview documentation]({{root_url}}How-to-contribute/#preview-documentation).
+* Check with the [Documentation style guide]({{root_url}}How-to-contribute/Style-guide/) to make sure your contribution complies with the Kaa requirements.
 
 ### Preview documentation
 

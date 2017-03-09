@@ -20,7 +20,7 @@ Here we describe the major ones, while the full list of stories and fixed bugs c
 This will allow developers to use and manage Kaa data schemas in a consistent, unified way across all types of Kaa applications. 
 
 * Documentation on gh-pages ([KAA-784](http://jira.kaaproject.org/browse/KAA-784)) - from now on, the Kaa documentation will be hosted on gh-pages. 
-The universal principle of pull requests used on github applies to documentation updates as well, so the [contribution procedure]({{root_url}}Customization-guide/How-to-contribute/Contribution-guide/) is now very straightforward, exactly like with source code contributions. 
+The universal principle of pull requests used on github applies to documentation updates as well, so the [contribution procedure]({{root_url}}How-to-contribute/) is now very straightforward, exactly like with source code contributions. 
 The documentation now also has a much better design, navigation, and versioning.
 
 * Auto-generated REST API documentation ([KAA-1108](http://jira.kaaproject.org/browse/KAA-1108)) - [REST API documentation]({{root_url}}Programming-guide/Server-REST-APIs/) is now auto-generated on gh-pages.

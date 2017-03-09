@@ -153,7 +153,7 @@ sort_idx: 50
 >Operations service receives logs from the [endpoints]({{root_url}}Glossary/#endpoint-ep) and sends them to the log appender.
 >Log appender writes the logs to a specific single storage as defined by the log appender type and configuration.
 >Kaa provides several default implementations of log appenders.
->You can [create custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+>You can [create custom log appenders]({{root_url}}Customization-guide/Log-appenders).
 
 ## O
 
@@ -165,7 +165,7 @@ sort_idx: 50
 
 ### Owner verifier
 >A server component that handles verification of [endpoint owners]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/).  
->See [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers) documentation section.
+>See [Owner verifiers]({{root_url}}Customization-guide/Owner-verifiers) documentation section.
 
 ## P
 

@@ -213,4 +213,4 @@ To restart Kaa service:
 
 ## Report issues to Kaa crew
 
-If you cannot resolve an issue, you can [report it]({{root_url}}Customization-guide/How-to-contribute/Jira-flow/) or [seek assistance from Kaa community]({{root_url}}Customization-guide/How-to-contribute/).
+If you cannot resolve an issue, you can [report it]({{root_url}}How-to-contribute/Jira-flow/) or [seek assistance from Kaa community]({{root_url}}How-to-contribute/).

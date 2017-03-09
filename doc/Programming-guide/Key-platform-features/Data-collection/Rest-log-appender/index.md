@@ -140,7 +140,8 @@ To play around with the REST log appender:
 	![Enter application title](attach/add-application2.png)
 
     >**NOTE:** To see the [Application token]({{root_url}}Glossary/#application-token) generated for your new application, open the **Application details** window containing the application token.<br/>
-
+    {:.note}
+    
 2.  Log in to the **Administration UI** as a tenant developer and create a log schema for your new application.
 To do this, select your application in the list and click **Schemas** > **Log** > **Add schema**.
 	![Add log schema](attach/rest-log-appender1.png)

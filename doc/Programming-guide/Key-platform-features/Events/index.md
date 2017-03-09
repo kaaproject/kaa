@@ -234,7 +234,7 @@ To view the list of endpoints registered as sinks for a certain owner, use the [
 
 Endpoints can exchange events only if they are attached to the same owner (registered with the same user).
 You can use the APIs to attach/detach endpoints to/from owners.
-See also [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) and [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/).
+See also [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) and [Owner verifiers]({{root_url}}Customization-guide/Owner-verifiers/).
 
 
 ## Event sequence number
