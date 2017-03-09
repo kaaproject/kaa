@@ -34,7 +34,7 @@ If you experience problems using Kaa platform, see [Troubleshooting guide]({{roo
 If your problem persists, post your questions on [StackOverflow](http://stackoverflow.com/questions/tagged/kaa).
 
 ## How to contribute
-See the [How to contribute]({{root_url}}Customization-guide/How-to-contribute/) guide to learn how to contribute to the Kaa IoT platform.
+See the [Contribution guide]({{root_url}}How-to-contribute/) to learn how to contribute to the Kaa IoT platform.
 
 You can report an issue by creating a corresponding ticket in [Kaa task tracker](http://jira.kaaproject.org/browse/KAA/).
 
