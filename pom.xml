@@ -141,6 +141,9 @@ Copyright 2014-2016 CyberVision, Inc.
         <org.glassfish.web>2.2.6</org.glassfish.web>
         <hibernate-validator>5.2.4.Final</hibernate-validator>
         <sleepycat.je.version>7.0.6</sleepycat.je.version>
+
+        <californium-core.version>2.0.0-M2</californium-core.version>
+        <element-connector.version>2.0.0-M2</element-connector.version>
     </properties>
 
     <modules>
@@ -1381,6 +1384,17 @@ Copyright 2014-2016 CyberVision, Inc.
                 <artifactId>signpost-core</artifactId>
                 <version>${signpost-core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.eclipse.californium</groupId>
+                <artifactId>californium-core</artifactId>
+                <version>${californium-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.californium</groupId>
+                <artifactId>element-connector</artifactId>
+                <version>${element-connector.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
