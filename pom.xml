@@ -1388,11 +1388,13 @@ Copyright 2014-2016 CyberVision, Inc.
                 <groupId>org.eclipse.californium</groupId>
                 <artifactId>californium-core</artifactId>
                 <version>${californium-core.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.californium</groupId>
                 <artifactId>element-connector</artifactId>
                 <version>${element-connector.version}</version>
+                <scope>provided</scope>
             </dependency>
 
         </dependencies>
