@@ -94,10 +94,6 @@
             <groupId>org.eclipse.californium</groupId>
             <artifactId>californium-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.californium</groupId>
-            <artifactId>element-connector</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
