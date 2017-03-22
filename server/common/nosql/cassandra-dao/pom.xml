@@ -115,7 +115,7 @@
         <dependency>
             <groupId>org.kaaproject.kaa.server.common</groupId>
             <artifactId>utils</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
