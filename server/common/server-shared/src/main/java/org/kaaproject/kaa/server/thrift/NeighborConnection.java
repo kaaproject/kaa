@@ -92,7 +92,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
   /**
    * Real maximum number of event messages queue.
    */
-  private final int messageQueueLingth = DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH;
+  private final int messageQueueLength = DEFAULT_EVENT_MESSAGE_QUEUE_LENGTH;
 
 
   private ThriftFactory<OperationsThriftService.Iface> clientFactory;
@@ -164,7 +164,7 @@ public final class NeighborConnection<T extends NeighborTemplate<V>, V> {
   public synchronized void start() {
     if (!started) {
       executor = Executors.newFixedThreadPool(maxNumberConnection);
-      messageQueue = new LinkedBlockingQueue<>(messageQueueLingth);
+      messageQueue = new LinkedBlockingQueue<>(messageQueueLength);
       workers = new LinkedList<>();
       clientFactory = ThriftFactory.create(OperationsThriftService.Iface.class);
       InetSocketAddress address = new InetSocketAddress(
