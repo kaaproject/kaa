@@ -19,6 +19,17 @@ You can log in to the Operations service host and browse logs using the `kaa_log
 
 ## Create file system log appender
 
+>**IMPORTANT:** Prior to creating the log appender, you need to specify explicit user privileges in `/etc/sudoers` to allow the user `kaa` to create root path for logs.
+>To do this, run:
+>```
+>sudo visudo
+>```
+>To give full sudo privileges for `kaa` user, add a new line:
+>```
+>kaa ALL=(ALL:ALL) ALL
+>```
+{:.important}
+
 To create a file system log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
 
 1. Log in to the **Administration UI** page as a [tenant developer]({{root_url}}Glossary/#tenant-developer).
