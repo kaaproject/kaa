@@ -27,8 +27,8 @@ To set up your Java SDK environment:
 
 1. [Generate endpoint SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk) for target platform 'Java'.
 
-2. Add the generated .jar file to the classpath by using appropriate build tools.
-For example, you can create the **lib** folder and put there the generated .jar file.
+2. Add the generated `.jar` file to the classpath by using appropriate build tools.
+For example, you can create the `lib` folder and put there the generated `.jar` file.
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a data-toggle="tab" href="#maven-sdk">Maven</a></li>
@@ -191,7 +191,7 @@ DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformCont
 	 CUSTOM_MAX_CALLBACK_THREADS, CUSTOM_MIN_SCHEDULED_THREADS
  ); // If you have no properties to set, just pass null instead of first constructor's argument
  
-KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener());
+KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener(), true);
 ```
 </div>
 
@@ -204,7 +204,7 @@ ExecutorContext executor = new SimpleExecutorContext(
  );
 
 DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext(null, executor);
-KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener());
+KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener(), true);
 ```
 </div>
 
@@ -212,18 +212,17 @@ KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientS
 
 ```java
 ExecutorContext executorContext = new FlexibleExecutorContext.FlexibleExecutorContextBuilder()
-	 .setMaxLifeCycleThreads(CUSTOM_MAX_LIFE_CYCLE_THREADS) // set custom maximum life cycle threads amount
+	 .setMaxLifeCycleThreads(CUSTOM_MAX_LIFE_CYCLE_THREADS) 
 	 .setMaxLifeCycleThreadsIdleMilliseconds(CUSTOM_MAX_LIFECYCLE_THREADS_IDLE_MILLISECONDS)
-	 // set custom maximum life cycle threads idle time
-	 .setMaxApiThreads(CUSTOM_MAX_API_THREADS) // set custom maximum api threads amount
-	 .setMaxApiThreadsIdleMilliseconds(CUSTOM_MAX_API_THREADS_IDLE_MILLISECONDS) // set custom maximum api threads idle time
-	 .setMaxCallbackThreads(CUSTOM_MAX_CALLBACK_THREADS) // set custom maximum callback threads amount
-	 .setMaxCallbackThreadsIdleMilliseconds(CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS)//set custom maximum callback threads idle time
-	 .setMinScheduledThreads(CUSTOM_MIN_SCHEDULED_THREADS) // set custom minimum scheduled threads amount
+	 .setMaxApiThreads(CUSTOM_MAX_API_THREADS) 
+	 .setMaxApiThreadsIdleMilliseconds(CUSTOM_MAX_API_THREADS_IDLE_MILLISECONDS) 
+	 .setMaxCallbackThreads(CUSTOM_MAX_CALLBACK_THREADS)
+	 .setMaxCallbackThreadsIdleMilliseconds(CUSTOM_MAX_CALLBACK_THREADS_IDLE_MILLISECONDS)
+	 .setMinScheduledThreads(CUSTOM_MIN_SCHEDULED_THREADS) 
 	 .build();
 	 
 DesktopKaaPlatformContext desktopKaaPlatformContext = new DesktopKaaPlatformContext(null, executorContext);
-KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener());
+KaaClient client = Kaa.newClient(desktopKaaPlatformContext, new SimpleKaaClientStateListener(), true);
 ```
 </div>
 
@@ -236,9 +235,9 @@ When you no longer need the client, you can call the `stop()` method to release 
 
 ## Client state
 
-When the Kaa client starts for the first time, it generates a private/public key pair and saves those keys in the key.private and key.public files accordingly.
+When the Kaa client starts for the first time, it generates a private/public key pair and saves those keys in the `key.private` and `key.public` files accordingly.
 These keys are used to maintain secure communication with the server.
-The Kaa client also creates the state.properties file that is used to persist the parameters that handle the client state during its communication with the server.
+The Kaa client also creates the `state.properties` file that is used to persist the parameters that handle the client state during its communication with the server.
 
 In the case of a Java desktop application, all these files are created by default in the working directory.
 However, you can specify a different folder by using `KaaClientProperties`.

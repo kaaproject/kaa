@@ -5,21 +5,21 @@ permalink: /:path/
 sort_idx: 60
 ---
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/2.1.4/css/screen.min.css">
+  <link rel="stylesheet" href="lib/swagger-ui/screen.min.css">
 
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery-1.8.0.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.ba-bbq/1.2.1/jquery.ba-bbq.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.3/highlight.min.js"></script>
-  <script type="text/javascript" src="https://libraries.cdnhttps.com/ajax/libs/json-editor/0.7.22/jsoneditor.js"></script>
-  <script type="text/javascript" src="https://libraries.cdnhttps.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
-  <script type="text/javascript" src="https://libraries.cdnhttps.com/ajax/libs/handlebars.js/2.0.0/handlebars.min.js"></script>
-  <script type="text/javascript" src="https://libraries.cdnhttps.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+  <script type="text/javascript" src="lib/jquery/jquery-1.8.0.min.js"></script>
+  <script type="text/javascript" src="lib/jquery/jquery.ba-bbq.min.js"></script>
+  <script type="text/javascript" src="lib/highlight/highlight.min.js"></script>
+  <script type="text/javascript" src="lib/jsoneditor/jsoneditor.min.js"></script>
+  <script type="text/javascript" src="lib/marked/marked.min.js"></script>
+  <script type="text/javascript" src="lib/handlebars/handlebars.min.js"></script>
+  <script type="text/javascript" src="lib/underscore/underscore-min.js"></script>
 
-  <script src='lib/jquery.wiggle.min.js' type='text/javascript'></script>
-  <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
-  <script src='lib/backbone-min.js' type='text/javascript'></script>
-  <script src='swagger-ui.min.js' type='text/javascript'></script>
-  <script src='lib/kaa-swagger-adaptor.js' type='text/javascript'></script>
+  <script src='lib/jquery/jquery.wiggle.min.js' type='text/javascript'></script>
+  <script src='lib/jquery/jquery.slideto.min.js' type='text/javascript'></script>
+  <script src='lib/backbone/backbone-min.js' type='text/javascript'></script>
+  <script src='lib/swagger-ui/swagger-ui.min.js' type='text/javascript'></script>
+  <script src='lib/swagger-ui/kaa-swagger-adaptor.js' type='text/javascript'></script>
 
   <script type="text/javascript">
     $(function () {

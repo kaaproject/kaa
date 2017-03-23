@@ -2,7 +2,7 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "Kaa Admin REST API",
-    "version" : "0.10.0",
+    "version" : "0.10.1",
     "title" : "Admin REST API"
   },
   "host" : "localhost:8080",
@@ -3769,6 +3769,9 @@
           "403" : {
             "description" : "The authenticated user does not have the required TENANT_ADMIN role or the Tenant ID of the editing user does not match the Tenant ID of the authenticated user"
           },
+          "404" : {
+            "description" : "The user does not exist"
+          },
           "500" : {
             "description" : "An unexpected error occurred on the server side"
           }
@@ -5229,7 +5232,7 @@
         "name" : {
           "type" : "string",
           "minLength" : 2,
-          "maxLength" : 255
+          "maxLength" : 100
         }
       }
     },

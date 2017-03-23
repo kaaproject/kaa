@@ -17,7 +17,7 @@ This page provides guidance on how to set up the Sandbox and run your first [Kaa
 The setup instructions are also available as a video tutorial below.
 
 <p align="center">
-  <iframe width="800" height="500" src="https://www.youtube.com/embed/ynbxcRdgXFU">
+  <iframe width="800" height="500" src="https://www.youtube.com/embed/AM-4qaAuCoY">
   </iframe>
 </p>
 
@@ -126,13 +126,13 @@ Public DNS and IP of your instance are available from your instance description.
 
 If your Kaa Sandbox interface does not start due to an error, you can see the error details in the Sandbox log records.
 
-The log records are stored in the **/var/log/kaa** directory.
+The log records are stored in the `var/log/kaa` directory.
 
 The log writing system is as follows:
 
-1. Kaa Sandbox Frame project writes its logs to the kaa-sandbox.log file.
-2. Kaa Avro UI writes its logs the avro-ui-sandbox.log file.0
-3. Kaa node writes its logs to the kaa-node.log file.
+1. Kaa Sandbox Frame project writes its logs to the `kaa-sandbox.log` file.
+2. Kaa Avro UI form writes its logs to the `avro-ui-sandbox.log` file.
+3. Kaa node writes its logs to the `kaa-node.log` file.
 This is the most important log file as it contains the most of the information required for an analysis.
 
 Also, one log file generated per each initialization and each shutdown of a Kaa node and Kaa Sandbox.
@@ -150,10 +150,10 @@ To work with your specific Kaa instance, use the Sandbox to download an [SDK lib
 
 ![Demo projects view](attach/sandbox_demo_projects.png)
 
-To download and run your first Kaa sample application, we recommend that you open the **Data collection demos** bundle description from your Sandbox and select your [SDK type]({{root_url}}Glossary/#sdk-type).
+To download and run your first Kaa sample application, we recommend that you open the **Data collection demos** bundle description from your Sandbox and select your [SDK type]({{root_url}}Glossary/#kaa-sdk-type).
 
 >**TIP:** For quickest possible setup, choose the Java SDK type.
->For Java SDK, you can download an executable .jar archive containing binary files.
+>For Java SDK, you can download an executable `.jar` archive containing binary files.
 >For other SDK types, you need to download and build from the source files.
 {: .tip}
 
@@ -186,11 +186,11 @@ You can log in using the default pre-configured accounts as listed below:
 | Tenant developer      | devuser  | devuser123       |
 
 
-### Avro UI
+### Avro UI form
 
-The [Avro UI]({{root_url}}Glossary/#avro-ui) is an online service that you can use to create schema structure templates.
+The [Avro UI form]({{root_url}}Glossary/#avro-ui-form) is an online service that you can use to create schema structure templates.
 This is helpful when you want to reuse and modify your schemas used within the Kaa platform.
-To access Avro UI, click the **Avro UI** button on the Sandbox main page.
+To access Avro UI form, click the **Avro UI form** button on the Sandbox main page.
 
 ### Advanced Sandbox configuration
 
@@ -255,6 +255,6 @@ Use the following guides and references to learn more about Kaa features.
 |-------|----------------|
 | **[Key platform features]({{root_url}}Programming-guide/Key-platform-features/)** | Learn about Kaa key features, such as [endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [logging]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), and others. |
 | **[Installation guide]({{root_url}}Administration-guide/System-installation)** | Install and configure Kaa platform on a single Linux node or in a cluster environment. |
-| **[Contribute To Kaa]({{root_url}}Customization-guide/How-to-contribute/)** | Learn how to contribute to Kaa project and which code/documentation style conventions we adhere to. |
+| **[Contribute to Kaa]({{root_url}}How-to-contribute/)** | Learn how to contribute to Kaa project and which code/documentation style conventions we adhere to. |
 
 ---

@@ -27,3 +27,6 @@
 {% else %}
     {% capture github_url_raw %}{{site.data.permanent_config.github_url_raw}}{{version}}/{% endcapture %}
 {% endif %}
+{% assign component_mapping = site.data.component_mapping[version] %}
+{% assign sandbox_frame_url = component_mapping["Sandbox frame"] %}
+{% assign sample_apps_url   = component_mapping["Sample Apps"] %}

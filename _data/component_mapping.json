@@ -1,0 +1,14 @@
+{
+	"current" : {
+		"Sample Apps"   : "http://github.com/kaaproject/sample-apps/tree/master/",
+		"Sandbox frame" : "http://github.com/kaaproject/sandbox-frame/tree/master/"
+	},
+	"v0.10.0" : {
+		"Sample Apps"   : "http://github.com/kaaproject/sample-apps/tree/v2.0.0/",
+		"Sandbox frame" : "http://github.com/kaaproject/sandbox-frame/tree/v1.4.0/"
+	},
+	"v0.10.1" : {
+		"Sample Apps"   : "http://github.com/kaaproject/sample-apps/tree/v2.0.1/",
+		"Sandbox frame" : "http://github.com/kaaproject/sandbox-frame/tree/v1.5.0/"
+	}
+}

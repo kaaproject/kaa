@@ -77,7 +77,7 @@ For a multi-node cluster, it is recommended that you use MariaDB because it prov
 
 ### NoSQL database
 
-A NoSQL database instance is used to store information about [endpoint profiles]({{root_url}}Glossary/#endpoint-profile), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [configurations]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/), etc.
+A NoSQL database instance is used to store information about [endpoint profiles]({{root_url}}Glossary/#endpoint-profile-client-side-server-side), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [configurations]({{root_url}}Programming-guide/Key-platform-features/Configuration-management/), etc.
 The volume of this information scales linearly with the number of endpoints managed by a particular Kaa cluster instance.
 NoSQL database nodes can be co-located with Kaa nodes on the same physical or virtual machines.
 

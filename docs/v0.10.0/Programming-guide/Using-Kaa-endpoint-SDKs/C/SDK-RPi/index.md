@@ -10,35 +10,45 @@ sort_idx: 60
 * TOC
 {:toc}
 
-The guide provides information on how to **cross-compile** C SDK for Raspberry PI.
-Alternatively, you can build the Kaa C endpoint SDK right on the Raspberry Pi board.
-Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for further details.
+This guide explains how to cross-compile [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Raspberry Pi](https://www.raspberrypi.org/).
+Alternatively, you can build the Kaa C SDK directly on the Raspberry Pi board.
+For more information, see [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for Kaa C SDK.
 
-## Install dependencies
+>**NOTE:** This guide is verified against:
+>
+> * **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
+> * **Device:** Raspberry Pi 3
+> * **Target OS:** [Raspbian Jessie](https://www.raspberrypi.org/downloads/)
+{:.note}
 
-**All steps described here were tested on:**
+## Prerequisites
 
- - **Host OS:** Ubuntu 14.04 LTS Desktop 64-bit
- - **Device:** Raspberry Pi 3
- - **Target OS:** [Raspbian Jessie](https://www.raspberrypi.org/downloads/)
-
-**The further instructions must be executed on the host machine.**
+Perform the following instructions on the host machine:
 
 1. Install build prerequisites.
 
-        sudo apt-get install cmake build-essential
+   ```bash
+   sudo apt-get install cmake build-essential
+   ```
 
-1. Install toolchain.
+2. Install toolchain.
 
-        mkdir rpi_root && cd rpi_root
-        git clone https://github.com/raspberrypi/tools.git
-        export ARMLINUX_GCC=$(pwd)/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-gcc
+   ```bash
+   mkdir rpi_root && cd rpi_root
+   git clone https://github.com/raspberrypi/tools.git
+   export ARMLINUX_GCC=$(pwd)/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin/arm-linux-gnueabihf-gcc
+   ```
 
-## Create application
+## Build Kaa application
 
-Now, dependencies are installed and it is time to create Kaa application.
-Since Raspberry is running Linux, you can refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) for detailed process of application creation.
-But remember, you must specify correct compiler name when compiling your Kaa application for Raspberry Pi:
+After you installed the required dependencies and built the C SDK, you can build and run your [Kaa application]({{root_url}}Glossary/#kaa-application).
 
-        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$ARMLINUX_GCC ..
-        make
+Since Raspberry runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) to build and run your application.
+
+>**NOTE:** Make sure to specify correct compiler name when compiling your Kaa application for Raspberry Pi:
+>
+>```bash
+>cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$ARMLINUX_GCC -DBUILD_TESTING=OFF ..
+>make
+>```
+{:.note}
