@@ -58,7 +58,7 @@ sort_idx: 50
 ### Control service
 >One of the three main service types in Kaa.
 >The other two are [Bootstrap service]({{root_url}}Glossary/#bootstrap-service) and [Operations service]({{root_url}}Glossary/#operations-service).
->Control service manages the system data, processes API calls from the [web UI]({{root_url}}Glossary/#web-ui) and external integrated systems, delivers notifications to Operations services.  
+>Control service manages the system data, processes API calls from the [Administration UI]({{root_url}}Glossary/#administration-ui) and external integrated systems, delivers notifications to Operations services.  
 >See [Architecture overview]({{root_url}}Architecture-overview/) documentation section.
 
 ## E
@@ -75,7 +75,7 @@ sort_idx: 50
 >Any endpoint can be a member of multiple groups at the same time.  
 >See [Endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups) documentation section.
 
-### Endpoint profile (client-side, server-side)  
+### Endpoint profile (client-side, server-side)
 >A structured set of data that describes specific characteristics of an [endpoint]({{root_url}}Glossary/#endpoint-ep).
 >Endpoint profiles are used to classify endpoints into [endpoint groups]({{root_url}}Glossary/#endpoint-group).
 >The values for the client-side endpoint profiles are specified by [Kaa client]({{root_url}}Glossary/#kaa-client).  
@@ -86,15 +86,15 @@ sort_idx: 50
 ### Endpoint SDK
 >A library used for communication, data marshaling, persistence, and other functions performed between an endpoint and [Kaa server]({{root_url}}Glossary/#kaa-server).
 >An SDK is used to create [Kaa clients]({{root_url}}Glossary/#kaa-client) on the connected endpoints of the same [Kaa application]({{root_url}}Glossary/#kaa-application) within a [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).  
->See [SDK type]({{root_url}}Glossary/#sdk-type) and [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) documentation sections.
+>See [Kaa SDK type]({{root_url}}Glossary/#kaa-sdk-type) and [Using Kaa endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs) documentation sections.
 
 ## G
 
 ### Group _all_
 >A default, non-editable group created for each Kaa [application]({{root_url}}Glossary/#kaa-application).
 >The _weight_ value of this group equals to 0.
->The [profile filter]({{root_url}}Glossary/#profile-filter) of this group is automatically set to "true" for every [profile schema]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) version in the system.
->The group _all_ includes every [endpoint]({{root_url}}Glossary/#endpoint-ep) registered in the application.
+>The [profile filter]({{root_url}}Glossary/#profile-filter) of this group is automatically set to **true** for every [profile schema]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) version in the system.
+>The group **all** includes every [endpoint]({{root_url}}Glossary/#endpoint-ep) registered in the application.
 >See [Using endpoint groups]({{root_url}}Programming-guide/Key-platform-features/Endpoint-groups/#using-endpoint-groups) documentation section.
 
 ## K
@@ -153,7 +153,7 @@ sort_idx: 50
 >Operations service receives logs from the [endpoints]({{root_url}}Glossary/#endpoint-ep) and sends them to the log appender.
 >Log appender writes the logs to a specific single storage as defined by the log appender type and configuration.
 >Kaa provides several default implementations of log appenders.
->You can [create custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+>You can [create custom log appenders]({{root_url}}Customization-guide/Log-appenders).
 
 ## O
 
@@ -165,7 +165,7 @@ sort_idx: 50
 
 ### Owner verifier
 >A server component that handles verification of [endpoint owners]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/).  
->See [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers) documentation section.
+>See [Owner verifiers]({{root_url}}Customization-guide/Owner-verifiers) documentation section.
 
 ## P
 

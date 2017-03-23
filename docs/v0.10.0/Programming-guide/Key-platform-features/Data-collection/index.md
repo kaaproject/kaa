@@ -207,11 +207,11 @@ Below is the list of available record header fields:
 Log appender is a service utility that operates on the [Operations service]({{root_url}}Glossary/#operations-service) side.
 The logs received by the Operations service from the endpoints are recorded by the log appender in the specific storage place depending on the log appender type.
 You can have several log appenders working simultaneously.
-Kaa provides several default implementations of log appenders but you can also develop and integrate [custom log appenders]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+Kaa provides several default implementations of log appenders but you can also develop and integrate [custom log appenders]({{root_url}}Customization-guide/Log-appenders).
 
 ### Confirm delivery option
 
-Every [Kaa client]({{root_url}}Glossary/#kaa-client) stores logs in a special log storage before sending them to the [Kaa server]({{root_url}}/Glossary/#kaa-server) node.
+Every [Kaa client]({{root_url}}Glossary/#kaa-client) stores logs in a special log storage before sending them to the [Kaa server]({{root_url}}Glossary/#kaa-server) node.
 By default, when a log appender on the Kaa server side receives a log from the Kaa client, it will send a delivery confirmation back to the Kaa client.
 In case of a successful delivery, the Kaa client deletes the log copies from its local storage.
 In case of a delivery error, Kaa client receives the error code and either sends the log to the same server node again or sends it to a different node.
@@ -248,24 +248,25 @@ For more information about architecture, configuration and administration of a p
 
 |Log appender|Description|
 |------------------------|
-|[Cassandra]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender)|Transfers logs from the Operations service to the [Cassandra](http://cassandra.apache.org/) database. You can flexibly configure Cassandra storage (Cassandra nodes, authentication credentials, keyspace name, table name, column mapping, clustering). See [configuration]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/#configuration).|
+|[Cassandra]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender)|Transfers logs from the Operations service to the [Cassandra](http://cassandra.apache.org/) database. You can flexibly configure Cassandra storage (Cassandra nodes, authentication credentials, keyspace name, table name, column mapping, clustering and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Cassandra-log-appender/#configure-log-appender).|
 |[Couchbase]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Couchbase-log-appender)|Transfers logs from the Operations service to the [Couchbase](http://www.couchbase.com/) database. You can configure Couchbase servers list, bucket name and password.|
-|[File system]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender)|Stores the received logs in the local file system of the Operations service. This log appender can be used for test purposes or in conjunction with tools like Flume and others. You can configure logs root path, file name pattern, maximum number of records in a file, maximum file size and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/#configuration).|
-|[Flume]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender)|Encapsulates the received logs into Flume events and sends these events to external Flume sources via Avro RPC. You can configure Flume event format, hosts balancing type, include client-side and/or server-side profile data and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender/#configuration).|
-|[Kafka]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender)|Transfers logs from the Operations service to the [Apache Kafka](http://kafka.apache.org/) service. The logs are stored within the specified topic. You can configure Kafka bootstrap servers list, topic name, compression type and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender/#configuration).|
-|[MongoDB]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender)|Transfers logs from the Operations service to the [MongoDB](https://www.mongodb.com/) database. You can configure MongoDB nodes list, authentication credentials, MongoDB database name and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/#configuration). The logs are stored in the table named **logs_$applicationToken**, where **$applicationToken** matches the token of the current application.|
-|[Oracle NoSQL]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender)|Transfers logs from the Operations service to the [Oracle NoSQL](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/overview/index.html) key/value storage. You can configure KVStore name, KVStore nodes and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender/#configuration).|
-|[REST]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender)|Transfers logs from Operations service to your custom service. You can configure host, port, relative URI path, method type and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/#configuration).|
+|[File system]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender)|Stores the received logs in the local file system of the Operations service. This log appender can be used for test purposes or in conjunction with tools like Flume and others. You can configure logs root path, file name pattern, maximum number of records in a file, maximum file size and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/File-system-log-appender/#configure-log-appender).|
+|[Flume]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender)|Encapsulates the received logs into Flume events and sends these events to external Flume sources via Avro RPC. You can configure Flume event format, hosts balancing type, include client-side and/or server-side profile data and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Flume-log-appender/#configure-log-appender).|
+|[Kafka]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender)|Transfers logs from the Operations service to the [Apache Kafka](http://kafka.apache.org/) service. The logs are stored within the specified topic. You can configure Kafka bootstrap servers list, topic name, compression type and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Kafka-log-appender/#configure-log-appender).|
+|[MongoDB]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender)|Transfers logs from the Operations service to the [MongoDB](https://www.mongodb.com/) database. You can configure MongoDB nodes list, authentication credentials, MongoDB database name and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/MongoDB-log-appender/#configure-log-appender). The logs are stored in the table named **logs_$applicationToken**, where **$applicationToken** matches the token of the current application.|
+|[Oracle NoSQL]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender)|Transfers logs from the Operations service to the [Oracle NoSQL](http://www.oracle.com/technetwork/database/database-technologies/nosqldb/overview/index.html) key/value storage. You can configure KVStore name, KVStore nodes and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Oracle-NoSQL-log-appender/#configure-log-appender).|
+|[REST]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender)|Transfers logs from Operations service to your custom service. You can configure host, port, relative URI path, method type and [other parameters]({{root_url}}Programming-guide/Key-platform-features/Data-collection/Rest-log-appender/#configure-log-appender).|
 
 ### Custom log appender implementations
 
-To learn how to create and integrate custom log appenders, see [Log appenders section in the Customization guide]({{root_url}}Customization-guide/Customizable-system-components/Log-appenders).
+To learn how to create and integrate custom log appenders, see [Log appenders section in the Customization guide]({{root_url}}Customization-guide/Log-appenders).
 
 ## Data collection API
 
 ### Log delivery
 
-The logging subsystem API varies depending on the [SDK type]({{root_url}}Glossary/#sdk-type). However, the general approach is the same.
+The logging subsystem API varies depending on the [SDK type]({{root_url}}Glossary/#kaa-sdk-type).
+However, the general approach is the same.
 
 To transfer logs to the Kaa Operations service, the Kaa client application uses the following code.
 

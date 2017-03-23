@@ -113,7 +113,7 @@ The FQN of the event is **com.company.project.ComplexEvent**, the <code>classTyp
 ## Event class families
 
 ECs are grouped into event class families (ECF) by subject areas.
-ECFs are registered within the [Kaa tenant]({{root_url}}Glossary/#kaa-tenant).
+ECFs are registered within the Kaa tenant.
 Once an event class family is saved in the [Kaa application]({{root_url}}Glossary/#kaa-application), the [Control service]({{root_url}}Glossary/#control-service) automatically assigns a version number to that ECF.
 The user can define new versions of the ECF that contain different ECs.
 ECF versions are used for grouping ECs that belong to a certain ECF.
@@ -121,7 +121,7 @@ ECF versions are used for grouping ECs that belong to a certain ECF.
 This means that an ECF contains the list of ECF versions, and each ECF version contains a list of ECs.
 While ECFs and ECF versions are lists, the actual CT schemas are contained in the ECs.
 
-To change the list of ECs for an ECF, you need to create a new version of that ECF.
+To change the list of ECs for an ECF, you need to create a new version of that ECF (see [Managing event class families](#managing-event-class-families)).
 
 An ECF is uniquely identified by its name and/or class name, and tenant.
 There cannot be two ECFs with the same name or same class name within a single tenant.
@@ -234,7 +234,7 @@ To view the list of endpoints registered as sinks for a certain owner, use the [
 
 Endpoints can exchange events only if they are attached to the same owner (registered with the same user).
 You can use the APIs to attach/detach endpoints to/from owners.
-See also [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) and [Owner verifiers]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/).
+See also [Endpoint ownership]({{root_url}}Programming-guide/Key-platform-features/Endpoint-ownership/) and [Owner verifiers]({{root_url}}Customization-guide/Owner-verifiers/).
 
 
 ## Event sequence number
@@ -899,6 +899,9 @@ Select an existing [CT schema]({{root_url}}Programming-guide/Key-platform-featur
 6. On the **Add new type** page, fill in the required fields and click **Add** or click **Choose file**.
 
 	![](images/admin_ui/event_class_family/ecf8.png)
+
+	>**NOTE:** To create a new CT, you can only use the existing schemas from other event families, not from other versions of the same event family.
+	{:.note}
 
 ### Adding event family mappings
 

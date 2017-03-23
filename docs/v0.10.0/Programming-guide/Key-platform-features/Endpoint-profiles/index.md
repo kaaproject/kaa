@@ -29,7 +29,7 @@ Client developer uses CTL to select a schema as the structure for the initial cl
 Then, the client-side endpoint profile is generated during [registration of a new endpoint]({{root_url}}Programming-guide/Key-platform-features/Devices-provisioning-and-registration/#endpoint-registration).
 
 The client-side endpoint profile can be updated at run time using an SDK API call.
-After the SDK requested a profile update, the new profile is checked against the [profile filters]({{root_url}}Glossary/#profile filter) on the server side.
+After the SDK requested a profile update, the new profile is checked against the [profile filters]({{root_url}}Glossary/#profile-filter) on the server side.
 Based on the checking results, the group membership of the endpoint is re-evaluated and updated to match the new EP profile.
 The client-side EP profile can change due to your client application logic or device state.
 Since the client-side EP profile is unidirectionally synchronized, it should not be considered as a means to temporarily store endpoint data in the [Kaa cluster]({{root_url}}Glossary/#kaa-cluster).

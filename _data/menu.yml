@@ -160,7 +160,7 @@
                 SDK-Beaglebone:
                   _sort_idx: 70
                   subitems: {}
-                  text: Beaglebone
+                  text: BeagleBone
                   url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Beaglebone/"
                 SDK-QNX-Neutrino:
                   _sort_idx: 90
@@ -186,7 +186,7 @@
                 SDK-Beaglebone:
                   _sort_idx: 30
                   subitems: {}
-                  text: Beaglebone
+                  text: BeagleBone
                   url: "/docs/v0.10.0/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Beaglebone/"
                 SDK-Samsung-Artik-5:
                   _sort_idx: 50
@@ -228,10 +228,25 @@
       _sort_idx: 30
       level: 2
       subitems:
+        Server-configuration:
+          _sort_idx: 10
+          subitems: {}
+          text: Server configuration
+          url: "/docs/v0.10.0/Administration-guide/Server-configuration/"
+        Database-configuration:
+          _sort_idx: 15
+          subitems: {}
+          text: Database configuration
+          url: "/docs/v0.10.0/Administration-guide/Database-configuration/"
         System-installation:
           _sort_idx: 20
           level: 3
           subitems:
+            Building-Kaa-server-from-source-code:
+              _sort_idx: 10
+              subitems: {}
+              text: Building Kaa server from source code
+              url: "/docs/v0.10.0/Administration-guide/System-installation/Building-Kaa-server-from-source-code/"
             Single-node-installation:
               _sort_idx: 20
               subitems: {}
@@ -244,7 +259,7 @@
                 MariaDB-cluster-setup-guide:
                   _sort_idx: 30
                   subitems: {}
-                  text: MariaDB cluster setup guide
+                  text: MariaDB cluster setup
                   url: "/docs/v0.10.0/Administration-guide/System-installation/Cluster-setup/MariaDB-cluster-setup-guide/"
               text: Cluster setup guide
               url: "/docs/v0.10.0/Administration-guide/System-installation/Cluster-setup/"
@@ -260,6 +275,11 @@
           subitems: {}
           text: Tenants and applications management
           url: "/docs/v0.10.0/Administration-guide/Tenants-and-applications-management/"
+        User-management:
+          _sort_idx: 50
+          subitems: {}
+          text: User management
+          url: "/docs/v0.10.0/Administration-guide/User-management/"
         Upgrading-your-instance:
           _sort_idx: 60
           level: 3
@@ -287,22 +307,42 @@
       _sort_idx: 40
       level: 2
       subitems:
-        Customizable-system-components:
+        Log-appenders:
+          _sort_idx: 30
+          subitems: {}
+          text: Log appenders
+          url: "/docs/v0.10.0/Customization-guide/Log-appenders/"
+        Owner-verifiers:
+          _sort_idx: 40
+          subitems: {}
+          text: Owner verifiers
+          url: "/docs/v0.10.0/Customization-guide/Owner-verifiers/"
+        Nix-guide:
+          _sort_idx: 70
+          subitems: {}
+          text: Nix package manager
+          url: "/docs/v0.10.0/Customization-guide/Nix-guide/"
+      text: Customization guide
+      url: "/docs/v0.10.0/Customization-guide/"
+    How-to-contribute:
+      _sort_idx: 45
+      level: 2
+      subitems:
+        Git-flow:
           _sort_idx: 10
-          level: 3
-          subitems:
-            Log-appenders:
-              _sort_idx: 30
-              subitems: {}
-              text: Log appenders
-              url: "/docs/v0.10.0/Customization-guide/Customizable-system-components/Log-appenders/"
-            Owner-verifiers:
-              _sort_idx: 40
-              subitems: {}
-              text: Owner verifiers
-              url: "/docs/v0.10.0/Customization-guide/Customizable-system-components/Owner-verifiers/"
-          text: Customizable system components
-          url: "/docs/v0.10.0/Customization-guide/Customizable-system-components/"
+          subitems: {}
+          text: Git flow
+          url: "/docs/v0.10.0/How-to-contribute/Git-flow/"
+        Jira-flow:
+          _sort_idx: 20
+          subitems: {}
+          text: Jira flow
+          url: "/docs/v0.10.0/How-to-contribute/Jira-flow/"
+        Style-guide:
+          _sort_idx: 30
+          subitems: {}
+          text: Documentation style
+          url: "/docs/v0.10.0/How-to-contribute/Style-guide/"
         Code-style:
           _sort_idx: 40
           level: 3
@@ -311,52 +351,26 @@
               _sort_idx: 10
               subitems: {}
               text: Java
-              url: "/docs/v0.10.0/Customization-guide/Code-style/Java/"
+              url: "/docs/v0.10.0/How-to-contribute/Code-style/Java/"
             C-C++:
               _sort_idx: 30
               subitems: {}
               text: C/C++
-              url: "/docs/v0.10.0/Customization-guide/Code-style/C-C++/"
+              url: "/docs/v0.10.0/How-to-contribute/Code-style/C-C++/"
             Objective-C:
               _sort_idx: 40
               subitems: {}
               text: Objective-C
-              url: "/docs/v0.10.0/Customization-guide/Code-style/Objective-C/"
+              url: "/docs/v0.10.0/How-to-contribute/Code-style/Objective-C/"
             Shell:
               _sort_idx: 50
               subitems: {}
               text: Shell
-              url: "/docs/v0.10.0/Customization-guide/Code-style/Shell/"
+              url: "/docs/v0.10.0/How-to-contribute/Code-style/Shell/"
           text: Code style
-          url: "/docs/v0.10.0/Customization-guide/Code-style/"
-        How-to-contribute:
-          _sort_idx: 50
-          level: 3
-          subitems:
-            Git-flow:
-              _sort_idx: 10
-              subitems: {}
-              text: Git flow
-              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Git-flow/"
-            Contribution-guide:
-              _sort_idx: 30
-              subitems: {}
-              text: Documentation contribution guide
-              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Contribution-guide/"
-            Style-guide:
-              _sort_idx: 30
-              subitems: {}
-              text: Documentation style guide
-              url: "/docs/v0.10.0/Customization-guide/How-to-contribute/Style-guide/"
-          text: How to contribute
-          url: "/docs/v0.10.0/Customization-guide/How-to-contribute/"
-        Nix-guide:
-          _sort_idx: 70
-          subitems: {}
-          text: Nix guide
-          url: "/docs/v0.10.0/Customization-guide/Nix-guide/"
-      text: Customization guide
-      url: "/docs/v0.10.0/Customization-guide/"
+          url: "/docs/v0.10.0/How-to-contribute/Code-style/"
+      text: Contribution guide
+      url: "/docs/v0.10.0/How-to-contribute/"
     Glossary:
       _sort_idx: 50
       subitems: {}

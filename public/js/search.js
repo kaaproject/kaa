@@ -22,32 +22,6 @@
 	var SEARCH_DICTIONARY_FILE = 'search_dictionary.json';
 	var SHOW_OFFSET = 75;
 
-	var Analytic = (function () {
-
-		var instance = null;
-
-		function init() {
-			function sendSearchEvent(searchTerm) {
-				ga('send', 'event', 'User Search', 'Search', searchTerm);
-			}
-
-			return {
-				sendSearchEvent : sendSearchEvent,
-			};
-		}
-
-		function getInstance() {
-			if( ! instance ) {
-				instance = new init();
-			}
-	 		return instance;
-		}
-
-		return {
-			getInstance : getInstance
-		};
-	}());
-
 	function urlBuilder (baseUrl) {
 		this.baseUrl = baseUrl;
 		this.buildSearchDictionaryUrl = function buildSearchDictionaryUrl(searchVersion) {

@@ -18,14 +18,14 @@
         {% assign selected_url  = site.data.versions[page.dir].url %}
         {% assign selected_item = site.data.versions[page.dir].text %}
     {% endif %}-->
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ selected_item }}<span class="caret"/></a>
-    <ul class="dropdown-menu">
+    <a href="#" id="selected_version" class="dropdown-toggle" data-toggle="dropdown">{{ selected_item }}<span class="caret"/></a>
+    <ul class="dropdown-menu" id="version-select">
     {% for item in include.nav %}
         {% assign key = item[0] %}
         {% assign val = item[1] %}
         {% if navurl contains val.nav %}
         {%else%}
-          <li>
+          <li id="li-version-{{val.text}}">
             <a href="{{ site.baseurl }}{{ val.url }}">
               {{ val.text }}{% if val.text == latest_version %} (latest) {% endif %}</a>
           </li>

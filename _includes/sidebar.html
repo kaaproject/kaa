@@ -20,11 +20,21 @@
 <ul class="nav hidden-xs" id="lg-menu">
   <a href="{{ site.baseurl }}/" data-toggle="offcanvas" class="hidden-xs text-center logo sidebar-header"><h2>{{site.title}}</h2></a>
   <li class="dropdown text-center sidebar-header">
-  {% include versions.html nav=site.data.versions %}
+    {% include versions.html nav=site.data.versions %}
   </li>
+  {% if page.generate_nav_for_all_versions %}
+    {% for item in site.data.menu %}
+      {% assign key = item[0] %}
+      {% assign navtree = site.data.menu[key].subitems %}
+      <div class="sidebar-navigation-container nav" id="sidbar-nav-version-{{site.data.versions[key].version}}" style="display: none;">
+        {% include nav.html nav=navtree lvl=0 %}
+      </div>
+    {% endfor %}
+  {% else %}
   <div class="sidebar-navigation-container nav">
     {% include nav.html nav=navtree lvl=0 %}
   </div>
+  {% endif %}
 </ul>
 
 <!-- tiny only nav-->

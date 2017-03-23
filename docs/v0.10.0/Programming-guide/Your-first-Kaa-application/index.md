@@ -41,13 +41,13 @@ In this example, the Configuration feature will be used to send the sampling per
 
 To add an application:
 
-1. On the Sandbox main page, click **Administration** and log in as a tenant administrator using default **admin** username and **admin123** password.
+1. On the Sandbox main page, click **Administration UI** and log in as a [tenant administrator]({{root_url}}Glossary/#tenant-administrator) using default **admin** username and **admin123** password.
 
-2. On the **Administration** page, click **Add application**.
+2. On the **Administration UI** page, click **Add application**.
 
 3. On the **Application details** page, enter a title for your new application, select a credentials service and click **Add**.
 
-	![Administration page](attach/new_app.png)
+	![Administration UI](attach/new_app.png)
 
 ## Create schemas
 
@@ -56,7 +56,7 @@ However, you can create custom data collection and configuration schemas.
 
 To create and upload custom schemas:
 
-1. Create a data-schema.json file containing the following schema definition.
+1. Create a `data-schema.json` file containing the following schema definition.
 
 		{
 			"type": "record",
@@ -70,7 +70,7 @@ To create and upload custom schemas:
 			]
 		}
 		
-2. Create a configuration-schema.json file containing the following schema definition.
+2. Create a `configuration-schema.json` file containing the following schema definition.
 The `by_default` parameter defines the default sampling period value which is set to **1** in this example case.
 
 		{
@@ -86,22 +86,22 @@ The `by_default` parameter defines the default sampling period value which is se
 			]
 		}
 		
-3. Use the **Upload from file** section to [create CT schemas]({{root_url}}/Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the data-schema.json and configuration-schema.json files.
-		
-4. On the Sandbox main page, click **Administration** and log in as a tenant developer using default **devuser** username and **devuser123** password.
+3. Use the **Upload from file** section to [create CT schemas]({{root_url}}Programming-guide/Key-platform-features/Common-Type-Library/#create-a-new-ct) of Application scope from the `data-schema.json` and `configuration-schema.json` files.
+
+4. On the Sandbox main page, click **Administration UI** and log in as a [tenant developer]({{root_url}}Glossary/#tenant-developer) using default **devuser** username and **devuser123** password.
 
 5. Click the **Applications** arrow to unfold the list and click the arrow of the application you created in [Add application](#add-application), then click **Schemas** > **Log** and click the **Add schema** button.
 
-6. On the **Add log schema** page, enter a name and description of the new data collection schema and select the CT created from the data-schema.json file.
+6. On the **Add log schema** page, enter a name and description of the new data collection schema and select the CT created from the `data-schema.json` file.
 
 	![Data collection schema](attach/new_data_schema2.png)
 
 7. Click the **Add** button at the top of the page.
 
->**NOTE:** Alternatively, you can use the Schema Avro UI form to create the schema.
+>**NOTE:** Alternatively, you can use the [Avro UI form]({{root_url}}Glossary/#avro-ui-form) to create the schema.
 {: .note}
 
-To create a configuration schema repeat the same procedure using the configuration-schema.json file.
+To create a configuration schema repeat the same procedure using the `configuration-schema.json` file.
 
 ![Add configuration schema](attach/new_config_schema2.png)
 
@@ -184,39 +184,59 @@ To do this, run the following commands in the terminal.
 
 		sudo apt-get install cmake
 		
-2. Create a directory named **kaa** and unpack the C SDK archive into it.
+2. Create a directory named `kaa` and unpack the C SDK archive into it.
 
-3. In the application directory, create a CMakeLists.txt file with the following contents.
+3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
-		cmake_minimum_required(VERSION 2.8.12)
-		project(kaa-application C)
-		
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
-		
-		add_subdirectory(kaa)
-		
-		add_executable(kaa-app main.c)
-		
-		target_link_libraries(kaa-app kaac)
-		
-4. Create a main.c source file containing empty main routine (for now).
+   ```bash
+   cmake_minimum_required(VERSION 2.8.12)
+   project(kaa-application C)
 
-		int main(void)
-		{
-		
-		}
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
+
+   add_subdirectory(kaa)
+
+   add_executable(kaa-app main.c)
+
+   target_link_libraries(kaa-app kaac)
+   ```
+
+4. Create a `main.c` source file containing empty main routine (for now).
+
+   ```c
+   int main(void)
+   {
+
+   }
+   ```
 
 5. To validate your build, run the following commands.
 
-		mkdir build
-		cd build
-		cmake ..
-		make
+   ```bash
+   mkdir build
+   cd build
+   cmake -DBUILD_TESTING=OFF ..
+   make
+   ```
 
 6. Check that the demo application executable file is present in the build directory.
 
-		$ ls -l kaa-app
-		-rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```bash
+   $ ls -l kaa-app
+   -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```
+
+Your application directory structure should look like this:
+
+```
+./my-kaa-application/
+	CMakeLists.txt
+	kaa/
+		<unpacked SDK should be placed here>
+	src/
+		kaa-application.c
+	<other sources related to the Kaa application>
+```
 
 </div>
 
@@ -224,49 +244,69 @@ To do this, run the following commands in the terminal.
 
 Before using the C++ application code, be sure to complete the following steps:
 
-1. Install the required libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}/Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites).
+1. Install the required libraries:  [CMake, Boost, AvroC++, Botan]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C++/SDK-Linux/#installing-prerequisites).
 
-2. Create a **kaa** directory and unpack the C++ SDK into it.
+2. Create a `kaa` directory and unpack the C++ SDK into it.
 
-3. In the application directory, create a CMakeLists.txt file with the following contents.
+3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
-        cmake_minimum_required(VERSION 2.8.12)
-        project(Cpp-SDK-your-first-Kaa-application CXX)
-        
-        add_subdirectory(kaa)
-        add_executable(kaa-app main.cpp)
-        target_link_libraries(kaa-app kaacpp)
+   ```bash
+   cmake_minimum_required(VERSION 2.8.12)
+   project(Cpp-SDK-your-first-Kaa-application CXX)
+   
+   add_subdirectory(kaa)
+   add_executable(kaa-app main.cpp)
+   target_link_libraries(kaa-app kaacpp)
+   ```
 
-4. Create a main.cpp source file with empty main routine (for now).
+4. Create a `main.cpp` source file with empty main routine (for now).
 
-        int main()
-        {
-            return 0;
-        }
+   ```cpp
+   int main()
+   {
+       return 0;
+   }
+   ```
 
 5. Validate that build system works as expected by triggering a build.
 
-        mkdir build
-        cd build
-        cmake ..
-        make
+   ```bash
+   mkdir build
+   cd build
+   cmake ..
+   make
+   ```
 
 6. Check that demo application executable is present in the build directory.
 
-        $ ls -l kaa-app
-        -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```bash
+   $ ls -l kaa-app
+   -rwxr-xr-x 1 user 53944 Jun 10 12:36 kaa-app
+   ```
+
+Your application directory structure should look like this:
+
+```
+./my-kaa-application/
+	CMakeLists.txt
+	kaa/
+		<unpacked SDK should be placed here>
+	src/
+		kaa-application.cpp
+	<other sources related to the Kaa application>
+```
 
 </div>
 
 <div id="prep-java" class="tab-pane fade" markdown="1" >
 
 Before using the Java application code, be sure to complete the following steps:
- 
+
 1. Install [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) for your OS.
 
-2. Create a **demo_app** directory.
+2. Create a `demo_app` directory.
 
-3. Use the Administration UI to [generate Java SDK]({{root_url}}/Programming-guide/Your-first-Kaa-application/#generate-sdk) into the **demo_app** directory.
+3. Use the Administration UI to [generate Java SDK]({{root_url}}Programming-guide/Your-first-Kaa-application/#generate-sdk) into the `demo_app` directory.
 
 </div>
 
@@ -275,14 +315,21 @@ Before using the Java application code, be sure to complete the following steps:
 Before using the Objective-C application code, be sure to complete the following steps:
 
 1. Install CocoaPods.
+
 2. Extract Kaa SDK, open a terminal from the extraction directory, and run the following command.
 
-        sh build.sh compile
+   ```bash
+   sh build.sh compile
+   ```
+
 3. Go to xCode and choose a template of the iOS Single View Application.
 Name it "My First Kaa Application", choose Objective-C language and leave all other fields unchanged.
+
 4. Link the SDK to your project as described in [Objective-C SDK]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/Objective-C/).
+
 5. Make sure that your application builds successfully.
-6. Replace code in the ViewController.m file with the code from the [Application code](#application-code) section.
+
+6. Replace code in the `ViewController.m` file with the code from the [Application code](#application-code) section.
 
 </div>
 
@@ -451,7 +498,7 @@ int main(void)
     return EXIT_SUCCESS;
 }
 ```
->**NOTE:** Use the links to the [code]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/kaa_demo.c) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/CMakeLists.txt) files of the example.
+>**NOTE:** Use the links to the [code]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-c/kaa_demo.c) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-c/CMakeLists.txt) files of the example.
 {:.note}
 
 </div>
@@ -570,7 +617,7 @@ int main()
 }
 ```
 
->**NOTE:** Use the links to the [code]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-cpp/KaaDemo.cpp) and a [CMake]({{root_url}}/Programming-guide/Your-first-Kaa-application/attach/demo-cpp/CMakeLists.txt) files of the example.
+>**NOTE:** Use the links to the [code]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-cpp/KaaDemo.cpp) and a [CMake]({{root_url}}Programming-guide/Your-first-Kaa-application/attach/demo-cpp/CMakeLists.txt) files of the example.
 {:.note}
 
 </div>
@@ -904,13 +951,17 @@ To launch your C application:
 1. Rebuild application with decreased log level.
 This will clean up the mess that can occur when debug logs are enabled.
 
-        cd build
-        cmake -DKAA_MAX_LOG_LEVEL=3 ..
-        make
+   ```bash
+   cd build
+   cmake -DKAA_MAX_LOG_LEVEL=3 -DBUILD_TESTING=OFF ..
+   make
+   ```
 
 2. Launch the executable file.
 
-        ./kaa-app
+   ```bash
+   ./kaa-app
+   ```
 
 </div>
 
@@ -921,13 +972,17 @@ To launch your C++ application:
 1. Rebuild application with decreased log level.
 This will clean up the mess that can occur when debug logs are enabled.
 
-        cd build
-        cmake -DKAA_MAX_LOG_LEVEL=3 ..
-        make
+   ```bash
+   cd build
+   cmake -DKAA_MAX_LOG_LEVEL=3 ..
+   make
+   ```
 
 2. Launch the executable file.
 
-        ./kaa-app
+   ```bash
+   ./kaa-app
+   ```
 
 </div>
 
@@ -935,37 +990,56 @@ This will clean up the mess that can occur when debug logs are enabled.
 
 To launch your Java application:
 
-    
-1.  Save the application code into FirstKaaDemo.java file located in the <b>demo_app</b> directory.
-    
-2.  Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) to the <b>demo_app</b> directory.
-    In Linux terminal you can just go to the <b>demo_app</b> directory and run the command:
-    <pre>wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar</pre>
+1. Save the application code into `FirstKaaDemo.java` file located in the `demo_app` directory.
 
-3.  Build the application by running the following command from the <b>demo_app</b> directory.
-    <pre>javac -cp kaa-*.jar *.java</pre>
+2. Download the [slf4j-simple-1.7.21.jar](http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar) and save it to the `demo_app` directory.
+In Linux terminal, run the following command from the `demo_app` directory.
 
-4.  Launch the application.
-    <br/>
-    <b>Unix-based OS</b>
-    <pre>java -cp '.:./*' FirstKaaDemo</pre>
-    <br/>
-    <b>Windows OS</b>
-    <pre>java -cp '.;.\*' FirstKaaDemo</pre>
+   ```bash
+   wget http://central.maven.org/maven2/org/slf4j/slf4j-simple/1.7.21/slf4j-simple-1.7.21.jar
+   ```
+
+3. Build the application by running the following command from the `demo_app` directory.
+
+   ```bash
+   javac -cp *.jar *.java
+   ```
+
+4. Launch the application.
+
+<ul>
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#un">Unix</a></li>
+  <li><a data-toggle="tab" href="#win">Windows</a></li>
+</ul>
+
+<div class="tab-content"><div id="un" class="tab-pane fade in active" markdown="1" >
+
+```
+java -cp '.:./*' FirstKaaDemo
+```
+
+</div><div id="win" class="tab-pane fade" markdown="1" >
+
+```
+java -cp '.;.\*' FirstKaaDemo
+```
 
 </div>
+</div>
 
-<div id="run-obj-c" class="tab-pane fade" markdown="1" >
+</ul>
+
+</div><div id="run-obj-c" class="tab-pane fade" markdown="1" >
 
 To launch your Objective-C application:
 
 1. Select **My First Kaa Application** as target.
+
 2. Click **Play**.
 
 </div>
-
 </div>
-
 
 ### Expected output
 
@@ -1012,12 +1086,12 @@ To do this:
 
 1. Make sure your client application is running and transmitting the temperature values.
 
-2. Log in to the **Administration** page as a Tenant Developer using the default **devuser** username and **devuser123** password.
+2. Log in to the **Administration UI** page as a tenant developer using the default **devuser** username and **devuser123** password.
 In the **Applications** list, select the **Endpoint Groups** section of your new application.
 
     ![Endpoint groups](attach/endpoint_group.png)
 
-3. Click on the endpoint group **All**.
+3. Click on the endpoint group **all**.
 On the **Endpoint group details** page, click on the latest version schema in the **Configurations** section.
 
     ![Endpoint groups inside](attach/endpoint_group_inside.png)
@@ -1041,7 +1115,7 @@ Your client application console will display the following messages.
         Sampled temperature: 34
         Sampled temperature: 25
 
-This means that the sampling period has been successfully modified.
+    This means that the sampling period has been successfully modified.
 
 
 ## Further reading
@@ -1055,6 +1129,6 @@ Use the following guides and references to learn more about Kaa features.
 | **[Key platform features]({{root_url}}Programming-guide/Key-platform-features)** | Learn about Kaa key features, such as [endpoint profiles]({{root_url}}Programming-guide/Key-platform-features/Endpoint-profiles/), [events]({{root_url}}Programming-guide/Key-platform-features/Events/), [notifications]({{root_url}}Programming-guide/Key-platform-features/Notifications/), [logging]({{root_url}}Programming-guide/Key-platform-features/Data-collection/), and others. |
 | **[Using endpoint SDKs]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs)** | Create advanced applications using Kaa SDKs. |
 | **[Installation guide]({{root_url}}Administration-guide/System-installation)** | Learn how to install, configure and manage Kaa platform. |
-| **[Contribute To Kaa]({{root_url}}Customization-guide/How-to-contribute)** | Learn how to contribute to Kaa project and which code/documentation style conventions we adhere to. |
+| **[Contribute to Kaa]({{root_url}}How-to-contribute/)** | Learn how to contribute to Kaa project and which code/documentation style conventions we adhere to. |
 
 ---

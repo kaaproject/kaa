@@ -188,7 +188,7 @@ To create a Twitter owner verifier, use the [server REST API]({{root_url}}Progra
 ### Custom owner verifier
 
 You can implement a custom plug-in verifier.
-To do this, follow the instructions in [Creating custom owner verifier]({{root_url}}Customization-guide/Customizable-system-components/Owner-verifiers/).
+To do this, follow the instructions in [Creating custom owner verifier]({{root_url}}Customization-guide/Owner-verifiers/).
 
 
 ## Using the endpoint access token
@@ -212,7 +212,7 @@ The process flows as follows:
 
 ### Attach endpoint to owner
 
-[Kaa client]({{root_url}}Glossary/#kaa-client) attaches the endpoint to the owner as shown in the following examples for different [SDK types]({{root_url}}Glossary/#sdk-type).
+[Kaa client]({{root_url}}Glossary/#kaa-client) attaches the endpoint to the owner as shown in the following examples for different [SDK types]({{root_url}}Glossary/#kaa-sdk-type).
 
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Java">Java</a></li>

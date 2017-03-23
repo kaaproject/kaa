@@ -35,9 +35,9 @@ Follow these steps to run the upgrade script:
 5. Execute the command below:
 
 ```bash
- sudo ./upgradeKaa081to090.sh
+sudo ./upgradeKaa081to090.sh
 ```
 
 >**Note:**
 >
->If needed, enter the password to the PostgreSQL database and confirm modification of configuration files located at /usr/lib/kaa-node/conf/ directory by entering "Y" during the script execution.
+>If needed, enter the password to the PostgreSQL database and confirm modification of configuration files located in the `/usr/lib/kaa-node/conf/` directory by entering "Y" during the script execution.

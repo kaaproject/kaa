@@ -10,43 +10,63 @@ sort_idx: 60
 * TOC
 {:toc}
 
-The guide provides information on how to **cross-compile** C SDK for Intel Edison.
-Alternatively, you can build the Kaa C endpoint SDK right on the Edison board.
-Refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for further details.
+This guide explains how to cross-compile [Kaa C SDK]({{root_url}}Glossary/#kaa-sdk-type) for [Intel Edison](https://software.intel.com/en-us/iot/hardware/edison).
+Alternatively, you can build the Kaa C SDK directly on the Intel Edison board.
+For more information, see [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/) for Kaa C SDK.
 
-**Verified against:**
+>**NOTE:** This guide is verified against:
+>
+> * **Host OS:** Ubuntu 16.04 LTS Desktop 64-bit
+> * **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3, kernel version 3.10.17-poky-edison+
+{:.note}
 
- - **Host OS:** Ubuntu 16.04 64-bit LTS
- - **Target OS:** Poky (Yocto Project Reference Distro) 1.7.3
+## Prerequisites
 
-# Install dependencies
+Perform the following instructions on the host machine:
 
-**The further instructions must be executed on the host machine.**
+1. Download the [cross compile tools](https://downloadcenter.intel.com/download/24472/Cross-Compiler-Toolchain-for-Intel-Edison-Maker-Board) for your platform, 32-bit or 64-bit version.
+Unpack the downloaded archive. <!--(don't forget to change the file name to proper one)-->
 
-1. Download the [cross compile tools](https://downloadcenter.intel.com/download/24472/Cross-Compiler-Toolchain-for-Intel-Edison-Maker-Board) for your platform, 32 or 64 bit. Untar the downloaded file (don't forget to change the file name to proper one).
+   ```
+   tar -xvf edison-toolchain-20150120-linux64.tar.bz2
+   ```
+   
+2. Install the toolchain.
 
-        tar -xvf edison-toolchain-20150120-linux64.tar.bz2
+   ```bash
+   cd i686
+   ./install_script.sh
+   ```
+   
+    While running the installation script, you may get an error message: `find: invalid mode '+111'`.
+    Fix it by running the command below.
 
-2. Install toolchain.
+   ```bash
+   sed -i 's:+111:/111:' install_script.sh
+   ```
+   
+    The cross-compilation toolchain is installed to the current directory by default.
+    On some configurations, the script installs the toolchain to `/opt/poky-edison/1.6.1/`.
 
-        cd i686
-        ./install_script.sh
+3. Install [Cmake](https://cmake.org/):
 
-    You may experience `find: invalid mode '+111'` error message while running the installation script. The script can be fixed with this command:
+   ```bash
+   sudo apt-get install cmake
+   ```
+   
+## Build Kaa application
 
-        sed -i 's:+111:/111:' install_script.sh
+After you installed the required dependencies and built the C SDK, you can build and run your [Kaa application]({{root_url}}Glossary/#kaa-application).
 
-    The cross compilation toolchain is installed to `/opt/poky-edison/1.6.1/` directory by default. On some configurations the script installs the toolchain only to its working directory.
+Since Edison runs on Linux, you can use the [Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#build-c-sdk) to build and run your application.
 
-# Create application
+>**NOTE:** Make sure to specify correct compiler name when compiling your Kaa application for Edison:
+>
+>```bash
+>cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_TOOLCHAIN_FILE=PATH_TO_KAA_SDK/toolchains/edison.cmake -DEDISON_SDK_ROOT=PATH_TO_EDISON_SDK -DBUILD_TESTING=OFF ..
+>make
+>```
+>Replace `PATH_TO_KAA_SDK` with the path to Kaa C SDK relative to the `build` directory, and `PATH_TO_EDISON_SDK` with the absolute path to the Edison SDK installation directory
+{:.note}
 
-Now, dependencies are installed and it is time to create Kaa application.
-Since Edison is running Linux, you can refer to [the Linux guide]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/C/SDK-Linux/#c-sdk-build) for detailed process of application creation.
-But remember, you must specify correct compiler when compiling your Kaa application for Intel Edison:
-
-        export EDISON_CC=/opt/poky-edison/1.6.1/sysroots/x86_64-pokysdk-linux/usr/bin/i586-poky-linux/i586-poky-linux-gcc
-        cmake -DKAA_MAX_LOG_LEVEL=3 -DCMAKE_C_COMPILER=$EDISON_CC ..
-        make 
-
-For more details on how to build, upload and run your application on Edison board, you may refer to official [user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).
-
+For more information on how to build, upload and run your application on Edison board, see [official user guide](https://software.intel.com/en-us/intel-edison-board-user-guide).

@@ -13,7 +13,7 @@ sort_idx: 30
 In this section, you can learn how to create [endpoint groups]({{root_url}}Glossary/#endpoint-group).
 
 Endpoint grouping is a Kaa feature that allows you to aggregate your [endpoints]({{root_url}}Glossary/#endpoint-ep) into endpoint groups within an [application]({{root_url}}Glossary/#kaa-application).
-The membership of an endpoint in a group is based on matching the [endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) to the [profile filter]({{root_url}}Glossary/#profile filter) assigned to that group.
+The membership of an endpoint in a group is based on matching the [endpoint profile]({{root_url}}Glossary/#endpoint-profile-client-side-server-side) to the [profile filter]({{root_url}}Glossary/#profile-filter) assigned to that group.
 This means that those endpoints whose profiles match the profile filters of a specific endpoint group become automatically registered as members of that group.
 Endpoint group is an independently managed entity defined by the profile filter assigned to it.
 
@@ -202,9 +202,9 @@ This default group is created for every application and cannot be edited by user
 
 Every group has a *weight* that represents the group priority.
 Higher weight number corresponds to higher priority.
-The weight of the group *all* is *0*, which is the lowest priority.
+The weight of the group **all** is **0**, which is the lowest priority.
 
-The group *all* also has the following attributes:
+The group **all** also has the following attributes:
 
 * Name
 * Weight
@@ -214,7 +214,7 @@ The group *all* also has the following attributes:
 * [Notification topics]({{root_url}}Programming-guide/Using-Kaa-endpoint-SDKs/#notification-topics)
 
 The associated profile filter is automatically set equal to **true** for each profile schema version in the system.
-Therefore, the group *all* contains every endpoint registered in the application.
+Therefore, the group **all** contains every endpoint registered in the application.
 You can create your custom endpoint groups using the [Administration UI](#adding-endpoint-groups) or [server REST API]({{root_url}}Programming-guide/Server-REST-APIs/#!/Grouping/editEndpointGroup).
 
 >**NOTE**: Once created, an endpoint group does not contain any endpoints, so you will need to create and add custom profile filters to the group.
@@ -331,7 +331,7 @@ To add a profile filter for an endpoint group:
 
 3. On the **Profile filter** page, select the schema version.
 
-4. Switch to the **Draft** tab, enter a description (optional) and a [filter body](#profile-filters).
+4. Switch to the **Draft** tab, enter a description (optional) and enter the filter conditions in the **Filter body** section.
 
     ![profile-filter-details](admin-ui/profile-filter-details.png "profile-filter-details.png")
 
