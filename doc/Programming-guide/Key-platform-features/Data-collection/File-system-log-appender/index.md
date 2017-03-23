@@ -28,7 +28,6 @@ You can log in to the Operations service host and browse logs using the `kaa_log
 >```
 >kaa ALL=(ALL:ALL) ALL
 >```
->For more information, see [this thread](http://stackoverflow.com/questions/42290872/file-appender-throws-java-lang-nullpointerexception).
 {:.important}
 
 To create a file system log appender for your application using the [Administration UI]({{root_url}}Glossary/#administration-ui):
