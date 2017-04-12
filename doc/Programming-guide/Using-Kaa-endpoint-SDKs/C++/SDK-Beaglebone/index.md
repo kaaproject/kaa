@@ -47,8 +47,8 @@ Perform the following instructions on the host machine:
 
    ```bash
    cd "${BB_ROOT}"
-   wget http://zlib.net/zlib-1.2.8.tar.gz
-   tar -xvzf zlib-1.2.8.tar.gz
+   wget http://zlib.net/zlib-1.2.11.tar.gz
+   tar -xvzf zlib-1.2.11.tar.gz
    cd zlib-1.2.8
    CROSS_PREFIX="${CROSS}" ./configure --prefix="${SYSROOT}"
    make && make install
