@@ -24,13 +24,20 @@ This guide is focused on the details of the [CMake](https://cmake.org/)-based bu
 
 To build Kaa C SDK, make sure to install the following components:
 
- - CMake (minimum required version is 2.8.12).
+ - CMake (minimum required version is 3.5.2).
  - C99 compatible compiler (e.g. GCC).
 
-To install dependencies on Ubuntu, execute the following command:
+To install CMake, execute the following commands:
 
 ```
-sudo apt-get install cmake build-essential
+sudo apt-get install build-essential
+wget http://www.cmake.org/files/v3.5/cmake-3.5.2.tar.gz
+tar xf cmake-3.5.2.tar.gz
+cd cmake-3.5.2
+./configure
+make
+sudo apt-get install checkinstall
+sudo checkinstall
 ```
 
 ## Build C SDK
