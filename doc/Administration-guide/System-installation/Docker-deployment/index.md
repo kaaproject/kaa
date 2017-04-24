@@ -25,24 +25,46 @@ To deploy a Kaa cluster on your machine:
 
 1. Install [Docker Engine](https://docs.docker.com/engine/installation/).
 
-	If you use Linux, you can install the Docker Engine by running the [installation script](https://get.docker.com/).
+	If you use Linux, you can install Docker Engine by running the [installation script](https://get.docker.com/).
 
 		wget -qO- https://get.docker.com/ | sh
 
 	>**IMPORTANT:** If you use Windows, you must also have [Python](https://www.python.org/downloads/) installed.
 	{:.important}
 
+	To verify your Docker installation, run:
+	
+		docker --version
+	
 2. Install [Docker Сompose](https://docs.docker.com/compose/install/).
 
-3. Download Kaa debian package from the [official site](http://www.kaaproject.org/download-kaa/) or [build your Kaa project locally]({{root_url}}Administration-guide/System-installation/Building-Kaa-server-from-source-code/) (use `kaa-node.deb` located in `server/node/target/`).
-Put the `kaa-node.deb` file in the `server/containers/docker/` directory.
+	To verify your Docker Compose installation, run:
+	
+		docker-compose --version
 
-4. Run the following command from the `server/containers/docker` directory.
+3. Download Kaa debian package from the [official site](http://www.kaaproject.org/download-kaa/) or build your Kaa project locally.
+
+	To build locally, clone Kaa repository
+	
+		$ git clone https://github.com/kaaproject/kaa.git
+	
+	and run the following command from the `kaa` directory.
+	
+		$ mvn -P compile-gwt,mongo-dao,mariadb-dao clean install verify
+	
+	This will generate a `kaa-node.deb` file in the `server/node/target/` directory.
+	
+	>**NOTE:** For more information, see [how to build your Kaa project locally]({{root_url}}Administration-guide/System-installation/Building-Kaa-server-from-source-code/).
+	{:.note}
+
+4. Put the `kaa-node.deb` file in the `server/containers/docker` directory of your cloned Kaa repository.
+
+5. Run the following command from the `server/containers/docker` directory.
 
 		docker build --build-arg setupfile=kaa-node.deb -t kaa-node:0.10.0 .
-        
-	Alternatively, you can run the following command.
-        
+
+	Alternatively, you can run the following command from the same directory.
+
 		build.sh
 
 
