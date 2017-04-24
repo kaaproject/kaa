@@ -54,8 +54,8 @@ Install the required third-party components:
 
    ```bash
    cd "${ARTIK_ROOT}"
-   wget http://zlib.net/zlib-1.2.8.tar.gz
-   tar -xvzf zlib-1.2.8.tar.gz
+   wget http://zlib.net/zlib-1.2.11.tar.gz
+   tar -xvzf zlib-1.2.11.tar.gz
    export INSTALLDIR="${ARTIK_ROOT}"/gcc-linaro-arm-linux-gnueabihf/libc/usr
    export PATH="${ARTIK_ROOT}"/gcc-linaro-arm-linux-gnueabihf/bin:"${PATH}"
    export TARGETMACH=arm-linux-gnueabi
