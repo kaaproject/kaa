@@ -76,11 +76,10 @@ kaa_error_t kaa_status_create(kaa_status_t ** kaa_status_p)
     KAA_RETURN_IF_NIL(kaa_status->topics, KAA_ERR_NOMEM);
 
     char *  read_buf = NULL;
-    char *  read_buf_head = NULL;
     size_t  read_size = 0;
     bool    needs_deallocation = false;
     ext_status_read(&read_buf, &read_size, &needs_deallocation);
-    read_buf_head = read_buf;
+    char *read_buf_head = read_buf;
 
     if (read_size >= KAA_STATUS_STATIC_SIZE + sizeof(size_t)) {
         READ_BUFFER(read_buf, &kaa_status->is_registered, sizeof(kaa_status->is_registered));

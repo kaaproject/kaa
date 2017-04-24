@@ -145,6 +145,8 @@ void test_specified_user_verifier(void **state)
     buf_cursor += kaa_aligned_size_get(strlen(USER_VERIFIER));
 
     kaa_platform_message_writer_destroy(writer);
+
+    (void)buf_cursor;
 }
 
 void test_success_response(void **state)

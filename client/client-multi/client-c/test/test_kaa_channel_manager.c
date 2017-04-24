@@ -356,6 +356,7 @@ void test_get_bootstrap_client_sync_size(void **state)
     error_code = kaa_channel_manager_bootstrap_request_get_size(channel_manager, &actual_size);
     ASSERT_EQUAL(error_code, KAA_ERR_NONE);
     ASSERT_EQUAL(actual_size, 0);
+    ASSERT_EQUAL(channel_count, 0);
 
     kaa_channel_manager_destroy(channel_manager);
 }

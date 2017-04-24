@@ -160,8 +160,8 @@ void test_create_kaa_tcp_channel(void **state)
     (void)state;
     kaa_error_t error_code;
 
-    kaa_transport_channel_interface_t *channel = NULL;
-    channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
+    kaa_transport_channel_interface_t *channel =
+        KAA_CALLOC(1, sizeof(kaa_transport_channel_interface_t));
 
     kaa_extension_id bootstrap_services[] = {KAA_EXTENSION_BOOTSTRAP};
 
@@ -210,8 +210,8 @@ void test_set_access_point_full_success_bootstrap(void **state)
 
     kaa_error_t error_code;
 
-    kaa_transport_channel_interface_t *channel = NULL;
-    channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
+    kaa_transport_channel_interface_t *channel =
+        KAA_CALLOC(1, sizeof(kaa_transport_channel_interface_t));
 
     kaa_extension_id bootstrap_services[] = {KAA_EXTENSION_BOOTSTRAP};
 
@@ -238,8 +238,8 @@ void test_set_access_point_connecting_error(void **state)
 
     kaa_error_t error_code;
 
-    kaa_transport_channel_interface_t *channel = NULL;
-    channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
+    kaa_transport_channel_interface_t *channel =
+        KAA_CALLOC(1, sizeof(kaa_transport_channel_interface_t));
 
     kaa_extension_id bootstrap_services[] = {KAA_EXTENSION_BOOTSTRAP};
 
@@ -280,8 +280,8 @@ void test_set_access_point_io_error(void **state)
 
     kaa_error_t error_code;
 
-    kaa_transport_channel_interface_t *channel = NULL;
-    channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
+    kaa_transport_channel_interface_t *channel =
+        KAA_CALLOC(1, sizeof(kaa_transport_channel_interface_t));
 
     kaa_extension_id bootstrap_services[] = {KAA_EXTENSION_BOOTSTRAP};
 
@@ -347,8 +347,8 @@ void test_bootstrap_sync_success(void **state)
 
     kaa_error_t error_code;
 
-    kaa_transport_channel_interface_t *channel = NULL;
-    channel = KAA_CALLOC(1,sizeof(kaa_transport_channel_interface_t));
+    kaa_transport_channel_interface_t *channel =
+        KAA_CALLOC(1, sizeof(kaa_transport_channel_interface_t));
 
     kaa_extension_id bootstrap_services[] = {KAA_EXTENSION_BOOTSTRAP};
 
