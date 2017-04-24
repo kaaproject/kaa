@@ -215,7 +215,7 @@ CREATE DATABASE "kaa"
 Install [Zookeeper 3.4.8](http://zookeeper.apache.org/doc/r3.4.8/).
 
 ```bash
-$ sudo apt-get install zookeeper
+$ sudo apt-get install zookeeperd
 ```
 
 Start Zookeeper.
