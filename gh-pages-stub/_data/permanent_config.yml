@@ -4,7 +4,7 @@ github_url_latest: https://github.com/kaaproject/kaa/tree/master/
 github_url: https://github.com/kaaproject/kaa/
 github_url_raw: https://raw.githubusercontent.com/kaaproject/kaa/
 github_url_raw_latest: https://raw.githubusercontent.com/kaaproject/kaa/master/
-copyright_text: "Copyright © 2014-2016, CyberVision, Inc."
+copyright_text: "Copyright © 2014-2017, CyberVision, Inc."
 copyright_url: http://www.cybervisiontech.com/
 sidebar_img_path: /public/kaa-avatar.png
 google_analytics_property_id: UA-47512871-7
