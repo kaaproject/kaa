@@ -149,7 +149,7 @@ public class DefaultOperationsServerListService
         for (TransportMetaData md : node.getTransports()) {
           if (md.getId() == key.getProtocolId() && md.getMinSupportedVersion() <= key.getVersion()
               && key.getVersion() <= md.getMaxSupportedVersion()) {
-            result.add(toProtocolConnectionData(node, md, key.getVersion()));
+            result.addAll(toProtocolConnectionData(node, md, key.getVersion()));
           }
         }
       }
@@ -157,19 +157,22 @@ public class DefaultOperationsServerListService
     return result;
   }
 
-  private ProtocolConnectionData toProtocolConnectionData(OperationsNodeInfo node,
-                                                          TransportMetaData md,
-                                                          int version) {
+  private Set<ProtocolConnectionData> toProtocolConnectionData(OperationsNodeInfo node,
+                                                               TransportMetaData md,
+                                                               int version) {
     byte[] connectionData = null;
+    Set<ProtocolConnectionData> result = new HashSet<>();
     for (VersionConnectionInfoPair pair : md.getConnectionInfo()) {
       if (version == pair.getVersion()) {
-        connectionData = pair.getConenctionInfo().array();
+        result.add(new ProtocolConnectionData(ServerNameUtil.crc32(node.getConnectionInfo()),
+            new ProtocolVersionId(md.getId(), version),
+            pair.getConenctionInfo().array())
+        );
+
       }
     }
-    return new ProtocolConnectionData(
-        ServerNameUtil.crc32(node.getConnectionInfo()),
-        new ProtocolVersionId(md.getId(), version),
-        connectionData);
+
+    return result;
   }
 
 
