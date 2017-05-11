@@ -90,7 +90,7 @@ For example, you can create the following directories:
    ```
 
     Open the `kaa-application.c` file and write the application code in it.
-    For the sake of example, a very simple application will be built that displays a string: *Hello, I am a Kaa Application!\n*.
+    For the sake of example, a very simple application will be built that displays a string: *Hello, I am a Kaa Application!*.
 
    ```c
 	#include <stdio.h>
