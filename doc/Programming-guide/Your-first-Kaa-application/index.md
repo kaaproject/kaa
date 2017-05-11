@@ -189,7 +189,7 @@ To do this, run the following commands in the terminal.
 3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
    ```bash
-   cmake_minimum_required(VERSION 2.8.12)
+   cmake_minimum_required(VERSION 3.0.2)
    project(kaa-application C)
 
    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -Wall -Wextra")
@@ -251,7 +251,7 @@ Before using the C++ application code, be sure to complete the following steps:
 3. In the application directory, create a `CMakeLists.txt` file with the following contents.
 
    ```bash
-   cmake_minimum_required(VERSION 2.8.12)
+   cmake_minimum_required(VERSION 3.0.2)
    project(Cpp-SDK-your-first-Kaa-application CXX)
    
    add_subdirectory(kaa)
