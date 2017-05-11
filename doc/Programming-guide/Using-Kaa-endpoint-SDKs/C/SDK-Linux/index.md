@@ -24,7 +24,7 @@ This guide is focused on the details of the [CMake](https://cmake.org/)-based bu
 
 To build Kaa C SDK, make sure to install the following components:
 
- - CMake (minimum required version is 3.0.2).
+ - CMake.
  - C99 compatible compiler (e.g. GCC).
 
 ## Build C SDK
@@ -138,7 +138,7 @@ It is a top-level CMake file handling the application build.
     The second line sets project name and language.
 
    ```bash
-   cmake_minimum_required(VERSION 3.0.2)
+   cmake_minimum_required(VERSION 2.8.12)
    project(kaa-application C)
    ```
 
@@ -160,7 +160,7 @@ It is a top-level CMake file handling the application build.
     See the full `CMakeLists.txt` code below.
 
    ```bash
-   cmake_minimum_required(VERSION 3.0.2)
+   cmake_minimum_required(VERSION 2.8.12)
    project(kaa-application C)
    
    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -Wextra")

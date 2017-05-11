@@ -206,7 +206,7 @@ Below is an example how to configure the `CMakeLists.txt` file for the applicati
 1. Specify minimum CMake version required.
 
    ```bash
-   cmake_minimum_required(VERSION 3.0.2)
+   cmake_minimum_required(VERSION 2.8.12)
    ```
 
 2. Specify the project name and enable C++11 standard.
