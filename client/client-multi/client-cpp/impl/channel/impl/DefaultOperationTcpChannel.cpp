@@ -55,13 +55,12 @@ const std::map<TransportType, ChannelDirection> DefaultOperationTcpChannel::SUPP
         };
 
 class ChannelConnection: public std::enable_shared_from_this<ChannelConnection> {
-    std::unique_ptr<boost::asio::ip::tcp::socket> sock_;
-    std::unique_ptr<boost::asio::streambuf> responseBuffer_;
+    boost::asio::ip::tcp::socket sock_;
+    boost::asio::streambuf responseBuffer_;
     boost::asio::deadline_timer pingTimer_;
     boost::asio::deadline_timer connAckTimer_;
     IKaaDataMultiplexer *multiplexer_ = nullptr;
     IKaaDataDemultiplexer *demultiplexer_ = nullptr;
-    KeyPair clientKeys_;
     std::list<TransportType> ackTypes_;
     KaaTcpResponseProcessor responseProcessor_;
     std::mutex connectionMutex_;
@@ -69,9 +68,7 @@ class ChannelConnection: public std::enable_shared_from_this<ChannelConnection> 
 
     std::deque<std::vector<uint8_t>> requestQueue_;
 
-    std::shared_ptr<RsaEncoderDecoder> encDec_;
-
-    std::shared_ptr<IPTransportInfo> currentServer_;
+    RsaEncoderDecoder encDec_;
 
     enum class State {
         Disconnected, ///< Connection has not been initiated yet
@@ -146,21 +143,24 @@ ChannelConnection::ChannelConnection(IKaaChannelManager& channelManager,
                                                    const std::string &channelId,
                                                    std::shared_ptr<IPTransportInfo> currentServer,
                                                     boost::asio::io_service &io):
+    sock_(io),
     strand_(io),
     context_(context),
     channelManager_(channelManager),
-    clientKeys_(clientKeys),
     pingTimer_(io),
     connAckTimer_(io),
     multiplexer_(multiplexer),
     demultiplexer_(demultiplexer),
     responseProcessor_(context),
     channel_(channel),
+    encDec_(clientKeys.getPublicKey(),
+           clientKeys.getPrivateKey(),
+           currentServer->getPublicKey(),
+           context_),
     state_(State::Disconnected),
-    channelId_(channelId),
-    currentServer_(currentServer)
+    channelId_(channelId)
 {
-    //std::lock_guard<std::mutex> lock(connectionMutex_);
+    std::lock_guard<std::mutex> lock(connectionMutex_);
     responseProcessor_.registerConnackReceiver(std::bind(&ChannelConnection::onConnack, this, std::placeholders::_1));
     responseProcessor_.registerKaaSyncReceiver(std::bind(&ChannelConnection::onKaaSync, this, std::placeholders::_1));
     responseProcessor_.registerPingResponseReceiver(std::bind(&ChannelConnection::onPingResponse, this));
@@ -168,25 +168,17 @@ ChannelConnection::ChannelConnection(IKaaChannelManager& channelManager,
 
     boost::system::error_code errorCode;
 
-    boost::asio::ip::tcp::endpoint ep = HttpUtils::resolveEndpoint(currentServer_->getHost(),
-                                                                   currentServer_->getPort(),
+    boost::asio::ip::tcp::endpoint ep = HttpUtils::resolveEndpoint(currentServer->getHost(),
+                                                                   currentServer->getPort(),
                                                                    errorCode);
     if (errorCode) {
         KAA_LOG_ERROR(boost::format("Channel [%1%] failed to resolve endpoint: %2%")
                                                                     % channelId_
                                                                     % errorCode.message());
         throw(KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
-        }
+    }
 
-    encDec_ = std::make_shared<RsaEncoderDecoder>(clientKeys_.getPublicKey(),
-                                                clientKeys_.getPrivateKey(),
-                                                currentServer_->getPublicKey(),
-                                                context_);
-
-    responseBuffer_.reset(new boost::asio::streambuf());
-    sock_.reset(new boost::asio::ip::tcp::socket(io));
-
-    sock_->open(ep.protocol(), errorCode);
+    sock_.open(ep.protocol(), errorCode);
 
     if (errorCode) {
         KAA_LOG_ERROR(boost::format("Channel [%1%] failed to open socket: %2%")
@@ -195,7 +187,7 @@ ChannelConnection::ChannelConnection(IKaaChannelManager& channelManager,
         throw(KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
     }
 
-    sock_->connect(ep, errorCode);
+    sock_.connect(ep, errorCode);
 
     if (errorCode) {
         KAA_LOG_ERROR(boost::format("Channel [%1%] failed to connect to %2%:%3%: %4%")
@@ -204,10 +196,10 @@ ChannelConnection::ChannelConnection(IKaaChannelManager& channelManager,
                                                                 % ep.port()
                                                                 % errorCode.message());
         throw(KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
-        }
+    }
 
-    KAA_LOG_INFO(boost::format("Channel [%1%] connected to %2%") % channelId_ % this);
-    channelManager_.onConnected({sock_->local_endpoint().address().to_string(), ep.address().to_string(), channel_->getServerType()});
+    KAA_LOG_INFO(boost::format("Channel [%1%] connected to %2%") % channelId_ % ep.address().to_string());
+    channelManager_.onConnected({sock_.local_endpoint().address().to_string(), ep.address().to_string(), channel_->getServerType()});
 }
 
 void ChannelConnection::run()
@@ -224,20 +216,20 @@ void ChannelConnection::shutdown()
     if (state_ == State::Disconnected) {
         return;
     }
+
     pingTimer_.cancel();
     connAckTimer_.cancel();
-    sock_->cancel();
+    sock_.cancel();
     sendDisconnect();
     state_ = State::Disconnected;
     boost::system::error_code errorCode;
-    sock_->shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorCode);
-    sock_->close(errorCode);
+    sock_.shutdown(boost::asio::ip::tcp::socket::shutdown_both, errorCode);
+    sock_.close(errorCode);
     responseProcessor_.flush();
 }
 
 ChannelConnection::~ChannelConnection()
 {
-    KAA_LOG_INFO("~ChannelConnection ");
     shutdown();
 }
 
@@ -289,7 +281,7 @@ void ChannelConnection::onKaaSync(const KaaSyncResponse& message)
     std::string decodedResponse;
 
     try {
-        decodedResponse = encDec_->decodeData(encodedResponse.data(), encodedResponse.size());
+        decodedResponse = encDec_.decodeData(encodedResponse.data(), encodedResponse.size());
     } catch (const std::exception& e) {
         KAA_LOG_ERROR(boost::format("Channel [%1%] unable to decode data: %2%")
                                                                         % channelId_
@@ -356,8 +348,8 @@ void ChannelConnection::sendData(const IKaaTcpRequest& request)
 void ChannelConnection::sendDataImpl()
 {
     const auto &data = requestQueue_[0];
-    KAA_LOG_INFO(boost::format("Channel [%1%] sending data: size %2% %3%") % channelId_ % data.size() % sock_.get());
-    boost::asio::async_write(*sock_, boost::asio::buffer(reinterpret_cast<const char *>(data.data()), data.size()),
+    KAA_LOG_TRACE(boost::format("Channel [%1%] sending data: size %2%") % channelId_ % data.size());
+    boost::asio::async_write(sock_, boost::asio::buffer(reinterpret_cast<const char *>(data.data()), data.size()),
                                 strand_.wrap(boost::bind(&ChannelConnection::onWriteEvent, shared_from_this(),
                                             boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred)));
 }
@@ -381,7 +373,7 @@ void ChannelConnection::sendKaaSync(const std::map<TransportType, ChannelDirecti
     std::lock_guard<std::mutex> lock(connectionMutex_);
     KAA_LOG_INFO(boost::format("Channel [%1%] sending KAASYNC") % channelId_);
     const auto& requestBody = multiplexer_->compileRequest(transportTypes);
-    const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
+    const auto& requestEncoded = encDec_.encodeData(requestBody.data(), requestBody.size());
     sendData(KaaSyncRequest(false, true, 0, requestEncoded, KaaSyncMessageType::SYNC));
 }
 
@@ -390,9 +382,9 @@ void ChannelConnection::sendConnect()
     std::lock_guard<std::mutex> lock(connectionMutex_);
     KAA_LOG_INFO(boost::format("Channel [%1%] sending CONNECT") % channelId_ );
     const auto& requestBody = multiplexer_->compileRequest(channel_->getSupportedTransportTypes());
-    const auto& requestEncoded = encDec_->encodeData(requestBody.data(), requestBody.size());
-    const auto& sessionKey = encDec_->getEncodedSessionKey();
-    const auto& signature = encDec_->signData(sessionKey.data(), sessionKey.size());
+    const auto& requestEncoded = encDec_.encodeData(requestBody.data(), requestBody.size());
+    const auto& sessionKey = encDec_.getEncodedSessionKey();
+    const auto& signature = encDec_.signData(sessionKey.data(), sessionKey.size());
     sendData(ConnectMessage(CHANNEL_TIMEOUT, KAA_PLATFORM_PROTOCOL_AVRO_ID, signature, sessionKey, requestEncoded));
 }
 
@@ -413,8 +405,8 @@ void ChannelConnection::readFromSocket()
 {
     std::lock_guard<std::mutex> lock(connectionMutex_);
     KAA_LOG_INFO(boost::format("readFromSocket() %1%") % this);
-    boost::asio::async_read(*sock_,
-                            *responseBuffer_,
+    boost::asio::async_read(sock_,
+                            responseBuffer_,
                             boost::asio::transfer_at_least(1),
                             boost::bind(&ChannelConnection::onReadEvent,
                                         shared_from_this(),
@@ -442,10 +434,9 @@ void ChannelConnection::syncAck(TransportType type)
 
 void ChannelConnection::onReadEvent(const boost::system::error_code& err)
 {
-    KAA_LOG_INFO(boost::format("onReadEvent connection id %1%") % this);
     if (!err) {
         std::ostringstream responseStream;
-        responseStream << responseBuffer_.get();
+        responseStream << &responseBuffer_;
         const auto& responseStr = responseStream.str();
         try {
             if (responseStr.empty()) {
@@ -583,7 +574,6 @@ void DefaultOperationTcpChannel::onServerFailed(KaaFailoverReason failoverReason
 
     isFailoverInProgress_ = true;
 
-    KAA_LOG_INFO("closing connection onServerFailed");
     closeConnection();
 
     KaaFailoverReason finalFailoverReason = failoverReason;
@@ -659,13 +649,11 @@ void DefaultOperationTcpChannel::stopThreads()
 
 void DefaultOperationTcpChannel::setMultiplexer(IKaaDataMultiplexer *multiplexer)
 {
-    KAA_LOG_INFO("setting multiplexer");
     multiplexer_ = multiplexer;
 }
 
 void DefaultOperationTcpChannel::setDemultiplexer(IKaaDataDemultiplexer *demultiplexer)
 {
-    KAA_LOG_INFO("setting demultiplexer");
     demultiplexer_ = demultiplexer;
 }
 
@@ -769,7 +757,7 @@ void DefaultOperationTcpChannel::syncAck(TransportType type)
         return;
     }
     KAA_LOG_DEBUG(boost::format("Channel [%1%] adding ACK for transport '%2%'")
-                                                        % channelId_
+														% getId()
                                                         % LoggingUtils::toString(type));
     connection_->syncAck(type);
 }
@@ -778,7 +766,7 @@ void DefaultOperationTcpChannel::doShutdown()
 {
     std::lock_guard<std::recursive_mutex> lock(channelGuard_);
     KAA_LOG_DEBUG(boost::format("Channel [%1%] is shutting down: isShutdown '%2%'")
-                                                    % channelId_
+													% getId()
                                                     % boost::io::group(std::boolalpha, isShutdown_));
 
     if (!isShutdown_) {
@@ -787,7 +775,7 @@ void DefaultOperationTcpChannel::doShutdown()
         closeConnection();
 
         KAA_LOG_TRACE(boost::format("Channel [%1%] stopping IO service: isStopped '%2%'")
-                                                    % channelId_
+													% getId()
                                                     % boost::io::group(std::boolalpha, io_.stopped()));
 
         if (!io_.stopped()) {

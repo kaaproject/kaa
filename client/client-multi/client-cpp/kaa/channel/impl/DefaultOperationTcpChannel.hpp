@@ -85,7 +85,7 @@ public:
     }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
-        static_cast<void>(strategy);
+		static_cast<void>(strategy);
     }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
@@ -105,31 +105,27 @@ private:
 
 private:
     static const std::string CHANNEL_ID;
-
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
-
     static const std::uint16_t THREADPOOL_SIZE = 2;
-
-private:
 
     IKaaClientContext& context_;
     IKaaChannelManager& channelManager_;
 
-	std::shared_ptr<ChannelConnection> connection_;
-	std::shared_ptr<IPTransportInfo> currentServer_;
+    std::shared_ptr<ChannelConnection> connection_;
+    std::shared_ptr<IPTransportInfo> currentServer_;
 
     boost::asio::io_service io_;
-	boost::asio::io_service::work work_;
+    boost::asio::io_service::work work_;
     std::vector<std::thread> ioThreads_;
-	KeyPair clientKeys_;
+    KeyPair clientKeys_;
 
-	IKaaDataMultiplexer *multiplexer_ = nullptr;
-	IKaaDataDemultiplexer *demultiplexer_ = nullptr;
+    IKaaDataMultiplexer *multiplexer_ = nullptr;
+    IKaaDataDemultiplexer *demultiplexer_ = nullptr;
 
-	bool isFailoverInProgress_ = false;
-	bool isShutdown_ = false;
+    bool isFailoverInProgress_ = false;
+    bool isShutdown_ = false;
 
-	std::recursive_mutex channelGuard_;
+    std::recursive_mutex channelGuard_;
 
     ConnectivityCheckerPtr connectivityChecker_;
 };
