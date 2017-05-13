@@ -44,6 +44,7 @@ namespace kaa {
 
 class IKaaTcpRequest;
 class KeyPair;
+class ChannelConnection;
 
 class DefaultOperationTcpChannel : public IDataChannel {
 public:
@@ -57,9 +58,13 @@ public:
     virtual void syncAll();
     virtual void syncAck(TransportType type);
 
-    virtual const std::string& getId() const { return CHANNEL_ID; }
+    virtual const std::string& getId() const
+    {
+        return CHANNEL_ID;
+    }
 
-    virtual TransportProtocolId getTransportProtocolId() const {
+    virtual TransportProtocolId getTransportProtocolId() const
+    {
         return TransportProtocolIdConstants::TCP_TRANSPORT_ID;
     }
 
@@ -67,7 +72,8 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual ITransportConnectionInfoPtr getServer() {
+    virtual ITransportConnectionInfoPtr getServer()
+    {
         return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
     }
 
@@ -75,7 +81,8 @@ public:
     virtual void pause();
     virtual void resume();
 
-    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const
+    {
         return SUPPORTED_TYPES;
     }
 
@@ -83,94 +90,49 @@ public:
         return ServerType::OPERATIONS;
     }
 
-    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
-        failoverStrategy_ = strategy;
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy)
+    {
+        static_cast<void>(strategy);
     }
 
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker)
+    {
         connectivityChecker_= checker;
     }
-
-    void onReadEvent(const boost::system::error_code& err);
-    void onPingTimeout(const boost::system::error_code& err);
-    void onConnAckTimeout(const boost::system::error_code& err);
-
-    void onConnack(const ConnackMessage& message);
-    void onDisconnect(const DisconnectMessage& message);
-    void onKaaSync(const KaaSyncResponse& message);
-    void onPingResponse();
 
     void openConnection();
     void closeConnection();
     void onServerFailed(KaaFailoverReason failoverReason = KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
 
 private:
-    boost::system::error_code sendKaaSync(const std::map<TransportType, ChannelDirection>& transportTypes);
-    boost::system::error_code sendConnect();
-    boost::system::error_code sendDisconnect();
-    boost::system::error_code sendPingRequest();
-    boost::system::error_code sendData(const IKaaTcpRequest& request);
-
-    void readFromSocket();
-    void setPingTimer();
-    void setConnAckTimer();
-
     void startThreads();
     void stopThreads();
 
-    void doShutdown();
-
 private:
     static const std::string CHANNEL_ID;
-
     static const std::map<TransportType, ChannelDirection> SUPPORTED_TYPES;
-
     static const std::uint16_t THREADPOOL_SIZE = 2;
-    static const std::uint32_t KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xe0c0c178;
 
-    static const std::uint16_t CHANNEL_TIMEOUT = 200;
-    static const std::uint16_t PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
-    static const std::uint16_t CONN_ACK_TIMEOUT = 20;
-
-private:
     IKaaClientContext& context_;
     IKaaChannelManager& channelManager_;
+
+    std::shared_ptr<ChannelConnection> connection_;
+    std::shared_ptr<IPTransportInfo> currentServer_;
+
+    boost::asio::io_service io_;
+    boost::asio::io_service::work work_;
+    std::vector<std::thread> ioThreads_;
     KeyPair clientKeys_;
-
-    std::list<TransportType> ackTypes_;
-
-    boost::asio::io_service                          io_;
-    boost::asio::io_service::work                    work_;
-    std::unique_ptr<boost::asio::ip::tcp::socket>    sock_;
-    boost::asio::deadline_timer                      pingTimer_;
-    boost::asio::deadline_timer                      connAckTimer_;
-    std::vector<std::thread>                         ioThreads_;
-    std::unique_ptr<boost::asio::streambuf>          responseBuffer_;
-
-    // TODO: http://jira.kaaproject.org/browse/KAA-1321
-    // Use states and present them as enum
-    bool isConnected_ = false;
-    bool isFirstResponseReceived_ = false;
-    bool isPendingSyncRequest_ = false;
-    bool isShutdown_ = false;
-    bool isPaused_ = false;
-    bool isFailoverInProgress_ = false;
 
     IKaaDataMultiplexer *multiplexer_ = nullptr;
     IKaaDataDemultiplexer *demultiplexer_ = nullptr;
 
-    KaaTcpResponseProcessor responseProcessor;
+    bool isFailoverInProgress_ = false;
+    bool isShutdown_ = false;
 
-    // To avoid simultaneously re-creation/access a shared pointer is used.
-    std::shared_ptr<RsaEncoderDecoder> encDec_;
+    std::recursive_mutex channelGuard_;
 
-    KAA_MUTEX_DECLARE(channelGuard_);
-
-    std::shared_ptr<IPTransportInfo> currentServer_;
     ConnectivityCheckerPtr connectivityChecker_;
-    IFailoverStrategyPtr failoverStrategy_;
-
-    EndpointConnectionInfo currentConnection_;
 };
 
 }
