@@ -44,7 +44,7 @@ namespace kaa {
 
 class IKaaTcpRequest;
 class KeyPair;
-class Connection;
+class ChannelConnection;
 
 class DefaultOperationTcpChannel : public IDataChannel {
 public:
@@ -85,7 +85,7 @@ public:
     }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
-        failoverStrategy_ = strategy;
+        static_cast<void>(strategy);
     }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
@@ -115,14 +115,13 @@ private:
     IKaaClientContext& context_;
     IKaaChannelManager& channelManager_;
 
+	std::shared_ptr<ChannelConnection> connection_;
+	std::shared_ptr<IPTransportInfo> currentServer_;
+
     boost::asio::io_service io_;
 	boost::asio::io_service::work work_;
     std::vector<std::thread> ioThreads_;
 	KeyPair clientKeys_;
-
-
-	std::shared_ptr<Connection> connection_;
-	std::shared_ptr<IPTransportInfo> currentServer_;
 
 	IKaaDataMultiplexer *multiplexer_ = nullptr;
 	IKaaDataDemultiplexer *demultiplexer_ = nullptr;
@@ -133,7 +132,6 @@ private:
 	std::recursive_mutex channelGuard_;
 
     ConnectivityCheckerPtr connectivityChecker_;
-    IFailoverStrategyPtr failoverStrategy_;
 };
 
 }
