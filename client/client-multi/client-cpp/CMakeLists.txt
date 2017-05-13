@@ -178,25 +178,9 @@ set(CMAKE_MODULE_PATH
 #Checks whether avrogen script exists
 set(WORKDIR ${CMAKE_CURRENT_SOURCE_DIR})
 message("==================================")
-if(WIN32)
-    set(AVROGEN "avrogen.bat")
-    if(NOT EXISTS "${WORKDIR}/${AVROGEN}")
-       message("Error: avrogen.bat hasn't been found.")
-    else()
-       execute_process(COMMAND "${AVROGEN}"
-                       WORKING_DIRECTORY ${WORKDIR})
-    endif()
-else()
-    set(AVROGEN "avrogen.sh")
-    if(NOT EXISTS "${WORKDIR}/${AVROGEN}")
-       message("Error: avrogen.sh hasn't been found.")
-    else()
-       execute_process(COMMAND chmod +x ./${AVROGEN}
-                       WORKING_DIRECTORY ${WORKDIR})
-       execute_process(COMMAND "./${AVROGEN}" 
-                       WORKING_DIRECTORY ${WORKDIR})
-    endif()
-endif()
+
+# Generate structures according to avro schemas.
+include(${CMAKE_CURRENT_SOURCE_DIR}/Modules/AvroStructGenerator.cmake)
 
 #
 # Sets common compilation flags.
