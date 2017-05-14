@@ -85,7 +85,7 @@ public:
     }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
-		static_cast<void>(strategy);
+        static_cast<void>(strategy);
     }
 
     virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
@@ -97,11 +97,8 @@ public:
     void onServerFailed(KaaFailoverReason failoverReason = KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
 
 private:
-
     void startThreads();
     void stopThreads();
-
-    void doShutdown();
 
 private:
     static const std::string CHANNEL_ID;
