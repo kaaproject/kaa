@@ -24,21 +24,8 @@ This guide is focused on the details of the [CMake](https://cmake.org/)-based bu
 
 To build Kaa C SDK, make sure to install the following components:
 
- - CMake (minimum required version is 3.5.2).
+ - CMake.
  - C99 compatible compiler (e.g. GCC).
-
-To install CMake, execute the following commands:
-
-```
-sudo apt-get install build-essential
-wget http://www.cmake.org/files/v3.5/cmake-3.5.2.tar.gz
-tar xf cmake-3.5.2.tar.gz
-cd cmake-3.5.2
-./configure
-make
-sudo apt-get install checkinstall
-sudo checkinstall
-```
 
 ## Build C SDK
 
@@ -103,7 +90,7 @@ For example, you can create the following directories:
    ```
 
     Open the `kaa-application.c` file and write the application code in it.
-    For the sake of example, a very simple application will be built that displays a string: *Hello, I am a Kaa Application!\n*.
+    For the sake of example, a very simple application will be built that displays a string: *Hello, I am a Kaa Application!*.
 
    ```c
 	#include <stdio.h>
