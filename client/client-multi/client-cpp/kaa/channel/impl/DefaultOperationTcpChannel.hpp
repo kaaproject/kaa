@@ -58,9 +58,13 @@ public:
     virtual void syncAll();
     virtual void syncAck(TransportType type);
 
-    virtual const std::string& getId() const { return CHANNEL_ID; }
+    virtual const std::string& getId() const
+    {
+        return CHANNEL_ID;
+    }
 
-    virtual TransportProtocolId getTransportProtocolId() const {
+    virtual TransportProtocolId getTransportProtocolId() const
+    {
         return TransportProtocolIdConstants::TCP_TRANSPORT_ID;
     }
 
@@ -68,7 +72,8 @@ public:
     virtual void setDemultiplexer(IKaaDataDemultiplexer *demultiplexer);
     virtual void setServer(ITransportConnectionInfoPtr server);
 
-    virtual ITransportConnectionInfoPtr getServer() {
+    virtual ITransportConnectionInfoPtr getServer()
+    {
         return std::dynamic_pointer_cast<ITransportConnectionInfo, IPTransportInfo>(currentServer_);
     }
 
@@ -76,7 +81,8 @@ public:
     virtual void pause();
     virtual void resume();
 
-    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const {
+    virtual const std::map<TransportType, ChannelDirection>& getSupportedTransportTypes() const
+    {
         return SUPPORTED_TYPES;
     }
 
@@ -84,11 +90,13 @@ public:
         return ServerType::OPERATIONS;
     }
 
-    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy) {
+    virtual void setFailoverStrategy(IFailoverStrategyPtr strategy)
+    {
         static_cast<void>(strategy);
     }
 
-    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker) {
+    virtual void setConnectivityChecker(ConnectivityCheckerPtr checker)
+    {
         connectivityChecker_= checker;
     }
 
