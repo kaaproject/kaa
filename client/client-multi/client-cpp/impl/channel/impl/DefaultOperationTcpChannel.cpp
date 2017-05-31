@@ -144,11 +144,17 @@ private:
 
     static const std::uint32_t KAA_PLATFORM_PROTOCOL_AVRO_ID = 0xf291f2d4;
 
-    static const auto CHANNEL_TIMEOUT = 200;
-    static const auto PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
-    static const auto CONN_ACK_TIMEOUT = 20;
-    static const auto DISCONNECT_TIMEOUT = 3;
+    static const int CHANNEL_TIMEOUT = 200;
+    static const int PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
+    static const int CONN_ACK_TIMEOUT = 20;
+    static const int DISCONNECT_TIMEOUT = 3;
 };
+
+const std::uint32_t ChannelConnection::KAA_PLATFORM_PROTOCOL_AVRO_ID;
+const int ChannelConnection::CHANNEL_TIMEOUT;
+const int ChannelConnection::PING_TIMEOUT;
+const int ChannelConnection::CONN_ACK_TIMEOUT;
+const int ChannelConnection::DISCONNECT_TIMEOUT;
 
 ChannelConnection::ChannelConnection(IKaaChannelManager& channelManager,
                                      const KeyPair& clientKeys,
