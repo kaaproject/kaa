@@ -126,6 +126,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <android.version>2.2.1</android.version>
 
         <javax.mail.version>1.4</javax.mail.version>
+
         <javax.websocket.version>1.0</javax.websocket.version>
 
         <iharder.version>2.3.8</iharder.version>
