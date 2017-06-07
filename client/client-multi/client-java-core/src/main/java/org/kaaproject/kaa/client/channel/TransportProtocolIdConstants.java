@@ -33,6 +33,13 @@ public class TransportProtocolIdConstants {
   private static final int TCP_TRANSPORT_PROTOCOL_VERSION = 1;
   public static final TransportProtocolId TCP_TRANSPORT_ID = new TransportProtocolId(
           TCP_TRANSPORT_PROTOCOL_ID, TCP_TRANSPORT_PROTOCOL_VERSION);
+  private static final int COAP_TRANSPORT_PROTOCOL_ID = 0x0b5d1174;
+  private static final int COAP_TRANSPORT_PROTOCOL_VERSION = 1;
+  public static final TransportProtocolId COAP_TRANSPORT_ID = new TransportProtocolId(
+          COAP_TRANSPORT_PROTOCOL_ID, COAP_TRANSPORT_PROTOCOL_VERSION);
+
+
+
 
   private TransportProtocolIdConstants() {
   }
