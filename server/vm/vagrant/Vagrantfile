@@ -1,0 +1,64 @@
+Vagrant.configure("2") do |config|
+	config.vm.box = "bento/ubuntu-16.04"
+	config.vm.network "forwarded_port", guest: 8080, host: 8080
+
+	config.vm.provider "virtualbox" do |vb|
+		vb.name = "Kaa (single node)"
+	end
+
+	config.vm.provision "shell", inline: <<-SHELL
+		# SKIP PROMPTS
+		export DEBIAN_FRONTEND=noninteractive &&
+		echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections &&
+		debconf-set-selections <<< 'mariadb-server-5.5 mariadb-server/root_password password root' &&
+		debconf-set-selections <<< 'mariadb-server-5.5 mariadb-server/root_password_again password root' &&
+		echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections &&
+		echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections &&
+
+		# ADD REPOSITORIES
+		apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db &&
+		apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10 &&
+		add-apt-repository -y ppa:webupd8team/java &&
+		add-apt-repository -y 'deb http://mirror.jmu.edu/pub/mariadb/repo/5.5/ubuntu trusty main' &&
+		add-apt-repository -y 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' &&
+
+		# INSTALLATION
+		apt-get update &&
+		apt-get -y upgrade &&
+		apt-get -y install wget ca-certificates curl oracle-java8-installer python-software-properties mariadb-galera-server-5.5 mariadb-client-5.5 rsync zookeeperd mongodb-org=2.6.9 mongodb-org-server=2.6.9 mongodb-org-shell=2.6.9 mongodb-org-mongos=2.6.9 mongodb-org-tools=2.6.9 iptables-persistent &&
+		wget -nv https://github.com/kaaproject/kaa/releases/download/v0.10.0/kaa-deb-0.10.0.tar.gz && tar -xvf kaa-deb-*.tar.gz && dpkg -i deb/kaa-node-0.10.0.deb && rm -rf kaa-deb-*.tar.gz deb/ &&
+
+		# MYSQL
+		mysql -u root -proot -e "
+			CREATE USER 'sqladmin'@'localhost' IDENTIFIED BY 'admin'; GRANT ALL PRIVILEGES ON *.* TO 'sqladmin'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;
+			CREATE DATABASE kaa CHARACTER SET utf8 COLLATE utf8_general_ci;
+		" &&
+
+		# MONGODB
+		echo "
+			[Unit]
+			Description=High-performance, schema-free document-oriented database
+			After=network.target
+			[Service]
+			User=mongodb
+			ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
+			[Install]
+			WantedBy=multi-user.target
+		" > /etc/systemd/system/mongodb.service &&
+
+		# FIREWALL
+		iptables -I INPUT -p tcp -m tcp --dport 22 -j ACCEPT &&
+		iptables -I INPUT -p tcp -m tcp --dport 8080 -j ACCEPT &&
+		iptables -I INPUT -p tcp -m tcp --dport 9888 -j ACCEPT &&
+		iptables -I INPUT -p tcp -m tcp --dport 9889 -j ACCEPT &&
+		iptables -I INPUT -p tcp -m tcp --dport 9997 -j ACCEPT &&
+		iptables -I INPUT -p tcp -m tcp --dport 9999 -j ACCEPT &&
+		service netfilter-persistent start &&
+		netfilter-persistent save &&
+
+		# START
+		systemctl start mongodb &&
+		service kaa-node start &&
+		echo "READY!"
+	SHELL
+end
