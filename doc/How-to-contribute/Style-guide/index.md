@@ -313,7 +313,7 @@ permalink: /:path/
 * Include `variables.md` files to capture `root_url`. This will allow you to refer to other pages.
 
 {% raw %}
-  ```
+  ```c
 {% include variables.md %}
 ```
 {% endraw %}
