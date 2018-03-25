@@ -12,7 +12,7 @@
                 "name":"Server",
                 "fields":[
                     {
-                        "name":"zk_Quorum",
+                        "name":"zkQuorum",
                         "displayName":"Zookeeper Quorum",
                         "weight":0.75,
                         "by_default":"localhost",
@@ -50,7 +50,7 @@
                     "name":"ColumnFamily",
                     "fields":[
                         {
-                            "name":"cf_name",
+                            "name":"cfName",
                             "displayName":"Column Family name",
                             "weight":0.4,
                             "type":"string"
@@ -94,7 +94,7 @@
                             "type":"int"
                         },
                         {
-                            "name":"BloomFilter",
+                            "name":"bloomFilter",
                             "displayName":"Bloom Filter",
                             "weight":0.2,
                             "by_default":"ROW",
@@ -143,14 +143,14 @@
                             }
                         },
 			{
-                            "name":"InMemory",
+                            "name":"inMemory",
                             "displayName":"In Memory",
                             "weight":0.2,
 			    			"by_default":false,
                             "type":"boolean"
                         },
 			{
-                            "name":"KeepDeletedCells",
+                            "name":"keepDeletedCells",
                             "displayName":"Keep Deleted Cells",
                             "weight":0.2,
 			    			"by_default":false,
@@ -186,7 +186,7 @@
                             "type":"string"
                         },
 			{
-                            "name":"ValueType",
+                            "name":"valueType",
                             "displayName":"Type",
                             "weight":0.2,
                             "by_default":"TEXT",
@@ -219,7 +219,7 @@
                         },
 
                         {
-                            "name":"RowKey",
+                            "name":"rowKey",
                             "displayName":"Is part of Row key?",
                             "weight":0.1,
                             "by_default":false,

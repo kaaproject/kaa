@@ -3,23 +3,61 @@
  * 
  * DO NOT EDIT DIRECTLY
  */
+
 package org.kaaproject.kaa.server.appenders.hbase.config.gen;  
+
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
-public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ColumnFamily\",\"namespace\":\"org.kaaproject.kaa.server.appenders.hbase.config.gen\",\"fields\":[{\"name\":\"cf_name\",\"type\":\"string\",\"displayName\":\"Column Family name\",\"weight\":0.4},{\"name\":\"minVersion\",\"type\":\"int\",\"displayName\":\"Min Version\",\"weight\":0.2,\"by_default\":0},{\"name\":\"maxVersion\",\"type\":\"int\",\"displayName\":\"Max Version\",\"weight\":0.2,\"by_default\":1},{\"name\":\"ttl\",\"type\":[\"int\",\"null\"],\"displayName\":\"TTL\",\"optional\":true,\"weight\":0.2},{\"name\":\"blockSize\",\"type\":\"int\",\"displayName\":\"block Size\",\"weight\":0.2,\"by_default\":65536},{\"name\":\"scope\",\"type\":\"int\",\"displayName\":\"Replication Scope\",\"weight\":0.2,\"by_default\":0},{\"name\":\"BloomFilter\",\"type\":{\"type\":\"enum\",\"name\":\"BloomFilterType\",\"symbols\":[\"NONE\",\"ROW\",\"ROWCOL\"]},\"displayName\":\"Bloom Filter\",\"weight\":0.2,\"by_default\":\"ROW\"},{\"name\":\"dataBlockEncoding\",\"type\":{\"type\":\"enum\",\"name\":\"Encoding\",\"symbols\":[\"NONE\",\"DIFF\",\"FAST_DIFF\",\"PREFIX\",\"PREFIX_TREE\"]},\"displayName\":\"Data Block Encoding\",\"weight\":0.2,\"by_default\":\"NONE\"},{\"name\":\"compression\",\"type\":{\"type\":\"enum\",\"name\":\"Algorithm\",\"symbols\":[\"NONE\",\"GZ\",\"LZ4\",\"LZO\",\"SNAPPY\"]},\"displayName\":\"Compression\",\"weight\":0.2,\"by_default\":\"NONE\"},{\"name\":\"InMemory\",\"type\":\"boolean\",\"displayName\":\"In Memory\",\"weight\":0.2,\"by_default\":false},{\"name\":\"KeepDeletedCells\",\"type\":\"boolean\",\"displayName\":\"Keep Deleted Cells\",\"weight\":0.2,\"by_default\":false},{\"name\":\"blockCache\",\"type\":\"boolean\",\"displayName\":\"Block Cache\",\"weight\":0.2,\"by_default\":true}]}");
-  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-  @Deprecated public java.lang.CharSequence cf_name;
+
+public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase implements
+    org.apache.avro.specific.SpecificRecord {
+  
+  public static final org.apache.avro.Schema SCHEMA$ = 
+      new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":"
+          + "\"ColumnFamily\",\"namespace\":\"org.kaaproject.kaa.server.appenders"
+          + ".hbase.config.gen\",\"fields\":[{\"name\":\"cfName\",\"type\":\"string\","
+          + "\"displayName\":\"Column Family name\",\"weight\":0.4},{\"name\":"
+          + "\"minVersion\",\"type\":\"int\",\"displayName\":\"Min Version\","
+          + "\"weight\":0.2,\"by_default\":0},{\"name\":\"maxVersion\",\"type\":"
+          + "\"int\",\"displayName\":\"Max Version\",\"weight\":0.2,\"by_default\":1},"
+          + "{\"name\":\"ttl\",\"type\":[\"int\",\"null\"],\"displayName\":\"TTL\","
+          + "\"optional\":true,\"weight\":0.2},{\"name\":\"blockSize\",\"type\":\"int\","
+          + "\"displayName\":\"block Size\",\"weight\":0.2,\"by_default\":65536},{\"name\""
+          + ":\"scope\",\"type\":\"int\",\"displayName\":\"Replication Scope\",\"weight\":0.2,"
+          + "\"by_default\":0},{\"name\":\"bloomFilter\",\"type\":{\"type\":\"enum\",\"name\":"
+          + "\"BloomFilterType\",\"symbols\":[\"NONE\",\"ROW\",\"ROWCOL\"]},"
+          + "\"displayName\":\"Bloom Filter\",\"weight\":0.2,\"by_default\":\"ROW\"},{\"name\":"
+          + "\"dataBlockEncoding\","
+          + "\"type\":{\"type\":\"enum\",\"name\":\"Encoding\",\"symbols\":[\"NONE\",\"DIFF\","
+          + "\"FAST_DIFF\",\"PREFIX\",\"PREFIX_TREE\"]},\"displayName\":\"Data Block Encoding\","
+          + "\"weight\":0.2,\"by_default\":\"NONE\"},{\"name\":\"compression\",\"type\":{\"type\":"
+          + "\"enum\",\"name\":\"Algorithm\",\"symbols\""
+          + ":[\"NONE\",\"GZ\",\"LZ4\",\"LZO\",\"SNAPPY\"]},"
+          + "\"displayName\":\"Compression\",\"weight\":0.2,\"by_default\":\"NONE\"},{\"name\":"
+          + "\"inMemory\",\"type\":\"boolean\",\"displayName\":\"In Memory\",\"weight\":0.2,"
+          + "\"by_default\":false},{\"name\":\"keepDeletedCells\",\"type\":"
+          + "\"boolean\",\"displayName\":"
+          + "\"Keep Deleted Cells\",\"weight\":0.2,\"by_default\":false},{\"name\":"
+          + "\"blockCache\",\"type\":"
+          + "\"boolean\",\"displayName\":\"Block Cache\",\"weight\":0.2,\"by_default\":true}]}");
+  
+  public static org.apache.avro.Schema getClassSchema() { 
+    return SCHEMA$;
+  }
+  
+  @Deprecated public java.lang.CharSequence cfName;
   @Deprecated public int minVersion;
   @Deprecated public int maxVersion;
   @Deprecated public java.lang.Integer ttl;
   @Deprecated public int blockSize;
   @Deprecated public int scope;
-  @Deprecated public org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType BloomFilter;
-  @Deprecated public org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding dataBlockEncoding;
+  @Deprecated public org.kaaproject.kaa.server.appenders.hbase.config.gen
+  .BloomFilterType bloomFilter;
+  @Deprecated public org.kaaproject.kaa.server.appenders.hbase.config.gen
+  .Encoding dataBlockEncoding;
   @Deprecated public org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm compression;
-  @Deprecated public boolean InMemory;
-  @Deprecated public boolean KeepDeletedCells;
+  @Deprecated public boolean inMemory;
+  @Deprecated public boolean keepDeletedCells;
   @Deprecated public boolean blockCache;
 
   /**
@@ -32,73 +70,105 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
   /**
    * All-args constructor.
    */
-  public ColumnFamily(java.lang.CharSequence cf_name, java.lang.Integer minVersion, java.lang.Integer maxVersion, java.lang.Integer ttl, java.lang.Integer blockSize, java.lang.Integer scope, org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType BloomFilter, org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding dataBlockEncoding, org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm compression, java.lang.Boolean InMemory, java.lang.Boolean KeepDeletedCells, java.lang.Boolean blockCache) {
-    this.cf_name = cf_name;
+  public ColumnFamily(java.lang.CharSequence cfName, java.lang.Integer minVersion, 
+      java.lang.Integer maxVersion, java.lang.Integer ttl, java.lang.Integer blockSize,
+      java.lang.Integer scope, 
+      org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType bloomFilter,
+      org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding dataBlockEncoding, 
+      org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm compression, 
+      java.lang.Boolean inMemory, java.lang.Boolean keepDeletedCells, 
+      java.lang.Boolean blockCache) {
+    
+    this.cfName = cfName;
     this.minVersion = minVersion;
     this.maxVersion = maxVersion;
     this.ttl = ttl;
     this.blockSize = blockSize;
     this.scope = scope;
-    this.BloomFilter = BloomFilter;
+    this.bloomFilter = bloomFilter;
     this.dataBlockEncoding = dataBlockEncoding;
     this.compression = compression;
-    this.InMemory = InMemory;
-    this.KeepDeletedCells = KeepDeletedCells;
+    this.inMemory = inMemory;
+    this.keepDeletedCells = keepDeletedCells;
     this.blockCache = blockCache;
   }
 
-  public org.apache.avro.Schema getSchema() { return SCHEMA$; }
+  public org.apache.avro.Schema getSchema() {
+    return SCHEMA$;
+  }
+  
   // Used by DatumWriter.  Applications should not call. 
-  public java.lang.Object get(int field$) {
-    switch (field$) {
-    case 0: return cf_name;
-    case 1: return minVersion;
-    case 2: return maxVersion;
-    case 3: return ttl;
-    case 4: return blockSize;
-    case 5: return scope;
-    case 6: return BloomFilter;
-    case 7: return dataBlockEncoding;
-    case 8: return compression;
-    case 9: return InMemory;
-    case 10: return KeepDeletedCells;
-    case 11: return blockCache;
-    default: throw new org.apache.avro.AvroRuntimeException("Bad index");
+  /**
+   * Get Column Family fields.
+   */
+  public java.lang.Object get(int field) {
+    switch (field) {
+      case 0: return cfName;
+      case 1: return minVersion;
+      case 2: return maxVersion;
+      case 3: return ttl;
+      case 4: return blockSize;
+      case 5: return scope;
+      case 6: return bloomFilter;
+      case 7: return dataBlockEncoding;
+      case 8: return compression;
+      case 9: return inMemory;
+      case 10: return keepDeletedCells;
+      case 11: return blockCache;
+      default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
   // Used by DatumReader.  Applications should not call. 
-  @SuppressWarnings(value="unchecked")
-  public void put(int field$, java.lang.Object value$) {
-    switch (field$) {
-    case 0: cf_name = (java.lang.CharSequence)value$; break;
-    case 1: minVersion = (java.lang.Integer)value$; break;
-    case 2: maxVersion = (java.lang.Integer)value$; break;
-    case 3: ttl = (java.lang.Integer)value$; break;
-    case 4: blockSize = (java.lang.Integer)value$; break;
-    case 5: scope = (java.lang.Integer)value$; break;
-    case 6: BloomFilter = (org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType)value$; break;
-    case 7: dataBlockEncoding = (org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding)value$; break;
-    case 8: compression = (org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm)value$; break;
-    case 9: InMemory = (java.lang.Boolean)value$; break;
-    case 10: KeepDeletedCells = (java.lang.Boolean)value$; break;
-    case 11: blockCache = (java.lang.Boolean)value$; break;
-    default: throw new org.apache.avro.AvroRuntimeException("Bad index");
+  /**
+   * Put values.
+   */
+  
+  @SuppressWarnings(value = "unchecked")
+  public void put(int field, java.lang.Object value) {
+    switch (field) {
+      case 0: cfName = (java.lang.CharSequence)value; 
+      break;
+      case 1: minVersion = (java.lang.Integer)value; 
+      break;
+      case 2: maxVersion = (java.lang.Integer)value; 
+      break;
+      case 3: ttl = (java.lang.Integer)value; 
+      break;
+      case 4: blockSize = (java.lang.Integer)value; 
+      break;
+      case 5: scope = (java.lang.Integer)value; 
+      break;
+      case 6: bloomFilter = (org.kaaproject.kaa.server.appenders.hbase.config.gen
+          .BloomFilterType)value; 
+      break;
+      case 7: dataBlockEncoding = (org.kaaproject.kaa.server.appenders.hbase
+          .config.gen.Encoding)value; 
+      break;
+      case 8: compression = (org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm)value; 
+      break;
+      case 9: inMemory = (java.lang.Boolean)value; 
+      break;
+      case 10: keepDeletedCells = (java.lang.Boolean)value; 
+      break;
+      case 11: blockCache = (java.lang.Boolean)value; 
+      break;
+      default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
   /**
-   * Gets the value of the 'cf_name' field.
+   * Gets the value of the 'cfName' field.
    */
   public java.lang.CharSequence getCfName() {
-    return cf_name;
+    return cfName;
   }
 
   /**
-   * Sets the value of the 'cf_name' field.
+   * Sets the value of the 'cfName' field.
    * @param value the value to set.
    */
   public void setCfName(java.lang.CharSequence value) {
-    this.cf_name = value;
+    this.cfName = value;
   }
 
   /**
@@ -177,18 +247,19 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
   }
 
   /**
-   * Gets the value of the 'BloomFilter' field.
+   * Gets the value of the 'bloomFilter' field.
    */
   public org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType getBloomFilter() {
-    return BloomFilter;
+    return bloomFilter;
   }
 
   /**
-   * Sets the value of the 'BloomFilter' field.
+   * Sets the value of the 'bloomFilter' field.
    * @param value the value to set.
    */
-  public void setBloomFilter(org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType value) {
-    this.BloomFilter = value;
+  public void setBloomFilter(org.kaaproject.kaa.server.appenders
+      .hbase.config.gen.BloomFilterType value) {
+    this.bloomFilter = value;
   }
 
   /**
@@ -202,7 +273,8 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
    * Sets the value of the 'dataBlockEncoding' field.
    * @param value the value to set.
    */
-  public void setDataBlockEncoding(org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding value) {
+  public void setDataBlockEncoding(org.kaaproject.kaa.server.appenders
+      .hbase.config.gen.Encoding value) {
     this.dataBlockEncoding = value;
   }
 
@@ -222,33 +294,33 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
   }
 
   /**
-   * Gets the value of the 'InMemory' field.
+   * Gets the value of the 'inMemory' field.
    */
   public java.lang.Boolean getInMemory() {
-    return InMemory;
+    return inMemory;
   }
 
   /**
-   * Sets the value of the 'InMemory' field.
+   * Sets the value of the 'inMemory' field.
    * @param value the value to set.
    */
   public void setInMemory(java.lang.Boolean value) {
-    this.InMemory = value;
+    this.inMemory = value;
   }
 
   /**
-   * Gets the value of the 'KeepDeletedCells' field.
+   * Gets the value of the 'keepDeletedCells' field.
    */
   public java.lang.Boolean getKeepDeletedCells() {
-    return KeepDeletedCells;
+    return keepDeletedCells;
   }
 
   /**
-   * Sets the value of the 'KeepDeletedCells' field.
+   * Sets the value of the 'keepDeletedCells' field.
    * @param value the value to set.
    */
   public void setKeepDeletedCells(java.lang.Boolean value) {
-    this.KeepDeletedCells = value;
+    this.keepDeletedCells = value;
   }
 
   /**
@@ -266,50 +338,60 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
     this.blockCache = value;
   }
 
-  /** Creates a new ColumnFamily RecordBuilder */
-  public static org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder newBuilder() {
-    return new org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder();
+  /** Creates a new ColumnFamily RecordBuilder. */
+  public static org.kaaproject.kaa.server.appenders.hbase.config.gen
+      .ColumnFamily.Builder newBuilder() {
+    return new org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder();
   }
-  
-  /** Creates a new ColumnFamily RecordBuilder by copying an existing Builder */
-  public static org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder newBuilder(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder other) {
-    return new org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder(other);
+
+  /** Creates a new ColumnFamily RecordBuilder by copying an existing Builder. */
+  public static org.kaaproject.kaa.server.appenders.hbase.config.gen
+      .ColumnFamily.Builder newBuilder(org.kaaproject.kaa.server.appenders
+          .hbase.config.gen.ColumnFamily.Builder other) {
+    return new org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder(other);
   }
-  
-  /** Creates a new ColumnFamily RecordBuilder by copying an existing ColumnFamily instance */
-  public static org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder newBuilder(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily other) {
-    return new org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder(other);
+
+  /** Creates a new ColumnFamily RecordBuilder by copying an existing ColumnFamily instance. */
+  public static org.kaaproject.kaa.server.appenders.hbase.config.gen
+      .ColumnFamily.Builder newBuilder(org.kaaproject.kaa.server.appenders
+      .hbase.config.gen.ColumnFamily other) {
+    return new org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder(other);
   }
-  
+
   /**
    * RecordBuilder for ColumnFamily instances.
    */
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ColumnFamily>
-    implements org.apache.avro.data.RecordBuilder<ColumnFamily> {
+  public static class Builder extends org.apache.avro.specific
+      .SpecificRecordBuilderBase<ColumnFamily>
+      implements org.apache.avro.data.RecordBuilder<ColumnFamily> {
 
-    private java.lang.CharSequence cf_name;
+    private java.lang.CharSequence cfName;
     private int minVersion;
     private int maxVersion;
     private java.lang.Integer ttl;
     private int blockSize;
     private int scope;
-    private org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType BloomFilter;
+    private org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType bloomFilter;
     private org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding dataBlockEncoding;
     private org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm compression;
-    private boolean InMemory;
-    private boolean KeepDeletedCells;
+    private boolean inMemory;
+    private boolean keepDeletedCells;
     private boolean blockCache;
 
-    /** Creates a new Builder */
+    /** Creates a new Builder. */
     private Builder() {
       super(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.SCHEMA$);
     }
-    
-    /** Creates a Builder by copying an existing Builder */
-    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder other) {
+
+    /** Creates a Builder by copying an existing Builder. */
+    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.cf_name)) {
-        this.cf_name = data().deepCopy(fields()[0].schema(), other.cf_name);
+      if (isValidValue(fields()[0], other.cfName)) {
+        this.cfName = data().deepCopy(fields()[0].schema(), other.cfName);
         fieldSetFlags()[0] = true;
       }
       if (isValidValue(fields()[1], other.minVersion)) {
@@ -332,8 +414,8 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
         this.scope = data().deepCopy(fields()[5].schema(), other.scope);
         fieldSetFlags()[5] = true;
       }
-      if (isValidValue(fields()[6], other.BloomFilter)) {
-        this.BloomFilter = data().deepCopy(fields()[6].schema(), other.BloomFilter);
+      if (isValidValue(fields()[6], other.bloomFilter)) {
+        this.bloomFilter = data().deepCopy(fields()[6].schema(), other.bloomFilter);
         fieldSetFlags()[6] = true;
       }
       if (isValidValue(fields()[7], other.dataBlockEncoding)) {
@@ -344,65 +426,12 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
         this.compression = data().deepCopy(fields()[8].schema(), other.compression);
         fieldSetFlags()[8] = true;
       }
-      if (isValidValue(fields()[9], other.InMemory)) {
-        this.InMemory = data().deepCopy(fields()[9].schema(), other.InMemory);
+      if (isValidValue(fields()[9], other.inMemory)) {
+        this.inMemory = data().deepCopy(fields()[9].schema(), other.inMemory);
         fieldSetFlags()[9] = true;
       }
-      if (isValidValue(fields()[10], other.KeepDeletedCells)) {
-        this.KeepDeletedCells = data().deepCopy(fields()[10].schema(), other.KeepDeletedCells);
-        fieldSetFlags()[10] = true;
-      }
-      if (isValidValue(fields()[11], other.blockCache)) {
-        this.blockCache = data().deepCopy(fields()[11].schema(), other.blockCache);
-        fieldSetFlags()[11] = true;
-      }
-    }
-    
-    /** Creates a Builder by copying an existing ColumnFamily instance */
-    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily other) {
-            super(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.SCHEMA$);
-      if (isValidValue(fields()[0], other.cf_name)) {
-        this.cf_name = data().deepCopy(fields()[0].schema(), other.cf_name);
-        fieldSetFlags()[0] = true;
-      }
-      if (isValidValue(fields()[1], other.minVersion)) {
-        this.minVersion = data().deepCopy(fields()[1].schema(), other.minVersion);
-        fieldSetFlags()[1] = true;
-      }
-      if (isValidValue(fields()[2], other.maxVersion)) {
-        this.maxVersion = data().deepCopy(fields()[2].schema(), other.maxVersion);
-        fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.ttl)) {
-        this.ttl = data().deepCopy(fields()[3].schema(), other.ttl);
-        fieldSetFlags()[3] = true;
-      }
-      if (isValidValue(fields()[4], other.blockSize)) {
-        this.blockSize = data().deepCopy(fields()[4].schema(), other.blockSize);
-        fieldSetFlags()[4] = true;
-      }
-      if (isValidValue(fields()[5], other.scope)) {
-        this.scope = data().deepCopy(fields()[5].schema(), other.scope);
-        fieldSetFlags()[5] = true;
-      }
-      if (isValidValue(fields()[6], other.BloomFilter)) {
-        this.BloomFilter = data().deepCopy(fields()[6].schema(), other.BloomFilter);
-        fieldSetFlags()[6] = true;
-      }
-      if (isValidValue(fields()[7], other.dataBlockEncoding)) {
-        this.dataBlockEncoding = data().deepCopy(fields()[7].schema(), other.dataBlockEncoding);
-        fieldSetFlags()[7] = true;
-      }
-      if (isValidValue(fields()[8], other.compression)) {
-        this.compression = data().deepCopy(fields()[8].schema(), other.compression);
-        fieldSetFlags()[8] = true;
-      }
-      if (isValidValue(fields()[9], other.InMemory)) {
-        this.InMemory = data().deepCopy(fields()[9].schema(), other.InMemory);
-        fieldSetFlags()[9] = true;
-      }
-      if (isValidValue(fields()[10], other.KeepDeletedCells)) {
-        this.KeepDeletedCells = data().deepCopy(fields()[10].schema(), other.KeepDeletedCells);
+      if (isValidValue(fields()[10], other.keepDeletedCells)) {
+        this.keepDeletedCells = data().deepCopy(fields()[10].schema(), other.keepDeletedCells);
         fieldSetFlags()[10] = true;
       }
       if (isValidValue(fields()[11], other.blockCache)) {
@@ -411,295 +440,376 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
       }
     }
 
-    /** Gets the value of the 'cf_name' field */
-    public java.lang.CharSequence getCfName() {
-      return cf_name;
+    /** Creates a Builder by copying an existing ColumnFamily instance. */
+    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily other) {
+      super(org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.SCHEMA$);
+      if (isValidValue(fields()[0], other.cfName)) {
+        this.cfName = data().deepCopy(fields()[0].schema(), other.cfName);
+        fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.minVersion)) {
+        this.minVersion = data().deepCopy(fields()[1].schema(), other.minVersion);
+        fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.maxVersion)) {
+        this.maxVersion = data().deepCopy(fields()[2].schema(), other.maxVersion);
+        fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.ttl)) {
+        this.ttl = data().deepCopy(fields()[3].schema(), other.ttl);
+        fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.blockSize)) {
+        this.blockSize = data().deepCopy(fields()[4].schema(), other.blockSize);
+        fieldSetFlags()[4] = true;
+      }
+      if (isValidValue(fields()[5], other.scope)) {
+        this.scope = data().deepCopy(fields()[5].schema(), other.scope);
+        fieldSetFlags()[5] = true;
+      }
+      if (isValidValue(fields()[6], other.bloomFilter)) {
+        this.bloomFilter = data().deepCopy(fields()[6].schema(), other.bloomFilter);
+        fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.dataBlockEncoding)) {
+        this.dataBlockEncoding = data().deepCopy(fields()[7].schema(), other.dataBlockEncoding);
+        fieldSetFlags()[7] = true;
+      }
+      if (isValidValue(fields()[8], other.compression)) {
+        this.compression = data().deepCopy(fields()[8].schema(), other.compression);
+        fieldSetFlags()[8] = true;
+      }
+      if (isValidValue(fields()[9], other.inMemory)) {
+        this.inMemory = data().deepCopy(fields()[9].schema(), other.inMemory);
+        fieldSetFlags()[9] = true;
+      }
+      if (isValidValue(fields()[10], other.keepDeletedCells)) {
+        this.keepDeletedCells = data().deepCopy(fields()[10].schema(), other.keepDeletedCells);
+        fieldSetFlags()[10] = true;
+      }
+      if (isValidValue(fields()[11], other.blockCache)) {
+        this.blockCache = data().deepCopy(fields()[11].schema(), other.blockCache);
+        fieldSetFlags()[11] = true;
+      }
     }
-    
-    /** Sets the value of the 'cf_name' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setCfName(java.lang.CharSequence value) {
+
+    /** Gets the value of the 'cfName' field. */
+    public java.lang.CharSequence getCfName() {
+      return cfName;
+    }
+
+    /** Sets the value of the 'cfName' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setCfName(java.lang.CharSequence value) {
       validate(fields()[0], value);
-      this.cf_name = value;
+      this.cfName = value;
       fieldSetFlags()[0] = true;
       return this; 
     }
-    
-    /** Checks whether the 'cf_name' field has been set */
+
+    /** Checks whether the 'cfName' field has been set. */
     public boolean hasCfName() {
       return fieldSetFlags()[0];
     }
-    
-    /** Clears the value of the 'cf_name' field */
+
+    /** Clears the value of the 'cfName' field. */
     public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearCfName() {
-      cf_name = null;
+      cfName = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'minVersion' field */
+    /** Gets the value of the 'minVersion' field. */
     public java.lang.Integer getMinVersion() {
       return minVersion;
     }
-    
-    /** Sets the value of the 'minVersion' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setMinVersion(int value) {
+
+    /** Sets the value of the 'minVersion' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setMinVersion(int value) {
       validate(fields()[1], value);
       this.minVersion = value;
       fieldSetFlags()[1] = true;
       return this; 
     }
-    
-    /** Checks whether the 'minVersion' field has been set */
+
+    /** Checks whether the 'minVersion' field has been set. */
     public boolean hasMinVersion() {
       return fieldSetFlags()[1];
     }
-    
-    /** Clears the value of the 'minVersion' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearMinVersion() {
+
+    /** Clears the value of the 'minVersion' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearMinVersion() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'maxVersion' field */
+    /** Gets the value of the 'maxVersion' field. */
     public java.lang.Integer getMaxVersion() {
       return maxVersion;
     }
-    
-    /** Sets the value of the 'maxVersion' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setMaxVersion(int value) {
+
+    /** Sets the value of the 'maxVersion' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setMaxVersion(int value) {
       validate(fields()[2], value);
       this.maxVersion = value;
       fieldSetFlags()[2] = true;
       return this; 
     }
-    
-    /** Checks whether the 'maxVersion' field has been set */
+
+    /** Checks whether the 'maxVersion' field has been set. */
     public boolean hasMaxVersion() {
       return fieldSetFlags()[2];
     }
-    
-    /** Clears the value of the 'maxVersion' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearMaxVersion() {
+
+    /** Clears the value of the 'maxVersion' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearMaxVersion() {
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'ttl' field */
+    /** Gets the value of the 'ttl' field. */
     public java.lang.Integer getTtl() {
       return ttl;
     }
-    
-    /** Sets the value of the 'ttl' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setTtl(java.lang.Integer value) {
+
+    /** Sets the value of the 'ttl' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setTtl(java.lang.Integer value) {
       validate(fields()[3], value);
       this.ttl = value;
       fieldSetFlags()[3] = true;
       return this; 
     }
-    
-    /** Checks whether the 'ttl' field has been set */
+
+    /** Checks whether the 'ttl' field has been set. */
     public boolean hasTtl() {
       return fieldSetFlags()[3];
     }
-    
-    /** Clears the value of the 'ttl' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearTtl() {
+
+    /** Clears the value of the 'ttl' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearTtl() {
       ttl = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'blockSize' field */
+    /** Gets the value of the 'blockSize' field. */
     public java.lang.Integer getBlockSize() {
       return blockSize;
     }
-    
-    /** Sets the value of the 'blockSize' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setBlockSize(int value) {
+
+    /** Sets the value of the 'blockSize' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setBlockSize(int value) {
       validate(fields()[4], value);
       this.blockSize = value;
       fieldSetFlags()[4] = true;
       return this; 
     }
-    
-    /** Checks whether the 'blockSize' field has been set */
+
+    /** Checks whether the 'blockSize' field has been set. */
     public boolean hasBlockSize() {
       return fieldSetFlags()[4];
     }
-    
-    /** Clears the value of the 'blockSize' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearBlockSize() {
+
+    /** Clears the value of the 'blockSize' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearBlockSize() {
       fieldSetFlags()[4] = false;
       return this;
     }
 
-    /** Gets the value of the 'scope' field */
+    /** Gets the value of the 'scope' field. */
     public java.lang.Integer getScope() {
       return scope;
     }
-    
-    /** Sets the value of the 'scope' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setScope(int value) {
+
+    /** Sets the value of the 'scope' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setScope(int value) {
       validate(fields()[5], value);
       this.scope = value;
       fieldSetFlags()[5] = true;
       return this; 
     }
-    
-    /** Checks whether the 'scope' field has been set */
+
+    /** Checks whether the 'scope' field has been set. */
     public boolean hasScope() {
       return fieldSetFlags()[5];
     }
-    
-    /** Clears the value of the 'scope' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearScope() {
+
+    /** Clears the value of the 'scope' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearScope() {
       fieldSetFlags()[5] = false;
       return this;
     }
 
-    /** Gets the value of the 'BloomFilter' field */
+    /** Gets the value of the 'bloomFilter' field. */
     public org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType getBloomFilter() {
-      return BloomFilter;
+      return bloomFilter;
     }
-    
-    /** Sets the value of the 'BloomFilter' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setBloomFilter(org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType value) {
+
+    /** Sets the value of the 'bloomFilter' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setBloomFilter(org.kaaproject.kaa.server.appenders
+        .hbase.config.gen.BloomFilterType value) {
       validate(fields()[6], value);
-      this.BloomFilter = value;
+      this.bloomFilter = value;
       fieldSetFlags()[6] = true;
       return this; 
     }
-    
-    /** Checks whether the 'BloomFilter' field has been set */
+
+    /** Checks whether the 'bloomFilter' field has been set. */
     public boolean hasBloomFilter() {
       return fieldSetFlags()[6];
     }
-    
-    /** Clears the value of the 'BloomFilter' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearBloomFilter() {
-      BloomFilter = null;
+
+    /** Clears the value of the 'bloomFilter' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearBloomFilter() {
+      bloomFilter = null;
       fieldSetFlags()[6] = false;
       return this;
     }
 
-    /** Gets the value of the 'dataBlockEncoding' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding getDataBlockEncoding() {
+    /** Gets the value of the 'dataBlockEncoding' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .Encoding getDataBlockEncoding() {
       return dataBlockEncoding;
     }
-    
-    /** Sets the value of the 'dataBlockEncoding' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setDataBlockEncoding(org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding value) {
+
+    /** Sets the value of the 'dataBlockEncoding' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+            .ColumnFamily.Builder setDataBlockEncoding(org.kaaproject.kaa.server.appenders
+            .hbase.config.gen.Encoding value) {
       validate(fields()[7], value);
       this.dataBlockEncoding = value;
       fieldSetFlags()[7] = true;
       return this; 
     }
-    
-    /** Checks whether the 'dataBlockEncoding' field has been set */
+
+    /** Checks whether the 'dataBlockEncoding' field has been set. */
     public boolean hasDataBlockEncoding() {
       return fieldSetFlags()[7];
     }
-    
-    /** Clears the value of the 'dataBlockEncoding' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearDataBlockEncoding() {
+
+    /** Clears the value of the 'dataBlockEncoding' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearDataBlockEncoding() {
       dataBlockEncoding = null;
       fieldSetFlags()[7] = false;
       return this;
     }
 
-    /** Gets the value of the 'compression' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm getCompression() {
+    /** Gets the value of the 'compression' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .Algorithm getCompression() {
       return compression;
     }
-    
-    /** Sets the value of the 'compression' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setCompression(org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm value) {
+
+    /** Sets the value of the 'compression' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setCompression(org.kaaproject.kaa.server.appenders
+        .hbase.config.gen.Algorithm value) {
       validate(fields()[8], value);
       this.compression = value;
       fieldSetFlags()[8] = true;
       return this; 
     }
-    
-    /** Checks whether the 'compression' field has been set */
+
+    /** Checks whether the 'compression' field has been set. */
     public boolean hasCompression() {
       return fieldSetFlags()[8];
     }
-    
-    /** Clears the value of the 'compression' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearCompression() {
+
+    /** Clears the value of the 'compression' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearCompression() {
       compression = null;
       fieldSetFlags()[8] = false;
       return this;
     }
 
-    /** Gets the value of the 'InMemory' field */
+    /** Gets the value of the 'inMemory' field. */
     public java.lang.Boolean getInMemory() {
-      return InMemory;
+      return inMemory;
     }
-    
-    /** Sets the value of the 'InMemory' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setInMemory(boolean value) {
+
+    /** Sets the value of the 'inMemory' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setInMemory(boolean value) {
       validate(fields()[9], value);
-      this.InMemory = value;
+      this.inMemory = value;
       fieldSetFlags()[9] = true;
       return this; 
     }
-    
-    /** Checks whether the 'InMemory' field has been set */
+
+    /** Checks whether the 'inMemory' field has been set. */
     public boolean hasInMemory() {
       return fieldSetFlags()[9];
     }
-    
-    /** Clears the value of the 'InMemory' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearInMemory() {
+
+    /** Clears the value of the 'inMemory' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearInMemory() {
       fieldSetFlags()[9] = false;
       return this;
     }
 
-    /** Gets the value of the 'KeepDeletedCells' field */
+    /** Gets the value of the 'keepDeletedCells' field. */
     public java.lang.Boolean getKeepDeletedCells() {
-      return KeepDeletedCells;
+      return keepDeletedCells;
     }
-    
-    /** Sets the value of the 'KeepDeletedCells' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setKeepDeletedCells(boolean value) {
+
+    /** Sets the value of the 'keepDeletedCells' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setKeepDeletedCells(boolean value) {
       validate(fields()[10], value);
-      this.KeepDeletedCells = value;
+      this.keepDeletedCells = value;
       fieldSetFlags()[10] = true;
       return this; 
     }
-    
-    /** Checks whether the 'KeepDeletedCells' field has been set */
+
+    /** Checks whether the 'keepDeletedCells' field has been set. */
     public boolean hasKeepDeletedCells() {
       return fieldSetFlags()[10];
     }
-    
-    /** Clears the value of the 'KeepDeletedCells' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearKeepDeletedCells() {
+
+    /** Clears the value of the 'keepDeletedCells' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearKeepDeletedCells() {
       fieldSetFlags()[10] = false;
       return this;
     }
 
-    /** Gets the value of the 'blockCache' field */
+    /** Gets the value of the 'blockCache' field. */
     public java.lang.Boolean getBlockCache() {
       return blockCache;
     }
-    
-    /** Sets the value of the 'blockCache' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder setBlockCache(boolean value) {
+
+    /** Sets the value of the 'blockCache' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder setBlockCache(boolean value) {
       validate(fields()[11], value);
       this.blockCache = value;
       fieldSetFlags()[11] = true;
       return this; 
     }
-    
-    /** Checks whether the 'blockCache' field has been set */
+
+    /** Checks whether the 'blockCache' field has been set. */
     public boolean hasBlockCache() {
       return fieldSetFlags()[11];
     }
-    
-    /** Clears the value of the 'blockCache' field */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily.Builder clearBlockCache() {
+
+    /** Clears the value of the 'blockCache' field. */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen
+        .ColumnFamily.Builder clearBlockCache() {
       fieldSetFlags()[11] = false;
       return this;
     }
@@ -708,18 +818,31 @@ public class ColumnFamily extends org.apache.avro.specific.SpecificRecordBase im
     public ColumnFamily build() {
       try {
         ColumnFamily record = new ColumnFamily();
-        record.cf_name = fieldSetFlags()[0] ? this.cf_name : (java.lang.CharSequence) defaultValue(fields()[0]);
-        record.minVersion = fieldSetFlags()[1] ? this.minVersion : (java.lang.Integer) defaultValue(fields()[1]);
-        record.maxVersion = fieldSetFlags()[2] ? this.maxVersion : (java.lang.Integer) defaultValue(fields()[2]);
+        record.cfName = fieldSetFlags()[0] ? this.cfName : 
+          (java.lang.CharSequence) defaultValue(fields()[0]);
+        record.minVersion = fieldSetFlags()[1] ? this.minVersion : 
+          (java.lang.Integer) defaultValue(fields()[1]);
+        record.maxVersion = fieldSetFlags()[2] ? this.maxVersion : 
+          (java.lang.Integer) defaultValue(fields()[2]);
         record.ttl = fieldSetFlags()[3] ? this.ttl : (java.lang.Integer) defaultValue(fields()[3]);
-        record.blockSize = fieldSetFlags()[4] ? this.blockSize : (java.lang.Integer) defaultValue(fields()[4]);
-        record.scope = fieldSetFlags()[5] ? this.scope : (java.lang.Integer) defaultValue(fields()[5]);
-        record.BloomFilter = fieldSetFlags()[6] ? this.BloomFilter : (org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType) defaultValue(fields()[6]);
-        record.dataBlockEncoding = fieldSetFlags()[7] ? this.dataBlockEncoding : (org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding) defaultValue(fields()[7]);
-        record.compression = fieldSetFlags()[8] ? this.compression : (org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm) defaultValue(fields()[8]);
-        record.InMemory = fieldSetFlags()[9] ? this.InMemory : (java.lang.Boolean) defaultValue(fields()[9]);
-        record.KeepDeletedCells = fieldSetFlags()[10] ? this.KeepDeletedCells : (java.lang.Boolean) defaultValue(fields()[10]);
-        record.blockCache = fieldSetFlags()[11] ? this.blockCache : (java.lang.Boolean) defaultValue(fields()[11]);
+        record.blockSize = fieldSetFlags()[4] ? this.blockSize : 
+          (java.lang.Integer) defaultValue(fields()[4]);
+        record.scope = fieldSetFlags()[5] ? this.scope : 
+          (java.lang.Integer) defaultValue(fields()[5]);
+        record.bloomFilter = fieldSetFlags()[6] ? this.bloomFilter : 
+          (org.kaaproject.kaa.server.appenders.hbase.config.gen.BloomFilterType) 
+          defaultValue(fields()[6]);
+        record.dataBlockEncoding = fieldSetFlags()[7] ? this.dataBlockEncoding : 
+          (org.kaaproject.kaa.server.appenders.hbase.config.gen.Encoding) defaultValue(fields()[7]);
+        record.compression = fieldSetFlags()[8] ? this.compression : 
+          (org.kaaproject.kaa.server.appenders.hbase.config.gen.Algorithm) 
+          defaultValue(fields()[8]);
+        record.inMemory = fieldSetFlags()[9] ? this.inMemory : 
+          (java.lang.Boolean) defaultValue(fields()[9]);
+        record.keepDeletedCells = fieldSetFlags()[10] ? this.keepDeletedCells : 
+          (java.lang.Boolean) defaultValue(fields()[10]);
+        record.blockCache = fieldSetFlags()[11] ? this.blockCache : 
+          (java.lang.Boolean) defaultValue(fields()[11]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
