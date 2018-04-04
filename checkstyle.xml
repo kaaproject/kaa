@@ -20,6 +20,7 @@ Copyright 2014-2016 CyberVision, Inc.
 -->
 
 <module name="Checker">
+
     <property name="charset" value="UTF-8"/>
 
     <property name="severity" value="error"/>
