@@ -95,7 +95,7 @@ public class HBaseLogEventDao implements LogEventDao  {
     //Get table and keyspace names
     String table  = configuration.getTableName().toString().toLowerCase().trim();
     String keyspace = configuration.getKeyspace().toString().toLowerCase().trim();
-    LOG.info("Starting creation of table:  {}",keyspace + ":" + table);
+    LOG.info("Starting creation of table:  {}", keyspace + ":" + table);
 
     // Creates the namespace and/or table in case of not existing.
 
