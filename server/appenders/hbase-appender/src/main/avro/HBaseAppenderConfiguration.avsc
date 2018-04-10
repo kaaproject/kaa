@@ -59,20 +59,20 @@
                             "name":"minVersion",
                             "displayName":"Min Version",
                             "weight":0.2,
-			    "by_default":0,
+			    			"by_default":0,
                             "type":"int"
                         },    
 			{
                             "name":"maxVersion",
                             "displayName":"Max Version",
                             "weight":0.2,
-			    "by_default":1,
+			    			"by_default":1,
                             "type":"int"
                         },
 			{
                             "name":"ttl",
                             "displayName":"TTL",
-			    "optional":true,
+			    			"optional":true,
                             "weight":0.2,
                             "type":[
                                 "int",
@@ -83,14 +83,14 @@
                             "name":"blockSize",
                             "displayName":"block Size",
                             "weight":0.2,
-			    "by_default":65536,
+			    			"by_default":65536,
                             "type":"int"
                         },
 		        {
                             "name":"scope",
                             "displayName":"Replication Scope",
                             "weight":0.2,
-			    "by_default":0,
+			    			"by_default":0,
                             "type":"int"
                         },
                         {
