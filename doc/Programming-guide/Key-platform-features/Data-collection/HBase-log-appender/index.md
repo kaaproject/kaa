@@ -41,7 +41,7 @@ You can configure the following log appender settings:
 
 
 ## Playing with HBase log appender
-The example below uses the [Data collection demo from My First Kaa Application](/doc/Programming-guide/Your-first-Kaa-application/index.md). However, it extends the number of fields in the log schema. The log appender will send data to Kaa and then persist it to HBase. Some selection queries will be demonstrated using the persisted data.
+The example below uses the data collection demo from [My First Kaa Application](/doc/Programming-guide/Your-first-Kaa-application/index.md). However, it extends the number of fields in the log schema. The log appender will send data to Kaa and then persist it to HBase. Some selection queries will be demonstrated using the persisted data.
 
 Below is the log schema for the application.
 
@@ -60,7 +60,7 @@ Below is the log schema for the application.
             "type":"int"
         },
         {
-            "name":"timeStamp",
+            "name":"timestamp",
             "type":"long"
         },
         {
@@ -77,7 +77,7 @@ To play around with the HBase log appender:
 
 2. Log in to the **Administration UI** as a tenant developer, open the **Log appenders** page of **My First Kaa Application** and click **Add log appender**.
 
-3. Follow the HBase log appender configuration settings presented on the figures from [Configure log appender](#configure-log-appender).
+3. Follow the HBase log appender configuration settings presented on the figures from [Create HBase Log Appender](#create-hbase-log-appender).
 
 4. Run the application as described in [My First Kaa Application](/doc/Programming-guide/Your-first-Kaa-application/index.md).
 
@@ -105,3 +105,16 @@ To play around with the HBase log appender:
     ```
     
 7. The following output will be displayed.
+
+    ```bash
+     ROW                        COLUMN+CELL
+     sensorID+1523616858341	column=info:loc,	timestamp=1523616858753,	value=sensor_location
+     sensorID+1523616858341	column=info:temp,	timestamp=1523616858753,	value=28
+     sensorID+1523616858341	column=meta:id,		timestamp=1523616858753,	value=sensorID
+     sensorID+1523616858341	column=meta:ts,		timestamp=1523616858753,	value=1523616858341
+     sensorID+1523616859327	column=info:loc,	timestamp=1523616859578,	value=sensor_location
+     sensorID+1523616859327	column=info:temp,	timestamp=1523616859578,	value=26
+     sensorID+1523616859327	column=meta:id,		timestamp=1523616859578,	value=sensorID
+     sensorID+1523616859327	column=meta:ts,		timestamp=1523616859578,	value=1523616859327
+     ...
+    ```
