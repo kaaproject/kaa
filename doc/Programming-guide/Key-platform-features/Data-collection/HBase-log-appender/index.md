@@ -38,3 +38,70 @@ You can configure the following log appender settings:
 * **Table name** -- HBase table name.
 * **Column families** -- specify and configure column families for the HBase table.
 * **Column mapping** -- mapping of specific log data to appropriate columns. Use the checkboxes to make any field part of the row key.
+
+
+## Playing with HBase log appender
+The example below uses the [Data collection demo from My First Kaa Application](/doc/Programming-guide/Your-first-Kaa-application/index.md). However, it extends the number of fields in the log schema. The log appender will send data to Kaa and then persist it to HBase. Some selection queries will be demonstrated using the persisted data.
+
+Below is the log schema for the application.
+
+```json
+{
+    "type":"record",
+    "name":"Data",
+    "namespace":"org.kaaproject.kaa.scheme.sample",
+    "fields":[
+        {
+            "name":"id",
+            "type":"String"
+        },    	
+        {
+            "name":"temperature",
+            "type":"int"
+        },
+        {
+            "name":"timeStamp",
+            "type":"long"
+        },
+        {
+            "name":"location",
+            "type":"String"
+        }
+    ],
+    "displayName":"Logging scheme"
+}
+```
+To play around with the HBase log appender:
+
+1. Follow the application instructions from [My First Kaa Application](/doc/Programming-guide/Your-first-Kaa-application/index.md) and use the log schema described above.
+
+2. Log in to the **Administration UI** as a tenant developer, open the **Log appenders** page of **My First Kaa Application** and click **Add log appender**.
+
+3. Follow the HBase log appender configuration settings presented on the figures from [Configure log appender](#configure-log-appender).
+
+4. Run the application as described in [My First Kaa Application](/doc/Programming-guide/Your-first-Kaa-application/index.md).
+
+5. The console will display the following messages.
+
+		My First Kaa Application started
+		Default sample period: 1
+		Sampled temperature: 28
+		Sampled temperature: 31 
+		Sampled temperature: 32 
+		Sampled temperature: 30 
+		Sampled temperature: 28 
+		...
+
+6. To verify that your logs have been persisted to HBase, open the HBase shell from the terminal using the command below.
+
+    ```bash
+    hbase shell
+    ```
+
+    Then run
+
+    ```bash
+    scan 'kaa:myfirstapplication'
+    ```
+    
+7. The following output will be displayed.
