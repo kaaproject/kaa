@@ -13,8 +13,10 @@ To create an HBase log appender for your application using the [Administration U
 Click **Add log appender**.
 
 3. On the **Log appender details** page, enter the necessary information and set the **Type** field to **HBase**.
-	
+Note: The field "Log metadata" is not currently working.
 
+![Create hbase log appender](attach/create-hbase-log-appender-admin-ui.png)
+	
 
 4. Fill in the **Configuration** section for your log appender and click **Add**.
 See [Configure log appender](#configure-log-appender).
