@@ -15,10 +15,14 @@ Click **Add log appender**.
 3. On the **Log appender details** page, enter the necessary information and set the **Type** field to **HBase**.
 Note: The field "Log metadata" is not currently working.
 
-![Create hbase log appender](attach/create-hbase-log-appender-admin-ui.png)
+	![Create hbase log appender](attach/create-hbase-log-appender-admin-ui.png)
 	
 
 4. Fill in the **Configuration** section for your log appender and click **Add**.
 See [Configure log appender](#configure-log-appender).
+
+	![HBase log appender configuration](attach/hbase-log-appender-config1.png)
+	![](attach/hbase-log-appender-config-zookeeper.png)
+	![](attach/hbase-log-appender-config2.png)
 
 ## Configure log appender
