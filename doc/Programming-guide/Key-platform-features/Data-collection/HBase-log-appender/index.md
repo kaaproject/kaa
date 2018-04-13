@@ -28,6 +28,6 @@ See [Configure log appender](#configure-log-appender).
 ## Configure log appender
 
 
-The HBase log appender configuration must match [this Avro schema]({{github_url}}server/appenders/hbase-appender/src/main/avro/HBaseAppenderConfiguration.avsc).
+The HBase log appender configuration must match [this Avro schema](/kaa/server/appenders/hbase-appender/src/main/avro/HBaseAppenderConfiguration.avsc).
 
 You can configure the following log appender settings:
