@@ -86,9 +86,9 @@ To play around with the HBase log appender:
 		My First Kaa Application started
 		Default sample period: 1
 		Sampled temperature: 28
-		Sampled temperature: 31 
-		Sampled temperature: 32 
-		Sampled temperature: 30 
+		Sampled temperature: 26 
+		Sampled temperature: 27 
+		Sampled temperature: 26 
 		Sampled temperature: 28 
 		...
 
