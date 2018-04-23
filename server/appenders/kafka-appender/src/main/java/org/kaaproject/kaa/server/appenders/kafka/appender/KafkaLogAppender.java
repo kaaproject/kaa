@@ -16,17 +16,6 @@
 
 package org.kaaproject.kaa.server.appenders.kafka.appender;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -40,6 +29,17 @@ import org.kaaproject.kaa.server.common.log.shared.appender.LogEventPack;
 import org.kaaproject.kaa.server.common.log.shared.avro.gen.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
 
@@ -111,20 +111,24 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
                                 .getSchema());
                         GenericAvroConverter<GenericRecord> headerConverter = getConverter(header.getSchema()
                                 .toString());
+
+                        String clientProfile = logEventPack.getClientProfile().getBody();
+                        String serverProfile = logEventPack.getServerProfile().getBody();
+
                         List<KafkaLogEventDto> dtoList = generateKafkaLogEvent(logEventPack, header, eventConverter);
                         LOG.debug("[{}] saving {} objects", topicName, dtoList.size());
                         if (!dtoList.isEmpty()) {
                             int logCount = dtoList.size();
                             inputLogCount.getAndAdd(logCount);
-                            logEventDao.save(dtoList, eventConverter, headerConverter, new LogAppenderCallback(
+                            logEventDao.save(dtoList, eventConverter, headerConverter, clientProfile, serverProfile, new LogAppenderCallback(
                                     listener, kafkaSuccessLogCount, kafkaFailureLogCount));
                             LOG.debug("[{}] appended {} logs to kafka collection", topicName, logEventPack.getEvents()
                                     .size());
                         } else {
                             listener.onInternalError();
                         }
-                    } catch (Exception e) {
-                        LOG.warn("Got exception. Can't process log events", e);
+                    } catch (Exception ex) {
+                        LOG.warn("Got exception. Can't process log events", ex);
                         listener.onInternalError();
                     }
                 }
@@ -152,7 +156,7 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
     }
 
     protected List<KafkaLogEventDto> generateKafkaLogEvent(LogEventPack logEventPack, RecordHeader header,
-            GenericAvroConverter<GenericRecord> eventConverter) throws IOException {
+                                                           GenericAvroConverter<GenericRecord> eventConverter) throws IOException {
         LOG.debug("Generate LogEventDto objects from LogEventPack [{}] and header [{}]", logEventPack, header);
         List<KafkaLogEventDto> events = new ArrayList<>(logEventPack.getEvents().size());
         try {
@@ -180,7 +184,7 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
         private final int size;
 
         private LogAppenderCallback(LogDeliveryCallback callback, AtomicInteger kafkaSuccessLogCount,
-                AtomicInteger kafkaFailureLogCount) {
+                                    AtomicInteger kafkaFailureLogCount) {
             this.callback = callback;
             this.kafkaSuccessLogCount = kafkaSuccessLogCount;
             this.kafkaFailureLogCount = kafkaFailureLogCount;
@@ -207,8 +211,7 @@ public class KafkaLogAppender extends AbstractLogAppender<KafkaConfig> {
     /**
      * Gets the converter.
      *
-     * @param schema
-     *            the schema
+     * @param schema the schema
      * @return the converter
      */
     private GenericAvroConverter<GenericRecord> getConverter(String schema) {

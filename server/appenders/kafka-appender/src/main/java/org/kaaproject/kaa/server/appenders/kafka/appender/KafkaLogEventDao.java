@@ -16,14 +16,6 @@
 
 package org.kaaproject.kaa.server.appenders.kafka.appender;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.Future;
-
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -35,6 +27,14 @@ import org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaConfig;
 import org.kaaproject.kaa.server.appenders.kafka.config.gen.KafkaServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.Future;
 
 public class KafkaLogEventDao implements LogEventDao {
 
@@ -89,19 +89,19 @@ public class KafkaLogEventDao implements LogEventDao {
 
     @Override
     public List<Future<RecordMetadata>> save(List<KafkaLogEventDto> logEventDtoList,
-            GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
-            Callback callback) throws IOException {
+                                             GenericAvroConverter<GenericRecord> eventConverter, GenericAvroConverter<GenericRecord> headerConverter,
+                                             String clientProfile, String serverProfile, Callback callback) throws IOException {
         List<Future<RecordMetadata>> results = new ArrayList<Future<RecordMetadata>>();
         LOG.info("[{}] Sending events to Kafka using {} key defining strategy", topicName, configuration
                 .getKafkaKeyType().toString());
         for (KafkaLogEventDto dto : logEventDtoList) {
             ProducerRecord<String, String> recordToWrite;
             if (configuration.getUseDefaultPartitioner()) {
-                recordToWrite = new ProducerRecord<String, String>(topicName, getKey(dto), formKafkaJSON(dto,
-                        eventConverter, headerConverter));
+                recordToWrite = new ProducerRecord<String, String>(topicName, getKey(dto), formKafkaJson(dto,
+                        eventConverter, headerConverter, clientProfile, serverProfile));
             } else {
                 recordToWrite = new ProducerRecord<String, String>(topicName, calculatePartitionID(dto), getKey(dto),
-                        formKafkaJSON(dto, eventConverter, headerConverter));
+                        formKafkaJson(dto, eventConverter, headerConverter, clientProfile, serverProfile));
             }
             results.add(producer.send(recordToWrite, callback));
         }
@@ -122,41 +122,44 @@ public class KafkaLogEventDao implements LogEventDao {
 
     private String parseAcknowledgement(String record) {
         switch (record) {
-        case "ALL":
-            return "all";
-        case "ZERO":
-            return "0";
-        case "ONE":
-            return "1";
-        case "TWO":
-            return "2";
-        default:
-            return "";
+            case "ALL":
+                return "all";
+            case "ZERO":
+                return "0";
+            case "ONE":
+                return "1";
+            case "TWO":
+                return "2";
+            default:
+                return "";
         }
     }
 
-    private String formKafkaJSON(KafkaLogEventDto dto, GenericAvroConverter<GenericRecord> eventConverter,
-            GenericAvroConverter<GenericRecord> headerConverter) throws IOException {
-        String eventJSON = eventConverter.encodeToJson(dto.getEvent());
-        String headerJSON = headerConverter.encodeToJson(dto.getHeader());
+    private String formKafkaJson(KafkaLogEventDto dto, GenericAvroConverter<GenericRecord> eventConverter,
+                                 GenericAvroConverter<GenericRecord> headerConverter,
+                                 String clientProfile, String serverProfile) throws IOException {
+        String eventJson = eventConverter.encodeToJson(dto.getEvent());
+        String headerJson = headerConverter.encodeToJson(dto.getHeader());
         StringBuilder result = new StringBuilder("{");
-        if (headerJSON != null && !headerJSON.isEmpty()) {
-            result.append("\"header\":" + headerJSON + ",");
+        if (headerJson != null && !headerJson.isEmpty()) {
+            result.append("\"header\":" + headerJson + ",");
         }
-        result.append("\"event\":" + eventJSON + "}");
+        result.append("\"event\":" + eventJson + ",");
+        result.append("\"clientProfile\":" + clientProfile + ",");
+        result.append("\"serverProfile\":" + serverProfile + "}");
         return result.toString();
     }
 
     private String getKey(KafkaLogEventDto dto) {
         switch (configuration.getKafkaKeyType()) {
-        case ENDPOINTHASHKEY:
-            return dto.getHeader().getEndpointKeyHash();
-        case UUID:
-            return new UUID(System.currentTimeMillis(), RANDOM.nextLong()).toString();
-        case HASH:
-            return "" + dto.hashCode();
-        default:
-            return null;
+            case ENDPOINTHASHKEY:
+                return dto.getHeader().getEndpointKeyHash();
+            case UUID:
+                return new UUID(System.currentTimeMillis(), RANDOM.nextLong()).toString();
+            case HASH:
+                return "" + dto.hashCode();
+            default:
+                return null;
         }
     }
 }

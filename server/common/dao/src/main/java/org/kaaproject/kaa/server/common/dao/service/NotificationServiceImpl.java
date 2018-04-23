@@ -279,10 +279,6 @@ public class NotificationServiceImpl implements NotificationService {
                 if(ep == null){
                     throw new DatabaseProcessingException("Can't find endpoint profile by hash " + endpointKeyHash);
                 }
-                if(ep.getSubscriptions()== null || ! ep.getSubscriptions().contains(topicId)){
-                    //TODO Error code?
-                    throw new DatabaseProcessingException("Endpoint profile is not subscribed to this topic");
-                }
             } else {
                 throw new IncorrectParameterException("Invalid endpointKeyHash: " + endpointKeyHash);
             }

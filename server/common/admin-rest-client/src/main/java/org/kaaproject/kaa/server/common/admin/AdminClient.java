@@ -353,6 +353,12 @@ public class AdminClient {
         restTemplate.postForObject(restTemplate.getUrl() + "removeTopicFromEpGroup", params, Void.class);
     }
 
+    public void removeEndpointProfileByKeyHash(String endpointProfileKeyHash) throws Exception {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.add("endpointProfileKeyHash", endpointProfileKeyHash);
+        restTemplate.postForObject(restTemplate.getUrl() + "removeEndpointProfileByKeyHash", params, Void.class);
+    }
+
     public NotificationDto sendNotification(NotificationDto notification, String notificationResource) throws Exception {
         return sendNotification(notification, getFileResource(notificationResource));
     }

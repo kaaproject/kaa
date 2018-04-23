@@ -7,12 +7,12 @@ package org.kaaproject.kaa.server.transport.tcp.config.gen;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroTcpConfig\",\"namespace\":\"org.kaaproject.kaa.server.transport.tcp.config.gen\",\"fields\":[{\"name\":\"bindInterface\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"bindPort\",\"type\":\"int\"},{\"name\":\"publicInterface\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"publicPort\",\"type\":\"int\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroTcpConfig\",\"namespace\":\"org.kaaproject.kaa.server.transport.tcp.config.gen\",\"fields\":[{\"name\":\"bindInterface\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"bindPort\",\"type\":\"int\"},{\"name\":\"publicInterface\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"publicPorts\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
    private java.lang.String bindInterface;
    private int bindPort;
    private java.lang.String publicInterface;
-   private int publicPort;
+   private java.lang.String publicPorts;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -24,11 +24,11 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
   /**
    * All-args constructor.
    */
-  public AvroTcpConfig(java.lang.String bindInterface, java.lang.Integer bindPort, java.lang.String publicInterface, java.lang.Integer publicPort) {
+  public AvroTcpConfig(java.lang.String bindInterface, java.lang.Integer bindPort, java.lang.String publicInterface, java.lang.String publicPorts) {
     this.bindInterface = bindInterface;
     this.bindPort = bindPort;
     this.publicInterface = publicInterface;
-    this.publicPort = publicPort;
+    this.publicPorts = publicPorts;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -38,7 +38,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
     case 0: return bindInterface;
     case 1: return bindPort;
     case 2: return publicInterface;
-    case 3: return publicPort;
+    case 3: return publicPorts;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -49,7 +49,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
     case 0: bindInterface = (java.lang.String)value$; break;
     case 1: bindPort = (java.lang.Integer)value$; break;
     case 2: publicInterface = (java.lang.String)value$; break;
-    case 3: publicPort = (java.lang.Integer)value$; break;
+    case 3: publicPorts = (java.lang.String)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -100,18 +100,18 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
   }
 
   /**
-   * Gets the value of the 'publicPort' field.
+   * Gets the value of the 'publicPorts' field.
    */
-  public java.lang.Integer getPublicPort() {
-    return publicPort;
+  public java.lang.String getPublicPorts() {
+    return publicPorts;
   }
 
   /**
-   * Sets the value of the 'publicPort' field.
+   * Sets the value of the 'publicPorts' field.
    * @param value the value to set.
    */
-  public void setPublicPort(java.lang.Integer value) {
-    this.publicPort = value;
+  public void setPublicPorts(java.lang.String value) {
+    this.publicPorts = value;
   }
 
   /** Creates a new AvroTcpConfig RecordBuilder */
@@ -138,7 +138,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
     private java.lang.String bindInterface;
     private int bindPort;
     private java.lang.String publicInterface;
-    private int publicPort;
+    private java.lang.String publicPorts;
 
     /** Creates a new Builder */
     private Builder() {
@@ -160,8 +160,8 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
         this.publicInterface = data().deepCopy(fields()[2].schema(), other.publicInterface);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.publicPort)) {
-        this.publicPort = data().deepCopy(fields()[3].schema(), other.publicPort);
+      if (isValidValue(fields()[3], other.publicPorts)) {
+        this.publicPorts = data().deepCopy(fields()[3].schema(), other.publicPorts);
         fieldSetFlags()[3] = true;
       }
     }
@@ -181,8 +181,8 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
         this.publicInterface = data().deepCopy(fields()[2].schema(), other.publicInterface);
         fieldSetFlags()[2] = true;
       }
-      if (isValidValue(fields()[3], other.publicPort)) {
-        this.publicPort = data().deepCopy(fields()[3].schema(), other.publicPort);
+      if (isValidValue(fields()[3], other.publicPorts)) {
+        this.publicPorts = data().deepCopy(fields()[3].schema(), other.publicPorts);
         fieldSetFlags()[3] = true;
       }
     }
@@ -261,26 +261,27 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
       return this;
     }
 
-    /** Gets the value of the 'publicPort' field */
-    public java.lang.Integer getPublicPort() {
-      return publicPort;
+    /** Gets the value of the 'publicPorts' field */
+    public java.lang.String getPublicPorts() {
+      return publicPorts;
     }
     
-    /** Sets the value of the 'publicPort' field */
-    public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder setPublicPort(int value) {
+    /** Sets the value of the 'publicPorts' field */
+    public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder setPublicPorts(java.lang.String value) {
       validate(fields()[3], value);
-      this.publicPort = value;
+      this.publicPorts = value;
       fieldSetFlags()[3] = true;
       return this; 
     }
     
-    /** Checks whether the 'publicPort' field has been set */
-    public boolean hasPublicPort() {
+    /** Checks whether the 'publicPorts' field has been set */
+    public boolean hasPublicPorts() {
       return fieldSetFlags()[3];
     }
     
-    /** Clears the value of the 'publicPort' field */
-    public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder clearPublicPort() {
+    /** Clears the value of the 'publicPorts' field */
+    public org.kaaproject.kaa.server.transport.tcp.config.gen.AvroTcpConfig.Builder clearPublicPorts() {
+      publicPorts = null;
       fieldSetFlags()[3] = false;
       return this;
     }
@@ -292,7 +293,7 @@ public class AvroTcpConfig extends org.apache.avro.specific.SpecificRecordBase i
         record.bindInterface = fieldSetFlags()[0] ? this.bindInterface : (java.lang.String) defaultValue(fields()[0]);
         record.bindPort = fieldSetFlags()[1] ? this.bindPort : (java.lang.Integer) defaultValue(fields()[1]);
         record.publicInterface = fieldSetFlags()[2] ? this.publicInterface : (java.lang.String) defaultValue(fields()[2]);
-        record.publicPort = fieldSetFlags()[3] ? this.publicPort : (java.lang.Integer) defaultValue(fields()[3]);
+        record.publicPorts = fieldSetFlags()[3] ? this.publicPorts : (java.lang.String) defaultValue(fields()[3]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

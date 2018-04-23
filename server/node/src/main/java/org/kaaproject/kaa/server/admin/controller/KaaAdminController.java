@@ -289,6 +289,20 @@ public class KaaAdminController {
     }
 
     /**
+     * Remove the endpoint with specific profile key.
+     *
+     * @param endpointProfileKeyHash
+     *
+     * @throws KaaAdminServiceException
+     *             the kaa admin service exception
+     */
+    @RequestMapping(value = "removeEndpointProfileByKeyHash", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void removeEndpointProfileByKeyHash(@RequestParam(value = "endpointProfileKeyHash") String endpointProfileKeyHash) throws KaaAdminServiceException {
+        kaaAdminService.removeEndpointProfileByKeyHash(endpointProfileKeyHash);
+    }
+
+    /**
      * Update server profile of endpoint.
      *
      * @param endpointProfileKey
