@@ -16,18 +16,12 @@
 
 package org.kaaproject.kaa.server.operations.service.akka.actors.core;
 
-import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.ENDPOINT_DISPATCHER_NAME;
-import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.LOG_DISPATCHER_NAME;
-import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.TOPIC_DISPATCHER_NAME;
-import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.VERIFIER_DISPATCHER_NAME;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import akka.actor.*;
+import akka.japi.Creator;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.Notification;
 import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftEndpointDeregistrationMessage;
+import org.kaaproject.kaa.server.common.thrift.gen.operations.ThriftUnicastNotificationMessage;
 import org.kaaproject.kaa.server.operations.service.akka.AkkaContext;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.global.GlobalEndpointActorCreator;
 import org.kaaproject.kaa.server.operations.service.akka.actors.core.endpoint.local.LocalEndpointActorCreator;
@@ -37,37 +31,22 @@ import org.kaaproject.kaa.server.operations.service.akka.messages.core.endpoint.
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.lb.ClusterUpdateMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.logs.LogEventPackMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.notification.ThriftNotificationMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointActorMsg;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointAddress;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointClusterAddress;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointRouteMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ThriftEndpointActorMsg;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.*;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.ApplicationActorStatusResponse;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.stats.StatusRequestMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.topic.TopicSubscriptionMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage;
+import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.*;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventDeliveryMessage.EventDeliveryStatus;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventReceiveMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointEventSendMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserActionRouteMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserConnectMessage;
-import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.EndpointUserDisconnectMessage;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.user.verification.UserVerificationRequestMessage;
 import org.kaaproject.kaa.server.transport.session.SessionAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import akka.actor.ActorRef;
-import akka.actor.LocalActorRef;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
-import akka.actor.Terminated;
-import akka.actor.UntypedActor;
-import akka.japi.Creator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.kaaproject.kaa.server.operations.service.akka.DefaultAkkaService.*;
 
 /**
  * The Class ApplicationActor.
@@ -241,6 +220,16 @@ public class ApplicationActor extends UntypedActor {
                 actorMD.actorRef.tell(message, context().self());
             } else {
                 LOG.warn("[{}] Failed to lookup {} actor for endpoint.", endpointId, classifier.name());
+                if (message instanceof ThriftEndpointActorMsg) {
+                    ThriftEndpointActorMsg<?> msg = (ThriftEndpointActorMsg<?>) message;
+                    Object thriftMsg = msg.getMsg();
+                    if (thriftMsg instanceof ThriftUnicastNotificationMessage) {
+                        ThriftUnicastNotificationMessage msgToSend = (ThriftUnicastNotificationMessage) thriftMsg;
+                        String endpointNode = context.getZookeeperClient().obtainEndpointNodeAddress(message.getAddress().getEntityId());
+                        LOG.debug("Redirecting notification [{}] to node = [{}]", msgToSend, endpointNode);
+                        context.getClusterService().sendUnicastNotificationMessage(endpointNode, msgToSend);
+                    }
+                }
             }
         }
     }
@@ -523,6 +512,9 @@ public class ApplicationActor extends UntypedActor {
                     endpointActorId);
             globalEndpointSessions.put(endpointKey, actorMD);
             context().watch(actorMD.actorRef);
+
+            LOG.info("Saving node [{}] for endpoint [{}] to zookeeper.", nodeId, endpointKey);
+            context.getZookeeperClient().saveEndpointNodeAddress(endpointKey, nodeId);
         }
         actorMD.actorRef.tell(msg, self());
     }

@@ -21,6 +21,7 @@ import org.kaaproject.kaa.server.common.dao.CTLService;
 import org.kaaproject.kaa.server.node.service.credentials.CredentialsServiceLocator;
 import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.ZookeeperClient;
 import org.kaaproject.kaa.server.operations.service.cache.CacheService;
 import org.kaaproject.kaa.server.operations.service.cluster.ClusterService;
 import org.kaaproject.kaa.server.operations.service.event.EventService;
@@ -93,6 +94,9 @@ public class AkkaContext {
     
     @Autowired
     private CTLService ctlService;
+
+    @Autowired
+    private ZookeeperClient zookeeperClient;
     
     @Value("#{properties[support_unencrypted_connection]}")
     private Boolean supportUnencryptedConnection;
@@ -177,6 +181,10 @@ public class AkkaContext {
 
     public RegistrationService getRegistrationService() {
         return registrationService;
+    }
+
+    public ZookeeperClient getZookeeperClient() {
+        return zookeeperClient;
     }
 
 }

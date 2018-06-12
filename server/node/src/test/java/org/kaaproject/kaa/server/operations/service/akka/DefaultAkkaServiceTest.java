@@ -97,6 +97,7 @@ import org.kaaproject.kaa.server.node.service.registration.RegistrationService;
 import org.kaaproject.kaa.server.operations.pojo.SyncContext;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
 import org.kaaproject.kaa.server.operations.service.OperationsService;
+import org.kaaproject.kaa.server.operations.service.ZookeeperClient;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.ActorClassifier;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.EndpointAddress;
 import org.kaaproject.kaa.server.operations.service.akka.messages.core.route.RouteOperation;
@@ -207,6 +208,8 @@ public class DefaultAkkaServiceTest {
 
     private EndpointProfileDto mockProfile;
 
+    private ZookeeperClient zookeeperClient;
+
     @Before
     public void before() throws GeneralSecurityException, CredentialsServiceException, EndpointRegistrationServiceException {
         akkaService = new DefaultAkkaService();
@@ -227,6 +230,7 @@ public class DefaultAkkaServiceTest {
         credentialsServiceLocator = mock(CredentialsServiceLocator.class);
         credentialsService = mock(CredentialsService.class);
         registrationService = mock(RegistrationService.class);
+        zookeeperClient = mock(ZookeeperClient.class);
 
         ReflectionTestUtils.setField(context, "clusterService", clusterService);
         ReflectionTestUtils.setField(context, "cacheService", cacheService);
@@ -241,6 +245,7 @@ public class DefaultAkkaServiceTest {
         ReflectionTestUtils.setField(context, "ctlService", ctlService);
         ReflectionTestUtils.setField(context, "credentialsServiceLocator", credentialsServiceLocator);
         ReflectionTestUtils.setField(context, "registrationService", registrationService);
+        ReflectionTestUtils.setField(context, "zookeeperClient", zookeeperClient);
 
         clientPair = KeyUtil.generateKeyPair();
         targetPair = KeyUtil.generateKeyPair();

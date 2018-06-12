@@ -20,7 +20,11 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kaaproject.kaa.server.operations.service.ZookeeperClient;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,13 +39,22 @@ public class DefaultCredentialsServiceLocatorTest {
     
     @Autowired
     private DefaultCredentialsServiceLocator credentialsServiceLocator;
-        
+
     @Test
     public void testCredentailsServiceLoad(){
         List<String> serviceNames = credentialsServiceLocator.getCredentialsServiceNames();
         Assert.assertEquals(2, serviceNames.size());
         Assert.assertEquals("Internal", serviceNames.get(0));
         Assert.assertEquals("Trustful", serviceNames.get(1));
+    }
+
+    @Configuration
+    static class ContextConfiguration {
+
+        @Bean
+        public ZookeeperClient zookeeperClient() {
+            return Mockito.mock(ZookeeperClient.class);
+        }
     }
 
 }
