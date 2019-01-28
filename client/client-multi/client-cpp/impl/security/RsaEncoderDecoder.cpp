@@ -38,7 +38,7 @@ RsaEncoderDecoder::RsaEncoderDecoder(const PublicKey& pubKey,
         pubKey_.reset(Botan::X509::load_key(pubMem));
     }
 
-    KAA_LOG_TRACE(boost::format("PublicKey: %1%") % ( pubKey_ ? LoggingUtils::ByteArrayToString(
+    KAA_LOG_TRACE(boost::format("PublicKey: %1%") % ( pubKey_ ? LoggingUtils::toString(
         pubKey_->x509_subject_public_key().data(), pubKey_->x509_subject_public_key().size()) : "empty"));
 
     if (!privKey.empty()) {
@@ -51,7 +51,7 @@ RsaEncoderDecoder::RsaEncoderDecoder(const PublicKey& pubKey,
         remoteKey_.reset(Botan::X509::load_key(remoteMem));
     }
 
-    KAA_LOG_TRACE(boost::format("RemotePublicKey: %1%") % ( remoteKey_ ? LoggingUtils::ByteArrayToString(
+    KAA_LOG_TRACE(boost::format("RemotePublicKey: %1%") % ( remoteKey_ ? LoggingUtils::toString(
             remoteKey_->x509_subject_public_key().data(), remoteKey_->x509_subject_public_key().size()) : "empty"));
 }
 

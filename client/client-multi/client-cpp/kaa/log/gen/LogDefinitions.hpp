@@ -30,7 +30,7 @@ namespace kaa {
 /**
  * @typedef The user-defined log record structure.
  */
-typedef kaa_log::SuperRecord KaaUserLogRecord;
+typedef kaa_log::ActorReport KaaUserLogRecord;
 
 }
 

@@ -22,32 +22,6 @@ call env.bat
 SET BUILD_HOME=%CD%
 SET BUILD_TYPE=debug
 
-if not exist %ZLIB_ROOT% (
-    echo "ZLIB_ROOT=%ZLIB_ROOT% does not exist"
-    echo "Please set this variable to valid value in env.bat and run this script again"
-    goto :eof
-)
-
-if not exist %AVRO_ROOT% (
-    echo "AVRO_ROOT=%AVRO_ROOT% does not exist"
-    echo "Please set this variable to valid value in env.bat and run this script again"
-    goto :eof
-)
-
-
-if not exist %BOTAN_ROOT% (
-    echo "BOTAN_ROOT=%BOTAN_ROOT% does not exist"
-    echo "Please set this variable to valid value in env.bat and run this script again"
-    goto :eof
-)
-
-if not exist %SQLITE_ROOT% (
-    echo "SQLITE_ROOT=%SQLITE_ROOT% does not exist"
-    echo "Please set this variable to valid value in env.bat and run this script again"
-    goto :eof
-)
-
-
 if "%1" == "" goto startBuild
 if /i %1 == release call :setRelease
 
@@ -79,9 +53,9 @@ goto :eof
   cd %AVRO_SRC%\lang\c++\build.win
 
   if %BUILD_PLATFORM% == x86 (
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT% -G "Visual Studio %MSVC_VERSION%"  ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ROOT_PATH% -G "Visual Studio %MSVC_VERSION%"  ..
   ) else (
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=%AVRO_ROOT% -G "Visual Studio %MSVC_VERSION% Win64"  ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ROOT_PATH% -G "Visual Studio %MSVC_VERSION% Win64"  ..
   )
 
   del buffertest.vcxproj
@@ -105,9 +79,9 @@ goto :eof
   cd %ZLIB_SRC%\build.win
 
   if %BUILD_PLATFORM% == x86 (
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_ROOT% -G "Visual Studio %MSVC_VERSION%"  ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ROOT_PATH% -G "Visual Studio %MSVC_VERSION%"  ..
   ) else (
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ZLIB_ROOT% -G "Visual Studio %MSVC_VERSION% Win64"  ..
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=%ROOT_PATH% -G "Visual Studio %MSVC_VERSION% Win64"  ..
   )
   msbuild INSTALL.vcxproj /property:Configuration=%BUILD_TYPE% /property:Platform=%BUILD_PLATFORM%
 
@@ -131,14 +105,14 @@ goto :eof
     set ARCH=amd64
   )
   if %BUILD_TYPE%==debug (
-    python configure.py --cc=msvc --cpu=%ARCH% --prefix=%BOTAN_ROOT% --with-debug-info --no-optimizations
+    python configure.py --cc=msvc --cpu=%ARCH% --prefix=%ROOT_PATH% --with-debug-info --no-optimizations
   ) else (
-    python configure.py --cc=msvc --cpu=%ARCH% --prefix=%BOTAN_ROOT%
+    python configure.py --cc=msvc --cpu=%ARCH% --prefix=%ROOT_PATH%
   ) 
 
   nmake install
 
-  move %BOTAN_ROOT%/include/botan-1.11/botan %BOTAN_ROOT%/include
+  move %ROOT_PATH%/include/botan-1.11/botan %ROOT_PATH%/include
 
   cd %BUILD_HOME%
 
@@ -151,12 +125,12 @@ goto :eof
   cd %SQLITE_SRC%
   nmake /f Makefile.msc sqlite3.c
   nmake /f Makefile.msc
-  mkdir %SQLITE_ROOT%\include
-  copy sqlite3.h %SQLITE_ROOT%\include
-  copy sqlite3ext.h %SQLITE_ROOT%\include
-  mkdir %SQLITE_ROOT%\lib
-  copy sqlite3.dll %SQLITE_ROOT%\lib
-  copy sqlite3.lib %SQLITE_ROOT%\lib
+  mkdir %ROOT_PATH%\include
+  copy sqlite3.h %ROOT_PATH%\include
+  copy sqlite3ext.h %ROOT_PATH%\include
+  mkdir %ROOT_PATH%\lib
+  copy sqlite3.dll %ROOT_PATH%\lib
+  copy sqlite3.lib %ROOT_PATH%\lib
 
 goto :eof
 

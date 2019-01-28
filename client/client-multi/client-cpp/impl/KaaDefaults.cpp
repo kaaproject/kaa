@@ -28,11 +28,11 @@
 
 namespace kaa {
 
-const char * const BUILD_VERSION = "0.7.1-SNAPSHOT";
+const char * const BUILD_VERSION = "0.9.0";
 
 const char * const BUILD_COMMIT_HASH = "";
 
-const char * const SDK_TOKEN = "48461193020513321075";
+const char * const SDK_TOKEN = "pPSFs1AbXe-iHY2qGnlX5-kiIlI";
 
 const std::uint32_t POLLING_PERIOD_SECONDS = 5;
 
@@ -59,21 +59,21 @@ ITransportConnectionInfoPtr createTransportInfo(const std::int32_t& accessPointI
     return connectionInfo;
 }
 
-const BootstrapServers& getBootstrapServers()
+const BootstrapServers& getBootstrapServers() 
 {
     static BootstrapServers listOfServers;
     if (listOfServers.empty()) {
-        listOfServers.push_back(createTransportInfo(0x95f7e40f, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAInAdYDtJzx02MWRJmAzyhcsOpGZv55tQ5gmNfRM/9LyJpy9vkuSsxn7bTzks9bkptBsV05i0ms0eaOeMdSElUMAuUQL5lfWgG/StUKBtBaxWZclNlkPkvHKwrMKUWSGEjuaBme4Qk23WrpRVmFMerR62DJ557pXZfIicJ8n3Fety0ox4Qs2WwgbudAY3qfs5Md7d7lXoWNq9hxL92SHNluTEtmgFkb/PQGrWYnGy73kyUSrz4iZURF47cPt0cazHySxHl/3gxcOk1SuXKu2Jv6HGaH+AjHwKYNFiW6hLWU0Q3vUkmlPaEDJsGdRfQ7b1SZM31+ivF1Q2xfgADTBiVsCAwEAAQAAAAkxMC4yLjMuOTMAACah"));
-listOfServers.push_back(createTransportInfo(0x95f7e40f, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAInAdYDtJzx02MWRJmAzyhcsOpGZv55tQ5gmNfRM/9LyJpy9vkuSsxn7bTzks9bkptBsV05i0ms0eaOeMdSElUMAuUQL5lfWgG/StUKBtBaxWZclNlkPkvHKwrMKUWSGEjuaBme4Qk23WrpRVmFMerR62DJ557pXZfIicJ8n3Fety0ox4Qs2WwgbudAY3qfs5Md7d7lXoWNq9hxL92SHNluTEtmgFkb/PQGrWYnGy73kyUSrz4iZURF47cPt0cazHySxHl/3gxcOk1SuXKu2Jv6HGaH+AjHwKYNFiW6hLWU0Q3vUkmlPaEDJsGdRfQ7b1SZM31+ivF1Q2xfgADTBiVsCAwEAAQAAAAkxMC4yLjMuOTMAACag"));
+        listOfServers.push_back(createTransportInfo(0xd7e0906, 0xfb9a3cf0, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJo3NWuC4hYZexwS+6VrtMkmvIK1sPICJZLELFAUEqIUxdUkoIKRYa92rMkqR8OMH9jSRHG1uNSQTDN9c5DoCbdKb2BuL0UwCGRQsrAnMQ5eqTE7Pm8Wo2uPRAIvXAMF+ed8OBbAGYwuERf/fJeKEqJbcOZ1ckr/TUDB+m63MDfOLPhZpCJp0Slzdh/8bsjQhueimqGn//1AU1flwisT29Qjw99bk/ElyeWFNNgCvk4+5ILube3k474rHDBeBcRpcOuyMO0OFaRLj/6dMUrZ5e+jNISfejIvdKwiKnzguD6gi3LNfVwKjuXmtY/Rz9ECxg1gUKif2TC3YfS09bMsc8sCAwEAAQAAAAo1Mi4zLjIwLjI5AAAAUA=="));
+listOfServers.push_back(createTransportInfo(0xd7e0906, 0x56c8ff92, 1, "AAABJjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJo3NWuC4hYZexwS+6VrtMkmvIK1sPICJZLELFAUEqIUxdUkoIKRYa92rMkqR8OMH9jSRHG1uNSQTDN9c5DoCbdKb2BuL0UwCGRQsrAnMQ5eqTE7Pm8Wo2uPRAIvXAMF+ed8OBbAGYwuERf/fJeKEqJbcOZ1ckr/TUDB+m63MDfOLPhZpCJp0Slzdh/8bsjQhueimqGn//1AU1flwisT29Qjw99bk/ElyeWFNNgCvk4+5ILube3k474rHDBeBcRpcOuyMO0OFaRLj/6dMUrZ5e+jNISfejIvdKwiKnzguD6gi3LNfVwKjuXmtY/Rz9ECxg1gUKif2TC3YfS09bMsc8sCAwEAAQAAAAo1Mi4zLjIwLjI5AAAmoA=="));
 ;
         std::random_shuffle(listOfServers.begin(), listOfServers.end());
     }
     return listOfServers;
 }
 
-const Botan::secure_vector<std::uint8_t>& getDefaultConfigData()
+const Botan::secure_vector<std::uint8_t>& getDefaultConfigData() 
 {
-    static const Botan::secure_vector<std::uint8_t> configData = Botan::base64_decode("JENPTkZJR1VSQVRJT04gREFUQQIAAQIDBAUGBwgJCgsMDQ4P");
+    static const Botan::secure_vector<std::uint8_t> configData = Botan::base64_decode("AAAAAABTBzYPmzBGbZ3GYqXoE8bQAObpw8KINUUHh2oIwKzj1H0AAAAAFTC/HINjRBKHGa3bD3UrWgC40BVNYjdCOagDAe8x332XAAAAAN4W3BHQUUIRml1R5RgC/2oAhcRGBB16TH+HBJG+ADGAGgCee2CIDu5E8I59IHJtl1i7AgICAgCnDLcZ4UhID6wHEVZMiZnF");
     return configData;
 }
 

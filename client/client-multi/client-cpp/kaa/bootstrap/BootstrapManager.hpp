@@ -38,12 +38,13 @@ public:
         , context_(context)
         , retryTimer_("BootstrapManager retryTimer")
         , client_(client)
-        { }
-    ~BootstrapManager() { }
+    {
+
+    }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
     virtual void receiveOperationsServerList();
-    virtual void useNextOperationsServer(const TransportProtocolId& protocolId, KaaFailoverReason reason);
+    virtual void onOperationsServerFailed(const TransportProtocolId& protocolId, KaaFailoverReason reason);
     virtual void useNextOperationsServerByAccessPointId(std::int32_t id);
     virtual void setTransport(IBootstrapTransport* transport);
     virtual void setChannelManager(IKaaChannelManager* manager);
@@ -53,7 +54,9 @@ private:
     typedef std::vector<ITransportConnectionInfoPtr> OperationsServers;
 
     OperationsServers getOPSByAccessPointId(std::int32_t id);
-    void              notifyChannelManangerAboutServer(const OperationsServers& servers);
+    void notifyChannelManangerAboutServer(const OperationsServers& servers);
+
+    void onCurrentBootstrapServerFailed(KaaFailoverReason reason);
 
 private:
     std::map<TransportProtocolId, OperationsServers > operationServers_;
@@ -62,7 +65,7 @@ private:
     BootstrapTransport *bootstrapTransport_;
     IKaaChannelManager *channelManager_;
 
-    IKaaClientContext &context_;
+    IKaaClientContext& context_;
 
     IFailoverStrategyPtr failoverStrategy_;
 

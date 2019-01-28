@@ -23,15 +23,29 @@
 #include "kaa/http/IHttpResponse.hpp"
 #include "kaa/http/IHttpRequest.hpp"
 
+#include "kaa/channel/IKaaChannelManager.hpp"
+
 namespace kaa {
 
 class IHttpClient
 {
 public:
-    virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request) = 0;
+    /**
+     * Send HTTP request.
+     *
+     * @param[in] request    the http request which will be sent.
+     * @param[in] connection the structure which is filled in case of successful connection establishment.
+     *
+     * @return response to the request.
+     */
+    virtual std::shared_ptr<IHttpResponse> sendRequest(const IHttpRequest& request, EndpointConnectionInfo *connection) = 0;
+
+    /**
+     * Close HTTP connection.
+     */
     virtual void closeConnection() = 0;
 
-    virtual ~IHttpClient() { }
+    virtual ~IHttpClient() = default;
 };
 
 }

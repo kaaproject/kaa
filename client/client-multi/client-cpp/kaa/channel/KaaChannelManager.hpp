@@ -37,8 +37,11 @@ class IBootstrapManager;
 class KaaChannelManager: public IKaaChannelManager, public IPingServerStorage
 {
 public:
-    KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers,
-            IKaaClientContext &context, IKaaClient *client);
+    KaaChannelManager(IBootstrapManager& manager,
+                      const BootstrapServers& servers,
+                      IKaaClientContext& context,
+                      IKaaClient *client);
+
     ~KaaChannelManager() { doShutdown(); }
 
     virtual void setFailoverStrategy(IFailoverStrategyPtr strategy);
@@ -53,6 +56,8 @@ public:
     virtual IDataChannelPtr getChannel(const std::string& channelId);
 
     virtual void onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason);
+
+    virtual void onConnected(const EndpointConnectionInfo& connection);
 
     virtual void onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo);
 
@@ -79,8 +84,18 @@ private:
     ITransportConnectionInfoPtr getCurrentBootstrapServer(const TransportProtocolId& protocolId);
     ITransportConnectionInfoPtr getNextBootstrapServer(const TransportProtocolId& protocolId, bool forceFirstElement);
 
+    void onBootstrapServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason);
+
+    void updateBootstrapServerAndSync(ITransportConnectionInfoPtr connectionInfo);
+
+    void checkAuthenticationFailover(KaaFailoverReason failover);
+
 private:
-    IBootstrapManager&   bootstrapManager_;
+    IBootstrapManager&    bootstrapManager_;
+    IKaaClientContext&    context_;
+
+    IKaaClient           *client_;
+
     IFailoverStrategyPtr failoverStrategy_;
 
     KaaTimer<void ()>        retryTimer_;
@@ -94,7 +109,6 @@ private:
     KAA_MUTEX_DECLARE(lastOpsServersGuard_);
     std::map<TransportProtocolId, ITransportConnectionInfoPtr>    lastOpsServers_;
 
-
     KAA_R_MUTEX_DECLARE(channelGuard_);
     std::set<IDataChannelPtr>                   channels_;
 
@@ -102,13 +116,6 @@ private:
     std::map<TransportType, IDataChannelPtr>    mappedChannels_;
 
     ConnectivityCheckerPtr connectivityChecker_;
-
-    TransportProtocolId bsTransportId_;
-
-    IKaaClientContext &context_;
-
-    // Temporary solution to stop app
-    IKaaClient *client_;
 };
 
 } /* namespace kaa */

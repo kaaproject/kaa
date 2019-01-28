@@ -40,24 +40,23 @@ if not %BUILD_PLATFORM% == x86 (
   set BUILD_PLATFORM=x64
 )
 
+@REM Root path which will be passed to CMake during SDK compilation
+set ROOT_PATH=C:\local\
+
 @REM zlib configuration
 set ZLIB_SRC=zlib-1.2.8
-set ZLIB_ROOT=C:\local\%ZLIB_SRC%\%BUILD_PLATFORM%
 set ZLIB_URL=http://zlib.net/zlib-1.2.8.tar.gz
 
 @REM Avro configuration
 set AVRO_SRC=avro-src-1.8.0
-set AVRO_ROOT=C:\local\%AVRO_SRC%\%BUILD_PLATFORM%
 set AVRO_URL=http://archive.apache.org/dist/avro/avro-1.8.0/avro-src-1.8.0.tar.gz
 
 @REM Botan configuration
 set BOTAN_SRC=Botan-1.11.28
-set BOTAN_ROOT=C:\local\%BOTAN_SRC%\%BUILD_PLATFORM%
 set BOTAN_URL=https://github.com/randombit/botan/archive/1.11.28.tar.gz
 
 @REM Sqlite configuration
 set SQLITE_SRC=sqlite-autoconf-3120200
-set SQLITE_ROOT=C:\local\%SQLITE_SRC%\
 set SQLITE_URL=https://www.sqlite.org/2016/sqlite-autoconf-3120200.tar.gz
 
 @REM PATH configuration
@@ -68,7 +67,7 @@ if %BUILD_PLATFORM% == x86 (
 )
 set BOTAN_INCLUDE_DIR=%BOTAN_ROOT%\include
 
-set PATH=%BOTAN_ROOT%\lib;%AVRO_ROOT%\bin;%AVRO_ROOT%\lib;%ZLIB_ROOT%\bin;%ZLIB_ROOT%\lib;%PATH%
+set PATH=%ROOT_PATH%\bin;%ROOT_PATH%\lib;%PATH%
 set PATH=%MSVS_ROOT%\VC;%BOOST_LIBRARYDIR%;%PYTHON_ROOT%;%GNUWIN32_ROOT%\bin;%SQLITE_ROOT%\lib;%PATH%
 
 call vcvarsall.bat %BUILD_PLATFORM%

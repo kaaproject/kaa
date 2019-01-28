@@ -294,10 +294,9 @@ std::shared_ptr<LogSyncRequest> LogCollector::getLogUploadRequest()
     return request;
 }
 
-void LogCollector::onLogUploadResponse(const LogSyncResponse& response)
+void LogCollector::onLogUploadResponse(const LogSyncResponse& response, std::size_t deliveryTime)
 {
     if (!response.deliveryStatuses.is_null()) {
-        auto deliveryTime = TimeUtils::getCurrentTimeInMs();
         const auto& deliveryStatuses = response.deliveryStatuses.get_array();
 
         for (const auto& status : deliveryStatuses) {
@@ -375,7 +374,7 @@ void LogCollector::switchAccessPoint()
         if (timeoutAccessPointId_ == logChannel->getServer()->getAccessPointId()) {
             KAA_LOG_WARN("Try to switch to another Operations server...");
             channelManager_->onServerFailed(logChannel->getServer(),
-                                            KaaFailoverReason::OPERATION_SERVERS_NA);
+                                            KaaFailoverReason::CURRENT_OPERATIONS_SERVER_NA);
             KAA_MUTEX_LOCKING("timeoutsGuard_");
             KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
             KAA_MUTEX_LOCKED("timeoutsGuard_");
