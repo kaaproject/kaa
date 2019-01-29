@@ -107,7 +107,7 @@ node('master') {
 
     stage('build kaa deb') {
         dir('kaa') {
-            sh "mvn clean package"
+            sh "mvn -P compile-gwt,cassandra-dao,postgresql-dao,kafka clean package verify"
         }
     }
 
