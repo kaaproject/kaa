@@ -44,7 +44,7 @@ def isPR() {
 
 def kaaTag="untagged"
 
-node('master') {
+node(isPR()?'slave-02':'master') {
 
     stage('init') {
         step([$class: 'WsCleanup'])
@@ -52,6 +52,8 @@ node('master') {
         env.PATH = "${env.HOME}/.local/bin:${env.PATH}"
         sh "which aws"
 
+        env.M2_HOME = "${tool name: 'mvn360', type: 'maven'}"
+        env.PATH = "${env.M2_HOME}/bin:${env.PATH}"
         sh "which mvn"
     }
 
@@ -107,7 +109,7 @@ node('master') {
 
     stage('build kaa deb') {
         dir('kaa') {
-            sh "mvn clean package"
+            sh "mvn -P compile-gwt,cassandra-dao,postgresql-dao,kafka clean package verify"
         }
     }
 
