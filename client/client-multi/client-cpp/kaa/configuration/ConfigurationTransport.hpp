@@ -50,6 +50,8 @@ public:
         configurationProcessor_ = processor;
     }
 
+    virtual ~ConfigurationTransport() noexcept {}
+
 private:
     IConfigurationProcessor        *configurationProcessor_;
     IConfigurationHashContainer    *hashContainer_;

@@ -79,11 +79,26 @@ public:
     }
 
     virtual std::shared_ptr<LogSyncRequest> getLogUploadRequest();
-    virtual void onLogUploadResponse(const LogSyncResponse& response);
+    virtual void onLogUploadResponse(const LogSyncResponse& response, std::size_t deliveryTime);
 
     void setTransport(LoggingTransport* transport) {
         transport_ = transport;
     }
+
+    void rollbackBuckets() {
+        KAA_MUTEX_LOCKING("timeoutsGuard_");
+        KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
+        KAA_MUTEX_LOCKED("timeoutsGuard_");
+
+        for (auto request = timeouts_.begin(); request != timeouts_.end();) {
+                storage_->rollbackBucket(request->first);
+                request = timeouts_.erase(request);
+        }
+
+        KAA_MUTEX_UNLOCKING("timeoutsGuard_");
+        KAA_UNLOCK(timeoutsGuardLock);
+        KAA_MUTEX_UNLOCKED("timeoutsGuard_");
+    };
 
 private:
     typedef std::shared_ptr<std::promise<RecordInfo>> DeliveryFuture;

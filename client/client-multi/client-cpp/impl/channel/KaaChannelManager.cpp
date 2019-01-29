@@ -26,15 +26,16 @@
 
 namespace kaa {
 
-KaaChannelManager::KaaChannelManager(IBootstrapManager& manager, const BootstrapServers& servers,
-        IKaaClientContext &context, IKaaClient *client)
+KaaChannelManager::KaaChannelManager(IBootstrapManager& manager,
+                                     const BootstrapServers& servers,
+                                     IKaaClientContext& context,
+                                     IKaaClient *client)
     : bootstrapManager_(manager)
+    , context_(context)
+    , client_(client)
     , retryTimer_("KaaChannelManager retryTimer")
     , isShutdown_(false)
     , isPaused_(false)
-    , bsTransportId_(0,0)
-    , context_(context)
-    , client_(client)
 {
     for (const auto& connectionInfo : servers) {
         auto& list = bootstrapServers_[connectionInfo->getTransportId()];
@@ -66,57 +67,115 @@ void KaaChannelManager::setFailoverStrategy(IFailoverStrategyPtr strategy) {
     }
 }
 
+void KaaChannelManager::onConnected(const EndpointConnectionInfo& connection)
+{
+    context_.getClientStateListener().onConnectionEstablished(connection);
+}
+
 void KaaChannelManager::onServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
+
     if (isShutdown_) {
-        KAA_LOG_WARN("Can't update server. Channel manager is down");
-        return;
+        KAA_LOG_WARN(boost::format("Failed to process '%s' failover for %s: channel manager stopped")
+                                                        % LoggingUtils::toString(reason)
+                                                        % LoggingUtils::toString(*connectionInfo));
+        throw KaaException("channel manager stopped");
     }
+
     if (!connectionInfo) {
-        KAA_LOG_WARN("Failed to process server failure: bad input data")
+        KAA_LOG_WARN(boost::format("Failed to process '%s' failover: null connection data")
+                                                        % LoggingUtils::toString(reason));
         throw KaaException("empty connection info pointer");
     }
 
+    KAA_LOG_TRACE(boost::format("Processing '%s' failover for %s")
+                                                % LoggingUtils::toString(reason)
+                                                % LoggingUtils::toString(*connectionInfo));
+
     if (connectionInfo->isFailedState()) {
-        KAA_LOG_DEBUG("Connection already failed. Ignoring connection failover!");
+        KAA_LOG_TRACE(boost::format("Ignoring failover: marked as already failed %s")
+                                                % LoggingUtils::toString(*connectionInfo));
         return;
     } else {
         connectionInfo->setFailedState();
     }
 
+    checkAuthenticationFailover(reason);
+
     if (connectionInfo->getServerType() == ServerType::BOOTSTRAP) {
-        ITransportConnectionInfoPtr nextConnectionInfo = getNextBootstrapServer(connectionInfo->getTransportId(), false);
-        if (nextConnectionInfo) {
-            onTransportConnectionInfoUpdated(nextConnectionInfo);
-        } else {
-            FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
-            switch (decision.getAction()) {
-                 case FailoverStrategyAction::NOOP:
-                     KAA_LOG_WARN("No operation is performed according to failover strategy decision.");
-                     break;
-                 case FailoverStrategyAction::RETRY:
-                 {
-                     std::size_t period = decision.getRetryPeriod();
-                     KAA_LOG_WARN(boost::format("Attempt to reconnect to first bootstrap server will be made in %1% secs "
-                             "according to failover strategy decision.") % period);
-                     bsTransportId_ = connectionInfo->getTransportId();
-                     retryTimer_.stop();
-                     retryTimer_.start(period, [&]
-                         {
-                             onTransportConnectionInfoUpdated(getNextBootstrapServer(bsTransportId_, true));
-                         });
-                     break;
-                 }
-                 case FailoverStrategyAction::STOP_CLIENT:
-                     KAA_LOG_WARN("Stopping client according to failover strategy decision!");
-                     client_->stop();
-                     break;
-                 default:
-                    break;
-             }
-        }
+        onBootstrapServerFailed(connectionInfo, reason);
     } else {
-        bootstrapManager_.useNextOperationsServer(connectionInfo->getTransportId(), reason);
+        bootstrapManager_.onOperationsServerFailed(connectionInfo->getTransportId(), reason);
     }
+}
+
+void KaaChannelManager::onBootstrapServerFailed(ITransportConnectionInfoPtr connectionInfo, KaaFailoverReason reason) {
+    if (!connectionInfo) {
+        throw KaaException("empty connection info pointer");
+    }
+
+    FailoverStrategyDecision decision = failoverStrategy_->onFailover(reason);
+    switch (decision.getAction()) {
+         case FailoverStrategyAction::NOOP:
+             KAA_LOG_WARN(boost::format("No decision for Bootstrap '%s' failover") % LoggingUtils::toString(reason));
+             break;
+         case FailoverStrategyAction::RETRY_CURRENT_SERVER:
+         {
+             auto period = decision.getRetryPeriod();
+             auto bootstrapTransportId = connectionInfo->getTransportId();
+
+             KAA_LOG_WARN(boost::format("Attempt to reconnect to current Bootstrap service will be made in %d seconds") % period);
+
+             retryTimer_.stop();
+             retryTimer_.start(period, [this, bootstrapTransportId]
+                 {
+                     updateBootstrapServerAndSync(getCurrentBootstrapServer(bootstrapTransportId));
+                 });
+             break;
+         }
+         case FailoverStrategyAction::USE_NEXT_BOOTSTRAP_SERVER:
+         {
+             /*
+              * In conjunction with ALL_BOOTSTRAP_SERVERS_NA lead to switching to the first Bootstrap service.
+              */
+             bool forceFirstBootstrapServer = (KaaFailoverReason::ALL_BOOTSTRAP_SERVERS_NA == reason);
+             auto nextBootstrapServer = getNextBootstrapServer(connectionInfo->getTransportId(), forceFirstBootstrapServer);
+
+             if (nextBootstrapServer) {
+                 std::size_t period = decision.getRetryPeriod();
+
+                 KAA_LOG_WARN(boost::format("Attempt to reconnect to %s Bootstrap service will be made in %d seconds")
+                                                                             % (forceFirstBootstrapServer ? "first" : "next")
+                                                                             % period);
+
+                 retryTimer_.stop();
+                 retryTimer_.start(period, [this, nextBootstrapServer]
+                     {
+                         updateBootstrapServerAndSync(nextBootstrapServer);
+                     });
+             } else {
+                 KAA_LOG_WARN(boost::format("No Bootstrap services are accessible for %s. Processing failover...")
+                                                         % LoggingUtils::toString(connectionInfo->getTransportId()));
+
+                 onBootstrapServerFailed(connectionInfo, KaaFailoverReason::ALL_BOOTSTRAP_SERVERS_NA);
+             }
+             break;
+         }
+         case FailoverStrategyAction::STOP_CLIENT:
+             KAA_LOG_WARN("Stopping client according to failover strategy decision!");
+             client_->stop();
+             break;
+         default:
+             KAA_LOG_WARN(boost::format("Unexpected '%s' decision for Bootstrap '%s' failover")
+                                                                  % LoggingUtils::toString(decision)
+                                                                  % LoggingUtils::toString(reason));
+             break;
+     }
+}
+
+void KaaChannelManager::updateBootstrapServerAndSync(ITransportConnectionInfoPtr connectionInfo)
+{
+    onTransportConnectionInfoUpdated(connectionInfo);
+    getChannelByTransportType(TransportType::BOOTSTRAP)->sync(TransportType::BOOTSTRAP);
 }
 
 void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInfoPtr connectionInfo) {
@@ -124,6 +183,7 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
         KAA_LOG_WARN("Can't update server. Channel manager is down");
         return;
     }
+
     if (!connectionInfo) {
         KAA_LOG_WARN("Failed to update connection info: bad input data")
         throw KaaException("empty connection info pointer");
@@ -147,7 +207,7 @@ void KaaChannelManager::onTransportConnectionInfoUpdated(ITransportConnectionInf
     for (auto& channel : channels_) {
         if (channel->getServerType() == connectionInfo->getServerType() && channel->getTransportProtocolId() == protocolId) {
             KAA_LOG_DEBUG(boost::format("Setting a new connection data for channel \"%1%\" %2%")
-                          % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+                          % channel->getId() % LoggingUtils::toString(protocolId));
 
             channel->setServer(connectionInfo);
         }
@@ -184,15 +244,15 @@ bool KaaChannelManager::addChannelToList(IDataChannelPtr channel)
 
         if (connectionInfo) {
             KAA_LOG_DEBUG(boost::format("Setting a new server for channel \"%1%\" %2%")
-                        % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+                        % channel->getId() % LoggingUtils::toString(protocolId));
             channel->setServer(connectionInfo);
         } else {
             if (channel->getServerType() == ServerType::BOOTSTRAP) {
-                KAA_LOG_WARN(boost::format("Failed to find bootstrap server for channel \"%1%\" %2%")
-                            % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+                KAA_LOG_WARN(boost::format("Failed to find bootstrap service for channel \"%1%\" %2%")
+                            % channel->getId() % LoggingUtils::toString(protocolId));
             } else {
-                KAA_LOG_INFO(boost::format("Failed to find operations server for channel \"%1%\" %2%")
-                            % channel->getId() % LoggingUtils::TransportProtocolIdToString(protocolId));
+                KAA_LOG_INFO(boost::format("Failed to find operations service for channel \"%1%\" %2%")
+                            % channel->getId() % LoggingUtils::toString(protocolId));
             }
         }
     }
@@ -215,7 +275,7 @@ void KaaChannelManager::setChannel(TransportType type, IDataChannelPtr channel)
     if (res == types.end() || !useChannelForType(*res, channel)) {
         KAA_LOG_WARN(boost::format("Can't apply Channel (id='%1%') for transport %2%")
                         % channel->getId()
-                        % LoggingUtils::TransportTypeToString(type));
+                        % LoggingUtils::toString(type));
         throw KaaException("invalid channel or transport type");
     }
     if (isPaused_) {
@@ -247,7 +307,7 @@ bool KaaChannelManager::useChannelForType(const std::pair<TransportType, Channel
 {
     if (type.second == ChannelDirection::UP || type.second == ChannelDirection::BIDIRECTIONAL) {
         KAA_LOG_INFO(boost::format("Channel (id='%1%') will be used for %2% transport type")
-                            % channel->getId() % LoggingUtils::TransportTypeToString(type.first));
+                            % channel->getId() % LoggingUtils::toString(type.first));
 
         KAA_MUTEX_LOCKING("mappedChannelGuard_");
         KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
@@ -447,6 +507,9 @@ void KaaChannelManager::setConnectivityChecker(ConnectivityCheckerPtr checker) {
 
 void KaaChannelManager::doShutdown()
 {
+    KAA_LOG_TRACE(boost::format("Channel manager is shutting down: isShutdown '%s'")
+                                        % boost::io::group(std::boolalpha, isShutdown_));
+
     if (!isShutdown_) {
         isShutdown_ = true;
 
@@ -454,10 +517,15 @@ void KaaChannelManager::doShutdown()
         KAA_R_MUTEX_UNIQUE_DECLARE(mappedChannelLock, mappedChannelGuard_);
         KAA_MUTEX_LOCKED("mappedChannelGuard_");
 
-        for (auto& channel : mappedChannels_) {
-            channel.second->shutdown();
+        for (auto& it : mappedChannels_) {
+            KAA_LOG_TRACE(boost::format("Channel manager is shutting down channel [%s], transport '%s'")
+                                                                    % it.second->getId()
+                                                                    % LoggingUtils::toString(it.first));
+            it.second->shutdown();
         }
     }
+
+    KAA_LOG_INFO("Channel manager shut down");
 }
 
 void KaaChannelManager::shutdown()
@@ -500,6 +568,17 @@ void KaaChannelManager::resume()
         for (auto& channel : mappedChannels_) {
             channel.second->resume();
         }
+    }
+}
+
+void KaaChannelManager::checkAuthenticationFailover(KaaFailoverReason failover)
+{
+    if (failover == KaaFailoverReason::ENDPOINT_NOT_REGISTERED) {
+        context_.getStatus().setRegistered(false);
+        context_.getStatus().save();
+
+        KAA_LOG_INFO(boost::format("Endpoint 'register' flag reseted because of '%s' failover")
+                                            % LoggingUtils::toString(failover));
     }
 }
 

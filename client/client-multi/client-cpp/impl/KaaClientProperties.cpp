@@ -25,9 +25,9 @@
 namespace kaa {
 
 #if __GNUC__
-    static const char FILE_SEPARATOR = '/';
+    static const char DIRECTORY_SEPARATOR = '/';
 #else
-    static const char FILE_SEPARATOR = '\\';
+    static const char DIRECTORY_SEPARATOR = '\\';
 #endif
 
 const std::string KaaClientProperties::PROP_WORKING_DIR = "kaa.work_dir";
@@ -39,7 +39,7 @@ const std::string KaaClientProperties::PROP_CONF_FILE = "kaa.conf.file";
 const std::string KaaClientProperties::PROP_CLIENT_ID = "kaa.conf.client_id";
 const std::string KaaClientProperties::PROP_LOG_FILE_NAME = "kaa.log.file.name";
 
-const std::string KaaClientProperties::DEFAULT_WORKING_DIR = std::string(".") + &FILE_SEPARATOR;
+const std::string KaaClientProperties::DEFAULT_WORKING_DIR = std::string(".") + DIRECTORY_SEPARATOR;
 const std::string KaaClientProperties::DEFAULT_STATE_FILE = CLIENT_STATUS_FILE_LOCATION;
 const std::string KaaClientProperties::DEFAULT_PUB_KEY_FILE = CLIENT_PUB_KEY_LOCATION;
 const std::string KaaClientProperties::DEFAULT_PRIV_KEY_FILE = CLIENT_PRIV_KEY_LOCATION;
@@ -95,8 +95,8 @@ void KaaClientProperties::setWorkingDirectoryPath(const std::string& path)
 {
     checkEmptyness(path, "Empty value of working directory path");
 
-    if (path[path.size() - 1] != FILE_SEPARATOR) {
-        std::string editedPath = path + &FILE_SEPARATOR;
+    if (path[path.size() - 1] != DIRECTORY_SEPARATOR) {
+        std::string editedPath = path + DIRECTORY_SEPARATOR;
         setProperty(PROP_WORKING_DIR, editedPath);
     } else {
         setProperty(PROP_WORKING_DIR, path);

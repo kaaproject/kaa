@@ -76,7 +76,8 @@ public:
     void updateProfile()
     {
         SharedDataBuffer serializedProfile = getSerializedProfile();
-        if (serializedProfile.first.get() && serializedProfile.second > 0) {
+        if ((serializedProfile.first.get() && serializedProfile.second > 0)
+                || context_.getStatus().isProfileResyncNeeded()) {
             transport_->sync();
         }
     }

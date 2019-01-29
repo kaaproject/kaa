@@ -77,13 +77,13 @@ const KaaRootConfiguration& ConfigurationManager::getConfiguration()
 
 void ConfigurationManager::updateConfiguration(const std::uint8_t* data, const std::uint32_t dataSize)
 {
-    static AvroByteArrayConverter<KaaRootConfiguration> converter;
+    AvroByteArrayConverter<KaaRootConfiguration> converter;
 
     converter.fromByteArray(data, dataSize, configuration_);
     configurationHash_ = EndpointObjectHash(data, dataSize);
 
     KAA_LOG_TRACE(boost::format("Calculated configuration hash: %1%") %
-            LoggingUtils::ByteArrayToString(configurationHash_.getHashDigest()));
+            LoggingUtils::toString(configurationHash_.getHashDigest()));
 }
 
 void ConfigurationManager::loadConfiguration()

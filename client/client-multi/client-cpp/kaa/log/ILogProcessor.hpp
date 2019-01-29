@@ -32,9 +32,10 @@ public:
     /**
      * Called when log upload response arrived.
      *
-     * \param   response    Response from operations server.
+     * \param   response        Response from operations service.
+     * \param   deliveryTime    The time point the log was delivered at.
      */
-    virtual void onLogUploadResponse(const LogSyncResponse& response) = 0;
+    virtual void onLogUploadResponse(const LogSyncResponse& response, std::size_t deliveryTime) = 0;
 
     virtual ~ILogProcessor() {}
 };
