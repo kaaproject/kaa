@@ -76,7 +76,7 @@ public class ZookeeperClient {
     public String obtainEndpointNodeAddress(byte[] endpointKeyHash) {
         LOG.debug("Obtaining endpoint node address for endpoint key hash: [{}]", endpointKeyHash);
         try {
-            byte[] encodedEpKey = Base64.encodeBase64(endpointKeyHash);
+            byte[] encodedEpKey = Base64.encodeBase64URLSafe(endpointKeyHash);
             String encodedEpKeyStr = new String(encodedEpKey);
             String path = ZK_ENDPOINTS_BASE_PATH + "/" + encodedEpKeyStr;
 
@@ -99,7 +99,7 @@ public class ZookeeperClient {
                 zookeeper.create(ZK_ENDPOINTS_BASE_PATH, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                 LOG.info("Created path for endpoint base [{}]", ZK_ENDPOINTS_BASE_PATH);
             }
-            byte[] encodedEpKey = Base64.encodeBase64(endpointKey.getData());
+            byte[] encodedEpKey = Base64.encodeBase64URLSafe(endpointKey.getData());
             String encodedEpKeyStr = new String(encodedEpKey);
             Stat epKeyStat = zookeeper.exists(ZK_ENDPOINTS_BASE_PATH + "/" + encodedEpKeyStr, false);
             if (null != epKeyStat) {
