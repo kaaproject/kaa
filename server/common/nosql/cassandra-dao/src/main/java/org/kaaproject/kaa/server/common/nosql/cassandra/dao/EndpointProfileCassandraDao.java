@@ -342,17 +342,24 @@ public class EndpointProfileCassandraDao extends AbstractVersionableCassandraDao
     @Override
     public EndpointProfilesPageDto findByEndpointGroupId(PageLinkDto pageLink) {
         LOG.debug("Try to find endpoint profile by endpoint group id [{}]", pageLink.getEndpointGroupId());
-        EndpointProfilesPageDto endpointProfilesPageDto;
-        List<EndpointProfileDto> cassandraEndpointProfileList;
         ByteBuffer[] keyHashList;
         if (pageLink.getApplicationId() != null) {
             keyHashList = cassandraEPByAppIdDao.findEPByAppId(pageLink, pageLink.getApplicationId());
         } else {
             keyHashList = cassandraEPByEndpointGroupIdDao.findEPByEndpointGroupId(pageLink);
         }
-        cassandraEndpointProfileList = findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
-        endpointProfilesPageDto = createNextPage(cassandraEndpointProfileList, pageLink.getEndpointGroupId(), pageLink.getLimit());
-        return endpointProfilesPageDto;
+
+        String nextPageOffset = nextPageOffset(keyHashList, pageLink.getLimit());
+        List<EndpointProfileDto> cassandraEndpointProfileList =
+            findEndpointProfilesList(keyHashList, pageLink.getEndpointGroupId());
+        return createEndpointProfilesPageDto(
+            pageLink.getEndpointGroupId(), pageLink.getLimit(), nextPageOffset, cassandraEndpointProfileList);
+    }
+
+    private String nextPageOffset(ByteBuffer[] keyHashList, String limitStr) {
+        Integer limit = Integer.valueOf(limitStr);
+        return keyHashList.length > limit ?
+            Base64.encodeBase64URLSafeString(getBytes(keyHashList[limit])) : null;
     }
 
     @Override
@@ -457,21 +464,22 @@ public class EndpointProfileCassandraDao extends AbstractVersionableCassandraDao
         return keyHashArray;
     }
 
-    private EndpointProfilesPageDto createNextPage(List<EndpointProfileDto> cassandraEndpointProfileList, String endpointGroupId, String limit) {
-        EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
+    private EndpointProfilesPageDto createEndpointProfilesPageDto(String endpointGroupId, String limitStr, String offset, List<EndpointProfileDto> cassandraEndpointProfileList) {
         PageLinkDto pageLinkDto = new PageLinkDto();
-        String next;
-        int lim = Integer.valueOf(limit);
-        if (cassandraEndpointProfileList.size() == (lim + 1)) {
-            pageLinkDto.setEndpointGroupId(endpointGroupId);
-            pageLinkDto.setLimit(limit);
-            pageLinkDto.setOffset(Base64.encodeBase64URLSafeString(cassandraEndpointProfileList.get(lim).getEndpointKeyHash()));
-            cassandraEndpointProfileList.remove(lim);
-            next = null;
+        if (offset == null) {
+            pageLinkDto.setNext(DaoConstants.LAST_PAGE_MESSAGE);
         } else {
-            next = DaoConstants.LAST_PAGE_MESSAGE;
+            pageLinkDto.setEndpointGroupId(endpointGroupId);
+            pageLinkDto.setLimit(limitStr);
+            pageLinkDto.setOffset(offset);
+
+          int limit = Integer.parseInt(limitStr);
+          if(cassandraEndpointProfileList.size() > limit) {
+            cassandraEndpointProfileList.remove(limit);
+          }
         }
-        pageLinkDto.setNext(next);
+
+        EndpointProfilesPageDto endpointProfilesPageDto = new EndpointProfilesPageDto();
         endpointProfilesPageDto.setPageLinkDto(pageLinkDto);
         endpointProfilesPageDto.setEndpointProfiles(cassandraEndpointProfileList);
         return endpointProfilesPageDto;

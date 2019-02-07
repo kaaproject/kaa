@@ -27,6 +27,7 @@ import org.kaaproject.kaa.common.dto.EndpointProfilesBodyDto;
 import org.kaaproject.kaa.common.dto.EndpointProfilesPageDto;
 import org.kaaproject.kaa.common.dto.EndpointUserDto;
 import org.kaaproject.kaa.common.dto.PageLinkDto;
+import org.kaaproject.kaa.server.common.dao.DaoConstants;
 import org.kaaproject.kaa.server.common.dao.exception.KaaOptimisticLockingFailureException;
 import org.kaaproject.kaa.server.common.dao.model.EndpointProfile;
 import org.kaaproject.kaa.server.common.nosql.cassandra.dao.model.CassandraEndpointProfile;
@@ -58,6 +59,27 @@ public class EndpointProfileCassandraDaoTest extends AbstractCassandraTest {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointProfileCassandraDaoTest.class);
 
     private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(10);
+
+    @Test
+    public void shouldFindByByEndpointGroupId() {
+      // Given
+      final PageLinkDto pageLink = getPageLinkDto();
+
+      // When
+      final EndpointProfilesPageDto result = endpointProfileDao.findByEndpointGroupId(pageLink);
+
+      // Then
+      Assert.assertEquals("PageLinkDto endpointGroupId: ",
+          TEST_ENDPOINT_GROUP_ID, result.getPageLinkDto().getEndpointGroupId());
+      Assert.assertEquals("PageLinkDto  limit: ",
+          TEST_LIMIT, result.getPageLinkDto().getLimit());
+      Assert.assertTrue("PageLinkDto offset: ",
+          result.getPageLinkDto().getOffset() != null);
+      Assert.assertEquals("PageLinkDto next: ",
+          null, result.getPageLinkDto().getNext());
+      Assert.assertEquals("EndpointProfiles size: ",
+          3, result.getEndpointProfiles().size());
+    }
 
     @Test
     public void testFindByEndpointGroupId() throws Exception {
