@@ -51,7 +51,7 @@ import java.util.UUID;
 
 public abstract class AbstractCassandraTest {
 
-    private static final String TEST_ENDPOINT_GROUP_ID = "124";
+    protected static final String TEST_ENDPOINT_GROUP_ID = "124";
 
     @Autowired
     protected EndpointNotificationDao<CassandraEndpointNotification> unicastNotificationDao;
