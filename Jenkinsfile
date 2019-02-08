@@ -206,7 +206,7 @@ node(isPR()?'slave-02':'master') {
                              string(credentialsId: 'JBT_QA_E2E_KAA_PASSWORD', variable: 'KAA_PASSWORD'),
 
             ]) {
-                sh "export KAA_TAG=${kaaTag}; export COMPOSE_PROJECT=${kaaTag}; ./run_local.sh"
+                sh "export KAA_TAG=${kaaTag}; export COMPOSE_PROJECT=${kaaCommit}; ./run_local.sh"
             }
 
         }
@@ -239,8 +239,8 @@ node(isPR()?'slave-02':'master') {
                                  usernamePassword(credentialsId: 'KAA_CREDS_STAGE', usernameVariable: 'KAA_USERNAME', passwordVariable: 'KAA_PASSWORD'),
 
                 ]) {
-                    saveLogs("${kaaTag}")
-                    sh "export JBT_BACKEND_DIR=`cd ../jbt-backend;pwd`; docker-compose --project-name ${kaaTag} down -t 1 || true"
+                    saveLogs("${kaaCommit}")
+                    sh "export JBT_BACKEND_DIR=`cd ../jbt-backend;pwd`; docker-compose --project-name ${kaaCommit} down -t 1 || true"
                 }
             }
         }
