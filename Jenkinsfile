@@ -46,6 +46,7 @@ def isPR() {
 }
 
 def kaaBranch="none"
+def kaaCommit="00000000"
 def kaaTag="untagged"
 
 node(isPR()?'slave-02':'master') {
@@ -94,7 +95,7 @@ node(isPR()?'slave-02':'master') {
                     kaaBranch = "${env.BRANCH_NAME}"
                 }
 
-                def kaaCommit = sh(
+                kaaCommit = sh(
                         script: "git rev-parse ${env.BRANCH_NAME}",
                         returnStdout: true
                 ).trim().take(8)
