@@ -226,6 +226,7 @@ node(isPR()?'slave-02':'master') {
                     parameters: [
                             string(name: 'JBT_QA_E2E_APPLICATION_URL', value: 'http://localhost:8084'),
                             string(name: 'JBT_QA_E2E_KAA_HOST', value: 'localhost'),
+                            string(name: 'JBT_QA_E2E_CASSANDRA_HOST', value: 'localhost'),
                             string(name: 'JBT_QA_E2E_BOOTSTRAP_SERVERS', value: 'localhost:9092'),
                             string(name: 'JBT_QA_E2E_AGENT_IMAGE_TAG', value: kaaAgentTag)
                     ]
