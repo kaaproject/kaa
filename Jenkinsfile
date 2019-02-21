@@ -8,6 +8,19 @@ properties([
 //        pipelineTriggers([
 //                issueCommentTrigger('.*test.*')
 //        ]),
+        parameters([
+                string(
+                        defaultValue: '0.9.1-SNAPSHOT',
+                        description: 'Kaa version',
+                        name: 'VERSION'
+                ),
+                string(
+                        defaultValue: 'http://10.0.1.5:5000',
+                        description: 'Aptly URL',
+                        name: 'APTLY_URL'
+                )
+
+        ]),
 
         [
                 $class         : 'BuildBlockerProperty',
@@ -43,6 +56,10 @@ def jbtIotBranch='master'
 
 def isPR() {
     return env.BRANCH_NAME ==~ /PR-\d+/
+}
+
+def isMaster() {
+    return env.BRANCH_NAME == '0.9.0-patched'
 }
 
 def kaaBranch="none"
@@ -150,6 +167,7 @@ node(isPR()?'slave-02':'master') {
 
     stage('build kaa deb') {
         dir('kaa') {
+            sh "KAA_VERSION=${env.VERSION} envsubst < ./server/node/src/deb/control/control.template > ./server/node/src/deb/control/control"
             if (isPR()) {
                 sh "mvn -P compile-gwt,cassandra-dao,postgresql-dao,kafka clean package verify"
             } else {
@@ -171,10 +189,10 @@ node(isPR()?'slave-02':'master') {
             cd nix
 
             `aws ecr get-login --region us-east-1 --no-include-email`
-            
+
             cp ../../kaa/server/node/target/kaa-node.deb .
             cp ../../kaa/server/node/target/sdk/cpp/kaa-cpp-ep-sdk-0.9.0.tar.gz .
-            
+
             docker build -t 138150065595.dkr.ecr.us-east-1.amazonaws.com/kaa:${kaaTag} .
             docker push 138150065595.dkr.ecr.us-east-1.amazonaws.com/kaa:${kaaTag}
 
@@ -245,6 +263,27 @@ node(isPR()?'slave-02':'master') {
                     sh "export JBT_BACKEND_DIR=`cd ../jbt-backend;pwd`; docker-compose --project-name ${kaaCommit} down -t 1 || true"
                 }
             }
+        }
+    }
+
+    stage('aptly') {
+        if (!isPR()) {
+            dir('kaa') {
+                sh "curl -F 'file=@./server/node/target/kaa-node.deb;filename=kaa-node_${env.VERSION}_amd64.deb' ${env.APTLY_URL}/api/files/jbt"
+                sh "curl -X POST ${env.APTLY_URL}/api/repos/jbt/file/jbt"
+                sh "curl -X PUT -H 'Content-Type: application/json' --data '{\"Signing\": {\"GpgKey\": \"Nborisenko <nborisenko@kaaiot.io>\"}}' ${env.APTLY_URL}/api/publish/:./xenial"
+            }
+        }
+    }
+
+    stage('deploy-on-stage') {
+        if (isMaster()) {
+            build(
+                    job: 'deploy_kaa_stage',
+                    parameters: [
+                            string(name: 'VERSION', value: "${env.VERSION}")
+                    ]
+            )
         }
     }
 
