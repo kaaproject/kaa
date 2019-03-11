@@ -16,66 +16,15 @@
 
 package org.kaaproject.kaa.server.operations.service.cache.concurrent;
 
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.kaaproject.kaa.common.dto.ApplicationDto;
-import org.kaaproject.kaa.common.dto.ChangeDto;
-import org.kaaproject.kaa.common.dto.ChangeType;
-import org.kaaproject.kaa.common.dto.ConfigurationDto;
-import org.kaaproject.kaa.common.dto.ConfigurationSchemaDto;
-import org.kaaproject.kaa.common.dto.EndpointConfigurationDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupDto;
-import org.kaaproject.kaa.common.dto.EndpointGroupStateDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileDto;
-import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.HistoryDto;
-import org.kaaproject.kaa.common.dto.ProfileFilterDto;
-import org.kaaproject.kaa.common.dto.ServerProfileSchemaDto;
-import org.kaaproject.kaa.common.dto.TopicDto;
-import org.kaaproject.kaa.common.dto.TopicListEntryDto;
+import org.kaaproject.kaa.common.dto.*;
 import org.kaaproject.kaa.common.dto.admin.SdkProfileDto;
 import org.kaaproject.kaa.common.dto.ctl.CTLSchemaDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventAction;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventFamilyMapDto;
-import org.kaaproject.kaa.common.dto.event.ApplicationEventMapDto;
-import org.kaaproject.kaa.common.dto.event.EventClassDto;
-import org.kaaproject.kaa.common.dto.event.EventClassFamilyDto;
+import org.kaaproject.kaa.common.dto.event.*;
 import org.kaaproject.kaa.common.hash.EndpointObjectHash;
 import org.kaaproject.kaa.server.common.core.configuration.BaseData;
-import org.kaaproject.kaa.server.common.dao.ApplicationEventMapService;
-import org.kaaproject.kaa.server.common.dao.ApplicationService;
-import org.kaaproject.kaa.server.common.dao.CTLService;
-import org.kaaproject.kaa.server.common.dao.ConfigurationService;
-import org.kaaproject.kaa.server.common.dao.EndpointService;
-import org.kaaproject.kaa.server.common.dao.EventClassService;
-import org.kaaproject.kaa.server.common.dao.HistoryService;
-import org.kaaproject.kaa.server.common.dao.ProfileService;
-import org.kaaproject.kaa.server.common.dao.SdkProfileService;
-import org.kaaproject.kaa.server.common.dao.ServerProfileService;
-import org.kaaproject.kaa.server.common.dao.TopicService;
+import org.kaaproject.kaa.server.common.dao.*;
 import org.kaaproject.kaa.server.operations.pojo.exceptions.GetDeltaException;
-import org.kaaproject.kaa.server.operations.service.cache.AppProfileVersionsKey;
-import org.kaaproject.kaa.server.operations.service.cache.AppSeqNumber;
-import org.kaaproject.kaa.server.operations.service.cache.AppVersionKey;
-import org.kaaproject.kaa.server.operations.service.cache.CacheService;
-import org.kaaproject.kaa.server.operations.service.cache.Computable;
-import org.kaaproject.kaa.server.operations.service.cache.ConfigurationCacheEntry;
-import org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey;
-import org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey;
-import org.kaaproject.kaa.server.operations.service.cache.EventClassFamilyIdKey;
-import org.kaaproject.kaa.server.operations.service.cache.EventClassFqnKey;
-import org.kaaproject.kaa.server.operations.service.cache.HistoryKey;
-import org.kaaproject.kaa.server.operations.service.cache.TopicListCacheEntry;
+import org.kaaproject.kaa.server.operations.service.cache.*;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFamilyVersion;
 import org.kaaproject.kaa.server.operations.service.event.EventClassFqnVersion;
 import org.kaaproject.kaa.server.operations.service.event.RouteTableKey;
@@ -86,6 +35,13 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.*;
 
 /**
  * The Class ConcurrentCacheService.
@@ -218,7 +174,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getAppSeqNumber(java.lang.String)
      */
@@ -239,7 +195,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putAppSeqNumber(java.lang.String, java.lang.Integer)
      */
@@ -251,7 +207,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getConfIdByKey
      * (org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey)
@@ -278,7 +234,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putConfId
      * (org.kaaproject.kaa.server.operations.service.cache.ConfigurationIdKey,
@@ -292,7 +248,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getHistory
      * (org.kaaproject.kaa.server.operations.service.cache.HistoryKey)
@@ -311,6 +267,8 @@ public class ConcurrentCacheService implements CacheService {
                         key.getNewSeqNumber());
                 Collections.sort(fullHistoryList, ConcurrentCacheService.HISTORY_SEQ_NUMBER_COMPARATOR);
 
+                LOG.trace("Processing change history: {}", fullHistoryList);
+
                 for (HistoryDto historyDto : fullHistoryList) {
                     ChangeDto changeDto = historyDto.getChange();
                     ChangeType changeType = changeDto.getType();
@@ -323,7 +281,12 @@ public class ConcurrentCacheService implements CacheService {
                         relatedChanges.add(historyDto);
                     } else if (changeType == ChangeType.ADD_PROF || changeType == ChangeType.REMOVE_PROF) {
                         ProfileFilterDto profileFilter = profileService.findProfileFilterById(changeDto.getProfileFilterId());
-                        if (supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
+                        if (profileFilter == null) {
+                            LOG.trace("Unable to find profile filter with id {}", changeDto.getProfileFilterId());
+                            //mark as related for safety, we don't know what profile filter was lost and if it was
+                            //related to current endpoint
+                            relatedChanges.add(historyDto);
+                        }else if (supports(profileFilter, key.getEndpointProfileSchemaVersion(), key.getServerProfileSchemaVersion())) {
                             relatedChanges.add(historyDto);
                         }
                     } else if (changeType == ChangeType.ADD_CONF || changeType == ChangeType.REMOVE_CONF) {
@@ -345,7 +308,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putHistory
      * (org.kaaproject.kaa.server.operations.service.cache.HistoryKey,
@@ -379,7 +342,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getFilters
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
@@ -402,7 +365,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#resetFilters
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
@@ -415,7 +378,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putFilterList
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey,
@@ -429,7 +392,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getFilter
      * (java.lang.String)
@@ -450,7 +413,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#putFilter
      * (java.lang.String, org.kaaproject.kaa.common.dto.ProfileFilterDto)
@@ -463,7 +426,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getConfByHash
      * (org.kaaproject.kaa.common.hash.EndpointObjectHash)
@@ -484,7 +447,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putConfiguration(org.kaaproject.kaa.common.hash.EndpointObjectHash,
      * org.kaaproject.kaa.common.dto.EndpointConfigurationDto)
@@ -501,7 +464,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getConfSchemaByAppAndVersion
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
@@ -523,7 +486,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putConfigurationSchema
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey,
@@ -537,7 +500,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getProfileSchemaByAppAndVersion
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey)
@@ -600,7 +563,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * putProfileSchema
      * (org.kaaproject.kaa.server.operations.service.cache.AppVersionKey,
@@ -626,7 +589,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getEndpointKey(org.kaaproject.kaa.common.hash.EndpointObjectHash)
      */
@@ -771,7 +734,7 @@ public class ConcurrentCacheService implements CacheService {
 
         });
     }
-    
+
     @Override
     @Cacheable("apps")
     public ApplicationDto findAppById(String applicationId) {
@@ -783,7 +746,7 @@ public class ConcurrentCacheService implements CacheService {
     public void resetAppById(String applicationId) {
         return;
     }
-    
+
     @Override
     @Cacheable("appIds")
     public String getApplicationIdByAppToken(String key) {
@@ -828,7 +791,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * getMergedConfiguration(java.util.List,
      * org.kaaproject.kaa.server.operations.service.cache.Computable)
@@ -850,7 +813,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setMergedConfiguration(java.util.List, java.lang.String)
      */
@@ -862,7 +825,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#getDelta
      * (org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey,
@@ -886,7 +849,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.kaaproject.kaa.server.operations.service.cache.CacheService#setDelta
      * (org.kaaproject.kaa.server.operations.service.cache.DeltaCacheKey,
@@ -994,7 +957,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setConfigurationService
      * (org.kaaproject.kaa.server.common.dao.ConfigurationService)
@@ -1006,7 +969,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setHistoryService(org.kaaproject.kaa.server.common.dao.HistoryService)
      */
@@ -1017,7 +980,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setProfileService(org.kaaproject.kaa.server.common.dao.ProfileService)
      */
@@ -1028,7 +991,7 @@ public class ConcurrentCacheService implements CacheService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.kaaproject.kaa.server.operations.service.cache.CacheService#
      * setEndpointService(org.kaaproject.kaa.server.common.dao.EndpointService)
      */
