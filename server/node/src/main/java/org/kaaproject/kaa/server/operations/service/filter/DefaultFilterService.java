@@ -16,9 +16,6 @@
 
 package org.kaaproject.kaa.server.operations.service.filter;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.kaaproject.kaa.common.dto.EndpointProfileDto;
 import org.kaaproject.kaa.common.dto.EndpointProfileSchemaDto;
 import org.kaaproject.kaa.common.dto.ProfileFilterDto;
@@ -31,6 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.EvaluationException;
 import org.springframework.stereotype.Service;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Default implementation of {@link FilterService FilterService}.
@@ -102,7 +102,12 @@ public class DefaultFilterService implements FilterService {
         filterEvaluator.init(profile, endpointProfileSchemaBody, serverProfileSchemaBody);
 
         ProfileFilterDto filter = cacheService.getFilter(profileFilterId);
-        LOG.trace("matching profile body with filter [{}]: {}", filter.getId(), filter.getBody());
+        if (filter != null) {
+            LOG.trace("matching profile body with filter [{}]: {}", filter.getId(), filter.getBody());
+        } else {
+            LOG.warn("Profile filter with id {} doesn't exist", profileFilterId);
+            return false;
+        }
         return checkFilter(filterEvaluator, filter);
     }
 
