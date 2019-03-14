@@ -270,7 +270,7 @@ node(isPR()?'slave-02':'master') {
         if (!isPR()) {
             dir('kaa') {
                 sh "curl -F 'file=@./server/node/target/kaa-node.deb;filename=kaa-node_${env.VERSION}_amd64.deb' ${env.APTLY_URL}/api/files/jbt"
-                sh "curl -X POST ${env.APTLY_URL}/api/repos/jbt/file/jbt"
+                sh "curl -X POST ${env.APTLY_URL}/api/repos/jbt/file/jbt?forceReplace=1"
                 sh "curl -X PUT -H 'Content-Type: application/json' --data '{\"Signing\": {\"GpgKey\": \"Nborisenko <nborisenko@kaaiot.io>\"}}' ${env.APTLY_URL}/api/publish/:./xenial"
             }
         }
