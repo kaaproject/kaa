@@ -1,3 +1,5 @@
+# Next generation [Kaa Enterprise IoT platform](https://www.kaaproject.org/overview) is now available! [Try it free with a 30-days trial](https://www.kaaproject.org/request-free-trial/).
+
 <p align="center">
   <a src='http://www.kaaproject.org/'>
     <img src='img/kaa_logo_fullsize.png' height=300 width=400 />
