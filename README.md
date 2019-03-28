@@ -1,4 +1,4 @@
-# There is new [Kaa Enterprise version](https://www.kaaproject.org/overview) of the Kaa platform! [Try its features with a free 30-days trial](https://www.kaaproject.org/request-free-trial/).
+# Next generation [Kaa Enterprise IoT platform](https://www.kaaproject.org/overview) is now available! [Try it free with a 30-days trial](https://www.kaaproject.org/request-free-trial/).
 
 <p align="center">
   <a src='http://www.kaaproject.org/'>
