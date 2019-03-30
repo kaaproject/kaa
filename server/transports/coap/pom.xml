@@ -1,6 +1,5 @@
 <!--
-  Copyright 2014-2016 CyberVision, Inc.
-
+  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -13,29 +12,36 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>org.kaaproject.kaa</groupId>
+        <groupId>org.kaaproject.kaa.server</groupId>
         <version>0.11.0-SNAPSHOT</version>
-        <artifactId>server</artifactId>
+        <artifactId>transports</artifactId>
     </parent>
-    <groupId>org.kaaproject.kaa.server</groupId>
-    <artifactId>transports</artifactId>
+
+    <groupId>org.kaaproject.kaa.server.transports</groupId>
+    <artifactId>coap</artifactId>
+    <version>0.11.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Kaa Transports</name>
+
+    <name>Kaa CoAP Transport</name>
     <url>http://kaaproject.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <main.dir>${basedir}/../..</main.dir>
+        <main.dir>/kaa</main.dir>
     </properties>
+
     <modules>
-        <module>http</module>
-        <module>tcp</module>
-        <module>coap</module>
+        <module>config</module>
+        <module>transport</module>
     </modules>
+
+
+
 </project>
