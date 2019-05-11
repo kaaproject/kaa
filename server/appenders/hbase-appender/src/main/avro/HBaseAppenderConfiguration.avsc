@@ -118,10 +118,10 @@
                                 "type":"enum",
                                 "symbols":[
                                     "NONE",
-				    				"DIFF",
+				    "DIFF",
                                     "FAST_DIFF",
                                     "PREFIX",
-				    				"PREFIX_TREE"
+				    "PREFIX_TREE"
                                 ]
                             }
                         },
@@ -137,8 +137,8 @@
                                     "NONE",
                                     "GZ",
                                     "LZ4",
-				    				"LZO",
-				    				"SNAPPY"
+				    "LZO",
+				    "SNAPPY"
                                 ]
                             }
                         },
@@ -146,21 +146,21 @@
                             "name":"inMemory",
                             "displayName":"In Memory",
                             "weight":0.2,
-			    			"by_default":false,
+			    "by_default":false,
                             "type":"boolean"
                         },
 			{
                             "name":"keepDeletedCells",
                             "displayName":"Keep Deleted Cells",
                             "weight":0.2,
-			    			"by_default":false,
+			    "by_default":false,
                             "type":"boolean"
                         },	
 			{
                             "name":"blockCache",
                             "displayName":"Block Cache",
                             "weight":0.2,
-			    			"by_default":true,
+			    "by_default":true,
                             "type":"boolean"
                         }   
                     ]
@@ -201,7 +201,7 @@
                                     "FLOAT",
                                     "INT",
                                     "TEXT",
-				    				"ARRAY"
+				    "ARRAY"
                                 ]
                             }
                         },

@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<fileset-config file-format-version="1.2.0" simple-config="true" sync-formatter="false">
-  <fileset name="all" enabled="true" check-config-name="Google Checks" local="false">
-    <file-match-pattern match-pattern="." include-pattern="true"/>
+<fileset-config file-format-version="1.2.0" simple-config="false" sync-formatter="false">
+  <local-check-config name="maven-checkstyle-plugin checkstyle" location="jar:file:/home/joao/.m2/repository/com/puppycrawl/tools/checkstyle/7.0/checkstyle-7.0.jar!/google_checks.xml" type="remote" description="maven-checkstyle-plugin configuration checkstyle">
+    <property name="checkstyle.cache.file" value="${project_loc}/target/checkstyle-cachefile"/>
+    <property name="checkstyle.header.file" value="/home/joao/workspaceLogOnly/.metadata/.plugins/org.eclipse.core.resources/.projects/hbase-appender/com.basistech.m2e.code.quality.checkstyleConfigurator/checkstyle-header-checkstyle.txt"/>
+  </local-check-config>
+  <fileset name="java-sources-checkstyle" enabled="true" check-config-name="maven-checkstyle-plugin checkstyle" local="true">
+    <file-match-pattern match-pattern="^src/main/java/.*\.java" include-pattern="true"/>
+    <file-match-pattern match-pattern="^src/main/java.*.*gen/.*" include-pattern="false"/>
+    <file-match-pattern match-pattern="^src/main/java.*^target/generated-sources" include-pattern="false"/>
+    <file-match-pattern match-pattern="^src/main/java.*.*org/kaaproject/kaa/schema/.*" include-pattern="false"/>
+    <file-match-pattern match-pattern="^src/main/java.*.*org/kaaproject/kaa/common/dto/ctl/.*" include-pattern="false"/>
+    <file-match-pattern match-pattern="^src/main/java.*.*org/kaaproject/kaa/server/common/Version\.java" include-pattern="false"/>
+    <file-match-pattern match-pattern="^src/main/resources.*\.properties" include-pattern="true"/>
+    <file-match-pattern match-pattern="^src/test/resources.*\.properties" include-pattern="true"/>
   </fileset>
 </fileset-config>

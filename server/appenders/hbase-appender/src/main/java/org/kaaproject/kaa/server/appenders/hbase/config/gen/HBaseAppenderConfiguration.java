@@ -3,73 +3,17 @@
  * 
  * DO NOT EDIT DIRECTLY
  */
-
 package org.kaaproject.kaa.server.appenders.hbase.config.gen;  
-
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
-public class HBaseAppenderConfiguration extends org.apache.avro.specific.SpecificRecordBase 
-    implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = 
-      new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":"
-          + "\"HBaseAppenderConfiguration\",\"namespace\":\"org.kaaproject.kaa.server"
-          + ".appenders.hbase.config.gen\",\"fields\":[{\"name\":\"server\",\"type\":"
-          + "{\"type\":\"record\",\"name\":\"Server\",\"fields\":[{\"name\":\"zkQuorum\","
-          + "\"type\":\"string\",\"displayName\":\"Zookeeper Quorum\",\"weight\":0.75,"
-          + "\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"string\","
-          + "\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":\"2181\"}]},"
-          + "\"namespace\":\"org.kaaproject.kaa.server.appenders.hbase.config.gen\","
-          + "\"displayName\":\"Zookeeper Quorum Configuration\"},{\"name\":\"keyspace\","
-          + "\"type\":\"string\",\"displayName\":\"Keyspace name\"},{\"name\":"
-          + "\"tableName\",\"type\":\"string\",\"displayName\":\"Table name\"},"
-          + "{\"name\":\"columnFamilies\",\"type\":{\"type\":\"array\",\"items\":"
-          + "{\"type\":\"record\",\"name\":\"ColumnFamily\",\"fields\":[{\"name\":"
-          + "\"cfName\",\"type\":\"string\",\"displayName\":\"Column Family name\","
-          + "\"weight\":0.4},{\"name\":\"minVersion\",\"type\":\"int\",\"displayName\":"
-          + "\"Min Version\",\"weight\":0.2,\"by_default\":0},{\"name\":\"maxVersion\","
-          + "\"type\":\"int\",\"displayName\":\"Max Version\",\"weight\":0.2,\"by_default\":1}"
-          + ",{\"name\":\"ttl\",\"type\":[\"int\",\"null\"],\"displayName\":\"TTL\","
-          + "\"optional\":true,\"weight\":0.2},{\"name\":\"blockSize\",\"type\":\"int\","
-          + "\"displayName\":\"block Size\",\"weight\":0.2,\"by_default\":65536},"
-          + "{\"name\":\"scope\",\"type\":\"int\",\"displayName\":\"Replication Scope\","
-          + "\"weight\":0.2,\"by_default\":0},{\"name\":\"bloomFilter\",\"type\":"
-          + "{\"type\":\"enum\",\"name\":\"BloomFilterType\",\"symbols\":[\"NONE\",\"ROW\","
-          + "\"ROWCOL\"]},\"displayName\":\"Bloom Filter\",\"weight\":0.2,\"by_default\":\"ROW\"},"
-          + "{\"name\":\"dataBlockEncoding\",\"type\":{\"type\":\"enum\",\"name\":\"Encoding\","
-          + "\"symbols\":[\"NONE\",\"DIFF\",\"FAST_DIFF\",\"PREFIX\",\"PREFIX_TREE\"]},"
-          + "\"displayName\":\"Data Block Encoding\",\"weight\":0.2,\"by_default\":\"NONE\"},"
-          + "{\"name\":\"compression\",\"type\":{\"type\":\"enum\",\"name\":\"Algorithm\","
-          + "\"symbols\":[\"NONE\",\"GZ\",\"LZ4\",\"LZO\",\"SNAPPY\"]},\"displayName\":"
-          + "\"Compression\",\"weight\":0.2,\"by_default\":\"NONE\"},{\"name\":\"inMemory\","
-          + "\"type\":\"boolean\",\"displayName\":\"In Memory\",\"weight\":0.2,"
-          + "\"by_default\":false},{\"name\":\"keepDeletedCells\",\"type\":\"boolean\","
-          + "\"displayName\":\"Keep Deleted Cells\",\"weight\":0.2,\"by_default\":false},"
-          + "{\"name\":\"blockCache\",\"type\":\"boolean\",\"displayName\":\"Block Cache\","
-          + "\"weight\":0.2,\"by_default\":true}]}},\"displayName\":\"Column Families\","
-          + "\"minRowCount\":1},{\"name\":\"columnMapping\",\"type\":{\"type\":\"array\","
-          + "\"items\":{\"type\":\"record\",\"name\":\"ColumnMappingElement\",\"fields\":"
-          + "[{\"name\":\"value\",\"type\":\"string\",\"displayName\":\"Value\","
-          + "\"weight\":0.2,\"by_default\":\"applicationToken\"},{\"name\":\"valueType\","
-          + "\"type\":{\"type\":\"enum\",\"name\":\"Type\",\"symbols\":[\"BIGINT\","
-          + "\"BLOB\",\"BOOLEAN\",\"DOUBLE\",\"FLOAT\",\"INT\",\"TEXT\",\"ARRAY\"]},"
-          + "\"displayName\":\"Type\",\"weight\":0.2,\"by_default\":\"TEXT\"},"
-          + "{\"name\":\"cf\",\"type\":\"string\",\"displayName\":\"ColumnFamily\","
-          + "\"weight\":0.2},{\"name\":\"columnName\",\"type\":\"string\","
-          + "\"displayName\":\"Column\",\"weight\":0.2},{\"name\":\"rowKey\","
-          + "\"type\":\"boolean\",\"displayName\":\"Is part of Row key?\",\"weight\":0.1,"
-          + "\"by_default\":false}]}},\"displayName\":\"Column Mapping\",\"minRowCount\":1}]}");
-  
-  public static org.apache.avro.Schema getClassSchema() {
-    return SCHEMA$;
-  }
-  
+public class HBaseAppenderConfiguration extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"HBaseAppenderConfiguration\",\"namespace\":\"org.kaaproject.kaa.server.appenders.hbase.config.gen\",\"fields\":[{\"name\":\"server\",\"type\":{\"type\":\"record\",\"name\":\"Server\",\"fields\":[{\"name\":\"zkQuorum\",\"type\":\"string\",\"displayName\":\"Zookeeper Quorum\",\"weight\":0.75,\"by_default\":\"localhost\"},{\"name\":\"port\",\"type\":\"string\",\"displayName\":\"Port\",\"weight\":0.25,\"by_default\":\"2181\"}]},\"namespace\":\"org.kaaproject.kaa.server.appenders.hbase.config.gen\",\"displayName\":\"Zookeeper Quorum Configuration\"},{\"name\":\"keyspace\",\"type\":\"string\",\"displayName\":\"Keyspace name\"},{\"name\":\"tableName\",\"type\":\"string\",\"displayName\":\"Table name\"},{\"name\":\"columnFamilies\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ColumnFamily\",\"fields\":[{\"name\":\"cfName\",\"type\":\"string\",\"displayName\":\"Column Family name\",\"weight\":0.4},{\"name\":\"minVersion\",\"type\":\"int\",\"displayName\":\"Min Version\",\"weight\":0.2,\"by_default\":0},{\"name\":\"maxVersion\",\"type\":\"int\",\"displayName\":\"Max Version\",\"weight\":0.2,\"by_default\":1},{\"name\":\"ttl\",\"type\":[\"int\",\"null\"],\"displayName\":\"TTL\",\"optional\":true,\"weight\":0.2},{\"name\":\"blockSize\",\"type\":\"int\",\"displayName\":\"block Size\",\"weight\":0.2,\"by_default\":65536},{\"name\":\"scope\",\"type\":\"int\",\"displayName\":\"Replication Scope\",\"weight\":0.2,\"by_default\":0},{\"name\":\"bloomFilter\",\"type\":{\"type\":\"enum\",\"name\":\"BloomFilterType\",\"symbols\":[\"NONE\",\"ROW\",\"ROWCOL\"]},\"displayName\":\"Bloom Filter\",\"weight\":0.2,\"by_default\":\"ROW\"},{\"name\":\"dataBlockEncoding\",\"type\":{\"type\":\"enum\",\"name\":\"Encoding\",\"symbols\":[\"NONE\",\"DIFF\",\"FAST_DIFF\",\"PREFIX\",\"PREFIX_TREE\"]},\"displayName\":\"Data Block Encoding\",\"weight\":0.2,\"by_default\":\"NONE\"},{\"name\":\"compression\",\"type\":{\"type\":\"enum\",\"name\":\"Algorithm\",\"symbols\":[\"NONE\",\"GZ\",\"LZ4\",\"LZO\",\"SNAPPY\"]},\"displayName\":\"Compression\",\"weight\":0.2,\"by_default\":\"NONE\"},{\"name\":\"inMemory\",\"type\":\"boolean\",\"displayName\":\"In Memory\",\"weight\":0.2,\"by_default\":false},{\"name\":\"keepDeletedCells\",\"type\":\"boolean\",\"displayName\":\"Keep Deleted Cells\",\"weight\":0.2,\"by_default\":false},{\"name\":\"blockCache\",\"type\":\"boolean\",\"displayName\":\"Block Cache\",\"weight\":0.2,\"by_default\":true}]}},\"displayName\":\"Column Families\",\"minRowCount\":1},{\"name\":\"columnMapping\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"ColumnMappingElement\",\"fields\":[{\"name\":\"value\",\"type\":\"string\",\"displayName\":\"Value\",\"weight\":0.2,\"by_default\":\"applicationToken\"},{\"name\":\"valueType\",\"type\":{\"type\":\"enum\",\"name\":\"Type\",\"symbols\":[\"BIGINT\",\"BLOB\",\"BOOLEAN\",\"DOUBLE\",\"FLOAT\",\"INT\",\"TEXT\",\"ARRAY\"]},\"displayName\":\"Type\",\"weight\":0.2,\"by_default\":\"TEXT\"},{\"name\":\"cf\",\"type\":\"string\",\"displayName\":\"ColumnFamily\",\"weight\":0.2},{\"name\":\"columnName\",\"type\":\"string\",\"displayName\":\"Column\",\"weight\":0.2},{\"name\":\"rowKey\",\"type\":\"boolean\",\"displayName\":\"Is part of Row key?\",\"weight\":0.1,\"by_default\":false}]}},\"displayName\":\"Column Mapping\",\"minRowCount\":1}]}");
+  public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   @Deprecated public org.kaaproject.kaa.server.appenders.hbase.config.gen.Server server;
   @Deprecated public java.lang.CharSequence keyspace;
   @Deprecated public java.lang.CharSequence tableName;
-  @Deprecated public java.util.List<org.kaaproject.kaa.server.appenders
-  .hbase.config.gen.ColumnFamily> columnFamilies;
-  @Deprecated public java.util.List<org.kaaproject.kaa.server.appenders
-  .hbase.config.gen.ColumnMappingElement> columnMapping;
+  @Deprecated public java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> columnFamilies;
+  @Deprecated public java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> columnMapping;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -81,13 +25,7 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
   /**
    * All-args constructor.
    */
-  public HBaseAppenderConfiguration(org.kaaproject.kaa.server.appenders
-      .hbase.config.gen.Server server, java.lang.CharSequence keyspace, 
-      java.lang.CharSequence tableName, java.util.List<org.kaaproject.kaa.server
-      .appenders.hbase.config.gen.ColumnFamily> columnFamilies, 
-      java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen
-      .ColumnMappingElement> columnMapping) {
-    
+  public HBaseAppenderConfiguration(org.kaaproject.kaa.server.appenders.hbase.config.gen.Server server, java.lang.CharSequence keyspace, java.lang.CharSequence tableName, java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> columnFamilies, java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> columnMapping) {
     this.server = server;
     this.keyspace = keyspace;
     this.tableName = tableName;
@@ -95,46 +33,28 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
     this.columnMapping = columnMapping;
   }
 
-  public org.apache.avro.Schema getSchema() {
-    return SCHEMA$; 
-  }
-  
+  public org.apache.avro.Schema getSchema() { return SCHEMA$; }
   // Used by DatumWriter.  Applications should not call. 
-  /**
-   * Get Configuration objects.
-   */
-  public java.lang.Object get(int field) {
-    switch (field) {
-      case 0: return server;
-      case 1: return keyspace;
-      case 2: return tableName;
-      case 3: return columnFamilies;
-      case 4: return columnMapping;
-      default: throw new org.apache.avro.AvroRuntimeException("Bad index");
+  public java.lang.Object get(int field$) {
+    switch (field$) {
+    case 0: return server;
+    case 1: return keyspace;
+    case 2: return tableName;
+    case 3: return columnFamilies;
+    case 4: return columnMapping;
+    default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
   // Used by DatumReader.  Applications should not call. 
-  
-  /**
-   * Get Configuration objects value.
-   */
-  @SuppressWarnings(value = "unchecked")
-  public void put(int field, java.lang.Object value) {
-    switch (field) {
-      case 0: server = (org.kaaproject.kaa.server.appenders
-          .hbase.config.gen.Server)value; 
-      break;
-      case 1: keyspace = (java.lang.CharSequence)value; 
-      break;
-      case 2: tableName = (java.lang.CharSequence)value; 
-      break;
-      case 3: columnFamilies = (java.util.List<org.kaaproject.kaa.server.appenders
-          .hbase.config.gen.ColumnFamily>)value; 
-      break;
-      case 4: columnMapping = (java.util.List<org.kaaproject.kaa.server.appenders
-          .hbase.config.gen.ColumnMappingElement>)value; 
-      break;
-      default: throw new org.apache.avro.AvroRuntimeException("Bad index");
+  @SuppressWarnings(value="unchecked")
+  public void put(int field$, java.lang.Object value$) {
+    switch (field$) {
+    case 0: server = (org.kaaproject.kaa.server.appenders.hbase.config.gen.Server)value$; break;
+    case 1: keyspace = (java.lang.CharSequence)value$; break;
+    case 2: tableName = (java.lang.CharSequence)value$; break;
+    case 3: columnFamilies = (java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily>)value$; break;
+    case 4: columnMapping = (java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement>)value$; break;
+    default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
 
@@ -186,8 +106,7 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
   /**
    * Gets the value of the 'columnFamilies' field.
    */
-  public java.util.List<org.kaaproject.kaa.server.appenders
-      .hbase.config.gen.ColumnFamily> getColumnFamilies() {
+  public java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> getColumnFamilies() {
     return columnFamilies;
   }
 
@@ -195,16 +114,14 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
    * Sets the value of the 'columnFamilies' field.
    * @param value the value to set.
    */
-  public void setColumnFamilies(java.util.List<org.kaaproject.kaa.server.appenders
-          .hbase.config.gen.ColumnFamily> value) {
+  public void setColumnFamilies(java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> value) {
     this.columnFamilies = value;
   }
 
   /**
    * Gets the value of the 'columnMapping' field.
    */
-  public java.util.List<org.kaaproject.kaa.server.appenders
-      .hbase.config.gen.ColumnMappingElement> getColumnMapping() {
+  public java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> getColumnMapping() {
     return columnMapping;
   }
 
@@ -212,59 +129,44 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
    * Sets the value of the 'columnMapping' field.
    * @param value the value to set.
    */
-  public void setColumnMapping(java.util.List<org.kaaproject.kaa.server.appenders
-        .hbase.config.gen.ColumnMappingElement> value) {
+  public void setColumnMapping(java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> value) {
     this.columnMapping = value;
   }
 
-  /** Creates a new HBaseAppenderConfiguration RecordBuilder. */
-  public static org.kaaproject.kaa.server.appenders.hbase.config.gen
-      .HBaseAppenderConfiguration.Builder newBuilder() {
-    return new org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder();
+  /** Creates a new HBaseAppenderConfiguration RecordBuilder */
+  public static org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder newBuilder() {
+    return new org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder();
   }
-
-  /** Creates a new HBaseAppenderConfiguration RecordBuilder by copying an existing Builder. */
-  public static org.kaaproject.kaa.server.appenders.hbase.config.gen
-      .HBaseAppenderConfiguration.Builder newBuilder(org.kaaproject.kaa.server.appenders
-      .hbase.config.gen.HBaseAppenderConfiguration.Builder other) {
-    return new org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder(other);
+  
+  /** Creates a new HBaseAppenderConfiguration RecordBuilder by copying an existing Builder */
+  public static org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder newBuilder(org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder other) {
+    return new org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder(other);
   }
-
-  /** Creates a new HBaseAppenderConfiguration RecordBuilder by copying an existing 
-   * HBaseAppenderConfiguration instance. */
-  public static org.kaaproject.kaa.server.appenders.hbase.config.gen
-      .HBaseAppenderConfiguration.Builder newBuilder(org.kaaproject.kaa.server.appenders
-      .hbase.config.gen.HBaseAppenderConfiguration other) {
-    return new org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder(other);
+  
+  /** Creates a new HBaseAppenderConfiguration RecordBuilder by copying an existing HBaseAppenderConfiguration instance */
+  public static org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder newBuilder(org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration other) {
+    return new org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder(other);
   }
-
+  
   /**
    * RecordBuilder for HBaseAppenderConfiguration instances.
    */
-  public static class Builder extends org.apache.avro.specific
-      .SpecificRecordBuilderBase<HBaseAppenderConfiguration>
-      implements org.apache.avro.data.RecordBuilder<HBaseAppenderConfiguration> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<HBaseAppenderConfiguration>
+    implements org.apache.avro.data.RecordBuilder<HBaseAppenderConfiguration> {
 
     private org.kaaproject.kaa.server.appenders.hbase.config.gen.Server server;
     private java.lang.CharSequence keyspace;
     private java.lang.CharSequence tableName;
-    private java.util.List<org.kaaproject.kaa.server.appenders
-        .hbase.config.gen.ColumnFamily> columnFamilies;
-    private java.util.List<org.kaaproject.kaa.server.appenders
-        .hbase.config.gen.ColumnMappingElement> columnMapping;
+    private java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> columnFamilies;
+    private java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> columnMapping;
 
-    /** Creates a new Builder. */
+    /** Creates a new Builder */
     private Builder() {
-      super(org.kaaproject.kaa.server.appenders.hbase.config.gen
-          .HBaseAppenderConfiguration.SCHEMA$);
+      super(org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.SCHEMA$);
     }
-
-    /** Creates a Builder by copying an existing Builder. */
-    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder other) {
+    
+    /** Creates a Builder by copying an existing Builder */
+    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.server)) {
         this.server = data().deepCopy(fields()[0].schema(), other.server);
@@ -287,12 +189,10 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
         fieldSetFlags()[4] = true;
       }
     }
-
-    /** Creates a Builder by copying an existing HBaseAppenderConfiguration instance. */
-    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration other) {
-      super(org.kaaproject.kaa.server.appenders.hbase.config.gen
-          .HBaseAppenderConfiguration.SCHEMA$);
+    
+    /** Creates a Builder by copying an existing HBaseAppenderConfiguration instance */
+    private Builder(org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration other) {
+            super(org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.SCHEMA$);
       if (isValidValue(fields()[0], other.server)) {
         this.server = data().deepCopy(fields()[0].schema(), other.server);
         fieldSetFlags()[0] = true;
@@ -315,141 +215,126 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
       }
     }
 
-    /** Gets the value of the 'server' field. */
+    /** Gets the value of the 'server' field */
     public org.kaaproject.kaa.server.appenders.hbase.config.gen.Server getServer() {
       return server;
     }
-
-    /** Sets the value of the 'server' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config
-        .gen.HBaseAppenderConfiguration.Builder setServer(org.kaaproject.kaa.server.appenders
-        .hbase.config.gen.Server value) {
+    
+    /** Sets the value of the 'server' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder setServer(org.kaaproject.kaa.server.appenders.hbase.config.gen.Server value) {
       validate(fields()[0], value);
       this.server = value;
       fieldSetFlags()[0] = true;
       return this; 
     }
-
-    /** Checks whether the 'server' field has been set. */
+    
+    /** Checks whether the 'server' field has been set */
     public boolean hasServer() {
       return fieldSetFlags()[0];
     }
-
-    /** Clears the value of the 'server' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder clearServer() {
+    
+    /** Clears the value of the 'server' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder clearServer() {
       server = null;
       fieldSetFlags()[0] = false;
       return this;
     }
 
-    /** Gets the value of the 'keyspace' field. */
+    /** Gets the value of the 'keyspace' field */
     public java.lang.CharSequence getKeyspace() {
       return keyspace;
     }
-
-    /** Sets the value of the 'keyspace' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder setKeyspace(java.lang.CharSequence value) {
+    
+    /** Sets the value of the 'keyspace' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder setKeyspace(java.lang.CharSequence value) {
       validate(fields()[1], value);
       this.keyspace = value;
       fieldSetFlags()[1] = true;
       return this; 
     }
-
-    /** Checks whether the 'keyspace' field has been set. */
+    
+    /** Checks whether the 'keyspace' field has been set */
     public boolean hasKeyspace() {
       return fieldSetFlags()[1];
     }
-
-    /** Clears the value of the 'keyspace' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder clearKeyspace() {
+    
+    /** Clears the value of the 'keyspace' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder clearKeyspace() {
       keyspace = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
-    /** Gets the value of the 'tableName' field. */
+    /** Gets the value of the 'tableName' field */
     public java.lang.CharSequence getTableName() {
       return tableName;
     }
-
-    /** Sets the value of the 'tableName' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder setTableName(java.lang.CharSequence value) {
+    
+    /** Sets the value of the 'tableName' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder setTableName(java.lang.CharSequence value) {
       validate(fields()[2], value);
       this.tableName = value;
       fieldSetFlags()[2] = true;
       return this; 
     }
-
-    /** Checks whether the 'tableName' field has been set. */
+    
+    /** Checks whether the 'tableName' field has been set */
     public boolean hasTableName() {
       return fieldSetFlags()[2];
     }
-
-    /** Clears the value of the 'tableName' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder clearTableName() {
+    
+    /** Clears the value of the 'tableName' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder clearTableName() {
       tableName = null;
       fieldSetFlags()[2] = false;
       return this;
     }
 
-    /** Gets the value of the 'columnFamilies' field. */
-    public java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .ColumnFamily> getColumnFamilies() {
+    /** Gets the value of the 'columnFamilies' field */
+    public java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> getColumnFamilies() {
       return columnFamilies;
     }
-
-    /** Sets the value of the 'columnFamilies' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder setColumnFamilies(java.util
-            .List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> value) {
+    
+    /** Sets the value of the 'columnFamilies' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder setColumnFamilies(java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily> value) {
       validate(fields()[3], value);
       this.columnFamilies = value;
       fieldSetFlags()[3] = true;
       return this; 
     }
-
-    /** Checks whether the 'columnFamilies' field has been set. */
+    
+    /** Checks whether the 'columnFamilies' field has been set */
     public boolean hasColumnFamilies() {
       return fieldSetFlags()[3];
     }
-
-    /** Clears the value of the 'columnFamilies' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder clearColumnFamilies() {
+    
+    /** Clears the value of the 'columnFamilies' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder clearColumnFamilies() {
       columnFamilies = null;
       fieldSetFlags()[3] = false;
       return this;
     }
 
-    /** Gets the value of the 'columnMapping' field. */
-    public java.util.List<org.kaaproject.kaa.server.appenders
-        .hbase.config.gen.ColumnMappingElement> getColumnMapping() {
+    /** Gets the value of the 'columnMapping' field */
+    public java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> getColumnMapping() {
       return columnMapping;
     }
-
-    /** Sets the value of the 'columnMapping' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder setColumnMapping(java.util
-        .List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> value) {
+    
+    /** Sets the value of the 'columnMapping' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder setColumnMapping(java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement> value) {
       validate(fields()[4], value);
       this.columnMapping = value;
       fieldSetFlags()[4] = true;
       return this; 
     }
-
-    /** Checks whether the 'columnMapping' field has been set. */
+    
+    /** Checks whether the 'columnMapping' field has been set */
     public boolean hasColumnMapping() {
       return fieldSetFlags()[4];
     }
-
-    /** Clears the value of the 'columnMapping' field. */
-    public org.kaaproject.kaa.server.appenders.hbase.config.gen
-        .HBaseAppenderConfiguration.Builder clearColumnMapping() {
+    
+    /** Clears the value of the 'columnMapping' field */
+    public org.kaaproject.kaa.server.appenders.hbase.config.gen.HBaseAppenderConfiguration.Builder clearColumnMapping() {
       columnMapping = null;
       fieldSetFlags()[4] = false;
       return this;
@@ -459,18 +344,11 @@ public class HBaseAppenderConfiguration extends org.apache.avro.specific.Specifi
     public HBaseAppenderConfiguration build() {
       try {
         HBaseAppenderConfiguration record = new HBaseAppenderConfiguration();
-        record.server = fieldSetFlags()[0] ? this.server : 
-          (org.kaaproject.kaa.server.appenders.hbase.config.gen.Server) defaultValue(fields()[0]);
-        record.keyspace = fieldSetFlags()[1] ? this.keyspace : 
-          (java.lang.CharSequence) defaultValue(fields()[1]);
-        record.tableName = fieldSetFlags()[2] ? this.tableName : 
-          (java.lang.CharSequence) defaultValue(fields()[2]);
-        record.columnFamilies = fieldSetFlags()[3] ? this.columnFamilies : 
-          (java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen
-              .ColumnFamily>) defaultValue(fields()[3]);
-        record.columnMapping = fieldSetFlags()[4] ? this.columnMapping : 
-          (java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen
-              .ColumnMappingElement>) defaultValue(fields()[4]);
+        record.server = fieldSetFlags()[0] ? this.server : (org.kaaproject.kaa.server.appenders.hbase.config.gen.Server) defaultValue(fields()[0]);
+        record.keyspace = fieldSetFlags()[1] ? this.keyspace : (java.lang.CharSequence) defaultValue(fields()[1]);
+        record.tableName = fieldSetFlags()[2] ? this.tableName : (java.lang.CharSequence) defaultValue(fields()[2]);
+        record.columnFamilies = fieldSetFlags()[3] ? this.columnFamilies : (java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnFamily>) defaultValue(fields()[3]);
+        record.columnMapping = fieldSetFlags()[4] ? this.columnMapping : (java.util.List<org.kaaproject.kaa.server.appenders.hbase.config.gen.ColumnMappingElement>) defaultValue(fields()[4]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

@@ -83,8 +83,8 @@ public class HBaseLogEventDao implements LogEventDao  {
 
 
       LOG.info("HBase Admin Started");
-    } catch (Exception e) {
-      LOG.error("Ops!", e);
+    } catch (Exception ex) {
+      LOG.error("ERROR - Unable to establish connection with HBase", ex);
     }
   }
 
@@ -95,7 +95,7 @@ public class HBaseLogEventDao implements LogEventDao  {
     //Get table and keyspace names
     String table  = configuration.getTableName().toString().toLowerCase().trim();
     String keyspace = configuration.getKeyspace().toString().toLowerCase().trim();
-    LOG.info("Starting creation of table:  {}",keyspace + ":" + table);
+    LOG.info("Starting creation of table:  {}", keyspace + ":" + table);
 
     // Creates the namespace and/or table in case of not existing.
 
@@ -131,8 +131,8 @@ public class HBaseLogEventDao implements LogEventDao  {
       //Format of hbase tables -  <namespace>:<table_name>
       namespacedTable = keyspace  + ":" + table;
 
-    } catch (Exception e) {
-      LOG.error("Ops",e);
+    } catch (Exception ex) {
+      LOG.error("ERROR creating table",ex);
     }
     return namespacedTable;
   }
