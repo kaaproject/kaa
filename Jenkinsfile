@@ -80,18 +80,11 @@ node(selectNode()) {
     stage('init') {
         step([$class: 'WsCleanup'])
 
-        sh "echo 'dce9897a5359f29284224295c0d179e1 ./docker-compose' > ./docker-compose.md5"
-        sh "md5sum -c ./docker-compose.md5 || curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` -o ./docker-compose"
-        sh "chmod +x ./docker-compose"
-        env.PATH = "${env.WORKSPACE}:${env.PWD}:${env.PATH}"
-        sh "which docker-compose"
+        assureJava()
+        assureAws()
+        assureDockerCompose()
+        assureMaven()
 
-        env.PATH = "${env.HOME}/.local/bin:${env.PATH}"
-        sh "which aws"
-
-        env.M2_HOME = "${tool name: 'mvn360', type: 'maven'}"
-        env.PATH = "${env.M2_HOME}/bin:${env.PATH}"
-        sh "which mvn"
     }
 
     stage('git') {
@@ -331,4 +324,54 @@ def fetchDockerLog(String container) {
 def fetchSparkLogs(String project, String filter = " ") {
     sh """docker exec ${project}_spark-worker_1 bash -c 'find /spark/work -name stderr | grep driver | xargs grep -e "$filter"' | gzip -vc > ${project}_spark_worker.driver.log.gz"""
     sh """docker exec ${project}_spark-worker_1 bash -c 'find /spark/work -name stderr | grep app    | xargs grep -e "$filter"' | gzip -vc > ${project}_spark_worker.app.log.gz"""
+}
+
+
+def assureDockerCompose() {
+    try {
+        sh "which docker-compose"
+    } catch (e) {
+        echo "$e"
+        sh "echo 'dce9897a5359f29284224295c0d179e1 ./docker-compose' > ./docker-compose.md5"
+        sh "md5sum -c ./docker-compose.md5 || curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` -o ./docker-compose"
+        sh "chmod +x ./docker-compose"
+        env.PATH = "${env.WORKSPACE}:${env.PWD}:${env.PATH}"
+    }
+    sh "which docker-compose"
+}
+
+
+def assureAws() {
+    try {
+        sh "which aws"
+    } catch (e) {
+        echo "$e"
+        env.PATH = "${env.HOME}/.local/bin:${env.PATH}"
+    }
+    sh "which aws"
+}
+
+def assureJava() {
+    try {
+        sh "which java"
+    } catch (e) {
+        echo "$e"
+        env.JAVA_HOME = "${tool name: 'jdk8u172', type: 'jdk'}"
+        env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+    }
+    sh "which java"
+}
+
+
+def assureMaven() {
+    try {
+        sh "which mvn"
+    } catch (e) {
+        echo "$e"
+        sh "wget http://apache.ip-connect.vn.ua/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz"
+        sh "tar -xvf apache-maven-3.6.1-bin.tar.gz"
+        env.PATH = "${env.WORKSPACE}:${env.PWD}/apache-maven-3.6.1:${env.PATH}"
+    }
+    sh "which mvn"
+
 }
