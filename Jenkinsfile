@@ -370,7 +370,7 @@ def assureMaven() {
         echo "$e"
         sh "wget http://apache.ip-connect.vn.ua/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz"
         sh "tar -xvf apache-maven-3.6.1-bin.tar.gz"
-        env.PATH = "${env.WORKSPACE}:${env.PWD}/apache-maven-3.6.1/bin:${env.PATH}"
+        env.PATH = "${env.WORKSPACE}/apache-maven-3.6.1/bin:${env.PATH}"
     }
     sh "which mvn"
 
