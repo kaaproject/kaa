@@ -66,7 +66,16 @@ def kaaBranch="none"
 def kaaCommit="00000000"
 def kaaTag="untagged"
 
-node(isPR()?'slave-02':'master') {
+
+def selectNode() {
+    if (isPR()) {
+        return "slave-02 || jenkins-dynamic"
+    } else {
+        return "master || jenkins-dynamic"
+    }
+}
+
+node(selectNode()) {
 
     stage('init') {
         step([$class: 'WsCleanup'])
