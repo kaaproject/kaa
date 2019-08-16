@@ -29,6 +29,8 @@
 #undef  NOMINMAX
 #include <DbgHelp.h>
 #undef WIN32_LEAN_AND_MEAN
+#elif defined __QNXNTO__ // http://www.qnx.com/developers/docs/6.5.0/topic/com.qnx.doc.neutrino_technotes/backtrace.html?cp=13_10_16
+#include <backtrace.h>
 #else
 #include <execinfo.h>
 #endif
@@ -85,12 +87,28 @@ private:
          symbol = ( SYMBOL_INFO * )calloc( sizeof( SYMBOL_INFO ) + 256 * sizeof( char ), 1 );
          symbol->MaxNameLen   = 255;
          symbol->SizeOfStruct = sizeof( SYMBOL_INFO );
+#elif defined __QNXNTO__
+         static_cast<void>(trace);
+
+         char out[1024]{};
+         bt_accessor_t acc;
+         bt_memmap_t memmap;
+         bt_init_accessor(&acc, BT_SELF);
+         bt_load_memmap(&acc, &memmap);
+         bt_sprn_memmap(&memmap, out, sizeof(out) - 1);
+         puts(out);
+         bt_release_accessor(&acc);
 #else
          char **messages = (char **)nullptr;
          trace_size = backtrace(trace, 16);
          messages = backtrace_symbols(trace, trace_size);
 #endif
+#ifdef __QNXNTO__
+         ss << std::endl << "Backtrace QNX: " << std::endl;
+         ss << out << std::endl;
+#else
          ss << std::endl << "Backtrace: " << std::endl;
+#endif
          for (i = 0; i < trace_size; ++i) {
 #ifdef _WIN32
              SymFromAddr( process, ( DWORD64 )( trace[ i ] ), 0, symbol );

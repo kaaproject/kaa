@@ -459,7 +459,8 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
     set(KAA_THIRDPARTY_LIBRARIES
             ${KAA_THIRDPARTY_LIBRARIES}
-            socket)
+            socket
+            backtrace)
 endif()
 
 set(KAA_SOURCE_FILES
