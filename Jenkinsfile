@@ -338,7 +338,7 @@ node(selectNode()) {
     stage('deploy-on-stage') {
         if (isMaster()) {
             build(
-                    job: 'deploy_kaa_stage',
+                    job: 'stage/deploy_kaa',
                     parameters: [
                             string(name: 'VERSION', value: "${env.VERSION}")
                     ]
