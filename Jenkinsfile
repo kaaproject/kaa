@@ -54,6 +54,9 @@ def jbtKaaAgentBuilderBranch = 'master'
 def jbtBackendBranch = 'master'
 def jbtIotBranch='master'
 
+def userId = currentBuild.rawBuild.getCauses().find { it instanceof hudson.model.Cause.UserIdCause }?.getUserId() ?: "jenkins"
+env.AWS_S3_ATHENA_DB_SUFFIX="qa_${userId}_${env.BUILD_TAG}"
+
 def isPR() {
     return env.BRANCH_NAME ==~ /PR-\d+/
 }
