@@ -220,7 +220,7 @@ node(selectNode()) {
                     tarMD5=`md5sum kaa-cpp-ep-sdk-0.9.0.tar.gz | awk '{print \$1}'`
                     tarSHA1=`shasum -a 1 kaa-cpp-ep-sdk-0.9.0.tar.gz | awk '{ print \$1 }'`
                     
-                    curl -uadmin:${ARTIFACTORY_PASS} --upload-file "kaa-cpp-ep-sdk-0.9.0.tar.gz" --header "X-Checksum-MD5:\${tarMD5}" --header "X-Checksum-Sha1:\${tarSHA1}" "\${ARTIFACTORY_URL}/kaa-cpp-ep-sdk-${kaaTag}.tar.gz"
+                    curl -uadmin:${ARTIFACTORY_PASS} --upload-file "kaa-cpp-ep-sdk-0.9.0.tar.gz" --header "X-Checksum-MD5:\${tarMD5}" --header "X-Checksum-Sha1:\${tarSHA1}" "\${ARTIFACTORY_URL}/kaa-sdk/kaa-cpp-ep-sdk-${kaaTag}.tar.gz"
             
             """
             }
