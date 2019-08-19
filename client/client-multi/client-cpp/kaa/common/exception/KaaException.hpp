@@ -113,6 +113,7 @@ private:
 #ifdef _WIN32
              SymFromAddr( process, ( DWORD64 )( trace[ i ] ), 0, symbol );
              ss << "[" << trace_size - i - 1 << "] " << symbol->Name << " - " << boost::format("0x%0X")%symbol->Address << std::endl;
+#elif defined __QNXNTO__
 #else
              ss << "[" << i << "] " << messages[i] << std::endl;
 #endif
