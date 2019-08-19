@@ -340,7 +340,9 @@ node(selectNode()) {
             build(
                     job: 'stage/deploy_kaa',
                     parameters: [
-                            string(name: 'VERSION', value: "${env.VERSION}")
+                            string(name: 'VERSION', value: "${env.VERSION}"),
+                            string(name: 'KAA_GIT_BRANCH', value: "${kaaBranch}"),
+                            string(name: 'KAA_GIT_COMMIT', value: "${kaaCommit}"),
                     ]
             )
         }
@@ -379,16 +381,8 @@ def fetchDockerLog(String container) {
 }
 
 def fetchSparkLogs(String project, String filter = " ") {
-    sh """docker exec ${
-        project
-    }_spark-worker_1 bash -c 'find /spark/work -name stderr | grep driver | xargs grep -e "$filter"' | gzip -vc > ${
-        project
-    }_spark_worker.driver.log.gz"""
-    sh """docker exec ${
-        project
-    }_spark-worker_1 bash -c 'find /spark/work -name stderr | grep app    | xargs grep -e "$filter"' | gzip -vc > ${
-        project
-    }_spark_worker.app.log.gz"""
+    sh """docker exec ${project}_spark-worker_1 bash -c 'find /spark/work -name stderr | grep driver | xargs grep -e "$filter"' | gzip -vc > ${project}_spark_worker.driver.log.gz"""
+    sh """docker exec ${project}_spark-worker_1 bash -c 'find /spark/work -name stderr | grep app    | xargs grep -e "$filter"' | gzip -vc > ${project}_spark_worker.app.log.gz"""
 }
 
 
