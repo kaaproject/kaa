@@ -39,7 +39,7 @@ Copyright 2014-2016 CyberVision, Inc.
         <ehcache-spring.version>1.2.0</ehcache-spring.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hikari.cp.version>2.4.2</hikari.cp.version>
-        <pgsql.driver.ver>9.3-1101-jdbc41</pgsql.driver.ver>
+        <pgsql.driver.ver>42.2.6</pgsql.driver.ver>
         <mariadb-driver.version>1.4.3</mariadb-driver.version>
         <h2.driver.ver>1.4.179</h2.driver.ver>
         <oracle-nosql-client.version>3.0.14</oracle-nosql-client.version>
