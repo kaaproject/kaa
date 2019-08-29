@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kaa.fullname" . }}-servers
+  labels:
+    app.kubernetes.io/name: {{ include "kaa.name" . }}
+    helm.sh/chart: {{ include "kaa.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.serversService.type }}
+  ports:
+    - port: {{ .Values.kaa.config.bootstrapHttpTransport.bindPort }}
+      targetPort: bootstrap-http
+      protocol: TCP
+      name: bootstrap-http
+    - port: {{ .Values.kaa.config.bootstrapTcpTransport.bindPort }}
+      targetPort: bootstrap-tcp
+      protocol: TCP
+      name: bootstrap-tcp
+    - port: {{ .Values.kaa.config.operationsHttpTransport.bindPort }}
+      targetPort: operations-http
+      protocol: TCP
+      name: operations-http
+    - port: {{ .Values.kaa.config.operationsTcpTransport.bindPort }}
+      targetPort: operations-tcp
+      protocol: TCP
+      name: operations-tcp
+  selector:
+    app.kubernetes.io/name: {{ include "kaa.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

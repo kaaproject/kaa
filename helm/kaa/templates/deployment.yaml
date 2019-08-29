@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kaa.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "kaa.name" . }}
+    helm.sh/chart: {{ include "kaa.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "kaa.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "kaa.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: "{{ include "kaa.fullname" . }}-kaa-config-updater"
+      {{ include "kaa.imagePullSecrets" . }}
+      {{- if .Values.waitContainers.enabled }}
+      initContainers:
+        - name: wait-for-cassandra
+          image: alpine:3.9.2
+          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "cassandraUrl" . }} 9042; do sleep 1; done']
+        - name: wait-for-postgres
+          image: alpine:3.9.2
+          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.postgresqlUrl" . }} 5432; do sleep 1; done']
+        - name: lb-ip-parser
+          image: turboazot/aws-cli-kubectl:0.0.1
+          volumeMounts:
+          - mountPath: /srv/lb-ip
+            name: lb-ip
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              set -e
+              sleep 30
+              kubectl get svc | grep {{ include "kaa.fullname" . }}-servers | awk '{ print $3 }' > /srv/lb-ip/data
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: admin
+              containerPort: 7777
+              protocol: TCP
+            - name: bootstrap-http
+              containerPort: {{ .Values.kaa.config.bootstrapHttpTransport.bindPort }}
+              protocol: TCP
+            - name: bootstrap-tcp
+              containerPort: {{ .Values.kaa.config.bootstrapTcpTransport.bindPort }}
+              protocol: TCP
+            - name: operations-http
+              containerPort: {{ .Values.kaa.config.operationsHttpTransport.bindPort }}
+              protocol: TCP
+            - name: opearations-tcp
+              containerPort: {{ .Values.kaa.config.operationsTcpTransport.bindPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/admin-dao.properties
+              subPath: admin-dao.properties
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/bootstrap-http-transport.config.template
+              subPath: bootstrap-http-transport.config
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config.template
+              subPath: bootstrap-tcp-transport.config
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/common-dao-cassandra.properties
+              subPath: common-dao-cassandra.properties
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/kaa-node.properties
+              subPath: kaa-node.properties
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/nosql-dao.properties
+              subPath: nosql-dao.properties
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/operations-http-transport.config.template
+              subPath: operations-http-transport.config
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/operations-tcp-transport.config.template
+              subPath: operations-tcp-transport.config
+            - name: kaa-config
+              mountPath: /usr/lib/kaa-node/conf/sql-dao.properties
+              subPath: sql-dao.properties
+            - name: kaa-keys
+              readOnly: true
+              mountPath: "/keys"
+            - mountPath: /srv/lb-ip
+              name: lb-ip
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          command:
+            - "/bin/bash"
+            - "-c"
+            - |
+              set -e
+              sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/bootstrap-http-transport.config.template > /usr/lib/kaa-node/conf/bootstrap-http-transport.config
+              sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config.template > /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config
+              sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/operations-http-transport.config.template > /usr/lib/kaa-node/conf/operations-http-transport.config
+              sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/operations-tcp-transport.config.template > /usr/lib/kaa-node/conf/operations-tcp-transport.config
+              java -cp /usr/lib/kaa-node/conf:/usr/lib/kaa-node/lib/* \
+              -Xms1G \
+              -Xmx4G \
+              -XX:+UseG1GC \
+              -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 \
+              -Dfile.encoding=UTF8 \
+              -Dserver_log_dir=/var/log/kaa \
+              -Dserver_log_sufix= \
+              -Dserver_home_dir=/usr/lib/kaa-node \
+              -Dcom.sun.management.jmxremote=true \
+              -Dcom.sun.management.jmxremote.port=7091 \
+              -Dcom.sun.management.jmxremote.authenticate=false \
+              -Dcom.sun.management.jmxremote.ssl=false org.kaaproject.kaa.server.node.KaaNodeApplication
+      volumes:
+        - name: kaa-config
+          configMap:
+            name: {{ include "kaa.fullname" . }}-config
+        - name: lb-ip
+          emptyDir: {}
+        - name: kaa-keys
+          secret:
+            secretName: {{ include "kaa.fullname" . }}-keys
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

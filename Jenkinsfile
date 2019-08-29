@@ -80,6 +80,75 @@ def selectNode() {
     }
 }
 
+// ####### Helm start ###########
+
+helmVersion = "2.12.2"
+helmMountDir = "/app"
+helmLocalChartsDir = "tmpcharts"
+helmRepository = "http://artifactory.jbt-iops.com:8081/artifactory/helm-charts"
+
+def _helmCommand(String command) {
+    sh """
+        docker run --rm \\
+            -e HELM_HOME=${helmMountDir}/${helmLocalChartsDir}/.helm \\
+            -v \$(pwd):/app \\
+            -u \$(id -u):\$(id -g) \\
+            -w ${helmMountDir} \\
+            alpine/helm:${helmVersion} \\
+            ${command}
+    """
+}
+
+def helmInit() {
+    _helmCommand("init --client-only")
+}
+
+def helmRepoAdd(String alias, String repoUrl) {
+    _helmCommand("repo add ${alias} ${repoUrl}")
+}
+
+def helmRepoUpdate() {
+    _helmCommand("repo update")
+}
+
+def helmPackage(String chartPath, String destinationPath) {
+    _helmCommand("dep update --skip-refresh ${chartPath}")
+    _helmCommand("package --save=false ${chartPath} -d ${destinationPath}")
+}
+
+def helmUploadChart(String chartName, String destinationPath, String artifactoryUsername, String artifactoryPassword) {
+    def chartArchive = sh(
+      script: "cd ${destinationPath} && ls ${chartName}*",
+      returnStdout: true
+    ).trim()
+
+    sh """
+        curl -u ${artifactoryUsername}:${artifactoryPassword} \\
+            -T ${destinationPath}/${chartArchive} \\
+            ${helmRepository}/${chartArchive}
+    """
+}
+
+def helmUpdateIndexFile(String destinationPath, String artifactoryUsername, String artifactoryPassword) {
+    sh """
+        curl -u ${artifactoryUsername}:${artifactoryPassword} \\
+            ${helmRepository}/index.yaml \\
+            -o ${destinationPath}/index.yaml
+    """
+
+    _helmCommand("repo index ${destinationPath} --url ${helmRepository} --merge ./${destinationPath}/index.yaml")
+}
+
+def helmUploadIndexFile(String destinationPath, String artifactoryUsername, String artifactoryPassword) {
+    sh """
+        curl -u ${artifactoryUsername}:${artifactoryPassword} \\
+            -T ${destinationPath}/index.yaml \\
+            ${helmRepository}/index.yaml
+    """
+}
+
+// ####### Helm end ###########
+
 node(selectNode()) {
 
     stage('init') {
@@ -332,6 +401,29 @@ node(selectNode()) {
                 sh "curl -X POST ${env.APTLY_URL}/api/repos/jbt/file/jbt?forceReplace=1"
                 sh "curl -X PUT -H 'Content-Type: application/json' --data '{\"Signing\": {\"GpgKey\": \"Nborisenko <nborisenko@kaaiot.io>\"}}' ${env.APTLY_URL}/api/publish/:./xenial"
             }
+        }
+    }
+
+    stage('upload helm chart') {
+        dir ("${helmLocalChartsDir}/.helm") {
+            deleteDir()
+        }
+
+        def chartName = "kaa"
+
+        helmInit()
+        helmRepoAdd("incubator", "http://storage.googleapis.com/kubernetes-charts-incubator")
+        helmRepoAdd("jbt", "http://artifactory.jbt-iops.com:8081/artifactory/helm-charts")
+        helmRepoUpdate()
+        helmPackage("helm/${chartName}", helmLocalChartsDir)
+        withCredentials([string(credentialsId: 'ARTIFACTORY_PASS', variable: 'ARTIFACTORY_PASS')]) {
+            helmUploadChart(chartName, helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
+            helmUpdateIndexFile(helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
+            helmUploadIndexFile(helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
+        }
+
+        dir ("${helmLocalChartsDir}/.helm") {
+            deleteDir()
         }
     }
 

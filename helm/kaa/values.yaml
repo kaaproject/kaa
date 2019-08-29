@@ -1,0 +1,283 @@
+# Default values for kaa.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+kaa:
+  applicationId: "1"
+  kafkaHost:
+  kafkaPort:
+  username:
+  password:
+  secretName:
+  config:
+    adminDao:
+      hibernateDialect: "org.hibernate.dialect.PostgreSQL82Dialect"
+      hibernateFormatSql: "False"
+      hibernateShowSql: "False"
+      hibernateHbm2DdlAuto: "none"
+      jdbcDriverClassname: "org.postgresql.Driver"
+      jdbcUsername: "postgres"
+      jdbcPassword: "jbtpass"
+#      jdbcUrl: "jdbc:postgresql://172.17.0.1:5432/kaa"
+    bootstrapHttpTransport:
+      bindInterface: "${transport_bind_interface}"
+      bindPort: "9889"
+      publicInterface: "172.17.0.1"
+      publicPorts: "9889"
+      maxBodySize: "524288"
+    bootstrapTcpTransport:
+      bindInterface: "${transport_bind_interface}"
+      bindPort: "9888"
+      publicInterface: "172.17.0.1"
+      publicPorts: "9888"
+    commonDaoCassandra:
+      clusterName: "Kaa Cluster"
+      keyspaceName: "kaa"
+#      nodeList: "172.17.0.1:9042"
+      useSsl: "False"
+      useJmx: "true"
+      compression: "none"
+      disableMetrics: "false"
+      useCredentials: "false"
+      username: ""
+      password: ""
+      socketConnectTimeout: "5000"
+      socketReadTimeout: "12000"
+      socketKeepAlive: "true"
+      socketReuseAddress: "true"
+      socketSoLinger: ""
+      socketTcpNoDelay: "false"
+      socketReceiveBufferSize: ""
+      socketSendBufferSize: ""
+      queryConsistencyLevel: "ONE"
+      queryDefaultFetchSize: "2000"
+      batchType: "LOGGED"
+      readConsistencyLevel: "ONE"
+      writeConsistencyLevel: "ONE"
+    kaaNode:
+      controlServerEnabled: "true"
+      bootstrapServerEnabled: "true"
+      operationsServerEnabled: "true"
+      thriftHost: "localhost"
+      thriftPort: "9090"
+      adminPort: "7777"
+      zkEnabled: "true"
+#      zkHostPortList: "172.17.0.1:2181"
+      zkMaxRetryTime: "3000"
+      zkSleepTime: "1000"
+      zkIgnoreErrors: "true"
+      loadmgmtMinDiff: "10000"
+      loadmgmtMaxInitRedirectProbability: "0.75"
+      loadmgmtMaxSessionRedirectProbability: "0.0"
+      recalculationPeriod: "10"
+      userHashPartitions: "10"
+      maxNumberNeighborConnections: "3"
+      opsServerHistoryTtl: "3600"
+      workerThreadPool: "8"
+      bootstrapKeysPrivateKeyLocation: "/keys/bootstrap-private.key"
+      bootstrapKeysPublicKeyLocation: "/keys/bootstrap-public.key"
+      operationsKeysPrivateKeyLocation: "/keys/operations-private.key"
+      operationsKeysPublicKeyLocation: "/keys/operations-public.key"
+      supportUnencryptedConnection: "true"
+      transportBindInterface: "0.0.0.0"
+      transportPublicInterface: "172.17.0.1"
+      metricsEnabled: "true"
+      logsRootDir: "/kaa_log_uploads"
+      datePattern: "'.'yyyy-MM-dd-HH-mm"
+      layoutPattern: "%m%n"
+      tmpKeys: "/home/kaa/tmp_keys"
+      loadStatsUpdateFrequency: "10000"
+      additionalPluginsScanPackage: ""
+    nosqlDao:
+      nosqlDbProviderName: "cassandra"
+    operationsHttpTransport:
+      bindInterface: "${transport_bind_interface}"
+      bindPort: "9999"
+      publicInterface: "172.17.0.1"
+      publicPorts: "9999"
+      maxBodySize: "524288"
+    operationsTcpTransport:
+      bindInterface: "${transport_bind_interface}"
+      bindPort: "9997"
+      publicInterface: "172.17.0.1"
+      publicPorts: "9997"
+    sqlDao:
+      dbName: "kaa"
+      daoMaxWaitTime: "5"
+      hibernateDialect: "org.hibernate.dialect.PostgreSQL82Dialect"
+      hibernateFormatSql: "False"
+      hibernateShowSql: "False"
+      hibernateHbm2DdlAuto: "none"
+      jdbcDriverClassname: "org.postgresql.Driver"
+      jdbcUsername: "postgres"
+      jdbcPassword: "jbtpass"
+#      jdbcHostPort: "172.17.0.1:5432"
+      sqlProviderName: "postgresql"
+  servers:
+    bootstrap:
+      keys:
+        privateB64: LS0tLS1CRUdJTiBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0KYjNCbGJuTnphQzFyWlhrdGRqRUFBQUFBQkc1dmJtVUFBQUFFYm05dVpRQUFBQUFBQUFBQkFBQUNGd0FBQUFkemMyZ3RjbgpOaEFBQUFBd0VBQVFBQUFnRUF3d3J1UzZlWVR4UzhYOUkwbWhwSnJ4TWU2OUNOUHhlVVNrNVdrVnpocVpjc0NVTnpSaHE0CndtTHRNTUEwSkFwL2VBd05IVUozbG9LSXJpN3BkNmk2UEl1eVhLMUhLMmpFd3BJUmJsWGNHeUJuRHZQSW40Z3JWNzlqMjgKWW0xbnlUTTR0c2t0Ni9TZVZQdFdOa3dSVkVNaVEvVVBRTGpJbXp2QVlYS3lkT0pEQTRkTUphSTI0L2cvbDF1SFFyTnlPagpIN2l5b0hvZE9VWGVsVVFEQ215dmJuYVlhQ0htTm9BeEpsMWRGVkt1bFB4Si9TeGpGWjlrTURIbzZhNlB4TFZYYWxhLzVxCjdiR2FRd1pHeC9UYTlxS2kzUFAvL0ZObGFWWldpR3Blckl2a3htUEVEaWpnS0M3S0dlZlBKc0tiVjZOdlRqMmx6ZDZjeHEKRjRqc1RybGpFU3Zzd3U4dlV0WitZeHR3TkNyZHZ1NmpYbzdIY0d0TFRzaUZOZEZPbHhNUHgvUHViQXIvUitaeEo4cE52MAp5OVVZUUJXUzhzSEFMZ3MvK1NOQk1RZDhwK204bGRqcGVmKzVLWUozbU5XVlZWYTdzQWZSZGxHRm8vTlV6YXFEenNWUXhZCnVmQ1JJL2ZCSG5laGJQZ2VXOTRtbmlBWHJzRWdpZlc4QWpUTnBSQ25jbGRyNWcvWXRITGpFOGVjMlVTNjJGVzBDZENqbWYKcXArbzMvYU1FNzVQRm10bUdCZlRCdlM2RjdHcHVQQVRTT1FzbnZsS2wxeHVmY3Zya2ZTWjNHSk4weCtYeTFCL0t1eW45MwpuU3VEakxVV041dnU3Y0Nub2F6eFQ1a0JwL1ErRkR3S0tRK2F3dUxVOXlscGw4bjVxZ3ZvenNmWGpHczVJWUZJYnNNOEFuClVBQUFjNCt5UWpPZnNrSXprQUFBQUhjM05vTFhKellRQUFBZ0VBd3dydVM2ZVlUeFM4WDlJMG1ocEpyeE1lNjlDTlB4ZVUKU2s1V2tWemhxWmNzQ1VOelJocTR3bUx0TU1BMEpBcC9lQXdOSFVKM2xvS0lyaTdwZDZpNlBJdXlYSzFISzJqRXdwSVJibApYY0d5Qm5EdlBJbjRnclY3OWoyOFltMW55VE00dHNrdDYvU2VWUHRXTmt3UlZFTWlRL1VQUUxqSW16dkFZWEt5ZE9KREE0CmRNSmFJMjQvZy9sMXVIUXJOeU9qSDdpeW9Ib2RPVVhlbFVRRENteXZibmFZYUNIbU5vQXhKbDFkRlZLdWxQeEovU3hqRloKOWtNREhvNmE2UHhMVlhhbGEvNXE3YkdhUXdaR3gvVGE5cUtpM1BQLy9GTmxhVlpXaUdwZXJJdmt4bVBFRGlqZ0tDN0tHZQpmUEpzS2JWNk52VGoybHpkNmN4cUY0anNUcmxqRVN2c3d1OHZVdForWXh0d05DcmR2dTZqWG83SGNHdExUc2lGTmRGT2x4Ck1QeC9QdWJBci9SK1p4SjhwTnYweTlVWVFCV1M4c0hBTGdzLytTTkJNUWQ4cCttOGxkanBlZis1S1lKM21OV1ZWVmE3c0EKZlJkbEdGby9OVXphcUR6c1ZReFl1ZkNSSS9mQkhuZWhiUGdlVzk0bW5pQVhyc0VnaWZXOEFqVE5wUkNuY2xkcjVnL1l0SApMakU4ZWMyVVM2MkZXMENkQ2ptZnFwK28zL2FNRTc1UEZtdG1HQmZUQnZTNkY3R3B1UEFUU09Rc252bEtsMXh1ZmN2cmtmClNaM0dKTjB4K1h5MUIvS3V5bjkzblN1RGpMVVdONXZ1N2NDbm9henhUNWtCcC9RK0ZEd0tLUSthd3VMVTl5bHBsOG41cWcKdm96c2ZYakdzNUlZRklic004QW5VQUFBQURBUUFCQUFBQ0FGbFVhRSsrTXNRRmUwRm54Uy9QV25BVkVkUnZjRUcxU3ZXOQphMmlvWWJLS3ltQnp4QmdYcFFkaXg3L01TQlU1dWFnQjNQL0pzWHY5elJ2NTRIUXRreDZuM01rVms4TU4rUkFrVmxkeWU1Cnp3K2tLZTVRUXNHYTNXdXFXdDI1dmc4b3BwRVJFemMra2tYWjEyS0c5R2pqVm81SmJ2TDFydXRxTW5KdlZjeXkxSDZKT1IKY0RkS0IwMHF0QUFITk1QTVRxbjRyZGRTRnBCa3I4MHRtVGJ0RUd4SFpRWk1nR1AxMG96L3RlSk9QQ2VBWldMUE1aSjFyaQoxa3JvaFlxd0F0RGh4bUh2NUlsNURtNGtNY2JqSG1aWGxzQWNBT0pRVCtJdTZQTVJ4TXJDUjhXVmEvWVFRcG9rMCt1SmdCCmNBaXFWWTlXR2dXcEF2cFI1VVZpTU5qZGo4RS9XSGlBSXJ1RldvcDlCd0pRek1lem43eUUyMjJLQ3NlTXBFM3lrMlB2N1oKTkJ5bXBJbXcraVNiNHB5ZWhCUktqbWVYa3RXSktJTktIVmR3MHFmekRWK0QvT2JpYjJ4eW9iVFd3SkhnQzduV2piOXl0WQo2K2lTdXdBNHNEZ3BCNmc4TTZpMm1nMllIdTE2TitpbUxBMVNRTUE1b2RWc0JFeXEzQ1J5a28veS9SSVVhSkpKeitLdmtvCmxydms4MmVIa0QwNDVaaWVCVE5QdEgrSkFtcTdyNnVKcGNacUpieVZHY1ZDRXlnU0FsZ2J2dWxSeHE5eWR5YnJBZng4aEoKQzBhcHl6OHJsUVVzU2ZFQk5VaklCYzZUbVo3RUo2MzhRQ0VUSE5nTFhDQ0w0OW9JRGY1OVJVTEdZOTFURmlSTEgyK2l3OAoxS0d2S2lZL3U0WXZWbmZ2OEJBQUFCQUFTUWd6UVlqTVgrUFdQL2VZUldJOFBrRDBzNUw3ZTBZVFpjV3hQelF6ZWRkOTB6CmJGNndFcWRSTE8yQ25aenVFV0U3b0hLQlhUNG8xV3ZTUkU3cHB3YnQyMTdyNjZ0OXBOenNjTVQwU1dialdXUnpSRmpSQysKbXZLVS9xeXVrVWRVcElIaDZ6ekFKL1pQVlNkY1U2NTJmeUUvblEyRXg4NzVsUUp6MTQzcXFSc0d2VFNkNmMvQzJrZUZnWAp1YURWelVxRjdST3phOUpNdFd5TGd4amQvOXJuT3FGR2JuZWNrdnd1RHd1dkJyNWwyRjJSaEI3cE9IaTgvVlVGVktvbXFXCkM2bjFGOC82VjlQTzRveVZ6c09KUWZ4K2djQ1dTUmc4ZVJjSDRISTFXbmRPQy9GQ1E1L082QUlUemY0bFhUUWJpZ2t4L1UKYUQycnNCb2pUVThjMFBVQUFBRUJBUDBDNklrZ2oydnJYU1QvaGVRQXdXWUFHdHFWbTNEOVJFUVlpKytxeHZXVzVUUW05RgpsUHB1SldIaVR3MUtweURRanhZRG9KaDd2bFhqdWkvaFRTdTdsTTIvZmloRTdvSEdHTFdsN2ZsaGFod0pRU0tmY0c3ajNpCkR0OGRtVndrTjM0WDFoZjhMNWtkMzFnVzJzMmJjSTZ3VmNtemlobTFUZXZFbTY5Mk50UC9jb09wOHBxMFNSV2dnQ1JEMWoKS0lUQXcwNEJjK01iNVlJbUVvcDdkWVhJL2JWelU4eGtqL0hxbEtuUStqSVg0UmRObE9Sb2tpT0lHaVEzTkI3YldjcGpqUwo2bmQ3S09HTEk3L2hndFAxdnZSV0RvUFFDUEdZaGxyTWI1ZktRU1NzNjNJU2lPNFpIZWVUa1JGMTRhNWViS2FrbWlQN0l1CnF5NmpBbnJ3NTVQeE1BQUFFQkFNVll1b2VxNlVpTFB4TTRkdkdWUnF4VHRPMU55VElMMkJtY2VJOTZyc3BhMWxZdHRjSUUKQnh4enU3Sms4MFdwNG1nMTZWZkgrRzdFWkdxLytSNVhKL2Frdkh4N3JTMElZRU1pa29IQjMvVEJqS1F6bFpUNnp2ZDlNWApOVVlyanYwSThiZFRtMzJrbUVGZmgzdHdiYTZBeS8wRXpTUm1ESkxvbFliZ21ERTVSdEFWRE5GV3A2MUN1dUt0bmRzZFlXCjJkUUlqMmwvSFRVS3d1bk4wSm9HdWJtSDZycTVpUWhjcnhyTkt4RmNLSWExMVN0dmlpc1RpU0hQTTZUcEJweXJSV3YvTDkKbGk4SVhTRWk4b1RheVV0UGtzNWo5ZHlLb1lJc3h1TWhXRGNlNmtmSGxqR2NIenVaL0ZNQ0hpVVdPZ01uVy9zN1Brb0tlaAp6QmNCeW9pbGdWY0FBQUFBQVFJRAotLS0tLUVORCBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0K
+        publicB64: c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFDQVFEREN1NUxwNWhQRkx4ZjBqU2FHa212RXg3cjBJMC9GNVJLVGxhUlhPR3BseXdKUTNOR0dyakNZdTB3d0RRa0NuOTREQTBkUW5lV2dvaXVMdWwzcUxvOGk3SmNyVWNyYU1UQ2toRnVWZHdiSUdjTzg4aWZpQ3RYdjJQYnhpYldmSk16aTJ5UzNyOUo1VSsxWTJUQkZVUXlKRDlROUF1TWliTzhCaGNySjA0a01EaDB3bG9qYmorRCtYVzRkQ3MzSTZNZnVMS2dlaDA1UmQ2VlJBTUtiSzl1ZHBob0llWTJnREVtWFYwVlVxNlUvRW45TEdNVm4yUXdNZWpwcm8vRXRWZHFWci9tcnRzWnBEQmtiSDlOcjJvcUxjOC8vOFUyVnBWbGFJYWw2c2krVEdZOFFPS09Bb0xzb1o1ODhtd3B0WG8yOU9QYVhOM3B6R29YaU94T3VXTVJLK3pDN3k5UzFuNWpHM0EwS3QyKzdxTmVqc2R3YTB0T3lJVTEwVTZYRXcvSDgrNXNDdjlINW5FbnlrMi9UTDFSaEFGWkx5d2NBdUN6LzVJMEV4QjN5bjZieVYyT2w1LzdrcGduZVkxWlZWVnJ1d0I5RjJVWVdqODFUTnFvUE94VkRGaTU4SkVqOThFZWQ2RnMrQjViM2lhZUlCZXV3U0NKOWJ3Q05NMmxFS2R5VjJ2bUQ5aTBjdU1UeDV6WlJMcllWYlFKMEtPWitxbjZqZjlvd1R2azhXYTJZWUY5TUc5TG9Yc2FtNDhCTkk1Q3llK1VxWFhHNTl5K3VSOUpuY1lrM1RINWZMVUg4cTdLZjNlZEs0T010UlkzbSs3dHdLZWhyUEZQbVFHbjlENFVQQW9wRDVyQzR0VDNLV21YeWZtcUMrak94OWVNYXpraGdVaHV3endDZFE9PSAK
+    operations:
+      keys:
+        privateB64: LS0tLS1CRUdJTiBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0KYjNCbGJuTnphQzFyWlhrdGRqRUFBQUFBQkc1dmJtVUFBQUFFYm05dVpRQUFBQUFBQUFBQkFBQUNGd0FBQUFkemMyZ3RjbgpOaEFBQUFBd0VBQVFBQUFnRUFtUTJHWkE4Nzc4U0gvYVAxUVZNbkdBQXU4UmlyeTNrSW4xenJCaU5XcnlxNlB3S0pwbUV6CnFXNzNHc3cvZGpaQThvK3pVdDhqYmtBY2NBOGZmZ0J4b0h2TTVIdWxlZkV3UlBjUGcveGJ5d0U4NjA3N28yLzlLUmpzQk8KQmZsWGE5MUpHTHRMQUpyZ0JOVVFvQXJGYThPZFBERkRVbmFJSDFNMVpLMk1BMmduNmZKWkVrZzZUbFloNGUvb1RxQmJuRApqa2R1MGpBdVNnaEJ5aURQVVEwbmUvZ3J6ZkhMQjlBcXBCSURsKzd4b3Y1WWZYSHRXY2NsL2xTcEZOeFdOOUorVWRkQkZ3CkczU2V6akptU3lJU2FhOGlHamY3STYyNHRGMkhLMHBhSFVpRHVNNXc3a2M5ZmFjSzV2VmNkMGZOdWxHdjhNR25DeGhWZUUKTVpuZHZCTnpJWXpDcjJZKy85Mkk2ZDFGVjc2SWhpRkF0NThVWTBqMXJ2OWNIQVBReEYzSEx5Z2xiUlhaaWxGZnZJOCthRQoydXZaVHFBekZyNCtlUFBuYVBkaHhHZDdKbVFZbTdBS0FCa1d1SkM2WkppSit1NXVtbjBDRXE1czMxOFhtdzZIMks3T0EyCk52cXo1SGRlazBURkNDdHB6NWxDalRpWFJiWjBiNmVJeUExOHFRbHZFOXpxY2x5TE95ZEVxVWhuaTNtMzlUczBUWW8yaVYKdHk5ZFdzZS8xM0p4dm4ydmt2N2h2dXpiSFZKcUx1ZlpKR0Q3bDlkbTlxSTJEdHl6eHY5NHREVzZFRlA4K1ZqK1dEUzRSMApwUzAxb3N3WUVaWDNabUZ1Z2dibGFYbi9WeXBOYVFibGk5dnZHalNwWnhuaE9pOGxBdDRpRE96UmtET2lXTHZjYnpYREtWCnNBQUFjNG1sRDgxcHBRL05ZQUFBQUhjM05vTFhKellRQUFBZ0VBbVEyR1pBODc3OFNIL2FQMVFWTW5HQUF1OFJpcnkza0kKbjF6ckJpTldyeXE2UHdLSnBtRXpxVzczR3N3L2RqWkE4byt6VXQ4amJrQWNjQThmZmdCeG9Idk01SHVsZWZFd1JQY1BnLwp4Ynl3RTg2MDc3bzIvOUtSanNCT0JmbFhhOTFKR0x0TEFKcmdCTlVRb0FyRmE4T2RQREZEVW5hSUgxTTFaSzJNQTJnbjZmCkpaRWtnNlRsWWg0ZS9vVHFCYm5EamtkdTBqQXVTZ2hCeWlEUFVRMG5lL2dyemZITEI5QXFwQklEbCs3eG92NVlmWEh0V2MKY2wvbFNwRk54V045SitVZGRCRndHM1NlempKbVN5SVNhYThpR2pmN0k2MjR0RjJISzBwYUhVaUR1TTV3N2tjOWZhY0s1dgpWY2QwZk51bEd2OE1HbkN4aFZlRU1abmR2Qk56SVl6Q3IyWSsvOTJJNmQxRlY3NkloaUZBdDU4VVkwajFydjljSEFQUXhGCjNITHlnbGJSWFppbEZmdkk4K2FFMnV2WlRxQXpGcjQrZVBQbmFQZGh4R2Q3Sm1RWW03QUtBQmtXdUpDNlpKaUordTV1bW4KMENFcTVzMzE4WG13NkgySzdPQTJOdnF6NUhkZWswVEZDQ3RwejVsQ2pUaVhSYlowYjZlSXlBMThxUWx2RTl6cWNseUxPeQpkRXFVaG5pM20zOVRzMFRZbzJpVnR5OWRXc2UvMTNKeHZuMnZrdjdodnV6YkhWSnFMdWZaSkdEN2w5ZG05cUkyRHR5enh2Cjk0dERXNkVGUDgrVmorV0RTNFIwcFMwMW9zd1lFWlgzWm1GdWdnYmxhWG4vVnlwTmFRYmxpOXZ2R2pTcFp4bmhPaThsQXQKNGlET3pSa0RPaVdMdmNielhES1ZzQUFBQURBUUFCQUFBQ0FRQ0V1d0Q0VjJuUU5tMEZIeUo3WTJSODRQUFVyR09ZRXIvUwpqSjlaZEY0aGpQbDEyWHFNYXJHRjE3QytjYkQ3a0hOa3FCQ0k1dkJ3RlhOVUR4bHRpVzhCRVR3UVRkYWsyUERXYmpmcmEzCmdqcGxBeGRRNnZuMWc2UXQyMElPMWp6bFUwT29DZzB5V2gyNnN4ZzI0d0J3dzNUaGxZdGZ3V0d0WU5qbUZjZGQwUDhFV08KSzhBeDFsZ0Ria0hNMG5HdFEzdC9NUjIvZEg5QVBzYm5SdXJqekhlWWdCRmxDYkxjZEwvMkI1Vk1OckVoZkZnN2VnaXZtaApDdDdyZXZXcUgreVRJNVFXYTJVQXVuTmFPTVVUbFZuSWcxUWN6cjJpSkc4UkpDY3IrTkFMb3k1d243KzZOTmZ6MTJDU0NPCmtHbktPaVdHTXZkSkdzQW85a3V6UkUvU1lqK3QybHh5K3lZTGx2ZWFqUW1FQjF3Rkl3R0F1dmdlbzJFQUwzQWxDTXlSdHEKb1JNeFBuMVVZbE51Q3QrTE1jNkgyVThRY05tOE1ZVDdyZ2JUK0ZvNzRjYk54dTVKKzZvTTJoUzYzVGNOcUYzUXVZRzc1UAp3a2J6NFhyVUxYQXFMYzRpbDVaOGd6QVdndllWNDcrY0pQSXphVnl5elNOaFVvOWYxa1M3SHA0a0lBcC8vQ21rWUs5MDNiCmRLQ2FuYjAyMDRkUHNLSjhNUTlFak9ZaHRuOHVNa0R3eUEwTGh4TEJrUkQ3cm5pa09IejhqS2RRNDUzTFlwYWVKdHhHVUEKVXhqcS81NTRRdGxZUUt3OWJGa0cySlBrTEpkNUtNYVBKNENRNDVZNFVoWW5mMzNuKzVCKzNmVm1zalFLSldRL0FLcTVnYQpyZG9UbkNpa3FIektZZHFuM1BRUUFBQVFCR0U3M09MK2ZhcjNPSzJPSmFCbmZYVTlCTDZRMElQa2VjSXVwQ082NEU3Z2JsCms3dEYxdXpRSmU0VTM5bFVnSWdYb3NsWE81eWhLaHJzSHVKeWZjWGNyaElTRzJnUnE4UnpjNStBckJmSnN0SmlUcjhzVTIKOFNtTEdFVWdjVFFQaDhnVmw1N0k5NjNJaUhrOW5KUW9nWW5aOUdRaHpYNEN5a1VxbElucXZ3bVprR3ArSzAyNEIwLzY2aApCb2pGQ0xnNHhPT0lreDlSWXVqN1JjLzlyVFZwQ25GSXVJaExxWURlMEt2aFJOK2k3dDJWd01NN1lrS1JUS3RxSHJ4K2l6CkxoR3ZtR2ozbHRpSzRXZFhkMEFvQk1jNW12WHA3OExWNnVlYnpRMGtvaHZScjRIL0pOYUJNVjRpNkhTSTFSdmxJNHozaFAKVVN4K1pkNFZxODFjOHNUbkFBQUJBUURLbVAvOXY3ekdZc3R6eE9lRERqMXNoS2xPcUNBN0t2VWdmWlp6bEJmdVFEeDByUgpBMHBubVNxUUo1WitmV1RwT25zVUFUdUVsSHRYYW9TT3J4NHN1c0JjbU1BUzQ1alZIZXVQc2tGN2prQ2FqWHRFK2NjM0pSCmNIQXJxZTZnaDE2Ym5Od0ZUeXVna1ZuVklDekF6YTNCeGtLSmdKRFVCRExLY1dSMllUOUJkbDFaSWIxS2h1TWhFd3hjTlkKdzlycW5kK2xsaUkyanBhU3lpd3BmSkJJR1RQRnBYZ3duMUlGb0pBYlZHTXFRSmdXNHprOW5wSk5qclI5VmwzWXZkK0xraQpuOXRsOEJVbHpXajFPZER4ejB6cG02dTV5cHhVZFRTVTJvejd4SDlvOHViZ2ZrR0tiWFI3cmxmL2dkTUJFL1lRbUg0bVpYCit1ZjJCMFZBc3NUR2c3QUFBQkFRREJaVSttT0E0bi9uWDlmVFZqbjcwLzBJQ0JFdndRZTRuYmpYY2ZmT3kwdTArT1RPeVAKZTdDa1Qyd1dkR0RObUJkZ0ZjWlFuREhyUlBEWDlKa1dTdHlaV3kreWgySElPaC91NXRDanR5cUNhWVl5QjFkUGpLK3hhOApGNHJBOGpHblp2NkQ5QkdUUnd3Qk83VE1XcTF0U0hLUkgyWXN1S2o4Rys0UEczWVFUUUMzeVN5ejJqWmIzYkd2UC8xSElZCnRyRHdZT2Z4SGY0SUFrVVNOR0RUM2ZCQkdWOEQ0OFdOT2xkK3hqWnJMSlVLZTlkRjhKdGZKcWdpZEljTlVWOEt3UVVibEYKQlFMbG1sblhRVGdTdlp6cFo5NG56NzNSNDhNcVVESWlUdkQwSENvcXh5ak9yQStoRGp6dmNVYnl6YXhtSEt5SmJPUjhMZAp4RWtGcUlPSEwxRmhBQUFBQUFFQwotLS0tLUVORCBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0K
+        publicB64: c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFDQVFDWkRZWmtEenZ2eElmOW8vVkJVeWNZQUM3eEdLdkxlUWlmWE9zR0kxYXZLcm8vQW9tbVlUT3BidmNhekQ5Mk5rRHlqN05TM3lOdVFCeHdEeDkrQUhHZ2U4emtlNlY1OFRCRTl3K0QvRnZMQVR6clR2dWpiLzBwR093RTRGK1ZkcjNVa1l1MHNBbXVBRTFSQ2dDc1ZydzUwOE1VTlNkb2dmVXpWa3JZd0RhQ2ZwOGxrU1NEcE9WaUhoNytoT29GdWNPT1IyN1NNQzVLQ0VIS0lNOVJEU2Q3K0N2Tjhjc0gwQ3FrRWdPWDd2R2kvbGg5Y2UxWnh5WCtWS2tVM0ZZMzBuNVIxMEVYQWJkSjdPTW1aTEloSnByeUlhTi9zanJiaTBYWWNyU2xvZFNJTzR6bkR1UnoxOXB3cm05VngzUjgyNlVhL3d3YWNMR0ZWNFF4bWQyOEUzTWhqTUt2Wmo3LzNZanAzVVZYdm9pR0lVQzNueFJqU1BXdS8xd2NBOURFWGNjdktDVnRGZG1LVVYrOGp6NW9UYTY5bE9vRE1Xdmo1NDgrZG85MkhFWjNzbVpCaWJzQW9BR1JhNGtMcGttSW42N202YWZRSVNybXpmWHhlYkRvZllyczREWTIrclBrZDE2VFJNVUlLMm5QbVVLTk9KZEZ0blJ2cDRqSURYeXBDVzhUM09weVhJczdKMFNwU0dlTGViZjFPelJOaWphSlczTDExYXg3L1hjbkcrZmErUy91Rys3TnNkVW1vdTU5a2tZUHVYMTJiMm9qWU8zTFBHLzNpME5ib1FVL3o1V1A1WU5MaEhTbExUV2l6QmdSbGZkbVlXNkNCdVZwZWY5WEtrMXBCdVdMMis4YU5LbG5HZUU2THlVQzNpSU03TkdRTTZKWXU5eHZOY01wV3c9PSAK
+
+
+waitContainers:
+  enabled: true
+
+image:
+  repository: 138150065595.dkr.ecr.us-east-1.amazonaws.com/kaa
+  tag: 0.9.0-patched
+  pullPolicy: IfNotPresent
+
+appender:
+  image:
+    repository: 138150065595.dkr.ecr.us-east-1.amazonaws.com/jbt-kaa-appender-cfg
+    tag: master-02b18c54
+    pullPolicy: IfNotPresent
+
+metadata:
+  partOf: jbt
+  component: kaa
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+serversService:
+  type: LoadBalancer
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  paths: []
+  hosts:
+    - chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: admin
+  initialDelaySeconds: 20
+  # periodSeconds: 30
+  # timeoutSeconds: 30
+  # failureThreshold: 6
+  # successThreshold: 1
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: admin
+  initialDelaySeconds: 20
+  # periodSeconds: 30
+  # timeoutSeconds: 30
+  # failureThreshold: 6
+  # successThreshold: 1
+
+kafkalocal:
+  enabled: true
+  url: "{{ .Release.Name }}-kafkalocal:9092"
+  replicas: 1
+  urlOverride: ""
+  persistence:
+    enabled: false
+  configurationOverrides:
+    "offsets.topic.replication.factor": 1
+    "confluent.support.metrics.enable": false
+  zookeeper:
+    replicaCount: 1
+    persistence:
+      enabled: false
+
+postgresqllocal:
+  enabled: true
+  url: "jdbc:postgresql://{{ .Release.Name }}-{{ default \"postgresqllocal\" .Values.postgresqllocal.nameOverride }}/{{ .Values.postgresqllocal.kaa.postgresqlDatabase }}"
+  persistence:
+    enabled: false
+  postgresqlPassword: postgres
+  postgresqlUsername: postgres
+  postgresqlDatabase: kaa
+  secretName:
+
+cassandralocal:
+  enabled: true
+  url: "{{ .Release.Name }}-{{ default \"cassandralocal\" .Values.cassandralocal.nameOverride }}"
+  urlOverride: ""
+  persistence:
+    enabled: false
+  config:
+    cluster_size: 1
+    seed_size: 0
+
+# ------------------------------------------------------------------------------
+# Zookeeper:
+# ------------------------------------------------------------------------------
+zookeeper:
+  ## If true, install the Zookeeper chart alongside Kafka
+  ## ref: https://github.com/kubernetes/charts/tree/master/incubator/zookeeper
+  enabled: true
+
+  ## Configure Zookeeper resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  resources: ~
+
+  ## Environmental variables to set in Zookeeper
+  env:
+    ## The JVM heap size to allocate to Zookeeper
+    ZK_HEAP_SIZE: "1G"
+
+  persistence:
+    enabled: false
+    ## The amount of PV storage allocated to each Zookeeper pod in the statefulset
+    # size: "2Gi"
+
+  ## Specify a Zookeeper imagePullPolicy
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  image:
+    PullPolicy: "IfNotPresent"
+
+  ## If the Zookeeper Chart is disabled a URL and port are required to connect
+  url: ""
+  port: 2181
+
+  ## Pod scheduling preferences (by default keep pods within a release on separate nodes).
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  ## By default we don't set affinity:
+  affinity: {}  # Criteria by which pod label-values influence scheduling for zookeeper pods.
+  # podAntiAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     - topologyKey: "kubernetes.io/hostname"
+  #       labelSelector:
+  #         matchLabels:
+  #           release: zookeeper

@@ -1,0 +1,125 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kaa.fullname" . }}-config
+  labels:
+    app.kubernetes.io/name: {{ include "kaa.name" . }}
+    helm.sh/chart: {{ include "kaa.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  admin-dao.properties: |
+    hibernate_dialect={{ .Values.kaa.config.adminDao.hibernateDialect }}
+    hibernate_format_sql={{ .Values.kaa.config.adminDao.hibernateFormatSql }}
+    hibernate_show_sql={{ .Values.kaa.config.adminDao.hibernateShowSql }}
+    hibernate_hbm2ddl_auto={{ .Values.kaa.config.adminDao.hibernateHbm2DdlAuto }}
+    jdbc_driver_className={{ .Values.kaa.config.adminDao.jdbcDriverClassname }}
+    jdbc_username={{ include "kaa.postgresqlUsername" . }}
+    jdbc_password={{ include "kaa.postgresqlPassword" . }}
+    jdbc_url={{ include "kaa.postgresqlUrlDatasource" . }}
+
+  bootstrap-http-transport.config: |
+    {
+      "bindInterface":{{ .Values.kaa.config.bootstrapHttpTransport.bindInterface | quote }},
+      "bindPort":{{ .Values.kaa.config.bootstrapHttpTransport.bindPort }},
+      "publicInterface":{{ .Values.kaa.config.bootstrapHttpTransport.publicInterface | quote }},
+      "publicPorts":{{ .Values.kaa.config.bootstrapHttpTransport.publicPorts | quote }},
+      "maxBodySize":{{ .Values.kaa.config.bootstrapHttpTransport.maxBodySize }}
+    }
+
+  bootstrap-tcp-transport.config: |
+    {
+      "bindInterface":{{ .Values.kaa.config.bootstrapTcpTransport.bindInterface | quote }},
+      "bindPort":{{ .Values.kaa.config.bootstrapTcpTransport.bindPort }},
+      "publicInterface":{{ .Values.kaa.config.bootstrapTcpTransport.publicInterface | quote }},
+      "publicPorts":{{ .Values.kaa.config.bootstrapTcpTransport.publicPorts | quote }}
+    }
+
+  common-dao-cassandra.properties: |
+    cluster_name={{ .Values.kaa.config.commonDaoCassandra.clusterName }}
+    keyspace_name={{ .Values.kaa.config.commonDaoCassandra.keyspaceName }}
+    node_list={{ printf "%s:%s" (include "kaa.cassandraUrl" . ) "9042" }}
+    use_ssl={{ .Values.kaa.config.commonDaoCassandra.useSsl }}
+    use_jmx={{ .Values.kaa.config.commonDaoCassandra.useJmx }}
+    compression={{ .Values.kaa.config.commonDaoCassandra.compression }}
+    disable_metrics={{ .Values.kaa.config.commonDaoCassandra.disableMetrics }}
+    use_credentials={{ .Values.kaa.config.commonDaoCassandra.useCredentials }}
+    username={{ .Values.kaa.config.commonDaoCassandra.username }}
+    password={{ .Values.kaa.config.commonDaoCassandra.password }}
+    socket_connect_timeout={{ .Values.kaa.config.commonDaoCassandra.socketConnectTimeout }}
+    socket_read_timeout={{ .Values.kaa.config.commonDaoCassandra.socketReadTimeout }}
+    socket_keep_alive={{ .Values.kaa.config.commonDaoCassandra.socketKeepAlive }}
+    socket_reuse_address={{ .Values.kaa.config.commonDaoCassandra.socketReuseAddress }}
+    socket_so_linger={{ .Values.kaa.config.commonDaoCassandra.socketSoLinger }}
+    socket_tcp_no_delay={{ .Values.kaa.config.commonDaoCassandra.socketTcpNoDelay }}
+    socket_receive_buffer_size={{ .Values.kaa.config.commonDaoCassandra.socketReceiveBufferSize }}
+    socket_send_buffer_size={{ .Values.kaa.config.commonDaoCassandra.socketSendBufferSize }}
+    query_consistency_level={{ .Values.kaa.config.commonDaoCassandra.queryConsistencyLevel }}
+    query_default_fetch_size={{ .Values.kaa.config.commonDaoCassandra.queryDefaultFetchSize }}
+    batch_type={{ .Values.kaa.config.commonDaoCassandra.batchType }}
+    read_consistency_level={{ .Values.kaa.config.commonDaoCassandra.readConsistencyLevel }}
+    write_consistency_level={{ .Values.kaa.config.commonDaoCassandra.writeConsistencyLevel }}
+
+  kaa-node.properties: |
+    control_server_enabled={{ .Values.kaa.config.kaaNode.controlServerEnabled }}
+    bootstrap_server_enabled={{ .Values.kaa.config.kaaNode.bootstrapServerEnabled }}
+    operations_server_enabled={{ .Values.kaa.config.kaaNode.operationsServerEnabled }}
+    thrift_host={{ .Values.kaa.config.kaaNode.thriftHost }}
+    thrift_port={{ .Values.kaa.config.kaaNode.thriftPort }}
+    admin_port={{ .Values.kaa.config.kaaNode.adminPort }}
+    zk_enabled={{ .Values.kaa.config.kaaNode.zkEnabled }}
+    zk_host_port_list={{ printf "%s:%s" (include "kaa.zookeeper.fullname" . ) "2181" }}
+    zk_max_retry_time={{ .Values.kaa.config.kaaNode.zkMaxRetryTime }}
+    zk_sleep_time={{ .Values.kaa.config.kaaNode.zkSleepTime }}
+    zk_ignore_errors={{ .Values.kaa.config.kaaNode.zkIgnoreErrors }}
+    loadmgmt_min_diff={{ .Values.kaa.config.kaaNode.loadmgmtMinDiff }}
+    loadmgmt_max_init_redirect_probability={{ .Values.kaa.config.kaaNode.loadmgmtMaxInitRedirectProbability }}
+    loadmgmt_max_session_redirect_probability={{ .Values.kaa.config.kaaNode.loadmgmtMaxSessionRedirectProbability }}
+    recalculation_period={{ .Values.kaa.config.kaaNode.recalculationPeriod }}
+    user_hash_partitions={{ .Values.kaa.config.kaaNode.userHashPartitions }}
+    max_number_neighbor_connections={{ .Values.kaa.config.kaaNode.maxNumberNeighborConnections }}
+    ops_server_history_ttl={{ .Values.kaa.config.kaaNode.opsServerHistoryTtl }}
+    worker_thread_pool={{ .Values.kaa.config.kaaNode.workerThreadPool }}
+    bootstrap_keys_private_key_location={{ .Values.kaa.config.kaaNode.bootstrapKeysPrivateKeyLocation }}
+    bootstrap_keys_public_key_location={{ .Values.kaa.config.kaaNode.bootstrapKeysPublicKeyLocation }}
+    operations_keys_private_key_location={{ .Values.kaa.config.kaaNode.operationsKeysPrivateKeyLocation }}
+    operations_keys_public_key_location={{ .Values.kaa.config.kaaNode.operationsKeysPublicKeyLocation }}
+    support_unencrypted_connection={{ .Values.kaa.config.kaaNode.supportUnencryptedConnection }}
+    transport_bind_interface={{ .Values.kaa.config.kaaNode.transportBindInterface }}
+    transport_public_interface={{ .Values.kaa.config.kaaNode.transportPublicInterface }}
+    metrics_enabled={{ .Values.kaa.config.kaaNode.metricsEnabled }}
+    logs_root_dir={{ .Values.kaa.config.kaaNode.logsRootDir }}
+    date_pattern={{ .Values.kaa.config.kaaNode.datePattern }}
+    layout_pattern={{ .Values.kaa.config.kaaNode.layoutPattern }}
+    tmp_keys={{ .Values.kaa.config.kaaNode.tmpKeys }}
+    load_stats_update_frequency={{ .Values.kaa.config.kaaNode.loadStatsUpdateFrequency }}
+    additional_plugins_scan_package={{ .Values.kaa.config.kaaNode.additionalPluginsScanPackage }}
+
+  nosql-dao.properties: |
+    nosql_db_provider_name={{ .Values.kaa.config.nosqlDao.nosqlDbProviderName }}
+
+  operations-http-transport.config: |
+    {
+      "bindInterface":{{ .Values.kaa.config.operationsHttpTransport.bindInterface | quote }},
+      "bindPort":{{ .Values.kaa.config.operationsHttpTransport.bindPort }},
+      "publicPorts":{{ .Values.kaa.config.operationsHttpTransport.publicPorts | quote }},
+      "maxBodySize":{{ .Values.kaa.config.operationsHttpTransport.maxBodySize }}
+    }
+  operations-tcp-transport.config: |
+    {
+      "bindInterface":{{ .Values.kaa.config.operationsTcpTransport.bindInterface | quote  }},
+      "bindPort":{{ .Values.kaa.config.operationsTcpTransport.bindPort  }},
+      "publicPorts":{{ .Values.kaa.config.operationsTcpTransport.publicPorts | quote  }}
+    }
+  sql-dao.properties: |
+    db_name={{ .Values.kaa.config.sqlDao.dbName }}
+    dao_max_wait_time={{ .Values.kaa.config.sqlDao.daoMaxWaitTime }}
+    hibernate_dialect={{ .Values.kaa.config.sqlDao.hibernateDialect }}
+    hibernate_format_sql={{ .Values.kaa.config.sqlDao.hibernateFormatSql }}
+    hibernate_show_sql={{ .Values.kaa.config.sqlDao.hibernateShowSql }}
+    hibernate_hbm2ddl_auto={{ .Values.kaa.config.sqlDao.hibernateHbm2DdlAuto }}
+    jdbc_driver_className={{ .Values.kaa.config.sqlDao.jdbcDriverClassname }}
+    jdbc_username={{ include "kaa.postgresqlUsername" . }}
+    jdbc_password={{ include "kaa.postgresqlPassword" . }}
+    jdbc_host_port={{ include "kaa.postgresqlUrl" . }}:5432
+    sql_provider_name={{ .Values.kaa.config.sqlDao.sqlProviderName }}
