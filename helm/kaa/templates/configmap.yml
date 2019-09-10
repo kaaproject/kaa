@@ -22,7 +22,6 @@ data:
     {
       "bindInterface":{{ .Values.kaa.config.bootstrapHttpTransport.bindInterface | quote }},
       "bindPort":{{ .Values.kaa.config.bootstrapHttpTransport.bindPort }},
-      "publicInterface":{{ .Values.kaa.config.bootstrapHttpTransport.publicInterface | quote }},
       "publicPorts":{{ .Values.kaa.config.bootstrapHttpTransport.publicPorts | quote }},
       "maxBodySize":{{ .Values.kaa.config.bootstrapHttpTransport.maxBodySize }}
     }
@@ -31,7 +30,6 @@ data:
     {
       "bindInterface":{{ .Values.kaa.config.bootstrapTcpTransport.bindInterface | quote }},
       "bindPort":{{ .Values.kaa.config.bootstrapTcpTransport.bindPort }},
-      "publicInterface":{{ .Values.kaa.config.bootstrapTcpTransport.publicInterface | quote }},
       "publicPorts":{{ .Values.kaa.config.bootstrapTcpTransport.publicPorts | quote }}
     }
 

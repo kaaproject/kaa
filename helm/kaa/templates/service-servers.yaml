@@ -7,6 +7,8 @@ metadata:
     helm.sh/chart: {{ include "kaa.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 spec:
   type: {{ .Values.serversService.type }}
   ports:
@@ -14,18 +16,30 @@ spec:
       targetPort: bootstrap-http
       protocol: TCP
       name: bootstrap-http
+      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.bootstrapHttpNodePort))) }}
+      nodePort: {{.Values.serversService.bootstrapHttpNodePort}}
+      {{ end }}
     - port: {{ .Values.kaa.config.bootstrapTcpTransport.bindPort }}
       targetPort: bootstrap-tcp
       protocol: TCP
       name: bootstrap-tcp
+      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.bootstrapTcpNodePort))) }}
+      nodePort: {{.Values.serversService.bootstrapTcpNodePort}}
+      {{ end }}
     - port: {{ .Values.kaa.config.operationsHttpTransport.bindPort }}
       targetPort: operations-http
       protocol: TCP
       name: operations-http
+      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.operationsHttpNodePort))) }}
+      nodePort: {{.Values.serversService.operationsHttpNodePort}}
+      {{ end }}
     - port: {{ .Values.kaa.config.operationsTcpTransport.bindPort }}
       targetPort: operations-tcp
       protocol: TCP
       name: operations-tcp
+      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.operationsTcpNodePort))) }}
+      nodePort: {{.Values.serversService.operationsTcpNodePort}}
+      {{ end }}
   selector:
     app.kubernetes.io/name: {{ include "kaa.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
