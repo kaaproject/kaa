@@ -29,8 +29,27 @@ spec:
         - name: wait-for-postgres
           image: alpine:3.9.2
           command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.postgresqlUrl" . }} 5432; do sleep 1; done']
+        - name: wait-for-flume
+          image: alpine:3.9.2
+          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.flumeHost" . }} {{ include "kaa.flumePort" . }}; do sleep 1; done']
+        - name: wait-for-kafka
+          image: alpine:3.9.2
+          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.kafkaHost" . }} {{ include "kaa.kafkaPort" . }}; do sleep 1; done']
         - name: lb-ip-parser
-          image: turboazot/aws-cli-kubectl:0.0.1
+          image: turboazot/aws-cli-kubectl:0.0.2
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kaa.fullname" . }}-aws
+                  key: aws-access-key-id
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "kaa.fullname" . }}-aws
+                  key: aws-secret-access-key
+            - name: AWS_DEFAULT_REGION
+              value: {{ .Values.aws.region }}
           volumeMounts:
           - mountPath: /srv/lb-ip
             name: lb-ip
@@ -39,8 +58,7 @@ spec:
             - "-c"
             - |
               set -e
-              sleep 30
-              kubectl get svc | grep {{ include "kaa.fullname" . }}-servers | awk '{ print $3 }' > /srv/lb-ip/data
+              aws ec2 describe-addresses --filter Name=allocation-id,Values={{ required ".Values.kaa.eip is required" .Values.kaa.eip }} | jq -r ".Addresses[0].PublicIp" > /srv/lb-ip/data
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -59,7 +77,7 @@ spec:
             - name: operations-http
               containerPort: {{ .Values.kaa.config.operationsHttpTransport.bindPort }}
               protocol: TCP
-            - name: opearations-tcp
+            - name: operations-tcp
               containerPort: {{ .Values.kaa.config.operationsTcpTransport.bindPort }}
               protocol: TCP
           volumeMounts:

@@ -75,6 +75,21 @@ Create chart name and version as used by the chart label.
 {{- tpl $name . -}}
 {{- end -}}
 
+{{- define "kaa.flumeHost" -}}
+{{- $name := .Values.kaa.flumeHost | default .Values.global.flume.host -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{- define "kaa.flumePort" -}}
+{{- $name := .Values.kaa.flumePort | default .Values.global.flume.port -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{- define "kaa.kafkaUrl" -}}
+{{- $name := .Values.kafkalocal.urlOverride | default (printf "%s:%s" .Values.global.kafka.host .Values.global.kafka.port) | default .Values.kafkalocal.url -}}
+{{- tpl $name . -}}
+{{- end -}}
+
 {{- define "kaa.postgresqlUrl" -}}
 {{- $name := .Values.postgresqllocal.urlOverride | default .Values.global.postgresql.url | default .Values.postgresqllocal.url -}}
 {{- tpl $name . -}}
