@@ -19,7 +19,7 @@ spec:
       initContainers:
         - name: wait-for-kaa
           image: alpine:3.9.2
-          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.fullname" . }} {{ .Values.service.port }}; do sleep 1; done']
+          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.fullname" . }} {{ include "kaa.kaaPort" . }}; do sleep 1; done']
         - name: wait-for-flume
           image: alpine:3.9.2
           command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.flumeHost" . }} {{ include "kaa.flumePort" . }}; do sleep 1; done']
@@ -42,7 +42,7 @@ spec:
           - name: JBT_QA_KAA_HOST
             value: {{ include "kaa.fullname" . | quote }}
           - name: JBT_QA_KAA_PORT
-            value: {{ .Values.service.port | quote }}
+            value: {{ include "kaa.kaaPort" . | quote }}
           - name: JBT_QA_KAA_USER
             valueFrom:
               secretKeyRef:

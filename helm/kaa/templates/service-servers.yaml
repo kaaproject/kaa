@@ -10,36 +10,39 @@ metadata:
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: nlb
 spec:
-  type: {{ .Values.serversService.type }}
+  type: {{ .Values.serviceServers.type }}
   ports:
     - port: {{ .Values.kaa.config.bootstrapHttpTransport.bindPort }}
       targetPort: bootstrap-http
       protocol: TCP
       name: bootstrap-http
-      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.bootstrapHttpNodePort))) }}
-      nodePort: {{.Values.serversService.bootstrapHttpNodePort}}
+      {{ if (and (eq .Values.serviceServers.type "NodePort") (not (empty .Values.serviceServers.bootstrapHttpNodePort))) }}
+      nodePort: {{.Values.serviceServers.bootstrapHttpNodePort}}
       {{ end }}
     - port: {{ .Values.kaa.config.bootstrapTcpTransport.bindPort }}
       targetPort: bootstrap-tcp
       protocol: TCP
       name: bootstrap-tcp
-      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.bootstrapTcpNodePort))) }}
-      nodePort: {{.Values.serversService.bootstrapTcpNodePort}}
+      {{ if (and (eq .Values.serviceServers.type "NodePort") (not (empty .Values.serviceServers.bootstrapTcpNodePort))) }}
+      nodePort: {{.Values.serviceServers.bootstrapTcpNodePort}}
       {{ end }}
     - port: {{ .Values.kaa.config.operationsHttpTransport.bindPort }}
       targetPort: operations-http
       protocol: TCP
       name: operations-http
-      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.operationsHttpNodePort))) }}
-      nodePort: {{.Values.serversService.operationsHttpNodePort}}
+      {{ if (and (eq .Values.serviceServers.type "NodePort") (not (empty .Values.serviceServers.operationsHttpNodePort))) }}
+      nodePort: {{.Values.serviceServers.operationsHttpNodePort}}
       {{ end }}
     - port: {{ .Values.kaa.config.operationsTcpTransport.bindPort }}
       targetPort: operations-tcp
       protocol: TCP
       name: operations-tcp
-      {{ if (and (eq .Values.serversService.type "NodePort") (not (empty .Values.serversService.operationsTcpNodePort))) }}
-      nodePort: {{.Values.serversService.operationsTcpNodePort}}
+      {{ if (and (eq .Values.serviceServers.type "NodePort") (not (empty .Values.serviceServers.operationsTcpNodePort))) }}
+      nodePort: {{.Values.serviceServers.operationsTcpNodePort}}
       {{ end }}
+
+
+
   selector:
     app.kubernetes.io/name: {{ include "kaa.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

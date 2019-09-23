@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "kaa.fullname" . }}
+  name: {{ include "kaa.fullname" . }}-jmx
   labels:
     app.kubernetes.io/name: {{ include "kaa.name" . }}
     helm.sh/chart: {{ include "kaa.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.serviceJmx.type }}
   ports:
-    - port: {{ include "kaa.kaaPort" . }}
-      targetPort: admin
+    - port: {{ .Values.serviceJmx.port }}
+      targetPort: jmx
       protocol: TCP
       name: http
   selector:
