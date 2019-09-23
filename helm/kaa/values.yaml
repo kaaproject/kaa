@@ -11,10 +11,17 @@ global:
 
 replicaCount: 1
 
+metadata:
+  partOf: jbt
+  component: kaa
+
 aws:
-  accessKey:
-  secretKey:
+  accessKey: ""
+  secrettKey: ""
   region: us-east-1
+
+nameOverride: ""
+fullnameOverride: ""
 
 kaa:
   eip:
@@ -161,18 +168,19 @@ appender:
     tag: master-02b18c54
     pullPolicy: IfNotPresent
 
-metadata:
-  partOf: jbt
-  component: kaa
-
-nameOverride: ""
-fullnameOverride: ""
-
 service:
   type: ClusterIP
-  port: 80
+  port:
 
-serversService:
+serviceJmx:
+  type: ClusterIP
+  port: 7091
+
+serviceThrift:
+  type: ClusterIP
+  port: 9090
+
+serviceServers:
   type: LoadBalancer
 
 ingress:
@@ -238,6 +246,8 @@ kafkalocal:
     "confluent.support.metrics.enable": false
   zookeeper:
     replicaCount: 1
+    image:
+      tag: v2
     persistence:
       enabled: false
 

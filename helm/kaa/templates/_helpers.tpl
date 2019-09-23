@@ -55,6 +55,11 @@ Create chart name and version as used by the chart label.
 {{- tpl $name . -}}
 {{- end -}}
 
+{{- define "kaa.kaaPort" -}}
+{{- $name := .Values.service.port | default .Values.global.kaa.port -}}
+{{- $name -}}
+{{- end -}}
+
 {{/* Env values */}}
 {{- define "kaa.envVariables" -}}
 {{- with .Values.env -}}
@@ -117,7 +122,7 @@ Create chart name and version as used by the chart label.
 
 {{- define "kaa.cassandraUrl" -}}
 {{- $name := .Values.cassandralocal.urlOverride | default .Values.global.cassandra.url | default .Values.cassandralocal.url -}}
-{{- tpl $name . | quote -}}
+{{- tpl $name . -}}
 {{- end -}}
 
 {{/*
@@ -126,4 +131,19 @@ Create a default fully qualified app name for the postgres requirement.
 {{- define "kaa.zookeeper.fullname" -}}
 {{- $zookeeperContext := dict "Values" .Values.zookeeper "Release" .Release "Chart" (dict "Name" "zookeeper") -}}
 {{ template "zookeeper.fullname" $zookeeperContext }}
+{{- end -}}
+
+{{- define "kaa.kafkaZookeeperHost" -}}
+{{- $name := .Values.global.zookeeper.host -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{- define "kaa.kafkaSeedCompleteTopic" -}}
+{{- $name := .Values.global.kafka.topicsJob.seedCompleteTopic -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{- define "kaa.cassandraSeedCompleteTable" -}}
+{{- $name := .Values.global.cassandra.seedJob.seedCompleteTable -}}
+{{- tpl $name . -}}
 {{- end -}}

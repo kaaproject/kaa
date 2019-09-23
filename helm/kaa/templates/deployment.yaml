@@ -23,18 +23,18 @@ spec:
       {{ include "kaa.imagePullSecrets" . }}
       {{- if .Values.waitContainers.enabled }}
       initContainers:
+        - name: wait-for-kafka
+          image: confluentinc/cp-kafka:4.0.0
+          command: ["timeout", "600", "sh", "-c", 'until timeout 15 kafka-topics --list --zookeeper {{ include "kaa.kafkaZookeeperHost" . }} | grep {{ include "kaa.kafkaSeedCompleteTopic" . }}; do sleep 2; done']
         - name: wait-for-cassandra
-          image: alpine:3.9.2
-          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "cassandraUrl" . }} 9042; do sleep 1; done']
+          image: cassandra:3.11.3
+          command: ["timeout", "600", "sh", "-c", 'until cqlsh {{ include "kaa.cassandraUrl" . }} 9042 -e "describe {{ include "kaa.cassandraSeedCompleteTable" . }}"; do sleep 2; done']
         - name: wait-for-postgres
           image: alpine:3.9.2
           command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.postgresqlUrl" . }} 5432; do sleep 1; done']
         - name: wait-for-flume
           image: alpine:3.9.2
           command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.flumeHost" . }} {{ include "kaa.flumePort" . }}; do sleep 1; done']
-        - name: wait-for-kafka
-          image: alpine:3.9.2
-          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.kafkaHost" . }} {{ include "kaa.kafkaPort" . }}; do sleep 1; done']
         - name: lb-ip-parser
           image: turboazot/aws-cli-kubectl:0.0.2
           env:
@@ -80,6 +80,12 @@ spec:
             - name: operations-tcp
               containerPort: {{ .Values.kaa.config.operationsTcpTransport.bindPort }}
               protocol: TCP
+            - name: thrift
+              containerPort: 9090
+              protocol: TCP
+            - name: jmx
+              containerPort: 7091
+              protocol: TCP
           volumeMounts:
             - name: kaa-config
               mountPath: /usr/lib/kaa-node/conf/admin-dao.properties
@@ -94,7 +100,7 @@ spec:
               mountPath: /usr/lib/kaa-node/conf/common-dao-cassandra.properties
               subPath: common-dao-cassandra.properties
             - name: kaa-config
-              mountPath: /usr/lib/kaa-node/conf/kaa-node.properties
+              mountPath: /usr/lib/kaa-node/conf/kaa-node.properties.template
               subPath: kaa-node.properties
             - name: kaa-config
               mountPath: /usr/lib/kaa-node/conf/nosql-dao.properties
@@ -128,11 +134,11 @@ spec:
               sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config.template > /usr/lib/kaa-node/conf/bootstrap-tcp-transport.config
               sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/operations-http-transport.config.template > /usr/lib/kaa-node/conf/operations-http-transport.config
               sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/operations-tcp-transport.config.template > /usr/lib/kaa-node/conf/operations-tcp-transport.config
+              sed -e "/^transport_bind_interface.*$/a"$'\\\n'"transport_public_interface=$(cat /srv/lb-ip/data)"$'\n' /usr/lib/kaa-node/conf/kaa-node.properties.template > /usr/lib/kaa-node/conf/kaa-node.properties
               java -cp /usr/lib/kaa-node/conf:/usr/lib/kaa-node/lib/* \
               -Xms1G \
               -Xmx4G \
               -XX:+UseG1GC \
-              -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 \
               -Dfile.encoding=UTF8 \
               -Dserver_log_dir=/var/log/kaa \
               -Dserver_log_sufix= \

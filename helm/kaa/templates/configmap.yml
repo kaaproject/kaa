@@ -84,7 +84,6 @@ data:
     operations_keys_public_key_location={{ .Values.kaa.config.kaaNode.operationsKeysPublicKeyLocation }}
     support_unencrypted_connection={{ .Values.kaa.config.kaaNode.supportUnencryptedConnection }}
     transport_bind_interface={{ .Values.kaa.config.kaaNode.transportBindInterface }}
-    transport_public_interface={{ .Values.kaa.config.kaaNode.transportPublicInterface }}
     metrics_enabled={{ .Values.kaa.config.kaaNode.metricsEnabled }}
     logs_root_dir={{ .Values.kaa.config.kaaNode.logsRootDir }}
     date_pattern={{ .Values.kaa.config.kaaNode.datePattern }}
