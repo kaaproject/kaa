@@ -72,6 +72,14 @@ Decoupling of endpoint tokens and endpoint IDs allows you to suspend, revoke, re
 To communicate with the Kaa platform, your devices or gateways do not need to know endpoint IDs,---just tokens.
 
 
+# Endpoint metadata
+
+Endpoint metadata are key-value attributes associated with an endpoint. It can be endpoint's location, description, serial number, hardware version, etc.
+Metadata is stored on [Endpoint Registered service][EPR] and can be read or updated in two ways: either via the [communication layer][communication] or [EPR REST API][EPR REST API].
+
+Simply put, endpoint metadata is a JSON document of a free structure that is associated with a specific endpoint.
+
+
 # Kaa client
 
 To have your devices (endpoints) exchange data with the Kaa servers, you need a *client*.
