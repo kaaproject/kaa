@@ -1,0 +1,10 @@
+
+project: kaabb
+latest: "current"
+
+jekdocs:
+ - md:
+     path: ""
+     target: ""
+     copy:
+       docs: doc

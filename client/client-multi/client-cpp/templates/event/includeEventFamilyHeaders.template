@@ -1,1 +1,0 @@
-#include "kaa/event/gen/${event_family_class_name}.hpp"

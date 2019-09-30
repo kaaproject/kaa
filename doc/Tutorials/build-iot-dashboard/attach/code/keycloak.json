@@ -1,0 +1,8 @@
+{
+  "realm": "kaa",
+  "auth-server-url": "",
+  "ssl-required": "external",
+  "resource": "kaa-frontend",
+  "public-client": true,
+  "confidential-port": 0
+}

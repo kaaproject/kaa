@@ -1,8 +1,0 @@
-{
-  "type":"record",
-  "name": "someFields",
-  "fields":[
-    {"name":"label", "type":"string"},
-    {"name":"__uuid", "type":"string"}
-  ]
-}

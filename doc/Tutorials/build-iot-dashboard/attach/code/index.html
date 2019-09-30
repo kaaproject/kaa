@@ -1,0 +1,36 @@
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="keycloak.js"></script>
+    <script src="index.js"></script>
+  </head>
+
+  <body>
+    <div id="container">
+      <table>
+        <caption id="table-caption">My endpoints</caption>
+        <thead>
+          <tr>
+            <th>Endpoint ID</th>
+            <th>Application version</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody id="table">
+        </tbody>
+      </table>
+    </div>
+
+    <p id="save-button">
+    </p>
+  </body>
+
+  <script>
+    var keycloak = Keycloak();
+    keycloak.init({onLoad: 'login-required'}).success(function() {
+      renderApp(keycloak);
+    }).error(function () {
+      renderError('Failed to initialize Keycloak client');
+    });
+  </script>
+</html>

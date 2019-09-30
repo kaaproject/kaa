@@ -1,1 +1,0 @@
-    [result addObject:@"{event_class_fqn}"];

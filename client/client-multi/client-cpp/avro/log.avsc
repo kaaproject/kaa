@@ -1,1 +1,0 @@
-{"type":"record","name":"SuperRecord","namespace":"org.kaaproject.kaa.scheme.sample","fields":[{"name":"logdata","type":{"type":"string","avro.java.string":"String"}}],"version":1,"displayName":"Data"}
