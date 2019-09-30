@@ -20,10 +20,6 @@ pipeline {
     stage ('Docs') {
       agent { label "docs-builder_v1" }
 
-      when {
-        changeset "doc/**/*"
-      }
-
       steps {
         // Workaround to prevent Jekver from building tags.
         // Since doc generation flow will be changed really soon, I see no point
