@@ -128,6 +128,6 @@ The response on **successful** data processing will arrive to the `kp1/demo_appl
 The response on **unsuccessful** data processing will arrive to the `kp1/demo_application_v1/dcx/myToken/json/42/error` MQTT topic.
 
 
-# Next steps
+## Next steps
 
 - [How to connect a device tutorial][how to connect device] - find out how to connect your device to the Kaa platform.

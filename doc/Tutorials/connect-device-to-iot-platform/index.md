@@ -16,7 +16,7 @@ In this tutorial we will look at how to connect a simulated device to the Kaa pl
 You will learn how to create a digital twin of your device, connect it, submit some metadata attributes, and view them in the Kaa web interface.
 
 
-# Overview
+## Overview
 
 We will simulate a smart energy scenario.
 Our [endpoint][endpoint] will act as a smart meter and report its model and MAC address to the Kaa platform.
@@ -25,7 +25,7 @@ Also, we will configure an [Endpoint List widget]({{docs_url}}WD/docs/current/Wi
 ![Solution blueprint](attach/img/architecture-overview.svg)
 
 
-# Prerequisites
+## Prerequisites
 
 1. You understand the Kaa platform [device management basics][identity].
 2. The Kaa platform is up and running with the following microservices included:
@@ -37,7 +37,7 @@ Also, we will configure an [Endpoint List widget]({{docs_url}}WD/docs/current/Wi
 3. [Python 2.7](https://www.python.org/download/releases/2.7/) is installed on your machine.
 
 
-# Background information
+## Background information
 
 Kaa platform by default uses an **MQTT-based transport**: the [Kaa Protocol (1/KP)]({{rfc_url}}0001/README.md).
 1/KP acts as a multiplexing protocol and allows running higher level (extension) protocols on top of it.
@@ -54,7 +54,7 @@ Check its extension protocol [10/EPMP]({{rfc_url}}0010/README.md) for more infor
 Now let's get to the action.
 
 
-# Playbook
+## Playbook
 
 **1**. Go to the Web Dashboard and configure (if it is not already configured) an [Endpoint List widget]({{docs_url}}WD/docs/current/Widgets/Ep-list/).
 Add `meterDescription` field to the endpoint creation form. We will fill it out during the endpoint record creation.
@@ -98,11 +98,11 @@ Now our device is listed in the Endpoint List widget along with its metadata:
 ![Endpoint List](attach/img/endpoint-list.png)
 
 
-# Resources
+## Resources
 
 All tutorial resources are located on [GitHub]({{code_url}}).
 
-# Next steps
+## Next steps
 
 - [Device management][identity] - find out more about device management feature.
 - [Data collection tutorial][data collection tutorial] - learn how to collect telemetry from your device into the platform.

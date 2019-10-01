@@ -13,7 +13,7 @@ sort_idx: 3
 {:toc}
 
 
-# Overview
+## Overview
 
 In this tutorial, we will learn how to implement simple **web dashboard (interface)** in vanilla JavaScript that integrates with the Kaa IoT platform and provides simple **device management** functionality. 
 We will teach you how to:
@@ -25,7 +25,7 @@ We will teach you how to:
 ![Architecture overview](attach/img/architecture-overview.svg)
 
 
-# Prerequisites
+## Prerequisites
 
 1. You have **web server for serving static HTML**. In this tutorial Intellij Idea built-in web server is used. [Nginx][nginx] is another option.
 2. Keycloak has a configured client with the ["openid-connect"][openid] in *"Client Protocol"* and ["public"](https://www.keycloak.org/docs/4.8/server_admin/#_access-type) in *"Access Type"* on its administration page (Keycloak administration dashboard -> "Clients" in left sidebar -> "kaa-frontend" or other client -> "Settings" tab). 
@@ -38,7 +38,7 @@ In our case we will work with the client that has the `kaa-frontend` client ID.
 5. There is a registered user in Keycloak whose credentials we will use.
 
 
-# Playbook
+## Playbook
 
 Keycloak comes with a **[client-side JavaScript library](https://www.keycloak.org/docs/4.8/securing_apps/index.html#_javascript_adapter)** that can be used to secure HTML5/JavaScript applications. 
 The library can be retrieved directly from the Keycloak server at `https://{keycloak-host}/auth/js/keycloak.js` REST API endpoint.
@@ -300,12 +300,12 @@ Refresh the page and verify that all changes were saved.
 Now you can use the same approach with the `Authorization` header to communicate with the [Endpoint Time Series service][EPTS], [Endpoint Configuration Repository service][ECR], [Credential Management service][CM] and other microservices with the REST API to operate with time series, configuration, credentials, etc.
 
 
-# Resources
+## Resources
 
 All tutorial resources are located on [GitHub]({{code_url}}).
 
 
-# Tips
+## Tips
 
 You can **obtain user access token manually**. For that execute the next CUrl command:
 

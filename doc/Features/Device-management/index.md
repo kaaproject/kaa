@@ -71,6 +71,6 @@ It also allows to forbid updating specific fields, rendering them read-only.
 EPMX itself does not persist metadata and integrates with [Endpoint Register service (EPR)][EPR] for that purpose.
 
 
-# Next steps
+## Next steps
 
 - [How to connect a device tutorial][how to connect device] - find out how to connect your device to the Kaa platform.
