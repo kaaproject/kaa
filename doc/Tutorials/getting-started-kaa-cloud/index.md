@@ -14,7 +14,7 @@ sort_idx: 5
 {:toc}
 
 
-# Overview
+## Overview
 
 <!--todo: return link to cloud-->
 In this tutorial we will look at how to get started with Kaa Cloud:
@@ -22,13 +22,13 @@ In this tutorial we will look at how to get started with Kaa Cloud:
 2. How to send and visualize device simulated data in [Web Dashboard](https://docs.kaaiot.io/WD/docs/current/Overview/).
 
 
-# Prerequisites
+## Prerequisites
 <!--todo: return link to cloud-->
 1. You have an account on Kaa Cloud.
 3. [Python 2.7](https://www.python.org/download/releases/2.7/) is installed on your machine.
 
 
-# Playbook
+## Playbook
 <!--todo: return link to cloud-->
 **1**. Let's go to devices dashboard in your Kaa Cloud account.
 
@@ -82,6 +82,6 @@ After hitting the command you should see simulator logs.
 Congratulations, you have connected your first device simulator to the Kaa Cloud! We encourage you to experiment with the simulator source code, modify the dashboards, and get back to us with the feedback!
 
 
-# Next steps
+## Next steps
 
 - [Data collection tutorial][data collection tutorial]. 

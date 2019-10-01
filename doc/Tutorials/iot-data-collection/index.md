@@ -17,7 +17,7 @@ In this tutorial, we will look at how to collect telemetry data from a simulated
 collected data into well-structured [time series](https://en.wikipedia.org/wiki/Time_series) and visualize it on the Kaa web interface. 
 
 
-# Overview
+## Overview
 
 We will simulate the fleet management scenario. Our [endpoint][endpoint] will act as a device, which is integrated into a vehicle, and reports its 
 location (latitude and longitude), engine temperature and fuel level to the Kaa platform.
@@ -29,7 +29,7 @@ Also, we will configure [Web Dashboard]({{docs_url}}WD) with the [Endpoint Locat
 ![Solution blueprint](attach/img/architecture-overview.svg)
 
 
-# Prerequisites
+## Prerequisites
 
 1. You know the Kaa platform [data collection basics][data collection].
 2. You know [how to connect a device]({{docs_url}}Tutorials/docs/current/how-to-connect-device/) to the Kaa platform.
@@ -43,7 +43,7 @@ Also, we will configure [Web Dashboard]({{docs_url}}WD) with the [Endpoint Locat
 4. [Python 2.7](https://www.python.org/download/releases/2.7/) is installed on your machine.
 
 
-# Playbook
+## Playbook
 
 **1**. Open Kaa Cluster [blueprint][blueprint] and configure [EPTS]({{docs_url}}EPTS/docs/current/Configuration/#time-series-definition) service with the `Temperature`, `FuelLevel` and `Location` time series:
 
@@ -133,6 +133,6 @@ Now you can monitor vehicle location, fuel level and engine temperature in real 
 ![vehicle-dashboard](attach/img/vehicle-dashboard.png)
 
 
-# Resources
+## Resources
 
 All tutorial resources are located on [GitHub]({{code_url}}). 

@@ -19,7 +19,7 @@ The Kaa platform **architecture overview in 2.5 minutes**.
 </div>
 
 
-# Microservice abstraction
+## Microservice abstraction
 
 The Kaa platform is a cloud-native Internet of Things platform.
 
@@ -50,7 +50,7 @@ Below is a diagram of how **Kaa microservices are typically composed:**
 Combined with well-defined and documented interfaces, these techniques allow us to **swap the whole microservice implementation without anyone ever noticing**.
 
 
-# Service composition and inter-service communication
+## Service composition and inter-service communication
 
 To make microservices composable, **the Kaa platform uses well-defined NATS-based protocols**.
 We use a ligthweight change management procedure to develop these protocols, and track them separately from the microservice implementations.
@@ -72,7 +72,7 @@ Another example is [ECR (Endpoint Configuration Repository)][ECR] and [OTAO (Ove
 Thus, all the microservices down the line---CMX, KPC---work with any implementation.
 
 
-# Scalability
+## Scalability
 
 Before we describe the scalability features of the Kaa platform, let's define some terms first.
 
@@ -134,7 +134,7 @@ In all cases, handling horizontal scalability is internal to each service, so yo
 In most cases, it boils down to scaling data stores; and we have paid attention to select data stores that scale well.
 
 
-# Deployment
+## Deployment
 
 **The Kaa platform leverages [Kubernetes][k8s] as an enterprise-grade orchestrator platform** for all the solutions.
 It lets you abstract from managing containers lifecycle, mitigation of node failures, networking, and much more, keeping the focus on the business domain only.
@@ -152,7 +152,7 @@ Blueprint fully defines the cluster state, except for the data stored.
 In other words, **you can restore a cluster or duplicate it (e.g., for testing or development purposes) with minimal effort**.
 Furthermore, configs for services can be served directly from the VCS, letting you change the behavior of a running cluster by merely pushing a commit!
 
-# Configuration
+## Configuration
 
 All components of the Kaa platform are able to read configuration from the filesystem. Default path of the configuration file is `/srv/<service-name>/service-config.yml` (e.g. `/srv/kpc/service-config.yml`).
 
@@ -199,13 +199,13 @@ spec:
 > List of configurable properties and examples of Kubernetes definitions can be found in the documentation for every Kaa microservice in the *Configuration* and *Deployment* sections respectively.
 {:.note}
 
-## Automatic configuration rollout
+### Automatic configuration rollout
 
 In order to automatically apply configuration updates we suggest using a third-party tool called [Reloader](https://github.com/stakater/Reloader).
 When it detects an update of a `ConfigMap` or a `Secret`,  Reloader utilizes Kubernetes native functionality to perform a rolling update of affected services.
 That gives you an ability to safely rollout configuration changes without worrying about breaking your cluster.
 
-# Next steps
+## Next steps
 
 - [Kaa concepts][kaa concepts] - find out about general concepts used in the Kaa documentation.
 - [Kaa features][kaa features] - read about the Kaa platform features.

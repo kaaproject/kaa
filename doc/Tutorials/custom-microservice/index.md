@@ -16,14 +16,14 @@ This page will help you add your custom microservice to the Kaa IoT Platform.
 You will be able to process data from endpoints in your own way and then send the processed data back to the platform.
 
 
-# Guide overview
+## Guide overview
 
 ![Pods status](attach/img/custom-service.svg)
 Kaa IoT Platform microservices provide NATS and REST API interfaces for inter-service comunication. Read more about [Kaa IoT Platform architecture]({{docs_url}}KAA/docs/current/Architecture-overview/).
 We'll use the example of NATS subscriber and publisher that can consume data from [endpoints][endpoint] and write to [EPTS]({{docs_url}}EPTS).
 The example is written in JavaScript for Node.JS.
 
-# Prerequisites
+## Prerequisites
 
 1. The next Kaa platform services are up and running: [KPC]({{docs_url}}KPC), [CM]({{docs_url}}CM), [EPR]({{docs_url}}EPR), [DCX]({{docs_url}}DCX), [EPTS]({{docs_url}}EPTS).
 2. EPTS is configured with the `Temperature` time series as [bellow](#epts-time-series-configuration).
@@ -35,7 +35,7 @@ unzip tutorials
 cd tutorials/custom-microservice/
 ```
 
-# Steps
+## Steps
 1. Initialize npm:
 ```bash
 npm init
@@ -57,7 +57,7 @@ kubectl get pods
 node Nats-example.js
 ```
 
-# What's going on in the code?
+## What's going on in the code?
 
 [Avro schema]({{rfc_url}}0014/README.md) for TSTP protocol:
 This schema is from [schema.js]({{code_url}}/schema.js) in the sample.
@@ -72,7 +72,7 @@ Avro schema will be used for parsing message:
 ```javascript
 const type = avro.parse(JSON.stringify(schema), {wrapUnions: true});
 ```
-## Subscribe
+### Subscribe
 Subscribe to NATS subject where [EPTS]({{docs_url}}EPTS) sends data to:
 ```javascript
 let subjectForSubscription = `kaa.v1.events.epts.endpoint.data-collection.data-points-received.Temperature`;
@@ -83,7 +83,7 @@ nats.subscribe(subjectForSubscription, function(msg) {
     console.log('Message received: ', type.toString(type.fromBuffer(msg)));
 });
 ```
-## Publish
+### Publish
 `temperature-transformer` part from the publish subject bellow stands for the name of the [TSTP transmitter instance]({{docs_url}}EPTS/docs/current/Configuration/#time-series-transmitters).
 Refer to the [bellow](#epts-time-series-configuration) EPTS configuration. 
 ```javascript
@@ -108,7 +108,7 @@ Publish the message to EPTS:
 const buf = type.toBuffer(message);
 nats.publish(subjectForPublish, buf);
 ```
-## EPTS time series configuration
+### EPTS time series configuration
 
 For tutorial completion, EPTS must have the next [time series configuration]({{docs_url}}EPTS/docs/current/Configuration/#service-configuration-structure): 
 
@@ -128,11 +128,11 @@ kaa:
 ```
 
 
-# Resources
+## Resources
 
 All tutorial resources are located on [GitHub]({{code_url}}).
 
 
-# Next steps
+## Next steps
 
 - [Custom web dashboard][custom web dashboard] - learn how to integrate your own web dashboard with the Kaa platform.
