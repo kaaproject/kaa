@@ -8,6 +8,7 @@ sort_idx: 2
 {% include variables.md %}
 {% include_relative links.md %}
 {% assign service_name    = "EPTS" %}
+{% assign code_url = "https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/iot-data-collection/attach/code" %}
 
 * TOC
 {:toc}
@@ -18,7 +19,7 @@ collected data into well-structured [time series](https://en.wikipedia.org/wiki/
 
 # Overview
 
-We will simulate the fleet management scenario. Our [endpoint]({{docs_url}}DOC/docs/current/Kaa-concepts/#endpoints) will act as a device, which is integrated into a vehicle, and reports its 
+We will simulate the fleet management scenario. Our [endpoint][endpoint] will act as a device, which is integrated into a vehicle, and reports its 
 location (latitude and longitude), engine temperature and fuel level to the Kaa platform.
 
 Also, we will configure [Web Dashboard]({{docs_url}}WD) with the [Endpoint Location]({{docs_url}}WD/docs/current/Widgets/Map/) widget for historical and realtime vehicle location, 
@@ -44,7 +45,7 @@ Also, we will configure [Web Dashboard]({{docs_url}}WD) with the [Endpoint Locat
 
 # Playbook
 
-**1**. Open Kaa Cluster [blueprint]({{docs_url}}DOC/docs/current/Kaa-concepts/#blueprint) and configure [EPTS]({{docs_url}}EPTS/docs/current/Configuration/#time-series-definition) service with the `Temperature`, `FuelLevel` and `Location` time series:
+**1**. Open Kaa Cluster [blueprint][blueprint] and configure [EPTS]({{docs_url}}EPTS/docs/current/Configuration/#time-series-definition) service with the `Temperature`, `FuelLevel` and `Location` time series:
 
 ```yaml
 kaa:
@@ -78,19 +79,19 @@ kaa:
           fallback-strategy: "server-timestamp"  # Take server timestamp if it is not present in data sample
 ```
 
-Here `demo_application` [application]({{docs_url}}DOC/docs/current/Kaa-concepts/#application) has three time series: 
+Here `demo_application` [application]({{docs_url}}KAA/docs/current/Kaa-concepts/#application) has three time series: 
 - `temperature` with `temperature` value;
 - `fuel_level` with `fuelLevel` value;
 - `location` with `latitude`, `longitude` values.
 
-Also, configuration has data sample structure description for the devices in `demo_application_v1` [application version](({{docs_url}}DOC/docs/current/Kaa-concepts/#application)).
+Also, configuration has data sample structure description for the devices in `demo_application_v1` [application version](({{docs_url}}KAA/docs/current/Kaa-concepts/#application)).
 
 The timestamp is accessible by `$.timestamp` JSON path. It is in UNIX format in milliseconds and 
 if it is not present EPTS should fall back to the timestamp of when data sample was received by the platform.
 
 Read more about EPTS time series configuration [here]({{docs_url}}EPTS/docs/current/Configuration/).      
 
-**2**. Run [Python simulator `client.py`](https://github.com/kaaproject/tutorials/blob/master/doc/data-collection/attach/code/client.py)
+**2**. Run [Python simulator `client.py`]({{code_url}}/client.py)
 that simulates our vehicle.
 
 ```
@@ -134,4 +135,4 @@ Now you can monitor vehicle location, fuel level and engine temperature in real 
 
 # Resources
 
-All tutorial resources are located on [GitHub](https://github.com/kaaproject/tutorials/tree/master/doc/data-collection/attach/code). 
+All tutorial resources are located on [GitHub]({{code_url}}). 

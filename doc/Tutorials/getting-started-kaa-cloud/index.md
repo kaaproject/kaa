@@ -7,8 +7,8 @@ sort_idx: 5
 
 {% include variables.md %}
 {% include_relative links.md %}
-{% assign kaa_cloud_url    = "https://cloud.kaaiot.net" %}
-{% assign device_simulator_url    = "https://github.com/kaaproject/tutorials/blob/master/doc/kaa-cloud/attach/code" %}
+{% assign kaa_cloud_url = "https://cloud.kaaiot.net" %}
+{% assign code_url = "https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/getting-started-kaa-cloud/attach/code" %}
 
 * TOC
 {:toc}
@@ -18,7 +18,7 @@ sort_idx: 5
 
 <!--todo: return link to cloud-->
 In this tutorial we will look at how to get started with Kaa Cloud:
-1. How to connect a [device simulator]({{device_simulator_url}}/client.py) to the Kaa Cloud server.
+1. How to connect a [device simulator]({{code_url}}/client.py) to the Kaa Cloud server.
 2. How to send and visualize device simulated data in [Web Dashboard](https://docs.kaaiot.io/WD/docs/current/Overview/).
 
 
@@ -37,15 +37,15 @@ In this tutorial we will look at how to get started with Kaa Cloud:
 As you can see from empty [Endpoint List widget]({{docs_url}}/WD/docs/current/Widgets/Ep-list/), there are no connected devices yet. 
 Let's connect one.
 
-**2**. Clone device simulator from [here]({{device_simulator_url}}).
+**2**. Clone device simulator from [here]({{code_url}}).
 
 The simulator consists of two files: 
-- [client.py]({{device_simulator_url}}/client.py) - device simulator code written in Python 2.7.
-- [location.json]({{device_simulator_url}}/location.json) - geographical location data for device live location simulation.
+- [client.py]({{code_url}}/client.py) - device simulator code written in Python 2.7.
+- [location.json]({{code_url}}/location.json) - geographical location data for device live location simulation.
 
 **Both files must be placed together in one directory.**
 
-**3**. Register device digital twin, which is called "[endpoint]({{docs_url}}/DOC/docs/current/Kaa-concepts/#endpoints)" in Kaa terminology, in Kaa Cloud.
+**3**. Register device digital twin, which is called "[endpoint][endpoint]" in Kaa terminology, in Kaa Cloud.
 
 ![Device creation. First step](attach/img/device-creation-1.png)
 
