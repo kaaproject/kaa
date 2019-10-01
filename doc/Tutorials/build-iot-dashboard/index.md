@@ -7,6 +7,7 @@ sort_idx: 3
 
 {% include variables.md %}
 {% include_relative links.md %}
+{% assign code_url = "https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/build-iot-dashboard/attach/code" %}
 
 * TOC
 {:toc}
@@ -191,8 +192,7 @@ function renderEndpointTable(responseText) {
 
 The table displays endpoint ID, its [application version][application] and endpoint `location` metadata field (**you may want to introduce your own metadata field since the Kaa platform is agnostic to the endpoint metadata structure**).
 
-<!-- TODO: add link -->
-Let's update `index.html` with the HTML of the table and add some [styles]() to prettify it.
+Let's update `index.html` with the HTML of the table and add some [styles]({{code_url}}/style.css) to prettify it.
 
 ```html
 <html lang="en">
@@ -302,8 +302,7 @@ Now you can use the same approach with the `Authorization` header to communicate
 
 # Resources
 
-<!-- TODO: add link -->
-All tutorial resources are located on [GitHub]().
+All tutorial resources are located on [GitHub]({{code_url}}).
 
 
 # Tips
