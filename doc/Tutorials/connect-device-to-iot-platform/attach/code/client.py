@@ -34,7 +34,7 @@ token = args.token
 client_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
 host = args.host
 port = args.port
-logger.info("Using EP token {0}, server at {1}:{2}".format(token, host, port))
+logger.info("Using endpoint token {0}, server at {1}:{2}".format(token, host, port))
 
 
 # Returns hard-coded metadata
