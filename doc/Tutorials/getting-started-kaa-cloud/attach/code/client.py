@@ -10,11 +10,14 @@ import time
 
 import paho.mqtt.client as mqtt
 
-DEFAULT_KPC_HOST = "cloud.kaaiot.net"  # Platform host goes here
-DEFAULT_KPC_PORT = 1883  # Platform port goes here
+DEFAULT_KPC_HOST = "cloud.kaaiot.com"  # Platform host goes here
+DEFAULT_KPC_PORT = 30900  # Platform port goes here
 
 DCX_INSTANCE_NAME = "dcx"
 EPMX_INSTANCE_NAME = "epmx"
+CEX_INSTANCE_NAME = "cex"
+
+HEALTH_CHECK_COMMAND_TYPE = "HEALTH_CHECK"
 
 
 def load_json(path):
@@ -57,7 +60,7 @@ token = args.token
 client_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
 host = args.host
 port = args.port
-logger.info("Using EP token {0}, server at {1}:{2}".format(token, host, port))
+logger.info("Using endpoint token {0}, server at {1}:{2}".format(token, host, port))
 
 
 def connect_to_server(client, host, port):
@@ -91,7 +94,7 @@ def compose_metadata():
     return json.dumps(
         {
             "serial": "00-14-22-01-23-45",
-            "mac": "50:8c:b1:77:e:e6"
+            "mac": "50:8c:b1:77:e8:e6"
         }
     )
 
@@ -128,6 +131,56 @@ def compose_data_sample(location, battery_level):
     return json.dumps(data_sample)
 
 
+def compose_log_data_sample():
+    data_sample = [
+        {
+            "log": "Endpoint health status: OK"
+        }
+    ]
+    return json.dumps(data_sample)
+
+
+# COMMAND section ----------------------------------------
+# LOG COMMAND section ------------------------------------
+topic_command_health_check = "kp1/{application_version}/{service_instance}/{resource_path}".format(
+    application_version=appVersionName,
+    service_instance=CEX_INSTANCE_NAME,
+    resource_path="{token}/command/{command}/status".format(token=token, command=HEALTH_CHECK_COMMAND_TYPE),
+)
+logger.debug("Composed command log topic: {}".format(topic_command_health_check))
+
+
+topic_command_result_log = "kp1/{application_version}/{service_instance}/{resource_path}".format(
+    application_version=appVersionName,
+    service_instance=CEX_INSTANCE_NAME,
+    resource_path="{token}/result/{command}".format(token=token, command=HEALTH_CHECK_COMMAND_TYPE),
+)
+logger.debug("Composed command result log topic: {}".format(topic_command_result_log))
+
+
+def log_command_handler(client, userdata, message):
+    """
+    Handles HEALTH_CHECK command
+    """
+    logger.info("Received HEALTH_CHECK command: topic [{}]\nbody [{}]".format(message.topic, str(message.payload.decode("utf-8"))))
+    command_result = compose_command_result_payload(message)
+    client.publish(topic=topic_command_result_log, payload=command_result)
+    logger.info("Published HEALTH_CHECK command result: topic [{}]\nbody [{}]".format(topic_command_result_log, str(command_result.decode("utf-8"))))
+    log_data_sample_payload = compose_log_data_sample()
+    client.publish(topic=topic_data_collection, payload=log_data_sample_payload)
+
+
+def compose_command_result_payload(message):
+    command_payload = json.loads(str(message.payload.decode("utf-8")))
+    command_result_list = []
+    for command in command_payload:
+        command_result = {"id": command['id'], "statusCode": 200, "payload": "done"}
+        command_result_list.append(command_result)
+    return json.dumps(
+        command_result_list
+    )
+
+
 def on_message(client, userdata, message):
     """
     Logs MQTT messages received from the server.
@@ -139,6 +192,7 @@ def on_message(client, userdata, message):
 # Initiate server connection
 client = mqtt.Client(client_id=client_id)
 client.on_message = on_message
+client.message_callback_add(topic_command_health_check, log_command_handler)
 connect_to_server(client=client, host=host, port=port)
 # Start the loop
 client.loop_start()
@@ -173,6 +227,6 @@ while 1:
     else:
         logger.debug("{0}: Sent next data sample: {1}".format(token, payload))
 
-    time.sleep(3)
+    time.sleep(10)
     location_index = location_index + 1
     battery_level = battery_level - 0.3

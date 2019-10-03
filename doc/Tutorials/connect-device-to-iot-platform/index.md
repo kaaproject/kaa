@@ -76,7 +76,7 @@ Add `meterDescription` field to the endpoint creation form. We will fill it out 
 ```
 python -t myToken -h {host} -p {port} client.py
 
-INFO: Using EP token myToken, server at {host}
+INFO: Using endpoint token myToken, server at {host}
 DEBUG: Composed metadata topic: kp1/demo_application_v1/epmx/myToken/update/keys
 INFO: Connecting to KPC instance at {host}:{port}...
 INFO: Successfully connected

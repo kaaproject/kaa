@@ -97,7 +97,7 @@ that simulates our vehicle.
 ```
 python -t myToken -h {host} -p {port} client.py
 
-INFO: Using EP token myToken, server at {host}:{port}
+INFO: Using endpoint token myToken, server at {host}:{port}
 DEBUG: Composed data collection topic: kp1/demo_application_v1/dcx/myToken/json/23
 INFO: Connecting to KPC instance at {host}:{port}...
 INFO: Successfully connected
