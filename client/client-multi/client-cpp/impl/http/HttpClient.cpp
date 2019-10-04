@@ -82,6 +82,9 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
         responseStream << &responseBuf;
     }
 
+	const std::string responseStringBody = responseStream.str();
+	const size_t responseStringBodySize = responseStringBody.size();
+
     checkError(errorCode);
 
     KAA_LOG_INFO(boost::format("Received response from server %s:%d")
@@ -90,7 +93,7 @@ std::shared_ptr<IHttpResponse> HttpClient::sendRequest(const IHttpRequest& reque
 
     doSocketClose();
 
-    return std::make_shared<HttpResponse>(responseStream.str());
+    return responseStringBody.size() ? std::make_shared<HttpResponse>(responseStringBody) : nullptr;
 }
 
 void HttpClient::closeConnection()

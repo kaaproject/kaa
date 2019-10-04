@@ -56,6 +56,15 @@ void AbstractHttpChannel::processTypes(const std::map<TransportType, ChannelDire
         // Sending http request
         EndpointConnectionInfo connection("", "", getServerType());
         auto response = httpClient_.sendRequest(*postRequest, &connection);
+		if (!response) {
+			KAA_LOG_WARN(boost::format("Channel [%1%] failed to send request %2%:%3%: An empty response returned") 
+                                       % getId()
+                                       % currentServer_->getHost()
+                                       % currentServer_->getPort());
+			KaaFailoverReason reason = getNotAccessibleFailoverReason(getServerType());
+			onServerFailed(reason);
+			return;
+		}
         channelManager_.onConnected(connection);
 
         KAA_MUTEX_LOCKING("channelGuard_");
