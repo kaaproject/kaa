@@ -47,7 +47,7 @@ namespace kaa {
 class KaaClient : public IKaaClient,
                   public std::enable_shared_from_this<KaaClient> {
 public:
-    KaaClient(IKaaClientPlatformContextPtr platformContext, KaaClientStateListenerPtr listener);
+    KaaClient(IKaaClientPlatformContextPtr platformContext, LoggerPtr logger, KaaClientStateListenerPtr listener);
 
     virtual void start();
     virtual void stop();

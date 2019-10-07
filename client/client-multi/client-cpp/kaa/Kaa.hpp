@@ -26,6 +26,7 @@
 #include "kaa/KaaClientStateListener.hpp"
 #include "kaa/IKaaClientPlatformContext.hpp"
 #include "kaa/KaaClientPlatformContext.hpp"
+#include "kaa/logging/DefaultLogger.hpp"
 
 namespace kaa {
 
@@ -62,6 +63,7 @@ public:
      */
     static std::shared_ptr<IKaaClient> newClient(
         IKaaClientPlatformContextPtr context = std::make_shared<KaaClientPlatformContext>(),
+        LoggerPtr logger = nullptr,
         KaaClientStateListenerPtr listener = std::make_shared<KaaClientStateListener>());
 
 private:

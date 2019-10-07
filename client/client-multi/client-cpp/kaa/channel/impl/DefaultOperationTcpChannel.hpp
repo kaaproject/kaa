@@ -121,6 +121,9 @@ private:
     void setPingTimer();
     void setConnAckTimer();
 
+    void startConnectivityTimer();
+
+
     void startThreads();
     void stopThreads();
 
@@ -138,6 +141,8 @@ private:
     static const std::uint16_t PING_TIMEOUT = CHANNEL_TIMEOUT / 2;
     static const std::uint16_t CONN_ACK_TIMEOUT = 20;
 
+    static const std::uint16_t CONNECTIVITY_TIMEOUT = 30;
+
 private:
     IKaaClientContext& context_;
     IKaaChannelManager& channelManager_;
@@ -152,6 +157,7 @@ private:
     std::unique_ptr<boost::asio::ip::tcp::socket>    sock_;
     boost::asio::deadline_timer                      pingTimer_;
     boost::asio::deadline_timer                      connAckTimer_;
+    KaaTimer<void ()>                                connectivityTimer_;
     std::vector<std::thread>                         ioThreads_;
     std::unique_ptr<boost::asio::streambuf>          responseBuffer_;
 

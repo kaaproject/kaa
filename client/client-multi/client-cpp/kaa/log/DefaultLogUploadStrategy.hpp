@@ -97,7 +97,7 @@ public:
     static const std::size_t DEFAULT_UPLOAD_COUNT_THRESHOLD = 64; /*!< The default value for the log count to initiate
                                                                        the log upload. */
 
-    static const std::size_t DEFAULT_MAX_PARALLEL_UPLOADS = INT32_MAX;  /*!< The default value for Max amount of log batches
+    static const std::size_t DEFAULT_MAX_PARALLEL_UPLOADS = 8;  /*!< The default value for Max amount of log batches
                                                                              allowed to be uploaded parallel. */
 
 protected:

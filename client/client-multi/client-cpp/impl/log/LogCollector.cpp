@@ -97,6 +97,8 @@ void LogCollector::processTimeout()
         }
     }
 
+    timeouts_.rehash(0);
+
     KAA_MUTEX_UNLOCKING("timeoutsGuard_");
     KAA_UNLOCK(timeoutsGuardLock);
     KAA_MUTEX_UNLOCKED("timeoutsGuard_");
@@ -243,7 +245,11 @@ bool LogCollector::removeDeliveryTimeout(std::int32_t requestId)
     KAA_MUTEX_UNIQUE_DECLARE(timeoutsGuardLock, timeoutsGuard_);
     KAA_MUTEX_LOCKED("timeoutsGuard_");
 
-    return timeouts_.erase(requestId);
+    bool bErase = timeouts_.erase(requestId);
+
+    timeouts_.rehash(0);
+
+    return bErase;
 }
 
 bool LogCollector::isUploadAllowed()
@@ -382,6 +388,7 @@ void LogCollector::switchAccessPoint()
                 storage_->rollbackBucket(request.first);
             }
             timeouts_.clear();
+            timeouts_.rehash(0);
         }
     } else {
         KAA_LOG_ERROR("Can't find LOGGING data channel");
@@ -438,6 +445,8 @@ void LogCollector::removeBucketInfo(std::int32_t id)
     KAA_MUTEX_LOCKED("bucketInfoStorageGuard_");
 
     bucketInfoStorage_.erase(id);
+
+    bucketInfoStorage_.rehash(0);
 }
 
 }  // namespace kaa
