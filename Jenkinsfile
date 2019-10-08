@@ -404,28 +404,28 @@ node(selectNode()) {
         }
     }
 
-    stage('upload helm chart') {
-        dir ("${helmLocalChartsDir}/.helm") {
-            deleteDir()
-        }
+    //stage('upload helm chart') {
+    //    dir ("${helmLocalChartsDir}/.helm") {
+    //        deleteDir()
+    //    }
 
-        def chartName = "kaa"
+    //    def chartName = "kaa"
 
-        helmInit()
-        helmRepoAdd("incubator", "http://storage.googleapis.com/kubernetes-charts-incubator")
-        helmRepoAdd("jbt", "http://artifactory.jbt-iops.com:8081/artifactory/helm-charts")
-        helmRepoUpdate()
-        helmPackage("helm/${chartName}", helmLocalChartsDir)
-        withCredentials([string(credentialsId: 'ARTIFACTORY_PASS', variable: 'ARTIFACTORY_PASS')]) {
-            helmUploadChart(chartName, helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
-            helmUpdateIndexFile(helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
-            helmUploadIndexFile(helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
-        }
+    //    helmInit()
+    //    helmRepoAdd("incubator", "http://storage.googleapis.com/kubernetes-charts-incubator")
+    //    helmRepoAdd("jbt", "http://artifactory.jbt-iops.com:8081/artifactory/helm-charts")
+    //    helmRepoUpdate()
+    //    helmPackage("helm/${chartName}", helmLocalChartsDir)
+    //    withCredentials([string(credentialsId: 'ARTIFACTORY_PASS', variable: 'ARTIFACTORY_PASS')]) {
+    //        helmUploadChart(chartName, helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
+    //        helmUpdateIndexFile(helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
+    //        helmUploadIndexFile(helmLocalChartsDir, "admin", env.ARTIFACTORY_PASS)
+    //    }
 
-        dir ("${helmLocalChartsDir}/.helm") {
-            deleteDir()
-        }
-    }
+    //    dir ("${helmLocalChartsDir}/.helm") {
+    //        deleteDir()
+    //    }
+    //}
 
     stage('deploy-on-stage') {
         if (isMaster()) {
