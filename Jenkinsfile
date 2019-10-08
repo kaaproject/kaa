@@ -299,6 +299,8 @@ node(selectNode()) {
                     set -ex
                     tarMD5=`md5sum ./server/node/target/sdk/cpp/kaa-cpp-ep-sdk-0.9.0.tar.gz | awk '{print \$1}'`
                     
+                    ARTIFACTORY_URL="http://artifactory.jbt-iops.com:8081/artifactory/example-repo-local"
+                    
                     curl -uadmin:${ARTIFACTORY_PASS} --upload-file ./server/node/target/sdk/cpp/kaa-cpp-ep-sdk-0.9.0.tar.gz --header "X-Checksum-MD5:\${tarMD5}" "\${ARTIFACTORY_URL}/kaa-sdk/kaa-cpp-ep-sdk-${kaaTag}.tar.gz"
             
             """
