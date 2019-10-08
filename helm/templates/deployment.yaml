@@ -9,6 +9,8 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    {{ toYaml .Values.updateStrategy | nindent 4 }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "kaa.name" . }}
@@ -23,6 +25,9 @@ spec:
       {{ include "kaa.imagePullSecrets" . }}
       {{- if .Values.waitContainers.enabled }}
       initContainers:
+        - name: wait-for-zookeeper
+          image: alpine:3.9.2
+          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.zookeeper.fullname" . }} 2181; do sleep 1; done']
         - name: wait-for-kafka
           image: confluentinc/cp-kafka:4.0.0
           command: ["timeout", "600", "sh", "-c", 'until timeout 15 kafka-topics --list --zookeeper {{ include "kaa.kafkaZookeeperHost" . }} | grep {{ include "kaa.kafkaSeedCompleteTopic" . }}; do sleep 2; done']

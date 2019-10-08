@@ -1,0 +1,73 @@
+plugins {
+  id 'pl.allegro.tech.build.axion-release' version '1.10.2'
+  id 'com.palantir.git-version' version '0.12.2'
+  // Helm
+  id 'org.unbroken-dome.helm-publish' version '0.4.1'
+  id 'org.unbroken-dome.helm' version '0.4.1'
+}
+
+ext.ifExists = { String filePath, Closure<File> action ->
+  def file = file(filePath)
+  if (file.exists()) {
+    action.call(file)
+  }
+}
+
+repositories {
+  mavenCentral()
+  jcenter()
+  maven { setUrl('http://artifactory.jbt-iops.com:8081/artifactory/jbt-common-dependencies') }
+}
+
+// Versioning start
+scmVersion {
+  tag {
+    prefix = 'v'
+    versionSeparator = ''
+  }
+  versionIncrementer 'incrementMinorIfNotOnRelease', [releaseBranchPattern: 'release.*']
+  versionCreator 'versionWithBranch'
+  branchVersionCreator = [
+    'release.*': 'simple'
+  ]
+}
+
+allprojects {
+  group = 'com.jbt-iops'
+  version = scmVersion.version
+}
+// Versioning end
+
+// Helm start
+helm {
+  home = file("$buildDir/helm/home")
+  charts {
+    main {
+      chartName = project.name
+      chartVersion = project.version
+      sourceDir = file("helm")
+    }
+  }
+  repositories {
+    incubator {
+      url = uri('https://kubernetes-charts-incubator.storage.googleapis.com')
+    }
+  }
+  publishing {
+    repositories {
+      chartMuseum('chartmuseum') {
+        url = uri(project.findProperty("helmChartmuseumUrl"))
+
+        credentials {
+          username = project.findProperty("helmChartmuseumUser")
+          password = project.findProperty("helmChartmuseumPassword")
+        }
+      }
+    }
+  }
+}
+
+helmPackageMainChart {
+  appVersion = project.findProperty("helmAppVersion") ?: project.version
+}
+// Helm end

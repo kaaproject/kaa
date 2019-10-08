@@ -219,7 +219,7 @@ public class BootstrapNodeInfo extends org.apache.avro.specific.SpecificRecordBa
       validate(fields()[2], value);
       this.timeStarted = value;
       fieldSetFlags()[2] = true;
-      return this; 
+      return this;
     }
     
     /** Checks whether the 'timeStarted' field has been set */

@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 global:
+  kaa:
+
   kafka:
     host:
     port:
@@ -15,9 +17,12 @@ metadata:
   partOf: jbt
   component: kaa
 
+updateStrategy:
+  type: Recreate
+
 aws:
   accessKey: ""
-  secrettKey: ""
+  secretKey: ""
   region: us-east-1
 
 nameOverride: ""
@@ -170,7 +175,7 @@ appender:
 
 service:
   type: ClusterIP
-  port:
+  port: ""
 
 serviceJmx:
   type: ClusterIP
