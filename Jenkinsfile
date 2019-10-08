@@ -282,20 +282,31 @@ node(selectNode()) {
         
                     docker build -t 138150065595.dkr.ecr.us-east-1.amazonaws.com/kaa:${kaaBranch} .
                     docker push 138150065595.dkr.ecr.us-east-1.amazonaws.com/kaa:${kaaBranch}
-        
+            """
+            }
+        }
+
+    }
+
+    stage('push kaa sdk to artifactory') {
+        if (isPR()) {
+            echo "skip build kaa docker for PR builds"
+            return
+        }
+        withCredentials([string(credentialsId: 'ARTIFACTORY_PASS', variable: 'ARTIFACTORY_PASS')]) {
+            dir('kaa') {
+                sh """#!/bin/bash
+                    set -ex
+                    tarMD5=`md5sum ./server/node/target/sdk/cpp/kaa-cpp-ep-sdk-0.9.0.tar.gz | awk '{print \$1}'`
                     
-                    ARTIFACTORY_URL="http://artifactory.jbt-iops.com:8081/artifactory/example-repo-local"
-                    
-                    tarMD5=`md5sum kaa-cpp-ep-sdk-0.9.0.tar.gz | awk '{print \$1}'`
-                    tarSHA1=`shasum -a 1 kaa-cpp-ep-sdk-0.9.0.tar.gz | awk '{ print \$1 }'`
-                    
-                    curl -uadmin:${ARTIFACTORY_PASS} --upload-file "kaa-cpp-ep-sdk-0.9.0.tar.gz" --header "X-Checksum-MD5:\${tarMD5}" --header "X-Checksum-Sha1:\${tarSHA1}" "\${ARTIFACTORY_URL}/kaa-sdk/kaa-cpp-ep-sdk-${kaaTag}.tar.gz"
+                    curl -uadmin:${ARTIFACTORY_PASS} --upload-file ./server/node/target/sdk/cpp/kaa-cpp-ep-sdk-0.9.0.tar.gz --header "X-Checksum-MD5:\${tarMD5}" "\${ARTIFACTORY_URL}/kaa-sdk/kaa-cpp-ep-sdk-${kaaTag}.tar.gz"
             
             """
             }
         }
 
     }
+
 
     stage('run local env') {
         if (isPR()) {
@@ -399,7 +410,7 @@ node(selectNode()) {
             dir('kaa') {
                 sh "curl -F 'file=@./server/node/target/kaa-node.deb;filename=kaa-node_${env.VERSION}_amd64.deb' ${env.APTLY_URL}/api/files/jbt"
                 sh "curl -X POST ${env.APTLY_URL}/api/repos/jbt/file/jbt?forceReplace=1"
-                sh "curl -X PUT -H 'Content-Type: application/json' --data '{\"Signing\": {\"GpgKey\": \"Nborisenko <nborisenko@kaaiot.io>\"}}' ${env.APTLY_URL}/api/publish/:./xenial"
+                sh "curl -X PUT -H 'Content-Type: application/json' --data '{\"ForceOverwrite\": true, \"Signing\": {\"GpgKey\": \"Nborisenko <nborisenko@kaaiot.io>\"}}' ${env.APTLY_URL}/api/publish/:./xenial"
             }
         }
     }
