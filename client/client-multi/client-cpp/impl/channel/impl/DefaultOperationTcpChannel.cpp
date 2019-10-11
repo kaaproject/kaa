@@ -23,7 +23,6 @@
 #include <functional>
 #include <chrono>
 #include <thread>
-#include <sys/time.h>
 
 #include <boost/bind.hpp>
 
