@@ -136,6 +136,7 @@
 #define KAA_COUNT_CHANGES_OPTION          "PRAGMA count_changes=OFF"
 #define KAA_MEMORY_JOURNAL_MODE_OPTION    "PRAGMA journal_mode=MEMORY"
 #define KAA_MEMORY_TEMP_STORE_OPTION      "PRAGMA temp_store=MEMORY"
+#define KAA_AUTO_VACUUM_OPTION            "PRAGMA auto_vacuum=FULL"
 
 namespace kaa {
 
@@ -176,7 +177,7 @@ SQLiteDBLogStorage::SQLiteDBLogStorage(IKaaClientContext &context, std::size_t b
       maxBucketSize_(bucketSize), maxBucketRecordCount_(bucketRecordCount),
       context_(context)
 {
-    init(SQLiteOptimizationOptions::SQLITE_NO_OPTIMIZATIONS);
+    init(SQLiteOptimizationOptions::SQLITE_AUTO_VACUUM_FULL);
 }
 
 SQLiteDBLogStorage::SQLiteDBLogStorage(IKaaClientContext &context,
@@ -343,6 +344,10 @@ void SQLiteDBLogStorage::applyDBOptimization(int mask)
     if (mask & SQLiteOptimizationOptions::SQLITE_COUNT_CHANGES_OFF) {
         sqlite3_exec(db_, KAA_COUNT_CHANGES_OPTION, nullptr, nullptr, nullptr);
         KAA_LOG_INFO(boost::format("Applied '%s' optimization") % KAA_COUNT_CHANGES_OPTION);
+    }
+    if (mask & SQLiteOptimizationOptions::SQLITE_AUTO_VACUUM_FULL) {
+        sqlite3_exec(db_, KAA_AUTO_VACUUM_OPTION, nullptr, nullptr, nullptr);
+        KAA_LOG_INFO(boost::format("Applied '%s' optimization") % KAA_AUTO_VACUUM_OPTION);
     }
 }
 
