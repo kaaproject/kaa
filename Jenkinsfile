@@ -341,14 +341,14 @@ node(selectNode()) {
     }
 
     stage('upload helm charts') {
-        steps {
-            script {
-                def helmRepository  = "http://artifactory.jbt-iops.com:8081/artifactory/helm-charts"
-
-                withCredentials([string(credentialsId: 'ARTIFACTORY_PASS', variable: 'ARTIFACTORY_PASS')]) {
-                    sh "./.helpers/helm/upload.sh ${helmRepository} admin ${env.ARTIFACTORY_PASS} ${env.VERSION} ${env.VERSION}"
-                }
-            }
+        withCredentials([usernamePassword(credentialsId: 'chartmuseum', usernameVariable: 'CHARTMUSEUM_USER', passwordVariable: 'CHARTMUSEUM_PASS')]) {
+            sh """
+                ./gradlew helmPackage
+                ./gradlew helmPublish \\
+                  -PhelmChartmuseumUrl=${env.CHARTMUSEUM_URL} \\
+                  -PhelmChartmuseumUser=${CHARTMUSEUM_USER} \\
+                  -PhelmChartmuseumPassword=${CHARTMUSEUM_PASS}
+            """
         }
     }
 

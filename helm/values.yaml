@@ -2,14 +2,42 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 global:
+  image:
+    pullSecrets: []
   kaa:
-
+    host: ""
+    username: ""
+    password: ""
+    secretName: ""
+    agentAppToken: ""
+    applicationTokens: ""
   kafka:
-    host:
-    port:
+    url: ""
+    host: ""
+    port: ""
+    topicsJob:
+      seedCompleteTopic: ""
   flume:
-    host:
-    port:
+    host: ""
+    port: ""
+  zookeeper:
+    host: ""
+  cassandra:
+    url: ""
+    seedJob:
+      seedCompleteTable: ""
+  postgresql:
+    url: ""
+    secretName: ""
+    postgresqlPassword: ""
+    postgresqlUsername: ""
+    postgresqlDatabase: ""
+    webapp:
+      urlDatasource: "jdbc:postgresql://{{ .Release.Name }}-{{ default \"postgresql\" }}/{{ .Values.global.postgresql.webapp.postgresqlDatabase }}"
+      postgresqlDatabase: "jbtc"
+    kaa:
+      urlDatasource: "jdbc:postgresql://{{ .Release.Name }}-{{ default \"postgresql\" }}/{{ .Values.global.postgresql.kaa.postgresqlDatabase }}"
+      postgresqlDatabase: "kaa"
 
 replicaCount: 1
 
@@ -29,15 +57,15 @@ nameOverride: ""
 fullnameOverride: ""
 
 kaa:
-  eip:
+  eip: ""
   applicationId: "1"
-  kafkaHost:
-  kafkaPort:
-  flumeHost:
-  flumePort:
-  username:
-  password:
-  secretName:
+  kafkaHost: ""
+  kafkaPort: ""
+  flumeHost: ""
+  flumePort: ""
+  username: ""
+  password: ""
+  secretName: ""
   config:
     adminDao:
       hibernateDialect: "org.hibernate.dialect.PostgreSQL82Dialect"
@@ -257,6 +285,9 @@ kafkalocal:
       enabled: false
 
 postgresqllocal:
+  nameOverride: ""
+  kaa:
+    postgresqlDatabase: ""
   enabled: true
   url: "jdbc:postgresql://{{ .Release.Name }}-{{ default \"postgresqllocal\" .Values.postgresqllocal.nameOverride }}/{{ .Values.postgresqllocal.kaa.postgresqlDatabase }}"
   persistence:
@@ -264,7 +295,7 @@ postgresqllocal:
   postgresqlPassword: postgres
   postgresqlUsername: postgres
   postgresqlDatabase: kaa
-  secretName:
+  secretName: ""
 
 cassandralocal:
   enabled: true
