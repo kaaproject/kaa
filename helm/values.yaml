@@ -47,7 +47,7 @@ metadata:
 
 aws:
   accessKey: ""
-  secrettKey: ""
+  secretKey: ""
   region: us-east-1
 
 nameOverride: ""

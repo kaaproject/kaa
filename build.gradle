@@ -1,0 +1,112 @@
+plugins {
+  id 'pl.allegro.tech.build.axion-release' version '1.10.2'
+  // Helm
+  id 'org.unbroken-dome.helm-publish' version '0.4.1'
+  id 'org.unbroken-dome.helm' version '0.4.1'
+  // Docker
+  id "com.bmuschko.docker-remote-api" version "5.0.0"
+  id "com.patdouble.awsecr" version "0.5.2"
+  id 'com.palantir.git-version' version '0.12.2'
+}
+
+ext.ifExists = { String filePath, Closure<File> action ->
+  def file = file(filePath)
+  if (file.exists()) {
+    action.call(file)
+  }
+}
+
+repositories {
+  mavenCentral()
+  jcenter()
+  maven { setUrl('http://artifactory.jbt-iops.com:8081/artifactory/jbt-common-dependencies') }
+}
+
+// Versioning start
+scmVersion {
+  tag {
+    prefix = 'v'
+    versionSeparator = ''
+  }
+  versionIncrementer 'incrementMinorIfNotOnRelease', [releaseBranchPattern: 'release.*']
+  versionCreator 'versionWithBranch'
+  branchVersionCreator = [
+    'release.*': 'simple'
+  ]
+}
+
+allprojects {
+  group = 'com.jbt-iops'
+  version = scmVersion.version
+}
+// Versioning end
+
+
+// Docker start
+import com.bmuschko.gradle.docker.tasks.image.*
+
+docker {
+  registryCredentials {
+    url = 'https://123456789012.dkr.ecr.us-east-1.amazonaws.com'
+  }
+}
+
+def hashVersion = "${project.version}-${versionDetails().gitHash}"
+
+task printHashVersion() {
+  doLast {
+    println hashVersion
+  }
+}
+
+def defaultImage = "138150065595.dkr.ecr.us-east-1.amazonaws.com/${project.name}:${project.version}"
+def hashImage = "138150065595.dkr.ecr.us-east-1.amazonaws.com/${project.name}:${hashVersion}"
+
+task dockerBuildMain(type: DockerBuildImage) {
+  inputDir = file('./')
+  tags.add(defaultImage)
+  tags.add(hashImage)
+}
+
+task dockerPushMain(type: DockerPushImage) {
+  imageName = defaultImage
+}
+
+task dockerPushMainHash(type: DockerPushImage) {
+  imageName = hashImage
+}
+// Docker end
+
+// Helm start
+helm {
+  home = file("$buildDir/helm/home")
+  charts {
+    main {
+      chartName = project.name
+      chartVersion = project.version
+      sourceDir = file("helm")
+    }
+  }
+  repositories {
+    incubator {
+      url = uri('https://kubernetes-charts-incubator.storage.googleapis.com')
+    }
+  }
+  publishing {
+    repositories {
+      chartMuseum('chartmuseum') {
+        url = uri(project.findProperty("helmChartmuseumUrl"))
+
+        credentials {
+          username = project.findProperty("helmChartmuseumUser")
+          password = project.findProperty("helmChartmuseumPassword")
+        }
+      }
+    }
+  }
+}
+
+helmPackageMainChart {
+  appVersion = project.findProperty("helmAppVersion") ?: project.version
+}
+// Helm end
