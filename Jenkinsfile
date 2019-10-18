@@ -353,15 +353,18 @@ node(selectNode()) {
         }
     }
     stage('upload helm charts') {
-        withCredentials([usernamePassword(credentialsId: 'chartmuseum', usernameVariable: 'CHARTMUSEUM_USER', passwordVariable: 'CHARTMUSEUM_PASS')]) {
-            sh """
-                ./gradlew helmPackage
-                ./gradlew helmPublish \\
-                  -PhelmChartmuseumUrl=${env.CHARTMUSEUM_URL} \\
-                  -PhelmChartmuseumUser=${CHARTMUSEUM_USER} \\
-                  -PhelmChartmuseumPassword=${CHARTMUSEUM_PASS}
-            """
+        dir (kaa) {
+            withCredentials([usernamePassword(credentialsId: 'chartmuseum', usernameVariable: 'CHARTMUSEUM_USER', passwordVariable: 'CHARTMUSEUM_PASS')]) {
+                sh """
+                    ./gradlew helmPackage
+                    ./gradlew helmPublish \\
+                      -PhelmChartmuseumUrl=${env.CHARTMUSEUM_URL} \\
+                      -PhelmChartmuseumUser=${CHARTMUSEUM_USER} \\
+                      -PhelmChartmuseumPassword=${CHARTMUSEUM_PASS}
+                """
+            }
         }
+
     }
 
     stage('deploy-on-stage') {
