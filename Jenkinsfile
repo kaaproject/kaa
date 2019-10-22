@@ -353,7 +353,7 @@ node(selectNode()) {
         }
     }
     stage('upload helm charts') {
-        dir (kaa) {
+        dir ('kaa') {
             withCredentials([usernamePassword(credentialsId: 'chartmuseum', usernameVariable: 'CHARTMUSEUM_USER', passwordVariable: 'CHARTMUSEUM_PASS')]) {
                 sh """
                     ./gradlew helmPackage
