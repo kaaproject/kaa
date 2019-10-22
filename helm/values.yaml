@@ -187,6 +187,9 @@ logAppenderJob:
 waitContainers:
   enabled: true
 
+statefulset:
+  updateStrategy: OnDelete
+
 image:
   repository: 138150065595.dkr.ecr.us-east-1.amazonaws.com/kaa
   tag: 0.9.0-patched
