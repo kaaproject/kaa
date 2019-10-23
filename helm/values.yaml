@@ -74,13 +74,13 @@ kaa:
       jdbcPassword: "jbtpass"
 #      jdbcUrl: "jdbc:postgresql://172.17.0.1:5432/kaa"
     bootstrapHttpTransport:
-      bindInterface: "${transport_bind_interface}"
+#      bindInterface: '${transport_bind_interface}'
       bindPort: "9889"
       publicInterface: "172.17.0.1"
       publicPorts: "9889"
       maxBodySize: "524288"
     bootstrapTcpTransport:
-      bindInterface: "${transport_bind_interface}"
+#      bindInterface: '${transport_bind_interface}'
       bindPort: "9888"
       publicInterface: "172.17.0.1"
       publicPorts: "9888"
@@ -145,13 +145,13 @@ kaa:
     nosqlDao:
       nosqlDbProviderName: "cassandra"
     operationsHttpTransport:
-      bindInterface: "${transport_bind_interface}"
+#      bindInterface: "${transport_bind_interface}"
       bindPort: "9999"
       publicInterface: "172.17.0.1"
       publicPorts: "9999"
       maxBodySize: "524288"
     operationsTcpTransport:
-      bindInterface: "${transport_bind_interface}"
+#      bindInterface: "${transport_bind_interface}"
       bindPort: "9997"
       publicInterface: "172.17.0.1"
       publicPorts: "9997"

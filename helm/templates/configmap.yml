@@ -20,7 +20,7 @@ data:
 
   bootstrap-http-transport.config: |
     {
-      "bindInterface":{{ .Values.kaa.config.bootstrapHttpTransport.bindInterface | quote }},
+      "bindInterface":{{ printf "%s%s" "$" "{transport_bind_interface}" | quote }},
       "bindPort":{{ .Values.kaa.config.bootstrapHttpTransport.bindPort }},
       "publicPorts":{{ .Values.kaa.config.bootstrapHttpTransport.publicPorts | quote }},
       "maxBodySize":{{ .Values.kaa.config.bootstrapHttpTransport.maxBodySize }}
@@ -28,7 +28,7 @@ data:
 
   bootstrap-tcp-transport.config: |
     {
-      "bindInterface":{{ .Values.kaa.config.bootstrapTcpTransport.bindInterface | quote }},
+      "bindInterface":{{ printf "%s%s" "$" "{transport_bind_interface}" | quote }},
       "bindPort":{{ .Values.kaa.config.bootstrapTcpTransport.bindPort }},
       "publicPorts":{{ .Values.kaa.config.bootstrapTcpTransport.publicPorts | quote }}
     }
@@ -97,14 +97,14 @@ data:
 
   operations-http-transport.config: |
     {
-      "bindInterface":{{ .Values.kaa.config.operationsHttpTransport.bindInterface | quote }},
+      "bindInterface":{{ printf "%s%s" "$" "{transport_bind_interface}" | quote }},
       "bindPort":{{ .Values.kaa.config.operationsHttpTransport.bindPort }},
       "publicPorts":{{ .Values.kaa.config.operationsHttpTransport.publicPorts | quote }},
       "maxBodySize":{{ .Values.kaa.config.operationsHttpTransport.maxBodySize }}
     }
   operations-tcp-transport.config: |
     {
-      "bindInterface":{{ .Values.kaa.config.operationsTcpTransport.bindInterface | quote  }},
+      "bindInterface":{{ printf "%s%s" "$" "{transport_bind_interface}" | quote  }},
       "bindPort":{{ .Values.kaa.config.operationsTcpTransport.bindPort  }},
       "publicPorts":{{ .Values.kaa.config.operationsTcpTransport.publicPorts | quote  }}
     }
