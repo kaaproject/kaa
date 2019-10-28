@@ -2,10 +2,9 @@ library 'kaaiot.shared-libraries@master'
 
 gitlabUtils.populateEnvVariables()
 
-def sanitizedBranchName = gitlabUtils.getBuildTag()
-
 pipeline {
   environment {
+    sanitizedBranchName = gitlabUtils.getBuildTag()
     TAG = gitlabUtils.getBuildTag()
     SERVICE_NAME = "kaa"
     SERVICE_NAME_UPPER = SERVICE_NAME.toUpperCase()
@@ -46,7 +45,7 @@ pipeline {
 
       steps {
         withCredentials([string(credentialsId: 'gitlab--jenkins-token-10', variable: 'GITLAB_TOKEN')]) {
-          versioning_createTag(env.GITLAB_TOKEN, env.gitlabSourceRepoName, sanitizedBranchName, env.GIT_COMMIT)
+          versioning_createTag(env.GITLAB_TOKEN, env.gitlabSourceRepoName, env.sanitizedBranchName, env.GIT_COMMIT)
           versioning_updateVersionsRepo(env.GITLAB_TOKEN, env.gitlabSourceRepoName, sanitizedBranchName, env.gitlabSourceNamespace)
         }
       }
