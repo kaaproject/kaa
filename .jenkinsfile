@@ -2,6 +2,8 @@ library 'kaaiot.shared-libraries@master'
 
 gitlabUtils.populateEnvVariables()
 
+def sanitizedBranchName = gitlabUtils.getBuildTag()
+
 pipeline {
   environment {
     TAG = gitlabUtils.getBuildTag()
