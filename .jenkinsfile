@@ -33,6 +33,22 @@ pipeline {
         }
       }
     }
+
+    stage ('Create tags') {
+      when {
+        anyOf {
+          branch 'master'
+          branch 'rel_*'
+        }
+      }
+
+      steps {
+        withCredentials([string(credentialsId: 'gitlab--jenkins-token-10', variable: 'GITLAB_TOKEN')]) {
+          versioning_createTag(env.GITLAB_TOKEN, env.gitlabSourceRepoName, sanitizedBranchName, env.GIT_COMMIT)
+          versioning_updateVersionsRepo(env.GITLAB_TOKEN, env.gitlabSourceRepoName, sanitizedBranchName, env.gitlabSourceNamespace)
+        }
+      }
+    }
   }
 
   post {
