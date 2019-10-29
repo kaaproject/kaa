@@ -17,19 +17,18 @@ sort_idx: 5
 ## Overview
 
 In this tutorial, we will look at how to get started with the [Kaa Cloud]({{kaa_cloud_url}}) in two simple steps:
-1. Connect a [device simulator]({{code_url}}/client.py) to the Kaa Cloud server.
-2. Send and visualize the device simulated data on [Web Dashboard][WD].
+1. Connect a [device simulator](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData) to the Kaa Cloud server.
+2. Send and visualize the device simulated data on the [Web Dashboard][WD].
 
 
 ## Prerequisites
 
 1. You have an account on the [Kaa Cloud]({{kaa_cloud_url}}).
-2. [Python 2.7](https://www.python.org/download/releases/2.7/) is installed on your machine.
 
 
 ## Playbook
 
-To help you get started with the Kaa Cloud real quick, we've created a [Python simulator]({{code_url}}/client.py) that connects to the platform and simulates a real device behavior, as follows: 
+To help you get started with the Kaa Cloud real quick, we've created a [Python simulator](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData) that connects to the platform and simulates a real device behavior, as follows: 
 
 **1**. The simulator sends the following metadata to the platform on its start.
 
@@ -87,54 +86,36 @@ Let's connect one.
 
 <br/>
 
-**2**. Clone the device simulator from [here]({{code_url}}).
-
-The simulator consists of two files: 
-- [client.py]({{code_url}}/client.py) - the device simulator code written in Python 2.7.
-- [location.json]({{code_url}}/location.json) - geographical location data for the device live location simulation.
-
-**Both files must be placed together in one directory.**
-
-<br/>
-
-**3**. Register the device digital twin. It's called "[endpoint][endpoint]" in Kaa.
+**2**. Register the device digital twin. It's called "[endpoint][endpoint]" in Kaa.
 
 ![Device creation. The first step](attach/img/device-creation-1.png)
 
 <br/>
 
-**4**. Enter the desired [endpoint token][endpoint-token], device name, and description. 
+**3**. Enter the desired device name, and description and click `Create` button.
 
 ![Device creation. Second step](attach/img/device-creation-2.png)
 
 <br/>
 
-**5**. Remember or save the endpoint token in some file because **you won't be able to see it again in the future**.
+**4**. Copy and save the [endpoint token][endpoint-token] in some file because **you won't be able to see it again in the future**.
 We will use the token in a bit to connect the simulator.
 
 ![Device creation. The third step](attach/img/device-creation-3.png)
 
 <br/>
 
-**6**. Go to the dashboard of the recently created endpoint and copy its [application version][application].
+**5**. Go to the dashboard of the recently created endpoint (by clicking on the corresponding row in [Endpoint List widget]({{docs_url}}WD/docs/current/Widgets/Ep-list/) and copy its [application version][application].
 
 ![Copy device application version](attach/img/device-application-version.png)
 
 <br/>
 
-**7**. Run the cloned simulator from a terminal.
+**6**. Open the simulator by [this link](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData), enter the `app_version_name` and the device `token` which you have saved in the previous steps and run the simulator in the sandbox.
 
-Enter the directory with the cloned simulator (where `client.py` and `location.json` are located). 
-Enter the following command replacing `{mySecretToken}` and `{myAppVersionName}` with your endpoint token and application version name, respectively.
-
-```bash
-$ python --token {mySecretToken} --appVersionName {myAppVersionName} client.py
-```
-
-After launching the above command, you should see the simulator logs.
+After accomplishing the current step, you should see the simulator logs.
 
 ```text
-INFO: Using endpoint token myToken, server at cloud.kaaiot.com:30900
 DEBUG: Composed data collection topic: kp1/6bf4ad4c-e3aa-4641-afc8-5c0f6f1f7ed16-v1/dcx/myToken/json/47
 INFO: Connecting to KPC instance at cloud.kaaiot.com:30900...
 INFO: Successfully connected
@@ -150,7 +131,7 @@ body []
 
 <br/>
 
-**8**. Go back to the dashboard of the recently connected endpoint and view the simulated data.
+**7**. Go back to the dashboard of the recently connected endpoint and view the simulated data.
 
 ![Device dashboard of connected simulator](attach/img/visualized-device-data.png)
 
