@@ -1,0 +1,14 @@
+stages:
+  - create_version_tag
+
+create_version_tag:
+  stage: create_version_tag
+  except:
+    - tags
+  only:
+    - master
+    - rel_*
+  image: ${CI_REGISTRY}/${VERSIONING_MANAGER_IMAGE_PATH}:${VERSIONING_MANAGER_IMAGE_TAG}
+  script:
+    - export LATEST_VERSION=$(main versioning --token ${CI_JOB_TOKEN} create-version-tag --project-name ${CI_PROJECT_NAME} --branch-name ${CI_BUILD_REF_NAME} --commit-sha ${CI_COMMIT_SHA})
+    - main versioning --token ${CI_JOB_TOKEN} update-version-in-version-repo --version-repo-name ${CI_VERSION_REPO_NAME} --project-namespace ${CI_PROJECT_NAMESPACE} --project-name ${CI_PROJECT_NAME} --project-version ${LATEST_VERSION} --branch 'master'
