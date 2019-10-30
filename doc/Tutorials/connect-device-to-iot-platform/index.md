@@ -71,11 +71,9 @@ Add `meterDescription` field to the endpoint creation form. We will fill it out 
     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-**3**. Run from your machine [client.py]({{code_url}}/client.py), passing the endpoint token, platform host and port as arguments:
+**3**. Open [client.py](https://repl.it/@ElenaOlkhovyk/ConnectDeviceToIotPlatform) simulator script, add the `user_host`,`user_port`, `token` and `user_application_version` parameters' values and click the `Run` button. The following logs should be outputted in the sandbox console:
 
 ```
-python -t myToken -h {host} -p {port} client.py
-
 INFO: Using endpoint token myToken, server at {host}
 DEBUG: Composed metadata topic: kp1/demo_application_v1/epmx/myToken/update/keys
 INFO: Connecting to KPC instance at {host}:{port}...
