@@ -37,7 +37,7 @@ You can use [EPR REST API][EPR REST API] to:
 - Provision new endpoints in one of the Kaa [applications][application] defined in your [solution cluster][solution].
 - Retrieve endpoint information and metadata attributes.
 - Update endpoint metadata attributes.
-- Configure [**endpoint filters**]({{epr_url}}/Key-service-features/Ep-filters/): queries against the endpoint data and metadata attributes that allow you to flexibly segment the devices in your Kaa platform instance.
+- Configure [**endpoint filters**][endpoint-filter]: queries against the endpoint data and metadata attributes that allow you to flexibly segment the devices in your Kaa platform instance.
 - Retrieve endpoints that match previously provisioned filters.
 
 EPR service is also a source of various important state update events.
@@ -50,7 +50,7 @@ You can subscribe to these using the [NATS][nats] broker:
 [**Credential Management service (CM)**][CM] manages device credentials and authenticates connecting [clients][client] and [endpoints][endpoint].
 Before your IoT devices are able to connect to Kaa, corresponding credentials must be provisioned.
 CM supports the following credential types:
- - [*Endpoint tokens*](https://github.com/kaaproject/kaa-rfcs/blob/master/0001/README.md#language) serve for the endpoint identification.
+ - [*Endpoint tokens*][1/KP] serve for the endpoint identification.
 - *Username/password* combination for client authentication.
 - Client *SSL certificate* for client authentication.
 

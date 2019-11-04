@@ -7,8 +7,6 @@ sort_idx: 5
 
 {% include variables.md %}
 {% include_relative links.md %}
-{% assign kaa_cloud_url = "https://cloud.kaaiot.com" %}
-{% assign code_url = "https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/getting-started-kaa-cloud/attach/code" %}
 
 * TOC
 {:toc}
@@ -16,19 +14,19 @@ sort_idx: 5
 
 ## Overview
 
-In this tutorial, we will look at how to get started with the [Kaa Cloud]({{kaa_cloud_url}}) in two simple steps:
+In this tutorial, we will look at how to get started with the [Kaa Cloud][kaa_cloud_url] in two simple steps:
 1. Connect a [device simulator](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData) to the Kaa Cloud server.
 2. Send and visualize the device simulated data on the [Web Dashboard][WD].
 
 
 ## Prerequisites
 
-1. You have an account on the [Kaa Cloud]({{kaa_cloud_url}}).
+1. You have an account on the [Kaa Cloud][kaa_cloud_url].
 
 
 ## Playbook
 
-To help you get started with the Kaa Cloud real quick, we've created a [Python simulator](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData) that connects to the platform and simulates a real device behavior, as follows: 
+To help you get started with the Kaa Cloud real quick, we've created a [Python simulator](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData) that connects to the platform and simulates a real device behavior, as follows:
 
 **1**. The simulator sends the following metadata to the platform on its start.
 
@@ -52,12 +50,12 @@ To help you get started with the Kaa Cloud real quick, we've created a [Python s
 }
 ```
 
-where: 
+where:
 - `timestamp` - the current timestamp;
 - `temperature` - a random number in the range of 20-25;
 - `log` - a string with a randomly generated last part;
-- `latitude` - latitude taken from the [file]({{code_url}}/location.json);
-- `longitude` - longitude taken from the [file]({{code_url}}/location.json);
+- `latitude` - latitude taken from the [file][location_json];
+- `longitude` - longitude taken from the [file][location_json];
 - `battery_level` - a number in the range of 0-100.
 
 **3**. The simulator listens to the `HEALTH_CHECK` [command][commands] and responds with the following telemetry data upon receiving it.
@@ -71,17 +69,17 @@ where:
 <br/>
 
 By default, a Kaa Cloud account is shipped with the preconfigured dashboards and widgets that visualize the above simulator data.
-Also, the account includes pre-provisioned [endpoint filters]({{docs_url}}EPR/docs/current/Key-service-features/Ep-filters/) and [software (firmware) definitions][ota].
+Also, the account includes pre-provisioned [endpoint filters][endpoint-filter] and [software (firmware) definitions][ota].
 
 <br/>
 
 Now let's proceed with the instructions to get you going.
 
-**1**. Go to the "Devices" dashboard in your [Kaa Cloud account]({{kaa_cloud_url}}).
+**1**. Go to the "Devices" dashboard in your [Kaa Cloud account][kaa_cloud_url].
 
 ![Devices dashboard](attach/img/devices-dashboard.png)
 
-As you can see from the empty [Endpoint List widget]({{docs_url}}WD/docs/current/Widgets/Ep-list/), there are no connected devices yet. 
+As you can see from the empty [Endpoint List widget][ep-list-widget], there are no connected devices yet.
 Let's connect one.
 
 <br/>
@@ -105,7 +103,7 @@ We will use the token in a bit to connect the simulator.
 
 <br/>
 
-**5**. Go to the dashboard of the recently created endpoint (by clicking on the corresponding row in [Endpoint List widget]({{docs_url}}WD/docs/current/Widgets/Ep-list/) and copy its [application version][application].
+**5**. Go to the dashboard of the recently created endpoint (by clicking on the corresponding row in [Endpoint List widget][ep-list-widget] and copy its [application version][application].
 
 ![Copy device application version](attach/img/device-application-version.png)
 
@@ -141,10 +139,15 @@ Congratulations, you have connected your first device simulator to the Kaa Cloud
 
 <br/>
 
-Explore the "Software management" dashboard and get acquainted with its capabilities. 
+Explore the "Software management" dashboard and get acquainted with its capabilities.
 
 ## Next steps
 
 - [Communication][communication] - find out what is under the hood of the Kaa platform communication layer.
 - [Device management][identity] - learn how the Kaa platform device management feature works.
 - [Data collection][data collection] - learn how the Kaa platform data collection feature works.
+
+
+[ep-list-widget]: {{wd_url}}Widgets/#ep-list
+[kaa_cloud_url]: https://cloud.kaaiot.com
+[location_json]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/getting-started-kaa-cloud/attach/code/location.json

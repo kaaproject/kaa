@@ -7,7 +7,6 @@ sort_idx: 1
 
 {% include variables.md %}
 {% include_relative links.md %}
-{% assign code_url = "https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-device-to-iot-platform/attach/code" %}
 
 * TOC
 {:toc}
@@ -20,7 +19,7 @@ You will learn how to create a digital twin of your device, connect it, submit s
 
 We will simulate a smart energy scenario.
 Our [endpoint][endpoint] will act as a smart meter and report its model and MAC address to the Kaa platform.
-Also, we will configure an [Endpoint List widget]({{docs_url}}WD/docs/current/Widgets/Ep-list/) on the [Web Dashboard]({{docs_url}}WD) to display newly connected endpoint with its reported metadata.
+Also, we will configure an [Endpoint List widget][ep-list-widget] on the [Web Dashboard][WD] to display newly connected endpoint with its reported metadata.
 
 ![Solution blueprint](attach/img/architecture-overview.svg)
 
@@ -29,45 +28,45 @@ Also, we will configure an [Endpoint List widget]({{docs_url}}WD/docs/current/Wi
 
 1. You understand the Kaa platform [device management basics][identity].
 2. The Kaa platform is up and running with the following microservices included:
-* [Kaa Protocol Communication (KPC)]({{docs_url}}KPC);
-* [Credential Management (CM)]({{docs_url}}CM);
-* [Endpoint Metadata Extension (EPMX)]({{docs_url}}EPMX);
-* [Endpoint Register (EPR)]({{docs_url}}EPR);
-* [Web Dashboard (WD)]({{docs_url}}WD).
+* [Kaa Protocol Communication (KPC)][KPC];
+* [Credential Management (CM)][CM];
+* [Endpoint Metadata Extension (EPMX)][EPMX];
+* [Endpoint Register (EPR)][EPR];
+* [Web Dashboard (WD)][WD].
 3. [Python 2.7](https://www.python.org/download/releases/2.7/) is installed on your machine.
 
 
 ## Background information
 
-Kaa platform by default uses an **MQTT-based transport**: the [Kaa Protocol (1/KP)]({{rfc_url}}0001/README.md).
+Kaa platform by default uses an **MQTT-based transport**: the [Kaa Protocol (1/KP)][1/KP].
 1/KP acts as a multiplexing protocol and allows running higher level (extension) protocols on top of it.
-Extension protocols enable data exchange between endpoints and extensions: microservices that implement different aspects of the server-side functionality, such as **metadata synchronization** ([EPMX]({{docs_url}}EPMX)), **data collection** ([DCX]({{docs_url}}DCX)), **configuration management** ([CMX]({{docs_url}}CMX)), etc.
+Extension protocols enable data exchange between endpoints and extensions: microservices that implement different aspects of the server-side functionality, such as **metadata synchronization** ([EPMX][EPMX]), **data collection** ([DCX][DCX]), **configuration management** ([CMX][CMX]), etc.
 
 Managed devices are represented as [endpoints][endpoint] in the Kaa platform.
 1/KP uses endpoint tokens (alphanumeric strings) to identify connected endpoints.
 Every managed device must have a **separate endpoint token** for communicating with the platform.
 
 Every extension defines its own **MQTT path and payload** structure to be used by endpoints.
-In this tutorial we will use only one **extension**, [EPMX]({{docs_url}}EPMX), that serves for endpoint metadata synchronization.
-Check its extension protocol [10/EPMP]({{rfc_url}}0010/README.md) for more information.
+In this tutorial we will use only one **extension**, [EPMX][EPMX], that serves for endpoint metadata synchronization.
+Check its extension protocol [10/EPMP][10/EPMP] for more information.
 
 Now let's get to the action.
 
 
 ## Playbook
 
-**1**. Go to the Web Dashboard and configure (if it is not already configured) an [Endpoint List widget]({{docs_url}}WD/docs/current/Widgets/Ep-list/).
+**1**. Go to the Web Dashboard and configure (if it is not already configured) an [Endpoint List widget][ep-list-widget].
 Add `meterDescription` field to the endpoint creation form. We will fill it out during the endpoint record creation.
 
 <div align="center">
-  <iframe width="640" height="385" src="https://www.youtube.com/embed/qMeLZa0emws?rel=0" frameborder="0" 
+  <iframe width="640" height="385" src="https://www.youtube.com/embed/qMeLZa0emws?rel=0" frameborder="0"
     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 **2**. Create an endpoint record and obtain an endpoint token:
 
 <div align="center">
-  <iframe width="640" height="385" src="https://www.youtube.com/embed/du7tBJY72xM?rel=0" frameborder="0" 
+  <iframe width="640" height="385" src="https://www.youtube.com/embed/du7tBJY72xM?rel=0" frameborder="0"
     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
@@ -87,7 +86,7 @@ INFO: Successfully disconnected
 **4**. Go to the Web Dashboard and configure the Endpoint List widget with new metadata columns:
 
 <div align="center">
-  <iframe width="640" height="385" src="https://www.youtube.com/embed/ozMnDBzknHQ?rel=0" frameborder="0" 
+  <iframe width="640" height="385" src="https://www.youtube.com/embed/ozMnDBzknHQ?rel=0" frameborder="0"
     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
@@ -98,9 +97,13 @@ Now our device is listed in the Endpoint List widget along with its metadata:
 
 ## Resources
 
-All tutorial resources are located on [GitHub]({{code_url}}).
+All tutorial resources are located on [GitHub][code_url].
 
 ## Next steps
 
 - [Device management][identity] - find out more about device management feature.
 - [Data collection tutorial][data collection tutorial] - learn how to collect telemetry from your device into the platform.
+
+
+[ep-list-widget]: {{wd_url}}Widgets/#ep-list
+[code_url]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-device-to-iot-platform/attach/code

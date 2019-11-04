@@ -141,6 +141,7 @@
 [endpoint]: {{kaa_concepts}}#endpoints
 [endpoint-id]: {{kaa_concepts}}#endpoint-id
 [endpoint-token]: {{kaa_concepts}}#endpoint-token
+[endpoint-filter]: {{epr_url}}Key-service-features/Ep-filters/
 [client]: {{kaa_concepts}}#kaa-client
 [application]: {{kaa_concepts}}#applications-and-application-versions
 [service]: {{kaa_concepts}}#kaa-services

@@ -7,7 +7,6 @@ sort_idx: 3
 
 {% include variables.md %}
 {% include_relative links.md %}
-{% assign code_url = "https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/build-iot-dashboard/attach/code" %}
 
 * TOC
 {:toc}
@@ -15,10 +14,10 @@ sort_idx: 3
 
 ## Overview
 
-In this tutorial, you will learn how to implement a simple **web dashboard (interface)** in vanilla JavaScript that integrates with the Kaa IoT platform and provides simple **device management** functionality. 
+In this tutorial, you will learn how to implement a simple **web dashboard (interface)** in vanilla JavaScript that integrates with the Kaa IoT platform and provides simple **device management** functionality.
 You will learn how to:
 - **authenticate a user with the username/password** in [Keycloak][keycloak] and get his or her **[access token][access token]** for usage in **communication with the Kaa microservices' REST API**;
-- retrieve all [endpoints][endpoint] using [EPR REST API]({{docs_url}}EPR/docs/current/REST-API/#endpoints_get) by the user access token;
+- retrieve all [endpoints][endpoint] using [EPR REST API][EPR REST API] by the user access token;
 - display **endpoint metadata**;
 - provide a user with the ability to **manage endpoints** by updating their metadata.
 
@@ -28,7 +27,7 @@ You will learn how to:
 ## Prerequisites
 
 1. You have a **web server for serving static HTML**. In this tutorial, we use an Intellij Idea built-in web server. [Nginx][nginx] is another option.
-2. Keycloak has a configured client with the ["openid-connect"][openid] in *"Client Protocol"* and ["public"](https://www.keycloak.org/docs/4.8/server_admin/#_access-type) in *"Access Type"* on its administration page (Keycloak administration dashboard -> "Clients" in left sidebar -> "kaa-frontend" or other client -> "Settings" tab). 
+2. Keycloak has a configured client with the ["openid-connect"][openid] in *"Client Protocol"* and ["public"](https://www.keycloak.org/docs/4.8/server_admin/#_access-type) in *"Access Type"* on its administration page (Keycloak administration dashboard -> "Clients" in left sidebar -> "kaa-frontend" or other client -> "Settings" tab).
 In our case, we will work with the client that has the `kaa-frontend` client ID.
 ![Client configuration for the Client Protocol and Access Type](attach/img/client-configuration-for-the-client-protocol-and-access-type.png)
 3. Keycloak has the `*` value in `Valid Redirect URIs` for the development purpose. **Remove `*` in production.**
@@ -40,12 +39,12 @@ In our case, we will work with the client that has the `kaa-frontend` client ID.
 
 ## Playbook
 
-Keycloak comes with a **[client-side JavaScript library](https://www.keycloak.org/docs/4.8/securing_apps/index.html#_javascript_adapter)** that can be used to secure HTML5/JavaScript applications. 
+Keycloak comes with a **[client-side JavaScript library](https://www.keycloak.org/docs/4.8/securing_apps/index.html#_javascript_adapter)** that can be used to secure HTML5/JavaScript applications.
 The library can be retrieved directly from the Keycloak server at `https://{keycloak-host}/auth/js/keycloak.js` REST API endpoint.
 
 <br/>
 
-> The best practice is to load the JavaScript adapter programmatically directly from Keycloak Server as it will automatically be updated when you upgrade the server. 
+> The best practice is to load the JavaScript adapter programmatically directly from Keycloak Server as it will automatically be updated when you upgrade the server.
 Make sure you upgrade the adapter only after you have upgraded the server.
 {:.note}
 
@@ -59,9 +58,9 @@ $ cd custom-dashboard-tutorial/
 $ curl https://{keycloak-host}/auth/js/keycloak.js >> keycloak.js
 ```
 
-Once the library is downloaded, go to the Keycloak administration page of the client (*Clients*-> *kaa-frontend* -> *Settings* tab), click on the `Installation` tab, select `Keycloak OIDC JSON` for `Format Option`, and then click the `Download` button. 
+Once the library is downloaded, go to the Keycloak administration page of the client (*Clients*-> *kaa-frontend* -> *Settings* tab), click on the `Installation` tab, select `Keycloak OIDC JSON` for `Format Option`, and then click the `Download` button.
 The downloaded `keycloak.json` file must be placed into the root project directory along with the `keycloak.js`.
-The `keycloak.json` file contains Keycloak auth URL, information about realm, client ID, etc. Check it. 
+The `keycloak.json` file contains Keycloak auth URL, information about realm, client ID, etc. Check it.
 
 Your current project directory must look as follows:
 
@@ -84,9 +83,9 @@ Create the `index.html` HTML file in the project root and paste the below code i
   <head>
     <script src="keycloak.js"></script>
   </head>
-  
+
   Hello, user! You are logged-in!
-  
+
   <script>
       var keycloak = Keycloak();
       keycloak
@@ -118,7 +117,7 @@ Enter your username/password and verify that you are redirected back to our web 
 If the login process **succeeds**, the callback passed to the `keycloak`'s `success` method is called. In the callback, we will **render the application for the logged in user**.
 However, if the login process **fails**, the callback passed to the `keycloak`'s `error` method is called. In the callback, we will **notify the user about the error**.
 
-After the successful login process, the `keycloak` variable authenticates the user's access token that can be obtained next: `keycloak.token`. 
+After the successful login process, the `keycloak` variable authenticates the user's access token that can be obtained next: `keycloak.token`.
 Now we can use the access token in subsequent requests to **any Kaa platform microservice REST API** specifying it in the `Authorization` header: `Authorization: bearer eyJhbGciOiJSUzI1NiIsInR5cCIg...`
 
 <br/>
@@ -129,8 +128,8 @@ Now we can use the access token in subsequent requests to **any Kaa platform mic
 
 Next, create the `index.js` file in the project root. This file will contain **application rendering logic**.
 
-Firstly, we will implement the `renderApp` method. 
-Here we call [Endpoint Register service][EPR] [`GET /endpoints` REST API]({{docs_url}}EPR/docs/current/REST-API/#endpoints_get) with the access token obtained by the Keycloak adapter.
+Firstly, we will implement the `renderApp` method.
+Here we call EPR [`GET /endpoints` REST API][epr get endpoints] with the access token obtained by the Keycloak adapter.
 This REST API endpoint returns all available endpoints for a requesting user.
 
 ```js
@@ -192,7 +191,7 @@ function renderEndpointTable(responseText) {
 
 The table displays an endpoint ID, its [application version][application], and an endpoint `location` metadata field (**you may want to introduce your own metadata field since the Kaa platform is agnostic to the endpoint metadata structure**).
 
-Let's update `index.html` with the HTML of the table and add some [styles]({{code_url}}/style.css) to prettify it.
+Let's update `index.html` with the HTML of the table and add some [styles][styles_css] to prettify it.
 
 ```html
 <html lang="en">
@@ -236,7 +235,7 @@ Revisit the `index.html` in a browser (log in if needed) and verify that endpoin
 
 ![Endpoint table](attach/img/endpoint-table.png)
 
-As you can see, there is no data in the 'Location' column since none of the endpoints have the corresponding metadata field (in your case, it may be filled if endpoints do have such a metadata attribute). 
+As you can see, there is no data in the 'Location' column since none of the endpoints have the corresponding metadata field (in your case, it may be filled if endpoints do have such a metadata attribute).
 Jump below to change it.
 
 <br/>
@@ -252,7 +251,8 @@ For that, go to the `index.html` and add the `<p>` tag above the closing `</body
   ...
 ```
 
-Add the `saveEndpointLocation` method to the `index.js`. It sends an endpoint location entered by the user to the server using the [EPR REST API]({{docs_url}}EPR/docs/current/REST-API/#endpoints__endpointid__metadata__metadatakey__put).
+Add the `saveEndpointLocation` method to the `index.js`.
+It sends an endpoint location entered by the user to the server using the [EPR REST API][epr put metadata key].
 
 ```js
 var saveEndpointLocation = (accessToken) => {
@@ -271,23 +271,23 @@ var saveEndpointLocation = (accessToken) => {
 };
 ```
 
-Pay attention to the `req.setRequestHeader('Authorization', 'bearer ${accessToken}');` line. 
+Pay attention to the `req.setRequestHeader('Authorization', 'bearer ${accessToken}');` line.
 Here we initialize thw `Authorization` header with the user access token prefixed with the `bearer `.
- 
+
 Add rendering of the 'Save changes' button under the `renderEndpointTable` method invocation in the `renderApp` method.
 
 ```js
 ...
 if (req.status === 200) {
   renderEndpointTable(req.responseText);
-  // 'Save changes' button rendering 
+  // 'Save changes' button rendering
   document.getElementById('save-button').innerHTML =
     '<button onclick="saveEndpointLocation(keycloak.token)">Save changes</button>';
 } else {
   renderError(`Failed to retrieve endpoints' metadata`);
 }
 ...
-```  
+```
 
 Revisit the `index.html` file in the browser, enter any endpoint location you want, and click the 'Save changes' button. It should save the entered location on the [EPR][EPR] service.
 
@@ -302,7 +302,7 @@ Now you can use the same approach with the `Authorization` header to communicate
 
 ## Resources
 
-All the tutorial resources are located on [GitHub]({{code_url}}).
+All the tutorial resources are located on [GitHub][code_url].
 
 
 ## Tips
@@ -314,7 +314,7 @@ $ curl -X POST \
   https://{keycloak-host}/auth/realms/kaa/protocol/openid-connect/token \
   -H 'Content-Type: application/x-www-form-urlencoded' \
   -d 'grant_type=password&client_id=kaa-frontend&username={username}&password={password}'
-  
+
 {"access_token":"eyJhbGciOiJSUzI1NiIsInR5cCIg..."
 ```
 
@@ -322,20 +322,27 @@ $ curl -X POST \
 
 Use the value of the `access_token` field as the access token by prefixing it with the `bearer` in requests to the Kaa platform microservices REST API.
 
-[EPR `GET /endpoints`]({{docs_url}}EPR/docs/current/REST-API/#endpoints_get) example:
+[EPR `GET /endpoints`][epr get endpoints] example:
 
 ```bash
 $ curl https://{kaa-platform-host}/epr/api/v1/endpoints \
   -H 'Authorization: bearer eyJhbGciOiJSUzI1NiIsInR5cCIg...'
-  
+
 {"totalElements":1,"content":[{"endpointId":"0de07db5-5d40-4108-8cf3-1aee344b4aef"...
 ```
 
-[EPTS `GET /time-series/config`]({{docs_url}}EPTS/docs/current/REST-API/#time_series_config_get) example:
+[EPTS `GET /time-series/config`][epts get ts config] example:
 
 ```bash
 $ curl https://{kaa-platform-host}/epts/api/v1/time-series/config \
   -H 'Authorization: bearer eyJhbGciOiJSUzI1NiIsInR5cCIg...'
-  
+
 {"demo_application":[{"name":"temperature","values":["temp"]}...
 ```
+
+[epr get endpoints]: {{epr_url}}REST-API/#endpoints_get
+[epr put metadata key]: {{epr_url}}REST-API/#endpoints__endpointid__metadata__metadatakey__put
+[epts get ts config]: {{epts_url}}REST-API/#time_series_config_get
+
+[code_url]:   https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/build-iot-dashboard/attach/code
+[styles_css]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/build-iot-dashboard/attach/code/style.css
