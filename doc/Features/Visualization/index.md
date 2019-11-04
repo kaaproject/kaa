@@ -36,4 +36,4 @@ The table below summarizes the list of Kaa platform components that contribute t
 
 | Service                  | Version                |
 | ------------------------ | ---------------------- |
-| [Web Dashboard (WD)][WD] | {{service_wd_version}} |
+| [Web Dashboard (WD)][WD] | {{wd_version}} |

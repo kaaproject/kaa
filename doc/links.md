@@ -114,23 +114,23 @@
 
 <!--== Kaa RFCs ==-->
 [RFCs]: {{rfc_url}}#kaa-rfcs
-[1/KP]: {{rfc_url}}0001/README.md
-[2/DCP]: {{rfc_url}}0002/README.md
-[3/ISM]: {{rfc_url}}0003/README.md
-[4/ESP]: {{rfc_url}}0004/README.md
-[6/CDTP]: {{rfc_url}}0006/README.md
-[7/CMP]: {{rfc_url}}0007/README.md
-[8/KPSR]: {{rfc_url}}0008/README.md
-[9/ELCE]: {{rfc_url}}0009/README.md
-[10/EPMP]: {{rfc_url}}0010/README.md
-[11/CEP]: {{rfc_url}}0011/README.md
-[12/CIP]: {{rfc_url}}0012/README.md
-[13/DSTP]: {{rfc_url}}0013/README.md
-[14/TSTP]: {{rfc_url}}0014/README.md
-[15/EME]: {{rfc_url}}0015/README.md
-[16/ECAP]: {{rfc_url}}0016/README.md
-[17/SCMP]: {{rfc_url}}0017/README.md
-[18/EFE]: {{rfc_url}}0018/README.md
+[1/KP]: {{rfc_url}}blob/master/0001/README.md
+[2/DCP]: {{rfc_url}}blob/master/0002/README.md
+[3/ISM]: {{rfc_url}}blob/master/0003/README.md
+[4/ESP]: {{rfc_url}}blob/master/0004/README.md
+[6/CDTP]: {{rfc_url}}blob/master/0006/README.md
+[7/CMP]: {{rfc_url}}blob/master/0007/README.md
+[8/KPSR]: {{rfc_url}}blob/master/0008/README.md
+[9/ELCE]: {{rfc_url}}blob/master/0009/README.md
+[10/EPMP]: {{rfc_url}}blob/master/0010/README.md
+[11/CEP]: {{rfc_url}}blob/master/0011/README.md
+[12/CIP]: {{rfc_url}}blob/master/0012/README.md
+[13/DSTP]: {{rfc_url}}blob/master/0013/README.md
+[14/TSTP]: {{rfc_url}}blob/master/0014/README.md
+[15/EME]: {{rfc_url}}blob/master/0015/README.md
+[16/ECAP]: {{rfc_url}}blob/master/0016/README.md
+[17/SCMP]: {{rfc_url}}blob/master/0017/README.md
+[18/EFE]: {{rfc_url}}blob/master/0018/README.md
 
 <!--== Kaa terminology ==-->
 [architecture overview]: {{root_url}}Architecture-overview
