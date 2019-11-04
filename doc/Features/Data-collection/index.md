@@ -8,10 +8,13 @@ sort_idx: 30
 {% include variables.md %}
 {% include_relative links.md %}
 
+* TOC
+{:toc}
+
 
 ## Prerequisites
 
-- You understand the Kaa platform [microservice-based architecture]({{root_url}}Architecture-overview/).
+- You understand the Kaa platform [microservice-based architecture][architecture overview].
 
 
 ## Basic concept
@@ -53,11 +56,11 @@ EPTS broadcasts the new data points through the [time series transmission][14/TS
 #### MQTT topic structure
 
 If an endpoint is going to upload telemetry data into the platform in the **"fire-and-forget"** fashion it can use the **unreliable data collection** feature.
-It works by just NOT specifying [request ID][1/KP over MQTT topic structure] at the end of MQTT topic. 
+It works by just NOT specifying [request ID][1/KP over MQTT topic structure] at the end of MQTT topic.
 
 Let’s take an example. Imagine that you have an endpoint with the `JTjdbENzHh` [endpoint token][endpoint-token] that works in the `demo_application_v1` [application version][application].
 In the **"fire-and-forget"** scenario endpoint should use the next MQTT topic: `kp1/demo_application_v1/dcx/JTjdbENzHh/json`.
-So, the platform will accept and process request message without sending confirmation about its successful or unsuccessful processing back to the endpoint.  
+So, the platform will accept and process request message without sending confirmation about its successful or unsuccessful processing back to the endpoint.
 
 
 ### Reliable data collection
@@ -65,7 +68,7 @@ So, the platform will accept and process request message without sending confirm
 
 #### MQTT topic structure
 
-If an endpoint wants to **reliably** deliver data it must append [request ID][1/KP over MQTT topic structure] to the end of the MQTT topic. 
+If an endpoint wants to **reliably** deliver data it must append [request ID][1/KP over MQTT topic structure] to the end of the MQTT topic.
 It may be useful when endpoint wants to know whether the submitted data should be resent or not.
 
 Let’s take an example. Imagine that you have an endpoint with the `JTjdbENzHh` [endpoint token][endpoint-token] that works in the `demo_application_v1` [application version][application].
@@ -81,7 +84,7 @@ Each element of the array represents a single **data sample**.
 
 Examples:
 
-1. Message payload that contains **one data sample** that is the JSON object with three fields `timestamp`, `temperature` and `log`. 
+1. Message payload that contains **one data sample** that is the JSON object with three fields `timestamp`, `temperature` and `log`.
 
 ```json
 [
@@ -134,7 +137,7 @@ Examples:
 
 An endpoint may use **data batching** by sending **several data samples at once**.
 
-Next example contains **three data samples** that represents three separate device readings. 
+Next example contains **three data samples** that represents three separate device readings.
 
 ```json
 [
@@ -156,10 +159,22 @@ Next example contains **three data samples** that represents three separate devi
 ]
 ```
 
-It may help to **preserve the device battery life** and **optimize the network efficiency**. 
+It may help to **preserve the device battery life** and **optimize the network efficiency**.
+
+
+## Components
+
+The table below summarizes the list of Kaa platform components that contribute to this feature:
+
+| Service                                        | Version          |
+| ---------------------------------------------- | ---------------- |
+| [Data Collection Extension (DCX)][DCX]         | {{dcx_version}}  |
+| [Endpoint Time-Series (EPTS)][EPTS]            | {{epts_version}} |
+| [Kafka Data Collection Adapter (KDCA)][KDCA]   | {{kdca_version}} |
+| [MongoDB Data Collection Adapter (MDCA)][MDCA] | {{mdca_version}} |
 
 
 ## Next steps
 
-- [MQTT topic structure]({{root_url}}Features/Communication#mqtt-topic-structure) - learn more about the MQTT topic structure.
+- [MQTT topic structure][1/KP over MQTT topic structure] - learn more about the MQTT topic structure.
 - [Data collection tutorial][data collection tutorial] - collect and display telemetry data from your device.

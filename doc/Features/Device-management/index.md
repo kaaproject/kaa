@@ -8,10 +8,13 @@ sort_idx: 10
 {% include variables.md %}
 {% include_relative links.md %}
 
+* TOC
+{:toc}
+
 
 ## Prerequisites
 
-- You understand the Kaa platform [microservice-based architecture]({{root_url}}Architecture-overview/).
+- You understand the Kaa platform [microservice-based architecture][architecture overview].
 
 
 ## Basic concept
@@ -34,7 +37,7 @@ You can use [EPR REST API][EPR REST API] to:
 - Provision new endpoints in one of the Kaa [applications][application] defined in your [solution cluster][solution].
 - Retrieve endpoint information and metadata attributes.
 - Update endpoint metadata attributes.
-- Configure [**endpoint filters**]({{docs_url}}EPR/docs/current/Key-service-features/Ep-filters/): queries against the endpoint data and metadata attributes that allow you to flexibly segment the devices in your Kaa platform instance.
+- Configure [**endpoint filters**]({{epr_url}}/Key-service-features/Ep-filters/): queries against the endpoint data and metadata attributes that allow you to flexibly segment the devices in your Kaa platform instance.
 - Retrieve endpoints that match previously provisioned filters.
 
 EPR service is also a source of various important state update events.
@@ -44,7 +47,7 @@ You can subscribe to these using the [NATS][nats] broker:
 - Endpoint filter events, delivered with [18/EFE][18/EFE], can be used to monitor endpoint filter (de-)activations, as well as endpoints (un-)matching such filters.
 
 
-[**Credential Management service (CM)**][CM] manages device credentials and authenticates connecting [clients and endpoints]({{root_url}}Architecture-overview/#client-endpoint).
+[**Credential Management service (CM)**][CM] manages device credentials and authenticates connecting [clients][client] and [endpoints][endpoint].
 Before your IoT devices are able to connect to Kaa, corresponding credentials must be provisioned.
 CM supports the following credential types:
  - [*Endpoint tokens*](https://github.com/kaaproject/kaa-rfcs/blob/master/0001/README.md#language) serve for the endpoint identification.
@@ -69,6 +72,17 @@ This feature allows specifying a list of metadata fields that endpoints are allo
 It also allows to forbid updating specific fields, rendering them read-only.
 
 EPMX itself does not persist metadata and integrates with [Endpoint Register service (EPR)][EPR] for that purpose.
+
+
+## Components
+
+The table below summarizes the list of Kaa platform components that contribute to this feature:
+
+| Service                                    | Version          |
+| ------------------------------------------ | ---------------- |
+| [Endpoint Register (EPR)][EPR]             | {{epr_version}}  |
+| [Endpoint Metadata Extension (EPMX)][EPMX] | {{epmx_version}} |
+| [Credential Management (CM)][CM]           | {{cm_version}}   |
 
 
 ## Next steps

@@ -14,7 +14,7 @@ sort_idx: 20
 
 ## Prerequisites
 
-- You understand the Kaa platform [microservice-based architecture]({{root_url}}Architecture-overview/).
+- You understand the Kaa platform [microservice-based architecture][architecture overview].
 
 
 ## Basic concept
@@ -22,7 +22,7 @@ sort_idx: 20
 Device communication is an important aspect of an IoT platform.
 The main objectives of this Kaa function are:
 - Handling the data exchange among connected devices and the Kaa platform components.
-- Authenticating connecting devices (both [clients and endpoints]({{root_url}}Architecture-overview/#client-endpoint)).
+- Authenticating connecting devices (both [clients][client] and [endpoints][endpoint].
 - Identification of the device capabilities (see [application and application version][application]).
 - Securing the device communication with encryption and tamper protection.
 - Handling device connectivity state (connected / disconnected).
@@ -126,6 +126,16 @@ The request IDs for outstanding requests from that endpoint to `dcx` service ins
 
 The response on **successful** data processing will arrive to the `kp1/demo_application_v1/dcx/myToken/json/42/status` MQTT topic.
 The response on **unsuccessful** data processing will arrive to the `kp1/demo_application_v1/dcx/myToken/json/42/error` MQTT topic.
+
+
+## Components
+
+The table below summarizes the list of Kaa platform components that contribute to this feature:
+
+| Service                                 | Version         |
+| --------------------------------------- | --------------- |
+| [Kaa Protocol Communication (KPC)][KPC] | {{kpc_version}} |
+| [Endpoint Lifecycle (EPL)][EPL]         | {{epl_version}} |
 
 
 ## Next steps

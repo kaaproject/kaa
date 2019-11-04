@@ -8,10 +8,13 @@ sort_idx: 60
 {% include variables.md %}
 {% include_relative links.md %}
 
+* TOC
+{:toc}
+
 
 ## Prerequisites
 
-- You understand the Kaa platform [microservice-based architecture]({{root_url}}Architecture-overview/).
+- You understand the Kaa platform [microservice-based architecture][architecture overview].
 
 
 ## Basic concept
@@ -52,5 +55,15 @@ OTAO provides [REST API][OTAO REST API] that can you can use to manage software 
 In its nature, such delivery is very similar to a configuration update, which is why CMX is reused.
 You should use [7/CMP][7/CMP] to integrate the software updates feature with your client application.
 
-> In Kaa clusters that support both configuration and software updates, there is normally a separate CMX [service instance]({{root_url}}Architecture-overview/#scalability) for each feature.
+> In Kaa clusters that support both configuration and software updates, there is normally a separate CMX [service instance][scalability] for each feature.
 {:.note}
+
+
+## Components
+
+The table below summarizes the list of Kaa platform components that contribute to this feature:
+
+| Service                                         | Version          |
+| ----------------------------------------------- | ---------------- |
+| [Over-the-air Orchestrator (OTAO)][OTAO]        | {{otao_version}} |
+| [Configuration Management Extension (CMX)][CMX] | {{cmx_version}}  |

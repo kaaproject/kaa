@@ -1,0 +1,34 @@
+{
+  "Device-management": [
+    "EPR",
+    "EPMX",
+    "CM"
+  ],
+  "Communication": [
+    "KPC",
+    "EPL"
+  ],
+  "Data-collection": [
+    "DCX",
+    "EPTS",
+    "KDCA",
+    "MDCA"
+  ],
+  "Configuration-management": [
+    "CMX",
+    "ECR"
+  ],
+  "Command-invocation": [
+    "CEX",
+    "RCI"
+  ],
+  "Software-updates": [
+    "OTAO"
+  ],
+  "Visualization": [
+    "WD"
+  ],
+  "Miscellaneous": [
+    "TSX"
+  ]
+}

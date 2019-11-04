@@ -1,49 +1,118 @@
 {% include variables.md %}
 
-<!-- Kaa services -->
-<!-- TODO: this is a good place to implement templating for the service versions in a release (instead of "current") -->
-[EPR]: {{docs_url}}EPR
-[EPR REST API]: {{docs_url}}EPR/docs/current/REST-API/
 
-[EPMX]: {{docs_url}}EPMX
-
-[CM]: {{docs_url}}CM
-[CM REST API]: {{docs_url}}CM/docs/current/REST-API/
-
-[KPC]: {{docs_url}}KPC
-
-[EPL]: {{docs_url}}EPL
-
-[DCX]: {{docs_url}}DCX
-
-[EPTS]: {{docs_url}}EPTS
-[EPTS REST API]: {{docs_url}}EPTS/docs/current/REST-API/
-
-[KDCA]: {{docs_url}}KDCA
-
-[MDCA]: {{docs_url}}MDCA
-
-[CMX]: {{docs_url}}CMX
-
-[ECR]: {{docs_url}}ECR
-[ECR REST API]: {{docs_url}}ECR/docs/current/REST-API/
-
-[CEX]: {{docs_url}}CEX
-
-[RCI]: {{docs_url}}RCI
-[RCI REST API]: {{docs_url}}RCI/docs/current/REST-API/
-
-[OTAO]: {{docs_url}}OTAO
-[OTAO REST API]: {{docs_url}}OTAO/docs/current/REST-API/
-
-[WD]: {{docs_url}}WD
-
-[SCR]: {{docs_url}}SCR
-
-[TSX]: {{docs_url}}TSX
+<!--== Features and components ==-->
+{% capture kaa_features_url %}{{root_url}}Features/{% endcapture %}
+[kaa features]: {{kaa_features_url}}
 
 
-<!-- Kaa RFCs -->
+<!-- Device management -->
+{% capture feature_device_mgmt_url %}{{kaa_features_url}}Device-management/{% endcapture %}
+[identity]: {{feature_device_mgmt_url}}
+[device management]: {{feature_device_mgmt_url}}
+
+{% capture epr_url %}{{feature_device_mgmt_url}}EPR/{% endcapture %}
+[EPR]: {{epr_url}}
+[EPR REST API]: {{epr_url}}REST-API/
+
+{% capture epmx_url %}{{feature_device_mgmt_url}}EPMX/{% endcapture %}
+[EPMX]: {{epmx_url}}
+
+{% capture cm_url %}{{feature_device_mgmt_url}}CM/{% endcapture %}
+[CM]: {{cm_url}}
+[CM REST API]: {{cm_url}}REST-API/
+
+
+<!-- Communication -->
+{% capture feature_communication_url %}{{kaa_features_url}}Communication/{% endcapture %}
+[communication]: {{feature_communication_url}}
+[1/KP over MQTT topic structure]: {{feature_communication_url}}#mqtt-topic-structure-for-the-kaa-protocol-v1
+
+{% capture kpc_url %}{{feature_communication_url}}KPC/{% endcapture %}
+[KPC]: {{kpc_url}}
+
+{% capture epl_url %}{{feature_communication_url}}EPL/{% endcapture %}
+[EPL]: {{epl_url}}
+
+
+<!-- Data collection -->
+{% capture feature_data_collection_url %}{{kaa_features_url}}Data-collection/{% endcapture %}
+[data collection]: {{feature_data_collection_url}}
+
+{% capture dcx_url %}{{feature_data_collection_url}}DCX/{% endcapture %}
+[DCX]: {{dcx_url}}
+
+{% capture epts_url %}{{feature_data_collection_url}}EPTS/{% endcapture %}
+[EPTS]: {{epts_url}}
+[EPTS REST API]: {{epts_url}}REST-API/
+
+{% capture kdca_url %}{{feature_data_collection_url}}KDCA/{% endcapture %}
+[KDCA]: {{kdca_url}}
+
+{% capture mdca_url %}{{feature_data_collection_url}}MDCA/{% endcapture %}
+[MDCA]: {{mdca_url}}
+
+
+<!-- Configuration management -->
+{% capture feature_config_mgmt_url %}{{kaa_features_url}}Configuration-management/{% endcapture %}
+[configuration]: {{feature_config_mgmt_url}}
+
+{% capture cmx_url %}{{feature_config_mgmt_url}}CMX/{% endcapture %}
+[CMX]: {{cmx_url}}
+
+{% capture ecr_url %}{{feature_config_mgmt_url}}ECR/{% endcapture %}
+[ECR]: {{ecr_url}}
+[ECR REST API]: {{ecr_url}}REST-API/
+
+
+<!-- Commands -->
+{% capture feature_commands_url %}{{kaa_features_url}}Command-invocation/{% endcapture %}
+[commands]: {{feature_commands_url}}
+
+{% capture cex_url %}{{feature_commands_url}}CEX/{% endcapture %}
+[CEX]: {{cex_url}}
+[CEX REST API]: {{cex_url}}REST-API/
+
+{% capture rci_url %}{{feature_commands_url}}RCI/{% endcapture %}
+[RCI]: {{rci_url}}
+[RCI REST API]: {{rci_url}}REST-API/
+
+
+<!-- Software updates -->
+{% capture feature_ota_url %}{{kaa_features_url}}Software-updates/{% endcapture %}
+[ota]: {{feature_ota_url}}
+
+{% capture otao_url %}{{feature_ota_url}}OTAO/{% endcapture %}
+[OTAO]: {{otao_url}}
+[OTAO REST API]: {{otao_url}}REST-API/
+
+
+<!-- Visualization -->
+{% capture feature_visualization_url %}{{kaa_features_url}}Visualization/{% endcapture %}
+[visualization]: {{feature_visualization_url}}
+
+{% capture wd_url %}{{feature_visualization_url}}WD/{% endcapture %}
+[WD]: {{wd_url}}
+
+
+<!-- Infrastructure -->
+{% capture feature_infrastructure_url %}{{kaa_features_url}}Infrastructure/{% endcapture %}
+[infrastructure]: {{feature_infrastructure_url}}
+
+{% capture tekton_url %}{{feature_infrastructure_url}}TEKTON/{% endcapture %}
+[TEKTON]: {{tekton_url}}
+[TEKTON REST API]: {{tekton_url}}REST-API/
+
+
+<!-- Miscellaneous -->
+{% capture feature_miscellaneous_url %}{{kaa_features_url}}Miscellaneous/{% endcapture %}
+[misc]: {{feature_miscellaneous_url}}
+
+{% capture tsx_url %}{{feature_miscellaneous_url}}TSX/{% endcapture %}
+[TSX]: {{tsx_url}}TSX/
+
+
+<!--== Kaa RFCs ==-->
 [RFCs]: {{rfc_url}}#kaa-rfcs
 [1/KP]: {{rfc_url}}0001/README.md
 [2/DCP]: {{rfc_url}}0002/README.md
@@ -60,10 +129,13 @@
 [14/TSTP]: {{rfc_url}}0014/README.md
 [15/EME]: {{rfc_url}}0015/README.md
 [16/ECAP]: {{rfc_url}}0016/README.md
+[17/SCMP]: {{rfc_url}}0017/README.md
 [18/EFE]: {{rfc_url}}0018/README.md
 
-<!-- Kaa terminology -->
+<!--== Kaa terminology ==-->
 [architecture overview]: {{root_url}}Architecture-overview
+[scalability]: {{root_url}}Architecture-overview/#scalability
+
 [kaa concepts]: {{root_url}}Kaa-concepts
 [endpoint]: {{root_url}}Kaa-concepts/#endpoints
 [endpoint-id]: {{root_url}}Kaa-concepts/#endpoint-id
@@ -75,23 +147,14 @@
 [blueprint]: {{root_url}}Kaa-concepts/#blueprint
 [extension]: {{root_url}}Kaa-concepts/#extension-services
 
-<!-- Features -->
-[kaa features]: {{root_url}}Features 
-[identity]: {{root_url}}Features/Device-management
-[communication]: {{root_url}}Features/Communication
-[1/KP over MQTT topic structure]: {{root_url}}Features/Communication#mqtt-topic-structure-for-the-kaa-protocol-v1
-[data collection]: {{root_url}}Features/Data-collection
-[configuration]: {{root_url}}Features/Configuration-management
-[commands]: {{root_url}}Features/Command-invocation
-[ota]: {{root_url}}Features/Software-updates
-
-<!-- Tutorials -->
+<!--== Tutorials ==-->
+[tutorials]: {{root_url}}Tutorials/
 [how to connect device]: {{root_url}}Tutorials/connect-device-to-iot-platform
 [data collection tutorial]: {{root_url}}Tutorials/iot-data-collection
 [custom web dashboard]: {{root_url}}Tutorials/build-iot-dashboard
 [custom microservice integration]: {{root_url}}Tutorials/custom-microservice
 
-<!-- 3-rd party components -->
+<!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
 [k8s]: https://kubernetes.io/
 [helm]: https://helm.sh/
@@ -102,13 +165,13 @@
 [nats]: https://www.nats.io/
 [keycloak]: https://www.keycloak.org/
 
-<!-- Technologies -->
+<!--== Technologies ==-->
 [mqtt]: http://mqtt.org/
 [coap]: http://coap.technology/
 [json]: https://www.json.org/
 [avro]: https://avro.apache.org/
 
-<!-- General -->
+<!--== General ==-->
 [digital twin]: https://en.wikipedia.org/wiki/Digital_twin
 [over-the-air]: https://en.wikipedia.org/wiki/Over-the-air_programming
 [access token]: https://www.oauth.com/oauth2-servers/access-tokens/

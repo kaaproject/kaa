@@ -10,7 +10,7 @@ sort_idx: 0
 Welcome to the Kaa documentation.
 Here you can find all **technical information related to Kaa products**.
 
-This page describes how Kaa documentation is structured and what kind of information it contains.  
+This page describes how Kaa documentation is structured and what kind of information it contains.
 If you need to figure out where to navigate to find information, read below.
 
 <table>
@@ -19,19 +19,19 @@ If you need to figure out where to navigate to find information, read below.
 </tr>
 <tr><td markdown="1" style="width:50%; vertical-align:top;">
 
-**[Kaa concepts &rarr;]({{root_url}}Kaa-concepts/)**
+**[Kaa concepts &rarr;][kaa concepts]**
 
 - This section explains at a high level the general concepts used in the Kaa documentation.
 - It describes the constituent parts of Kaa platform and how they work together.
 - If you are new to Kaa, this is the place you might want to start from.
 
 
-**[Features &rarr;]({{root_url}}Features/)**
+**[Features &rarr;][kaa features]**
 
 - Learn about the Kaa platform features and how to use them.
 
 
-**[Architecture overview &rarr;]({{root_url}}Architecture-overview/)**
+**[Architecture overview &rarr;][architecture overview]**
 
 - An in-depth technical description of Kaa platform architecture.
 - If you already know Kaa basics and/or have some developer experience, you might want to dive into this one.
@@ -80,7 +80,7 @@ If you need to figure out where to navigate to find information, read below.
 - Kaa service API documentation.
 
 
-**[Tutorials &rarr;]({{root_url}}/Tutorials)**
+**[Tutorials &rarr;][tutorials]**
 
 - Practical examples on how to work with Kaa in different use cases.
 

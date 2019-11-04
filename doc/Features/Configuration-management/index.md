@@ -8,10 +8,13 @@ sort_idx: 40
 {% include variables.md %}
 {% include_relative links.md %}
 
+* TOC
+{:toc}
+
 
 ## Prerequisites
 
-- You understand the Kaa platform [microservice-based architecture]({{root_url}}Architecture-overview/).
+- You understand the Kaa platform [microservice-based architecture][architecture overview].
 
 
 ## Basic concept
@@ -48,3 +51,13 @@ This protocol is used to retrieve configuration data, track endpoints' last appl
 
 [**Endpoint Configuration Repository service (ECR)**][ECR] is used for storing and managing endpoint configuration data.
 It exposes [REST API][ECR REST API] for the configuration management and supports integration with CMX using the Configuration Data Transport Protocol ([6/CDTP][6/CDTP]).
+
+
+## Components
+
+The table below summarizes the list of Kaa platform components that contribute to this feature:
+
+| Service                                         | Version         |
+| ----------------------------------------------- | --------------- |
+| [Configuration Management Extension (CMX)][CMX] | {{cmx_version}} |
+| [Endpoint Configuration Repository (ECR)][ECR]  | {{ecr_version}} |

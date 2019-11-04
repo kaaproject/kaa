@@ -8,15 +8,18 @@ sort_idx: 50
 {% include variables.md %}
 {% include_relative links.md %}
 
+* TOC
+{:toc}
+
 
 ## Prerequisites
 
-- You understand the Kaa platform [microservice-based architecture]({{root_url}}Architecture-overview/).
+- You understand the Kaa platform [microservice-based architecture][architecture overview].
 
 
 ## Basic concept
 
-Kaa command invocation feature helps controling devices remotely.
+Kaa command invocation feature helps controlling devices remotely.
 Using it, you can send short lived messages to connected devices (commands), make them react as necessary, and receive responses.
 For example, you can toggle light, pop up car trunk, or request an immediate device status report.
 <!-- - Remotely invoke execution of commands, synchronously or asynchronously. -->
@@ -37,3 +40,13 @@ CEX communicates with RCI via the Command Invocation Protocol ([12/CIP][12/CIP])
 This protocol is used to accept command requests and return results back to the caller.
 
 [**REST Command Invocation service (RCI)**][RCI] exposes [REST API][RCI REST API] for invoking commands against endpoints.
+
+
+## Components
+
+The table below summarizes the list of Kaa platform components that contribute to this feature:
+
+| Service                                  | Version         |
+| ---------------------------------------- | --------------- |
+| [Command Execution Extension (CEX)][CEX] | {{cex_version}} |
+| [REST Command Invocation (RCI)][RCI]     | {{rci_version}} |
