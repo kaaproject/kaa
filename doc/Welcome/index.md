@@ -6,6 +6,7 @@ sort_idx: 0
 ---
 
 {% include variables.md %}
+{% include_relative links.md %}
 
 Welcome to the Kaa documentation.
 Here you can find all **technical information related to Kaa products**.
