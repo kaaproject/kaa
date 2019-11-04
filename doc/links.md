@@ -109,7 +109,7 @@
 [misc]: {{feature_miscellaneous_url}}
 
 {% capture tsx_url %}{{feature_miscellaneous_url}}TSX/{% endcapture %}
-[TSX]: {{tsx_url}}TSX/
+[TSX]: {{tsx_url}}
 
 
 <!--== Kaa RFCs ==-->
@@ -133,26 +133,27 @@
 [18/EFE]: {{rfc_url}}blob/master/0018/README.md
 
 <!--== Kaa terminology ==-->
-[architecture overview]: {{root_url}}Architecture-overview
+[architecture overview]: {{root_url}}Architecture-overview/
 [scalability]: {{root_url}}Architecture-overview/#scalability
 
-[kaa concepts]: {{root_url}}Kaa-concepts
-[endpoint]: {{root_url}}Kaa-concepts/#endpoints
-[endpoint-id]: {{root_url}}Kaa-concepts/#endpoint-id
-[endpoint-token]: {{root_url}}Kaa-concepts/#endpoint-token
-[client]: {{root_url}}Kaa-concepts/#kaa-client
-[application]: {{root_url}}Kaa-concepts/#applications-and-application-versions
-[service]: {{root_url}}Kaa-concepts/#kaa-services
-[solution]: {{root_url}}Kaa-concepts/#solution-cluster
-[blueprint]: {{root_url}}Kaa-concepts/#blueprint
-[extension]: {{root_url}}Kaa-concepts/#extension-services
+{% capture kaa_concepts %}{{root_url}}Kaa-concepts/{% endcapture %}
+[kaa concepts]: {{kaa_concepts}}
+[endpoint]: {{kaa_concepts}}#endpoints
+[endpoint-id]: {{kaa_concepts}}#endpoint-id
+[endpoint-token]: {{kaa_concepts}}#endpoint-token
+[client]: {{kaa_concepts}}#kaa-client
+[application]: {{kaa_concepts}}#applications-and-application-versions
+[service]: {{kaa_concepts}}#kaa-services
+[solution]: {{kaa_concepts}}#solution-cluster
+[blueprint]: {{kaa_concepts}}#blueprint
+[extension]: {{kaa_concepts}}#extension-services
 
 <!--== Tutorials ==-->
 [tutorials]: {{root_url}}Tutorials/
-[how to connect device]: {{root_url}}Tutorials/connect-device-to-iot-platform
-[data collection tutorial]: {{root_url}}Tutorials/iot-data-collection
-[custom web dashboard]: {{root_url}}Tutorials/build-iot-dashboard
-[custom microservice integration]: {{root_url}}Tutorials/custom-microservice
+[how to connect device]: {{root_url}}Tutorials/connect-device-to-iot-platform/
+[data collection tutorial]: {{root_url}}Tutorials/iot-data-collection/
+[custom web dashboard]: {{root_url}}Tutorials/build-iot-dashboard/
+[custom microservice integration]: {{root_url}}Tutorials/custom-microservice/
 
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
