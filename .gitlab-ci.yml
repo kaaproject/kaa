@@ -7,7 +7,7 @@ create_version_tag:
     - tags
   only:
     - master
-    - rel_*
+    - /^rel_.*$/
   image: ${CI_REGISTRY}/${VERSIONING_MANAGER_IMAGE_PATH}:${VERSIONING_MANAGER_IMAGE_TAG}
   script:
     - export LATEST_VERSION=$(main versioning --token ${CI_JOB_TOKEN} create-version-tag --project-name ${CI_PROJECT_NAME} --branch-name ${CI_BUILD_REF_NAME} --commit-sha ${CI_COMMIT_SHA})
