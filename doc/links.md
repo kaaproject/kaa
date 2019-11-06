@@ -136,6 +136,7 @@
 <!--== Kaa terminology ==-->
 [architecture overview]: {{root_url}}Architecture-overview/
 [scalability]: {{root_url}}Architecture-overview/#scalability
+[service configuration]:{{root_url}}Architecture-overview/#configuration
 
 {% capture kaa_concepts %}{{root_url}}Kaa-concepts/{% endcapture %}
 [kaa concepts]: {{kaa_concepts}}
@@ -167,12 +168,16 @@
 [grafana]: https://grafana.com/
 [nats]: https://www.nats.io/
 [keycloak]: https://www.keycloak.org/
+[mongo]: https://www.mongodb.com/
+[maria]: https://mariadb.org/
+[redis]: https://redis.io
 
 <!--== Technologies ==-->
 [mqtt]: http://mqtt.org/
 [coap]: http://coap.technology/
 [json]: https://www.json.org/
 [avro]: https://avro.apache.org/
+[oauth2]: https://oauth.net/2/
 
 <!--== General ==-->
 [digital twin]: https://en.wikipedia.org/wiki/Digital_twin
