@@ -168,7 +168,8 @@
 [grafana]: https://grafana.com/
 [nats]: https://www.nats.io/
 [keycloak]: https://www.keycloak.org/
-[mongo]: https://www.mongodb.com/
+[influxdb]: https://docs.influxdata.com/influxdb/
+[mongo]: https://www.mongodb.com/what-is-mongodb
 [maria]: https://mariadb.org/
 [redis]: https://redis.io
 
