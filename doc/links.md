@@ -156,7 +156,7 @@
 [how to connect device]: {{root_url}}Tutorials/connect-device-to-iot-platform/
 [data collection tutorial]: {{root_url}}Tutorials/iot-data-collection/
 [custom web dashboard]: {{root_url}}Tutorials/build-iot-dashboard/
-[custom microservice integration]: {{root_url}}Tutorials/custom-microservice/
+[iot notification tutorial]: {{root_url}}Tutorials/iot-notification/
 
 <!-- Administration -->
 [administration]: {{root_url}}Administration/
