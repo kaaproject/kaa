@@ -171,7 +171,6 @@ The table below summarizes the list of Kaa platform components that contribute t
 | [Data Collection Extension (DCX)][DCX]         | {{dcx_version}}  |
 | [Endpoint Time-Series (EPTS)][EPTS]            | {{epts_version}} |
 | [Kafka Data Collection Adapter (KDCA)][KDCA]   | {{kdca_version}} |
-| [MongoDB Data Collection Adapter (MDCA)][MDCA] | {{mdca_version}} |
 
 
 ## Next steps
