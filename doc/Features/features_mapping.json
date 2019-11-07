@@ -28,6 +28,9 @@
   "Visualization": [
     "WD"
   ],
+  "Infrastructure": [
+    "TEKTON"
+  ],
   "Miscellaneous": [
     "TSX"
   ]

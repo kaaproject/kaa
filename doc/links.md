@@ -159,6 +159,10 @@
 [custom web dashboard]: {{root_url}}Tutorials/build-iot-dashboard/
 [custom microservice integration]: {{root_url}}Tutorials/custom-microservice/
 
+<!-- Administration -->
+[administration]: {{root_url}}Administration/
+[api security]: {{root_url}}Administration/API-security/
+
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
 [k8s]: https://kubernetes.io/
@@ -179,10 +183,14 @@
 [coap]: http://coap.technology/
 [json]: https://www.json.org/
 [avro]: https://avro.apache.org/
-[oauth2]: https://oauth.net/2/
+[oauth2]: https://tools.ietf.org/html/rfc6749
+[resource server]: https://www.oauth.com/oauth2-servers/the-resource-server/
+[access token]: https://www.oauth.com/oauth2-servers/access-tokens/
+[oauth scope]: https://www.oauth.com/oauth2-servers/scope/
+[openid]: https://openid.net/connect/
+[uma]: https://en.wikipedia.org/wiki/User-Managed_Access
 
 <!--== General ==-->
 [digital twin]: https://en.wikipedia.org/wiki/Digital_twin
 [over-the-air]: https://en.wikipedia.org/wiki/Over-the-air_programming
-[access token]: https://www.oauth.com/oauth2-servers/access-tokens/
 [openid]: https://openid.net/connect/
