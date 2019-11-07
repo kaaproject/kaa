@@ -384,6 +384,15 @@ Now you can go further and expand the application with the [metadata][endpoint-m
 Endpoint metadata can be retrieved from the [Endpoint Register service][EPR] using its [REST API][EPR REST API].
 It can be endpoint location ("living room"), floor ("2nd floor"), etc., so that the email recipient can understand which device produced a notification and properly react.
 
+
+## Resources
+
+All tutorial resources are located on [GitHub][code_url].
+
+
 ## Next steps
 
 - Get acquainted with the [14/TSTP][14/TSTP] protocol.
+
+
+[code_url]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/iot-notification/attach/code
