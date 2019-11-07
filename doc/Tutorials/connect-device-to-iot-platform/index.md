@@ -21,7 +21,7 @@ We will simulate a smart energy scenario.
 Our [endpoint][endpoint] will act as a smart meter and report its model and MAC address to the Kaa platform.
 Also, we will configure an [Endpoint List widget][ep-list-widget] on the [Web Dashboard][WD] to display newly connected endpoint with its reported metadata.
 
-![Solution blueprint](attach/img/architecture-overview.svg)
+![Architecture overview](attach/img/architecture-overview.svg)
 
 
 ## Prerequisites
