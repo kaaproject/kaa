@@ -70,7 +70,7 @@ Add `meterDescription` field to the endpoint creation form. We will fill it out 
     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
-**3**. Open [client.py](https://repl.it/@ElenaOlkhovyk/ConnectDeviceToIotPlatform) simulator script, add the `user_host`,`user_port`, `token` and `user_application_version` parameters' values and click the `Run` button. The following logs should be outputted in the sandbox console:
+**3**. Open [client.py](https://repl.it/@KaaIoT/ConnectDeviceToIotPlatform) simulator script, add the `user_host`,`user_port`, `token` and `user_application_version` parameters' values and click the `Run` button. The following logs should be outputted in the sandbox console:
 
 ```
 INFO: Using endpoint token myToken, server at {host}

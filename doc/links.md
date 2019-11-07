@@ -93,7 +93,6 @@
 
 {% capture wd_url %}{{feature_visualization_url}}WD/{% endcapture %}
 [WD]: {{wd_url}}
-[WD WIDGETS]: {{wd_url}}/Widgets
 
 
 <!-- Infrastructure -->

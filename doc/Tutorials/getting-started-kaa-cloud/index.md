@@ -15,7 +15,7 @@ sort_idx: 5
 ## Overview
 
 In this tutorial, we will look at how to get started with the [Kaa Cloud][kaa_cloud_url] in two simple steps:
-1. Connect a [device simulator](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData) to the Kaa Cloud server.
+1. Connect a [device simulator](https://repl.it/@KaaIoT/SimulateEndpointTelemetryData) to the Kaa Cloud server.
 2. Send and visualize the device simulated data on the [Web Dashboard][WD].
 
 
@@ -109,7 +109,7 @@ We will use the token in a bit to connect the simulator.
 
 <br/>
 
-**6**. Open the simulator by [this link](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData), enter the `app_version_name` and the device `token` which you have saved in the previous steps and run the simulator in the sandbox.
+**6**. Open the simulator by [this link](https://repl.it/@KaaIoT/SimulateEndpointTelemetryData), enter the `app_version_name` and the device `token` which you have saved in the previous steps and run the simulator in the sandbox.
 
 After accomplishing the current step, you should see the simulator logs.
 
