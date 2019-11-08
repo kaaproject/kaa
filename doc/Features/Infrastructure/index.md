@@ -16,5 +16,3 @@ In addition to these amazing 3-rd party components, Kaa includes its own infrast
 | Service          | Version            |
 | ---------------- | ------------------ |
 | [Tekton][TEKTON] | {{tekton_version}} |
-<!-- TODO: add installer once the doc is ready -->
-<!-- | [Kaa installer][TODO] | {{installer_version}} | -->
