@@ -291,15 +291,15 @@ kube_info = {
 
 ## Verification
 
-Open the https://env.<kube_ingress_domain> in you browser.
+Open the `https://env.<kube_ingress_domain>` in you browser.
 The default user and password are `admin/admin`.
 
 If the web page loads, you have successfuly completed an installation of the Kaa platform on an existing Kubernetes cluster.
 
-The KeyCloak web interface will be available at https://auth.<kube_ingress_domain>.
+The KeyCloak web interface will be available at `https://auth.<kube_ingress_domain>`.
 The default user and password are `admin/admin`.
 
-Platform components' REST API will be served under https://env.<kube_ingress_domain>.
+Platform components' REST API will be served under `https://env.<kube_ingress_domain>`.
 For example: `https://env.<kube_ingress_domain>/epr/api/v1/endpoints`.
 
 
