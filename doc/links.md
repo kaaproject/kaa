@@ -162,8 +162,9 @@
 [iot notification tutorial]: {{root_url}}Tutorials/iot-notification/
 
 <!-- Administration -->
-[administration]: {{root_url}}Administration/
-[api security]: {{root_url}}Administration/API-security/
+[administration]:       {{root_url}}Administration/
+[local installation]:   {{root_url}}Administration/Local-installation/
+[api security]:         {{root_url}}Administration/API-security/
 
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
