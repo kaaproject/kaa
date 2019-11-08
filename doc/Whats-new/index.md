@@ -35,7 +35,7 @@ Whenever the list of applications, versions, or service configs changes, Tekton 
 In turn, they reload updated configurations from Tekton and apply changes immediately without a restart.
 It is no longer necessary to update all service instance configuration files or reboot service replicas.
 
-You can use [this script](attach/v1.1/generate_tekton_config.py) to convert your Kaa 1.0 blueprint configuration files into a JSON suitable for [Tekton bulk configuration load REST API][TEKTON bulk config load REST API].
+You can use [this script](https://github.com/kaaproject/kaa/blob/master/doc/Whats-new/attach/v1.1/generate_tekton_config.py) to convert your Kaa 1.0 blueprint configuration files into a JSON suitable for [Tekton bulk configuration load REST API][TEKTON bulk config load REST API].
 Note that due to the various compatibility reasons the application and application version names must be limited to lowercase latin letters (`a-z`), digits (`0-9`), dashes (`-`) and underscores (`_`).
 
 
