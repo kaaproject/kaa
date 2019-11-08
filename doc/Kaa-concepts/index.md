@@ -113,6 +113,18 @@ This means that you can develop new functionality for your endpoints without dis
 ![Diagram showing different application and application versions](attach/app-versions.png)
 
 
+## Solutions
+
+A solution is a logical namespace in the Kaa [Web Dashboard][WD] that embraces a certain use case, e.g. fleet management.
+Usually a solution consists of a set of visual components ([dashboards][dashboard], [widgets][widget], etc.) and operates with one or more [Kaa applications][application].
+
+> Note that the current WD implementation of the solution concept is based on Kaa applications.
+  Thus, a solution is equal to an application.
+  The only difference is logical.
+{:.important}
+
+
+
 ## Kaa services
 
 The Kaa platform design is based on [microservices](https://en.wikipedia.org/wiki/Microservices).

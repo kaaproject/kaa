@@ -150,6 +150,9 @@
 [solution]: {{kaa_concepts}}#solution-cluster
 [blueprint]: {{kaa_concepts}}#blueprint
 [extension]: {{kaa_concepts}}#extension-services
+[web-solution]: {{kaa_concepts}}#solutions
+[dashboard]: {{wd_url}}Overview/#dashboards
+[widget]: {{wd_url}}Overview/#widgets
 
 <!--== Tutorials ==-->
 [tutorials]: {{root_url}}Tutorials/
