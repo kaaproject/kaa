@@ -25,7 +25,7 @@ In previous Kaa versions applications and their configurations were defined in t
 Such configuration is still supported for backward compatibility and simple deployments.
 However, Tekton now offers a more convenient management mechanism.
 
-Tekton offers [REST API][TEKTON REST API] for managing applications, versions, and the associated configurations.
+Tekton exposes [REST API][TEKTON REST API] for managing applications, versions, and the associated configurations.
 The [Web Dashboard (WD)][WD] leverages this API and provides a convenient management UI.
 Applications are represented as [protected resources][application resource type] in the auth server, so you can configure users' level of access by granting corresponding [OAuth 2.0 scopes][oauth scope].
 
@@ -35,7 +35,7 @@ Whenever the list of applications, versions, or service configs changes, Tekton 
 In turn, they reload updated configurations from Tekton and apply changes immediately without a restart.
 It is no longer necessary to update all service instance configuration files or reboot service replicas.
 
-You can use [this script][attach/v1.1/generate_tekton_config.py] to convert your Kaa 1.0 blueprint configuration files into a JSON suitable for [Tekton bulk configuration load REST API][TEKTON bulk config load REST API].
+You can use [this script](attach/v1.1/generate_tekton_config.py) to convert your Kaa 1.0 blueprint configuration files into a JSON suitable for [Tekton bulk configuration load REST API][TEKTON bulk config load REST API].
 Note that due to the various compatibility reasons the application and application version names must be limited to lowercase latin letters (`a-z`), digits (`0-9`), dashes (`-`) and underscores (`_`).
 
 
@@ -79,8 +79,8 @@ In Kaa 1.1 the primary UI colors were revised and consolidated, and the theme cu
 * [**[KPC]**][KPC] Support for [endpoint][endpoint] roaming across [client][client] MQTT connections to different KPC replicas.
   When multiple gateways (Kaa clients) represent a single endpoint, they may communicate on behalf of such endpoint in turns.
   Whenever such communication switch (roaming) occurs, even across KPC replicas, they are now able to identify that and correctly remove endpoint from the routing table of the previously used KPC replica.
-* [**[WD]**][WD] Default 'Device management' and 'Software management' pages are now available in WD to administrators with `application:update` OAuth 2.0 scope granted for a given Kaa application.
-* [**[WD]**][WD] Added ability to specify default sort key and direction in endpoint list and time series table widgets.
+* [**[WD]**][WD] Default "Device management" and "Software management" pages are now available in WD to administrators with `application:update` OAuth 2.0 scope granted for a given Kaa application.
+* [**[WD]**][WD] Added the ability to specify the default sort key and direction in endpoint list and time series table widgets.
 * Documentation restructuring: previously Kaa components documentation was hosted separately from the general documentation.
   For the readers' convenience, all component docs are now relocated to the ["Features and components" section][kaa features].
   This documentation now captures the exact state of all platform components at the moment of the general platform release.

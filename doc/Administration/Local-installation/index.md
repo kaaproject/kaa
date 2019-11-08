@@ -5,6 +5,9 @@ permalink: /:path/
 sort_idx: 0
 ---
 
+{% include variables.md %}
+{% include_relative links.md %}
+
 * TOC
 {:toc}
 
@@ -54,7 +57,7 @@ virt-host-validate
 ```
 
 Output example:
-```console
+```
 QEMU: Checking for hardware virtualization                                 : PASS
 QEMU: Checking if device /dev/kvm exists                                   : PASS
 QEMU: Checking if device /dev/kvm is accessible                            : PASS
@@ -119,7 +122,7 @@ kubectl get pods --all-namespaces
 
 Output example:
 
-```console
+```
 NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE
 kube-system   coredns-fb8b8dccf-66gkk            1/1     Running   0          106s
 kube-system   coredns-fb8b8dccf-drf66            1/1     Running   0          106s
@@ -153,7 +156,7 @@ docker run --rm -it --entrypoint bash \
 ```
 
 Output example:
-```console
+```
 (venv) [OS:none][AWS:default]:/usr/src/kaa/installer
 ```
 
@@ -174,7 +177,7 @@ kubectl cluster-info
 ```
 
 Output example:
-```console
+```
 Kubernetes master is running at <https://192.168.64.4:8443>
 KubeDNS is running at <https://192.168.64.4:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy>
 
@@ -250,7 +253,7 @@ State file of the terraform installation will be saved to `output/kaa-local/kaa-
 
 Output example:
 
-```console
+```
 Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
 
 The state of your infrastructure has been saved to the path
@@ -324,7 +327,7 @@ Terraform installation state will be saved to `output/kaa-local/kaa-apps/`.
 
 Output example:
 
-```console
+```
 Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
 
 The state of your infrastructure has been saved to the path
@@ -402,7 +405,7 @@ kube_info = {
 
 Exit the `kube-installer` docker container and append the lines below to `/etc/hosts` file on you host system:
 
-```console
+```
 <kubernetes IP> auth.local.kaatech.com
 <kubernetes IP> env.local.kaatech.com
 ```
