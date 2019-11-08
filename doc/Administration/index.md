@@ -10,7 +10,8 @@ sort_idx: 5
 
 This documentation section discusses various aspects of the Kaa IoT platform administration and operation.
 
-| **Section**                                  | **Description**                                                              |
-| -------------------------------------------- | ---------------------------------------------------------------------------- |
-| [**Local installation**][local installation] | Learn how to install a Kaa cluster locally on Linux or MacOS using minikube. |
-| [**API security**][api security]             | API security, resource management, and access authorization.                 |
+| **Section**                                               | **Description**                                                                                       |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [**Local installation**][local installation]              | Learn how to install Kaa locally on Linux or MacOS using minikube.                                    |
+| [**Installation to Kubenetes cluster**][k8s installation] | Learn how to install Kaa to an existing Kubenetes cluster on bare metal or in a cloud infrastructure. |
+| [**API security**][api security]                          | API security, resource management, and access authorization.                                          |

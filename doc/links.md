@@ -171,6 +171,7 @@
 <!-- Administration -->
 [administration]:               {{root_url}}Administration/
 [local installation]:           {{root_url}}Administration/Local-installation/
+[k8s installation]:             {{root_url}}Administration/Installation-to-kubernetes-cluster/
 [api security]:                 {{root_url}}Administration/API-security/
 [endpoint resource type]:       {{root_url}}Administration/API-security/#endpoint-resource-type
 [application resource type]:    {{root_url}}Administration/API-security/#application-resource-type
