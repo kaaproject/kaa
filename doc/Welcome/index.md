@@ -76,6 +76,12 @@ This page describes how Kaa documentation is structured and what information it 
 
 <td markdown="1" style="width:50%; vertical-align:top;">
 
+
+**[Administration &rarr;][administration]**
+
+- Various aspects of the Kaa platform administration and operation.
+
+
 **[Tutorials &rarr;][tutorials]**
 
 - Practical examples on how to work with Kaa in different use cases.
@@ -83,7 +89,13 @@ This page describes how Kaa documentation is structured and what information it 
 
 **[Kaa RFCs &rarr;][RFCs]**
 
-- This is Kaa team's repository that contains Kaa RFCs---most of them describe interface protocols that define how services exchange data in a Kaa deployment.
+- This is Kaa team's repository that contains Kaa RFCs---most of them describe interface protocols that define how services exchange data in a Kaa cluster.
+
+
+**[What's new &rarr;][whats new]**
+
+- Summary of the changes between the Kaa platform versions.
+
 
 </td>
 </tr>
