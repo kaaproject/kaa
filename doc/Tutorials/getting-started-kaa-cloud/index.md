@@ -26,7 +26,7 @@ In this tutorial, we will look at how to get started with the [Kaa Cloud][kaa_cl
 
 ## Playbook
 
-To help you get started with the Kaa Cloud real quick, we've created a [Python simulator](https://repl.it/@ElenaOlkhovyk/SimulateEndpointTelemetryData) that connects to the platform and simulates a real device behavior, as follows:
+To help you get started with the Kaa Cloud real quick, we've created a [Python simulator](https://repl.it/@KaaIoT/SimulateEndpointTelemetryData) that connects to the platform and simulates a real device behavior, as follows:
 
 **1**. The simulator sends the following metadata to the platform on its start.
 
