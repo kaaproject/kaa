@@ -368,6 +368,11 @@ node(selectNode()) {
     }
 
     stage ('change parent chart requirements') {
+      when {
+        expression {
+          return env.BRANCH_NAME == '0.9.0-patched'
+        }
+      }
       steps {
         script {
           LIB.build.triggerBuild("jbt-iot/jbt-metachart/master", [
