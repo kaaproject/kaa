@@ -92,8 +92,6 @@ Read more about EPTS time series configuration [here][epts ts definition].
 **2**. Run [Python simulator `client.py`][client_py] that simulates a vehicle.
 
 ```
-python -t myToken -h {host} -p {port} client.py
-
 INFO: Using endpoint token myToken, server at {host}:{port}
 DEBUG: Composed data collection topic: kp1/demo_application_v1/dcx/myToken/json/23
 INFO: Connecting to KPC instance at {host}:{port}...
@@ -142,4 +140,4 @@ All tutorial resources are located on [GitHub][code_url].
 [epts ts definition]: {{epts_url}}Configuration/#time-series-definition
 
 [code_url]:  https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/iot-data-collection/attach/code
-[client_py]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/iot-data-collection/attach/code/client.py
+[client_py]: https://repl.it/@KaaIoT/DataCollection
