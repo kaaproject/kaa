@@ -133,9 +133,9 @@ Now you can monitor vehicle location, fuel level and engine temperature in real 
 All tutorial resources are located on [GitHub][code_url].
 
 
-[ep-location-widget]: {{wd_url}}Widgets#ep-location
-[gauge-widget]: {{wd_url}}Widgets#gauge
-[multi-series-chart-widget]: {{wd_url}}Widgets#multi-series-chart
+[ep-location-widget]: {{wd_url}}Widgets/#ep-location
+[gauge-widget]: {{wd_url}}Widgets/#gauge
+[multi-series-chart-widget]: {{wd_url}}Widgets/#multi-series-chart
 
 [epts ts definition]: {{epts_url}}Configuration/#time-series-definition
 
