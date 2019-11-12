@@ -31,7 +31,8 @@ scmVersion {
   versionIncrementer 'incrementMinorIfNotOnRelease', [releaseBranchPattern: 'release.*']
   versionCreator 'versionWithBranch'
   branchVersionCreator = [
-    'release.*': 'simple'
+    'release.*': 'simple',
+    ".*": { version, position -> versionDetails().commitDistance == 0 ? versionDetails().lastTag.replace('v', '') : version + '-' + versionDetails().gitHash }
   ]
 }
 
@@ -51,29 +52,15 @@ docker {
   }
 }
 
-def hashVersion = "${project.version}-${versionDetails().gitHash}"
-
-task printHashVersion() {
-  doLast {
-    println hashVersion
-  }
-}
-
 def defaultImage = "138150065595.dkr.ecr.us-east-1.amazonaws.com/${project.name}:${project.version}"
-def hashImage = "138150065595.dkr.ecr.us-east-1.amazonaws.com/${project.name}:${hashVersion}"
 
 task dockerBuildMain(type: DockerBuildImage) {
   inputDir = file('./')
   tags.add(defaultImage)
-  tags.add(hashImage)
 }
 
 task dockerPushMain(type: DockerPushImage) {
   imageName = defaultImage
-}
-
-task dockerPushMainHash(type: DockerPushImage) {
-  imageName = hashImage
 }
 // Docker end
 
