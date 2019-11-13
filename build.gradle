@@ -32,7 +32,13 @@ scmVersion {
   versionCreator 'versionWithBranch'
   branchVersionCreator = [
     'release.*': 'simple',
-    ".*": { version, position -> versionDetails().commitDistance == 0 ? versionDetails().lastTag.replace('v', '') : version + '-' + versionDetails().gitHash }
+    ".*": { version, position ->
+      if (versionDetails().lastTag.startsWith('v') && versionDetails().commitDistance == 0) {
+        return versionDetails().lastTag.replace('v', '')
+      } else {
+        return version + '-' + versionDetails().gitHash
+      }
+    }
   ]
 }
 
