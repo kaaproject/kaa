@@ -272,46 +272,6 @@ readinessProbe:
   # failureThreshold: 6
   # successThreshold: 1
 
-kafkalocal:
-  enabled: true
-  url: "{{ .Release.Name }}-kafkalocal:9092"
-  replicas: 1
-  urlOverride: ""
-  persistence:
-    enabled: false
-  configurationOverrides:
-    "offsets.topic.replication.factor": 1
-    "confluent.support.metrics.enable": false
-  zookeeper:
-    replicaCount: 1
-    image:
-      tag: v2
-    persistence:
-      enabled: false
-
-postgresqllocal:
-  nameOverride: ""
-  kaa:
-    postgresqlDatabase: ""
-  enabled: true
-  url: "jdbc:postgresql://{{ .Release.Name }}-{{ default \"postgresqllocal\" .Values.postgresqllocal.nameOverride }}/{{ .Values.postgresqllocal.kaa.postgresqlDatabase }}"
-  persistence:
-    enabled: false
-  postgresqlPassword: postgres
-  postgresqlUsername: postgres
-  postgresqlDatabase: kaa
-  secretName: ""
-
-cassandralocal:
-  enabled: true
-  url: "{{ .Release.Name }}-{{ default \"cassandralocal\" .Values.cassandralocal.nameOverride }}"
-  urlOverride: ""
-  persistence:
-    enabled: false
-  config:
-    cluster_size: 1
-    seed_size: 0
-
 # ------------------------------------------------------------------------------
 # Zookeeper:
 # ------------------------------------------------------------------------------

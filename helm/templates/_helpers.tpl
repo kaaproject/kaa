@@ -142,17 +142,17 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{- define "kaa.postgresqlSecretName" -}}
-{{- $name := .Values.global.postgresql.secretName | default .Values.postgresqllocal.secretName -}}
+{{- $name := .Values.global.postgresql.secretName -}}
 {{- tpl $name . -}}
 {{- end -}}
 
 {{- define "kaa.postgresqlUsername" -}}
-{{- $name := .Values.global.postgresql.postgresqlUsername | default .Values.postgresqllocal.postgresqlUsername | default .Values.kaa.config.adminDao.jdbcUsername -}}
+{{- $name := .Values.global.postgresql.postgresqlUsername -}}
 {{- tpl $name . -}}
 {{- end -}}
 
 {{- define "kaa.postgresqlPassword" -}}
-{{- $name := .Values.global.postgresql.postgresqlPassword | default .Values.postgresqllocal.postgresqlPassword | default .Values.kaa.config.adminDao.jdbcPassword -}}
+{{- $name := .Values.global.postgresql.postgresqlPassword -}}
 {{- tpl $name . -}}
 {{- end -}}
 
