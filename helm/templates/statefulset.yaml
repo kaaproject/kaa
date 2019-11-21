@@ -36,10 +36,10 @@ spec:
           command: ["timeout", "600", "sh", "-c", 'until timeout 15 kafka-topics --list --zookeeper {{ include "kaa.kafkaZookeeperHost" . }} | grep {{ include "kaa.kafkaSeedCompleteTopic" . }}; do sleep 2; done']
         - name: wait-for-cassandra
           image: cassandra:3.11.3
-          command: ["timeout", "600", "sh", "-c", 'until cqlsh {{ include "kaa.cassandraUrl" . }} 9042 -e "describe {{ include "kaa.cassandraSeedCompleteTable" . }}"; do sleep 2; done']
+          command: ["timeout", "600", "sh", "-c", 'until cqlsh {{ include "kaa.cassandraHost" . }} {{ include "kaa.cassandraPort" . }} -e "describe {{ include "kaa.cassandraSeedCompleteTable" . }}"; do sleep 2; done']
         - name: wait-for-postgres
           image: alpine:3.9.2
-          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.postgresqlUrl" . }} 5432; do sleep 1; done']
+          command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.postgresqlHost" . }} {{ include "kaa.postgresqlPort" . }}; do sleep 1; done']
         - name: wait-for-flume
           image: alpine:3.9.2
           command: ["timeout", "-t", "600", "sh", "-c", 'until timeout -t 1 nc -z {{ include "kaa.flumeHost" . }} {{ include "kaa.flumePort" . }}; do sleep 1; done']

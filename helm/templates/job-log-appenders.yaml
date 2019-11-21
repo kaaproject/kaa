@@ -34,7 +34,7 @@ spec:
           - name: JAVA_OPTS
             value: {{ .Values.logAppenderJob.javaOpts | quote }}
           - name: JBT_QA_LOG_APPENDER_KAFKA_BROKER_LIST
-            value: {{ include "kaa.kafkaUrl" . | quote }}
+            value: {{ include "kaa.kafkaUrls" . | quote }}
           - name: JBT_QA_LOG_APPENDER_FLUME_HOST
             value: {{ include "kaa.flumeHost" . | quote }}
           - name: JBT_QA_LOG_APPENDER_FLUME_PORT

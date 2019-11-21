@@ -12,7 +12,7 @@ global:
     agentAppToken: ""
     applicationTokens: ""
   kafka:
-    url: ""
+    urls: ""
     host: ""
     port: ""
     topicsJob:
@@ -23,11 +23,16 @@ global:
   zookeeper:
     host: ""
   cassandra:
-    url: ""
+    urls: ""
+    host: ""
+    port: ""
     seedJob:
       seedCompleteTable: ""
   postgresql:
-    url: ""
+    urls: ""
+    host: ""
+    port: ""
+    database: ""
     secretName: ""
     postgresqlPassword: ""
     postgresqlUsername: ""

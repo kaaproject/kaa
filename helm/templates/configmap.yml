@@ -16,7 +16,7 @@ data:
     jdbc_driver_className={{ .Values.kaa.config.adminDao.jdbcDriverClassname }}
     jdbc_username={{ include "kaa.postgresqlUsername" . }}
     jdbc_password={{ include "kaa.postgresqlPassword" . }}
-    jdbc_url={{ include "kaa.postgresqlUrlDatasource" . }}
+    jdbc_url=jdbc:postgresql://{{ include "kaa.postgresqlUrls" . }}/{{ include "kaa.postgresqlDatabase" . }}
 
   bootstrap-http-transport.config: |
     {
@@ -36,7 +36,7 @@ data:
   common-dao-cassandra.properties: |
     cluster_name={{ .Values.kaa.config.commonDaoCassandra.clusterName }}
     keyspace_name={{ .Values.kaa.config.commonDaoCassandra.keyspaceName }}
-    node_list={{ printf "%s:%s" (include "kaa.cassandraUrl" . ) "9042" }}
+    node_list={{ include "kaa.cassandraUrls" . }}
     use_ssl={{ .Values.kaa.config.commonDaoCassandra.useSsl }}
     use_jmx={{ .Values.kaa.config.commonDaoCassandra.useJmx }}
     compression={{ .Values.kaa.config.commonDaoCassandra.compression }}
@@ -118,5 +118,5 @@ data:
     jdbc_driver_className={{ .Values.kaa.config.sqlDao.jdbcDriverClassname }}
     jdbc_username={{ include "kaa.postgresqlUsername" . }}
     jdbc_password={{ include "kaa.postgresqlPassword" . }}
-    jdbc_host_port={{ include "kaa.postgresqlUrl" . }}:5432
+    jdbc_host_port={{ include "kaa.postgresqlUrls" . }}
     sql_provider_name={{ .Values.kaa.config.sqlDao.sqlProviderName }}

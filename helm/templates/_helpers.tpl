@@ -1,3 +1,4 @@
+{{/* --------------- Common templates start --------------- */}}
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
@@ -40,6 +41,17 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 {{- end -}}
 
+{{/* Env values */}}
+{{- define "kaa.envVariables" -}}
+{{- with .Values.env -}}
+{{- range $key, $val := . }}
+- name: {{ $key | upper }}
+  value: {{ $val | quote }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{/* --------------- Common templates end --------------- */}}
+
 {{- define "kaa.kaaSecretName" -}}
 {{- $name := .Values.kaa.secretName | default .Values.global.kaa.secretName -}}
 {{- tpl $name . -}}
@@ -60,14 +72,32 @@ Create chart name and version as used by the chart label.
 {{- $name -}}
 {{- end -}}
 
-{{/* Env values */}}
-{{- define "kaa.envVariables" -}}
-{{- with .Values.env -}}
-{{- range $key, $val := . }}
-- name: {{ $key | upper }}
-  value: {{ $val | quote }}
+{{/* --------------- Dependencies templates start --------------- */}}
+{{/* -- cassandra -- */}}
+{{- define "kaa.cassandraUrls" -}}
+{{- $name := .Values.global.cassandra.urls -}}
+{{- tpl $name . -}}
 {{- end -}}
+
+{{- define "kaa.cassandraHost" -}}
+{{- $name := .Values.global.cassandra.host -}}
+{{- tpl $name . -}}
 {{- end -}}
+
+{{- define "kaa.cassandraPort" -}}
+{{- $name := .Values.global.cassandra.port -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{- define "kaa.cassandraSeedCompleteTable" -}}
+{{- $name := .Values.global.cassandra.seedJob.seedCompleteTable -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{/* -- kafka -- */}}
+{{- define "kaa.kafkaUrls" -}}
+{{- $name := .Values.global.kafka.urls -}}
+{{- tpl $name . -}}
 {{- end -}}
 
 {{- define "kaa.kafkaHost" -}}
@@ -80,28 +110,34 @@ Create chart name and version as used by the chart label.
 {{- tpl $name . -}}
 {{- end -}}
 
-{{- define "kaa.flumeHost" -}}
-{{- $name := .Values.kaa.flumeHost | default .Values.global.flume.host -}}
+{{- define "kaa.kafkaZookeeperHost" -}}
+{{- $name := .Values.global.zookeeper.host -}}
 {{- tpl $name . -}}
 {{- end -}}
 
-{{- define "kaa.flumePort" -}}
-{{- $name := .Values.kaa.flumePort | default .Values.global.flume.port -}}
+{{- define "kaa.kafkaSeedCompleteTopic" -}}
+{{- $name := .Values.global.kafka.topicsJob.seedCompleteTopic -}}
 {{- tpl $name . -}}
 {{- end -}}
 
-{{- define "kaa.kafkaUrl" -}}
-{{- $name := .Values.kafkalocal.urlOverride | default (printf "%s:%s" .Values.global.kafka.host .Values.global.kafka.port) | default .Values.kafkalocal.url -}}
+{{/* -- postgresql -- */}}
+{{- define "kaa.postgresqlUrls" -}}
+{{- $name := .Values.global.postgresql.urls -}}
 {{- tpl $name . -}}
 {{- end -}}
 
-{{- define "kaa.postgresqlUrl" -}}
-{{- $name := .Values.postgresqllocal.urlOverride | default .Values.global.postgresql.url | default .Values.postgresqllocal.url -}}
+{{- define "kaa.postgresqlHost" -}}
+{{- $name := .Values.global.postgresql.host -}}
 {{- tpl $name . -}}
 {{- end -}}
 
-{{- define "kaa.postgresqlUrlDatasource" -}}
-{{- $name := .Values.postgresqllocal.urlDatasource | default .Values.global.postgresql.kaa.urlDatasource | default .Values.kaa.config.adminDao.jdbcUrl -}}
+{{- define "kaa.postgresqlDatabase" -}}
+{{- $name := .Values.global.postgresql.database -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{- define "kaa.postgresqlPort" -}}
+{{- $name := .Values.global.postgresql.port -}}
 {{- tpl $name . -}}
 {{- end -}}
 
@@ -120,11 +156,18 @@ Create chart name and version as used by the chart label.
 {{- tpl $name . -}}
 {{- end -}}
 
-{{- define "kaa.cassandraUrl" -}}
-{{- $name := .Values.cassandralocal.urlOverride | default .Values.global.cassandra.url | default .Values.cassandralocal.url -}}
+{{/* -- flume -- */}}
+{{- define "kaa.flumeHost" -}}
+{{- $name := .Values.kaa.flumeHost | default .Values.global.flume.host -}}
 {{- tpl $name . -}}
 {{- end -}}
 
+{{- define "kaa.flumePort" -}}
+{{- $name := .Values.kaa.flumePort | default .Values.global.flume.port -}}
+{{- tpl $name . -}}
+{{- end -}}
+
+{{/* -- zookeeper -- */}}
 {{/*
 Create a default fully qualified app name for the postgres requirement.
 */}}
@@ -132,18 +175,4 @@ Create a default fully qualified app name for the postgres requirement.
 {{- $zookeeperContext := dict "Values" .Values.zookeeper "Release" .Release "Chart" (dict "Name" "zookeeper") -}}
 {{ template "zookeeper.fullname" $zookeeperContext }}
 {{- end -}}
-
-{{- define "kaa.kafkaZookeeperHost" -}}
-{{- $name := .Values.global.zookeeper.host -}}
-{{- tpl $name . -}}
-{{- end -}}
-
-{{- define "kaa.kafkaSeedCompleteTopic" -}}
-{{- $name := .Values.global.kafka.topicsJob.seedCompleteTopic -}}
-{{- tpl $name . -}}
-{{- end -}}
-
-{{- define "kaa.cassandraSeedCompleteTable" -}}
-{{- $name := .Values.global.cassandra.seedJob.seedCompleteTable -}}
-{{- tpl $name . -}}
-{{- end -}}
+{{/* --------------- Dependencies templates end --------------- */}}
