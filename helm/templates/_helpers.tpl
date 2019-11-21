@@ -132,7 +132,7 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{- define "kaa.postgresqlDatabase" -}}
-{{- $name := .Values.global.postgresql.database -}}
+{{- $name := .Values.global.postgresql.kaa.postgresqlDatabase -}}
 {{- tpl $name . -}}
 {{- end -}}
 
