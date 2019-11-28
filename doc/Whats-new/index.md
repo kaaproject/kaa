@@ -12,6 +12,13 @@ sort_idx: 6
 {:toc}
 ​
 
+## Future release
+
+Below is a work-in-progress list of changes for the next Kaa platform release.
+
+<!-- TODO: add change descriptions here -->
+
+
 ## Kaa 1.1 (November 8-th, 2019)
 
 
