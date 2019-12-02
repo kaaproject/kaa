@@ -144,8 +144,7 @@ spec:
               sed -e "/^ *\"bindPort.*$/a"$'\\\n'"  \"publicInterface\": \"$(cat /srv/lb-ip/data)\","$'\n' /usr/lib/kaa-node/conf/operations-tcp-transport.config.template > /usr/lib/kaa-node/conf/operations-tcp-transport.config
               sed -e "/^transport_bind_interface.*$/a"$'\\\n'"transport_public_interface=$(cat /srv/lb-ip/data)"$'\n' /usr/lib/kaa-node/conf/kaa-node.properties.template > /usr/lib/kaa-node/conf/kaa-node.properties
               java -cp /usr/lib/kaa-node/conf:/usr/lib/kaa-node/lib/* \
-              -Xms1G \
-              -Xmx4G \
+              -XX:MinRAMPercentage=60.0 -XX:MaxRAMPercentage=80.0 \
               -XX:+UseG1GC \
               -Dfile.encoding=UTF8 \
               -Dserver_log_dir=/var/log/kaa \
