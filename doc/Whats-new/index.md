@@ -19,6 +19,11 @@ Below is a work-in-progress list of changes for the next Kaa platform release.
 <!-- TODO: add change descriptions here -->
 
 
+### Other highlights
+
+* [**[EPTS]**][EPTS] Support specifying the time before which to retrieve last time series data points via the [EPTS REST API][EPTS time series last REST API].
+
+
 ## Kaa 1.1 (November 8-th, 2019)
 
 
