@@ -178,8 +178,13 @@
 [dashboard resource type]:      {{root_url}}Administration/API-security/#dashboard-resource-type
 [kaa resource type]:            {{root_url}}Administration/API-security/#kaa-resource-type
 
+<!-- Webinars -->
+[webinars]: {{root_url}}Webinars/
+[webinar Kaa IoT Cloud and Kaa 1.1]: {{root_url}}Webinars/2019-12-11-Kaa-IoT-Cloud-and-Kaa-1.1/
+
 <!-- What's new -->
 [whats new]: {{root_url}}Whats-new/
+[whats new in 1.1]: {{root_url}}Whats-new/#kaa-11-november-8-th-2019
 
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/

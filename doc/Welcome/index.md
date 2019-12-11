@@ -87,6 +87,11 @@ This page describes how Kaa documentation is structured and what information it 
 - Practical examples on how to work with Kaa in different use cases.
 
 
+**[Webinars &rarr;][webinars]**
+
+- Recordings of the past Kaa webinars.
+
+
 **[Kaa RFCs &rarr;][RFCs]**
 
 - This is Kaa team's repository that contains Kaa RFCs---most of them describe interface protocols that define how services exchange data in a Kaa cluster.

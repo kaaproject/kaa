@@ -2,7 +2,7 @@
 layout: page
 title: What's new
 permalink: /:path/
-sort_idx: 6
+sort_idx: 7
 ---
 
 {% include variables.md %}
