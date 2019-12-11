@@ -37,7 +37,7 @@ We will teach you how to:
 5. You have configured Kubernetes [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl/) utility to work with the Kubernetes cluster where Kaa platform is deployed.
 <!-- todo: add link -->
 6. You have an endpoint (or a simulator) that sends telemetry data with notifications into the platform.
-If you don't, use [one from the tutorial]().
+If you don't, use [one from the tutorial](https://github.com/kaaproject/kaa/blob/master/doc/Tutorials/iot-notification/attach/code/sensor-simulator/client.py).
 It randomly sends `{"event_type":"DOOR_OPENED"}` or `{"event_type":"WINDOW_OPENED"}` JSON into the platform every 30 seconds.
 
 
@@ -93,7 +93,7 @@ For that, create a Maven (or Gradle) project, and add **dependencies**:
 Also, we need [`avro-maven-plugin`](https://mvnrepository.com/artifact/org.apache.avro/avro-maven-plugin/1.9.1) to **generate Java classes from Avro schemas**.
 
 <!-- TODO: link to pom -->
-Take a look at how dependencies and `avro-maven-plugin` must be arranged and configured in the project [pom.xml]().
+Take a look at how dependencies and `avro-maven-plugin` must be arranged and configured in the project [pom.xml](https://github.com/kaaproject/kaa/blob/master/doc/Tutorials/iot-notification/attach/code/iot-notification-tutorial/pom.xml).
 
 <br/>
 
@@ -265,7 +265,6 @@ Handling incoming time series event: {"correlationId": "blt34aaqicrcv30ar9p0", "
 Great!
 The final thing left to do is implement an **email service that sends email notifications with the time series event data** instead of just logging it.
 
-<!-- TODO: link to pom -->
 For that, add [`spring-boot-starter-mail`](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail/2.1.8.RELEASE) dependency to your project [`pom.xml`]() and create `EmailService` Java class with the next code:
 
 ```java
