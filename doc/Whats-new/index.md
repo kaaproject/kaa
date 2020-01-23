@@ -21,8 +21,10 @@ Below is a work-in-progress list of changes for the next Kaa platform release.
 
 ### Other highlights
 
-* [**[EPTS]**][EPTS] Support specifying the time before which to retrieve last time series data points via the [EPTS REST API][EPTS time series last REST API].
-
+* [**[EPTS]**][EPTS] EPTS now supports last received data points filtering by the `beforeDate` query parameter in its [REST API][EPTS time series last REST API].
+* [**[EPR]**][EPR] In previous Kaa versions EPR provided endpoint metadata and endpoint filter management only via its [REST API][EPR REST API]. 
+Now, in addition to REST API it is possible to manage endpoint [metadata][endpoint-metadata] and [endpoint filters][endpoint-filter] via [NATS][nats] using the [19/EPMMP] and [20/EFMP] protocols. 
+It improves overall performance and gives more flexibility in platform expansion and customization.
 
 ## Kaa 1.1 (November 8-th, 2019)
 
