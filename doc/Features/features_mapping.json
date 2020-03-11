@@ -28,7 +28,8 @@
     "WD"
   ],
   "Infrastructure": [
-    "TEKTON"
+    "TEKTON",
+    "TENANT-MANAGER"
   ],
   "Miscellaneous": [
     "TSX"
