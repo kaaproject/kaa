@@ -12,7 +12,21 @@ sort_idx: 7
 {:toc}
 ​
 
+## Kaa 1.1-mr1 (March 25-th, 2020)
+<!-- 1.1.110 -->
+
+Kaa 1.1-mr1 is a maintenance release for Kaa 1.1.
+In scope of this release the following changes were made:
+
+* **[Bug fix]** Creating a new application or application version overwrites configuration of an existing one.
+Reproducible with Java-based services when the new name is a sub-string of an existing one.
+* **[Bug fix]** The [WD][WD] permits creating endpoints with an empty token.
+* **[Bug fix]** The [WD][WD] does not render variables in dashboard titles.
+* **[Bug fix]** Wrong [WD][WD] documentation link anchors.
+
+
 ## Kaa 1.1 (November 8-th, 2019)
+<!-- 1.1.77 -->
 
 
 Find below high-level descriptions of some of the major release highlights.
