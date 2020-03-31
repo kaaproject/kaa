@@ -81,6 +81,10 @@ Metadata is stored on [Endpoint Registered service][EPR] and can be read or upda
 Simply put, endpoint metadata is a JSON document of a free structure that is associated with a specific endpoint.
 
 
+## Data sample
+
+Data sample is an independent data record sent by (or collected from) an endpoint.
+
 ## Kaa client
 
 To have your devices (endpoints) exchange data with the Kaa servers, you need a *client*.
