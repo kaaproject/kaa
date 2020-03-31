@@ -44,6 +44,7 @@
 
 {% capture dcx_url %}{{feature_data_collection_url}}DCX/{% endcapture %}
 [DCX]: {{dcx_url}}
+[DCX metadata enrichment]: {{dcx_url}}Overview/#enriching-data-samples-with-endpoint-metadata
 
 {% capture epts_url %}{{feature_data_collection_url}}EPTS/{% endcapture %}
 [EPTS]:                             {{epts_url}}

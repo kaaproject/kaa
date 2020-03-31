@@ -25,6 +25,7 @@ Below is a work-in-progress list of changes for the next Kaa platform release.
 * [**[EPR]**][EPR] In previous Kaa versions EPR provided endpoint metadata and endpoint filter management only via its [REST API][EPR REST API].
 Now, in addition to REST API it is possible to manage endpoint [metadata][endpoint-metadata] and [endpoint filters][endpoint-filter] via [NATS][nats] using the [19/EPMMP] and [20/EFMP] protocols.
 It improves overall performance and gives more flexibility in platform expansion and customization.
+* [**[DCX]**][DCX] Support for [enriching data samples with endpoint metadata][DCX metadata enrichment] based on the application specific configuration. Disabled by default for backward compatibility.
 
 
 ## Kaa 1.1-mr1 (March 25-th, 2020)
