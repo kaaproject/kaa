@@ -205,6 +205,8 @@
 [mongo]: https://www.mongodb.com/what-is-mongodb
 [maria]: https://mariadb.org/
 [redis]: https://redis.io
+[elastic stack]: https://www.elastic.co/elastic-stack
+[kibana]: https://www.elastic.co/kibana
 
 <!--== Technologies ==-->
 [mqtt]: http://mqtt.org/
