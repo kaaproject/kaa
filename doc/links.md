@@ -113,6 +113,10 @@
 [TEKTON applications REST API]:     {{tekton_url}}REST-API/#applications
 [TEKTON bulk config load REST API]: {{tekton_url}}REST-API/#app_configs_post
 
+{% capture tenant_manager_url %}{{feature_infrastructure_url}}TENANT-MANAGER/{% endcapture %}
+[Tenant Manager]:          {{tenant-manager_url}}
+[Tenant Manager REST API]: {{tenant-manager_url}}REST-API/
+
 
 <!-- Miscellaneous -->
 {% capture feature_miscellaneous_url %}{{kaa_features_url}}Miscellaneous/{% endcapture %}
@@ -165,6 +169,7 @@
 [extension]:            {{kaa_concepts}}#extension-services
 [dashboard]:            {{wd_url}}Overview/#dashboards
 [widget]:               {{wd_url}}Overview/#widgets
+[tenant]:               {{kaa_concepts}}#tenant
 
 <!--== Tutorials ==-->
 [tutorials]:                    {{root_url}}Tutorials/
@@ -206,6 +211,7 @@
 [mongo]: https://www.mongodb.com/what-is-mongodb
 [maria]: https://mariadb.org/
 [redis]: https://redis.io
+[postgresql]: https://www.postgresql.org/
 [elastic stack]: https://www.elastic.co/elastic-stack
 [kibana]: https://www.elastic.co/kibana
 

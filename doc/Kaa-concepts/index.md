@@ -172,6 +172,15 @@ Such architecture allows you to easily expand the Kaa platform with a new IoT fu
 Read about the [Kaa Protocol MQTT topic structure][1/KP over MQTT topic structure] to understand how endpoint messages are routed to the extensions.
 
 
+## Tenant
+
+Tenant is a secure and isolated partition within Kaa platform where you can create, organize, and manage your resources.
+Each tenant’s data is isolated from, and invisible to, the other tenants sharing the application instance, ensuring data security and privacy for all tenants.
+A tenant manages a set of users, credentials, roles and groups. A user belongs to and logs into a tenant. 
+
+Kaa multi-tenancy is implemented on top of Keycloak [realms](https://www.keycloak.org/docs/latest/server_admin/#core-concepts-and-terms)
+
+
 ## Service interface protocols
 
 Different services are designed to handle data differently.
