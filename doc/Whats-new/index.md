@@ -27,6 +27,9 @@ Now, in addition to REST API it is possible to manage endpoint [metadata][endpoi
 It improves overall performance and gives more flexibility in platform expansion and customization.
 * [**[DCX]**][DCX] Support for [enriching data samples with endpoint metadata][DCX metadata enrichment] based on the application specific configuration. Disabled by default for backward compatibility.
 
+* [**[CEX]**][CEX] now supports getting the list of existing command resources per endpoint or application name by [REST API][CEX REST API].
+
+* [**[CEX]**][CEX] database migration from Redis to PostgreSQL.
 
 ## Kaa 1.1-mr1 (March 25-th, 2020)
 <!-- 1.1.110 -->
