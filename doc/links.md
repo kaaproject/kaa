@@ -47,12 +47,14 @@
 [DCX metadata enrichment]: {{dcx_url}}Overview/#enriching-data-samples-with-endpoint-metadata
 
 {% capture epts_url %}{{feature_data_collection_url}}EPTS/{% endcapture %}
-[EPTS]:                             {{epts_url}}
-[EPTS REST API]:                    {{epts_url}}REST-API/
-[EPTS time series PUT REST API]:    {{epts_url}}REST-API/#applications__applicationname__time_series_data_put
-[EPTS time series last REST API]:   {{epts_url}}REST-API/#applications__applicationname__time_series_last_get
-[EPTS time series extraction]:      {{epts_url}}Configuration/#time-series-extraction
-[EPTS time series auto extraction]: {{epts_url}}Configuration/#time-series-auto-extraction
+[EPTS]:                                             {{epts_url}}
+[EPTS REST API]:                                    {{epts_url}}REST-API/
+[EPTS time series PUT REST API]:                    {{epts_url}}REST-API/#applications__applicationname__time_series_data_put
+[EPTS time series PUT via app version REST API]:    {{epts_url}}REST-API/#app_versions__appversionname__time_series_data_put
+[EPTS time series last REST API]:                   {{epts_url}}REST-API/#applications__applicationname__time_series_last_get
+[EPTS time series data REST API]:                   {{epts_url}}REST-API/#applications__applicationname__time_series_data_get
+[EPTS time series extraction]:                      {{epts_url}}Configuration/#time-series-extraction
+[EPTS time series auto extraction]:                 {{epts_url}}Configuration/#time-series-auto-extraction
 
 {% capture kdca_url %}{{feature_data_collection_url}}KDCA/{% endcapture %}
 [KDCA]: {{kdca_url}}

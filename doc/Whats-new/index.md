@@ -21,6 +21,11 @@ Below is a work-in-progress list of changes for the next Kaa platform release.
 
 ### Other highlights
 
+* [**[EPTS]**][EPTS] EPTS now supports updating time series data for the specified endpoints under the application version in its [REST API][EPTS time series PUT via app version REST API].
+Just like with DSTP and TSTP interfaces, the data points published to this API yield time series events on the TSTP interface.
+* [**[EPTS]**][EPTS] REST API for [updating endpoint time series data under an application][EPTS time series PUT REST API] is deprecated and will be dropped in the next release.
+Using the [application version-specific API][EPTS time series PUT via app version REST API] instead is recommended going forward.
+* [**[EPTS]**][EPTS] EPTS now supports defining which of the `fromDate` and `toDate` are inclusive when [retrieving historical time series data][EPTS time series data REST API].
 * [**[EPTS]**][EPTS] EPTS now supports last received data points filtering by the `beforeDate` query parameter in its [REST API][EPTS time series last REST API].
 * [**[EPR]**][EPR] In previous Kaa versions EPR provided endpoint metadata and endpoint filter management only via its [REST API][EPR REST API].
 Now, in addition to REST API it is possible to manage endpoint [metadata][endpoint-metadata] and [endpoint filters][endpoint-filter] via [NATS][nats] using the [19/EPMMP] and [20/EFMP] protocols.
