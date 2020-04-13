@@ -2,7 +2,7 @@
 layout: page
 title: IoT notifications
 permalink: /:path/
-sort_idx: 4
+sort_idx: 5
 ---
 
 {% include variables.md %}

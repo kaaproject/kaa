@@ -13,7 +13,7 @@ sort_idx: 2
 
 
 In this webinar we explore the Kaa platform integration with the [Elastic Stack][elastic stack] for data analytics and notifications.
-We set up a remote power monitoring for an aquarim at our office using a WiFi-enabled smart socket integrated with the Kaa platform.
+We set up a remote power monitoring for an aquarim at our office using a [WiFi-enabled smart socket][connect BlitzWolf smart socket] integrated with the Kaa platform.
 We demonstrate the real-time data ingestion, filtering and querying through [Kibana][kibana].
 Finally, we set up Kibana monitors and triggers that notify a channel in our corporate Slack account whenever the aquarium power consumption drops below a given threshold or the telemetry is completely lost for over a minute.
 

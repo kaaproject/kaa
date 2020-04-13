@@ -2,7 +2,7 @@
 layout: page
 title: Kaa Cloud Getting Started
 permalink: /:path/
-sort_idx: 5
+sort_idx: 6
 ---
 
 {% include variables.md %}

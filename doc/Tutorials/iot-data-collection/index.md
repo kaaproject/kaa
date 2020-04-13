@@ -2,7 +2,7 @@
 layout: page
 title: Data collection
 permalink: /:path/
-sort_idx: 2
+sort_idx: 3
 ---
 
 {% include variables.md %}
