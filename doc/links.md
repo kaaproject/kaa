@@ -116,8 +116,8 @@
 [TEKTON bulk config load REST API]: {{tekton_url}}REST-API/#app_configs_post
 
 {% capture tenant_manager_url %}{{feature_infrastructure_url}}TENANT-MANAGER/{% endcapture %}
-[Tenant Manager]:          {{tenant-manager_url}}
-[Tenant Manager REST API]: {{tenant-manager_url}}REST-API/
+[Tenant Manager]:          {{tenant_manager_url}}
+[Tenant Manager REST API]: {{tenant_manager_url}}REST-API/
 
 
 <!-- Miscellaneous -->
@@ -174,23 +174,26 @@
 [tenant]:               {{kaa_concepts}}#tenant
 
 <!--== Tutorials ==-->
-[tutorials]:                        {{root_url}}Tutorials/
-[how to connect device]:            {{root_url}}Tutorials/connect-device-to-iot-platform/
-[connect BlitzWolf smart socket]:   {{root_url}}Tutorials/connect-blitzwolf-smart-socket/
-[data collection tutorial]:         {{root_url}}Tutorials/iot-data-collection/
-[custom web dashboard]:             {{root_url}}Tutorials/build-iot-dashboard/
-[iot notification tutorial]:        {{root_url}}Tutorials/iot-notification/
-[kaa cloud getting started]:        {{root_url}}Tutorials/getting-started-kaa-cloud/
+{% capture tutorials_url %}{{root_url}}Tutorials/{% endcapture %}
+[tutorials]:                        {{tutorials_url}}
+[how to connect device]:            {{tutorials_url}}connect-device-to-iot-platform/
+[connect BlitzWolf smart socket]:   {{tutorials_url}}connect-blitzwolf-smart-socket/
+[how to connect an ESP8266]:        {{tutorials_url}}connect-esp8266-to-kaa-platform/
+[data collection tutorial]:         {{tutorials_url}}iot-data-collection/
+[custom web dashboard]:             {{tutorials_url}}build-iot-dashboard/
+[iot notification tutorial]:        {{tutorials_url}}iot-notification/
+[kaa cloud getting started]:        {{tutorials_url}}getting-started-kaa-cloud/
 
 <!-- Administration -->
-[administration]:               {{root_url}}Administration/
-[local installation]:           {{root_url}}Administration/Local-installation/
-[k8s installation]:             {{root_url}}Administration/Installation-to-kubernetes-cluster/
-[api security]:                 {{root_url}}Administration/API-security/
-[endpoint resource type]:       {{root_url}}Administration/API-security/#endpoint-resource-type
-[application resource type]:    {{root_url}}Administration/API-security/#application-resource-type
-[dashboard resource type]:      {{root_url}}Administration/API-security/#dashboard-resource-type
-[kaa resource type]:            {{root_url}}Administration/API-security/#kaa-resource-type
+{% capture administration_url %}{{root_url}}Administration/{% endcapture %}
+[administration]:               {{administration_url}}
+[local installation]:           {{administration_url}}Local-installation/
+[k8s installation]:             {{administration_url}}Installation-to-kubernetes-cluster/
+[api security]:                 {{administration_url}}API-security/
+[endpoint resource type]:       {{administration_url}}API-security/#endpoint-resource-type
+[application resource type]:    {{administration_url}}API-security/#application-resource-type
+[dashboard resource type]:      {{administration_url}}API-security/#dashboard-resource-type
+[kaa resource type]:            {{administration_url}}API-security/#kaa-resource-type
 
 <!-- Webinars -->
 [webinars]: {{root_url}}Webinars/
@@ -235,3 +238,8 @@
 [digital twin]: https://en.wikipedia.org/wiki/Digital_twin
 [over-the-air]: https://en.wikipedia.org/wiki/Over-the-air_programming
 [openid]: https://openid.net/connect/
+
+
+<!--== KaaIoT sites ==-->
+[Kaa cloud]: https://cloud.kaaiot.com
+[Kaa user chat]: https://gitter.im/KaaIoT/community

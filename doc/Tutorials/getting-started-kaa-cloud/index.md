@@ -14,7 +14,7 @@ sort_idx: 6
 
 ## Overview
 
-In this tutorial, we will look at how to get started with the [Kaa Cloud][kaa_cloud_url] in two simple steps:
+In this tutorial, we will look at how to get started with the [Kaa Cloud][Kaa cloud] in two simple steps:
 
 1. Connect a [device simulator][client_url] to the Kaa Cloud server.
 2. Send and visualize the device simulated data on the [Web Dashboard][WD].
@@ -22,7 +22,7 @@ In this tutorial, we will look at how to get started with the [Kaa Cloud][kaa_cl
 
 ## Prerequisites
 
-1. You have an account on the [Kaa Cloud][kaa_cloud_url].
+1. You have an account on the [Kaa Cloud][Kaa cloud].
 It is free and has no time limit, so create one if you haven't yet.
 
 
@@ -79,7 +79,7 @@ By default, a Kaa Cloud account includes pre-provisioned [endpoint filters][endp
 
 Now let's proceed with the instructions to get you going.
 
-**1**. Go to the "Device management" dashboard in your [Kaa Cloud account][kaa_cloud_url].
+**1**. Go to the "Device management" dashboard in your [Kaa Cloud account][Kaa cloud].
 
 ![Empty device management dashboard](attach/img/empty-device-management-dashboard.png)
 
@@ -202,6 +202,5 @@ Explore the "Software management" dashboard and get acquainted with its capabili
 [ep-list-widget]: {{wd_url}}Widgets/#ep-list
 [ep-location-widget]: {{wd_url}}Widgets/#ep-location
 [multi-series-chart-widget]: {{wd_url}}Widgets/#multiseries-chart
-[kaa_cloud_url]: https://cloud.kaaiot.com
 [location_json]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/getting-started-kaa-cloud/attach/code/location.json
 [client_url]: https://repl.it/@KaaIoT/SimulateEndpointTelemetryData

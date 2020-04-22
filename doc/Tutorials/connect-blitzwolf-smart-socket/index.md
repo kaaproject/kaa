@@ -38,8 +38,8 @@ Other libraries may be installed from Arduino library manager.
 2. Open the [bw-shp6_kaa_example][code-url] project with an Arduino IDE and define bellow connection parameters in the `bw-shp6_kaa_example.ino` file.
 
 ```
-#define WIFI_SSID "**********"          // your WIFI network SSID
-#define WIFI_PASS "**********"          // your WIFI network password
+#define WIFI_SSID "**********"          // your WiFi network SSID
+#define WIFI_PASS "**********"          // your WiFi network password
 
 #define KAA_HOST "**********"           // the KAA host address
 #define KAA_PORT 1883
@@ -59,7 +59,7 @@ Tools->Port: [your usb-serial adapter COM port].
 
 5. All programming part is done. Please finish all hardware preparation and make the smart socket able to connect to the power.   
 
-Now our smart socket can send the telemetry data with the voltage, current and power values.
+Now our smart socket can send the telemetry data with the voltage, current, and power values.
 
 Also, the device can receive commands from the Kaa platform to switch `On/Off` its state.
 

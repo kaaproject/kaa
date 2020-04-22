@@ -21,3 +21,5 @@ Finally, we set up Kibana monitors and triggers that notify a channel in our cor
   <iframe width="640" height="385" src="https://www.youtube.com/embed/TwlVVWn5kf8" frameborder="0"
     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+
+For details on how to connect a smart socket, see [this tutorial][connect BlitzWolf smart socket].
