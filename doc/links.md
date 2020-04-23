@@ -82,6 +82,7 @@
 {% capture cex_url %}{{feature_commands_url}}CEX/{% endcapture %}
 [CEX]: {{cex_url}}
 [CEX REST API]: {{cex_url}}REST-API/
+[CEX REST API POST command]: {{cex_url}}REST-API/#endpoints__endpointid__commands__commandtype__post
 
 {% capture rci_url %}{{feature_commands_url}}RCI/{% endcapture %}
 [RCI]: {{rci_url}}

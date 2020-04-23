@@ -21,6 +21,7 @@ Below is a work-in-progress list of changes for the next Kaa platform release.
 
 ### Other highlights
 
+* [**[CEX]**][CEX] `commandRetentionTtl` time unit was changed in [REST API][CEX REST API POST command] from hour to millisecond.
 * [**[EPTS]**][EPTS] EPTS now supports updating time series data for the specified endpoints under the application version in its [REST API][EPTS time series PUT via app version REST API].
 Just like with DSTP and TSTP interfaces, the data points published to this API yield time series events on the TSTP interface.
 * [**[EPTS]**][EPTS] REST API for [updating endpoint time series data under an application][EPTS time series PUT REST API] is deprecated and will be dropped in the next release.
