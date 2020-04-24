@@ -28,10 +28,12 @@
     "WD"
   ],
   "Infrastructure": [
-    "TEKTON",
-    "TENANT-MANAGER"
+    "TEKTON"
   ],
   "Miscellaneous": [
     "TSX"
+  ],
+  "Multi-tenancy": [
+    "TENANT-MANAGER"
   ]
 }
