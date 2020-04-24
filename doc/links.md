@@ -111,10 +111,12 @@
 [infrastructure]: {{feature_infrastructure_url}}
 
 {% capture tekton_url %}{{feature_infrastructure_url}}TEKTON/{% endcapture %}
-[TEKTON]:                           {{tekton_url}}
-[TEKTON REST API]:                  {{tekton_url}}REST-API/
-[TEKTON applications REST API]:     {{tekton_url}}REST-API/#applications
-[TEKTON bulk config load REST API]: {{tekton_url}}REST-API/#app_configs_post
+[TEKTON]:                               {{tekton_url}}
+[TEKTON REST API]:                      {{tekton_url}}REST-API/
+[TEKTON applications REST API]:         {{tekton_url}}REST-API/#applications
+[TEKTON application create REST API]:   {{tekton_url}}REST-API/#applications_post
+[TEKTON app version create REST API]:   {{tekton_url}}REST-API/#applications__appname__app_versions_post
+[TEKTON bulk config load REST API]:     {{tekton_url}}REST-API/#app_configs_post
 
 {% capture tenant_manager_url %}{{feature_infrastructure_url}}TENANT-MANAGER/{% endcapture %}
 [Tenant Manager]:          {{tenant_manager_url}}

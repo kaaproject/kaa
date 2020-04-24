@@ -10,17 +10,21 @@ sort_idx: 7
 
 * TOC
 {:toc}
-​
 
-## Future release
+
+## Kaa 1.2 (future release)
+<!-- TODO: remember to update links below when updating this header -->
 
 Below is a work-in-progress list of changes for the next Kaa platform release.
 
 <!-- TODO: add change descriptions here -->
 
 
-### Other highlights
+### Other highlights of Kaa 1.2
 
+* [**[TEKTON]**][TEKTON] Tekton now restricts the application version name suffix to match `^[a-z0-9]+$` regex pattern when you create a new application version using the [REST API][TEKTON app version create REST API].
+  In addition, application names will be automatically generated for [newly created applications][TEKTON application create REST API] when `kaa.tekton.app-names.auto-generation.enabled` configuration variable is set to `true`.
+  It is recommended to enable the auto-generation to prevent the possible [application name conflicts](#application-and-application-version-names-conflict-in-java-based-services).
 * [**[CEX]**][CEX] `commandRetentionTtl` time unit was changed in [REST API][CEX REST API POST command] from hour to millisecond.
 * [**[EPTS]**][EPTS] EPTS now supports updating time series data for the specified endpoints under the application version in its [REST API][EPTS time series PUT via app version REST API].
 Just like with DSTP and TSTP interfaces, the data points published to this API yield time series events on the TSTP interface.
@@ -32,10 +36,9 @@ Using the [application version-specific API][EPTS time series PUT via app versio
 Now, in addition to REST API it is possible to manage endpoint [metadata][endpoint-metadata] and [endpoint filters][endpoint-filter] via [NATS][nats] using the [19/EPMMP] and [20/EFMP] protocols.
 It improves overall performance and gives more flexibility in platform expansion and customization.
 * [**[DCX]**][DCX] Support for [enriching data samples with endpoint metadata][DCX metadata enrichment] based on the application specific configuration. Disabled by default for backward compatibility.
-
 * [**[CEX]**][CEX] now supports getting the list of existing command resources per endpoint or application name by [REST API][CEX REST API].
-
 * [**[CEX]**][CEX] database migration from Redis to PostgreSQL.
+
 
 ## Kaa 1.1-mr1 (March 25-th, 2020)
 <!-- 1.1.110 -->
@@ -48,6 +51,24 @@ Reproducible with Java-based services when the new name is a sub-string of an ex
 * **[Bug fix]** The [WD][WD] permits creating endpoints with an empty token.
 * **[Bug fix]** The [WD][WD] does not render variables in dashboard titles.
 * **[Bug fix]** Wrong [WD][WD] documentation link anchors.
+
+
+### Known issues in Kaa 1.1-mr1
+
+#### Application and application version names conflict in Java-based services
+
+**Affected Kaa versions**: [1.1-mr1](#kaa-11-mr1-march-25-th-2020), [1.1](#kaa-11-november-8-th-2019), and [1.0](#kaa-10-june-10-th-2019).
+
+**Issue summary**: Application or application version names that differ only by dashes (`-`) or underscores (`_`) cause naming conflict in Java-based services.
+
+Consider an example of a Kaa application with name `smart_kettle`.
+Creating applications with names like `smart-kettle`, `smartkettle`, or similar, will cause a conflict when loading such configuration in Java-based services.
+
+To prevent this issue, starting from [Kaa 1.2](#kaa-12-future-release) we introduced the option of application name auto-generation on [creation via the Tekton REST API][TEKTON application create REST API].
+Additionally, the application version name suffix is restricted to lowercase Latin letters (`a-z`) and digits (`0-9`) when you [create new application versions][TEKTON app version create REST API].
+
+**Known workaround**: To prevent the issue from happening in affected Kaa versions, refrain from creating applications or application versions with names that only differ by dashes (`-`) or underscores (`_`).
+Starting with [Kaa 1.2](#kaa-12-future-release) it is recommended to enable the application name auto-generation feature.
 
 
 ## Kaa 1.1 (November 8-th, 2019)
@@ -92,7 +113,7 @@ In Kaa 1.1 the primary UI colors were revised and consolidated, and the theme cu
 ![Theme customization](attach/v1.1/theme.png)
 
 
-### Other highlights
+### Other highlights of Kaa 1.1
 
 * [**[CEX]**][CEX] CEX now supports synchronous and asynchronous [REST API][CEX REST API] calls for command invocation.
   Due to this, the [RCI][RCI] microservice is now deprecated and will be retired in a future Kaa version.
