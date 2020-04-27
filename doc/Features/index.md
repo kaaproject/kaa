@@ -21,5 +21,6 @@ Explore the nested subsections to learn more about the various Kaa features and 
 | [**Command invocation**][commands]            | **Remote control** of connected devices. Immediate and delayed **command invocation**.                                       |
 | [**Software updates**][ota]                   | **Software version management** and upgrade orchestration. Targeted, gradual, and scheduled software roll-out.               |
 | [**Visualization**][visualization]            | **Web interface** for data visualization, device management, platform administration, and more.                              |
+| [**Multi-tenancy**][multi-tenancy]            | Components that enables **multi-tenancy**.                                                                                   |
 | [**Infrastructure**][infrastructure]          | **Infrastructure** components for the Kaa platform **clusters operation and administration**.                                |
 | [**Miscellaneous**][misc]                     | **Miscellaneous** additional Kaa platform functionality.                                                                     |

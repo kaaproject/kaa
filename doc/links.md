@@ -118,7 +118,12 @@
 [TEKTON app version create REST API]:   {{tekton_url}}REST-API/#applications__appname__app_versions_post
 [TEKTON bulk config load REST API]:     {{tekton_url}}REST-API/#app_configs_post
 
-{% capture tenant_manager_url %}{{feature_infrastructure_url}}TENANT-MANAGER/{% endcapture %}
+
+<!-- Multi-tenancy -->
+{% capture feature_multi_tenancy_url %}{{kaa_features_url}}Multi-tenancy/{% endcapture %}
+[multi-tenancy]: {{feature_multi_tenancy_url}}
+
+{% capture tenant_manager_url %}{{feature_multi_tenancy_url}}TENANT-MANAGER/{% endcapture %}
 [Tenant Manager]:          {{tenant_manager_url}}
 [Tenant Manager REST API]: {{tenant_manager_url}}REST-API/
 
