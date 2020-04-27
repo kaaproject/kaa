@@ -36,7 +36,7 @@ Note that for simplicity the reported values are simulated, but you are welcome 
 
 ### Connect your device
 
-**1**. Go to the "Device management" dashboard in your [Kaa Cloud account][kaa_cloud_url].
+**1**. Go to the "Device management" dashboard in your [Kaa Cloud account][Kaa cloud].
 
 ![Empty device management dashboard](attach/img/empty-device-management-dashboard.png)
 
