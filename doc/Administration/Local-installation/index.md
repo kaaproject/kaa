@@ -12,31 +12,39 @@ sort_idx: 0
 {:toc}
 
 
-This page provides instructions on installing a Kaa cluster on your Linux or MacOS local machine using [minikube](https://github.com/kubernetes/minikube).
+This page provides instructions on installing a Kaa cluster on your Linux or macOS local machine using [minikube](https://github.com/kubernetes/minikube).
 
 
 ## Docker and minikube
 
-1. [Install Docker](https://docs.docker.com/v17.09/engine/installation/)
+1. [Install Docker](https://docs.docker.com/install/) (please use version 17.09)
 2. [Install minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 
 After the installation you should have:
 - minikube
 - kubectl
-- vm driver (kvm in case of Linux, hyperkit in case of MacOS)
+- vm driver (kvm in case of Linux, hyperkit in case of macOS)
 
 
-### MacOS dependencies
+### macOS dependencies
 
-Install dependencies for minikube:
+#### For Catalina +
+
+Install Docker Desktop for Mac 
+https://docs.docker.com/docker-for-mac/install/
+
+Go to `Preference` -> `Kubernetes` and check `Enable Kubernetes` checkbox.
+#### For previous macOS versions
+
+Install minikube and hyperkit:
 
 ```sh
-printf "\n"|/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew cask install minikube
-brew install kubernetes-cli
-brew cask install docker-edge
+printf "\n"|/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" 
+brew install hyperkit
+brew install minikube 
+brew install kubernetes-cli 
+brew install docker
 ```
-
 
 ### Linux dependencies
 
@@ -104,17 +112,21 @@ LXC: Checking if device /sys/fs/fuse/connections exists                   : PASS
 
 Create a minikube machine using the kaa profile.
 
-For MacOS:
+For macOS:
 ```sh
-minikube start --cpus 4 --memory 16384 --disk-size 40G --profile kaa --vm-driver=hyperkit --kubernetes-version='v1.15.0'
+minikube start --cpus=4 --memory=16384 --disk-size=40G --profile=kaa --vm-driver=hyperkit --kubernetes-version='v1.15.0'
 ```
 
 For Linux:
 ```sh
-minikube start --cpus 4 --memory 16384 --disk-size 40G --profile kaa --vm-driver=kvm2 --kubernetes-version='v1.15.0'
+minikube start --cpus=4 --memory=16384 --disk-size=40G --profile=kaa --vm-driver=kvm2 --kubernetes-version='v1.15.0'
+```
+Restart docker service after the minikube started (**Linux only**):
+```sh
+sudo systemctl restart docker
 ```
 
-To verify, run:
+Run command to check that all steps were done correctly:
 
 ```sh
 kubectl get pods --all-namespaces
@@ -135,181 +147,65 @@ kube-system   kube-scheduler-minikube            1/1     Running   0          41
 kube-system   storage-provisioner                1/1     Running   0          104s
 ```
 
-Restart docker service after the minikube starts (**Linux only**):
-```sh
-sudo systemctl restart docker
-```
-
-
 ## Kaa installation profile
 
-Run `kaa-installer` docker image:
-
+Run Kaa installer docker image:
 ```sh
-docker run --rm -it --entrypoint bash \
-  --name kaa-installer  \
-  -v ${HOME}/.kube:/home/app/.kube \
-  -v ${HOME}/.minikube:${HOME}/.minikube \
-  -v ${PWD}/kaa_installer/output:/usr/src/kaa/installer/output \
-  -v ${PWD}/kaa_installer/profile_overrides:/usr/src/kaa/installer/profile_overrides \
-  hub.kaaiot.net/devops/kaa-installer:rel_{{version}}
+./dev-cli.sh rebuild
 ```
-
 Output example:
 ```
-(venv) [OS:none][AWS:default]:/usr/src/kaa/installer
+(venv) (k8s: kaa)[OS:none][AWS:default]:/usr/src/kaa/installer
 ```
 
-Mounted volumes description:
-- `${PWD}/kaa_installer/profile_overrides:/usr/src/kaa/installer/profile_overrides` is used for saving profile overrides in the local filesystem.
+Mounted volume description:
 - `${PWD}/kaa_installer/output:/usr/src/kaa/installer/output` is used for saving terraform state in the local filesystem (installation state, terraform state, terraform vars).
 
-Following steps will be done inside the docker container console.
+The following steps will be done inside the docker container console.
 
-Set kube-context to minikube.
+Set kube-context for connection to the local Kubernetes cluster. 
 ```sh
 kubectl config use-context kaa
 ```
+or if you use Docker for Mac
+```sh
+kubectl config use-context docker-desktop
+```
 
-Verify that the installer container has access to minikube:
+Validate that the installer container has access to the local Kubernetes cluster:
 ```sh
 kubectl cluster-info
 ```
 
 Output example:
 ```
-Kubernetes master is running at <https://192.168.64.4:8443>
-KubeDNS is running at <https://192.168.64.4:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy>
+Kubernetes master is running at https://192.168.39.81:8443
+KubeDNS is running at https://192.168.39.81:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 
-To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
+Create profile values YAML file for the Kaa installer with any name and replace values with your ones:
 
-Note the Kubernetes master URL and use it in place of the `<kubernetes master URL>` in the JSON below.
-
-Fill in the below JSON template and create a profile override file in `/usr/src/kaa/installer/profile_overrides` for the Kaa installer (you can use any file name):
-```sh
-cat <<EOF > my_profile.json
-{
-  "kube_info": {
-    "kube_api_url": "",
-    "master_vm_ips": [],
-    "worker_vm_ips": [],
-    "kube_vm_ips": []
-  },
-  "kaa": {
-    "release_set": {
-      "global.license.createSecret.fileBase64": "",
-      "global.license.createSecret.password": "",
-      "global.image.pullSecretsCreate.registryUsername": "",
-      "global.image.pullSecretsCreate.registryPassword": ""
-    }
-  }
-}
-EOF
+Values:
 ```
-
-Description of the template values:
-- `kube_api_url` - use the Kubernetes master URL from the previous step
-- `master_vm_ips` - in case of a single node minikube use the Kubernetes master IP address
-- `worker_vm_ips` - same as `master_vm_ips`
-- `kube_vm_ips` - same as `master_vm_ips`
-- `global.license.createSecret.fileBase64` - your Kaa license file content, base64 encoded
-- `global.license.createSecret.password` - your Kaa license file password
-- `global.image.pullSecretsCreate.registryUsername` - your KaaID login
-- `global.image.pullSecretsCreate.registryPassword` - your KaaID password
-
-For example:
-
-```sh
-cat <<EOF > my_profile.json
-{
-  "kube_info": {
-    "kube_api_url": "https://192.168.64.4:8443",
-    "master_vm_ips": ["192.168.64.4"],
-    "worker_vm_ips": ["192.168.64.4"],
-    "kube_vm_ips": ["192.168.64.4"]
-  },
-  "kaa": {
-    "release_set": {
-        "global.license.createSecret.fileBase64": "<your-licence-file-content-base64-encoded>",
-        "global.license.createSecret.password": "<license-file-password>",
-        "global.image.pullSecretsCreate.registryUsername": "john@example.com",
-        "global.image.pullSecretsCreate.registryPassword": "SeCuReP@ssw0rd"
-    }
-  }
-}
-EOF
+local_installation: true
+kaa_license: "${KAAIOT_LICENSE}"
+kaa_license_password: "${KAAIOT_LICENSE_PASSWORD}"
+monitoring_enabled: true
+opendistro_enabled: true
+logstash_enabled: true
+filebeat_enabled: true
 ```
+Where:
 
-
-## Kaa thirdparties
-
-Install kaa thirdparties (this step not required if you install minikube ingress addon).
-```sh
-envmanager manager apply --env kaa-local --profile minikube --script kaa-thirdparty --state local --cloud kubernetes --profile-override /usr/src/kaa/installer/profile_overrides/my_profile.json
-```
-
-State file of the terraform installation will be saved to `output/kaa-local/kaa-thirdparty`
-
-Output example:
-
-```
-Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
-
-The state of your infrastructure has been saved to the path
-below. This state is required to modify and destroy your
-infrastructure, so keep it safe. To inspect the complete state
-use the `terraform show` command.
-
-State path: /usr/src/kaa/installer/output/kaa-local/kaa-thirdparty/terraform.tfstate
-
-Outputs:
-
-certmanager_issuer_repository = [
-  "https://kubernetes-charts.storage.googleapis.com",
-  "stable",
-]
-certmanager_repository = [
-  "https://kubernetes-charts.storage.googleapis.com",
-  "stable",
-]
-dns_note = Don't forget setup dns records for created nginx ingress service
-required 2 records (kaa domain, keycloak, domain)
-
-ingress_name = ingress
-ingress_namespace = ingress
-ingress_repository = [
-  "https://kubernetes-charts.storage.googleapis.com",
-  "stable",
-]
-ingress_revision = 1
-kaaid_roles_repository = [
-  "https://kubernetes-charts.storage.googleapis.com",
-  "stable",
-]
-kube_info = {
-  "kube_api_ca" = ""
-  "kube_api_token" = ""
-  "kube_api_url" = "https://192.168.64.4:8443"
-  "kube_ingress_domain" = "local.kaatech.com"
-  "kube_lb_supported" = "false"
-  "kube_persistence_supported" = "false"
-  "kube_version" = ""
-  "kube_vm_ips" = [
-    "192.168.64.4",
-  ]
-  "master_vm_ips" = [
-    "192.168.64.4",
-  ]
-  "worker_vm_ips" = [
-    "192.168.64.4",
-  ]
-}
-openebs_repository = [
-  "https://kubernetes-charts.storage.googleapis.com",
-  "stable",
-]
-```
+- `KAAIOT_LICENSE` - KaaIoT license file content (base64 encoded)
+- `KAAIOT_LICENSE_PASSWORD` - KaaIoT license file password
+- if you want to install Prometheus and Grafana:
+  `monitoring_enabled: true`
+- if you want to install ELK stack:
+  `opendistro_enabled: true`,
+  `logstash_enabled: true`,
+  `filebeat_enabled: true`
 
 
 ## Kaa installation
@@ -317,104 +213,33 @@ openebs_repository = [
 Now everything is ready to install the Kaa platform.
 
 ```sh
-envmanager manager apply --env kaa-local --profile minikube --script kaa-apps --state local --cloud kubernetes --profile-override /usr/src/kaa/installer/profile_overrides/my_profile.json
+envmanager manager --env local --profile kubernetes.yml --vars-file values.yaml apply
 ```
 
-By default, deployment timeout is 1200 seconds, but you can change to an appropriate value according to your hardware settings in the `kaa-installer/profiles/kubernetes/kaa-apps/minikube.json` profile.
-For example:  `"release_timeout": "700"`.
-
-Terraform installation state will be saved to `output/kaa-local/kaa-apps/`.
-
-Output example:
-
-```
-Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
-
-The state of your infrastructure has been saved to the path
-below. This state is required to modify and destroy your
-infrastructure, so keep it safe. To inspect the complete state
-use the `terraform show` command.
-
-State path: /usr/src/kaa/installer/output/kaa-local/kaa-apps/terraform.tfstate
-
-Outputs:
-
-kaa_name = kaa
-kaa_namespace = kaa
-kaa_repository = [
-  "https://kubernetes-charts.storage.googleapis.com",
-  "stable",
-]
-kaa_revision = 1
-kaa_version = {
-  "componets" = {
-    "core" = {
-      "blueprint" = {
-        "building" = "0.0.9"
-      }
-      "client" = {
-        "python-simulator" = "0.1.4"
-      }
-      "dev-tools" = {
-        "keycloak-configurator" = "0.1.16"
-      }
-      "service" = {
-        "cex" = "1.0.13"
-        "cm" = "1.0.13"
-        "cmx" = "1.0.5"
-        "dcx" = "1.0.11"
-        "ecr" = "1.0.11"
-        "epl" = "1.0.22"
-        "epmx" = "1.0.13"
-        "epr" = "1.0.15"
-        "epts" = "1.0.25"
-        "kdca" = "0.0.21"
-        "kpc" = "1.0.17"
-        "otao" = "1.0.13"
-        "rci" = "1.0.7"
-        "tekton" = "0.0.37"
-        "tsx" = "1.0.4"
-        "wd" = "0.0.233"
-      }
-    }
-  }
-  "version_repo" = "1.0.390"
-}
-kube_info = {
-  "kube_api_ca" = ""
-  "kube_api_token" = ""
-  "kube_api_url" = "https://192.168.64.4:8443"
-  "kube_ingress_domain" = "local.kaatech.com"
-  "kube_lb_supported" = "false"
-  "kube_persistence_supported" = "false"
-  "kube_version" = ""
-  "kube_vm_ips" = [
-    "192.168.64.4",
-  ]
-  "master_vm_ips" = [
-    "192.168.64.4",
-  ]
-  "worker_vm_ips" = [
-    "192.168.64.4",
-  ]
-}
-```
-
+Terraform installation state will be saved to `output/local/`.
 
 ## Verification
 
-Exit the `kube-installer` docker container and append the lines below to `/etc/hosts` file on you host system:
+Exit the `kaa-installer` docker container and append the lines below to the `/etc/hosts` file on your host system:
 
 ```
 <kubernetes IP> auth.local.kaatech.com
 <kubernetes IP> env.local.kaatech.com
+<kubernetes IP> kibana.local.kaatech.com
+<kubernetes IP> grafana.local.kaatech.com
 ```
-where `<kubernetes IP>` is the Kubernetes IP address from your [installation profile](#kaa-installation-profile).
+where `<kubernetes IP>` is the Kubernetes IP address ( from the `kubectl cluster-info`).
 
-Open the [Kaa Web Dashboard interface](https://env.local.kaatech.com) in you browser.
-The default user and password are `admin/admin`.
+Open the [Kaa Web Dashboard interface](https://env.local.kaatech.com) in your browser.
 
-If the web page loads, you have successfuly completed a local installation of the Kaa platform.
+The default credentials:
+```
+tenant_id: 'kaa'  
+login: 'admin@example.com'  
+password: 'admin'
+```
+
+If the web page loads, you have completed a local installation of the Kaa platform.
 
 The KeyCloak web interface will be available at [https://auth.local.kaatech.com](https://auth.local.kaatech.com).
 The default user and password are `admin/admin`.
@@ -422,7 +247,7 @@ The default user and password are `admin/admin`.
 Platform components' REST API will be served under https://env.local.kaatech.com.
 For example: `https://env.local.kaatech.com/epr/api/v1/endpoints`.
 
-
+Logging and monitoring will be available at [https://kibana.local.kaatech.com](https://kibana.local.kaatech.com) and [https://grafana.local.kaatech.com](https://grafana.local.kaatech.com).
 ## Next steps
 
 - [Connect a device to your local Kaa cluster][how to connect device].
