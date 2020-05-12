@@ -169,6 +169,7 @@ The table below summarizes the list of Kaa platform components that contribute t
 | Service                                        | Version          |
 | ---------------------------------------------- | ---------------- |
 | [Data Collection Extension (DCX)][DCX]         | {{dcx_version}}  |
+| [Binary Data Collection Extension (BCX)][BCX]  | {{bcx_version}}  |
 | [Endpoint Time-Series (EPTS)][EPTS]            | {{epts_version}} |
 | [Kafka Data Collection Adapter (KDCA)][KDCA]   | {{kdca_version}} |
 
