@@ -2,7 +2,8 @@
   "Device-management": [
     "EPR",
     "EPMX",
-    "CM"
+    "CM",
+    "CCM"
   ],
   "Communication": [
     "KPC",

@@ -25,6 +25,9 @@
 [CM clients REST API]:          {{cm_url}}REST-API/#clients
 [CM certificate POST REST API]: {{cm_url}}REST-API/#clients_certificates_post
 
+{% capture ccm_url %}{{feature_device_mgmt_url}}CCM/{% endcapture %}
+[CCM]: {{ccm_url}}
+
 
 <!-- Communication -->
 {% capture feature_communication_url %}{{kaa_features_url}}Communication/{% endcapture %}
@@ -45,6 +48,9 @@
 {% capture dcx_url %}{{feature_data_collection_url}}DCX/{% endcapture %}
 [DCX]: {{dcx_url}}
 [DCX metadata enrichment]: {{dcx_url}}Overview/#enriching-data-samples-with-endpoint-metadata
+
+{% capture bcx_url %}{{feature_data_collection_url}}BCX/{% endcapture %}
+[BCX]: {{bcx_url}}
 
 {% capture epts_url %}{{feature_data_collection_url}}EPTS/{% endcapture %}
 [EPTS]:                                             {{epts_url}}
