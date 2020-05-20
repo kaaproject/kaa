@@ -50,7 +50,11 @@
 [DCX metadata enrichment]: {{dcx_url}}Overview/#enriching-data-samples-with-endpoint-metadata
 
 {% capture bcx_url %}{{feature_data_collection_url}}BCX/{% endcapture %}
-[BCX]: {{bcx_url}}
+[BCX]:                                      {{bcx_url}}
+[BCX token exchange extension interface]:   {{bcx_url}}#token-exchange-extension-interface
+[BCX REST API]:                             {{bcx_url}}REST-API/
+[BCX binary data blob upload REST API]:     {{bcx_url}}REST-API/#binary_data_post
+[BCX data blob management REST API]:        {{bcx_url}}REST-API/#applications__appname_
 
 {% capture epts_url %}{{feature_data_collection_url}}EPTS/{% endcapture %}
 [EPTS]:                                             {{epts_url}}
