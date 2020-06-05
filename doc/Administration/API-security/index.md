@@ -105,6 +105,7 @@ Application name is used as a resource handle to construct resource names accord
 | `application:endpoint-filter:update`       | Update of endpoint filters in a given application.                                         |
 | `application:endpoint-filter:delete`       | Delete operation on endpoint filters in a given application.                               |
 | `application:endpoints-metadata-keys:read` | Read access to all existing endpoint metadata attribute keys in a given application.       |
+| `application:endpoint-command:read`        | Read access to all existing endpoint commands in a given application.                      |
 | `application:timeseries-config:read`       | Read access to all existing endpoint time-series configurations in a given application.    |
 | `application:endpoint-config:read`         | Read access to default endpoint configuration in a given application.                      |
 | `application:endpoint-config:update`       | Write access to default endpoint configuration in a given application.                     |
