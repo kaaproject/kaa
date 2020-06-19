@@ -55,7 +55,7 @@ Before creating any device, you need to create at least one "Application"
 
 ![Fill application information](attach/img/fill_application_info.png)
 
-**5**. Create at least one version of your application. 
+**4**. Create at least one version of your application. 
 For that, expand the created application, click "Add version", fill out the fields, and click "Create".
 
 ![create application version](attach/img/create_new_application_version.png)
