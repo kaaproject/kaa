@@ -193,14 +193,15 @@
 
 <!--== Tutorials ==-->
 {% capture tutorials_url %}{{root_url}}Tutorials/{% endcapture %}
-[tutorials]:                        {{tutorials_url}}
-[how to connect device]:            {{tutorials_url}}connect-device-to-iot-platform/
-[connect BlitzWolf smart socket]:   {{tutorials_url}}connect-blitzwolf-smart-socket/
-[how to connect an ESP8266]:        {{tutorials_url}}connect-esp8266-to-kaa-platform/
-[data collection tutorial]:         {{tutorials_url}}iot-data-collection/
-[custom web dashboard]:             {{tutorials_url}}build-iot-dashboard/
-[iot notification tutorial]:        {{tutorials_url}}iot-notification/
-[kaa cloud getting started]:        {{tutorials_url}}getting-started-kaa-cloud/
+[tutorials]:                              {{tutorials_url}}
+[how to connect device]:                  {{tutorials_url}}connect-device-to-iot-platform/
+[connect Arduino (MKR-1010 + MKR-ENV)]:   {{tutorials_url}}connect-arduino-mkr-1010-to-kaa-platform/
+[connect BlitzWolf smart socket]:         {{tutorials_url}}connect-blitzwolf-smart-socket/
+[how to connect an ESP8266]:              {{tutorials_url}}connect-esp8266-to-kaa-platform/
+[data collection tutorial]:               {{tutorials_url}}iot-data-collection/
+[custom web dashboard]:                   {{tutorials_url}}build-iot-dashboard/
+[iot notification tutorial]:              {{tutorials_url}}iot-notification/
+[kaa cloud getting started]:              {{tutorials_url}}getting-started-kaa-cloud/
 
 <!-- Administration -->
 {% capture administration_url %}{{root_url}}Administration/{% endcapture %}
