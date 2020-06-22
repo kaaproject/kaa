@@ -268,7 +268,6 @@ Here's a short video of how this setup works.
 - Now that you have some Kaa experience under your belt, check out the [Kaa IoT Cloud and Kaa 1.1 webinar][webinar Kaa IoT Cloud and Kaa 1.1] to implement something more complicated.
 - [Data Analytics and Notifications webinar][webinar Data Analytics and Notifications] based on Arduino compatible(ESP8266) smart socket.
 - [Device management][identity] - find out more about the device management feature.
-- Review the [telemetry data collection tutorial][data collection tutorial] that is based on a Python simulator.
 
 
 [code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-arduino-mkr-1010-to-kaa-platform/attach/code
