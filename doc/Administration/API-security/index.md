@@ -20,6 +20,7 @@ To get the most out of the below documentation, we recommend that you:
 * familiarize yourself with the [OAuth 2.0 Authorization Framework][oauth2] (also, great read [here](https://www.oauth.com/#in-page)).
 
 
+
 ## Introduction
 
 The Kaa platform is based on multiple microservices that implement various aspects of the overall platform functionality.
@@ -34,7 +35,10 @@ To perform an operation on a resource, the requesting user must be authenticated
 All Kaa services support bearer token HTTP authentication scheme on exposed REST APIs.
 
 
+
 ## Conventions
+
+
 
 ### Resource naming convention
 
@@ -66,16 +70,19 @@ For example:
 * `application:endpoint:create` grants the right to create endpoints within a given application.
 
 
+
 ## OAuth 2.0 resource types and scopes
 
 Kaa services use several resource types to manage access authorization to corresponding resources.
 Below is a summary of existing resource types and their associated [OAuth 2.0 scopes][oauth scope].
 
 
+
 ### Endpoint resource type
 
 `endpoint` resource type is used for restricting access to Kaa [endpoints][endpoint].
 These resources are managed by the [Endpoint Register service (EPR)][EPR].
+Scopes are enforced by many of the Kaa platform services, including [EPR][EPR], [EPTS][EPTS], [ECR][ECR], and others.
 
 [Endpoint ID][endpoint-id] is used as a resource handle to construct resource names according to the [resource naming convention](#resource-naming-convention).
 
@@ -86,6 +93,7 @@ These resources are managed by the [Endpoint Register service (EPR)][EPR].
 | `endpoint:delete` | Endpoint delete operation.                                                                                     |
 
 
+
 ### Application resource type
 
 `application` resource type is used for restricting access to Kaa [applications][application].
@@ -94,24 +102,81 @@ These resources are managed by the [Kaa Tekton service][TEKTON].
 Application name is used as a resource handle to construct resource names according to the [resource naming convention](#resource-naming-convention).
 
 
-| **Scope**                                  | **Description**                                                                            |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| `application:read`                         | Read access to application, its associated metadata, and service instance configurations.  |
-| `application:update`                       | Write access to application, its associated metadata, and service instance configurations. |
-| `application:delete`                       | Application delete operation.                                                              |
-| `application:endpoint:create`              | Creation of a new Kaa endpoint in a given application.                                     |
-| `application:endpoint-filter:create`       | Creation of endpoint filters in a given application.                                       |
-| `application:endpoint-filter:read`         | Read access to endpoint filters created in a given application.                            |
-| `application:endpoint-filter:update`       | Update of endpoint filters in a given application.                                         |
-| `application:endpoint-filter:delete`       | Delete operation on endpoint filters in a given application.                               |
-| `application:endpoints-metadata-keys:read` | Read access to all existing endpoint metadata attribute keys in a given application.       |
-| `application:endpoint-command:read`        | Read access to all existing endpoint commands in a given application.                      |
-| `application:timeseries-config:read`       | Read access to all existing endpoint time-series configurations in a given application.    |
-| `application:endpoint-config:read`         | Read access to default endpoint configuration in a given application.                      |
-| `application:endpoint-config:update`       | Write access to default endpoint configuration in a given application.                     |
-| `application:endpoint-config:delete`       | Delete operation on default endpoint configuration in a given application.                 |
-| `application:software:read`                | Read access to over-the-air software definitions in a given application.                   |
-| `application:software:update`              | Write access to over-the-air software definitions in a given application.                  |
+| **Scope**            | **Description**                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `application:read`   | Read access to application, its associated metadata, and service instance configurations.  |
+| `application:update` | Write access to application, its associated metadata, and service instance configurations. |
+| `application:delete` | Application delete operation.                                                              |
+
+
+#### Endpoint creation scope
+
+Enforced by the [EPR][EPR].
+
+| **Scope**                     | **Description**                                        |
+| ----------------------------- | ------------------------------------------------------ |
+| `application:endpoint:create` | Creation of a new Kaa endpoint in a given application. |
+
+
+#### Endpoint filter management scopes
+
+Enforced by the [EPR][EPR].
+
+| **Scope**                            | **Description**                                                 |
+| ------------------------------------ | --------------------------------------------------------------- |
+| `application:endpoint-filter:create` | Creation of endpoint filters in a given application.            |
+| `application:endpoint-filter:read`   | Read access to endpoint filters created in a given application. |
+| `application:endpoint-filter:update` | Update of endpoint filters in a given application.              |
+| `application:endpoint-filter:delete` | Delete operation on endpoint filters in a given application.    |
+
+
+#### Endpoint metadata keys access scope
+
+Enforced by the [EPR][EPR].
+
+| **Scope**                                  | **Description**                                                                      |
+| ------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `application:endpoints-metadata-keys:read` | Read access to all existing endpoint metadata attribute keys in a given application. |
+
+
+#### Endpoint commands access scope
+
+Enforced by the [CEX][CEX].
+
+| **Scope**                           | **Description**                                                       |
+| ----------------------------------- | --------------------------------------------------------------------- |
+| `application:endpoint-command:read` | Read access to all existing endpoint commands in a given application. |
+
+
+#### Timeseries configuration access scope
+
+Enforced by the [EPTS][EPTS].
+
+| **Scope**                            | **Description**                                                                         |
+| ------------------------------------ | --------------------------------------------------------------------------------------- |
+| `application:timeseries-config:read` | Read access to all existing endpoint time-series configurations in a given application. |
+
+
+#### Default endpoint configuration management scopes
+
+Enforced by the [ECR][ECR].
+
+| **Scope**                            | **Description**                                                            |
+| ------------------------------------ | -------------------------------------------------------------------------- |
+| `application:endpoint-config:read`   | Read access to default endpoint configuration in a given application.      |
+| `application:endpoint-config:update` | Write access to default endpoint configuration in a given application.     |
+| `application:endpoint-config:delete` | Delete operation on default endpoint configuration in a given application. |
+
+
+#### Software OTA management scopes
+
+Enforced by the [OTAO][OTAO].
+
+| **Scope**                     | **Description**                                                           |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| `application:software:read`   | Read access to over-the-air software definitions in a given application.  |
+| `application:software:update` | Write access to over-the-air software definitions in a given application. |
+
 
 
 ### Dashboard resource type
@@ -126,273 +191,286 @@ Dashboard UUID is used as a resource handle to construct resource names accordin
 | `dashboard:read` | View access to a given web dashboard. |
 
 
+
+### Tenant resource type
+
+`tenant` resource type is used for restricting tenant-wide operations.
+One resource of this type (with the name `tenant-system`) is created per KeyCloak authentication realm (created for a Kaa tenant) by the [tenant-manager][Tenant Manager].
+
+| **Scope**                   | **Description**                    |
+| --------------------------- | ---------------------------------- |
+| `tenant:application:create` | Creation of a new Kaa application. |
+
+
+#### Basic client credentials management scopes
+
+The following scopes restrict access to basic (username / password) credentials, enforced by the [Client Credentials Management service][CCM].
+
+| **Scope**                         | **Description**                           |
+| --------------------------------- | ----------------------------------------- |
+| `tenant:basic-credentials:create` | Creation of new basic client credentials. |
+| `tenant:basic-credentials:read`   | Read access to basic client credentials.  |
+| `tenant:basic-credentials:update` | Basic client credentials management.      |
+
+
+#### X.509 client credentials management scopes
+
+The following scopes restrict access to X.509 (TLS certificate) credentials, enforced by the [Client Credentials Management service][CCM].
+
+| **Scope**                        | **Description**                           |
+| -------------------------------- | ----------------------------------------- |
+| `tenant:x509-credentials:create` | Creation of new X.509 client credentials. |
+| `tenant:x509-credentials:read`   | Read access to X.509 client credentials.  |
+| `tenant:x509-credentials:update` | X.509 client credentials management.      |
+
+
+
 ### Kaa resource type
 
 `kaa` resource type is used for restricting platform-wide operations.
 Only one resource of this type (with the name `kaa-system`) is created per Kaa platform instance by the Kaa installer.
 
-| **Scope**                        | **Description**                                         |
-| -------------------------------- | ------------------------------------------------------- |
-| `kaa:application:create`         | Creation of a new Kaa application.                      |
-| `kaa:application:read`           | Bulk read of Kaa application configurations.            |
-| `kaa:application:update`         | Bulk update of Kaa application configurations.          |
-| `kaa:client-credentials:create`  | Creation of new client username/password credentials.   |
-| `kaa:client-credentials:read`    | Read access to client username/password credentials.    |
-| `kaa:client-credentials:update`  | Client username/password credentials status management. |
-| `kaa:client-certificates:create` | Creation of new client certificates.                    |
-| `kaa:client-certificates:read`   | Read access to client certificates.                     |
-| `kaa:client-certificates:update` | Client certificates status management.                  |
 
+#### Application management scopes
 
-### Tenant resource type
+The following scopes restict application management access, enforced by the [Kaa Tekton][TEKTON].
 
-`tenant` resource type is used for restricting access to Kaa [tenants][tenant] and tenant-wide operations.
-Only one resource of this type (with the name `tenant-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                | **Description**                                |
+| ------------------------ | ---------------------------------------------- |
+| `kaa:application:create` | Creation of a new Kaa application.             |
+| `kaa:application:read`   | Bulk read of Kaa application configurations.   |
+| `kaa:application:update` | Bulk update of Kaa application configurations. |
 
-| **Scope**                   | **Description**                    |
-| --------------------------- | ---------------------------------- |
-| `tenant:create`             | Creation of a new tenant.          |
-| `tenant:read`               | Read access to tenant.             |
-| `tenant:update`             | Write access to tenant.            |
-| `tenant:delete`             | Tenant delete operation.           |
-| `tenant:application:create` | Creation of a new Kaa application. |
 
+#### Tenant configuration access scope
 
-### Tenant user resource type
+The following scope resticts tenant-specific configuration access, enforced by the [Kaa Tekton][TEKTON].
 
-`tenants-users` resource type is used for restricting access to Kaa tenant users.
-Only one resource of this type (with the name `tenants-users-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                       | **Description**                                                           |
+| ------------------------------- | ------------------------------------------------------------------------- |
+| `kaa:tenant:configuration:read` | Read access to tenant-specific configuration of any tenant in the system. |
 
-| **Scope**                     | **Description**                |
-| ----------------------------- | ------------------------------ |
-| `tenant:tenants-users:create` | Creation of a new tenant user. |
-| `tenant:tenants-users:read`   | Read access to tenant user.    |
-| `tenant:tenants-users:update` | Write access to tenant user.   |
-| `tenant:tenants-users:delete` | Tenant user delete operation.  |
 
+#### Tenant management scopes
 
-### Keycloak client backend template version resource type
+The following scopes restict tenant operations access, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`templates-realm-backend-clients` resource type is used for restricting access to Kaa keycloak client backend template versions.
-Only one resource of this type (with the name `templates-realm-backend-clients-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**           | **Description**              |
+| ------------------- | ---------------------------- |
+| `kaa:tenant:create` | Creation of a new tenant.    |
+| `kaa:tenant:read`   | Read access to all tenants.  |
+| `kaa:tenant:update` | Write access to all tenants. |
+| `kaa:tenant:delete` | Tenant delete operation.     |
 
-| **Scope**                                       | **Description**                                             |
-| ----------------------------------------------- | ----------------------------------------------------------- |
-| `tenant:templates-realm-backend-clients:create` | Creation of a new keycloak client backend template version. |
-| `tenant:templates-realm-backend-clients:read`   | Read access to keycloak client backend template version.    |
-| `tenant:templates-realm-backend-clients:update` | Write access to keycloak client backend template version.   |
-| `tenant:templates-realm-backend-clients:delete` | Keycloak client backend template version delete operation.  |
 
+#### Tenant user management scopes
 
-### Keycloak client frontend template version resource type
+The following scopes restict tenant user management access, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`templates-realm-frontend-clients` resource type is used for restricting access to Kaa keycloak client frontend template versions.
-Only one resource of this type (with the name `templates-realm-frontend-clients-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                | **Description**                |
+| ------------------------ | ------------------------------ |
+| `kaa:tenant:user:create` | Creation of a new tenant user. |
+| `kaa:tenant:user:read`   | Read access to tenant users.   |
+| `kaa:tenant:user:update` | Write access to tenant users.  |
+| `kaa:tenant:user:delete` | Tenant user delete operation.  |
 
-| **Scope**                                        | **Description**                                              |
-| ------------------------------------------------ | ------------------------------------------------------------ |
-| `tenant:templates-realm-frontend-clients:create` | Creation of a new keycloak client frontend template version. |
-| `tenant:templates-realm-frontend-clients:read`   | Read access to keycloak client frontend template version.    |
-| `tenant:templates-realm-frontend-clients:update` | Write access to keycloak client frontend template version.   |
-| `tenant:templates-realm-frontend-clients:delete` | Keycloak client frontend template version delete operation.  |
 
+#### Tenant backend client template management scopes
 
-### Keycloak default resource resource type
+The following scopes restict management access for backend client templates for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`default-resources` resource type is used for restricting access to Kaa keycloak default resources.
-Only one resource of this type (with the name `default-resources-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                                         | **Description**                                    |
+| ------------------------------------------------- | -------------------------------------------------- |
+| `kaa:tenant:realm-backend-client-template:create` | Creation of a new backend client template version. |
+| `kaa:tenant:realm-backend-client-template:read`   | Read access to backend client template version.    |
+| `kaa:tenant:realm-backend-client-template:update` | Write access to backend client template version.   |
+| `kaa:tenant:realm-backend-client-template:delete` | Backend client template version delete operation.  |
 
-| **Scope**                         | **Description**                              |
-| --------------------------------- | -------------------------------------------- |
-| `tenant:default-resources:create` | Creation of a new keycloak default resource. |
-| `tenant:default-resources:read`   | Read access to keycloak default resource.    |
-| `tenant:default-resources:update` | Write access to keycloak default resource.   |
-| `tenant:default-resources:delete` | Keycloak default resource delete operation.  |
 
+#### Tenant frontend client template management scopes
 
-### Keycloak default resource mapping resource type
+The following scopes restict management access for frontend client templates for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`default-resources-mappings` resource type is used for restricting access to Kaa keycloak default resource mappings.
-Only one resource of this type (with the name `default-resources-mappings-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                                          | **Description**                                             |
+| -------------------------------------------------- | ----------------------------------------------------------- |
+| `kaa:tenant:realm-frontend-client-template:create` | Creation of a new frontend client template version.         |
+| `kaa:tenant:realm-frontend-client-template:read`   | Read access to frontend client template version.            |
+| `kaa:tenant:realm-frontend-client-template:update` | Write access to frontend client template version.           |
+| `kaa:tenant:realm-frontend-client-template:delete` | Frontend client template template version delete operation. |
 
-| **Scope**                                  | **Description**                                      |
-| ------------------------------------------ | ---------------------------------------------------- |
-| `tenant:default-resources-mappings:create` | Creation of a new keycloak default resource mapping. |
-| `tenant:default-resources-mappings:read`   | Read access to keycloak default resource mapping.    |
-| `tenant:default-resources-mappings:update` | Write access to keycloak default resource mapping.   |
-| `tenant:default-resources-mappings:delete` | Keycloak default resource mapping delete operation.  |
 
+#### Tenant default resource management scopes
 
-### Keycloak default resource version resource type
+The following scopes restict management access for tenant default resources, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`default-resources-versions` resource type is used for restricting access to Kaa keycloak default resource versions.
-Only one resource of this type (with the name `default-resources-versions-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                            | **Description**                            |
+| ------------------------------------ | ------------------------------------------ |
+| `kaa:tenant:default-resource:create` | Creation of a new tenant default resource. |
+| `kaa:tenant:default-resource:read`   | Read access to tenant default resource.    |
+| `kaa:tenant:default-resource:update` | Write access to tenant default resource.   |
+| `kaa:tenant:default-resource:delete` | Tenant default resource delete operation.  |
 
-| **Scope**                                  | **Description**                                      |
-| ------------------------------------------ | ---------------------------------------------------- |
-| `tenant:default-resources-versions:create` | Creation of a new keycloak default resource version. |
-| `tenant:default-resources-versions:read`   | Read access to keycloak default resource version.    |
-| `tenant:default-resources-versions:update` | Write access to keycloak default resource version.   |
-| `tenant:default-resources-versions:delete` | Keycloak default resource version delete operation.  |
 
+#### Tenant default resource mapping management scopes
 
-### Keycloak default resource version mapping resource type
+The following scopes restict management access for tenant default resource mappings, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`default-resources-version-mappings` resource type is used for restricting access to Kaa keycloak default resource version mappings.
-Only one resource of this type (with the name `default-resources-version-mappings-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                                    | **Description**                                    |
+| -------------------------------------------- | -------------------------------------------------- |
+| `kaa:tenant:default-resource-mapping:create` | Creation of a new tenant default resource mapping. |
+| `kaa:tenant:default-resource-mapping:read`   | Read access to tenant default resource mapping.    |
+| `kaa:tenant:default-resource-mapping:update` | Write access to tenant default resource mapping.   |
+| `kaa:tenant:default-resource-mapping:delete` | Tenant default resource mapping delete operation.  |
 
-| **Scope**                                          | **Description**                                              |
-| -------------------------------------------------- | ------------------------------------------------------------ |
-| `tenant:default-resources-version-mappings:create` | Creation of a new keycloak default resource version mapping. |
-| `tenant:default-resources-version-mappings:read`   | Read access to keycloak default resource version mapping.    |
-| `tenant:default-resources-version-mappings:update` | Write access to keycloak default resource version mapping.   |
-| `tenant:default-resources-version-mappings:delete` | Keycloak default resource version mapping delete operation.  |
 
+#### Tenant default resource version management scopes
 
-### Keycloak identity provider resource type
+The following scopes restict management access for tenant default resource versions, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`idps` resource type is used for restricting access to Kaa keycloak identity providers.
-Only one resource of this type (with the name `idps-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                                    | **Description**                                    |
+| -------------------------------------------- | -------------------------------------------------- |
+| `kaa:tenant:default-resource-version:create` | Creation of a new tenant default resource version. |
+| `kaa:tenant:default-resource-version:read`   | Read access to tenant default resource version.    |
+| `kaa:tenant:default-resource-version:update` | Write access to tenant default resource version.   |
+| `kaa:tenant:default-resource-version:delete` | Tenant default resource version delete operation.  |
 
-| **Scope**            | **Description**                               |
-| -------------------- | --------------------------------------------- |
-| `tenant:idps:create` | Creation of a new keycloak identity provider. |
-| `tenant:idps:read`   | Read access to keycloak identity provider.    |
-| `tenant:idps:update` | Write access to keycloak identity provider.   |
-| `tenant:idps:delete` | Keycloak identity provider delete operation.  |
 
+#### Tenant default resource version mapping management scopes
 
-### Keycloak realm template version resource type
+The following scopes restict management access for tenant default resource version mappings, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`templates-realms` resource type is used for restricting access to Kaa keycloak realm template versions.
-Only one resource of this type (with the name `templates-realms-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                                            | **Description**                                            |
+| ---------------------------------------------------- | ---------------------------------------------------------- |
+| `kaa:tenant:default-resource-version-mapping:create` | Creation of a new tenant default resource version mapping. |
+| `kaa:tenant:default-resource-version-mapping:read`   | Read access to tenant default resource version mapping.    |
+| `kaa:tenant:default-resource-version-mapping:update` | Write access to tenant default resource version mapping.   |
+| `kaa:tenant:default-resource-version-mapping:delete` | Tenant default resource version mapping delete operation.  |
 
-| **Scope**                        | **Description**                                    |
-| -------------------------------- | -------------------------------------------------- |
-| `tenant:templates-realms:create` | Creation of a new keycloak realm template version. |
-| `tenant:templates-realms:read`   | Read access to keycloak realm template version.    |
-| `tenant:templates-realms:update` | Write access to keycloak realm template version.   |
-| `tenant:templates-realms:delete` | Keycloak realm template version delete operation.  |
 
+#### Tenant identity provider management scopes
 
-### Keycloak role resource type
+The following scopes restict management access for tenant identity providers (IDPs), enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`roles` resource type is used for restricting access to Kaa keycloak roles.
-Only one resource of this type (with the name `roles-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**               | **Description**                             |
+| ----------------------- | ------------------------------------------- |
+| `kaa:tenant:idp:create` | Creation of a new tenant identity provider. |
+| `kaa:tenant:idp:read`   | Read access to tenant identity provider.    |
+| `kaa:tenant:idp:update` | Write access to tenant identity provider.   |
+| `kaa:tenant:idp:delete` | Tenant identity provider delete operation.  |
 
-| **Scope**             | **Description**                  |
-| --------------------- | -------------------------------- |
-| `tenant:roles:create` | Creation of a new keycloak role. |
-| `tenant:roles:read`   | Read access to keycloak role.    |
-| `tenant:roles:update` | Write access to keycloak role.   |
-| `tenant:roles:delete` | Keycloak role delete operation.  |
 
+#### Tenant realm template management scopes
 
-### Keycloak role scope mapping resource type
+The following scopes restict management access for tenant realm templates, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`roles-scope-mappings` resource type is used for restricting access to Kaa keycloak role scope mappings.
-Only one resource of this type (with the name `roles-scope-mappings-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                          | **Description**                                  |
+| ---------------------------------- | ------------------------------------------------ |
+| `kaa:tenant:realm-template:create` | Creation of a new tenant realm template version. |
+| `kaa:tenant:realm-template:read`   | Read access to tenant realm template version.    |
+| `kaa:tenant:realm-template:update` | Write access to tenant realm template version.   |
+| `kaa:tenant:realm-template:delete` | Tenant realm template version delete operation.  |
 
-| **Scope**                            | **Description**                                |
-| ------------------------------------ | ---------------------------------------------- |
-| `tenant:roles-scope-mappings:create` | Creation of a new keycloak role scope mapping. |
-| `tenant:roles-scope-mappings:read`   | Read access to keycloak role scope mapping.    |
-| `tenant:roles-scope-mappings:update` | Write access to keycloak role scope mapping.   |
-| `tenant:roles-scope-mappings:delete` | Keycloak role scope mapping delete operation.  |
 
+#### Tenant role management scopes
 
-### Keycloak roles version resource type
+The following scopes restict management access for tenant roles, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`roles-versions` resource type is used for restricting access to Kaa keycloak roles versions.
-Only one resource of this type (with the name `roles-versions-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                | **Description**                |
+| ------------------------ | ------------------------------ |
+| `kaa:tenant:role:create` | Creation of a new tenant role. |
+| `kaa:tenant:role:read`   | Read access to tenant role.    |
+| `kaa:tenant:role:update` | Write access to tenant role.   |
+| `kaa:tenant:role:delete` | Tenant role delete operation.  |
 
-| **Scope**                      | **Description**                           |
-| ------------------------------ | ----------------------------------------- |
-| `tenant:roles-versions:create` | Creation of a new keycloak roles version. |
-| `tenant:roles-versions:read`   | Read access to keycloak roles version.    |
-| `tenant:roles-versions:update` | Write access to keycloak roles version.   |
-| `tenant:roles-versions:delete` | Keycloak roles version delete operation.  |
 
+#### Tenant role to scope mapping management scopes
 
-### Keycloak role version mapping resource type
+The following scopes restict management access for tenant role to scope mappings, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`roles-versions-mappings` resource type is used for restricting access to Kaa Keycloak role version mappings.
-Only one resource of this type (with the name `roles-versions-mappings-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                              | **Description**                                 |
+| -------------------------------------- | ----------------------------------------------- |
+| `kaa:tenant:role-scope-mapping:create` | Creation of a new tenant role to scope mapping. |
+| `kaa:tenant:role-scope-mapping:read`   | Read access to tenant role to scope mapping.    |
+| `kaa:tenant:role-scope-mapping:update` | Write access to tenant role to scope mapping.   |
+| `kaa:tenant:role-scope-mapping:delete` | Tenant role to scope mapping delete operation.  |
 
-| **Scope**                               | **Description**                                  |
-| --------------------------------------- | ------------------------------------------------ |
-| `tenant:roles-versions-mappings:create` | Creation of a new keycloak role version mapping. |
-| `tenant:roles-versions-mappings:read`   | Read access to keycloak role version mapping.    |
-| `tenant:roles-versions-mappings:update` | Write access to keycloak role version mapping.   |
-| `tenant:roles-versions-mappings:delete` | Keycloak role version mapping delete operation.  |
 
+#### Tenant role version management scopes
 
-### Keycloak scope resource type
+The following scopes restict management access for tenant role versions, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`scopes` resource type is used for restricting access to Kaa keycloak scopes.
-Only one resource of this type (with the name `scopes-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                        | **Description**                         |
+| -------------------------------- | --------------------------------------- |
+| `kaa:tenant:role-version:create` | Creation of a new tenant roles version. |
+| `kaa:tenant:role-version:read`   | Read access to tenant roles version.    |
+| `kaa:tenant:role-version:update` | Write access to tenant roles version.   |
+| `kaa:tenant:role-version:delete` | Tenant roles version delete operation.  |
 
-| **Scope**              | **Description**                   |
-| ---------------------- | --------------------------------- |
-| `tenant:scopes:create` | Creation of a new keycloak scope. |
-| `tenant:scopes:read`   | Read access to keycloak scope.    |
-| `tenant:scopes:update` | Write access to keycloak scope.   |
-| `tenant:scopes:delete` | Keycloak scope delete operation.  |
 
+#### Tenant role version mapping management scopes
 
-### Keycloak scopes version resource type
+The following scopes restict management access for tenant role version mappings, which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`scopes-versions` resource type is used for restricting access to Kaa keycloak scopes versions.
-Only one resource of this type (with the name `scopes-versions-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                                | **Description**                                |
+| ---------------------------------------- | ---------------------------------------------- |
+| `kaa:tenant:role-version-mapping:create` | Creation of a new tenant role version mapping. |
+| `kaa:tenant:role-version-mapping:read`   | Read access to tenant role version mapping.    |
+| `kaa:tenant:role-version-mapping:update` | Write access to tenant role version mapping.   |
+| `kaa:tenant:role-version-mapping:delete` | Tenant role version mapping delete operation.  |
 
-| **Scope**                       | **Description**                            |
-| ------------------------------- | ------------------------------------------ |
-| `tenant:scopes-versions:create` | Creation of a new keycloak scopes version. |
-| `tenant:scopes-versions:read`   | Read access to keycloak scopes version.    |
-| `tenant:scopes-versions:update` | Write access to keycloak scopes version.   |
-| `tenant:scopes-versions:delete` | Keycloak scopes version delete operation.  |
 
+#### Tenant scope management scopes
 
-### Keycloak scope version mapping resource type
+The following scopes restict management access for tenant scopes, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-`scopes-versions-mappings` resource type is used for restricting access to Kaa keycloak scope version mappings.
-Only one resource of this type (with the name `scopes-versions-mappings-system`) is created per Kaa platform instance by the Kaa installer.
+| **Scope**                 | **Description**                 |
+| ------------------------- | ------------------------------- |
+| `kaa:tenant:scope:create` | Creation of a new tenant scope. |
+| `kaa:tenant:scope:read`   | Read access to tenant scope.    |
+| `kaa:tenant:scope:update` | Write access to tenant scope.   |
+| `kaa:tenant:scope:delete` | Tenant scope delete operation.  |
 
-`scopes-versions-mappings`
 
-| **Scope**                                | **Description**                                   |
-| ---------------------------------------- | ------------------------------------------------- |
-| `tenant:scopes-versions-mappings:create` | Creation of a new keycloak scope version mapping. |
-| `tenant:scopes-versions-mappings:read`   | Read access to keycloak scope version mapping.    |
-| `tenant:scopes-versions-mappings:update` | Write access to keycloak scope version mapping.   |
-| `tenant:scopes-versions-mappings:delete` | Keycloak scope version mapping delete operation.  |
+#### Tenant scope version management scopes
 
+The following scopes restict management access for tenant scope versions, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-### Keycloak server resource type
+| **Scope**                         | **Description**                         |
+| --------------------------------- | --------------------------------------- |
+| `kaa:tenant:scope-version:create` | Creation of a new tenant scope version. |
+| `kaa:tenant:scope-version:read`   | Read access to tenant scope version.    |
+| `kaa:tenant:scope-version:update` | Write access to tenant scope version.   |
+| `kaa:tenant:scope-version:delete` | Tenant scope version delete operation.  |
 
-`keycloak-servers` resource type is used for restricting access to Kaa keycloak servers.
-Only one resource of this type (with the name `keycloak-servers-system`) is created per Kaa platform instance by the Kaa installer.
 
-`keycloak-servers`
+#### Tenant scope version mapping management scopes
 
-| **Scope**                        | **Description**                    |
-| -------------------------------- | ---------------------------------- |
-| `tenant:keycloak-servers:create` | Creation of a new keycloak server. |
-| `tenant:keycloak-servers:read`   | Read access to keycloak server.    |
-| `tenant:keycloak-servers:update` | Write access to keycloak server.   |
-| `tenant:keycloak-servers:delete` | Keycloak server delete operation.  |
+The following scopes restict management access for tenant scope version mappings, which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
+| **Scope**                                 | **Description**                                 |
+| ----------------------------------------- | ----------------------------------------------- |
+| `kaa:tenant:scope-version-mapping:create` | Creation of a new tenant scope version mapping. |
+| `kaa:tenant:scope-version-mapping:read`   | Read access to tenant scope version mapping.    |
+| `kaa:tenant:scope-version-mapping:update` | Write access to tenant scope version mapping.   |
+| `kaa:tenant:scope-version-mapping:delete` | Tenant scope version mapping delete operation.  |
 
-### Package type resource type
 
-`package-types` resource type is used for restricting access to Kaa package types.
-Only one resource of this type (with the name `package-types-system`) is created per Kaa platform instance by the Kaa installer.
+#### KeyCloak server management scopes
 
-`package-types`
+The following scopes restict management access for KeyCloak servers, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-| **Scope**                     | **Description**                 |
-| ----------------------------- | ------------------------------- |
-| `tenant:package-types:create` | Creation of a new package type. |
-| `tenant:package-types:read`   | Read access to package type.    |
-| `tenant:package-types:update` | Write access to package type.   |
-| `tenant:package-types:delete` | Package type delete operation.  |
+| **Scope**                           | **Description**                    |
+| ----------------------------------- | ---------------------------------- |
+| `kaa:tenant:keycloak-server:create` | Creation of a new KeyCloak server. |
+| `kaa:tenant:keycloak-server:read`   | Read access to KeyCloak server.    |
+| `kaa:tenant:keycloak-server:update` | Write access to KeyCloak server.   |
+| `kaa:tenant:keycloak-server:delete` | KeyCloak server delete operation.  |
+
+
+#### UI settings management scope
+
+The UI settings management scope is enforced by Kaa [Web Dashboard][WD].
+
+| **Scope**       | **Description**                                                 |
+| --------------- | --------------------------------------------------------------- |
+| `kaa:ui:update` | Management of UI settings for all tenants (banner, logos, etc). |

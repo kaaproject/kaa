@@ -167,6 +167,9 @@
 [18/EFE]:   {{rfc_url}}blob/master/0018/README.md
 [19/EPMMP]: {{rfc_url}}blob/master/0019/README.md
 [20/EFMP]:  {{rfc_url}}blob/master/0020/README.md
+[21/TLE]:   {{rfc_url}}blob/master/0021/README.md
+[22/CAP]:   {{rfc_url}}blob/master/0022/README.md
+
 
 <!--== Kaa terminology ==-->
 [architecture overview]:    {{root_url}}Architecture-overview/
