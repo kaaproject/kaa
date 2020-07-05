@@ -12,12 +12,111 @@ sort_idx: 7
 {:toc}
 
 
-## Kaa 1.2 (future release)
-<!-- TODO: remember to update links below when updating this header -->
+## Kaa 1.2 (July 6-th, 2020)
 
-Below is a work-in-progress list of changes for the next Kaa platform release.
+Find below high-level descriptions of some of the major release highlights.
 
-<!-- TODO: add change descriptions here -->
+
+### Multi-tenancy
+
+Kaa 1.2 implements an advanced multi-tenancy where every platform tenant is isolated in a dedicated authentication and authorization KeyCloak realm.
+Thus, each tenant has a fully isolated space and can manage their own:
+
+* users
+* permissions
+* applications and their versions
+* endpoints and their related data
+* client credentials
+* solutions
+* dashboards, etc.
+
+Tenants are also able to configure their own external Identity Providers (IDPs: e.g. corporate LDAP, Active Directory, various OAuth or SAML providers).
+
+To learn more about multi-tenancy, see [the corresponding documentation][multi-tenancy].
+
+
+### Client credentials management
+
+[**Client Credentials Management service (CCM)**][CCM] is a new Kaa service for the [client][client] authentication that takes over these responsibilities from the [**Credentials Management service (CM)**][CM].
+CCM supports authentication using basic credentials, like username/password, and SSL/TLS certificates, based on X.509 technology.
+
+Basic authentication is currently supported by all MQTT-based transports available in the [Kaa Protocol Communication service (KPC)][KPC]: plain MQTT, MQTT/TLS, MQTT/WebSocket.
+X.509 authentication is supported by the MQTT/TLS KPC transport.
+
+Both basic and X.509 authentication are now enforcable on a per-tenant basic, separately for each compatible transport.
+You can toggle them in your tenant right from the [Kaa Web Dashboard][WD] interface.
+
+![Basic auth toggle on plain MQTT transport](attach/v1.2/mqtt-transport-turn-on.png)
+
+Kaa WD now also provides interface for managing basic and X.509 credentials.
+Credentials of both types are a propery of a given tenant and can be used to connect clients to exchange data on behalf of any endpoints that belong to applications of that tenant.
+
+Basic credentials management.
+
+![create basic credentials](attach/v1.2/create-basic-credentials.jpg)
+
+X.509 credentials management.
+
+![create x509 credentials](attach/v1.2/create-x509-credentials.jpg)
+
+
+### Binary data collection
+
+Kaa 1.2 supports collection of binary data blobs (still images, video segments, audio recordings, etc.) from connected devices.
+This is enabled by a new microservice: [**Binary data Collection Extension (BCX)**][BCX]).
+The supported data storage backend is AWS S3.
+
+To upload a binary data blob, client must first [retrieve a temporary authorization token][BCX token exchange extension interface] on behalf of an endpoint from the BCX service using an existing communication channel (MQTT- or HTTP-based).
+Once in possession of a temporary token, client may upload binary data blobs related to that endpoint using the [RESTful data upload API][BCX binary data blob upload REST API].
+BCX also provides [REST API for managing and accessing already uploaded binary blobs][BCX data blob management REST API].
+
+The submitted binary data blobs can be viewed and downloaded using corresponding Kaa Web Dashboard (WD) widgets:
+
+![Binary data blobs in Kaa WD](attach/v1.2/bcx.jpg)
+
+
+### Endpoint configuration schema management
+
+In Kaa 1.0 and 1.1 endpoint configuration was a free-form JSON document.
+With Kaa 1.2 we introduce an ability to configure endpoint configuration schema in the [Endpoint Configuration Registry service (ECR)][ECR].
+The endpoint configuration schemas are associated with Kaa applications and appversions.
+The appversion-specific schema takes precedence over the corresponding application-specific schema.
+
+When schema validation is enabled in ECR, it rejects provisioning endpoint configs that do not satisfy the expected schema.
+
+Endpoint configuration schemas can be configured for ECR in the Kaa Web Dashboard, either in the schema view:
+
+![Endpoint configuration schema management schema view](attach/v1.2/ep-config-schema-schema.png)
+
+or in the JSON view:
+
+![Endpoint configuration schema management JSON view](attach/v1.2/ep-config-schema-json.png)
+
+
+### Data samples enrichment with endpoint metadata
+
+Kaa [Data Collection Extension service (DCX)][DCX] now supports enriching data samples received from connected endpoints with their metadata attributes.
+When this feature is [enabled in the DCX configuration][DCX metadata enrichment config], it appends endpoint metadata key-value pairs to each data sample events using the specified path (`~ep-metadata` by default).
+Doing so makes it possible to feed downstream data processing services, such as [EPTS][EPTS] or [KDCA][KDCA] with additional endpoint-related state information.
+Note that only data samples that are JSON objects can be enriched with endpoint metadata.
+The data samples enrichment is disabled by default for backward compatibility.
+
+See the [DCX documentation][DCX metadata enrichment] for more details.
+
+
+### Data analytics
+
+Kaa 1.2 is now pre-integrated out of the box with the [Open Distro for Elasticsearch][open distro].
+Each tenant's data is isolated in Elasticsearch and Kibana, and the security access policies are seamlessly integrated with Kaa.
+This integration enables various IoT data analytics functionality, including collection, analysis, querting and visualizing device data.
+
+![data analytics](attach/v1.2/data-analytics.jpg)
+
+Flexible triggers and alerts can be configured to send notifications to preferred destinations.
+
+![data analytics](attach/v1.2/alerts.jpg)
+
+Find out more about the data analytics in Kaa [here][data analytics].
 
 
 ### Other highlights of Kaa 1.2
@@ -25,19 +124,38 @@ Below is a work-in-progress list of changes for the next Kaa platform release.
 * [**[TEKTON]**][TEKTON] Tekton now restricts the application version name suffix to match `^[a-z0-9]+$` regex pattern when you create a new application version using the [REST API][TEKTON app version create REST API].
   In addition, application names will be automatically generated for [newly created applications][TEKTON application create REST API] when `kaa.tekton.app-names.auto-generation.enabled` configuration variable is set to `true`.
   It is recommended to enable the auto-generation to prevent the possible [application name conflicts](#application-and-application-version-names-conflict-in-java-based-services).
-* [**[CEX]**][CEX] `commandRetentionTtl` time unit was changed in [REST API][CEX REST API POST command] from hour to millisecond.
-* [**[EPTS]**][EPTS] EPTS now supports updating time series data for the specified endpoints under the application version in its [REST API][EPTS time series PUT via app version REST API].
-Just like with DSTP and TSTP interfaces, the data points published to this API yield time series events on the TSTP interface.
+* [**[TEKTON]**][TEKTON] Tekton now supports bulk REST API for [Bulk operations][TEKTON bulk REST API] on tenants and their applications.
+* [**[CEX]**][CEX] `commandRetentionTtl` time unit changed in [REST API][CEX REST API POST command] from hours to milliseconds.
+* [**[EPTS]**][EPTS] EPTS now supports updating time series data for specified endpoints under application version in its [REST API][EPTS time series PUT via app version REST API].
+  Just like with DSTP and TSTP interfaces, the data points published to this API yield time series events on the TSTP interface.
 * [**[EPTS]**][EPTS] REST API for [updating endpoint time series data under an application][EPTS time series PUT REST API] is deprecated and will be dropped in the next release.
-Using the [application version-specific API][EPTS time series PUT via app version REST API] instead is recommended going forward.
+  Using the [application version-specific API][EPTS time series PUT via app version REST API] instead is recommended going forward.
 * [**[EPTS]**][EPTS] EPTS now supports defining which of the `fromDate` and `toDate` are inclusive when [retrieving historical time series data][EPTS time series data REST API].
-* [**[EPTS]**][EPTS] EPTS now supports last received data points filtering by the `beforeDate` query parameter in its [REST API][EPTS time series last REST API].
+* [**[EPTS]**][EPTS] EPTS now supports data points filtering using the `beforeDate` query parameter in its [REST API][EPTS time series last REST API].
 * [**[EPR]**][EPR] In previous Kaa versions EPR provided endpoint metadata and endpoint filter management only via its [REST API][EPR REST API].
-Now, in addition to REST API it is possible to manage endpoint [metadata][endpoint-metadata] and [endpoint filters][endpoint-filter] via [NATS][nats] using the [19/EPMMP] and [20/EFMP] protocols.
-It improves overall performance and gives more flexibility in platform expansion and customization.
-* [**[DCX]**][DCX] Support for [enriching data samples with endpoint metadata][DCX metadata enrichment] based on the application specific configuration. Disabled by default for backward compatibility.
-* [**[CEX]**][CEX] now supports getting the list of existing command resources per endpoint or application name by [REST API][CEX REST API].
-* [**[CEX]**][CEX] database migration from Redis to PostgreSQL.
+  Now, in addition to REST API it is possible to manage endpoint [metadata][endpoint-metadata] and [endpoint filters][endpoint-filter] via [NATS][nats] using the [19/EPMMP] and [20/EFMP] protocols.
+  These interfaces improve overall performance and give more flexibility in platform expansion and customization.
+* [**[CEX]**][CEX] now supports getting the list of existing command resources per endpoint or application name via the [REST API][CEX REST API].
+* [**[CEX]**][CEX] now uses PostgresSQL database instead of Redis.
+* [**[KPC]**][KPC] now supports [http transport][KPC HTTP] that implements 1/KP protocol over plain HTTP.
+  Unlike 1/KP over MQTT, HTTP binding is synchronous: it follows the request-response communication pattern and does not support server message push.
+* **[RCI]** service is now fully deprecated and removed.
+  [CEX][CEX] service provides a super-set of the original RCI functionality.
+* [**[KDCA]**][KDCA] now adds tenant ID and the endpoint application version fields to Kafka events.
+* [**[CMX]**][CMX] now supports configuration applied messages from endpoints per [7/CMP][7/CMP].
+* [**[WD]**][WD] JSON schema editor integrated with Configuration form, Endpoint list, Software OTA related widgets.
+* [**[WD]**][WD] New widgets added: "Device orientation" and "Luminance".
+* [**[WD]**][WD] Added dynamic variables for "Gauge" widgets.
+  It is possible to populate values from endpoint or application version configuration to scale, max, min and threshold fields.
+* [**[WD]**][WD] "Multi series chart" now can be configured to show mixed line styles like bar, step and line.
+  It is now possible to show data from multiple endpoints.
+* [**[WD]**][WD] now has a pre-configured device management page for manage endpoint metadata, commands, data blobs, etc.
+* [**[WD]**][WD] now has a "User management" link that redirects to the KeyCloak user administration page.
+* [**[WD]**][WD] now has a "Help" page.
+* [**[WD]**][WD] various UX improvements, performance optimizations, and bugfixes.
+* **[Bug fix]** [KPC][KPC] sets SubAck MQTT packet QoS.
+* **[Bug fix]** [KDCA][KDCA] does not recover after losing a Kafka connection.
+* **[Bug fix]** Java services don't fetch Tekton configs at boot time.
 
 
 ## Kaa 1.1-mr1 (March 25-th, 2020)

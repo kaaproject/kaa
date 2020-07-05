@@ -27,6 +27,7 @@
 
 {% capture ccm_url %}{{feature_device_mgmt_url}}CCM/{% endcapture %}
 [CCM]: {{ccm_url}}
+[CCM REST API]: {{ccm_url}}REST-API
 
 
 <!-- Communication -->
@@ -36,6 +37,8 @@
 
 {% capture kpc_url %}{{feature_communication_url}}KPC/{% endcapture %}
 [KPC]: {{kpc_url}}
+[KPC HTTP]: {{kpc_url}}Configuration/#http-transport
+[KPC MQTT]: {{kpc_url}}Configuration/#mqtt-transport
 
 {% capture epl_url %}{{feature_communication_url}}EPL/{% endcapture %}
 [EPL]: {{epl_url}}
@@ -47,7 +50,8 @@
 
 {% capture dcx_url %}{{feature_data_collection_url}}DCX/{% endcapture %}
 [DCX]: {{dcx_url}}
-[DCX metadata enrichment]: {{dcx_url}}Overview/#enriching-data-samples-with-endpoint-metadata
+[DCX metadata enrichment]:        {{dcx_url}}Overview/#enriching-data-samples-with-endpoint-metadata
+[DCX metadata enrichment config]: {{dcx_url}}Configuration/#endpoint-metadata-enrichment
 
 {% capture bcx_url %}{{feature_data_collection_url}}BCX/{% endcapture %}
 [BCX]:                                      {{bcx_url}}
@@ -72,6 +76,9 @@
 {% capture mdca_url %}{{feature_data_collection_url}}MDCA/{% endcapture %}
 [MDCA]: {{mdca_url}}
 
+<!-- Data analytics -->
+{% capture feature_data_analytics_url %}{{kaa_features_url}}Data-analytics/{% endcapture %}
+[data analytics]: {{feature_data_analytics_url}}
 
 <!-- Configuration management -->
 {% capture feature_config_mgmt_url %}{{kaa_features_url}}Configuration-management/{% endcapture %}
@@ -123,6 +130,8 @@
 [TEKTON application create REST API]:   {{tekton_url}}REST-API/#applications_post
 [TEKTON app version create REST API]:   {{tekton_url}}REST-API/#applications__appname__app_versions_post
 [TEKTON bulk config load REST API]:     {{tekton_url}}REST-API/#app_configs_post
+[TEKTON tenant configs REST API]:       {{tekton_url}}REST-API/#tenant_configs
+[TEKTON bulk REST API]:                 {{tekton_url}}REST-API/#bulk
 
 
 <!-- Multi-tenancy -->
@@ -259,6 +268,11 @@
 [postgresql]: https://www.postgresql.org/
 [elastic stack]: https://www.elastic.co/elastic-stack
 [kibana]: https://www.elastic.co/kibana
+[vault]: https://www.vaultproject.io/
+[open distro]: https://opendistro.github.io/
+[open distro security]: https://opendistro.github.io/for-elasticsearch-docs/docs/security-configuration/
+[open distro kibana]: https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/
+[open distro alerting]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/
 
 <!--== Technologies ==-->
 [mqtt]: http://mqtt.org/
