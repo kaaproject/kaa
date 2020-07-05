@@ -130,8 +130,28 @@
 [multi-tenancy]: {{feature_multi_tenancy_url}}
 
 {% capture tenant_manager_url %}{{feature_multi_tenancy_url}}TENANT-MANAGER/{% endcapture %}
-[Tenant Manager]:          {{tenant_manager_url}}
-[Tenant Manager REST API]: {{tenant_manager_url}}REST-API/
+[Tenant Manager]:                                   {{tenant_manager_url}}
+[Tenant Manager REST API]:                          {{tenant_manager_url}}REST-API/
+[Tenant Manager tenant]:                            {{tenant_manager_url}}#tenant
+[Tenant Manager tenant user]:                       {{tenant_manager_url}}#tenant-user
+[Tenant Manager realm template]:                    {{tenant_manager_url}}#realm-template
+[Tenant Manager backend client template]:           {{tenant_manager_url}}#realm-backend-client-template
+[Tenant Manager frontend client template]:          {{tenant_manager_url}}#realm-frontend-client-template
+[Tenant Manager scope]:                             {{tenant_manager_url}}#scope
+[Tenant Manager scope version]:                     {{tenant_manager_url}}#scope-version
+[Tenant Manager scope version mapping]:             {{tenant_manager_url}}#scope-version-mapping
+[Tenant Manager role]:                              {{tenant_manager_url}}#role
+[Tenant Manager role version]:                      {{tenant_manager_url}}#role-version
+[Tenant Manager role scope mapping]:                {{tenant_manager_url}}#role-scope-mapping
+[Tenant Manager role version mapping]:              {{tenant_manager_url}}#role-version-mapping
+[Tenant Manager default resource]:                  {{tenant_manager_url}}#default-resource
+[Tenant Manager default resource version]:          {{tenant_manager_url}}#default-resource-version
+[Tenant Manager default resource scope mapping]:    {{tenant_manager_url}}#default-resource-scope-mapping
+[Tenant Manager default resource version mapping]:  {{tenant_manager_url}}#default-resource-version-mapping
+[Tenant Manager idp]:                               {{tenant_manager_url}}#idp
+[Tenant Manager keycloak server]:                   {{tenant_manager_url}}#keycloak-server
+[Tenant Manager tenant subscription]:               {{tenant_manager_url}}#tenant-subscription
+[Tenant Manager package type]:                      {{tenant_manager_url}}#package-type
 
 
 <!-- Miscellaneous -->

@@ -21,6 +21,7 @@ sort_idx: 20
 
 Device communication is an important aspect of an IoT platform.
 The main objectives of this Kaa function are:
+
 - Handling the data exchange among connected devices and the Kaa platform components.
 - Authenticating connecting devices (both [clients][client] and [endpoints][endpoint].
 - Identification of the device capabilities (see [application and application version][application]).

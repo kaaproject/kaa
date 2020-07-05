@@ -233,7 +233,7 @@ Only one resource of this type (with the name `kaa-system`) is created per Kaa p
 
 #### Application management scopes
 
-The following scopes restict application management access, enforced by the [Kaa Tekton][TEKTON].
+The following scopes restrict application management access, enforced by the [Kaa Tekton][TEKTON].
 
 | **Scope**                | **Description**                                |
 | ------------------------ | ---------------------------------------------- |
@@ -244,7 +244,7 @@ The following scopes restict application management access, enforced by the [Kaa
 
 #### Tenant configuration access scope
 
-The following scope resticts tenant-specific configuration access, enforced by the [Kaa Tekton][TEKTON].
+The following scope restricts tenant-specific configuration access, enforced by the [Kaa Tekton][TEKTON].
 
 | **Scope**                       | **Description**                                                           |
 | ------------------------------- | ------------------------------------------------------------------------- |
@@ -253,7 +253,7 @@ The following scope resticts tenant-specific configuration access, enforced by t
 
 #### Tenant management scopes
 
-The following scopes restict tenant operations access, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict [tenant][Tenant Manager tenant] operations access, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**           | **Description**              |
 | ------------------- | ---------------------------- |
@@ -265,19 +265,19 @@ The following scopes restict tenant operations access, enforced by the [Kaa Tena
 
 #### Tenant user management scopes
 
-The following scopes restict tenant user management access, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict [tenant user][Tenant Manager tenant user] management access, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-| **Scope**                | **Description**                |
-| ------------------------ | ------------------------------ |
-| `kaa:tenant:user:create` | Creation of a new tenant user. |
-| `kaa:tenant:user:read`   | Read access to tenant users.   |
-| `kaa:tenant:user:update` | Write access to tenant users.  |
-| `kaa:tenant:user:delete` | Tenant user delete operation.  |
+| **Scope**                       | **Description**                |
+| ------------------------------- | ------------------------------ |
+| `kaa:tenant:tenant-user:create` | Creation of a new tenant user. |
+| `kaa:tenant:tenant-user:read`   | Read access to tenant users.   |
+| `kaa:tenant:tenant-user:update` | Write access to tenant users.  |
+| `kaa:tenant:tenant-user:delete` | Tenant user delete operation.  |
 
 
 #### Tenant backend client template management scopes
 
-The following scopes restict management access for backend client templates for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for [backend client templates][Tenant Manager backend client template] for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                                         | **Description**                                    |
 | ------------------------------------------------- | -------------------------------------------------- |
@@ -289,7 +289,7 @@ The following scopes restict management access for backend client templates for 
 
 #### Tenant frontend client template management scopes
 
-The following scopes restict management access for frontend client templates for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for [frontend client templates][Tenant Manager frontend client template] for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                                          | **Description**                                             |
 | -------------------------------------------------- | ----------------------------------------------------------- |
@@ -301,7 +301,7 @@ The following scopes restict management access for frontend client templates for
 
 #### Tenant default resource management scopes
 
-The following scopes restict management access for tenant default resources, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resources][Tenant Manager default resource], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                            | **Description**                            |
 | ------------------------------------ | ------------------------------------------ |
@@ -311,21 +311,21 @@ The following scopes restict management access for tenant default resources, enf
 | `kaa:tenant:default-resource:delete` | Tenant default resource delete operation.  |
 
 
-#### Tenant default resource mapping management scopes
+#### Tenant default resource scope mapping management scopes
 
-The following scopes restict management access for tenant default resource mappings, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resource scope mappings][Tenant Manager default resource scope mapping], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
-| **Scope**                                    | **Description**                                    |
-| -------------------------------------------- | -------------------------------------------------- |
-| `kaa:tenant:default-resource-mapping:create` | Creation of a new tenant default resource mapping. |
-| `kaa:tenant:default-resource-mapping:read`   | Read access to tenant default resource mapping.    |
-| `kaa:tenant:default-resource-mapping:update` | Write access to tenant default resource mapping.   |
-| `kaa:tenant:default-resource-mapping:delete` | Tenant default resource mapping delete operation.  |
+| **Scope**                                          | **Description**                                          |
+| -------------------------------------------------- | -------------------------------------------------------- |
+| `kaa:tenant:default-resource-scope-mapping:create` | Creation of a new tenant default resource scope mapping. |
+| `kaa:tenant:default-resource-scope-mapping:read`   | Read access to tenant default resource scope mapping.    |
+| `kaa:tenant:default-resource-scope-mapping:update` | Write access to tenant default resource scope mapping.   |
+| `kaa:tenant:default-resource-scope-mapping:delete` | Tenant default resource scope mapping delete operation.  |
 
 
 #### Tenant default resource version management scopes
 
-The following scopes restict management access for tenant default resource versions, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resource versions][Tenant Manager default resource version], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                                    | **Description**                                    |
 | -------------------------------------------- | -------------------------------------------------- |
@@ -337,7 +337,7 @@ The following scopes restict management access for tenant default resource versi
 
 #### Tenant default resource version mapping management scopes
 
-The following scopes restict management access for tenant default resource version mappings, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resource version mappings][Tenant Manager default resource version mapping], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                                            | **Description**                                            |
 | ---------------------------------------------------- | ---------------------------------------------------------- |
@@ -349,7 +349,7 @@ The following scopes restict management access for tenant default resource versi
 
 #### Tenant identity provider management scopes
 
-The following scopes restict management access for tenant identity providers (IDPs), enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [identity providers (IDPs)][Tenant Manager idp], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**               | **Description**                             |
 | ----------------------- | ------------------------------------------- |
@@ -361,7 +361,7 @@ The following scopes restict management access for tenant identity providers (ID
 
 #### Tenant realm template management scopes
 
-The following scopes restict management access for tenant realm templates, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [realm templates][Tenant Manager realm template], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                          | **Description**                                  |
 | ---------------------------------- | ------------------------------------------------ |
@@ -373,7 +373,7 @@ The following scopes restict management access for tenant realm templates, enfor
 
 #### Tenant role management scopes
 
-The following scopes restict management access for tenant roles, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [roles][Tenant Manager role], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                | **Description**                |
 | ------------------------ | ------------------------------ |
@@ -385,7 +385,7 @@ The following scopes restict management access for tenant roles, enforced by the
 
 #### Tenant role to scope mapping management scopes
 
-The following scopes restict management access for tenant role to scope mappings, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [role to scope mappings][Tenant Manager role scope mapping], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                              | **Description**                                 |
 | -------------------------------------- | ----------------------------------------------- |
@@ -397,7 +397,7 @@ The following scopes restict management access for tenant role to scope mappings
 
 #### Tenant role version management scopes
 
-The following scopes restict management access for tenant role versions, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [role versions][Tenant Manager role version], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                        | **Description**                         |
 | -------------------------------- | --------------------------------------- |
@@ -409,7 +409,7 @@ The following scopes restict management access for tenant role versions, enforce
 
 #### Tenant role version mapping management scopes
 
-The following scopes restict management access for tenant role version mappings, which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [role version mappings][Tenant Manager role version mapping], which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                                | **Description**                                |
 | ---------------------------------------- | ---------------------------------------------- |
@@ -421,7 +421,7 @@ The following scopes restict management access for tenant role version mappings,
 
 #### Tenant scope management scopes
 
-The following scopes restict management access for tenant scopes, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [scopes][Tenant Manager scope], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                 | **Description**                 |
 | ------------------------- | ------------------------------- |
@@ -433,7 +433,7 @@ The following scopes restict management access for tenant scopes, enforced by th
 
 #### Tenant scope version management scopes
 
-The following scopes restict management access for tenant scope versions, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [scope versions][Tenant Manager scope version], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                         | **Description**                         |
 | --------------------------------- | --------------------------------------- |
@@ -445,7 +445,7 @@ The following scopes restict management access for tenant scope versions, enforc
 
 #### Tenant scope version mapping management scopes
 
-The following scopes restict management access for tenant scope version mappings, which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [scope version mappings][Tenant Manager scope version mapping], which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                                 | **Description**                                 |
 | ----------------------------------------- | ----------------------------------------------- |
@@ -457,7 +457,7 @@ The following scopes restict management access for tenant scope version mappings
 
 #### KeyCloak server management scopes
 
-The following scopes restict management access for KeyCloak servers, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for [Keycloak servers][Tenant Manager keycloak server], enforced by the [Kaa Tenant Manager][Tenant Manager].
 
 | **Scope**                           | **Description**                    |
 | ----------------------------------- | ---------------------------------- |
@@ -465,6 +465,30 @@ The following scopes restict management access for KeyCloak servers, enforced by
 | `kaa:tenant:keycloak-server:read`   | Read access to KeyCloak server.    |
 | `kaa:tenant:keycloak-server:update` | Write access to KeyCloak server.   |
 | `kaa:tenant:keycloak-server:delete` | KeyCloak server delete operation.  |
+
+
+#### Tenant subscription management scopes
+
+The following scopes restrict management access for tenant [subscriptions][Tenant Manager tenant subscription], enforced by the [Kaa Tenant Manager][Tenant Manager].
+
+| **Scope**                               | **Description**                        |
+| --------------------------------------- | -------------------------------------- |
+| `kaa:tenant:tenant-subscription:create` | Creation of a new tenant subscription. |
+| `kaa:tenant:tenant-subscription:read`   | Read access to tenant subscription.    |
+| `kaa:tenant:tenant-subscription:update` | Write access to tenant subscription.   |
+| `kaa:tenant:tenant-subscription:delete` | Tenant subscription delete operation.  |
+
+
+#### Package type management scopes
+
+The following scopes restrict management access for [packages types][Tenant Manager package type], enforced by the [Kaa Tenant Manager][Tenant Manager].
+
+| **Scope**                        | **Description**                 |
+| -------------------------------- | ------------------------------- |
+| `kaa:tenant:package-type:create` | Creation of a new package type. |
+| `kaa:tenant:package-type:read`   | Read access to package type.    |
+| `kaa:tenant:package-type:update` | Write access to package type.   |
+| `kaa:tenant:package-type:delete` | Package type delete operation.  |
 
 
 #### UI settings management scope
