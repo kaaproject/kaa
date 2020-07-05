@@ -89,7 +89,9 @@
 
 {% capture ecr_url %}{{feature_config_mgmt_url}}ECR/{% endcapture %}
 [ECR]: {{ecr_url}}
-[ECR REST API]: {{ecr_url}}REST-API/
+[ECR REST API]:                         {{ecr_url}}REST-API/
+[ECR REST API GET default config]:      {{ecr_url}}REST-API/#app_versions__appversionname__get
+[ECR REST API GET per-endpoint config]: {{ecr_url}}REST-API/#endpoints__endpointid__app_versions__appversionname__get
 
 
 <!-- Commands -->

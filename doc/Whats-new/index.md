@@ -110,11 +110,11 @@ Kaa 1.2 is now pre-integrated out of the box with the [Open Distro for Elasticse
 Each tenant's data is isolated in Elasticsearch and Kibana, and the security access policies are seamlessly integrated with Kaa.
 This integration enables various IoT data analytics functionality, including collection, analysis, querting and visualizing device data.
 
-![data analytics](attach/v1.2/data-analytics.jpg)
+![Data analytics](attach/v1.2/analytics.png)
 
 Flexible triggers and alerts can be configured to send notifications to preferred destinations.
 
-![data analytics](attach/v1.2/alerts.jpg)
+![Trigger and alerts](attach/v1.2/analytics-alerts.png)
 
 Find out more about the data analytics in Kaa [here][data analytics].
 
@@ -126,6 +126,7 @@ Find out more about the data analytics in Kaa [here][data analytics].
   It is recommended to enable the auto-generation to prevent the possible [application name conflicts](#application-and-application-version-names-conflict-in-java-based-services).
 * [**[TEKTON]**][TEKTON] Tekton now supports bulk REST API for [Bulk operations][TEKTON bulk REST API] on tenants and their applications.
 * [**[CEX]**][CEX] `commandRetentionTtl` time unit changed in [REST API][CEX REST API POST command] from hours to milliseconds.
+* [**[CEX]**][CEX] `commandRetentionTtl` renamed in [REST API][CEX REST API POST command] to `commandTtl`.
 * [**[EPTS]**][EPTS] EPTS now supports updating time series data for specified endpoints under application version in its [REST API][EPTS time series PUT via app version REST API].
   Just like with DSTP and TSTP interfaces, the data points published to this API yield time series events on the TSTP interface.
 * [**[EPTS]**][EPTS] REST API for [updating endpoint time series data under an application][EPTS time series PUT REST API] is deprecated and will be dropped in the next release.
@@ -137,6 +138,9 @@ Find out more about the data analytics in Kaa [here][data analytics].
   These interfaces improve overall performance and give more flexibility in platform expansion and customization.
 * [**[CEX]**][CEX] now supports getting the list of existing command resources per endpoint or application name via the [REST API][CEX REST API].
 * [**[CEX]**][CEX] now uses PostgresSQL database instead of Redis.
+* [**[ECR]**][ECR] configuration response format changed in [default config API][ECR REST API GET default config] and [per-endpoint config API][ECR REST API GET per-endpoint config].
+* [**[ECR]**][ECR] `/endpoints/{endpointId}/app-versions/{appVersionName}/current` REST endpoint removed.
+  Use [per-endpoint config API][CEX REST API GET per-endpoint config] instead.
 * [**[KPC]**][KPC] now supports [http transport][KPC HTTP] that implements 1/KP protocol over plain HTTP.
   Unlike 1/KP over MQTT, HTTP binding is synchronous: it follows the request-response communication pattern and does not support server message push.
 * **[RCI]** service is now fully deprecated and removed.
