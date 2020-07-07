@@ -1,0 +1,816 @@
+{
+	"info": {
+		"_postman_id": "00c6b4ee-7e6d-4958-b02e-6f4db72da4e2",
+		"name": "1/KP HTTP binding",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Endpoint metadata",
+			"item": [
+				{
+					"name": "Get all metadata keys",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/epmx/{{token}}/get/keys",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"epmx",
+								"{{token}}",
+								"get",
+								"keys"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all metadata",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/epmx/{{token}}/get",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"epmx",
+								"{{token}}",
+								"get"
+							]
+						},
+						"description": "Get all metadata."
+					},
+					"response": []
+				},
+				{
+					"name": "Get partial metadata",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"keys\":[\n        \"name\",\n        \"location\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/epmx/{{token}}/get",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"epmx",
+								"{{token}}",
+								"get"
+							]
+						},
+						"description": "Get only `name` and `location` metadata key-value pairs:"
+					},
+					"response": []
+				},
+				{
+					"name": "Full metadata update",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true,
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Sensor 1\",\n    \"OSName\":\"Linux\",\n    \"OSVersion\":\"4.2.9\",\n    \"cores\":2,\n    \"ssd\":true,\n    \"location\":{\n        \"latitude\":27.664827,\n        \"longitude\":-81.515754\n    },\n    \"supportedFirmwareVersions\":[\n        \"2.0.0\",\n        \"2.0.1\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/epmx/{{token}}/update",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"epmx",
+								"{{token}}",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Partial metadata update",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true,
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"deviceModel\":\"new model\",\n    \"OSVersion\":\"4.2.10\",\n    \"location\":{\n        \"latitude\":27.764827,\n        \"longitude\":-81.515754\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/epmx/{{token}}/update/keys",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"epmx",
+								"{{token}}",
+								"update",
+								"keys"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete metadata keys",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true,
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  \"location\",\n  \"areaId\"\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/epmx/{{token}}/delete/keys",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"epmx",
+								"{{token}}",
+								"delete",
+								"keys"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "02131286-46a4-40a6-aede-38b84fccb9c7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e3340b6f-6353-4715-a4c7-f1d6af62f743",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Data collection",
+			"item": [
+				{
+					"name": "Send data samples",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6789c15b-5dcc-44fa-aefe-68d697bb83a8",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true,
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"ts\":\"2019-04-26T15:41:07+0000\",\n    \"temp\":21,\n    \"humidity\":73,\n    \"location\":{\n      \"lat\":34.1340258,\n      \"lon\":-118.3238652\n    }\n  },\n  {\n    \"ts\":\"2019-04-26T16:41:07+0000\",\n    \"temp\":21.5,\n    \"humidity\":67,\n    \"location\":{\n      \"lat\":34.1340258,\n      \"lon\":-118.3238652\n    }\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/dcx/{{token}}/json",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"dcx",
+								"{{token}}",
+								"json"
+							]
+						},
+						"description": "Request payload schema:\n\n```json\n{\n  \"$schema\":\"http://json-schema.org/schema#\",\n  \"title\":\"2/DCP request schema\",\n  \"type\":\"array\"\n}\n```\n\nMore info [here](https://docs.kaaiot.io/KAA/docs/v1.1.0/Features/Data-collection/#client-integration)."
+					},
+					"response": []
+				}
+			],
+			"description": "Data Collection feature.",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Binary data collection",
+			"item": [
+				{
+					"name": "Get upload token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d3368a5d-dbf0-4846-a41a-cc2ebb250ffe",
+								"exec": [
+									"pm.environment.set(\"bcx_upload_token\", JSON.parse(responseBody).token);",
+									"console.log(pm.environment.get(\"bcx_upload_token\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true,
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/bcx/{{token}}/token",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"bcx",
+								"{{token}}",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload binary data blob",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02138282-5206-48f1-be06-896eabe11381",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true,
+							"accept-encoding": true,
+							"content-type": true,
+							"user-agent": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"description": "Use the \"Get upload token\" request to populate this variable",
+								"key": "x-auth-token",
+								"type": "text",
+								"value": "{{bcx_upload_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/octet-stream"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": ""
+							},
+							"options": {
+								"file": {}
+							}
+						},
+						"url": {
+							"raw": "{{rest_host}}:{{rest_port}}/bcx/api/v1/binary-data?name=image1.png",
+							"host": [
+								"{{rest_host}}"
+							],
+							"port": "{{rest_port}}",
+							"path": [
+								"bcx",
+								"api",
+								"v1",
+								"binary-data"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "image1.png",
+									"description": "Name of the data blob. Used for reference only."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download binary data blob",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{rest_host}}:{{rest_port}}/bcx/api/v1//applications/{{appName}}/endpoints/{{endpointId}}/binary-data/{{blobId}}/data",
+							"host": [
+								"{{rest_host}}"
+							],
+							"port": "{{rest_port}}",
+							"path": [
+								"bcx",
+								"api",
+								"v1",
+								"",
+								"applications",
+								"{{appName}}",
+								"endpoints",
+								"{{endpointId}}",
+								"binary-data",
+								"{{blobId}}",
+								"data"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Command execution",
+			"item": [
+				{
+					"name": "Request pending commands",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "05405b0d-7a09-4e7f-827d-2fa25069b95c",
+								"exec": [
+									"pm.environment.set(\"command_type\", \"toggle\");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true,
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/cex/{{token}}/command/{{command_type}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"cex",
+								"{{token}}",
+								"command",
+								"{{command_type}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Report command execution result",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[{\n\t\"id\": 123,\n\t\"statusCode\": 200,\n\t\"reasonPhrase\": \"OK\",\n\t\"payload\": \"Success\"\n}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/cex/{{token}}/result/{{command_type}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"cex",
+								"{{token}}",
+								"result",
+								"{{command_type}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Configuration management",
+			"item": [
+				{
+					"name": "Configuration request",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true,
+							"accept-encoding": true,
+							"content-type": true,
+							"user-agent": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/cmx/{{token}}/config/json",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"cmx",
+								"{{token}}",
+								"config",
+								"json"
+							]
+						},
+						"description": "Used to retrieve the latest endpoint configuration from the server.\n\nRequest payload schema:\n\n```json\n{\n  \"$schema\":\"http://json-schema.org/schema#\",\n  \"title\":\"7/CMP configuration request schema\",\n  \"type\":\"object\",\n  \"properties\":{\n    \"configId\":{\n      \"type\":\"string\",\n      \"description\":\"Identifier of the currently applied configuration\"\n    },\n    \"observe\":{\n      \"type\":\"boolean\",\n      \"description\":\"Whether the endpoint is interested in observing its configuration\"\n    }\n  },\n  \"additionalProperties\":false\n}\n```\n\nRequest payload examples:\n\n**1.** Endpoint does not have configuration and requests the latest from the server:\n\n```json\n{}\n```\n\n**2.** Endpoint has a configuration with ID `foo` and asks server whether it has a newer configuration.\n\n```json\n{\n\t\"configId\":\"foo\"\n}\n```\nIf a server has the configuration with ID `bar` it will respond with it, otherwise device will receive 304 (Not Modified) status code.\n\n**NOTE**: `observe` can be omitted in HTTP protocol as it is useful in bidirectional protocols (e.g. MQTT) only and means that server can push configuration whenever it is updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Report applied configuration",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"configId\":\"0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/cmx/{{token}}/applied/json",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"cmx",
+								"{{token}}",
+								"applied",
+								"json"
+							]
+						},
+						"description": "Used by endpoints to notify a server about configuration application status.\n\nRequest payload schema:\n\n```json\n{\n    \"$schema\":\"http://json-schema.org/schema#\",\n    \"title\":\"7/CMX applied configuration request schema\",\n    \"type\":\"object\",\n    \"properties\":{\n        \"configId\":{\n            \"type\":\"string\",\n            \"description\":\"Identifier of the applied configuration\"\n        },\n        \"statusCode\":{\n            \"type\":\"number\",\n            \"description\":\"Status code based on HTTP status codes\",\n            \"default\":200\n        },\n        \"reasonPhrase\":{\n            \"type\":\"string\",\n            \"description\":\"Human-readable string explaining the cause of an error (if any)\"\n        }\n    },\n    \"required\":[\n        \"configId\"\n    ],\n    \"additionalProperties\":false\n}\n```\n\nRequest payload examples:\n\n**1.** Endpoint has sucessfully applied configuration with ID `foo`:\n\n```json\n{\n    \"configId\":\"foo\"\n}\n```\n\n**2.** Endpoint failed to apply the configuration with ID `bar`:\n\n```json\n{\n    \"configId\": \"bar\",\n    \"statusCode\": 400,\n    \"reasonPhrase\": \"Configuration is invalid\"\n}\n```\n\nLearn more [here](https://github.com/kaaproject/kaa-rfcs/blob/master/0007/README.md#applied-configuration-resource)."
+					},
+					"response": []
+				}
+			],
+			"description": "Configuration management feature.",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Software OTA",
+			"item": [
+				{
+					"name": "Software request",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true,
+							"accept-encoding": true,
+							"user-agent": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/cmx_ota/{{token}}/config/json",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"cmx_ota",
+								"{{token}}",
+								"config",
+								"json"
+							]
+						},
+						"description": "Used to retrieve the latest endpoint software update from the server.\n\nRequest payload schema:\n\n```json\n{\n  \"$schema\":\"http://json-schema.org/schema#\",\n  \"title\":\"7/CMP software update request schema\",\n  \"type\":\"object\",\n  \"properties\":{\n    \"configId\":{\n      \"type\":\"string\",\n      \"description\":\"Identifier of the currently applied software\"\n    },\n    \"observe\":{\n      \"type\":\"boolean\",\n      \"description\":\"Whether the endpoint is interested in observing its software updates\"\n    }\n  },\n  \"additionalProperties\":false\n}\n```\n\nRequest payload examples:\n\n**1.** Endpoint requests the latest software update from the server:\n\n```json\n{}\n```\n\n**2.** Endpoint has a software update with version `0.0.1` and asks the server whether it has a newer software update.\n\n```json\n{\n\t\"configId\":\"0.0.1\"\n}\n```\nIf a server has the software update with version `0.0.2` it will respond with it, otherwise device will receive 304 (Not Modified) status code.\n\n**NOTE**: `observe` can be omitted in HTTP protocol as it is useful in bidirectional protocols (e.g. MQTT) only and means that server can push software updates whenever it is updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Report applied software update",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true,
+							"accept-encoding": true,
+							"user-agent": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"configId\":\"0.0.1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/cmx_ota/{{token}}/applied/json",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"cmx_ota",
+								"{{token}}",
+								"applied",
+								"json"
+							]
+						},
+						"description": "Request payload schema:\n\n```json\n{\n    \"$schema\":\"http://json-schema.org/schema#\",\n    \"title\":\"7/CMX applied software update request schema\",\n\n    \"type\":\"object\",\n    \"properties\":{\n        \"configId\":{\n            \"type\":\"string\",\n            \"description\":\"Identifier of the applied software update\"\n        },\n        \"statusCode\":{\n            \"type\":\"number\",\n            \"description\":\"Status code based on HTTP status codes\",\n            \"default\":200\n        },\n        \"reasonPhrase\":{\n            \"type\":\"string\",\n            \"description\":\"Human-readable string explaining the cause of an error (if any)\"\n        }\n    },\n    \"required\":[\n        \"configId\"\n    ],\n    \"additionalProperties\":false\n}\n```\n\nRequest payload examples:\n\n**1.** Endpoint has sucessfully upgraded to software with version `0.0.1`:\n\n```json\n{\n    \"configId\":\"0.0.1\"\n}\n```\n\n**2.** Endpoint failed to upgrade to software with version `0.0.2`:\n\n```json\n{\n    \"configId\": \"0.0.2\",\n    \"statusCode\": 400,\n    \"reasonPhrase\": \"Not enough free memory\"\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Over-the-air updates feature.\nImplemented on top of the Configuration Management feature, thus they are similar.",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Time synchronization",
+			"item": [
+				{
+					"name": "Get current timestamp (UTC)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "50db307a-6452-4bc6-8f6a-a025f1a2b87c",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/tsx/{{token}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"tsx",
+								"{{token}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current timestamp (PST)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "015d205d-5df4-486d-b2df-3ce60d6af496",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true,
+							"user-agent": true,
+							"accept": true,
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"timezone\":\"Pacific/Easter\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}:{{port}}/kp1/{{appversion_name}}/tsx/{{token}}",
+							"host": [
+								"{{host}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"kp1",
+								"{{appversion_name}}",
+								"tsx",
+								"{{token}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

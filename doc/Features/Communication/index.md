@@ -186,18 +186,23 @@ HTTP transport is very similar to MQTT, except:
 Now, if we take the MQTT example above and translate that to the HTTP binding, an HTTP `POST /kp1/demo_application_v1/dcx/JTjdbENzHh/json` request will result in a reliable delivery request to the DCX.
 The request payload is identical for MQTT or HTTP transports.
 
-To get started with the Kaa HTTP transport, try [this Postman collection](./1kp-http-binding.zip) with environments preconfigured for [the Kaa Cloud][Kaa cloud] HTTP and HTTPS interfaces.
-Remember to fill in variables such as your application version and the endpoint token.
+To get started with the Kaa HTTP transport, try <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/1kp-http-binding.postman_collection.json" download>this Postman collection</a>.
+To use this collection with [the Kaa Cloud][Kaa cloud], also download these preconfigured environments:
 
+* <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/cloud-http.postman_environment.json" download>for the HTTP interface</a>
+* <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/cloud-https.postman_environment.json" download>and for the HTTPS</a>.
+
+Remember to fill in variables such as your application version and the endpoint token.
 
 ## Components
 
 The table below summarizes the list of Kaa platform components that contribute to this feature:
 
-| Service                                 | Version         |
-| --------------------------------------- | --------------- |
-| [Kaa Protocol Communication (KPC)][KPC] | {{kpc_version}} |
-| [Endpoint Lifecycle (EPL)][EPL]         | {{epl_version}} |
+| Service                                    | Version         |
+| ------------------------------------------ | --------------- |
+| [Kaa Protocol Communication (KPC)][KPC]    | {{kpc_version}} |
+| [Client Credentials Management (CCM)][CCM] | {{ccm_version}} |
+| [Endpoint Lifecycle (EPL)][EPL]            | {{epl_version}} |
 
 
 ## Next steps
