@@ -166,7 +166,7 @@ Imagine that [in the previous example](#1kp-resource-path) you don't just want t
 Then the MQTT topic you should use to publish telemetry data is `kp1/demo_application_v1/dcx/JTjdbENzHh/json/42`, where `42` is the request ID.
 Request IDs you use for outstanding requests from that endpoint to `dcx` service instance must be unique at any point in time so that you can properly match received responses.
 
-> `42` is not a constant but just an example and, coincidentally, the ["Answer to the Ultimate Question of Life, the Universe, and Everything"][42].
+> `42` is not a constant but just an example, and, coincidentally, the ["Answer to the Ultimate Question of Life, the Universe, and Everything"][42].
 {:.note}
 
 The response on **successful** data processing will arrive to the `kp1/demo_application_v1/dcx/myToken/json/42/status` MQTT topic.
@@ -184,7 +184,7 @@ HTTP transport is very similar to MQTT, except:
 * there is no need in a [request ID at the end of the resource path or special response topics](#requestresponse-pattern) due to the native request-response support in HTTP
 
 Now, if we take the MQTT example above and translate that to the HTTP binding, an HTTP `POST /kp1/demo_application_v1/dcx/JTjdbENzHh/json` request will result in a reliable delivery request to the DCX.
-The request payload is identical for MQTT or HTTP transports.
+The request payload is identical for MQTT and HTTP transports.
 
 To get started with the Kaa HTTP transport, try <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/1kp-http-binding.zip" download>this Postman collection</a> with environments preconfigured for [the Kaa Cloud][Kaa cloud] HTTP and HTTPS interfaces.
 Remember to fill in variables such as your application version and the endpoint token.

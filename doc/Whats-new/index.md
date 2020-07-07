@@ -60,6 +60,14 @@ X.509 credentials management.
 ![create x509 credentials](attach/v1.2/create-x509-credentials.jpg)
 
 
+### HTTP transport support
+
+[**Kaa Protocol Communication service (KPC)**][KPC] now supports [http transport][KPC HTTP] that implements [1/KP protocol][1/KP] over plain HTTP.
+Unlike 1/KP over MQTT, HTTP binding is synchronous: it follows the request-response communication pattern and does not support server message push.
+
+Learn more about integrating clients using the HTTP transport [here][1/KP over HTTP].
+
+
 ### Binary data collection
 
 Kaa 1.2 supports collection of binary data blobs (still images, video segments, audio recordings, etc.) from connected devices.
@@ -141,8 +149,6 @@ Find out more about the data analytics in Kaa [here][data analytics].
 * [**[ECR]**][ECR] configuration response format changed in [default config API][ECR REST API GET default config] and [per-endpoint config API][ECR REST API GET per-endpoint config].
 * [**[ECR]**][ECR] `/endpoints/{endpointId}/app-versions/{appVersionName}/current` REST endpoint removed.
   Use [per-endpoint config API][CEX REST API GET per-endpoint config] instead.
-* [**[KPC]**][KPC] now supports [http transport][KPC HTTP] that implements 1/KP protocol over plain HTTP.
-  Unlike 1/KP over MQTT, HTTP binding is synchronous: it follows the request-response communication pattern and does not support server message push.
 * **[RCI]** service is now fully deprecated and removed.
   [CEX][CEX] service provides a super-set of the original RCI functionality.
 * [**[KDCA]**][KDCA] now adds tenant ID and the endpoint application version fields to Kafka events.
