@@ -44,4 +44,4 @@ The table below summarizes the list of Kaa platform components that contribute t
 | -------------------------------------------- | -------------------------- |
 | [Open Distro for Elasticsearch][open distro] | 1.6.0                      |
 | Open Distro Token Exchange service           | {{ote_version}}            |
-| [Tenant Manager (TM)][Tenant Manager]        | {{tenant-manager_version}} |
+| [Tenant Manager (TM)][TM]                    | {{tenant-manager_version}} |

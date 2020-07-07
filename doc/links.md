@@ -25,15 +25,13 @@
 [CM clients REST API]:          {{cm_url}}REST-API/#clients
 [CM certificate POST REST API]: {{cm_url}}REST-API/#clients_certificates_post
 
-{% capture ccm_url %}{{feature_device_mgmt_url}}CCM/{% endcapture %}
-[CCM]: {{ccm_url}}
-[CCM REST API]: {{ccm_url}}REST-API
-
 
 <!-- Communication -->
 {% capture feature_communication_url %}{{kaa_features_url}}Communication/{% endcapture %}
-[communication]: {{feature_communication_url}}
-[1/KP over MQTT topic structure]: {{feature_communication_url}}#mqtt-topic-structure-for-the-kaa-protocol-v1
+[communication]:  {{feature_communication_url}}
+[1/KP structure]: {{feature_communication_url}}#kaa-protocol-v1-structure
+[1/KP over MQTT]: {{feature_communication_url}}#mqtt-transport-binding-for-1kp
+[1/KP over HTTP]: {{feature_communication_url}}#http-transport-binding-for-1kp
 
 {% capture kpc_url %}{{feature_communication_url}}KPC/{% endcapture %}
 [KPC]: {{kpc_url}}
@@ -42,6 +40,10 @@
 
 {% capture epl_url %}{{feature_communication_url}}EPL/{% endcapture %}
 [EPL]: {{epl_url}}
+
+{% capture ccm_url %}{{feature_communication_url}}CCM/{% endcapture %}
+[CCM]: {{ccm_url}}
+[CCM REST API]: {{ccm_url}}REST-API/
 
 
 <!-- Data collection -->
@@ -141,28 +143,28 @@
 [multi-tenancy]: {{feature_multi_tenancy_url}}
 
 {% capture tenant_manager_url %}{{feature_multi_tenancy_url}}TENANT-MANAGER/{% endcapture %}
-[Tenant Manager]:                                   {{tenant_manager_url}}
-[Tenant Manager REST API]:                          {{tenant_manager_url}}REST-API/
-[Tenant Manager tenant]:                            {{tenant_manager_url}}#tenant
-[Tenant Manager tenant user]:                       {{tenant_manager_url}}#tenant-user
-[Tenant Manager realm template]:                    {{tenant_manager_url}}#realm-template
-[Tenant Manager backend client template]:           {{tenant_manager_url}}#realm-backend-client-template
-[Tenant Manager frontend client template]:          {{tenant_manager_url}}#realm-frontend-client-template
-[Tenant Manager scope]:                             {{tenant_manager_url}}#scope
-[Tenant Manager scope version]:                     {{tenant_manager_url}}#scope-version
-[Tenant Manager scope version mapping]:             {{tenant_manager_url}}#scope-version-mapping
-[Tenant Manager role]:                              {{tenant_manager_url}}#role
-[Tenant Manager role version]:                      {{tenant_manager_url}}#role-version
-[Tenant Manager role scope mapping]:                {{tenant_manager_url}}#role-scope-mapping
-[Tenant Manager role version mapping]:              {{tenant_manager_url}}#role-version-mapping
-[Tenant Manager default resource]:                  {{tenant_manager_url}}#default-resource
-[Tenant Manager default resource version]:          {{tenant_manager_url}}#default-resource-version
-[Tenant Manager default resource scope mapping]:    {{tenant_manager_url}}#default-resource-scope-mapping
-[Tenant Manager default resource version mapping]:  {{tenant_manager_url}}#default-resource-version-mapping
-[Tenant Manager idp]:                               {{tenant_manager_url}}#idp
-[Tenant Manager keycloak server]:                   {{tenant_manager_url}}#keycloak-server
-[Tenant Manager tenant subscription]:               {{tenant_manager_url}}#tenant-subscription
-[Tenant Manager package type]:                      {{tenant_manager_url}}#package-type
+[TM]:                                   {{tenant_manager_url}}
+[TM REST API]:                          {{tenant_manager_url}}REST-API/
+[TM tenant]:                            {{tenant_manager_url}}#tenant
+[TM tenant user]:                       {{tenant_manager_url}}#tenant-user
+[TM realm template]:                    {{tenant_manager_url}}#realm-template
+[TM backend client template]:           {{tenant_manager_url}}#realm-backend-client-template
+[TM frontend client template]:          {{tenant_manager_url}}#realm-frontend-client-template
+[TM scope]:                             {{tenant_manager_url}}#scope
+[TM scope version]:                     {{tenant_manager_url}}#scope-version
+[TM scope version mapping]:             {{tenant_manager_url}}#scope-version-mapping
+[TM role]:                              {{tenant_manager_url}}#role
+[TM role version]:                      {{tenant_manager_url}}#role-version
+[TM role scope mapping]:                {{tenant_manager_url}}#role-scope-mapping
+[TM role version mapping]:              {{tenant_manager_url}}#role-version-mapping
+[TM default resource]:                  {{tenant_manager_url}}#default-resource
+[TM default resource version]:          {{tenant_manager_url}}#default-resource-version
+[TM default resource scope mapping]:    {{tenant_manager_url}}#default-resource-scope-mapping
+[TM default resource version mapping]:  {{tenant_manager_url}}#default-resource-version-mapping
+[TM idp]:                               {{tenant_manager_url}}#idp
+[TM keycloak server]:                   {{tenant_manager_url}}#keycloak-server
+[TM tenant subscription]:               {{tenant_manager_url}}#tenant-subscription
+[TM package type]:                      {{tenant_manager_url}}#package-type
 
 
 <!-- Miscellaneous -->
@@ -289,6 +291,7 @@
 [uma]: https://en.wikipedia.org/wiki/User-Managed_Access
 
 <!--== General ==-->
+[42]: https://en.wikipedia.org/wiki/42_(number)#The_Hitchhiker's_Guide_to_the_Galaxy
 [digital twin]: https://en.wikipedia.org/wiki/Digital_twin
 [over-the-air]: https://en.wikipedia.org/wiki/Over-the-air_programming
 [openid]: https://openid.net/connect/

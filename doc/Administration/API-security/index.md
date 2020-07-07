@@ -195,7 +195,7 @@ Dashboard UUID is used as a resource handle to construct resource names accordin
 ### Tenant resource type
 
 `tenant` resource type is used for restricting tenant-wide operations.
-One resource of this type (with the name `tenant-system`) is created per KeyCloak authentication realm (created for a Kaa tenant) by the [tenant-manager][Tenant Manager].
+One resource of this type (with the name `tenant-system`) is created per KeyCloak authentication realm (created for a Kaa tenant) by the [tenant-manager][TM].
 
 | **Scope**                   | **Description**                    |
 | --------------------------- | ---------------------------------- |
@@ -253,7 +253,7 @@ The following scope restricts tenant-specific configuration access, enforced by 
 
 #### Tenant management scopes
 
-The following scopes restrict [tenant][Tenant Manager tenant] operations access, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict [tenant][TM tenant] operations access, enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**           | **Description**              |
 | ------------------- | ---------------------------- |
@@ -265,7 +265,7 @@ The following scopes restrict [tenant][Tenant Manager tenant] operations access,
 
 #### Tenant user management scopes
 
-The following scopes restrict [tenant user][Tenant Manager tenant user] management access, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict [tenant user][TM tenant user] management access, enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                       | **Description**                |
 | ------------------------------- | ------------------------------ |
@@ -277,7 +277,7 @@ The following scopes restrict [tenant user][Tenant Manager tenant user] manageme
 
 #### Tenant backend client template management scopes
 
-The following scopes restrict management access for [backend client templates][Tenant Manager backend client template] for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for [backend client templates][TM backend client template] for tenant realm, enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                                         | **Description**                                    |
 | ------------------------------------------------- | -------------------------------------------------- |
@@ -289,7 +289,7 @@ The following scopes restrict management access for [backend client templates][T
 
 #### Tenant frontend client template management scopes
 
-The following scopes restrict management access for [frontend client templates][Tenant Manager frontend client template] for tenant realm, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for [frontend client templates][TM frontend client template] for tenant realm, enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                                          | **Description**                                             |
 | -------------------------------------------------- | ----------------------------------------------------------- |
@@ -301,7 +301,7 @@ The following scopes restrict management access for [frontend client templates][
 
 #### Tenant default resource management scopes
 
-The following scopes restrict management access for tenant [default resources][Tenant Manager default resource], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resources][TM default resource], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                            | **Description**                            |
 | ------------------------------------ | ------------------------------------------ |
@@ -313,7 +313,7 @@ The following scopes restrict management access for tenant [default resources][T
 
 #### Tenant default resource scope mapping management scopes
 
-The following scopes restrict management access for tenant [default resource scope mappings][Tenant Manager default resource scope mapping], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resource scope mappings][TM default resource scope mapping], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                                          | **Description**                                          |
 | -------------------------------------------------- | -------------------------------------------------------- |
@@ -325,7 +325,7 @@ The following scopes restrict management access for tenant [default resource sco
 
 #### Tenant default resource version management scopes
 
-The following scopes restrict management access for tenant [default resource versions][Tenant Manager default resource version], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resource versions][TM default resource version], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                                    | **Description**                                    |
 | -------------------------------------------- | -------------------------------------------------- |
@@ -337,7 +337,7 @@ The following scopes restrict management access for tenant [default resource ver
 
 #### Tenant default resource version mapping management scopes
 
-The following scopes restrict management access for tenant [default resource version mappings][Tenant Manager default resource version mapping], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [default resource version mappings][TM default resource version mapping], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                                            | **Description**                                            |
 | ---------------------------------------------------- | ---------------------------------------------------------- |
@@ -349,7 +349,7 @@ The following scopes restrict management access for tenant [default resource ver
 
 #### Tenant identity provider management scopes
 
-The following scopes restrict management access for tenant [identity providers (IDPs)][Tenant Manager idp], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [identity providers (IDPs)][TM idp], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**               | **Description**                             |
 | ----------------------- | ------------------------------------------- |
@@ -361,7 +361,7 @@ The following scopes restrict management access for tenant [identity providers (
 
 #### Tenant realm template management scopes
 
-The following scopes restrict management access for tenant [realm templates][Tenant Manager realm template], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [realm templates][TM realm template], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                          | **Description**                                  |
 | ---------------------------------- | ------------------------------------------------ |
@@ -373,7 +373,7 @@ The following scopes restrict management access for tenant [realm templates][Ten
 
 #### Tenant role management scopes
 
-The following scopes restrict management access for tenant [roles][Tenant Manager role], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [roles][TM role], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                | **Description**                |
 | ------------------------ | ------------------------------ |
@@ -385,7 +385,7 @@ The following scopes restrict management access for tenant [roles][Tenant Manage
 
 #### Tenant role to scope mapping management scopes
 
-The following scopes restrict management access for tenant [role to scope mappings][Tenant Manager role scope mapping], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [role to scope mappings][TM role scope mapping], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                              | **Description**                                 |
 | -------------------------------------- | ----------------------------------------------- |
@@ -397,7 +397,7 @@ The following scopes restrict management access for tenant [role to scope mappin
 
 #### Tenant role version management scopes
 
-The following scopes restrict management access for tenant [role versions][Tenant Manager role version], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [role versions][TM role version], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                        | **Description**                         |
 | -------------------------------- | --------------------------------------- |
@@ -409,7 +409,7 @@ The following scopes restrict management access for tenant [role versions][Tenan
 
 #### Tenant role version mapping management scopes
 
-The following scopes restrict management access for tenant [role version mappings][Tenant Manager role version mapping], which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [role version mappings][TM role version mapping], which used for tenant creation, enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                                | **Description**                                |
 | ---------------------------------------- | ---------------------------------------------- |
@@ -421,7 +421,7 @@ The following scopes restrict management access for tenant [role version mapping
 
 #### Tenant scope management scopes
 
-The following scopes restrict management access for tenant [scopes][Tenant Manager scope], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [scopes][TM scope], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                 | **Description**                 |
 | ------------------------- | ------------------------------- |
@@ -433,7 +433,7 @@ The following scopes restrict management access for tenant [scopes][Tenant Manag
 
 #### Tenant scope version management scopes
 
-The following scopes restrict management access for tenant [scope versions][Tenant Manager scope version], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [scope versions][TM scope version], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                         | **Description**                         |
 | --------------------------------- | --------------------------------------- |
@@ -445,7 +445,7 @@ The following scopes restrict management access for tenant [scope versions][Tena
 
 #### Tenant scope version mapping management scopes
 
-The following scopes restrict management access for tenant [scope version mappings][Tenant Manager scope version mapping], which used for tenant creation, enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [scope version mappings][TM scope version mapping], which used for tenant creation, enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                                 | **Description**                                 |
 | ----------------------------------------- | ----------------------------------------------- |
@@ -457,7 +457,7 @@ The following scopes restrict management access for tenant [scope version mappin
 
 #### KeyCloak server management scopes
 
-The following scopes restrict management access for [Keycloak servers][Tenant Manager keycloak server], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for [Keycloak servers][TM keycloak server], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                           | **Description**                    |
 | ----------------------------------- | ---------------------------------- |
@@ -469,7 +469,7 @@ The following scopes restrict management access for [Keycloak servers][Tenant Ma
 
 #### Tenant subscription management scopes
 
-The following scopes restrict management access for tenant [subscriptions][Tenant Manager tenant subscription], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for tenant [subscriptions][TM tenant subscription], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                               | **Description**                        |
 | --------------------------------------- | -------------------------------------- |
@@ -481,7 +481,7 @@ The following scopes restrict management access for tenant [subscriptions][Tenan
 
 #### Package type management scopes
 
-The following scopes restrict management access for [packages types][Tenant Manager package type], enforced by the [Kaa Tenant Manager][Tenant Manager].
+The following scopes restrict management access for [packages types][TM package type], enforced by the [Kaa Tenant Manager][TM].
 
 | **Scope**                        | **Description**                 |
 | -------------------------------- | ------------------------------- |

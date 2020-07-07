@@ -2,12 +2,12 @@
   "Device-management": [
     "EPR",
     "EPMX",
-    "CM",
-    "CCM"
+    "CM"
   ],
   "Communication": [
     "KPC",
-    "EPL"
+    "EPL",
+    "CCM"
   ],
   "Data-collection": [
     "DCX",
