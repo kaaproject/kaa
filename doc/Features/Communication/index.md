@@ -186,13 +186,9 @@ HTTP transport is very similar to MQTT, except:
 Now, if we take the MQTT example above and translate that to the HTTP binding, an HTTP `POST /kp1/demo_application_v1/dcx/JTjdbENzHh/json` request will result in a reliable delivery request to the DCX.
 The request payload is identical for MQTT or HTTP transports.
 
-To get started with the Kaa HTTP transport, try <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/1kp-http-binding.postman_collection.json" download>this Postman collection</a>.
-To use this collection with [the Kaa Cloud][Kaa cloud], also download these preconfigured environments:
-
-* <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/cloud-http.postman_environment.json" download>for the HTTP interface</a>
-* <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/cloud-https.postman_environment.json" download>and for the HTTPS</a>.
-
+To get started with the Kaa HTTP transport, try <a href="https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/1kp-http-binding.zip" download>this Postman collection</a> with environments preconfigured for [the Kaa Cloud][Kaa cloud] HTTP and HTTPS interfaces.
 Remember to fill in variables such as your application version and the endpoint token.
+
 
 ## Components
 
