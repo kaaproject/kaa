@@ -14,7 +14,7 @@ sort_idx: 30
 
 ## Prerequisites
 
-- You understand the Kaa platform [microservice-based architecture][architecture overview].
+* You understand the Kaa platform [microservice-based architecture][architecture overview].
 
 
 ## Basic concept
@@ -22,11 +22,12 @@ sort_idx: 30
 Kaa data collection feature is designed to obtain data from connected devices and send it to various storage and processing systems.
 Typical use cases include time-series data, telemetry, firmware or software logs, alerts (traps), etc.
 This feature is designed to help you:
-- Reliably collect data at large scale.
-- Notify clients on successful data delivery or a processing error.
-- Enable ordered data samples delivery.
-- Collect structured and unstructured data.
-- Optimize network use via data samples batching.
+
+* Reliably collect data at large scale.
+* Notify clients on successful data delivery or a processing error.
+* Enable ordered data samples delivery.
+* Collect structured and unstructured data.
+* Optimize network use via data samples batching.
 
 Data collection in Kaa is enabled via the collaboration of several services' functionality.
 <!-- TODO: redraw -->
@@ -47,32 +48,28 @@ EPTS broadcasts the new data points through the [time series transmission][14/TS
 
 ## Client integration
 
-[**Data Collection Extension**][DCX] implements the `json` [resource path][1/KP over MQTT topic structure] that allows [endpoints][endpoint] to push telemetry data into the platform in the [JSON][json] format.
+[**Data Collection Extension**][DCX] implements the `json` [resource path][1/KP structure] that allows [endpoints][endpoint] to push telemetry data into the platform in the [JSON][json] format.
 
 
 ### Unreliable data collection
 
+If an endpoint needs to upload telemetry data into the platform in the **"fire-and-forget"** fashion it can use the **unreliable data collection** feature.
+It works by just NOT specifying [request ID][1/KP structure] at the end of the MQTT topic.
 
-#### MQTT topic structure
-
-If an endpoint is going to upload telemetry data into the platform in the **"fire-and-forget"** fashion it can use the **unreliable data collection** feature.
-It works by just NOT specifying [request ID][1/KP over MQTT topic structure] at the end of MQTT topic.
-
-Let’s take an example. Imagine that you have an endpoint with the `JTjdbENzHh` [endpoint token][endpoint-token] that works in the `demo_application_v1` [application version][application].
-In the **"fire-and-forget"** scenario endpoint should use the next MQTT topic: `kp1/demo_application_v1/dcx/JTjdbENzHh/json`.
-So, the platform will accept and process request message without sending confirmation about its successful or unsuccessful processing back to the endpoint.
+Let's take an example.
+Imagine that you have an endpoint with the `JTjdbENzHh` [endpoint token][endpoint-token] that works in the `demo_application_v1` [application version][application].
+In the **"fire-and-forget"** scenario, endpoint should use the next MQTT topic: `kp1/demo_application_v1/dcx/JTjdbENzHh/json`.
+The platform will accept and process request message without sending a confirmation back to the endpoint.
 
 
 ### Reliable data collection
 
+If an endpoint wants to **reliably** deliver data, it must append [request ID][1/KP structure] at the end of the MQTT topic.
+This may be useful when endpoint wants to know whether the submitted data should be resent or not.
 
-#### MQTT topic structure
-
-If an endpoint wants to **reliably** deliver data it must append [request ID][1/KP over MQTT topic structure] to the end of the MQTT topic.
-It may be useful when endpoint wants to know whether the submitted data should be resent or not.
-
-Let’s take an example. Imagine that you have an endpoint with the `JTjdbENzHh` [endpoint token][endpoint-token] that works in the `demo_application_v1` [application version][application].
-In the **reliable** data collection scenario endpoint should use the next MQTT topic: `kp1/demo_application_v1/dcx/JTjdbENzHh/json/42` where `42` is the request ID.
+Let's take an example.
+Imagine that you have an endpoint with the `JTjdbENzHh` [endpoint token][endpoint-token] that works in the `demo_application_v1` [application version][application].
+In the **reliable** data collection scenario endpoint should use the next MQTT topic: `kp1/demo_application_v1/dcx/JTjdbENzHh/json/42` where `42` is an example of a request ID.
 
 
 ### Message payload structure
@@ -166,15 +163,15 @@ It may help to **preserve the device battery life** and **optimize the network e
 
 The table below summarizes the list of Kaa platform components that contribute to this feature:
 
-| Service                                        | Version          |
-| ---------------------------------------------- | ---------------- |
-| [Data Collection Extension (DCX)][DCX]         | {{dcx_version}}  |
-| [Binary Data Collection Extension (BCX)][BCX]  | {{bcx_version}}  |
-| [Endpoint Time-Series (EPTS)][EPTS]            | {{epts_version}} |
-| [Kafka Data Collection Adapter (KDCA)][KDCA]   | {{kdca_version}} |
+| Service                                       | Version          |
+| --------------------------------------------- | ---------------- |
+| [Data Collection Extension (DCX)][DCX]        | {{dcx_version}}  |
+| [Binary Data Collection Extension (BCX)][BCX] | {{bcx_version}}  |
+| [Endpoint Time-Series (EPTS)][EPTS]           | {{epts_version}} |
+| [Kafka Data Collection Adapter (KDCA)][KDCA]  | {{kdca_version}} |
 
 
 ## Next steps
 
-- [MQTT topic structure][1/KP over MQTT topic structure] - learn more about the MQTT topic structure.
-- [Data collection tutorial][data collection tutorial] - collect and display telemetry data from your device.
+* [Kaa Protocol structure][1/KP structure]---learn more about the Kaa Protocol with MQTT and HTTP.
+* [Data collection tutorial][data collection tutorial]---collect and display telemetry data from your device.

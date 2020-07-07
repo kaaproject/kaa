@@ -47,11 +47,11 @@ Tenant Manager operates with the following important entities:
 - **Identity providers (IDPs)** describe external single sign-on (SSO) servers to be used for the tenant users authentication.
 - **Keycloak servers** represent the available KeyCloak servers to host tenant realms.
 
-Refer to the [Tenant Manager REST API][Tenant Manager REST API] for more details.
+Refer to the [Tenant Manager REST API][TM REST API] for more details.
 
 
 ## Components
 
-| Service                               | Version                    |
-| ------------------------------------- | -------------------------- |
-| [Tenant Manager (TM)][Tenant Manager] | {{tenant-manager_version}} |
+| Service                   | Version                    |
+| ------------------------- | -------------------------- |
+| [Tenant Manager (TM)][TM] | {{tenant-manager_version}} |
