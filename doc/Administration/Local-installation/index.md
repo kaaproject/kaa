@@ -15,6 +15,11 @@ sort_idx: 0
 This page provides instructions on installing a Kaa cluster on your Linux or macOS local machine using [minikube](https://github.com/kubernetes/minikube).
 
 
+## Prerequisites
+
+1. Your KaaID account is granted with the access to Kaa Docker images.
+
+
 ## Docker and minikube
 
 1. [Install Docker](https://docs.docker.com/install/) (please use version 17.09)
@@ -30,8 +35,8 @@ After the installation you should have:
 
 #### For Catalina +
 
-Install Docker Desktop for Mac 
-https://docs.docker.com/docker-for-mac/install/
+Install Docker Desktop for Mac using the [link][docker-for-mac].
+
 
 Go to `Preference` -> `Kubernetes` and check `Enable Kubernetes` checkbox.
 #### For previous macOS versions
@@ -248,6 +253,9 @@ Platform components' REST API will be served under https://env.local.kaatech.com
 For example: `https://env.local.kaatech.com/epr/api/v1/endpoints`.
 
 Logging and monitoring will be available at [https://kibana.local.kaatech.com](https://kibana.local.kaatech.com) and [https://grafana.local.kaatech.com](https://grafana.local.kaatech.com).
+
 ## Next steps
 
 - [Connect a device to your local Kaa cluster][how to connect device].
+
+[docker-for-mac]: https://docs.docker.com/docker-for-mac/install/
