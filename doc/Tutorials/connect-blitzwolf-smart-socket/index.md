@@ -20,7 +20,7 @@ You will learn how to connect the real device used for [Data Analytics and Notif
 
 ## Prerequisites
 
-1. You are familiar with the [How to connect a device][how to connect device] tutorial.
+1. You are familiar with the [identity management tutorial][identity management tutorial].
 2. You have installed the [Arduino IDE][arduino-ide].
 
 

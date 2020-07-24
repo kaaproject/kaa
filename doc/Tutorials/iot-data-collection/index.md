@@ -30,7 +30,7 @@ Also, we will configure [Web Dashboard][WD] with the [Endpoint Location][ep-loca
 ## Prerequisites
 
 1. You know the Kaa platform [data collection basics][data collection].
-2. You know [how to connect a device][how to connect device] to the Kaa platform.
+2. You know [how to connect a device][identity management tutorial] to the Kaa platform.
 3. The Kaa platform is up and running with the following microservices included:
    * [Kaa Protocol Communication (KPC)][KPC];
    * [Credential Management (CM)][CM];

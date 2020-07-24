@@ -75,13 +75,13 @@ In the **reliable** data collection scenario endpoint should use the next MQTT t
 ### Message payload structure
 
 There are **no requirements to the JSON structure** of the message payload **except that it must be enclosed into JSON array** for [data batching](#batching) purpose.
-Elements inside the array can be any valid JSON type and may be both structured and unstructured with any complexity.
+Elements inside the array can be **any valid JSON type** and may be both structured and unstructured with any complexity.
 
 Each element of the array represents a single **data sample**.
 
 Examples:
 
-1. Message payload that contains **one data sample** that is the JSON object with three fields `timestamp`, `temperature` and `log`.
+**1**. Message payload that contains **one data sample** that is the JSON object with three fields `timestamp`, `temperature` and `log`.
 
 ```json
 [
@@ -93,7 +93,7 @@ Examples:
 ]
 ```
 
-2. Message payload that contains **two data samples**: `15` and `23`.
+**2**. Message payload that contains **two data samples**: `15` and `23`.
 
 ```json
 [
@@ -102,7 +102,7 @@ Examples:
 ]
 ```
 
-3. Message payload that contains **one data sample** that is the JSON array.
+**3**. Message payload that contains **one data sample** that is the JSON array.
 
 ```json
 [
@@ -113,7 +113,7 @@ Examples:
 ]
 ```
 
-4. You can even combine different JSON types in one message. Message payload that contains **four data sample** that are JSON object, JSON number, JSON array and JSON boolean.
+**4**. You can even combine different JSON types in one message. Message payload that contains **four data sample** that are JSON object, JSON number, JSON array and JSON boolean.
 
 ```json
 [

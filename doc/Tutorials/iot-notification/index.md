@@ -29,7 +29,7 @@ We will teach you how to:
 ## Prerequisites
 
 1. You understand the [Kaa platform architecture][architecture overview].
-2. You know how to [connect a device to the Kaa platform][how to connect device].
+2. You know how to [connect a device to the Kaa platform][identity management tutorial].
 3. Your [Google account settings](https://myaccount.google.com/lesssecureapps) allow using less secure app access, so that SMTP client will be able to connect to Google SMTP server and send emails.
 > Disable less secure app access after finishing the tutorial.
 {:.important}

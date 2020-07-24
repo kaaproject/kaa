@@ -114,6 +114,7 @@ Platform components' REST API will be served under `https://env.<kube_ingress_do
 For example: `https://env.<kube_ingress_domain>/epr/api/v1/endpoints`.
 
 Logging and monitoring will be available at `https://kibana.<kube_ingress_domain>` and `https://grafana.<kube_ingress_domain>`.
+
 ## Next steps
 
-- [Connect a device to your Kaa cluster][how to connect device].
+- [Connect a device to your Kaa cluster][identity management tutorial].

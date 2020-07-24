@@ -248,6 +248,7 @@ Platform components' REST API will be served under https://env.local.kaatech.com
 For example: `https://env.local.kaatech.com/epr/api/v1/endpoints`.
 
 Logging and monitoring will be available at [https://kibana.local.kaatech.com](https://kibana.local.kaatech.com) and [https://grafana.local.kaatech.com](https://grafana.local.kaatech.com).
+
 ## Next steps
 
-- [Connect a device to your local Kaa cluster][how to connect device].
+- [Connect a device to your local Kaa cluster][identity management tutorial].

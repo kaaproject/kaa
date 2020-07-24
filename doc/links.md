@@ -226,7 +226,7 @@
 <!--== Tutorials ==-->
 {% capture tutorials_url %}{{root_url}}Tutorials/{% endcapture %}
 [tutorials]:                              {{tutorials_url}}
-[how to connect device]:                  {{tutorials_url}}connect-device-to-iot-platform/
+[identity management tutorial]:           {{tutorials_url}}connect-device-to-iot-platform/
 [connect Arduino (MKR-1010 + MKR-ENV)]:   {{tutorials_url}}connect-arduino-mkr-1010-to-kaa-platform/
 [connect BlitzWolf smart socket]:         {{tutorials_url}}connect-blitzwolf-smart-socket/
 [how to connect an ESP8266]:              {{tutorials_url}}connect-esp8266-to-kaa-platform/
@@ -300,3 +300,4 @@
 <!--== KaaIoT sites ==-->
 [Kaa cloud]: https://cloud.kaaiot.com
 [Kaa user chat]: https://gitter.im/KaaIoT/community
+[Kaa cloud free trial]: https://www.kaaproject.org/free-trial
