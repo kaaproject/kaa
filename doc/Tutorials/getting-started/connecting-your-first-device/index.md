@@ -12,7 +12,7 @@ sort_idx: 2
 {:toc}
 
 <div align="center">
-  <iframe width="640" height="385" src="https://www.youtube.com/embed/QpyW5gEJKe0?rel=0" frameborder="0"
+  <iframe width="640" height="385" src="https://www.youtube.com/embed/KciiHnvlUGQ?rel=0" frameborder="0"
           allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
@@ -103,7 +103,7 @@ curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-ve
 --data-raw '{}'
 ```
 
-Update endpoint metadata on the platform.
+Report endpoint metadata to the platform.
 
 ```bash
 curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/epmx/<endpoint-token>/update/keys' \
@@ -119,13 +119,12 @@ curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-ve
 
 <br>
 
-Open this client in the [Repl.it]() if you don't want to run it on your host machine.
+Open this client in the [Repl.it](https://repl.it/@KaaIoT/ConnectingYourFirstDevice) if you don't want to run it on your host machine.
 
 Initialize `ENDPOINT_TOKEN` and `APPLICATION_VERSION` variables with endpoint token and application version respectively.
 
 ```python
 import json
-import logging
 import random
 import string
 import time
@@ -138,17 +137,30 @@ KPC_PORT = 1883
 ENDPOINT_TOKEN = ""       # Paste endpoint token
 APPLICATION_VERSION = ""  # Paste application version
 
-# Configure logging
-logger = logging.getLogger('mqtt-client')
-logger.setLevel(logging.DEBUG)
-
-hdl = logging.StreamHandler()
-hdl.setLevel(logging.DEBUG)
-hdl.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
-
-logger.addHandler(hdl)
-
 print(f'Using endpoint token {ENDPOINT_TOKEN}, server at {KPC_HOST}:{KPC_PORT}')
+
+request_id = random.randint(0, 99)
+
+# MQTT PUBLISH topic: "get metadata" request
+get_metadata_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/get/{request_id}'
+print(f'{get_metadata_publish_topic} - MQTT PUBLISH topic: "get metadata" request')
+
+# MQTT SUBSCRIBE topic: "get metadata" response
+get_metadata_subscribe_topic = f'{get_metadata_publish_topic}/status'
+print(f'{get_metadata_subscribe_topic} - MQTT SUBSCRIBE topic: "get metadata" response')
+
+# MQTT PUBLISH topic: "partial metadata update" request
+partial_metadata_udpate_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/update/keys/{request_id}'
+print(f'{partial_metadata_udpate_publish_topic} - MQTT PUBLISH topic: "partial metadata update"')
+
+# MQTT SUBSCRIBE topic: "partial metadata update" response
+partial_metadata_update_subscribe_topic = f'{partial_metadata_udpate_publish_topic}/status'
+print(f'{partial_metadata_update_subscribe_topic} - MQTT SUBSCRIBE topic: "partial metadata update"')
+
+# MQTT PUBLISH topic: "full metadata update"
+full_metadata_udpate_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/update'
+print(f'{full_metadata_udpate_publish_topic} - MQTT PUBLISH topic: "full metadata update"')
+
 
 # Returns hard-coded metadata
 def get_metadata():
@@ -159,79 +171,44 @@ def get_metadata():
     }
   )
 
-
-def connect_to_server(client):
-  logger.info(f'Connecting to KPC instance at {KPC_HOST}:{KPC_PORT}...')
-  client.connect(KPC_HOST, KPC_PORT, 60)
-  logger.info("Successfully connected")
-
-
-def disconnect_from_server(client):
-  logger.info('Disconnecting from server')
-  client.disconnect()
-  logger.info("Successfully disconnected")
-
-
 def log_metadata(client, userdata, message):
-  logger.info(f'Received metadata from server: {str(message.payload.decode("utf-8"))} on topic: {message.topic}')
+  print(f'Received metadata from server: {str(message.payload.decode("utf-8"))} on topic: {message.topic}')
 
 
 def log_partial_metadata_update_response(client, userdata, message):
-  logger.info(f'Received partial metadata update response: {str(message.payload.decode("utf-8"))} on topic: {message.topic}')
-
-
-request_id = random.randint(0, 99)
-
-# MQTT PUBLISH topic: "get metadata" request
-get_metadata_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/get/{request_id}'
-logger.info(f'{get_metadata_publish_topic} - MQTT PUBLISH topic: "get metadata" request')
-
-# MQTT SUBSCRIBE topic: "get metadata" response
-get_metadata_subscribe_topic = f'{get_metadata_publish_topic}/status'
-logger.info(f'{get_metadata_subscribe_topic} - MQTT SUBSCRIBE topic: "get metadata" response')
-
-# MQTT PUBLISH topic: "partial metadata update" request
-partial_metadata_udpate_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/update/keys/{request_id}'
-logger.info(
-  f'{partial_metadata_udpate_publish_topic} - MQTT PUBLISH topic: "partial metadata update"')
-
-# MQTT SUBSCRIBE topic: "partial metadata update" response
-partial_metadata_update_subscribe_topic = f'{partial_metadata_udpate_publish_topic}/status'
-logger.info(
-  f'{partial_metadata_update_subscribe_topic} - MQTT SUBSCRIBE topic: "partial metadata update"')
-
-# MQTT PUBLISH topic: "full metadata update"
-full_metadata_udpate_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/update'
-logger.info(f'{full_metadata_udpate_publish_topic} - MQTT PUBLISH topic: "full metadata update"')
+  print(f'Received partial metadata update response: {str(message.payload.decode("utf-8"))} on topic: {message.topic}')
 
 
 def on_message(client, userdata, message):
-  logger.info(f'Message received: topic: {message.topic}\nbody: {str(message.payload.decode("utf-8"))}')
+  print(f'Message received: topic: {message.topic}\nbody: {str(message.payload.decode("utf-8"))}')
 
 
 def on_connect(client, userdata, flags, rc):
-  logger.info("Requesting metadata from server")
+  print("Requesting metadata from server")
+  # Request metadata
   client.publish(topic=get_metadata_publish_topic, payload=json.dumps({}))
 
+def main():
+  # Initiate server connection
+  client_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+  client = mqtt.Client(client_id=client_id)
+  client.on_message = on_message
+  client.on_connect = on_connect
+  client.connect(KPC_HOST, KPC_PORT, 60)
+  client.loop_start()
 
-# Initiate server connection
-client_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
-client = mqtt.Client(client_id=client_id)
-client.on_message = on_message
-client.on_connect = on_connect
-connect_to_server(client=client)
-# Start the loop
-client.loop_start()
+  client.message_callback_add(get_metadata_subscribe_topic, log_metadata)
+  client.message_callback_add(partial_metadata_update_subscribe_topic, log_partial_metadata_update_response)
 
-client.message_callback_add(get_metadata_subscribe_topic, log_metadata)
-client.message_callback_add(partial_metadata_update_subscribe_topic, log_partial_metadata_update_response)
+  # Report metadata
+  data = get_metadata()
+  client.publish(topic=partial_metadata_udpate_publish_topic, payload=data)
+  print(f'Reported metadata: {data}')
+  time.sleep(5)
+  client.disconnect()
 
-# Send metadata
-data = get_metadata()
-client.publish(topic=partial_metadata_udpate_publish_topic, payload=data)
-logger.info(f'Sent metadata: {data}')
-time.sleep(5)
-disconnect_from_server(client=client)
+if __name__ == '__main__':
+  main()
 ```
 
 <br>
@@ -245,5 +222,5 @@ In this guide, you learned how to create a digital twin of your device, connect 
 
 All the tutorial resources are located on [GitHub][code url].
 
-[code url]:           https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/build-iot-dashboard/attach/code
+[code url]:           https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/connecting-your-first-device/attach/code
 [devices dashboard]:  https://cloud.kaaiot.com/devices/device-management
