@@ -10,8 +10,8 @@ import time
 
 import paho.mqtt.client as mqtt
 
-DEFAULT_KPC_HOST = "cloud.kaaiot.com"  # Platform host goes here
-DEFAULT_KPC_PORT = 30900  # Platform port goes here
+DEFAULT_KPC_HOST = "mqtt.cloud.kaaiot.com"  # Platform host goes here
+DEFAULT_KPC_PORT = 1883  # Platform port goes here
 
 DCX_INSTANCE_NAME = "dcx"
 EPMX_INSTANCE_NAME = "epmx"
@@ -84,6 +84,7 @@ topic_metadata = "kp1/{application_version}/{service_instance}/{resource_path}".
     service_instance=EPMX_INSTANCE_NAME,
     resource_path="{token}/update/keys".format(token=token)
 )
+logger.debug("Composed metadata topic: {}".format(topic_metadata))
 
 
 def compose_metadata():
@@ -145,10 +146,10 @@ def compose_log_data_sample():
 topic_command_health_check = "kp1/{application_version}/{service_instance}/{resource_path}".format(
     application_version=appVersionName,
     service_instance=CEX_INSTANCE_NAME,
-    resource_path="{token}/command/{command}/status".format(token=token, command=HEALTH_CHECK_COMMAND_TYPE),
+    resource_path="{token}/command/{command}/status".format(token=token,
+                                                            command=HEALTH_CHECK_COMMAND_TYPE),
 )
 logger.debug("Composed command log topic: {}".format(topic_command_health_check))
-
 
 topic_command_result_log = "kp1/{application_version}/{service_instance}/{resource_path}".format(
     application_version=appVersionName,
@@ -162,10 +163,12 @@ def log_command_handler(client, userdata, message):
     """
     Handles HEALTH_CHECK command
     """
-    logger.info("Received HEALTH_CHECK command: topic [{}]\nbody [{}]".format(message.topic, str(message.payload.decode("utf-8"))))
+    logger.info("Received HEALTH_CHECK command: topic [{}]\nbody [{}]".format(message.topic, str(
+        message.payload.decode("utf-8"))))
     command_result = compose_command_result_payload(message)
     client.publish(topic=topic_command_result_log, payload=command_result)
-    logger.info("Published HEALTH_CHECK command result: topic [{}]\nbody [{}]".format(topic_command_result_log, str(command_result.decode("utf-8"))))
+    logger.info("Published HEALTH_CHECK command result: topic [{}]\nbody [{}]".format(
+        topic_command_result_log, str(command_result.decode("utf-8"))))
     log_data_sample_payload = compose_log_data_sample()
     client.publish(topic=topic_data_collection, payload=log_data_sample_payload)
 
@@ -205,11 +208,9 @@ metadata = compose_metadata()
 client.publish(topic=topic_metadata, payload=metadata)
 logger.info("Sent metadata: {0}\n".format(metadata))
 
-
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, "location.json")
 location_data = load_json(filename)
-
 
 # Send device data sample in loop
 while 1:
@@ -227,6 +228,6 @@ while 1:
     else:
         logger.debug("{0}: Sent next data sample: {1}".format(token, payload))
 
-    time.sleep(10)
+    time.sleep(5)
     location_index = location_index + 1
     battery_level = battery_level - 0.3
