@@ -8,15 +8,12 @@ sort_idx: 4
 {% include variables.md %}
 {% include_relative links.md %}
 
-Practical examples on **how to work with Kaa** in different use cases.
+Tutorials are divided into courses by main topics:
 
-| **Tutorial**                                                                              | **Description**                                                                                                                                                                                                                |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [**Identity management**][identity management tutorial]                                   | In this tutorial we will look at **identity management feature** in the Kaa platform, connect a device and discuss **"endpoint", "endpoint ID", "endpoint token" and "endpoint metadata"** terms.                              |
-| [**How to connect an ESP8266**][how to connect an ESP8266]                                | **Connect an ESP8266 board** to the Kaa platform using the default, MQTT-based protocol. You will connect a real device, submit some telemetry, and view it in the Kaa web interface.                                          |
-| [**How to connect Arduino (MKR-1010 + MKR-ENV)**][connect Arduino (MKR-1010 + MKR-ENV)]   | **Connect an [Arduino MKR-1010][MKR-1010] board with [MKR-ENV][MKR-ENV-Shield]** shield to the Kaa platform using the default MQTT-based protocol.                                                                             |
-| [**Connecting the BlitzWolf® BW-SHP6 WIFI Smart Socket**][connect BlitzWolf smart socket] | **Connect a BlitzWolf® BW-SHP6 WIFI Smart Socket** to the Kaa platform using the default, MQTT-based protocol. You will connect a real device, publish the telemetry data and handle commands from the Kaa platform.           |
-| [**Data collection**][data collection tutorial]                                           | **Collect telemetry data from a simulated device** to the Kaa platform. You will learn how to **transform collected data into well-structured time series** and **visualize it on the Kaa web interface**.                     |
-| [**Custom web dashboard**][custom web dashboard]                                          | **Implement and integrate a custom web dashboard with the Kaa platform**.                                                                                                                                                      |
-| [**IoT notifications**][iot notification tutorial]                                        | Integrate **a custom microservice with the Kaa IoT Platform** and **send email notifications** on events from your device.                                                                                                     |
-| [**Kaa Cloud Getting Started**][kaa cloud getting started]                                | Quick start with the [Kaa Cloud][Kaa cloud].                                                                                                                                                                                   |
+1. [**Getting Started**](getting-started) - brief overview of the Kaa platform main features.
+Follow getting started tutorials in sequence to complete them successfully. 
+Get started here.
+
+
+2. [**Device integration**](device-integration) - device integration basics, MQTT topics/HTTP URLs structure, device attributes, data collection.
+Hardware integration.
