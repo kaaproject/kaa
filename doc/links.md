@@ -301,3 +301,6 @@
 <!--== KaaIoT sites ==-->
 [Kaa cloud]: https://cloud.kaaiot.com
 [Kaa user chat]: https://gitter.im/KaaIoT/community
+
+<!--== Repl.it ==-->
+[connecting your first device repl]: https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
