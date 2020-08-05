@@ -277,6 +277,14 @@ If you, our reader from the future, spot some major discrepancies with your curr
 
 Actually, even if the tutorial served you well, we'd love to hear your feedback, so [join the community][Kaa user chat]!
 
+<br/>
+<div style="display: flex; justify-content: space-between;">
+<div>
+</div>
+<div>
+<a class="free_trial__button" href="{{collecting_data_from_a_device}}">Collecting data from a device >></a>
+</div>
+</div>
 
 [code url]:           https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/connecting-your-first-device/attach/code
 [devices dashboard]:  https://cloud.kaaiot.com/devices/device-management
