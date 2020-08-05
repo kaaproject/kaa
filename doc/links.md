@@ -230,9 +230,13 @@
 [tutorials]:                              {{tutorials_url}}
 
 <!--== Getting Started ==-->
-[connecting your first device]:           {{tutorials_url}}getting-started/connecting-your-first-device/
-[collecting data from a device]:          {{tutorials_url}}getting-started/collecting-data-from-a-device/
-[custom web dashboard]:                   {{tutorials_url}}getting-started/build-iot-dashboard/
+{% capture connecting_your_first_device %}{{tutorials_url}}getting-started/connecting-your-first-device/{% endcapture %}
+[connecting your first device]:           {{connecting_your_first_device}}
+{% capture collecting_data_from_a_device %}{{tutorials_url}}getting-started/collecting-data-from-a-device/{% endcapture %}
+[collecting data from a device]:          {{collecting_data_from_a_device}}
+{% capture custom_web_dashboard %}        {{tutorials_url}}getting-started/build-iot-dashboard/{% endcapture %}
+[custom web dashboard]:                   {{custom_web_dashboard}}
+
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
 

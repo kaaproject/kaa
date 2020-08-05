@@ -192,5 +192,14 @@ If you, our reader from the future, spot some major discrepancies with your curr
 
 Actually, even if the tutorial served you well, we'd love to hear your feedback, so [join the community][Kaa user chat]!
 
+<br/>
+<div style="display: flex; justify-content: space-between;">
+<div>
+<a class="free_trial__button" href="{{connecting_your_first_device}}"><< Connecting your first device</a>
+</div>
+<div>
+<a class="free_trial__button" href="{{custom_web_dashboard}}">Custom web dashboard >></a>
+</div>
+</div>
 
 [code url]:           https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/collecting-data-from-a-device/attach/code
