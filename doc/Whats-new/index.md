@@ -62,7 +62,7 @@ X.509 credentials management.
 
 ### HTTP transport support
 
-[**Kaa Protocol Communication service (KPC)**][KPC] now supports [http transport][KPC HTTP] that implements [1/KP protocol][1/KP] over plain HTTP.
+[**Kaa Protocol Communication service (KPC)**][KPC] now supports [HTTP transport][KPC HTTP] that implements [1/KP protocol][1/KP] over plain HTTP.
 Unlike 1/KP over MQTT, HTTP binding is synchronous: it follows the request-response communication pattern and does not support server message push.
 
 Learn more about integrating clients using the HTTP transport [here][1/KP over HTTP].
@@ -71,7 +71,7 @@ Learn more about integrating clients using the HTTP transport [here][1/KP over H
 ### Binary data collection
 
 Kaa 1.2 supports collection of binary data blobs (still images, video segments, audio recordings, etc.) from connected devices.
-This is enabled by a new microservice: [**Binary data Collection Extension (BCX)**][BCX]).
+This is enabled by a new microservice: [**Binary data Collection Extension (BCX)**][BCX].
 The supported data storage backend is AWS S3.
 
 To upload a binary data blob, client must first [retrieve a temporary authorization token][BCX token exchange extension interface] on behalf of an endpoint from the BCX service using an existing communication channel (MQTT- or HTTP-based).

@@ -81,7 +81,7 @@ Each element of the array represents a single **data sample**.
 
 Examples:
 
-1. Message payload that contains **one data sample** that is the JSON object with three fields `timestamp`, `temperature` and `log`.
+**1**. Message payload that contains **one data sample** that is the JSON object with three fields `timestamp`, `temperature` and `log`.
 
 ```json
 [
@@ -93,7 +93,7 @@ Examples:
 ]
 ```
 
-2. Message payload that contains **two data samples**: `15` and `23`.
+**2**. Message payload that contains **two data samples**: `15` and `23`.
 
 ```json
 [
@@ -102,7 +102,7 @@ Examples:
 ]
 ```
 
-3. Message payload that contains **one data sample** that is the JSON array.
+**3**. Message payload that contains **one data sample** that is the JSON array.
 
 ```json
 [
@@ -113,7 +113,7 @@ Examples:
 ]
 ```
 
-4. You can even combine different JSON types in one message. Message payload that contains **four data sample** that are JSON object, JSON number, JSON array and JSON boolean.
+**4**. You can even combine different JSON types in one message. Message payload that contains **four data sample** that are JSON object, JSON number, JSON array and JSON boolean.
 
 ```json
 [
@@ -174,4 +174,4 @@ The table below summarizes the list of Kaa platform components that contribute t
 ## Next steps
 
 * [Kaa Protocol structure][1/KP structure]---learn more about the Kaa Protocol with MQTT and HTTP.
-* [Data collection tutorial][data collection tutorial]---collect and display telemetry data from your device.
+* [Data collection tutorial][collecting data from a device]---collect and display telemetry data from your device.

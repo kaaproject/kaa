@@ -20,7 +20,7 @@ You will learn how to connect the real device used for [Data Analytics and Notif
 
 ## Prerequisites
 
-1. You are familiar with the [How to connect a device][how to connect device] tutorial.
+1. You know [how to connect a device][connecting your first device].
 2. You have installed the [Arduino IDE][arduino-ide].
 
 
@@ -73,7 +73,7 @@ Also, the device can receive commands from the Kaa platform to switch `On/Off` i
 
 - [Data Analytics and Notifications webinar][webinar Data Analytics and Notifications] - figure out how this smart socket used with Kaa platform for data analytics and notifications.
 - [Device management][identity] - find out more about device management feature.
-- [Data collection tutorial][data collection tutorial] - learn how to collect telemetry from your device into the platform.
+- [Data collection tutorial][collecting data from a device] - learn how to collect telemetry from your device into the platform.
 
 
 [HLW8012-library-url]:      https://github.com/kaaproject/hlw8012

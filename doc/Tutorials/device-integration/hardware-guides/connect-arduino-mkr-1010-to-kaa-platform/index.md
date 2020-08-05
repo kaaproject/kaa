@@ -14,10 +14,6 @@ sort_idx: 8
 In this tutorial, we will look at how to connect an [Arduino MKR-1010][MKR-1010] board with [MKR-ENV][MKR-ENV-Shield] shield to the Kaa platform using the default MQTT-based protocol.
 You will learn how to create a digital twin of your device and connect it to the platform, collect device telemetry, and view telemetry in the Kaa web interface.
 
-​Here is what we will have in the result:
-
-![tutorial result](attach/img/tutorial_result.jpg)
-
 
 ## Overview
 
