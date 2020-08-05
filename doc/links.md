@@ -32,6 +32,7 @@
 [1/KP structure]: {{feature_communication_url}}#kaa-protocol-v1-structure
 [1/KP over MQTT]: {{feature_communication_url}}#mqtt-transport-binding-for-1kp
 [1/KP over HTTP]: {{feature_communication_url}}#http-transport-binding-for-1kp
+{% capture 1kp_over_http_postman_collection %}https://github.com/kaaproject/kaa/raw/master/doc/Features/Communication/1kp-http-binding.zip{% endcapture %}
 
 {% capture kpc_url %}{{feature_communication_url}}KPC/{% endcapture %}
 [KPC]: {{kpc_url}}
@@ -49,6 +50,7 @@
 <!-- Data collection -->
 {% capture feature_data_collection_url %}{{kaa_features_url}}Data-collection/{% endcapture %}
 [data collection]: {{feature_data_collection_url}}
+[batching]: {{feature_data_collection_url}}#batching
 
 {% capture dcx_url %}{{feature_data_collection_url}}DCX/{% endcapture %}
 [DCX]: {{dcx_url}}
@@ -226,15 +228,18 @@
 <!--== Tutorials ==-->
 {% capture tutorials_url %}{{root_url}}Tutorials/{% endcapture %}
 [tutorials]:                              {{tutorials_url}}
-[how to connect device]:                  {{tutorials_url}}connect-device-to-iot-platform/
+
+<!--== Getting Started ==-->
 [connecting your first device]:           {{tutorials_url}}getting-started/connecting-your-first-device/
+[collecting data from a device]:          {{tutorials_url}}getting-started/collecting-data-from-a-device/
+[custom web dashboard]:                   {{tutorials_url}}getting-started/build-iot-dashboard/
+[iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
+[kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
+
+<!--== Device Integration ==-->
 [connect Arduino (MKR-1010 + MKR-ENV)]:   {{tutorials_url}}connect-arduino-mkr-1010-to-kaa-platform/
 [connect BlitzWolf smart socket]:         {{tutorials_url}}connect-blitzwolf-smart-socket/
 [how to connect an ESP8266]:              {{tutorials_url}}connect-esp8266-to-kaa-platform/
-[data collection tutorial]:               {{tutorials_url}}iot-data-collection/
-[custom web dashboard]:                   {{tutorials_url}}build-iot-dashboard/
-[iot notification tutorial]:              {{tutorials_url}}iot-notification/
-[kaa cloud getting started]:              {{tutorials_url}}getting-started-kaa-cloud/
 
 <!-- Administration -->
 {% capture administration_url %}{{root_url}}Administration/{% endcapture %}
@@ -255,6 +260,7 @@
 <!-- What's new -->
 [whats new]: {{root_url}}Whats-new/
 [whats new in 1.1]: {{root_url}}Whats-new/#kaa-11-november-8-th-2019
+[whats new in 1.2]: {{root_url}}Whats-new/#kaa-12-july-6-th-2020
 
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
@@ -278,11 +284,13 @@
 [open distro security]: https://opendistro.github.io/for-elasticsearch-docs/docs/security-configuration/
 [open distro kibana]: https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/
 [open distro alerting]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/
+[curl]: https://en.wikipedia.org/wiki/CURL
 
 <!--== Technologies ==-->
 [mqtt]: http://mqtt.org/
 [coap]: http://coap.technology/
 [json]: https://www.json.org/
+[uuid]: https://en.wikipedia.org/wiki/Universally_unique_identifier
 [avro]: https://avro.apache.org/
 [oauth2]: https://tools.ietf.org/html/rfc6749
 [resource server]: https://www.oauth.com/oauth2-servers/the-resource-server/
@@ -299,8 +307,10 @@
 
 
 <!--== KaaIoT sites ==-->
-[Kaa cloud]: https://cloud.kaaiot.com
-[Kaa user chat]: https://gitter.im/KaaIoT/community
+[Kaa cloud]:                https://cloud.kaaiot.com
+[Kaa cloud registration]:   https://www.kaaproject.org/free-trial
+[Kaa user chat]:            https://gitter.im/KaaIoT/community
 
 <!--== Repl.it ==-->
-[connecting your first device repl]: https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
+[connecting your first device repl]:  https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
+[collecting data from a device repl]: https://repl.it/@KaaIoT/CollectingDataFromADevice120

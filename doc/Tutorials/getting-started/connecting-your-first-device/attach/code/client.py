@@ -1,85 +1,85 @@
+# Simple MQTT-based endpoint metadata management client for the Kaa IoT platform.
+# See https://docs.kaaiot.io/KAA/docs/current/Tutorials/getting-started/connecting-your-first-device/.
+
+import itertools
 import json
+import queue
 import random
 import string
-import time
+import sys
 
 import paho.mqtt.client as mqtt
 
-KPC_HOST = "mqtt.cloud.kaaiot.com"
-KPC_PORT = 1883
+KPC_HOST = "mqtt.cloud.kaaiot.com"  # Kaa Cloud plain MQTT host
+KPC_PORT = 1883                     # Kaa Cloud plain MQTT port
 
-ENDPOINT_TOKEN = ""       # Paste endpoint token
-APPLICATION_VERSION = ""  # Paste application version
-
-print(f'Using endpoint token {ENDPOINT_TOKEN}, server at {KPC_HOST}:{KPC_PORT}')
-
-request_id = random.randint(0, 99)
-
-# MQTT PUBLISH topic: "get metadata" request
-get_metadata_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/get/{request_id}'
-print(f'{get_metadata_publish_topic} - MQTT PUBLISH topic: "get metadata" request')
-
-# MQTT SUBSCRIBE topic: "get metadata" response
-get_metadata_subscribe_topic = f'{get_metadata_publish_topic}/status'
-print(f'{get_metadata_subscribe_topic} - MQTT SUBSCRIBE topic: "get metadata" response')
-
-# MQTT PUBLISH topic: "partial metadata update" request
-partial_metadata_udpate_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/update/keys/{request_id}'
-print(f'{partial_metadata_udpate_publish_topic} - MQTT PUBLISH topic: "partial metadata update"')
-
-# MQTT SUBSCRIBE topic: "partial metadata update" response
-partial_metadata_update_subscribe_topic = f'{partial_metadata_udpate_publish_topic}/status'
-print(f'{partial_metadata_update_subscribe_topic} - MQTT SUBSCRIBE topic: "partial metadata update"')
-
-# MQTT PUBLISH topic: "full metadata update"
-full_metadata_udpate_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/update'
-print(f'{full_metadata_udpate_publish_topic} - MQTT PUBLISH topic: "full metadata update"')
+APPLICATION_VERSION = ""  # Paste your application version
+ENDPOINT_TOKEN = ""       # Paste your endpoint token
 
 
-# Returns hard-coded metadata
-def get_metadata():
-  return json.dumps(
-    {
-      "model": "MySmartMeter A300",
-      "mac": "00-14-22-01-23-45"
-    }
-  )
+class MetadataClient:
 
-def log_metadata(client, userdata, message):
-  print(f'Received metadata from server: {str(message.payload.decode("utf-8"))} on topic: {message.topic}')
+    def __init__(self, client):
+        self.client = client
+        self.metadata_by_request_id = {}
+        self.global_request_id = itertools.count()
+        get_metadata_subscribe_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/get/#'
+        self.client.message_callback_add(get_metadata_subscribe_topic, self.handle_metadata)
 
+    def handle_metadata(self, client, userdata, message):
+        request_id = int(message.topic.split('/')[-2])
+        if message.topic.split('/')[-1] == 'status' and request_id in self.metadata_by_request_id:
+            print(f'<--- Received metadata response on topic {message.topic}')
+            metadata_queue = self.metadata_by_request_id[request_id]
+            metadata_queue.put_nowait(message.payload)
+        else:
+            print(f'<--- Received bad metadata response on topic {message.topic}')
 
-def log_partial_metadata_update_response(client, userdata, message):
-  print(f'Received partial metadata update response: {str(message.payload.decode("utf-8"))} on topic: {message.topic}')
+    def get_metadata(self):
+        request_id = next(self.global_request_id)
+        get_metadata_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/get/{request_id}'
 
+        metadata_queue = queue.Queue()
+        self.metadata_by_request_id[request_id] = metadata_queue
 
-def on_message(client, userdata, message):
-  print(f'Message received: topic: {message.topic}\nbody: {str(message.payload.decode("utf-8"))}')
+        print(f'---> Requesting metadata by topic {get_metadata_publish_topic}')
+        self.client.publish(topic=get_metadata_publish_topic, payload=json.dumps({}))
+        try:
+            metadata = metadata_queue.get(True, 5)
+            del self.metadata_by_request_id[request_id]
+            return str(metadata.decode("utf-8"))
+        except queue.Empty:
+            print('Timed out waiting for metadata response from server')
+            sys.exit()
 
+    def patch_metadata_unconfirmed(self, metadata):
+        partial_metadata_udpate_publish_topic = f'kp1/{APPLICATION_VERSION}/epmx/{ENDPOINT_TOKEN}/update/keys'
 
-def on_connect(client, userdata, flags, rc):
-  print("Requesting metadata from server")
-  # Request metadata
-  client.publish(topic=get_metadata_publish_topic, payload=json.dumps({}))
+        print(f'---> Reporting metadata on topic {partial_metadata_udpate_publish_topic}\nwith payload {metadata}')
+        self.client.publish(topic=partial_metadata_udpate_publish_topic, payload=metadata)
+
 
 def main():
-  # Initiate server connection
-  client_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
-  client = mqtt.Client(client_id=client_id)
-  client.on_message = on_message
-  client.on_connect = on_connect
-  client.connect(KPC_HOST, KPC_PORT, 60)
-  client.loop_start()
+    # Initiate server connection
+    print(f'Connecting to Kaa server at {KPC_HOST}:{KPC_PORT} using application version {APPLICATION_VERSION} and endpoint token {ENDPOINT_TOKEN}')
 
-  client.message_callback_add(get_metadata_subscribe_topic, log_metadata)
-  client.message_callback_add(partial_metadata_update_subscribe_topic, log_partial_metadata_update_response)
+    client_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+    client = mqtt.Client(client_id=client_id)
+    client.connect(KPC_HOST, KPC_PORT, 60)
+    client.loop_start()
 
-  # Report metadata
-  data = get_metadata()
-  client.publish(topic=partial_metadata_udpate_publish_topic, payload=data)
-  print(f'Reported metadata: {data}')
-  time.sleep(5)
-  client.disconnect()
+    metadata_client = MetadataClient(client)
+
+    # Fetch current endpoint metadata attributes
+    retrieved_metadata = metadata_client.get_metadata()
+    print(f'Retrieved metadata from server: {retrieved_metadata}')
+
+    # Do a partial endpoint metadata update
+    metadata_to_report = json.dumps({"model": "BFG 9000", "mac": "00-14-22-01-23-45"})
+    metadata_client.patch_metadata_unconfirmed(metadata_to_report)
+
+    client.disconnect()
+
 
 if __name__ == '__main__':
-  main()
+    main()

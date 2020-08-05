@@ -113,22 +113,6 @@ Examples:
 ]
 ```
 
-**4**. You can even combine different JSON types in one message. Message payload that contains **four data sample** that are JSON object, JSON number, JSON array and JSON boolean.
-
-```json
-[
-    {
-        "temperature": 27
-    },
-    15,
-    [
-        "Some information",
-        23
-    ],
-    true
-]
-```
-
 
 #### Batching
 
@@ -174,4 +158,4 @@ The table below summarizes the list of Kaa platform components that contribute t
 ## Next steps
 
 * [Kaa Protocol structure][1/KP structure]---learn more about the Kaa Protocol with MQTT and HTTP.
-* [Data collection tutorial][data collection tutorial]---collect and display telemetry data from your device.
+* [Data collection tutorial][collecting data from a device]---collect and display telemetry data from your device.
