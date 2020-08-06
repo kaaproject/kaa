@@ -12,6 +12,18 @@ sort_idx: 7
 {:toc}
 
 
+## Kaa 1.3
+
+Find below high-level descriptions of some of the major release highlights.
+
+
+### Other highlights of Kaa 1.3
+
+* [**[CMX]**][CMX] In previous Kaa versions, CMX would send configuration applied messages to the configuration repository, e.g., [ECR][ECR], regardless of whether the config was applied by an endpoint or not. 
+Starting with Kaa 1.3, CMX no longer automatically sends configuration applied messages. 
+Instead, CMX sends only those apply messages that were explicitly initiated by an endpoint.
+
+
 ## Kaa 1.2 (July 6-th, 2020)
 
 Find below high-level descriptions of some of the major release highlights.
