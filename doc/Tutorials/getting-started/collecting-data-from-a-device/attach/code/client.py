@@ -12,8 +12,8 @@ import paho.mqtt.client as mqtt
 KPC_HOST = "mqtt.cloud.kaaiot.com"  # Kaa Cloud plain MQTT host
 KPC_PORT = 1883                     # Kaa Cloud plain MQTT port
 
-APPLICATION_VERSION = ""  # Paste your application version
 ENDPOINT_TOKEN = ""       # Paste your endpoint token
+APPLICATION_VERSION = ""  # Paste your application version
 
 
 class DataCollectionClient:
@@ -43,12 +43,17 @@ class DataCollectionClient:
         ])
 
 
+def on_message(client, userdata, message):
+    print(f'<-- Received message on topic "{message.topic}":\n{str(message.payload.decode("utf-8"))}')
+
+
 def main():
     # Initiate server connection
     client = mqtt.Client(client_id=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))
 
     data_collection_client = DataCollectionClient(client)
     data_collection_client.connect_to_server()
+    client.on_message = on_message
 
     # Start the loop
     client.loop_start()
