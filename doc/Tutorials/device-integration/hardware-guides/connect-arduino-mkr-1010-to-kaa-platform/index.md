@@ -2,7 +2,7 @@
 layout: page
 title: How to connect Arduino (MKR-1010 + MKR-ENV)
 permalink: /:path/
-sort_idx: 8
+sort_idx: 1
 ---
 
 {% include variables.md %}
