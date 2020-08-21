@@ -2,7 +2,7 @@
 layout: page
 title: How to connect ESP8266
 permalink: /:path/
-sort_idx: 7
+sort_idx: 0
 ---
 
 {% include variables.md %}

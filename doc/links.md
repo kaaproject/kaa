@@ -230,6 +230,7 @@
 [tutorials]:                              {{tutorials_url}}
 
 <!--== Getting Started ==-->
+[getting started tutorials]:              {{tutorials_url}}getting-started/
 {% capture connecting_your_first_device %}{{tutorials_url}}getting-started/connecting-your-first-device/{% endcapture %}
 [connecting your first device]:           {{connecting_your_first_device}}
 {% capture collecting_data_from_a_device %}{{tutorials_url}}getting-started/collecting-data-from-a-device/{% endcapture %}
@@ -241,9 +242,10 @@
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
 
 <!--== Device Integration ==-->
-[connect Arduino (MKR-1010 + MKR-ENV)]:   {{tutorials_url}}connect-arduino-mkr-1010-to-kaa-platform/
-[connect BlitzWolf smart socket]:         {{tutorials_url}}connect-blitzwolf-smart-socket/
-[how to connect an ESP8266]:              {{tutorials_url}}connect-esp8266-to-kaa-platform/
+[connect Arduino (MKR-1010 + MKR-ENV)]:   {{tutorials_url}}device-integration/hardware-guides/connect-arduino-mkr-1010-to-kaa-platform/
+[connect BlitzWolf smart socket]:         {{tutorials_url}}device-integration/hardware-guides/connect-blitzwolf-smart-socket/
+[how to connect an ESP8266]:              {{tutorials_url}}device-integration/hardware-guides/connect-esp8266-to-kaa-platform/
+[how to connect an STM32]:                {{tutorials_url}}device-integration/hardware-guides/connect-stm32-to-kaa-platform/
 
 <!-- Administration -->
 {% capture administration_url %}{{root_url}}Administration/{% endcapture %}
