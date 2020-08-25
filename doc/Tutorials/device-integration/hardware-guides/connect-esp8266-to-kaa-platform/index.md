@@ -48,7 +48,7 @@ It's called an "[endpoint][endpoint]" in Kaa.
 
 **3**. Choose the [application version][application] from the drop-down menu.
 You can bump application versions in the application administration page as your devices evolve.
-Enter the desired [endpoint token][endpoint token].
+Enter the desired [endpoint token][endpoint-token].
 
 Tokens are used for device identification in communication with the Kaa platform.
 They are non-empty strings that do not contain the following reserved characters: `+`, `#`, `/`, and `.`.
