@@ -2,7 +2,7 @@
 layout: page
 title: How to connect STM32
 permalink: /:path/
-sort_idx: 2
+sort_idx: 3
 ---
 
 {% include variables.md %}
@@ -96,7 +96,7 @@ After a few seconds device connects to Kaa Cloud and starts sending data.
 **1**. Now we want to transform raw telemetry into time series to be able to visualize it. 
 For that navigate to the "Device management" -> "Applications" and edit the application configuration for the [Endpoint Time Series service (EPTS)][EPTS].
 EPTS is a Kaa platform component that is responsible for transforming raw [data samples][data-sample] from endpoints into well-structured time series.
-It also stores the time series data and provides access API for other services, including the [Web Dashboard][Web Dashboard].
+It also stores the time series data and provides access API for other services, including the [Web Dashboard][WD].
 
 ![Edit EPTS configuration](attach/img/epts-application-config.png)
 
@@ -104,7 +104,7 @@ Enable the [time series auto-extraction][EPTS time series auto extraction] from 
 
 ![Enable time series auto extract](attach/img/epts-autoextract-config.png)
 
-With this function enabled, Kaa will automatically create a time series for each numeric field it encounters at the root of data samples your endpoints submits.
+With this function enabled, Kaa will automatically create a time series for each numeric field it encounters at the root of data samples your endpoints submit.
 You will then be able to view these time series in Kaa UI, no extra configuration is required.
 
 **2**. Go to the "Device management" page and open device details of the recently created endpoint (by clicking on the corresponding row in the device table).
@@ -135,13 +135,12 @@ Further, you may configure your dashboard with a [command execution widget]({{wd
 
 ## Next steps
 
+- Complete the [**Getting Started tutorials cycle**][getting started tutorials] with short tutorials about the main Kaa features.
 - Join the discussion at our [community chat][Kaa user chat] and share feedback!
 - Outfit your STM32 with sensors to collect more data.
-- Complete the [Getting Started tutorials cycle][getting started tutorials].
 
 
 [code-url]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/hardware-guides/connect-stm32-to-kaa-platform/attach/code
 [Kaa IoT Platform Arduino library]: https://github.com/kaaproject/kaa-arduino-sdk
 [arduino-ide]: https://www.arduino.cc/en/Main/Software
 [STM32]: https://en.wikipedia.org/wiki/STM32
-[Web Dashboard]: https://docs.kaaiot.io/KAA/docs/current/Features/Visualization/WD/
