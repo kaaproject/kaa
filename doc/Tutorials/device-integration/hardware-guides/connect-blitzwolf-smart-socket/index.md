@@ -2,7 +2,7 @@
 layout: page
 title: Connecting the BlitzWolf® BW-SHP6 WIFI smart socket
 permalink: /:path/
-sort_idx: 3
+sort_idx: 10
 ---
 
 {% include variables.md %}
@@ -71,9 +71,9 @@ Also, the device can receive commands from the Kaa platform to switch `On/Off` i
 
 ## Next steps
 
+- Complete the [**Getting Started tutorials cycle**][getting started tutorials] with short tutorials about the main Kaa features.
 - [Data Analytics and Notifications webinar][webinar Data Analytics and Notifications] - figure out how this smart socket used with Kaa platform for data analytics and notifications.
 - [Device management][identity] - find out more about device management feature.
-- [Data collection tutorial][collecting data from a device] - learn how to collect telemetry from your device into the platform.
 
 
 [HLW8012-library-url]:      https://github.com/kaaproject/hlw8012

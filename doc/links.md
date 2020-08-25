@@ -221,7 +221,7 @@
 [solution]:             {{kaa_concepts}}#solutions
 [blueprint]:            {{kaa_concepts}}#blueprint
 [extension]:            {{kaa_concepts}}#extension-services
-[dashboard]:            {{wd_url}}Overview/#dashboards
+[dashboard]:            {{wd_url}}Dashboards/#dashboards
 [widget]:               {{wd_url}}Overview/#widgets
 [tenant]:               {{kaa_concepts}}#tenant
 
@@ -248,6 +248,7 @@
 [connect BlitzWolf smart socket]:         {{tutorials_url}}device-integration/hardware-guides/connect-blitzwolf-smart-socket/
 [how to connect an ESP8266]:              {{tutorials_url}}device-integration/hardware-guides/connect-esp8266-to-kaa-platform/
 [how to connect an STM32]:                {{tutorials_url}}device-integration/hardware-guides/connect-stm32-to-kaa-platform/
+[how to connect a Raspberry Pi]:          {{tutorials_url}}device-integration/hardware-guides/connect-raspberry-to-kaa-platform/
 
 <!-- Administration -->
 {% capture administration_url %}{{root_url}}Administration/{% endcapture %}

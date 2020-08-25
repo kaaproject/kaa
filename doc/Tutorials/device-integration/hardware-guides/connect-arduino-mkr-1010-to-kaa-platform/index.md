@@ -19,7 +19,7 @@ You will learn how to create a digital twin of your device and connect it to the
 
 We will simulate a greenhouse solution, which will allow us to monitor temperature, humidity, and lighting levels.
 Our MKR-1010 will represent an [endpoint][endpoint] in the Kaa platform and report all sensor data.
-Also, we will interact with the Kaa [Web Dashboard][dashboard] to create a digital twin of the [Arduino MKR-1010][MKR-1010] and view telemetry data.
+Also, we will interact with the Kaa [Web Dashboard][WD] to create a digital twin of the [Arduino MKR-1010][MKR-1010] and view telemetry data.
 
 > NOTE: [MKR-ENV][MKR-ENV-Shield] shield has more than temperature, humidity, and lighting; additionally, it has an ultraviolet(A and B wavelengths) and atmosphere pressure sensors, the data from which will be also reported in our solution.
 {:.note}
@@ -119,7 +119,7 @@ More details about the payload format are [here][data collection].
 
 Before visualizing the data, you should edit application configuration for the [Endpoint Time Series service (EPTS)][EPTS].
 EPTS is the Kaa platform's component that is responsible for transforming raw [data samples][data-sample] into well-structured time series.
-It also stores the time series data and provides access API for other services, including the [Web Dashboard][dashboard].
+It also stores the time series data and provides access API for other services, including the [Web Dashboard][WD].
 
 **1**. Go to the "Applications" dashboard
 
@@ -260,6 +260,7 @@ Here's a short video of how this setup works.
 
 ## Next steps
 
+- Complete the [**Getting Started tutorials cycle**][getting started tutorials] with short tutorials about the main Kaa features.
 - Join the discussion at our [community chat][Kaa user chat] and share feedback!
 - Now that you have some Kaa experience under your belt, check out the [Kaa IoT Cloud and Kaa 1.1 webinar][webinar Kaa IoT Cloud and Kaa 1.1] to implement something more complicated.
 - [Data Analytics and Notifications webinar][webinar Data Analytics and Notifications] based on Arduino compatible(ESP8266) smart socket.

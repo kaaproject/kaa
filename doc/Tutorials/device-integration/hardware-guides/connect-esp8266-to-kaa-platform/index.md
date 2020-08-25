@@ -19,7 +19,7 @@ You will learn how to create a digital twin of your device, connect it, submit s
 
 We will simulate a weather station scenario.
 Our ESP8266 will represent an [endpoint][endpoint] in the Kaa platform and report temperature, humidity, and CO2 level.
-Also, we will interact with the Kaa [Web Dashboard][Web Dashboard] to create a digital twin of the ESP8266 and view telemetry data.
+Also, we will interact with the Kaa [Web Dashboard][WD] to create a digital twin of the ESP8266 and view telemetry data.
 
 Note that for simplicity the reported values are simulated, but you are welcome to extend the functionality by connecting sensors to your board and reporting real data.
 
@@ -95,7 +95,7 @@ See [Data Collection Protocol][2/DCP] RFC for more details on the payload format
 
 **1**. Edit the application configuration for the [Endpoint Time Series service (EPTS)][EPTS].
 EPTS is a Kaa platform component that is responsible for transforming raw [data samples][data-sample] into well-structured time series.
-It also stores the timeseries data and provides access API for other services, including the [Web Dashboard][Web Dashboard].
+It also stores the timeseries data and provides access API for other services, including the [Web Dashboard][WD].
 
 ![Edit EPTS configuration](attach/img/epts-application-config.png)
 
@@ -118,12 +118,12 @@ Congratulations, you have connected and visualized data from your ESP8266!
 
 ## Next steps
 
+- Complete the [**Getting Started tutorials cycle**][getting started tutorials] with short tutorials about the main Kaa features.
 - Join the discussion at our [community chat][Kaa user chat] and share feedback!
 - Outfit your ESP8266 with sensors to collect real data.
 - Now that you have some Kaa experience under your belt, check out the [Kaa IoT Cloud and Kaa 1.1 webinar][webinar Kaa IoT Cloud and Kaa 1.1] to implement something more complicated.
 - [Data Analytics and Notifications webinar][webinar Data Analytics and Notifications] is also based on an ESP8266-powered smart socket.
 - [Device management][identity] - find out more about the device management feature.
-- Review the [telemetry data collection tutorial][collecting data from a device].
 
 
 [code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-esp8266-to-kaa-platform/attach/code
