@@ -2,7 +2,7 @@
 layout: page
 title: Collecting data from a device
 permalink: /:path/
-sort_idx: 3
+sort_idx: 1
 ---
 
 {% include variables.md %}
@@ -198,7 +198,7 @@ Actually, even if the tutorial served you well, we'd love to hear your feedback,
 <a class="free_trial__button" href="{{connecting_your_first_device}}"><< Connecting your first device</a>
 </div>
 <div>
-<a class="free_trial__button" href="{{custom_web_dashboard}}">Custom web dashboard >></a>
+<a class="free_trial__button" href="{{sending_commands_to_device}}">Sending command to a device >></a>
 </div>
 </div>
 

@@ -2,7 +2,7 @@
 layout: page
 title: Connecting your first device
 permalink: /:path/
-sort_idx: 2
+sort_idx: 0
 ---
 
 {% include variables.md %}
@@ -288,4 +288,3 @@ Actually, even if the tutorial served you well, we'd love to hear your feedback,
 
 [code url]:           https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/connecting-your-first-device/attach/code
 [devices dashboard]:  https://cloud.kaaiot.com/devices/device-management
-[python download]:    https://www.python.org/downloads/

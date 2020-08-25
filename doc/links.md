@@ -237,6 +237,8 @@
 [collecting data from a device]:          {{collecting_data_from_a_device}}
 {% capture custom_web_dashboard %}        {{tutorials_url}}getting-started/build-iot-dashboard/{% endcapture %}
 [custom web dashboard]:                   {{custom_web_dashboard}}
+{% capture sending_commands_to_device %}  {{tutorials_url}}getting-started/sending-commands-to-device/{% endcapture %}
+[sending commands to device]:             {{sending_commands_to_device}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
@@ -304,6 +306,7 @@
 [oauth scope]: https://www.oauth.com/oauth2-servers/scope/
 [openid]: https://openid.net/connect/
 [uma]: https://en.wikipedia.org/wiki/User-Managed_Access
+[python download]: https://www.python.org/downloads/
 
 <!--== General ==-->
 [42]: https://en.wikipedia.org/wiki/42_(number)#The_Hitchhiker's_Guide_to_the_Galaxy
@@ -311,12 +314,12 @@
 [over-the-air]: https://en.wikipedia.org/wiki/Over-the-air_programming
 [openid]: https://openid.net/connect/
 
-
 <!--== KaaIoT sites ==-->
 [Kaa cloud]:                https://cloud.kaaiot.com
 [Kaa cloud registration]:   https://www.kaaproject.org/free-trial
 [Kaa user chat]:            https://gitter.im/KaaIoT/community
 
 <!--== Repl.it ==-->
-[connecting your first device repl]:  https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
-[collecting data from a device repl]: https://repl.it/@KaaIoT/CollectingDataFromADevice120
+[connecting your first device repl]:   https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
+[collecting data from a device repl]:  https://repl.it/@KaaIoT/CollectingDataFromADevice120
+[sending commands to the device repl]: https://repl.it/@KaaIoT/SendingCommandsTODevice120
