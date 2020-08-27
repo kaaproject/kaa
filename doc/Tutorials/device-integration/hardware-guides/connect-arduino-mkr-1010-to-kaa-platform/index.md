@@ -32,7 +32,7 @@ Also, we will interact with the Kaa [Web Dashboard][WD] to create a digital twin
 For the tutorial completion, we will need an account in the Kaa Cloud.
 To obtain it, register on [kaaproject.org][kaaproject.org].
 
-Then go to the [free trial page][Kaa cloud free trial] and click "Go to cloud". A Kaa Cloud account will be automatically created for you.
+Then go to the [free trial page][Kaa cloud registration] and click "Go to cloud". A Kaa Cloud account will be automatically created for you.
 
 
 ### Create application
@@ -85,7 +85,7 @@ We will use the token in a bit to connect [Arduino MKR-1010][MKR-1010].
 
 ![Adding a device. Step 2](attach/img/save_davice_token.png)
 
-**4**. Open the [sketch_MKR_1010_KAA_integration_tutorial.ino][code-url] file with the Arduino IDE and fill out the connection parameters:
+**4**. Open the [sketch_MKR_1010_KAA_integration_tutorial.ino][code url] file with the Arduino IDE and fill out the connection parameters:
 
 ```
 const char* ssid = "";          // your WiFi network SSID
@@ -255,7 +255,7 @@ Here's a short video of how this setup works.
 
 ## Resources
 
-* All tutorial resources are located on [GitHub][code-url].
+* All tutorial resources are located on [GitHub][code url].
 
 
 ## Next steps
@@ -267,10 +267,5 @@ Here's a short video of how this setup works.
 - [Device management][identity] - find out more about the device management feature.
 
 
-[code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-arduino-mkr-1010-to-kaa-platform/attach/code
-[arduino-ide]:              https://www.arduino.cc/en/Main/Software
-[MKR-1010]:                 https://www.arduino.cc/en/Guide/MKRWiFi1010
-[MKR-ENV-Shield]:           https://www.arduino.cc/en/Guide/MKRENVShield
-[Kaa cloud free trial]:     https://www.kaaproject.org/free-trial
-[kaaproject.org]:      https://www.kaaproject.org
-
+[code url]:    https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-arduino-mkr-1010-to-kaa-platform/attach/code
+[arduino-ide]: https://www.arduino.cc/en/Main/Software

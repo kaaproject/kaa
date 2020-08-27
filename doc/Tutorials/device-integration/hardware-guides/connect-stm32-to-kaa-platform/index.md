@@ -130,7 +130,7 @@ Further, you may configure your dashboard with a [command execution widget]({{wd
 
 ## Resources
 
-* All tutorial resources are located on [GitHub][code-url].
+* All tutorial resources are located on [GitHub][code url].
 
 
 ## Next steps
@@ -140,7 +140,7 @@ Further, you may configure your dashboard with a [command execution widget]({{wd
 - Outfit your STM32 with sensors to collect more data.
 
 
-[code-url]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/hardware-guides/connect-stm32-to-kaa-platform/attach/code
+[code url]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/hardware-guides/connect-stm32-to-kaa-platform/attach/code
 [Kaa IoT Platform Arduino library]: https://github.com/kaaproject/kaa-arduino-sdk
 [arduino-ide]: https://www.arduino.cc/en/Main/Software
 [STM32]: https://en.wikipedia.org/wiki/STM32
