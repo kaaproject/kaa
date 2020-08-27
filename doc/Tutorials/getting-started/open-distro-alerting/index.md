@@ -13,7 +13,7 @@ sort_idx: 3
 
 Based on the [*Kaa v1.2*][whats new in 1.2].
 
-Time to complete: *10 min*.
+Time to complete: *19 min*.
 
 
 ## Overview
@@ -75,13 +75,14 @@ The field must look like `{your-tenant-ID}*`.
 * Define the below query for the "Create monitor for" field:
 
 ```sql
-WHEN count()
+WHEN max()
+OF dataSample.co2
 OVER all documents
 FOR THE LAST 1 minute(s)
 WHERE dataSample.co2 is greater than 1000
 ```
 
-Here we count all documents where `co2` is greater than 1000.
+Here we calculate the maximum value across all documents where `co2` is greater than 1000.
 
 ![Monitor definition](attach/img/monitor-definition.png)
 
@@ -94,7 +95,7 @@ After monitor creation you should be automatically redirected to the trigger def
 Open Distro **triggers** are conditions that, if met, generate alerts and can perform some action.
 More info on Open Distro triggers is [here][create trigger].
 
-Give trigger a name (e.g., `CO2 level trigger`); leave severity level as is and define "Trigger condition" as `IS ABOVE 0`.
+Give trigger a name (e.g., `CO2 level trigger`); leave severity level as is and define "Trigger condition" as `IS ABOVE 1,000`.
 
 ![Create trigger](attach/img/create-trigger.png)
 
@@ -126,7 +127,14 @@ Actions have a destination, a message subject, and a message body.
 More info on Open Distro actions is [here][create action].
 
 Go back to the "Monitors" page -> click on the just created monitor -> select the trigger -> click "Edit" -> scroll down and click "Add action".
-Name the action (e.g., `High CO2 action`), select earlier created destination, enter Message subject (e.g., `High CO2`).
+* Name the action (e.g., `High CO2 action`)
+* Select earlier created destination
+<!--== We use such trick since Jekyll treats pair of curly braces as variable ==-->
+{% assign co2var = "{{ctx.results.0.aggregations.when.value}}" %}
+* Enter Message subject: `CO2 level is {{co2var}} ppm`.
+Here we used the `{{co2var}}` variable with CO2 level value that will trigger the alert.
+* Finally enter some message in the Message field. 
+
 Click "Send test message" and verify that you got notified in Slack.
 
 Now when the action is set up, click "Update".
