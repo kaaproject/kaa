@@ -239,6 +239,8 @@
 [custom web dashboard]:                   {{custom_web_dashboard}}
 {% capture sending_commands_to_device %}  {{tutorials_url}}getting-started/sending-commands-to-device/{% endcapture %}
 [sending commands to device]:             {{sending_commands_to_device}}
+{% capture open_distro_alerting %}        {{tutorials_url}}getting-started/open-distro-alerting/{% endcapture %}
+[open distro alerting tutorial]:          {{open_distro_alerting}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
@@ -287,10 +289,11 @@
 [redis]: https://redis.io
 [postgresql]: https://www.postgresql.org/
 [elastic stack]: https://www.elastic.co/elastic-stack
+[elasticsearch]: https://www.elastic.co/elasticsearch/
 [kibana]: https://www.elastic.co/kibana
 [vault]: https://www.vaultproject.io/
 [open distro]: https://opendistro.github.io/
-[open distro security]: https://opendistro.github.io/for-elasticsearch-docs/docs/security-configuration/
+[open distro security]: https://opendistro.github.io/for-elasticsearch-docs/docs/security/
 [open distro kibana]: https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/
 [open distro alerting]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/
 [curl]: https://en.wikipedia.org/wiki/CURL
@@ -316,11 +319,16 @@
 [openid]: https://openid.net/connect/
 
 <!--== KaaIoT sites ==-->
-[Kaa cloud]:                https://cloud.kaaiot.com
-[Kaa cloud registration]:   https://www.kaaproject.org/free-trial
-[Kaa user chat]:            https://gitter.im/KaaIoT/community
+[Kaa cloud]:              https://cloud.kaaiot.com
+[Kaa cloud registration]: https://www.kaaproject.org/free-trial
+[Kaa user chat]:          https://gitter.im/KaaIoT/community
+[kaaproject.org]:         https://www.kaaproject.org
 
 <!--== Repl.it ==-->
 [connecting your first device repl]:   https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
 [collecting data from a device repl]:  https://repl.it/@KaaIoT/CollectingDataFromADevice120
 [sending commands to the device repl]: https://repl.it/@KaaIoT/SendingCommandsTODevice120
+
+<!--== Hardware ==-->
+[MKR-1010]:       https://www.arduino.cc/en/Guide/MKRWiFi1010
+[MKR-ENV-Shield]: https://www.arduino.cc/en/Guide/MKRENVShield

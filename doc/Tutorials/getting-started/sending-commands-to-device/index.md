@@ -192,7 +192,7 @@ Actually, even if the tutorial served you well, we'd love to hear your feedback,
 <a class="free_trial__button" href="{{collecting_data_from_a_device}}"><< Collecting data from a device</a>
 </div>
 <div>
-<a class="free_trial__button" href="{{custom_web_dashboard}}">Custom web dashboard >></a>
+<a class="free_trial__button" href="{{open_distro_alerting}}">Open Distro alerting >></a>
 </div>
 </div>
 
