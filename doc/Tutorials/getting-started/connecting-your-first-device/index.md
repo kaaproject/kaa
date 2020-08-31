@@ -275,7 +275,7 @@ All the tutorial resources are located on [GitHub][code url].
 This tutorial is based on Kaa 1.2 released on July 6-th, 2020.
 If you, our reader from the future, spot some major discrepancies with your current version of the Kaa platform, or if anything does not work for you, please [give us a shout][Kaa user chat] and we will help!
 
-Actually, even if the tutorial served you well, we'd love to hear your feedback, so [join the community][Kaa user chat]!
+And if the tutorial served you well, we'd still love to hear your feedback, so [join the community][Kaa user chat]!
 
 <br/>
 <div style="display: flex; justify-content: space-between;">

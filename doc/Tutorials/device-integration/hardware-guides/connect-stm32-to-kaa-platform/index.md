@@ -36,7 +36,7 @@ Our STM32 board will represent an endpoint in the Kaa platform, report its built
 
 ![Device management dashboard](attach/img/empty-device-management-dashboard.png)
 
-**2**. Choose the [application version][application] from the drop-down menu and register a device digital twin by clicking the "Add Device" button.
+**2**. Choose the [application version][application] from the drop-down menu and register a device digital twin by clicking "Add Device" button.
 It's called an "[endpoint][endpoint]" in Kaa.
 
 **3**. Enter the desired [endpoint token][endpoint-token] and click "Create".
@@ -62,8 +62,8 @@ You may do it via Arduino Boards manager (search for “STM32 Cores”)
 
 ![Boards Manager](attach/img/boards-manager.png)
 
-After installing choose the correct board.
-In this example we use Nucleo L476RG, but it should work with other boards too.
+After the installation, choose the correct board.
+In this example, we will use Nucleo L476RG, but it should work with other boards, too.
 
 ![Choose board](attach/img/choose-board.png)
 
@@ -73,7 +73,7 @@ Also install [Kaa IoT Platform Arduino library](https://github.com/kaaproject/ka
 
 ![ESP8266 to STM32 connection](attach/img/stm32-nucleo-esp8266-connection.png)
 
-The resulting set-up must look like that.
+The resulting set-up must look like this.
 
 ![ESP8266 to STM32 connection photo](attach/img/stm32-nucleo-esp8266-connection-photo.jpg)
 
@@ -81,12 +81,12 @@ The resulting set-up must look like that.
 
 ![Arduino upload](attach/img/arduino-upload-img.png)
 
-After uploading open serial monitor.
+After the upload, open a serial monitor.
 If everything is ok, you will see the following output:
 
 ![Serial monitor 1](attach/img/serial-monitor-1-img.png)
 
-After a few seconds device connects to Kaa Cloud and starts sending data.
+In a few seconds, the device connects to the Kaa Cloud and starts sending data.
  
 ![Serial monitor 2](attach/img/serial-monitor-2-img.png)
 
@@ -104,28 +104,28 @@ Enable the [time series auto-extraction][EPTS time series auto extraction] from 
 
 ![Enable time series auto extract](attach/img/epts-autoextract-config.png)
 
-With this function enabled, Kaa will automatically create a time series for each numeric field it encounters at the root of data samples your endpoints submit.
+With this function enabled, Kaa will automatically create a time series for each numeric field it encounters at the root of data samples submitted by your endpoints.
 You will then be able to view these time series in Kaa UI, no extra configuration is required.
 
 **2**. Go to the "Device management" page and open device details of the recently created endpoint (by clicking on the corresponding row in the device table).
 Here you can see all the device telemetry and metadata. 
 Our board is sending one value `output_1` that represents a state of an onboard LED.
-The platform prefixed its time series name with the `auto~` meaning it was auto-extracted.
+The platform prefixed its time series name with the `auto~`, meaning it was auto-extracted.
 
 ![Device telemetry data](attach/img/device-telemetry-data-img.png)
 
 You can control the LED directly from this page.
-Scroll below and find the **Command execution** widget. 
-Fill **Command type** field with `OUTPUT_SWITCH` and **Command body in JSON** field with `{ "number": "1", "state": "1" }` to turn on the LED.
+Scroll down and find the **Command execution** widget.
+Fill out the **Command type** field with `OUTPUT_SWITCH` and **Command body in JSON** field with `{ "number": "1", "state": "1" }` to turn on the LED.
 
 ![Command execution](attach/img/command-execution-img.png)
 
-`"number"` is an output number and `"state"` is LED state. 
-We have one output pin with LED connected to it so we named it **first** output or output **number 1** in device firmware.
-If we have more outputs we may refer to them in the same manner. 
-To turn off the LED change `"state"` to zero: `{ "number": "1", "state": "0" }`.
+`"number"` is an output number and `"state"` is the LED state.
+We have one output pin with the LED connected to it, so we named it the **first** output or output **number 1** in the device firmware. 
+If we have more outputs, we may refer to them in a similar way.
+To turn off the LED, change `"state"` to zero: `{ "number": "1", "state": "0" }`.
 
-Further, you may configure your dashboard with a [command execution widget]({{wd_url}}Widgets/#command-execution) to do this in one click.
+Further, you may configure your dashboard with a [command execution widget]({{wd_url}}Widgets/#command-execution) to do all of the above in one click.
 
 
 ## Resources

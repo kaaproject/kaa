@@ -43,20 +43,20 @@ Let us start by reviewing some new terms and concepts related to the Kaa command
 ### Command
 
 **Command** is a short-lived message sent to a connected endpoint from the Kaa platform.
-With the commands, you can toggle the light on/off, pop up car trunk, or request an immediate endpoint state report.
+With the commands, you can toggle the lights on/off, open a car trunk, or request an immediate endpoint state report.
 
-Commands may have either *pending* or *executed* states.
+Any commands may be in either *pending* or *executed* state.
 *Pending* state means that the command was invoked but no execution result for that command is known yet.
-*Executed* state is assigned to the command to which endpoint has respond, meaning an endpoint received the command, executed it, and sent the execution result back to the platform.
+*Executed* state is assigned to the command that has gotten an endpoint response, meaning an endpoint received the command, executed it, and sent the execution result back to the platform.
 
-Consider the example.
+Consider the following example.
 
-Assume you send a command to your Tesla to park on a parking slot.
-The platform immediately assigns *pending* state to that command, your Tesla receives the command and starts parking.
-After finishing parking Tesla reports the execution result of that command back to the platform and Kaa assigns *executed* state to that command.
+Let's assume you just sent a command to your Tesla car to park itself in a parking slot.
+The platform immediately assigns *pending* to that command, while your Tesla receives the command and starts parking.
+After finishing with the task, the car reports the execution result of that command back to the platform and Kaa assigns *executed* to that command.
 
 Every command has an execution _status code_ and _reason phrase_ that endpoints can specify at the moment of reporting the execution result back to the platform.
-Assuming that your Tesla arrived at the parking slot but it was parked by another vehicle, Tesla may report the execution result specifying `409` status code and some meaningful reason phrase available then from the Kaa UI.
+If, for example, your Tesla couldn't finish the parking because it was taken by another vehicle, it may report the execution result specifying `409` status code and some meaningful reason phrase, which will be displayed for you in the Kaa UI. 
 
 
 ### Command type
@@ -86,16 +86,16 @@ Start by logging into your [Kaa Cloud account][Kaa cloud].
 
 <br>
 
-When a user invokes the command (e.g., from Kaa UI) on the device that connects to the platform over a synchronous protocol (e.g., HTTP) there is no way for the platform to push such command to the device.
-Instead, Kaa persists the command and waits till the device requests such command for the execution.
-It means that for devices with synchronous protocols it is the their responsibility to periodically poll the platform for new commands.
+When the user invokes a command (e.g., from Kaa UI) on a device that connects to the platform over a synchronous protocol (e.g., HTTP), there is no way for the platform to push such command to the device.
+Instead, Kaa persists the command and waits until the device requests it for execution.
+This means that for devices with synchronous protocols it is their responsibility to periodically poll the platform for new commands.
 
-So let's invoke the command and make it available for the execution by an endpoint.  
+So let's invoke some command and make it available for execution by an endpoint.  
 
 Go to the endpoint's dashboard and find the "Command execution" widget.
 
 Fill out _Command type_ field with `reboot` and set _Maximum command retention for delivery_ to 1 hour.
-_Maximum command retention for delivery_ defines the time of how long the command is available for the execution by an endpoint.
+_Maximum command retention for delivery_ defines the time of how long the command is available for execution by an endpoint.
 
 Click `Run`.
 
@@ -104,9 +104,9 @@ Click `Run`.
 Once the command is invoked, it appears in a response to the polling during the time specified in the _Maximum command retention for delivery_ field (1 hour in our case).
 
 To poll the platform for new commands with the `reboot` command type, execute the bellow `cURL`.
-The last part of the URL designates the command type which is `reboot` in our case.
+The last part of the URL designates the command type, which in our case is `reboot`.
 
-Swap `<app-version-name>` with the application version that endpoint works in and `<endpoint-token>` with an endpoint token.
+Replace `<app-version-name>` with the actual application version used by the endpoint and `<endpoint-token>` with the endpoint token.
 
 ```bash
 curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/cex/<endpoint-token>/command/reboot' \
@@ -115,12 +115,12 @@ curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-ve
 
 You just retrieved the earlier invoked command.
 Capture the `id` from the response.
-It's internal **command ID** used by Kaa to uniquely identify the command.
+It's an internal **command ID** used by Kaa to uniquely identify the command.
 
 Note that the command is still in the `Pending` state in the "Commands history" widget on Kaa UI.
-Let's send command execution result back to Kaa.
+Let's send the command execution result back to Kaa.
 
-Specify application version for `<app-version-name>`, endpoint token for `<endpoint-token>` and command ID for `<command-ID>` from the earlier received response body.
+Specify the application version for `<app-version-name>`, the endpoint token for `<endpoint-token>` and the command ID for `<command-ID>` from the earlier received response body.
 
 ```bash
 curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/cex/<endpoint-token>/result/reboot' \
@@ -132,7 +132,7 @@ curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-ve
 }]'
 ```
 
-When the platform receives the execution result for the command with specific **command ID** it marks the command as **executed** and stops returning it in a response for the command polling.  
+When the platform receives the execution result for the command with the specific **command ID**, it marks the command as **executed** and stops returning it in a response for the command polling.  
 
 <br>
 
@@ -143,7 +143,7 @@ When the platform receives the execution result for the command with specific **
 To run the below MQTT client on your PC, you will need [Python 3][python download] installed.
 To speed things up a little, you can also just [open and run it on Repl.it][sending commands to the device repl].
 
-Initialize `ENDPOINT_TOKEN` and `APPLICATION_VERSION` variables with endpoint token and application version respectively.
+Initialize the `ENDPOINT_TOKEN` and the `APPLICATION_VERSION` variables with endpoint token and application version respectively.
 
 ```python
 {% include_relative attach/code/client.py %}
@@ -151,11 +151,11 @@ Initialize `ENDPOINT_TOKEN` and `APPLICATION_VERSION` variables with endpoint to
 
 Run the python code.
 
-Now when the simulator is running go to the endpoint's dashboard and send a command with type `zero` to the endpoint.
+Now that the simulator is running, go to the endpoint's dashboard and send a command with type `zero` to the endpoint.
 
 ![zero-command-execution](attach/img/zero-command-execution.png)
 
-Navigate to the endpoint `Device telemetry` widget and see that endpoint respond with zero telemetry data values.
+Navigate to the endpoint `Device telemetry` widget and see that the endpoint responded with zero telemetry data values.
 
 ![zero-telemetry](attach/img/zero-telemetry.png)
 
@@ -184,7 +184,7 @@ All the tutorial resources are located on [GitHub][code url].
 This tutorial is based on Kaa 1.2 released on July 6-th, 2020.
 If you, our reader from the future, spot some major discrepancies with your current version of the Kaa platform, or if anything does not work for you, please [give us a shout][Kaa user chat] and we will help!
 
-Actually, even if the tutorial served you well, we'd love to hear your feedback, so [join the community][Kaa user chat]!
+And if the tutorial served you well, we'd still love to hear your feedback, so [join the community][Kaa user chat]!
 
 <br/>
 <div style="display: flex; justify-content: space-between;">
