@@ -14,7 +14,7 @@ sort_idx: 10
  
 ## Overview
 
-In this tutorial, we will look at how to connect the [BlitzWolf® BW-SHP6 2300W WIFI Smart Socket][blitzwolf-smart-socket] to the Kaa platform using the default, MQTT-based protocol.
+In this tutorial, we will look at how to connect the [BlitzWolf® BW-SHP6 2300W WIFI Smart Socket][blitzwolf-smart-socket] to the Kaa platform using the default MQTT-based protocol.
 You will learn how to connect the real device used for [Data Analytics and Notifications webinar][webinar Data Analytics and Notifications], publish the telemetry data and handle commands from the Kaa platform.
 
 
