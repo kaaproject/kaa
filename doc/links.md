@@ -251,6 +251,7 @@
 [how to connect an ESP8266]:              {{tutorials_url}}device-integration/hardware-guides/connect-esp8266-to-kaa-platform/
 [how to connect an STM32]:                {{tutorials_url}}device-integration/hardware-guides/connect-stm32-to-kaa-platform/
 [how to connect a Raspberry Pi]:          {{tutorials_url}}device-integration/hardware-guides/connect-raspberry-to-kaa-platform/
+[connecting node-red to kaa]:             {{tutorials_url}}device-integration/connecting-node-red-to-kaa/
 
 <!-- Administration -->
 {% capture administration_url %}{{root_url}}Administration/{% endcapture %}
