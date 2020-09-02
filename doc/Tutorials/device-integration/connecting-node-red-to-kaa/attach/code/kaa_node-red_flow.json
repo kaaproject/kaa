@@ -1,0 +1,229 @@
+[
+  {
+    "id": "a120f4f.e30b208",
+    "type": "tab",
+    "label": "kaa_client",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "a12578ee.d4bef8",
+    "type": "inject",
+    "z": "a120f4f.e30b208",
+    "name": "Metadata Update",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "1.0",
+    "x": 150,
+    "y": 180,
+    "wires": [
+      [
+        "690e0efd.93f15"
+      ]
+    ]
+  },
+  {
+    "id": "a54dbdb1.24dcc",
+    "type": "mqtt out",
+    "z": "a120f4f.e30b208",
+    "name": "Kaa KPC",
+    "topic": "",
+    "qos": "0",
+    "retain": "",
+    "broker": "dc0deea1.ea5b2",
+    "x": 700,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "b23dc76c.f7c288",
+    "type": "debug",
+    "z": "a120f4f.e30b208",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "x": 710,
+    "y": 340,
+    "wires": []
+  },
+  {
+    "id": "690e0efd.93f15",
+    "type": "function",
+    "z": "a120f4f.e30b208",
+    "name": "Metadata",
+    "func": "var deviceToken = global.get('DeviceToken');\nvar appVersion = global.get('AppVersion');\n\nmsg.topic = 'kp1/' + appVersion + '/epmx/' + deviceToken + '/update/keys';\n\nmsg.payload = {\n    \"model\": \"Node Red\",\n    \"works\": true,\n    \"model\": \"BME/BMP 280\",\n    \"fwVersion\": \"v0.0.1\",\n    \"latitude\": 40.71427,\n    \"longitude\": -74.00597,\n}\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 360,
+    "y": 180,
+    "wires": [
+      [
+        "a54dbdb1.24dcc",
+        "8c84e0d7.92ae3"
+      ]
+    ]
+  },
+  {
+    "id": "88765ea7.037f",
+    "type": "inject",
+    "z": "a120f4f.e30b208",
+    "name": "Send Telemetry",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "repeat": "2",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "1.5",
+    "x": 150,
+    "y": 340,
+    "wires": [
+      [
+        "a2dab299.37ae3"
+      ]
+    ]
+  },
+  {
+    "id": "66c1df10.0d3db",
+    "type": "comment",
+    "z": "a120f4f.e30b208",
+    "name": "Sending Metadata to Kaa",
+    "info": "Example of sending metadata to kaa",
+    "x": 150,
+    "y": 140,
+    "wires": []
+  },
+  {
+    "id": "a2dab299.37ae3",
+    "type": "function",
+    "z": "a120f4f.e30b208",
+    "name": "Telemetry Data",
+    "func": "var deviceToken = global.get('DeviceToken');\nvar appVersion = global.get('AppVersion');\n\nmsg.topic = 'kp1/' + appVersion + '/dcx/' + deviceToken + '/json';\n\nmsg.payload = [{\n    temperature_C: Math.random() * (25 - 16) + 16,\n    humidity: Math.random() * (95 - 80) + 80,\n    pressure_hPa: Math.random() * (1000 - 990) + 990,\n    timestamp: new Date().getTime()\n}];\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 380,
+    "y": 340,
+    "wires": [
+      [
+        "a54dbdb1.24dcc",
+        "b23dc76c.f7c288"
+      ]
+    ]
+  },
+  {
+    "id": "bbea8f00.2718",
+    "type": "comment",
+    "z": "a120f4f.e30b208",
+    "name": "Sending Telemetry to Kaa",
+    "info": "Example of sending telemtry data to kaa",
+    "x": 150,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "3a42d047.ab7e5",
+    "type": "inject",
+    "z": "a120f4f.e30b208",
+    "name": "Init",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "0",
+    "x": 110,
+    "y": 80,
+    "wires": [
+      [
+        "2a00fd58.27c562"
+      ]
+    ]
+  },
+  {
+    "id": "2a00fd58.27c562",
+    "type": "function",
+    "z": "a120f4f.e30b208",
+    "name": "Init Global",
+    "func": "global.set('DeviceToken', 'yourToken');\nglobal.set('AppVersion', 'yourAppVersion');\n\nconsole.log('kaa_client')\nconsole.log('DeviceToken:', global.get('DeviceToken'))\nconsole.log('AppVersion:', global.get('AppVersion'))\n\nvar deviceToken = global.get('DeviceToken');\nvar appVersion = global.get('AppVersion');\n\nmsg.payload = 'DeviceToken: ' + deviceToken + '; AppVersion: ' + appVersion;\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "x": 360,
+    "y": 80,
+    "wires": [
+      [
+        "cd0bf7ba.c69908"
+      ]
+    ]
+  },
+  {
+    "id": "cd0bf7ba.c69908",
+    "type": "debug",
+    "z": "a120f4f.e30b208",
+    "name": "Initial Variables",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "x": 720,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "8c84e0d7.92ae3",
+    "type": "debug",
+    "z": "a120f4f.e30b208",
+    "name": "",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "x": 710,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "a3cb4cfe.034f7",
+    "type": "comment",
+    "z": "a120f4f.e30b208",
+    "name": "Initialization",
+    "info": "",
+    "x": 110,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "dc0deea1.ea5b2",
+    "type": "mqtt-broker",
+    "z": "",
+    "name": "mqtt.cloud.kaaiot.com",
+    "broker": "mqtt.cloud.kaaiot.com",
+    "port": "1883",
+    "clientid": "",
+    "usetls": false,
+    "compatmode": true,
+    "keepalive": "60",
+    "cleansession": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": ""
+  }
+]
