@@ -270,9 +270,10 @@
 [webinar Data Analytics and Notifications]: {{root_url}}Webinars/2020-04-02-Data-Analytics-and-Notifications/
 
 <!-- What's new -->
-[whats new]: {{root_url}}Whats-new/
-[whats new in 1.1]: {{root_url}}Whats-new/#kaa-11-november-8-th-2019
-[whats new in 1.2]: {{root_url}}Whats-new/#kaa-12-july-6-th-2020
+{% capture whats_new_url %}{{root_url}}Whats-new/{% endcapture %}
+[whats new]:        {{whats_new_url}}
+[whats new in 1.1]: {{whats_new_url}}#kaa-11-november-8-th-2019
+[whats new in 1.2]: {{whats_new_url}}#kaa-12-july-6-th-2020
 
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
