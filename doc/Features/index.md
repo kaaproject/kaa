@@ -19,6 +19,7 @@ Explore the nested subsections to learn more about the various Kaa features and 
 | [**Data collection**][data collection]        | Device **telemetry data collection** and storage. **Time series data, device logs, alerts. Connecting external systems.**    |
 | [**Configuration management**][configuration] | Management and **distribution of the device configuration data**: individually or in bulk.                                   |
 | [**Command invocation**][commands]            | **Remote control** of connected devices. Immediate and delayed **command invocation**.                                       |
+| [**Data analytics**][data analytics]            | Device data **storage, querying, analysis, and visualization.** Trigger-based **alerting and notifications** delivery.    |
 | [**Software updates**][ota]                   | **Software version management** and upgrade orchestration. Targeted, gradual, and scheduled software roll-out.               |
 | [**Visualization**][visualization]            | **Web interface** for data visualization, device management, platform administration, and more.                              |
 | [**Multi-tenancy**][multi-tenancy]            | Components that enables **multi-tenancy**.                                                                                   |
