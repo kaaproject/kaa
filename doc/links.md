@@ -246,6 +246,7 @@
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
 
 <!--== Device Integration ==-->
+[device integration tutorials]:           {{tutorials_url}}device-integration/
 [connect Arduino (MKR-1010 + MKR-ENV)]:   {{tutorials_url}}device-integration/hardware-guides/connect-arduino-mkr-1010-to-kaa-platform/
 [connect BlitzWolf smart socket]:         {{tutorials_url}}device-integration/hardware-guides/connect-blitzwolf-smart-socket/
 [how to connect an ESP8266]:              {{tutorials_url}}device-integration/hardware-guides/connect-esp8266-to-kaa-platform/
