@@ -18,7 +18,7 @@ Time to complete: *19 min*.
 
 ## Overview
 
-Welcome to the third tutorial in the Kaa getting started guide!
+Welcome to the fourth tutorial in the Kaa getting started guide!
 We assume that you have successfully [connected your first device][connecting your first device] to Kaa and [collected data from a device][collecting data from a device], so make sure to review those tutorials before proceeding here.
 
 From this tutorial, you will learn how to configure alerts to be triggered when a certain telemetry value from the endpoint exceeds a defined threshold.
@@ -191,7 +191,7 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 <a class="free_trial__button" href="{{sending_commands_to_device}}"><< Sending commands to device</a>
 </div>
 <div>
-<a class="free_trial__button" href="{{custom_web_dashboard}}">Custom web dashboard >></a>
+<a class="free_trial__button" href="{{authenticating_client_with_tls_certificate}}">Authenticating client with TLS certificate >></a>
 </div>
 </div>
 

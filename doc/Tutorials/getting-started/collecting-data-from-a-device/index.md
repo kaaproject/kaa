@@ -133,6 +133,7 @@ Go to the pre-defined endpoint dashboard and scroll to the "Device telemetry" wi
 (The endpoint dashboard is available from Device management -> Devices -> select your endpoint in the list.)
 Now we are all set to send our first data sample to the platform.
 
+
 ### Send data samples
 
 You can submit telemetry data via a variety of MQTT- and HTTP-based interfaces.
@@ -202,4 +203,4 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 </div>
 </div>
 
-[code url]:           https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/collecting-data-from-a-device/attach/code
+[code url]: https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/collecting-data-from-a-device/attach/code

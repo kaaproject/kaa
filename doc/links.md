@@ -230,17 +230,19 @@
 [tutorials]:                              {{tutorials_url}}
 
 <!--== Getting Started ==-->
-[getting started tutorials]:              {{tutorials_url}}getting-started/
-{% capture connecting_your_first_device %}{{tutorials_url}}getting-started/connecting-your-first-device/{% endcapture %}
-[connecting your first device]:           {{connecting_your_first_device}}
-{% capture collecting_data_from_a_device %}{{tutorials_url}}getting-started/collecting-data-from-a-device/{% endcapture %}
-[collecting data from a device]:          {{collecting_data_from_a_device}}
-{% capture custom_web_dashboard %}        {{tutorials_url}}getting-started/build-iot-dashboard/{% endcapture %}
-[custom web dashboard]:                   {{custom_web_dashboard}}
-{% capture sending_commands_to_device %}  {{tutorials_url}}getting-started/sending-commands-to-device/{% endcapture %}
-[sending commands to device]:             {{sending_commands_to_device}}
-{% capture open_distro_alerting %}        {{tutorials_url}}getting-started/open-distro-alerting/{% endcapture %}
-[open distro alerting tutorial]:          {{open_distro_alerting}}
+[getting started tutorials]:                             {{tutorials_url}}getting-started/
+{% capture connecting_your_first_device %}               {{tutorials_url}}getting-started/connecting-your-first-device/{% endcapture %}
+[connecting your first device]:                          {{connecting_your_first_device}}
+{% capture collecting_data_from_a_device %}              {{tutorials_url}}getting-started/collecting-data-from-a-device/{% endcapture %}
+[collecting data from a device]:                         {{collecting_data_from_a_device}}
+{% capture custom_web_dashboard %}                       {{tutorials_url}}getting-started/build-iot-dashboard/{% endcapture %}
+[custom web dashboard]:                                  {{custom_web_dashboard}}
+{% capture sending_commands_to_device %}                 {{tutorials_url}}getting-started/sending-commands-to-device/{% endcapture %}
+[sending commands to device]:                            {{sending_commands_to_device}}
+{% capture open_distro_alerting %}                       {{tutorials_url}}getting-started/open-distro-alerting/{% endcapture %}
+[open distro alerting tutorial]:                         {{open_distro_alerting}}
+{% capture authenticating_client_with_tls_certificate %} {{tutorials_url}}getting-started/tls-certificate-client-authentication/{% endcapture %}
+[authenticating client with tls certificate]:            {{authenticating_client_with_tls_certificate}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
@@ -328,9 +330,11 @@
 [kaaproject.org]:         https://www.kaaproject.org
 
 <!--== Repl.it ==-->
-[connecting your first device repl]:   https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
-[collecting data from a device repl]:  https://repl.it/@KaaIoT/CollectingDataFromADevice120
-[sending commands to the device repl]: https://repl.it/@KaaIoT/SendingCommandsTODevice120
+[connecting your first device repl]:                        https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
+[collecting data from a device repl]:                       https://repl.it/@KaaIoT/CollectingDataFromADevice120
+[sending commands to the device repl]:                      https://repl.it/@KaaIoT/SendingCommandsTODevice120
+[one way authenticating client with tls certificate repl]:  https://repl.it/@KaaIoT/OneWayAuthenticatingClientWithTlsCertificate120
+[two way authenticating client with tls certificate repl]:  https://repl.it/@KaaIoT/TwoWayAuthenticatingClientWithTlsCertificate120
 
 <!--== Hardware ==-->
 [MKR-1010]:       https://www.arduino.cc/en/Guide/MKRWiFi1010
