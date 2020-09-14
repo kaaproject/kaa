@@ -11,14 +11,14 @@ sort_idx: 2
 * TOC
 {:toc}
 
-In this tutorial, we will look at how to send data to the Kaa platform using Node-RED (a flow-based development tool for visual programming).
-You will learn how to create a digital twin of your Node-RED device, connect it, submit some telemetry and view it in the Kaa web interface.
+In this tutorial, we will look at how to send data to the Kaa platform by using Node-RED, which is a flow-based development tool for visual programming.
+You will learn how to create a digital twin of your Node-RED device, connect the device to Kaa, submit some telemetry and view it in the Kaa web interface.
 
 
 ## Overview
 
 We will be using [Node-RED][Node-RED] installed on a Raspberry Pi.
-However, in your case Node-RED can be installed **anywhere** - on a local machine, on other than Raspberry Pi device, in the cloud, etc.
+However, in your case Node-RED can be installed **anywhere** - on a local machine, on some other device instead of Raspberry Pi, in the cloud, etc.
 Our device will represent an [endpoint][endpoint] in the Kaa platform and report temperature, humidity, and air pressure.
 Also, we will interact with the Kaa [Web Dashboard][WD] to create a digital twin of the Raspberry Pi and view telemetry data.
 
@@ -34,11 +34,11 @@ Also, we will interact with the Kaa [Web Dashboard][WD] to create a digital twin
 
 ### Connect your device
 
-Go to the "Device Management" dashboard in your account
+Go to the "Device Management" dashboard in your account.
 
 ![Menu device management](attach/img/menu-device-management.png)
 
-and add a new device specifying a token that we will use later to identify a Raspberry Pi in the Kaa Cloud.
+Then add a new device specifying a token that we will use later to identify the Raspberry Pi in the Kaa Cloud.
 
 ![Add device](attach/img/add-device.png)
  
@@ -46,12 +46,12 @@ Also, go to the added device page from the "Device Management" dashboard and cop
 
 ![App version device page](attach/img/app-version-device-page.png)
 
-We will need both the application version and token to connect a Raspberry Pi to the Kaa Cloud.
+We will need both the application version and the token to connect the Raspberry Pi to the Kaa Cloud.
 
-Now that we have a device’s digital twin created in Kaa together with its token and application version, let's work with the Raspberry Pi.
+Now that we have a digital twin of our device created in Kaa together with its token and application version, let's work with the Raspberry Pi.
 
 
-Connect the BME280 sensor to the Raspberry Pi by referring to the following table:  
+Connect a BME280 sensor to the Raspberry Pi by referring to the following table:  
 
 |MODULE PCB|DESC   |GPIO HEADER PINS|
 |----------|-------|----------------|
@@ -60,15 +60,14 @@ Connect the BME280 sensor to the Raspberry Pi by referring to the following tabl
 |SCL       |I2C SCL|P1-05           |
 |SDA       |I2C SDA|P1-03           |
 
-Here’s the diagram of a breadboard setup.  
+Here’s the diagram the breadboard setup diagram.  
 ![BME280 module setup](attach/img/bme280-module-setup.png)
 
-If you don't have the BME280 sensor, then skip the above step and move on.
+If you don't have a BME280 sensor, then skip the above step and move on.
 
-You may use cable Ethernet connection or connect the Raspberry Pi to the WiFi
-[using command line](https://raspberrypihq.com/how-to-connect-your-raspberry-pi-to-wifi/) or [graphical desktop user interface](https://maker.pro/raspberry-pi/tutorial/ways-to-connect-raspberry-pi-to-a-wi-fi-network).
+You may use an Ethernet cable or connect the Raspberry Pi to WiFi [using command line](https://raspberrypihq.com/how-to-connect-your-raspberry-pi-to-wifi/) or [graphical desktop user interface](https://maker.pro/raspberry-pi/tutorial/ways-to-connect-raspberry-pi-to-a-wi-fi-network).
 
-Once the Raspberry Pi is connected to the network, install the Node-RED:  
+Once the Raspberry Pi is connected to the network, install Node-RED:  
 > NOTE: Node-RED is pre-installed in the "Raspberry Pi OS (32-bit) with desktop and recommended software", so you may skip installation step if you have this OS distribution.
 {:.note}
 
@@ -78,7 +77,7 @@ $ sudo apt install npm
 $ sudo npm install -g --unsafe-perm node-red
 ```
 
-After successful installation start Node-RED:
+After the installation is complete, start Node-RED:
 
 ```bash
 $ node-red
@@ -86,7 +85,7 @@ $ node-red
 
 ![Node-RED start](attach/img/node-red-start.png)
 
-After Node-RED reports in a console that it is running, open a browser on the Raspberry Pi and go to `127.0.0.1:1880` or if you are using the browser on another computer, you will need to use your network Raspberry Pi IP address: `your_raspberry_ip_address:1880`.
+When Node-RED reports in a console that it is running, open a browser on the Raspberry Pi and go to `127.0.0.1:1880` or, if you are using the browser on another computer, you will need to use the Raspberry Pi IP address from your network: `your_raspberry_ip_address:1880`.
 
 ![Node-RED blank](attach/img/node-red-blank.png)
 
@@ -97,41 +96,41 @@ Install a BME280 node, for that click on a menu button in the right top corner a
 
 ![Node-RED manage palette](attach/img/node-red-manage-palette.png)
 
-then click on **Install** tab and search for **bme280**.
+Then, click on **Install** tab and search for **bme280**.
 
 ![Node-RED search BME280 node](attach/img/node-red-search-bme280-node.png)
 
 Install `node-red-contrib-bme280` node.
 
-OK, now let's import Kaa Node-RED client flow description into Node-RED. 
+OK, now let's import the Kaa Node-RED client flow description into Node-RED. 
 
 Click **menu** -> **Import**:
  
 ![Node-RED import](attach/img/node-red-import.png)
 
-If you have BME280 use this flow description:
+If you have BME280, use this flow description:
 
 ```json
 {% include_relative attach/code/kaa_node-red_flow_bme280.json %}
 ```
 
-If **not** use this flow description:
+If **not**, use this flow description:
 
 ```json
 {% include_relative attach/code/kaa_node-red_flow.json %}
 ```
 
-Copy the corresponding code then paste it into the red field and click **Import**.
+Copy the corresponding code, then paste it into the red field and click **Import**.
 
 ![Node-RED import clipboard](attach/img/node-red-import-clipboard.png)
 
-Open the `Init Global` node and change token and app version:
+Open the `Init Global` node and change the token and the app version:
 
 ![Configure client](attach/img/configure_client.png)
 
 At this point, the nodes only exist in the editor and must be deployed to the server.
 Click **Deploy**.
-Node-Red will start executing the flow on the server (Raspberry Pi) pushing collected data from BME280 into the Kaa platform.
+Node-Red will start executing the flow on the server (Raspberry Pi), pushing collected data from BME280 into the Kaa platform.
 
 
 ### Visualize data from the device
@@ -140,7 +139,7 @@ Node-Red will start executing the flow on the server (Raspberry Pi) pushing coll
 #### Enable time series auto extract
 
 Edit the application configuration for the [Endpoint Time Series service (EPTS)][EPTS].
-EPTS is a Kaa platform component that is responsible for transforming raw [data samples][data-sample] into well-structured time series.
+EPTS is a Kaa platform component responsible for transforming raw [data samples][data-sample] into well-structured time series.
 It also stores the time series data and provides access API for other services, including the [Web Dashboard][WD].
 
 ![Edit EPTS configuration](attach/img/applications.png)
@@ -149,8 +148,8 @@ Enable the [time series auto-extraction][EPTS time series auto extraction] from 
 
 ![Enable time series auto extract](attach/img/epts-autoextract-config.png)
 
-With this function enabled, Kaa will automatically create a time series for each numeric field it encounters at the root of data samples your endpoints submit.
-You will then be able to view these time series in Kaa UI, no extra configuration is required.
+With this function enabled, Kaa will automatically create a time series for each numeric field that it encounters at the root of data samples submitted by your endpoints.
+You will then be able to view these time series in the Kaa UI, with no extra configuration required.
 
 
 #### Visualize data
@@ -160,7 +159,7 @@ See the data from your Raspberry Pi on the "Device telemetry" widget.
 
 ![Device telemetry data](attach/img/device-telemetry-data.png)
 
-Congratulations, you have send data from your Raspberry Pi with Node-RED and visualized it in Kaa UI!
+Congratulations, you have successfully send data from your Raspberry Pi with Node-RED and visualized it in the Kaa UI!
 
 
 ## Resources
@@ -170,7 +169,7 @@ Congratulations, you have send data from your Raspberry Pi with Node-RED and vis
 
 ## Next steps
 
-- Complete the [**Getting Started tutorials cycle**][getting started tutorials] with short tutorials about the main Kaa features.
+- Complete the [**Getting Started tutorials cycle**][getting started tutorials] with short tutorials on the main Kaa features.
 - Join the discussion at our [community chat][Kaa user chat] and share feedback!
 
 
