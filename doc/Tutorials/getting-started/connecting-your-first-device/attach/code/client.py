@@ -7,6 +7,7 @@ import queue
 import random
 import string
 import sys
+import time
 
 import paho.mqtt.client as mqtt
 
@@ -33,7 +34,7 @@ class MetadataClient:
             metadata_queue = self.metadata_by_request_id[request_id]
             metadata_queue.put_nowait(message.payload)
         else:
-            print(f'<--- Received bad metadata response on topic {message.topic}')
+            print(f'<--- Received bad metadata response on topic {message.topic}:\n{str(message.payload.decode("utf-8"))}')
 
     def get_metadata(self):
         request_id = next(self.global_request_id)
@@ -78,6 +79,7 @@ def main():
     metadata_to_report = json.dumps({"model": "BFG 9000", "mac": "00-14-22-01-23-45"})
     metadata_client.patch_metadata_unconfirmed(metadata_to_report)
 
+    time.sleep(5)
     client.disconnect()
 
 
