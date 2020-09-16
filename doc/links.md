@@ -241,7 +241,7 @@
 [sending commands to device]:                            {{sending_commands_to_device}}
 {% capture open_distro_alerting %}                       {{tutorials_url}}getting-started/open-distro-alerting/{% endcapture %}
 [open distro alerting tutorial]:                         {{open_distro_alerting}}
-{% capture authenticating_client_with_tls_certificate %} {{tutorials_url}}getting-started/tls-certificate-client-authentication/{% endcapture %}
+{% capture authenticating_client_with_tls_certificate %} {{tutorials_url}}getting-started/authenticating-client-with-tls-certificate/{% endcapture %}
 [authenticating client with tls certificate]:            {{authenticating_client_with_tls_certificate}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
