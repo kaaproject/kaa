@@ -76,12 +76,10 @@ logger.debug("Composed data collection topic: {}".format(topic_data_collection))
 
 
 def compose_data_sample(eventType):
-  payload = [
-    {
+  payload = {
       "timestamp": int(round(time.time() * 1000)),
       "event_type": eventType,
     }
-  ]
   return json.dumps(payload)
 
 

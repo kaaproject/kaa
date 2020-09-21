@@ -74,12 +74,38 @@ In the **reliable** data collection scenario endpoint should use the next MQTT t
 
 ### Message payload structure
 
-There are **no requirements to the JSON structure** of the message payload **except that it must be enclosed into JSON array** for [data batching](#batching) purpose.
-Elements inside the array can be any valid JSON type and may be both structured and unstructured with any complexity.
+There are **no requirements to the JSON structure** of the message payload, except that **if you use [data batching](#batching), data samples must be enclosed in a JSON array**.
+Array elements (data samples) can be of any valid JSON type of any complexity.
 
 Each element of the array represents a single **data sample**.
 
 Examples:
+
+Individual data samples:
+
+**1**. Message payload that contains a **single data sample** that is the JSON object with three fields `timestamp`, `temperature`, and `log`.
+
+```json
+{
+    "timestamp": 1566987657005,
+    "temperature": 23,
+    "log": "Some information"
+}
+```
+
+**2**. Message payload that contains a **single data sample** that is a JSON number.
+
+```json
+23
+```
+
+**3**. Message payload that contains a **single data sample** that is a JSON boolean.
+
+```json
+true
+```
+
+[Data sample batches](#batching):
 
 **1**. Message payload that contains **one data sample** that is the JSON object with three fields `timestamp`, `temperature` and `log`.
 
@@ -113,7 +139,8 @@ Examples:
 ]
 ```
 
-**4**. You can even combine different JSON types in one message. Message payload that contains **four data sample** that are JSON object, JSON number, JSON array and JSON boolean.
+**4**. You can even combine different JSON types in one message.
+Message payload that contains **four data samples**: JSON object, number, array, and boolean.
 
 ```json
 [
@@ -128,6 +155,14 @@ Examples:
     true
 ]
 ```
+
+>**NOTE:** A payload structured as a JSON array is always treated as a batch of data samples.
+Therefore, a `[85,34]` JSON record is split into separate `85` and `34` data samples.
+In case you need to collect data samples structured as JSON arrays, the workaround is to send them batched, e.g. `[[85,34]]` is treated as a batch with one data sample---`[85,34]`.
+{:.note}
+It means that the [85,34] JSON record will be divided into separate 85 and 34 data samples.
+The workaround is to send a JSON array inside a batch, e.g. `[[85,34]]`---will be treated as a batch with one data sample---`[85,34]`.
+{:.note}
 
 
 #### Batching

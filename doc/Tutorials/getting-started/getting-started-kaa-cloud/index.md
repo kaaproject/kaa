@@ -204,4 +204,4 @@ Explore the "Software management" dashboard and get acquainted with its capabili
 [ep-location-widget]: {{wd_url}}Widgets/#ep-location
 [multi-series-chart-widget]: {{wd_url}}Widgets/#multiseries-chart
 [location_json]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/getting-started-kaa-cloud/attach/code/location.json
-[client_url]: https://repl.it/@KaaIoT/SimulateEndpointTelemetryData
+[client_url]: https://repl.it/@KaaIoT/SimulateEndpointTelemetryData130

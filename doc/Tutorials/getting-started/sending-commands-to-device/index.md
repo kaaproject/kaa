@@ -124,12 +124,12 @@ Specify the application version for `<app-version-name>`, the endpoint token for
 
 ```bash
 curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/cex/<endpoint-token>/result/reboot' \
---data-raw '[{
+--data-raw '{
     "id": <command-ID>,
     "statusCode": 200,
     "reasonPhrase": "OK",
     "payload": "Success"
-}]'
+}'
 ```
 
 When the platform receives the execution result for the command with the specific **command ID**, it marks the command as **executed** and stops returning it in a response for the command polling.  
@@ -141,7 +141,7 @@ When the platform receives the execution result for the command with the specifi
 <br>
 
 To run the below MQTT client on your PC, you will need [Python 3][python download] installed.
-To speed things up a little, you can also just [open and run it on Repl.it][sending commands to the device repl].
+To speed things up a little, you can also just [open and run it on Repl.it][sending commands to the device repl 1.3].
 
 Initialize the `ENDPOINT_TOKEN` and the `APPLICATION_VERSION` variables with endpoint token and application version respectively.
 

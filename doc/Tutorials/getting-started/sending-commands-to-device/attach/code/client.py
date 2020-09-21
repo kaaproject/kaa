@@ -69,13 +69,11 @@ class DataCollectionClient:
         )
 
     def compose_data_sample(self, fuelLevel, minTemp, maxTemp):
-        return json.dumps([
-            {
-                'timestamp': int(round(time.time() * 1000)),
-                'fuelLevel': fuelLevel,
-                'temperature': random.randint(minTemp, maxTemp),
-            }
-        ])
+        return json.dumps({
+            'timestamp': int(round(time.time() * 1000)),
+            'fuelLevel': fuelLevel,
+            'temperature': random.randint(minTemp, maxTemp),
+        })
 
 
 def on_message(client, userdata, message):

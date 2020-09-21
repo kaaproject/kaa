@@ -60,22 +60,6 @@ Then the Arduino formats sensor values into a [JSON][json] object: this is a dat
 }
 ```
 
-Before uploading, one or more data samples must be enclosed into a JSON array:
-
-```json
-[
-  {
-    "temperature": 25,
-    "humidity": 46,
-    "lux": 8600
-  }
-]
-```
-
-This array can be used for [batching together several data samples][batching] for upload.
-Also, a data sample does not necessarily have to be a flat JSON object: you can use nested objects and arrays.
-For simplicity, we will postpone these subjects to a later tutorial.
-
 
 ### Time series
 
@@ -97,12 +81,10 @@ All auto-extracted time series have a name that follows the pattern `auto~<field
 So, if your endpoint sends data a sample with two fields, e.g.:
 
 ```json
-[
   {
     "temperature": 23,
     "humidity": 48
   }
-]
 ```
 
 and the auto-extraction feature is enabled, EPTS creates two time-series: `auto~temperature` and `auto~humidity`. 
@@ -153,18 +135,16 @@ Remember to replace `<app-version-name>` and `<endpoint-token>` with your applic
 
 ```bash
 curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/dcx/<endpoint-token>/json' \
---data-raw '[
-  {
-    "temperature": 23,
-    "humidity": 48
-  }
-]'
+--data-raw '{
+  "temperature": 23,
+  "humidity": 48
+}'
 ```
 
 </div><div id="mqtt-client" class="tab-pane fade" markdown="1"><br>
 
 To run the below MQTT client on your PC, you will need [Python 3][python download] installed.
-To speed things up a little, you can also just [open and run it on Repl.it][collecting data from a device repl].
+To speed things up a little, you can also just [open and run it on Repl.it][collecting data from a device repl 1.3].
 
 Remember to initialize `APPLICATION_VERSION` and `ENDPOINT_TOKEN` variables your application version name and the endpoint token respectively.
 
@@ -203,4 +183,4 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 </div>
 </div>
 
-[code url]: https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/collecting-data-from-a-device/attach/code
+[code url]:           https://github.com/kaaproject/kaa/tree/rel_1.3.0/doc/Tutorials/getting-started/collecting-data-from-a-device/attach/code

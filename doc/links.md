@@ -332,7 +332,9 @@
 <!--== Repl.it ==-->
 [connecting your first device repl]:                        https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
 [collecting data from a device repl]:                       https://repl.it/@KaaIoT/CollectingDataFromADevice120
+[collecting data from a device repl 1.3]:                   https://repl.it/@KaaIoT/CollectingDataFromADevice130
 [sending commands to the device repl]:                      https://repl.it/@KaaIoT/SendingCommandsTODevice120
+[sending commands to the device repl 1.3]:                  https://repl.it/@KaaIoT/SendingCommandsTODevice130
 [one way authenticating client with tls certificate repl]:  https://repl.it/@KaaIoT/OneWayAuthenticatingClientWithTlsCertificate120
 [two way authenticating client with tls certificate repl]:  https://repl.it/@KaaIoT/TwoWayAuthenticatingClientWithTlsCertificate120
 
