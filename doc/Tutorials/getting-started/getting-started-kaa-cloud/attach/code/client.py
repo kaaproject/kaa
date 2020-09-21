@@ -119,16 +119,14 @@ def compose_data_sample(location, battery_level):
     """
     random_string = ''.join(
         random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-    data_sample = [
-        {
-            "timestamp": int(round(time.time() * 1000)),
-            "temperature": random.randint(20, 25),
-            "log": 'Randomly generated string: ' + random_string,
-            "latitude": location[0],
-            "longitude": location[1],
-            "battery_level": round(battery_level),
-        }
-    ]
+    data_sample = {
+        "timestamp": int(round(time.time() * 1000)),
+        "temperature": random.randint(20, 25),
+        "log": 'Randomly generated string: ' + random_string,
+        "latitude": location[0],
+        "longitude": location[1],
+        "battery_level": round(battery_level),
+    }
     return json.dumps(data_sample)
 
 

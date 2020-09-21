@@ -43,11 +43,9 @@ For that, execute the below `cURL` replacing `<app-version-name>` and `<endpoint
 
 ```bash
 curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/dcx/<endpoint-token>/json' \
---data-raw '[
-  {
-    "co2": 1050
-  }
-]'
+--data-raw '{
+  "co2": 1050
+}'
 ```
 
 
@@ -153,11 +151,9 @@ Don't forget to replace `<app-version-name>` and `<endpoint-token>` with your ap
 
 ```bash
 curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/dcx/<endpoint-token>/json' \
---data-raw '[
-  {
-    "co2": 1100
-  }
-]'
+--data-raw '{
+  "co2": 1100
+}'
 ``` 
 
 Within a minute you should receive a similar notification in your Slack:

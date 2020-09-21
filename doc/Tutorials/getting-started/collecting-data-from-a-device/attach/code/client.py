@@ -34,13 +34,11 @@ class DataCollectionClient:
         print('Successfully disconnected')
 
     def compose_data_sample(self):
-        return json.dumps([
-            {
-                'timestamp': int(round(time.time() * 1000)),
-                'temperature': random.randint(15, 25),
-                'humidity': random.randint(35, 60),
-            }
-        ])
+        return json.dumps({
+            'timestamp': int(round(time.time() * 1000)),
+            'temperature': random.randint(15, 25),
+            'humidity': random.randint(35, 60),
+        })
 
 
 def on_message(client, userdata, message):
