@@ -241,6 +241,8 @@
 [sending commands to device]:                            {{sending_commands_to_device}}
 {% capture open_distro_alerting %}                       {{tutorials_url}}getting-started/open-distro-alerting/{% endcapture %}
 [open distro alerting tutorial]:                         {{open_distro_alerting}}
+{% capture email_alerting %}                             {{tutorials_url}}getting-started/email-alerting/{% endcapture %}
+[email alerting tutorial]:                               {{email_alerting}}
 {% capture authenticating_client_with_tls_certificate %} {{tutorials_url}}getting-started/authenticating-client-with-tls-certificate/{% endcapture %}
 [authenticating client with tls certificate]:            {{authenticating_client_with_tls_certificate}}
 

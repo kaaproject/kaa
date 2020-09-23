@@ -36,6 +36,7 @@ Open Distro is open-source distribution of Elasticsearch with advanced security,
 
 ## Playbook
 
+
 ### Push telemetry data
 
 Firstly, we should push telemetry data into Kaa to be able to define an Open Distro **monitor**.
@@ -187,7 +188,7 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 <a class="free_trial__button" href="{{sending_commands_to_device}}"><< Sending commands to device</a>
 </div>
 <div>
-<a class="free_trial__button" href="{{authenticating_client_with_tls_certificate}}">Authenticating client with TLS certificate >></a>
+<a class="free_trial__button" href="{{email_alerting}}">Email alerting >></a>
 </div>
 </div>
 
