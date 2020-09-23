@@ -2,7 +2,7 @@
 layout: page
 title: Authenticating client with SSL/TLS certificate
 permalink: /:path/
-sort_idx: 4
+sort_idx: 5
 ---
 
 {% include variables.md %}
@@ -26,7 +26,7 @@ Time to complete: *10 min*.
 
 ## Overview
 
-Welcome to the fifth tutorial in the Kaa getting started guide!
+Welcome to the sixth tutorial in the Kaa getting started guide!
 
 From this tutorial you will learn some additional concepts of the Kaa platform and discover how to:
 
