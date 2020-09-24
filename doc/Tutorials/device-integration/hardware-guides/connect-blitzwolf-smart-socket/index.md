@@ -77,6 +77,6 @@ Also, the device can receive commands from the Kaa platform to switch `On/Off` i
 
 
 [HLW8012-library-url]:      https://github.com/kaaproject/hlw8012
-[code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-blitzwolf-smart-socket/attach/code
+[code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/hardware-guides/connect-blitzwolf-smart-socket/attach/code
 [arduino-ide]:              https://www.arduino.cc/en/Main/Software
 [blitzwolf-smart-socket]:   https://www.blitzwolf.com/BlitzWolf-BW-SHP6-2300W-WIFI-Smart-Socket-EU-Plug-Works-with-Alexa-Remote-Control-Time-Switch-Electricity-Monitoring-p-300.html
