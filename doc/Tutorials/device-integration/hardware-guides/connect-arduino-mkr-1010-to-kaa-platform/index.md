@@ -267,5 +267,5 @@ Here's a short video of how this setup works.
 - [Device management][identity] - find out more about the device management feature.
 
 
-[code url]:    https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/connect-arduino-mkr-1010-to-kaa-platform/attach/code
+[code url]:    https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/hardware-guides/connect-arduino-mkr-1010-to-kaa-platform/attach/code
 [arduino-ide]: https://www.arduino.cc/en/Main/Software
