@@ -19,9 +19,18 @@ Find below high-level descriptions of some of the major release highlights.
 
 ### Other highlights of Kaa 1.3
 
-* [**[CMX]**][CMX] In previous Kaa versions, CMX would send configuration applied messages to the configuration repository, e.g., [ECR][ECR], regardless of whether the config was applied by an endpoint or not. 
-Starting with Kaa 1.3, CMX no longer automatically sends configuration applied messages. 
+* [**[CMX]**][CMX] In previous Kaa versions, CMX would send configuration applied messages to the configuration repository, e.g., [ECR][ECR], regardless of whether the config was applied by an endpoint or not.
+Starting with Kaa 1.3, CMX no longer automatically sends configuration applied messages.
 Instead, CMX sends only those apply messages that were explicitly initiated by an endpoint.
+
+
+## Kaa 1.2-mr1 (October 2-nd, 2020)
+<!-- 1.2.1417 -->
+
+Kaa 1.2-mr1 is a maintenance release for Kaa 1.2 with the following changes:
+
+* **[Bug fix]** Incomplete TLS handshake prevents [KPC][KPC] from accepting other MQTT/TLS connections.
+The condition occurs when an outstanding client TLS handshake hangs prior to completion, and clears when the handshake times out.
 
 
 ## Kaa 1.2 (July 6-th, 2020)
