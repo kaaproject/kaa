@@ -12,6 +12,15 @@ sort_idx: 7
 {:toc}
 ​
 
+## Kaa 1.1-mr2 (October 2-nd, 2020)
+<!-- 1.1.119 -->
+
+Kaa 1.1-mr2 is a maintenance release for Kaa 1.1 with the following changes:
+
+* **[Bug fix]** Incomplete TLS handshake prevents [KPC][KPC] from accepting other MQTT/TLS connections.
+The condition occurs when an outstanding client TLS handshake hangs prior to completion, and clears when the handshake times out.
+
+
 ## Kaa 1.1-mr1 (March 25-th, 2020)
 <!-- 1.1.110 -->
 

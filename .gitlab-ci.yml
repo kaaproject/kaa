@@ -3,7 +3,11 @@ include:
     file: '/.create_version_tag.yml'
   - project: 'devops/gitlab-ci-templates'
     file: '/.update_version_in_version_repo.yml'
+  - project: 'devops/gitlab-ci-templates'
+    file: '/.create_cherry_picks.yml'
+
 
 stages:
   - create_version_tag
   - update_version_in_version_repo
+  - create_cherry_picks
