@@ -189,6 +189,15 @@ Find out more about the data analytics in Kaa [here][data analytics].
 * **[Bug fix]** Java services don't fetch Tekton configs at boot time.
 
 
+## Kaa 1.1-mr3 (November 17-th, 2020)
+
+Kaa 1.1-mr3 is a maintenance release for Kaa 1.1 with the following changes:
+
+* **[Bug fix]** `commandRetentionTtl` zero value in [REST API][https://docs.kaaiot.io/KAA/docs/v1.1.0/Features/Command-invocation/CEX/REST-API/#endpoints__endpointid__commands__commandtype__post] was not supported.
+Now commands with zero `commandRetentionTtl` are pushed to the device only once.
+Also, `commandRetentionTtl` can be configured with `kaa.cex.commands.command-retention-ttl-hours` service configuration property.
+
+
 ## Kaa 1.1-mr2 (October 2-nd, 2020)
 <!-- 1.1.119 -->
 
