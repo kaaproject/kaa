@@ -73,6 +73,7 @@
 [EPTS time series data REST API]:                   {{epts_url}}REST-API/#applications__applicationname__time_series_data_get
 [EPTS time series extraction]:                      {{epts_url}}Configuration/#time-series-extraction
 [EPTS time series auto extraction]:                 {{epts_url}}Configuration/#time-series-auto-extraction
+[EPTS time series configuration]:                   {{epts_url}}Configuration/#time-series-configuration
 
 {% capture kdca_url %}{{feature_data_collection_url}}KDCA/{% endcapture %}
 [KDCA]: {{kdca_url}}
@@ -245,6 +246,8 @@
 [email alerting tutorial]:                               {{email_alerting}}
 {% capture authenticating_client_with_tls_certificate %} {{tutorials_url}}getting-started/authenticating-client-with-tls-certificate/{% endcapture %}
 [authenticating client with tls certificate]:            {{authenticating_client_with_tls_certificate}}
+{% capture user_management %}                            {{tutorials_url}}getting-started/user-management/{% endcapture %}
+[user management]:                                       {{user_management}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
