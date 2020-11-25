@@ -193,7 +193,7 @@ Find out more about the data analytics in Kaa [here][data analytics].
 
 Kaa 1.1-mr3 is a maintenance release for Kaa 1.1 with the following changes:
 
-* **[Bug fix]** `commandRetentionTtl` zero value in [REST API][https://docs.kaaiot.io/KAA/docs/v1.1.0/Features/Command-invocation/CEX/REST-API/#endpoints__endpointid__commands__commandtype__post] was not supported.
+* **[Bug fix]** `commandRetentionTtl` zero value in [REST API](https://docs.kaaiot.io/KAA/docs/v1.1.0/Features/Command-invocation/CEX/REST-API/#endpoints__endpointid__commands__commandtype__post) was not supported.
 Now commands with zero `commandRetentionTtl` are pushed to the device only once.
 Also, `commandRetentionTtl` can be configured with `kaa.cex.commands.command-retention-ttl-hours` service configuration property.
 
