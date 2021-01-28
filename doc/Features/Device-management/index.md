@@ -81,7 +81,6 @@ The table below summarizes the list of Kaa platform components that contribute t
 | [Endpoint Register (EPR)][EPR]             | {{epr_version}}  |
 | [Endpoint Metadata Extension (EPMX)][EPMX] | {{epmx_version}} |
 | [Credential Management (CM)][CM]           | {{cm_version}}   |
-| [Client Credential Management (CCM)][CCM]  | {{ccm_version}}  |
 
 
 ## Next steps

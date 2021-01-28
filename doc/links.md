@@ -46,6 +46,8 @@
 [CCM]: {{ccm_url}}
 [CCM REST API]: {{ccm_url}}REST-API/
 
+{% capture rsx_url %}{{feature_communication_url}}RSX/{% endcapture %}
+[RSX]: {{rsx_url}}
 
 <!-- Data collection -->
 {% capture feature_data_collection_url %}{{kaa_features_url}}Data-collection/{% endcapture %}

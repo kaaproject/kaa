@@ -199,6 +199,7 @@ The table below summarizes the list of Kaa platform components that contribute t
 | [Kaa Protocol Communication (KPC)][KPC]    | {{kpc_version}} |
 | [Client Credentials Management (CCM)][CCM] | {{ccm_version}} |
 | [Endpoint Lifecycle (EPL)][EPL]            | {{epl_version}} |
+| [Request Status Extension (RSX)][RSX]      | {{rsx_version}}  |
 
 
 ## Next steps
