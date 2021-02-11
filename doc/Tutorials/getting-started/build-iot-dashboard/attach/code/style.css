@@ -1,0 +1,26 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th {
+    padding: 5px 5px;
+    text-align: center;
+}
+td {
+    padding: 5px 5px;
+    text-align: center;
+}
+#container {
+    margin: 0 auto;
+    text-align: left;
+    justify-content: center;
+    display: flex;
+}
+body {
+    text-align: center;
+}
+#table-caption{
+    padding: 10px 10px;
+    font-size: 26px;
+    font-weight: bold;
+}
