@@ -18,7 +18,7 @@ In this tutorial, you will learn how to implement a simple **web dashboard (inte
 You will learn how to:
 - **authenticate a user with the username/password** in [Keycloak][keycloak] and get his or her **[access token][access token]** for usage in **communication with the Kaa microservices' REST API**;
 - retrieve all [endpoints][endpoint] using [EPR REST API][EPR REST API] by the user access token;
-- display endpoint metadata[endpoint-metadata];
+- display [endpoint metadata][endpoint-metadata];
 - provide a user with the ability to **manage endpoints** by updating their metadata.
 
 ![Architecture overview](attach/img/architecture-overview.svg)
