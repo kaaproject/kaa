@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Platform Backup
+title: Administration
 permalink: /:path/
 sort_idx: 50
 ---
@@ -14,6 +14,8 @@ sort_idx: 50
 
 ## Basic concept
 
+### Disaster Recovery Plan
+
 The Kaa platform has a disaster recovery plan (DRP) by implementing backup and restore procedures.
 
 By default, the platform is deployed with the enabled backup feature.
@@ -22,8 +24,6 @@ Using the snapshots it is possible to restore the platform to a specific state.
 
 You can configure the backup frequency using the cron expression.
 So it is possible to set up the platform to backup itself every half a day, every day, every week, etc.
-
-Check the components from the bellow list to study how the disaster recovery plan works under the hood.
 
 
 ## Components
