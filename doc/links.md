@@ -5,6 +5,12 @@
 {% capture kaa_features_url %}{{root_url}}Features/{% endcapture %}
 [kaa features]: {{kaa_features_url}}
 
+<!-- Administration -->
+{% capture feature_administration_url %}{{kaa_features_url}}Administration/{% endcapture %}
+[administration feature]: {{feature_administration_url}}
+
+{% capture platform_backup_url %}{{feature_administration_url}}PLATFORM-BACKUP/{% endcapture %}
+[Platform Backup]:              {{platform_backup_url}}
 
 <!-- Device management -->
 {% capture feature_device_mgmt_url %}{{kaa_features_url}}Device-management/{% endcapture %}
