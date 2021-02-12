@@ -179,4 +179,7 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 <div>
 <a class="free_trial__button" href="{{authenticating_client_with_tls_certificate}}"><< Authenticating client with SSL/TLS certificate</a>
 </div>
+<div>
+<a class="free_trial__button" href="{{custom_web_dashboard}}">Build custom web dashboard on top of Kaa >></a>
+</div>
 </div>

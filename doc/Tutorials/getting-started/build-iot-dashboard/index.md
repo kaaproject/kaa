@@ -2,7 +2,7 @@
 layout: page
 title: Custom web dashboard
 permalink: /:path/
-sort_idx: 3
+sort_idx: 7
 ---
 
 {% include variables.md %}

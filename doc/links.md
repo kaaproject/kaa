@@ -250,6 +250,8 @@
 [authenticating client with tls certificate]:            {{authenticating_client_with_tls_certificate}}
 {% capture user_management %}                            {{tutorials_url}}getting-started/user-management/{% endcapture %}
 [user management]:                                       {{user_management}}
+{% capture custom_web_dashboard %}                       {{tutorials_url}}getting-started/build-iot-dashboard/{% endcapture %}
+[custom web dashboard tutorial]:                         {{custom_web_dashboard}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
@@ -288,7 +290,9 @@
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
 [k8s]: https://kubernetes.io/
+[k8s image pull secret]: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
 [helm]: https://helm.sh/
+[install helm]: https://helm.sh/docs/intro/install/
 [prometheus]: https://prometheus.io/
 [nginx]: https://www.nginx.com/
 [fluentd]: https://www.fluentd.org/
