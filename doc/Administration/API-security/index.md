@@ -2,7 +2,7 @@
 layout: page
 title: API security
 permalink: /:path/
-sort_idx: 10
+sort_idx: 2
 ---
 
 {% include variables.md %}

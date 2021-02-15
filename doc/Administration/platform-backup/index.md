@@ -2,7 +2,7 @@
 layout: page
 title: Platform backup
 permalink: /:path/
-sort_idx: 0
+sort_idx: 3
 ---
 
 {% include variables.md %}
