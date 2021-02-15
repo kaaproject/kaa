@@ -93,7 +93,7 @@ This folder will be used for storing backup snapshots.
 Now when you are inside the Docker container, check that the Kubernetes cluster where Kaa is deployed is reachable. 
 
 ```bash
-kubectl get pods -n {kaa-namespace}
+kubectl get pods -n {k8s-namespace}
 ```
 
 You should see a list of Kaa pods.
@@ -123,12 +123,12 @@ Use the bellow command to backup the platform and store a snapshot to a `storage
 Also, it will store a snapshot in the `backup` directory of the folder on your host machine where you run the Docker container.
 
 ```bash
-backup backup --release-name-prefix {release-name-prefix} --namespace {kaa-namespace} create_s3_all_backups
+backup backup --release-name-prefix {release-name-prefix} --namespace {k8s-namespace} create_s3_all_backups
 ```
 
 where:
 
-* `{kaa-namespace}` - Kubernetes namespace where Kaa is deployed
+* `{k8s-namespace}` - Kubernetes namespace where Kaa is deployed
 * `{release-name-prefix}` - prefix of the Helm release name used to deploy the platform
 
 Use the bellow commands instead of the `create_s3_all_backups` to backup and upload snapshots to S3 only specific type of storage:
@@ -144,7 +144,7 @@ Use the bellow commands instead of the `create_s3_all_backups` to backup and upl
 Use the bellow command to backup the platform and place a snapshot in the `backup` directory on a filesystem of your host machine where you run the Docker container.
 
 ```bash
-backup backup --release-name-prefix {release-name-prefix} --namespace {kaa-namespace} create_local_all_backups
+backup backup --release-name-prefix {release-name-prefix} --namespace {k8s-namespace} create_local_all_backups
 ```
 
 > Note that the `create_local_all_backups` command backups all storages except Open Distro.
@@ -169,12 +169,12 @@ We assume that you are still in the backup tool Docker container.
 Use the bellow command to restore the platform from the snapshot in the `storage-backup--{K8s-namespace}` AWS S3 bucket.
 
 ```bash
-backup backup --release-name-prefix {release-name-prefix} --namespace {kaa-namespace} --backup-date {backup-date} --source-namespace {source-kaa-namespace} restore_s3_all_backups
+backup backup --release-name-prefix {release-name-prefix} --namespace {k8s-namespace} --backup-date {backup-date} --source-namespace {source-k8s-namespace} restore_s3_all_backups
 ```
 
 where:
 
-* `{kaa-namespace}` - Kubernetes namespace where Kaa is deployed
+* `{k8s-namespace}` - Kubernetes namespace where Kaa is deployed
 * `{release-name-prefix}` - prefix of the Helm release name used to deploy the platform
 * `{backup-date}` - backup date that you want to restore. Must match the date and time in the snapshot filename on S3
 * `{source-K8s-namespace}` - source Kubernetes namespace from where the backup was taken.
@@ -193,7 +193,7 @@ Use the bellow commands instead of `restore_s3_all_backups` to restore only spec
 Use the bellow command to restore the platform from the snapshot from a `backup` folder on a local machine
 
 ```bash
-backup backup --release-name-prefix {release-name-prefix} --namespace {kaa-namespace} --backup-date {backup-date} restore_local_all_backups
+backup backup --release-name-prefix {release-name-prefix} --namespace {k8s-namespace} --backup-date {backup-date} restore_local_all_backups
 ```
 
 > Note that the `restore_local_all_backups` command restores all storages except Open Distro.
