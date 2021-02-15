@@ -30,15 +30,13 @@
     "WD"
   ],
   "Infrastructure": [
-    "TEKTON"
+    "TEKTON",
+    "PBM"
   ],
   "Miscellaneous": [
     "TSX"
   ],
   "Multi-tenancy": [
     "TENANT-MANAGER"
-  ],
-  "Administration": [
-    "PLATFORM-BACKUP"
   ]
 }

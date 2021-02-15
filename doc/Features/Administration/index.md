@@ -19,8 +19,8 @@ sort_idx: 50
 The Kaa platform has a disaster recovery plan (DRP) by implementing backup and restore procedures.
 
 By default, the platform is deployed with the enabled backup feature.
-Kaa automatically backup itself on a daily basis and upload snapshots to the AWS S3 bucket related to the particular deployment.
-Using the snapshots it is possible to restore the platform to a specific state.
+Kaa automatically backs up itself on a daily basis and upload snapshots to an AWS S3 bucket related to the particular deployment.
+Using the snapshots it is possible to restore the platform to a specific state in the time.
 
 You can configure the backup frequency using the cron expression.
 So it is possible to set up the platform to backup itself every half a day, every day, every week, etc.

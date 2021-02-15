@@ -5,13 +5,6 @@
 {% capture kaa_features_url %}{{root_url}}Features/{% endcapture %}
 [kaa features]: {{kaa_features_url}}
 
-<!-- Administration -->
-{% capture feature_administration_url %}{{kaa_features_url}}Administration/{% endcapture %}
-[administration feature]: {{feature_administration_url}}
-
-{% capture platform_backup_url %}{{feature_administration_url}}PLATFORM-BACKUP/{% endcapture %}
-[Platform Backup]:              {{platform_backup_url}}
-
 <!-- Device management -->
 {% capture feature_device_mgmt_url %}{{kaa_features_url}}Device-management/{% endcapture %}
 [identity]: {{feature_device_mgmt_url}}
@@ -31,6 +24,11 @@
 [CM clients REST API]:          {{cm_url}}REST-API/#clients
 [CM certificate POST REST API]: {{cm_url}}REST-API/#clients_certificates_post
 
+
+<!-- Protocols -->
+{% capture 1kp %}https://github.com/kaaproject/kaa-rfcs/blob/master/0001/README.md{% endcapture %}
+[1/KP]: {{1kp}}
+[1/KP request ID]: {{1kp}}#request-id
 
 <!-- Communication -->
 {% capture feature_communication_url %}{{kaa_features_url}}Communication/{% endcapture %}
@@ -71,6 +69,8 @@
 [BCX REST API]:                             {{bcx_url}}REST-API/
 [BCX binary data blob upload REST API]:     {{bcx_url}}REST-API/#binary_data_post
 [BCX data blob management REST API]:        {{bcx_url}}REST-API/#applications__appname_
+[BCX data blob last REST API]:              {{bcx_url}}REST-API/#applications__appname__endpoints__endpointid__binary_data_data_last_get
+[BCX data blob delete REST API]:            {{bcx_url}}REST-API/#applications__appname__endpoints__endpointid__binary_data__blobid__delete
 
 {% capture epts_url %}{{feature_data_collection_url}}EPTS/{% endcapture %}
 [EPTS]:                                             {{epts_url}}
@@ -115,6 +115,7 @@
 [CEX]: {{cex_url}}
 [CEX REST API]: {{cex_url}}REST-API/
 [CEX REST API POST command]: {{cex_url}}REST-API/#endpoints__endpointid__commands__commandtype__post
+[CEX REST API DELETE command]: {{cex_url}}REST-API/#endpoints__endpointid__commands__commandtype___commandid__delete
 
 
 <!-- Software updates -->
@@ -132,11 +133,16 @@
 
 {% capture wd_url %}{{feature_visualization_url}}WD/{% endcapture %}
 [WD]: {{wd_url}}
+[WD Branding]: {{wd_url}}/Branding-customization
+[WD File management]: {{wd_url}}/File-management
 
 
 <!-- Infrastructure -->
 {% capture feature_infrastructure_url %}{{kaa_features_url}}Infrastructure/{% endcapture %}
 [infrastructure]: {{feature_infrastructure_url}}
+
+{% capture pbm_url %}{{feature_infrastructure_url}}PBM/{% endcapture %}
+[PBM]:                      {{pbm_url}}
 
 {% capture tekton_url %}{{feature_infrastructure_url}}TEKTON/{% endcapture %}
 [TEKTON]:                               {{tekton_url}}
@@ -281,6 +287,7 @@
 [application resource type]:    {{administration_url}}API-security/#application-resource-type
 [dashboard resource type]:      {{administration_url}}API-security/#dashboard-resource-type
 [kaa resource type]:            {{administration_url}}API-security/#kaa-resource-type
+[platform backup]:              {{administration_url}}platform-backup
 
 <!-- Webinars -->
 [webinars]: {{root_url}}Webinars/
@@ -298,6 +305,8 @@
 [k8s]: https://kubernetes.io/
 [k8s image pull secret]: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
 [helm]: https://helm.sh/
+[helm3]: https://helm.sh/blog/helm-3-released/
+[helm3-changes]: https://helm.sh/docs/faq/#changes-since-helm-2
 [install helm]: https://helm.sh/docs/intro/install/
 [prometheus]: https://prometheus.io/
 [nginx]: https://www.nginx.com/
@@ -319,6 +328,7 @@
 [open distro kibana]: https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/
 [open distro alerting]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/
 [curl]: https://en.wikipedia.org/wiki/CURL
+[minio]: https://min.io/
 
 <!--== Technologies ==-->
 [mqtt]: http://mqtt.org/

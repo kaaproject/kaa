@@ -12,9 +12,72 @@ sort_idx: 7
 {:toc}
 
 
-## Kaa 1.3
+## Kaa 1.3 (February 17-th, 2021)
 
 Find below high-level descriptions of some of the major release highlights.
+
+
+### Branding
+
+Kaa 1.3 supports [branding customization][WD Branding] for the platform and per tenant.
+![branding overview](attach/v1.3/branding-overview.jpg)
+It is possible to set up a company's unique color scheme, add logo and icons, and change styling to match the branded palette.
+The following customization options are now available:
+
+* Company name
+* Logo
+  ![logo and company name configuration](attach/v1.3/branding-logo-configuration.jpg)
+* Favicon
+  ![favicon configuration](attach/v1.3/branding-favicon-configuration.jpg)
+* Login page styling as well as theme colors used within the application
+  ![login page configuration](attach/v1.3/branding-login-configuration.jpg)
+* Color schema
+  ![login page configuration](attach/v1.3/branding-color-schema.jpg)
+
+
+### File management
+
+Kaa 1.3 supports the sharing of uploaded or downloaded files with other users and devices.
+These [file management][WD File management] capabilities are enabled by the open-source storage called [MinIO][minio].
+All binary and file blobs used in WD configuration, such as branding, dashboards, and widgets, are stored in a bucket named by the tenant id.
+Each tenant has two buckets, one of which is configured to allow public read access.
+Minio UI and its file management functions can be accessed from the WD admin sidebar, which features a direct link.
+
+![Minio UI](attach/v1.3/minio-overview.jpg)
+
+
+### Disaster recovery plan
+
+Kaa 1.3 introduces a Disaster Recovery Plan (DRP) by implementing backup and restore procedures.
+By default, Kaa automatically backs up itself on a daily basis and uploads snapshots to an AWS S3 bucket related to the particular deployment.
+Using the snapshots it is possible to restore the platform to a specific state in time.
+
+Find more info on how Disaster Recovery Plan works [here][platform backup].
+
+
+### Migration to Helm 3
+
+In the Kaa 1.3 release, all Kaa services were migrated to [Helm 3][helm3].
+You can use the improvements and features of this version, such as support of library charts, the improved Upgrade strategy, validation of chart values with JSONSchema and others.
+More information about Helm 3 features and changes you can find at [changes since Helm 2][helm3-changes].
+
+
+### Solution templates
+
+Kaa 1.3 provides 3 templates with preconfigured services, configurations and dashboards to provision a fully featured, end-to-end solution.
+Each template provides a simulator example that describes main protocols to communicate with the platform features, such as data collection, metadata management, command execution, and device configuration.
+
+![Run solution](attach/v1.3/run-solution.gif)
+
+
+### Request Status Extension
+
+Kaa 1.3 has a new service called Request Status Extension that allows connected clients to retrieve the status of [1/KP-based][1/KP] message by its [Request ID][1/KP request ID].
+Suppose the client published telemetry data with the request ID `67` and immediately restarted, thus having no time to handle the platform's response for the message with that request ID.
+After the restart, the client should somehow know whether it should republish the telemetry data or not.
+It can be done by requesting the last known status code and reason phrase for the given request ID `67` using the extension protocol implemented by [RSX][RSX].
+
+Find more info on how to use [RSX here][RSX].
 
 
 ### Other highlights of Kaa 1.3
@@ -22,6 +85,39 @@ Find below high-level descriptions of some of the major release highlights.
 * [**[CMX]**][CMX] In previous Kaa versions, CMX would send configuration applied messages to the configuration repository, e.g., [ECR][ECR], regardless of whether the config was applied by an endpoint or not.
 Starting with Kaa 1.3, CMX no longer automatically sends configuration applied messages.
 Instead, CMX sends only those apply messages that were explicitly initiated by an endpoint.
+* [**[WD]**][WD] added form control to upload files.
+* [**[WD]**][WD] added unit converting fields for Label, Single Number widgets.
+* [**[WD]**][WD] responsive layout for mobile and tablet devices.
+* [**[WD]**][WD] added Single number digital view.
+* [**[WD]**][WD] fixed security vulnerabilities in Raw HTML widget, Dashboard titles and description fields.
+* [**[WD]**][WD] In Kaa 1.3, platform administrators can configure announcement and maintenance banners directly from UI.
+A maintenance banner can be used to notify other users about planned maintenance.
+It cannot be closed by the user, so everyone will know about the upcoming downtime in advance.
+A marketing banner can be used for commercial announcements, discounts, or any other marketing campaigns.
+[KaaIoT Cloud](https://cloud.kaaiot.com) users can [enable advanced security](https://cloud.kaaiot.com/settings/security) configuration that allows to change all tenant specific properties.
+* [**[Data analytics]**][data analytics] In [**[Open Distro for Elasticsearch]**] added automatic index pattern creation for [Kibana][[open distro kibana].
+* [**[EPTS]**][EPTS] Deprecated REST API for [updating endpoint time series data under an application][EPTS time series PUT REST API] is dropped.
+  Using the [application version-specific API][EPTS time series PUT via app version REST API] instead is recommended going forward.
+* [**[EPTS]**][EPTS] now permits time series names to contain upper-case Latin letters, making the effectively allowed charset as follows: Latin letters (`a-z`, `A-Z`), digits (`0-9`), dashes (`-`) and underscores (`_`).
+  Time series value names must not include any of: backslash (`\`), circumflex accent (`^`), dollar sign (`$`), single quotation mark (`'`), double quotation mark (`"`), equal sign (`=`), or comma (`,`).
+  Also, names `time`, `kaaEndpointID`, `kaaEmpty`, `_field`, and `_measurement` are reserved and cannot be used.
+* [**[EPTS]**][EPTS] Data sample keys eligible for auto-extraction are now limited to Latin letters (`a-z`, `A-Z`), digits (`0-9`), underscores (`_`), and dashes (`-`) to conform to the existing restrictions on EPTS time series names.
+* [**[DCX]**][DCX] Support processing non-batched, individual data samples in addition to batches defined in [2/DCP][2/DCP].
+  Now an endpoint can upload a single, non-batched data sample as a JSON record.
+  This is useful for devices that do not support data batching and can only send single data sample JSON record per data collection message to the platform.
+* [**[DCX]**][DCX] Processes messages with an extension-specific resource path that starts with `/json` without requiring the full path match as defined in the [2/DCP][2/DCP].
+  As a result, the devices that automatically append random values to the MQTT topic can communicate with DCX without restrictions.
+  E.g. the resource path `/json/random_string` is handled as the `/json`.
+  See the [application configuration]({{dcx_url}}Configuration/#resource-path-relaxed-validation) for details.
+* [**KPC**][KPC] now supports MQTT over TLS 1.3.
+* [**BCX**][BCX] supports retrieving the most recent binary data blob payload using the [REST API][BCX data blob last REST API].
+* [**BCX**][BCX] supports deleting binary data blob by its ID using the [REST API][BCX data blob delete REST API].
+* [**BCX**][BCX] data persistence interface configuration parameter `kaa.postgresql.url` is no longer supported.
+  See [data persistence interface configuration]({{bcx_url}}Configuration/#data-persistence-interface) and [Environment variables]({{bcx_url}}Deployment/#environment-variables) as well for the new parameters.
+* [**CCM**][CCM] data persistence interface configuration parameter `kaa.postgresql.url` is no longer supported.
+  See [data persistence interface configuration]({{ccm_url}}Configuration/#data-persistence-interface) and [Environment variables]({{ccm_url}}Deployment/#environment-variables) as well for the new parameters.
+* [**[CEX]**][CEX] supports deleting the command using the [REST API][CEX REST API DELETE command].
+* [**[OTAO]**][OTAO] Now endpoint can get software specification on software creation or update without making explicit requests.
 
 
 ## Kaa 1.2-mr1 (October 2-nd, 2020)
@@ -40,8 +136,8 @@ Find below high-level descriptions of some of the major release highlights.
 
 ### Multi-tenancy
 
-Kaa 1.2 implements an advanced multi-tenancy where every platform tenant is isolated in a dedicated authentication and authorization KeyCloak realm.
-Thus, each tenant has a fully isolated space and can manage their own:
+Kaa 1.2 implements advanced multi-tenancy so that every platform tenant gets a dedicated authentication and authorization KeyCloak realm.
+As a result, each tenant has a fully isolated space and can manage their own:
 
 * users
 * permissions
@@ -58,14 +154,14 @@ To learn more about multi-tenancy, see [the corresponding documentation][multi-t
 
 ### Client credentials management
 
-[**Client Credentials Management service (CCM)**][CCM] is a new Kaa service for the [client][client] authentication that takes over these responsibilities from the [**Credentials Management service (CM)**][CM].
-CCM supports authentication using basic credentials, like username/password, and SSL/TLS certificates, based on X.509 technology.
+[**Client Credentials Management service (CCM)**][CCM] is a new Kaa service for the [client][client] authentication, which takes over these responsibilities from the [**Credentials Management service (CM)**][CM].
+CCM supports authentication using basic credentials, such as username/password, and SSL/TLS certificates, based on X.509 technology.
 
 Basic authentication is currently supported by all MQTT-based transports available in the [Kaa Protocol Communication service (KPC)][KPC]: plain MQTT, MQTT/TLS, MQTT/WebSocket.
 X.509 authentication is supported by the MQTT/TLS KPC transport.
 
 Both basic and X.509 authentication are now enforcable on a per-tenant basic, separately for each compatible transport.
-You can toggle them in your tenant right from the [Kaa Web Dashboard][WD] interface.
+You can toggle between them in your tenant right from the [Kaa Web Dashboard][WD] interface.
 
 ![Basic auth toggle on plain MQTT transport](attach/v1.2/mqtt-transport-turn-on.png)
 
@@ -99,19 +195,19 @@ To upload a binary data blob, client must first [retrieve a temporary authorizat
 Once in possession of a temporary token, client may upload binary data blobs related to that endpoint using the [RESTful data upload API][BCX binary data blob upload REST API].
 BCX also provides [REST API for managing and accessing already uploaded binary blobs][BCX data blob management REST API].
 
-The submitted binary data blobs can be viewed and downloaded using corresponding Kaa Web Dashboard (WD) widgets:
+The submitted binary data blobs can be viewed and downloaded using the corresponding Kaa Web Dashboard (WD) widgets:
 
 ![Binary data blobs in Kaa WD](attach/v1.2/bcx.jpg)
 
 
 ### Endpoint configuration schema management
 
-In Kaa 1.0 and 1.1 endpoint configuration was a free-form JSON document.
+In Kaa 1.0 and 1.1, endpoint configuration was a free-form JSON document.
 With Kaa 1.2 we introduce an ability to configure endpoint configuration schema in the [Endpoint Configuration Registry service (ECR)][ECR].
 The endpoint configuration schemas are associated with Kaa applications and appversions.
 The appversion-specific schema takes precedence over the corresponding application-specific schema.
 
-When schema validation is enabled in ECR, it rejects provisioning endpoint configs that do not satisfy the expected schema.
+When schema validation is enabled in ECR, it rejects provisioning endpoint configs that do not match the expected schema.
 
 Endpoint configuration schemas can be configured for ECR in the Kaa Web Dashboard, either in the schema view:
 
@@ -124,7 +220,7 @@ or in the JSON view:
 
 ### Data samples enrichment with endpoint metadata
 
-Kaa [Data Collection Extension service (DCX)][DCX] now supports enriching data samples received from connected endpoints with their metadata attributes.
+Kaa [Data Collection Extension service (DCX)][DCX] now allows enriching data samples received from connected endpoints with their metadata attributes.
 When this feature is [enabled in the DCX configuration][DCX metadata enrichment config], it appends endpoint metadata key-value pairs to each data sample events using the specified path (`~ep-metadata` by default).
 Doing so makes it possible to feed downstream data processing services, such as [EPTS][EPTS] or [KDCA][KDCA] with additional endpoint-related state information.
 Note that only data samples that are JSON objects can be enriched with endpoint metadata.
@@ -137,7 +233,7 @@ See the [DCX documentation][DCX metadata enrichment] for more details.
 
 Kaa 1.2 is now pre-integrated out of the box with the [Open Distro for Elasticsearch][open distro].
 Each tenant's data is isolated in Elasticsearch and Kibana, and the security access policies are seamlessly integrated with Kaa.
-This integration enables various IoT data analytics functionality, including collection, analysis, querting and visualizing device data.
+This integration enables various IoT data analytics functionality, including collection, analysis, querying and visualizing device data.
 
 ![Data analytics](attach/v1.2/analytics.png)
 
@@ -152,7 +248,7 @@ Find out more about the data analytics in Kaa [here][data analytics].
 
 * [**[TEKTON]**][TEKTON] Tekton now restricts the application version name suffix to match `^[a-z0-9]+$` regex pattern when you create a new application version using the [REST API][TEKTON app version create REST API].
   In addition, application names will be automatically generated for [newly created applications][TEKTON application create REST API] when `kaa.tekton.app-names.auto-generation.enabled` configuration variable is set to `true`.
-  It is recommended to enable the auto-generation to prevent the possible [application name conflicts](#application-and-application-version-names-conflict-in-java-based-services).
+  It is recommended that you enable the auto-generation to prevent the possible [application name conflicts](#application-and-application-version-names-conflict-in-java-based-services).
 * [**[TEKTON]**][TEKTON] Tekton now supports bulk REST API for [Bulk operations][TEKTON bulk REST API] on tenants and their applications.
 * [**[CEX]**][CEX] `commandRetentionTtl` time unit changed in [REST API][CEX REST API POST command] from hours to milliseconds.
 * [**[CEX]**][CEX] `commandRetentionTtl` renamed in [REST API][CEX REST API POST command] to `commandTtl`.
@@ -162,9 +258,9 @@ Find out more about the data analytics in Kaa [here][data analytics].
   Using the [application version-specific API][EPTS time series PUT via app version REST API] instead is recommended going forward.
 * [**[EPTS]**][EPTS] EPTS now supports defining which of the `fromDate` and `toDate` are inclusive when [retrieving historical time series data][EPTS time series data REST API].
 * [**[EPTS]**][EPTS] EPTS now supports data points filtering using the `beforeDate` query parameter in its [REST API][EPTS time series last REST API].
-* [**[EPR]**][EPR] In previous Kaa versions EPR provided endpoint metadata and endpoint filter management only via its [REST API][EPR REST API].
+* [**[EPR]**][EPR] In previous Kaa versions, EPR provided endpoint metadata and endpoint filter management only via its [REST API][EPR REST API].
   Now, in addition to REST API it is possible to manage endpoint [metadata][endpoint-metadata] and [endpoint filters][endpoint-filter] via [NATS][nats] using the [19/EPMMP] and [20/EFMP] protocols.
-  These interfaces improve overall performance and give more flexibility in platform expansion and customization.
+  These interfaces improve overall performance and give more flexibility for platform expansion and customization.
 * [**[CEX]**][CEX] now supports getting the list of existing command resources per endpoint or application name via the [REST API][CEX REST API].
 * [**[CEX]**][CEX] now uses PostgresSQL database instead of Redis.
 * [**[ECR]**][ECR] configuration response format changed in [default config API][ECR REST API GET default config] and [per-endpoint config API][ECR REST API GET per-endpoint config].
