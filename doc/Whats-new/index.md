@@ -118,6 +118,10 @@ A marketing banner can be used for commercial announcements, discounts, or any o
   See [data persistence interface configuration]({{ccm_url}}Configuration/#data-persistence-interface) and [Environment variables]({{ccm_url}}Deployment/#environment-variables) as well for the new parameters.
 * [**[CEX]**][CEX] supports deleting the command using the [REST API][CEX REST API DELETE command].
 * [**[OTAO]**][OTAO] Now endpoint can get software specification on software creation or update without making explicit requests.
+* [**[Helmfile]**][Helmfile] Starting with Kaa 1.3, the platform is deployed by Helmfile.
+  With Helmfile each Kaa component has its own Helm release lifecycle.
+  So if you want to upgrade or downgrade a specific Kaa component, you don't need to upgrade or downgrade the whole platform but instead only this specific component.
+  Note, that the platform does not have a Kaa Helm meta-chart anymore.
 
 
 ## Kaa 1.2-mr1 (October 2-nd, 2020)

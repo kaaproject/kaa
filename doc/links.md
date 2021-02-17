@@ -307,6 +307,7 @@
 [helm]: https://helm.sh/
 [helm3]: https://helm.sh/blog/helm-3-released/
 [helm3-changes]: https://helm.sh/docs/faq/#changes-since-helm-2
+[Helmfile]: https://github.com/roboll/helmfile
 [install helm]: https://helm.sh/docs/intro/install/
 [prometheus]: https://prometheus.io/
 [nginx]: https://www.nginx.com/
