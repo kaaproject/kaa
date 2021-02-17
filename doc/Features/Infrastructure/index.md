@@ -16,4 +16,4 @@ In addition to these amazing 3-rd party components, Kaa includes its own infrast
 | Service                              | Version                     |
 | ------------------------------------ | --------------------------- |
 | [Tekton][TEKTON]                     | {{tekton_version}}          |
-| [Platform Backup][Platform Backup]   | {{pbm_version}}             |
+| [Platform Backup Manager (PBM)][PBM] | {{pbm_version}}             |
