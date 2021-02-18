@@ -12,6 +12,17 @@ sort_idx: 7
 {:toc}
 
 
+## Kaa 1.4
+
+Find below high-level descriptions of some of the major release highlights.
+
+
+### Other highlights of Kaa 1.4
+
+* [**[DCX]**][DCX] supports handling the plain text data like `21`, `55%`, `2061m`, etc. on `/plain/${metric-name}` resource path.
+  See details on [plain data handling]({{dcx_url}}#/Plain-data-handling) overview.
+
+
 ## Kaa 1.3 (February 17-th, 2021)
 
 Find below high-level descriptions of some of the major release highlights.
