@@ -28,6 +28,21 @@ In the first part, we will discover how to grant the user read-only and read-wri
 In the second part, we will grant the user read-only access to one application and one endpoint in the given application.
 
 
+## Prerequisites
+
+To complete this tutorial you need to enable **Advance security configuration** in the Security menu in the Settings tab.
+This setting authorizes your tenant administrators to manage all of the tenant security configurations in Keycloak, including:
+
+* add, reconfigure, and remove Keycloak clients
+* manage scopes, policies, and permissions
+
+Some of the security configuration changes allowed in the advanced mode may be harmful and lead to the loss of functionality and data access, integration failures, or inability to log into the system.
+
+So be careful since with great power comes great responsibility!
+
+![enable-advanced-security-configuration](attach/img/enable-advanced-security-configuration.png)
+
+
 ## Playbook
 
 
