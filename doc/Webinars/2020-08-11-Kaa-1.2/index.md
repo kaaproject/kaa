@@ -12,7 +12,7 @@ sort_idx: 3
 ***Date: August 11, 2020 at 12 pm EST***
 
 
-In this webinar we introduce the Kaa IoT platform release 1.2 and its highlight features:
+In this webinar we introduce the Kaa IoT platform release 1.2 and highlight its features:
 
 * [Multi-tenancy]({{whats_new_url}}#multi-tenancy)
 * [Client credentials management]({{whats_new_url}}#client-credentials-management)
