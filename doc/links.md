@@ -293,12 +293,15 @@
 [webinars]: {{root_url}}Webinars/
 [webinar Kaa IoT Cloud and Kaa 1.1]:        {{root_url}}Webinars/2019-12-11-Kaa-IoT-Cloud-and-Kaa-1.1/
 [webinar Data Analytics and Notifications]: {{root_url}}Webinars/2020-04-02-Data-Analytics-and-Notifications/
+[webinar kaa 1.2 release]: {{root_url}}Webinars/2020-08-11-Kaa-1.2/
+[webinar kaa 1.3 release]: {{root_url}}Webinars/2021-04-07-Kaa-1.3/
 
 <!-- What's new -->
 {% capture whats_new_url %}{{root_url}}Whats-new/{% endcapture %}
 [whats new]:        {{whats_new_url}}
 [whats new in 1.1]: {{whats_new_url}}#kaa-11-november-8-th-2019
 [whats new in 1.2]: {{whats_new_url}}#kaa-12-july-6-th-2020
+[whats new in 1.3]: {{whats_new_url}}#kaa-13-february-17-th-2021
 
 <!--== 3-rd party components ==-->
 [docker]: https://www.docker.com/
