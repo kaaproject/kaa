@@ -264,6 +264,8 @@
 [user management]:                                       {{user_management}}
 {% capture custom_web_dashboard %}                       {{tutorials_url}}getting-started/build-iot-dashboard/{% endcapture %}
 [custom web dashboard tutorial]:                         {{custom_web_dashboard}}
+{% capture custom_widget_tutorial %}                     {{tutorials_url}}getting-started/custom-widget/{% endcapture %}
+[custom widget tutorial]:                                {{custom_widget_tutorial}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/
