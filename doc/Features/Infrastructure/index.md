@@ -13,7 +13,8 @@ This includes [NATS message broker][nats], [InfluxDB][influxdb] and [MongoDB][mo
 
 In addition to these amazing 3-rd party components, Kaa includes its own infrastructure components which simplify the operation of Kaa-based clusters and provide Kaa-specific administration functionality.
 
-| Service                              | Version                     |
-| ------------------------------------ | --------------------------- |
-| [Tekton][TEKTON]                     | {{tekton_version}}          |
-| [Platform Backup Manager (PBM)][PBM] | {{pbm_version}}             |
+| Service                                    | Version                     |
+| ------------------------------------------ | --------------------------- |
+| [Tekton][TEKTON]                           | {{tekton_version}}          |
+| [Traffic Statistics Appender (TSA)][TSA]   | {{tsa_version}}             |
+| [Platform Backup Manager (PBM)][PBM]       | {{pbm_version}}             |

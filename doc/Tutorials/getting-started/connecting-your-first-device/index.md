@@ -73,7 +73,7 @@ This data is clearly associated with drug batches, and not the sensors and machi
 Similarly to the olive trees, it would be confusing to call drug batches "devices", so "endpoints" seemed like a more natural (though generic) fit.
 
 As you may have realized from these examples, an endpoint in Kaa is not necessarily the same thing as the client device connected to the platform.
-This is importand decoupling that makes it possible for connected clients to exchange data *on behalf of* endpoints.
+This is important decoupling that makes it possible for connected clients to exchange data *on behalf of* endpoints.
 For example, you can connect a gateway to Kaa and program it to submit data from multiple home appliances in the local network.
 The appliances in this case may be modelled as individual endpoints.
 
