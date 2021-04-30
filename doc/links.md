@@ -266,6 +266,8 @@
 [custom web dashboard tutorial]:                         {{custom_web_dashboard}}
 {% capture custom_widget_tutorial %}                     {{tutorials_url}}getting-started/custom-widget/{% endcapture %}
 [custom widget tutorial]:                                {{custom_widget_tutorial}}
+{% capture esp32_ota_update_tutorial %}                  {{tutorials_url}}device-integration/hardware-guides/esp32-ota-updates/{% endcapture %}
+[esp32 ota update]:                                      {{esp32_ota_update_tutorial}}
 
 [iot notification tutorial]:              {{tutorials_url}}getting-started/iot-notification/
 [kaa cloud getting started]:              {{tutorials_url}}getting-started/getting-started-kaa-cloud/

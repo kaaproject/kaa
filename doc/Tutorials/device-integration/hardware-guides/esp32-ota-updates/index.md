@@ -11,7 +11,7 @@ sort_idx: 3
 * TOC
 {:toc}
 
-In this tutorial, we will look at how do over-the-air (OTA) update for ESP32. 
+In this tutorial, we will look at how to do over-the-air (OTA) update for ESP32. 
 
 
 ## Prerequisites
@@ -36,7 +36,7 @@ After the compilation is done, choose **Sketch** -> **Show Sketch Folder**.
 
 This is a new firmware that we are going to update our ESP32 to.
 
-Next, we should host it on HTTP server.
+Next, we should host it on the HTTP server.
 ESP32 is also able to download its firmware from the HTTPS server but to keep things simple we chose HTTP.
 
 Let's host compiled binary.  
@@ -65,13 +65,13 @@ Press **Create**.
 
 ### New firmware definition provisioning
 
-Now we want to provision a new firmware and define the relation between the initial firmware and this one.
+Now we want to provision a new firmware and define the relationship between the initial firmware and this one.
 
-Again, go to Kaa UI -> **Device Management** -> **Software OTA** and add new software definition pressing **Add software version**.
+Again, go to Kaa UI -> **Device Management** -> **Software OTA** and add a new software definition pressing **Add software version**.
 
 This time set `1.0.1` for **Semantic software version** and `Second firmware` for the **Upgradable from**, choose `1.0.0` for **Upgradable from**.
 Paste the earlier copied link to firmware binary in the **Download link** field. 
-Update the link schema from **HTTPS** to **HTTP**, otherwise ESP won't be able to download the firmware over the HTTPS protocol.
+Update the link schema from **HTTPS** to **HTTP**, otherwise, ESP won't be able to download the firmware over the HTTPS protocol.
 Also, remove extra params from the URL so that it looks like the below: 
 
 ```text
@@ -88,9 +88,9 @@ Press **Create**.
 ### Update ESP32 firmware
 
 Now we are ready to do over-the-air (OTA) update on ESP32.
-The below firmware connects to Kaa, reports its current firmware version, which is `1.0.0` and requests the new one and updates to it if it exists.
+The below firmware connects to Kaa, reports its current firmware version, which is `1.0.0`, and requests the new one and updates to it if it exists.
 
-Specify your WiFi SSID, password and token, application version of your endpoint.
+Specify your WiFi SSID, password, and token and application version of your endpoint.
 
 ```c++
 {% include_relative attach/code/esp32-ota-sketch.ino %}
