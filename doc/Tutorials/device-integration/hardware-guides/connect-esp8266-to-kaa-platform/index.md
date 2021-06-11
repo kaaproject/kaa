@@ -129,4 +129,4 @@ Congratulations, you have connected and visualized data from your ESP8266!
 [code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/hardware-guides/connect-esp8266-to-kaa-platform/attach/code
 [arduino-ide]:              https://www.arduino.cc/en/Main/Software
 [ESP8266]:                  https://en.wikipedia.org/wiki/ESP8266
-[Kaa cloud free trial]:     https://www.kaaproject.org/free-trial
+[Kaa cloud free trial]:     https://www.kaaiot.com/free-trial

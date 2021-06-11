@@ -30,7 +30,7 @@ Also, we will interact with the Kaa [Web Dashboard][WD] to create a digital twin
 ### Create Kaa Cloud account
 
 For the tutorial completion, we will need an account in the Kaa Cloud.
-To obtain it, register on [kaaproject.org][kaaproject.org].
+To obtain it, register on [kaaproject.org][kaaiot.com].
 
 Then go to the [free trial page][Kaa cloud registration] and click "Go to cloud". A Kaa Cloud account will be automatically created for you.
 

@@ -360,9 +360,9 @@
 
 <!--== KaaIoT sites ==-->
 [Kaa cloud]:              https://cloud.kaaiot.com
-[Kaa cloud registration]: https://www.kaaproject.org/free-trial
+[Kaa cloud registration]: https://www.kaaiot.com/free-trial
 [Kaa user chat]:          https://gitter.im/KaaIoT/community
-[kaaproject.org]:         https://www.kaaproject.org
+[kaaproject.org]:         https://www.kaaiot.com
 
 <!--== Repl.it ==-->
 [connecting your first device repl]:                        https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
