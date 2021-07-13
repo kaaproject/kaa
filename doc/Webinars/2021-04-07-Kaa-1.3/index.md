@@ -2,7 +2,7 @@
 layout: page
 title: Kaa 1.3 release
 permalink: /:path/
-sort_idx: 4
+sort_idx: 1
 ---
 
 {% include variables.md %}

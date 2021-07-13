@@ -2,7 +2,7 @@
 layout: page
 title: Kaa IoT Cloud and Kaa 1.1
 permalink: /:path/
-sort_idx: 1
+sort_idx: 4
 ---
 
 {% include variables.md %}
