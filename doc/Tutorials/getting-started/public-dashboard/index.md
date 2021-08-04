@@ -5,7 +5,6 @@ permalink: /:path/
 sort_idx: 9
 ---
 
-
 {% include variables.md %}
 {% include_relative links.md %}
 
@@ -52,28 +51,18 @@ You can find the user in Keycloak named as public_<uuid> where uuid is a unique 
 
 Now we can talk about creating the first public dashboard. It is assumed that you already have created a dashboard that you want to share.
 
-1. To share the dashboard you need to go to the solutions page, select any of them and go to the **Public resources** page.
-
+* To share the dashboard you need to go to the solutions page, select any of them and go to the **Public resources** page.
 ![public-resource-link](attach/public-resource-link.png)
-
-2. Сhoose the application you want to make public on the **Applications** tab. If your solution uses another application, you also need to share it.
-
+* Сhoose the application you want to make public on the **Applications** tab. If your solution uses another application, you also need to share it.
 ![public-applications](attach/public-applications.png)
-
-Select the endpoints you want to make available on the **Endpoints** tab. In order not to display data for some endpoints, you should leave them off.
-
+* Select the endpoints you want to make available on the **Endpoints** tab. In order not to display data for some endpoints, you should leave them off.
 ![available-endpoints](attach/available-endpoints.png)
-
 Sharing setup is done, and your resources are publicly available now.
 Also you **should remember** that the solution will become public automatically the first time it is published.
-
-3. Now you can share with others the dashboard link either from the solution page or from the specific dashboard you are sharing. Also, please, pay attention that you can see the status of your dashboard on the solution page.
-
+* Now you can share with others the dashboard link either from the solution page or from the specific dashboard you are sharing. Also, please, pay attention that you can see the status of your dashboard on the solution page.
 ![share-from-dashboard](attach/share-from-dashboard.png)
 ![dashboards-share-button](attach/dashboards-share-button.png)
-
-4. In case you want to change the status of the shared dashboard or get a link for sharing, click on the sharing icon from the solution page or from the dashboard. Then you will see an additional menu.
-
+* In case you want to change the status of the shared dashboard or get a link for sharing, click on the sharing icon from the solution page or from the dashboard. Then you will see an additional menu.
 ![share-from-solution-popup](attach/share-from-solution-popup.png)
 
 ### Security roles

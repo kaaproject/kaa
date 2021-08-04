@@ -267,7 +267,7 @@
 {% capture custom_widget_tutorial %}                     {{tutorials_url}}getting-started/custom-widget/{% endcapture %}
 [custom widget tutorial]:                                {{custom_widget_tutorial}}
 {% capture public_dashboard_tutorial %}                  {{tutorials_url}}getting-started/public-dashboard/{% endcapture %}
-[public dashboard tutorial]:                             {{public dashboard tutorial}}
+[public dashboard tutorial]:                             {{public_dashboard_tutorial}}
 {% capture esp32_ota_update_tutorial %}                  {{tutorials_url}}device-integration/hardware-guides/esp32-ota-updates/{% endcapture %}
 [esp32 ota update]:                                      {{esp32_ota_update_tutorial}}
 
