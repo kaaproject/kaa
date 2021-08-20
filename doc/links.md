@@ -283,6 +283,11 @@
 [how to connect a Raspberry Pi]:          {{tutorials_url}}device-integration/hardware-guides/connect-raspberry-to-kaa-platform/
 [connecting node-red to kaa]:             {{tutorials_url}}device-integration/connecting-node-red-to-kaa/
 
+<!--== Solutions ==-->
+[solutions tutorials]:                                    {{tutorials_url}}solutions/
+{% capture air_quality_monitoring_tutorial %}             {{tutorials_url}}solutions/air-quality-monitoring/{% endcapture %}
+[air quality monitoring]:                                 {{air_quality_monitoring_tutorial}}
+
 <!-- Administration -->
 {% capture administration_url %}{{root_url}}Administration/{% endcapture %}
 [administration]:               {{administration_url}}

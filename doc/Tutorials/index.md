@@ -16,3 +16,5 @@ Follow getting started tutorials in sequence to complete them successfully.
 
 2. [**Device integration**][device integration tutorials] - device integration basics, MQTT topics/HTTP URLs structure, device attributes, data collection.
 Hardware integration.
+
+3. [**Solutions**][solutions tutorials] - complete guides on how to implement end-to-end IoT solutions covering steps like how to assemble a device, connect it to Kaa, and interact with it using Kaa UI.

@@ -2,7 +2,7 @@
 layout: page
 title: Solutions
 permalink: /:path/
-sort_idx: 1
+sort_idx: 3
 ---
 
 {% include variables.md %}
