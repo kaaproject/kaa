@@ -33,12 +33,15 @@ After the installation you should have:
 
 ### macOS dependencies
 
+
 #### For Catalina +
 
 Install Docker Desktop for Mac using the [link][docker-for-mac].
 
 
 Go to `Preference` -> `Kubernetes` and check `Enable Kubernetes` checkbox.
+
+
 #### For previous macOS versions
 
 Install minikube and hyperkit:
@@ -50,6 +53,7 @@ brew install minikube
 brew install kubernetes-cli 
 brew install docker
 ```
+
 
 ### Linux dependencies
 
@@ -152,6 +156,7 @@ kube-system   kube-scheduler-minikube            1/1     Running   0          41
 kube-system   storage-provisioner                1/1     Running   0          104s
 ```
 
+
 ## Kaa installation profile
 
 Run Kaa installer docker image:
@@ -223,6 +228,7 @@ envmanager manager --env local --profile kubernetes.yml --vars-file values.yaml 
 
 Terraform installation state will be saved to `output/local/`.
 
+
 ## Verification
 
 Exit the `kaa-installer` docker container and append the lines below to the `/etc/hosts` file on your host system:
@@ -254,8 +260,9 @@ For example: `https://env.local.kaatech.com/epr/api/v1/endpoints`.
 
 Logging and monitoring will be available at [https://kibana.local.kaatech.com](https://kibana.local.kaatech.com) and [https://grafana.local.kaatech.com](https://grafana.local.kaatech.com).
 
+
 ## Next steps
 
-- [Connect a device to your local Kaa cluster][how to connect device].
+- [Get started in minutes with the Kaa platform by connecting a device][connecting your first device]
 
 [docker-for-mac]: https://docs.docker.com/docker-for-mac/install/
