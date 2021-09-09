@@ -60,7 +60,7 @@
 
 {% capture dcx_url %}{{feature_data_collection_url}}DCX/{% endcapture %}
 [DCX]: {{dcx_url}}
-[DCX metadata enrichment]:        {{dcx_url}}Overview/#enriching-data-samples-with-endpoint-metadata
+[DCX metadata enrichment]:        {{dcx_url}}#enriching-data-samples-with-endpoint-metadata
 [DCX metadata enrichment config]: {{dcx_url}}Configuration/#endpoint-metadata-enrichment
 
 {% capture bcx_url %}{{feature_data_collection_url}}BCX/{% endcapture %}
@@ -237,7 +237,7 @@
 [blueprint]:            {{kaa_concepts}}#blueprint
 [extension]:            {{kaa_concepts}}#extension-services
 [dashboard]:            {{wd_url}}Dashboards/#dashboards
-[widget]:               {{wd_url}}Overview/#widgets
+[widget]:               {{wd_url}}/Widgets/
 [tenant]:               {{kaa_concepts}}#tenant
 
 <!--== Tutorials ==-->

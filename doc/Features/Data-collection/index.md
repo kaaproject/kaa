@@ -39,7 +39,7 @@ DCX supports this extension protocol to receive endpoint data from a communicati
 
 **Data Collection Adapters (DCAs)** are various services that implement the [13/DSTP][13/DSTP] protocol to receive the endpoint-originated data samples from DCX.
 DCAs typicaly serve the purpose of feeding collected from devices data to different data storage and data processing systems.
-For example, see [KDCA][KDCA] and [MDCA][MDCA].
+For example, see [KDCA][KDCA].
 
 [**Endpoint Time Series service (EPTS)**][EPTS] is another example of a service that is often used in conjunction with DCX.
 It receives endpoint data samples and transforms them into time series.
