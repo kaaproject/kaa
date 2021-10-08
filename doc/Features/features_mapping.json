@@ -38,6 +38,7 @@
     "TSX"
   ],
   "Multi-tenancy": [
-    "TENANT-MANAGER"
+    "TENANT-MANAGER",
+    "IAM"
   ]
 }
