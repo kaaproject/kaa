@@ -318,6 +318,7 @@
 [docker]: https://www.docker.com/
 [k8s]: https://kubernetes.io/
 [k8s image pull secret]: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+[k8s docs home]: https://kubernetes.io/docs/home/
 [helm]: https://helm.sh/
 [helm3]: https://helm.sh/blog/helm-3-released/
 [helm3-changes]: https://helm.sh/docs/faq/#changes-since-helm-2
@@ -370,16 +371,16 @@
 [Kaa cloud registration]: https://www.kaaiot.com/free-trial
 [Kaa user chat]:          https://gitter.im/KaaIoT/community
 [kaaproject.org]:         https://www.kaaiot.com
+{% capture kaa_museum %}https://museum.kaaiot.net/{% endcapture %}
+[kaa museum]:             {{kaa_museum}}
 
-<!--== Repl.it ==-->
-[connecting your first device repl]:                        https://repl.it/@KaaIoT/ConnectingYourFirstDevice120
-[collecting data from a device repl]:                       https://repl.it/@KaaIoT/CollectingDataFromADevice120
-[collecting data from a device repl 1.3]:                   https://repl.it/@KaaIoT/CollectingDataFromADevice130
-[sending commands to the device repl]:                      https://repl.it/@KaaIoT/SendingCommandsTODevice120
-[sending commands to the device repl 1.3]:                  https://repl.it/@KaaIoT/SendingCommandsTODevice130
-[one way authenticating client with tls certificate repl]:  https://repl.it/@KaaIoT/OneWayAuthenticatingClientWithTlsCertificate120
-[two way authenticating client with tls certificate repl]:  https://repl.it/@KaaIoT/TwoWayAuthenticatingClientWithTlsCertificate120
+<!--== Replit.com ==-->
+[connecting your first device repl]:                        https://replit.com/@KaaIoT/ConnectingYourFirstDevice120
+[collecting data from a device repl]:                       https://replit.com/@KaaIoT/CollectingDataFromADevice130
+[sending commands to the device repl]:                      https://replit.com/@KaaIoT/Getting-Started130SendingCommandsTODevice130
+[one way authenticating client with tls certificate repl]:  https://replit.com/@KaaIoT/OneWayAuthenticatingClientWithTlsCertificate120
+[two way authenticating client with tls certificate repl]:  https://replit.com/@KaaIoT/TwoWayAuthenticatingClientWithTlsCertificate120
 
 <!--== Hardware ==-->
-[MKR-1010]:       https://www.arduino.cc/en/Guide/MKRWiFi1010
-[MKR-ENV-Shield]: https://www.arduino.cc/en/Guide/MKRENVShield
+[MKR-1010]:       https://www.arduino.cc/en/Guide/MKRWiFi1010/
+[MKR-ENV-Shield]: https://www.arduino.cc/en/Guide/MKRENVShield/

@@ -141,7 +141,7 @@ When the platform receives the execution result for the command with the specifi
 <br>
 
 To run the below MQTT client on your PC, you will need [Python 3][python download] installed.
-To speed things up a little, you can also just [open and run it on Repl.it][sending commands to the device repl 1.3].
+To speed things up a little, you can also just [open and run it on Replit.com][sending commands to the device repl].
 
 Initialize the `ENDPOINT_TOKEN` and the `APPLICATION_VERSION` variables with endpoint token and application version respectively.
 
