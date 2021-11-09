@@ -327,7 +327,7 @@ If you, our reader from the future, spot some major discrepancies with your curr
 And if the tutorial served you well, we'd still love to hear your feedback, so [join the community][Kaa user chat]!
 
 
-[code url]: https://github.com/kaaproject/kaa/tree/rel_1.3.0/doc/Tutorials/solutions/air-quality-monitor/attach/code
+[code url]: https://github.com/kaaproject/kaa/tree/rel_1.3.0/doc/Tutorials/solutions/air-quality-monitoring/attach/code
 [bsec library]: https://github.com/BoschSensortec/BSEC-Arduino-library
 [bsec algorithm]: https://www.bosch-sensortec.com/software-tools/software/bsec/
 [Nova Fitness SDS library]: https://github.com/lewapek/sds-dust-sensors-arduino-library

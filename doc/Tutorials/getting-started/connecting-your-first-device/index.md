@@ -243,7 +243,7 @@ Of course, we do not suggest that you run cURL or Postman in your award winning 
 <br/>
 
 To run the below MQTT client on your PC, you will need [Python 3][python download] installed.
-To speed things up a little, you can also just [open and run it on Repl.it][connecting your first device repl].
+To speed things up a little, you can also just [open and run it on Replit.com][connecting your first device repl].
 
 Remember to initialize `APPLICATION_VERSION` and `ENDPOINT_TOKEN` variables your application version name and the endpoint token respectively.
 

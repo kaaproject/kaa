@@ -144,7 +144,7 @@ curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-ve
 </div><div id="mqtt-client" class="tab-pane fade" markdown="1"><br>
 
 To run the below MQTT client on your PC, you will need [Python 3][python download] installed.
-To speed things up a little, you can also just [open and run it on Repl.it][collecting data from a device repl 1.3].
+To speed things up a little, you can also just [open and run it on Replit.com][collecting data from a device repl].
 
 Remember to initialize `APPLICATION_VERSION` and `ENDPOINT_TOKEN` variables your application version name and the endpoint token respectively.
 
