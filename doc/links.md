@@ -62,6 +62,7 @@
 [DCX]: {{dcx_url}}
 [DCX metadata enrichment]:        {{dcx_url}}#enriching-data-samples-with-endpoint-metadata
 [DCX metadata enrichment config]: {{dcx_url}}Configuration/#endpoint-metadata-enrichment
+[DCX plain data handling]:        {{dcx_url}}#plain-data-handling
 
 {% capture bcx_url %}{{feature_data_collection_url}}BCX/{% endcapture %}
 [BCX]:                                      {{bcx_url}}
