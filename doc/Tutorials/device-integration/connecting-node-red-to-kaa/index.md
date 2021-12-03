@@ -173,7 +173,7 @@ Congratulations, you have successfully send data from your Raspberry Pi with Nod
 - Join the discussion at our [community chat][Kaa user chat] and share feedback!
 
 
-[code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/node-red-raspberry/attach/code
+[code-url]:                 https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/device-integration/connecting-node-red-to-kaa/attach/code
 [Node-RED]:                 https://nodered.org/
 [Raspberry Pi]:             https://en.wikipedia.org/wiki/Raspberry_Pi
 [BME280]:                   https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/
