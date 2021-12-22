@@ -14,13 +14,197 @@ sort_idx: 7
 
 ## Kaa 1.4
 
-Find below high-level descriptions of some of the major release highlights.
+
+### Identity and Access Management (IAM)
+
+Identity and Access Management (IAM) feature brings major changes in how user, group, and permission management operate in Kaa.
+Below is the short description of changes that the Kaa IAM introduces in Kaa 1.4.
+
+
+#### User management
+
+With IAM user management you can:
+
+* create new users
+* edit created users' details
+* activate / deactivate already created users
+* grant / revoke user permissions using [policies][policy]
+* add / remove users to / from groups
+
+![User management](attach/v1.4/iam-user-management.png)
+
+
+#### User groups
+
+With IAM groups feature you can:
+
+* create new groups and subgroups with unlimited nesting
+* edit group details
+* assign / unassign users to / from groups
+* grant / revoke group permissions using [policies][policy]
+
+![Group management](attach/v1.4/iam-group-management.png)
+
+
+#### IAM policies
+
+With IAM policies you can granularly control user / group permissions on the following resources types:
+
+* user
+* policy
+* group
+
+> The list of resource types that policies may apply to will be expanded in subsequent Kaa releases.
+{:.note}
+
+![Policy management](attach/v1.4/iam-policy-management.png)
+
+You can find more information on how the Kaa IAM works [here][IAM].
+
+
+### Custom widgets
+
+Kaa 1.4 introduces the functionality to create your own widgets using JavaScript.
+By default, custom widgets are registered to a specific tenant but can be enabled for all tenants.
+Widget developers are not limited to specific frontend technologies or project bundlers.
+We provide typings for our REST API clients as well as widget SDK, which are [hosted on npm](https://www.npmjs.com/package/@kaaiot/services) along with open-source examples to showing how to develop custom widgets.
+
+You can get started by following [this tutorial][custom widget tutorial].
+
+![Custom widget](attach/v1.4/registry.svg)
+
+![Custom widgets configuration](attach/v1.4/custom-widgets-configuration.png)
+
+
+### Public dashboards
+
+Kaa 1.4 allows dashboards to be publicly available so that users can access them without authentication or authorization.
+Users can select applications and endpoints to be public and assign additional roles and permissions to a public user.
+You can even build in public Kaa dashboads on your own website to showcase the work you have done using Kaa.
+
+![Public dashboard sharing](attach/v1.4/public–dashboard–sharing.png)
+
+Check out our [public dashboard tutorial][public dashboard tutorial] for more information.
+
+
+### API usage statistics
+
+Kaa 1.4 introduces reports on the amount of sent and received data to / from devices.
+Reports can be viewed on the tenant, application, and endpoint levels for the total, 24-hour, and 7-days periods.
+
+You can find more information this feature in the [Traffic Analytics Service documentation][TSA], which listens to traffic events and sends them to [OpenDistro][open distro].
+
+![Device traffic stats](attach/v1.4/api-usage-device.png)
+
+![Application traffic stats](attach/v1.4/api-usage-application.png)
+
+
+### Data types mapping and transformation pipelines
+
+[Starting from 1.2 version](#data-analytics) Kaa is pre-integrated with [Open Distro][open distro] built on top of [Elasticsearch][elasticsearch].
+Until now, Elasticsearch document data types were defined dynamically from the incoming telemetry data.
+Starting from Kaa 1.4 you can define your own [mappings][elastic mapping], having greater control over how data is indexed and stored in Elasticsearch.
+
+In addition to mappings, there is another large feature built on top of Elasticsearch: ingest pipelines.
+Pipelines allow you to perform transformations on your data before indexing.
+For example, you can remove fields based on custom conditions, compute some formulas, enrich data with additional values, etc.
+
+The full list of pipeline processors is [here][elastic pipeline processors].
+
+Below is a sample pipeline that processes plaintext data sample (e.g., `{"readings":"t=24 h=41"}`) into JSON and converts Fahrenheit to Celsius using the [script processor][elastic script processor].
+
+![Elastic pipeline example 1](attach/v1.4/elastic-pipeline.png)
+
+Also, as you can see from the above screenshot, you can test your pipeline on sample data in the [application][application] index by choosing **Add a test document from index** checkbox.
+
+Here is another example of conditional transformation of telemetry data.
+Based on custom condition it adds a new field to the document.
+
+![Elastic pipeline example 2](attach/v1.4/elastic-pipeline-2.png)
+
+
+### Analytics level security
+
+The [data types mapping and transformation pipelines](#data-types-mapping-and-transformation-pipelines) feature wouldn't be possible without a new Kaa component called Analytics Security Facade (ASF).
+The ASF proxies API requests to [Open Distro][open distro] adding authentication / authorization layer by resolving caller permissions on [Keycloak][keycloak].
+
+Read more about the ASF service [here][ASF].
+
+
+### Built in analytics widgets
+
+Kaa 1.4 introduces time series chart, polar chart, and gauge widgets integrated with the analytics engine.
+New widgets support aggregations, math operations, and rich customization thanks to the [ECharts][echarts] library.
+
+![Analytics widgets](attach/v1.4/analytics-widgets.png)
+
+![Analytics chart](attach/v1.4/analytics-chart.png)
+
+![Analytics gauge and polar widgets](attach/v1.4/analytics-gauge-and-polar–widgets.png)
+
+
+### Batch command execution based on endpoint filters
+
+Kaa 1.4 allows you to execute a single command on a set of endpoints that match a specific [endpoint filter][endpoint-filter].
+For example, you can define an endpoint filter by geolocation and send a command to these endpoints in one [REST API call][CEX REST API POST batch command], specifying the filter ID and the command payload.
+Also, you can use new widgets on [Kaa UI][WD] to run and list previously executed batch commands.
+
+![Batch command execution](attach/v1.4/batch-command-execution.png)
+
+![Batch commands history](attach/v1.4/batch-commands-history.png)
+
+Adding batch command execution widgets to dashboards.
+
+![Batch commands history widget adding](attach/v1.4/batch-commands-history-widget-adding.png)
+
+![Batch command widget setting](attach/v1.4/batch-command-widget-setting.png)
+
+See the [Command Execution service documentation][CEX batch command overview] to find out how batch execution works.
+
+
+### Attribute Dictionary Extension (ADX)
+
+New [Attribute Dictionary Extension (ADX)][ADX] service functions similarly to other Kaa platform [extension services][extension], such as [DCX][DCX], [EPMX][EPMX] [CMX][CMX], etc.
+Connected clients are able to query application-specific attributes using a request-response protocol based on existing transport protocols supported by the Kaa platform: 1/KP, MQTT, HTTP, and their flavors.
+ADX sources application-specific key-value attributes to serve from its own configuration, which could be loaded from a config file or from Kaa [Tekton service][TEKTON].
+The extension accepts client requests with attribute paths that support the [GJSON][gjson] syntax.
+
+Read more about the ADX service [here][ADX].
 
 
 ### Other highlights of Kaa 1.4
 
-* [**[DCX]**][DCX] supports handling the plain text data like `21`, `55%`, `2061m`, etc. on `/plain/${metric-name}` resource path.
-  See details on [plain data handling]({{dcx_url}}#/Plain-data-handling) overview.
+* [**[WD]**][WD] Added Air quality monitoring solution template
+* [**[WD]**][WD] Date range control redesigned
+* [**[WD]**][WD] Support for actions, multi navigation and time series data in the Endpoint List widget
+* [**[WD]**][WD] Support for passing endpoint ID from dashboard variables
+* [**[WD]**][WD] Map widget supports default zoom customization
+* [**[WD]**][WD] Fixed permission detection for configuration widgets and endpoint token status widget
+* [**[WD]**][WD] Added possibility to customize solution logo displayed in public dashboard
+* [**[WD]**][WD] Option to switch between gauge types in widget configuration
+* [**[WD]**][WD] Option to hide widgets based on endpoint metadata or time series value
+* [**[WD]**][WD] Option to use dashboard variables and theme in Raw HTML widget
+* [**[WD]**][WD] Raw HTML widget supports advanced templating such as loops, conditions, and helpers
+* [**[WD]**][WD] Raw HTML widget supports internal links navigation without a page refresh
+* [**[CEX]**][CEX] "Expired" command status added.
+  Commands expire when failed to complete execution within the `commandTtl` period.
+* [**[CEX]**][CEX] `createdAt` and `updatedAt` command related fields now has ISO 8601 format in UTC timezone in [REST API][CEX REST API] responses. 
+  <!-- TODO: Time format in `CommandDescriptorDto` was changed to universal format for EPR-CEX API - Timestamp in ISO 8601 format (UTC timezone). -->
+* [**[CM]**][CM] [**[CMX]**][CMX] [**[EPMX]**][EPMX] [**[EPR]**][EPR] [**[EPL]**][EPL] [**[KDCA]**][KDCA] [**[ECR]**][ECR] [**[CEX]**][CEX] [**[OTAO]**][OTAO] Added PAT token cache to speed up inter-service communication.
+* [**[CM]**][CM] Added Grafana dashboard with HTTP server error responses, REST API request processing time, application-specific configuration update time, and JVM threads state monitoring.
+* [**[CM]**][CM] [**[CEX]**][CEX] [**[EPR]**][EPR] [**[ECR]**][ECR] Added ability to granularly enable authentication without authorization.
+* [**[DCX]**][DCX] is now able to handle plain text data like `21`, `55%`, `2061m`, etc. on `/plain/${metric-name}` resource path.
+  Devices are no longer required to send telemetry in JSON format.
+  More info [here]({{dcx_url}}#/Plain-data-handling).
+* [**[CM]**][CM] [**[CMX]**][CMX] [**[EPMX]**][EPMX] [**[EPR]**][EPR] [**[EPL]**][EPL] [**[KDCA]**][KDCA] [**[ECR]**][ECR] [**[CEX]**][CEX] [**[OTAO]**][OTAO] [**[CCM]**][CCM] [**[KPC]**][KPC] [**[DXC]**][DCX] [**[EPTS]**][EPTS] [**[BCX]**][BCX] [**[Tekton]**][Tekton] services now use cluster internal Keycloak DNS name to issue PAT tokens.
+  This allows platform services to start without depending on KeyCloak's public DNS.
+* [**[EPR]**][EPR] Fixed `Location` header with duplicated endpoint resource location link.
+* [**[EPR]**][EPR] now supports batch endpoint creation.
+  You can create up to 1000 endpoints with a single REST API request.
+* [**[EPR]**][EPR] Added Grafana dashboard with HTTP server error responses, REST API request processing time, application-specific configuration update time, JVM threads state monitoring, and current active requests.
+* [**[CM]**][CM] [**[CMX]**][CMX] [**[EPMX]**][EPMX] [**[EPR]**][EPR] [**[EPL]**][EPL] [**[KDCA]**][KDCA] [**[ECR]**][ECR] [**[CEX]**][CEX] [**[OTAO]**][OTAO] Fix services start when specifying an external config file.
+* [**[CM]**][CM] [**[CMX]**][CMX] [**[EPMX]**][EPMX] [**[EPR]**][EPR] [**[EPL]**][EPL] [**[KDCA]**][KDCA] [**[ECR]**][ECR] [**[CEX]**][CEX] [**[OTAO]**][OTAO] Java upgraded to version 11.
+* [**[CM]**][CM] [**[EPR]**][EPR] [**[OTAO]**][OTAO] [**[CEX]**][CEX] Configured monitoring dashboards in Grafana.
 
 
 ## Kaa 1.3 (February 17-th, 2021)
@@ -433,3 +617,9 @@ Kaa 1.0 is the initial general release of the Kaa Enterprise IoT platform.
 Prior to the 1.0 version, every Kaa component was versioned independently.
 Such independent versioning still exists for each of the Kaa microservices, while the Kaa 1.0 release is a "meta-package" that includes a set of component versions.
 All of the microservices in Kaa 1.0 have been tested for interoperation and can be installed in one shot to a Kubernetes cluster of your choice with a new Kaa installer.
+
+
+[elastic mapping]:              https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html
+[elastic pipeline processors]:  https://www.elastic.co/guide/en/elasticsearch/reference/master/processors.html
+[elastic script processor]:     https://www.elastic.co/guide/en/elasticsearch/reference/master/script-processor.html
+[echarts]:                      https://echarts.apache.org/en/index.html

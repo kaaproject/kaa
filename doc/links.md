@@ -94,6 +94,9 @@
 {% capture feature_data_analytics_url %}{{kaa_features_url}}Data-analytics/{% endcapture %}
 [data analytics]: {{feature_data_analytics_url}}
 
+{% capture asf_url %}{{feature_data_analytics_url}}ASF/{% endcapture %}
+[ASF]: {{asf_url}}
+
 <!-- Configuration management -->
 {% capture feature_config_mgmt_url %}{{kaa_features_url}}Configuration-management/{% endcapture %}
 [configuration]: {{feature_config_mgmt_url}}
@@ -107,16 +110,22 @@
 [ECR REST API GET default config]:      {{ecr_url}}REST-API/#app_versions__appversionname__get
 [ECR REST API GET per-endpoint config]: {{ecr_url}}REST-API/#endpoints__endpointid__app_versions__appversionname__get
 
+{% capture adx_url %}{{feature_config_mgmt_url}}ADX/{% endcapture %}
+[ADX]: {{adx_url}}
+
 
 <!-- Commands -->
 {% capture feature_commands_url %}{{kaa_features_url}}Command-invocation/{% endcapture %}
 [commands]: {{feature_commands_url}}
 
 {% capture cex_url %}{{feature_commands_url}}CEX/{% endcapture %}
-[CEX]: {{cex_url}}
-[CEX REST API]: {{cex_url}}REST-API/
-[CEX REST API POST command]: {{cex_url}}REST-API/#endpoints__endpointid__commands__commandtype__post
-[CEX REST API DELETE command]: {{cex_url}}REST-API/#endpoints__endpointid__commands__commandtype___commandid__delete
+[CEX]:                              {{cex_url}}
+[CEX REST API]:                     {{cex_url}}REST-API/
+[CEX REST API POST command]:        {{cex_url}}REST-API/#endpoints__endpointid__commands__commandtype__post
+[CEX REST API DELETE command]:      {{cex_url}}REST-API/#endpoints__endpointid__commands__commandtype___commandid__delete
+[CEX REST API POST batch command]:  {{cex_url}}REST-API/#endpoints_commands__commandtype__batch_post
+
+[CEX batch command overview]: {{cex_url}}#batch-command-execution
 
 
 <!-- Software updates -->
@@ -143,7 +152,7 @@
 [infrastructure]: {{feature_infrastructure_url}}
 
 {% capture pbm_url %}{{feature_infrastructure_url}}PBM/{% endcapture %}
-[PBM]:                      {{pbm_url}}
+[PBM]: {{pbm_url}}
 
 {% capture tekton_url %}{{feature_infrastructure_url}}TEKTON/{% endcapture %}
 [TEKTON]:                               {{tekton_url}}
@@ -155,10 +164,18 @@
 [TEKTON tenant configs REST API]:       {{tekton_url}}REST-API/#tenant_configs
 [TEKTON bulk REST API]:                 {{tekton_url}}REST-API/#bulk
 
+{% capture tsa_url %}{{feature_infrastructure_url}}TSA/{% endcapture %}
+[TSA]: {{tsa_url}}
+
 
 <!-- Multi-tenancy -->
 {% capture feature_multi_tenancy_url %}{{kaa_features_url}}Multi-tenancy/{% endcapture %}
 [multi-tenancy]: {{feature_multi_tenancy_url}}
+
+{% capture iam_url %}{{feature_multi_tenancy_url}}IAM/{% endcapture %}
+[IAM]:          {{iam_url}}
+[IAM REST API]: {{iam_url}}REST-API/
+
 
 {% capture tenant_manager_url %}{{feature_multi_tenancy_url}}TENANT-MANAGER/{% endcapture %}
 [TM]:                                   {{tenant_manager_url}}
@@ -240,6 +257,7 @@
 [dashboard]:            {{wd_url}}Dashboards/#dashboards
 [widget]:               {{wd_url}}/Widgets/
 [tenant]:               {{kaa_concepts}}#tenant
+[policy]:               {{iam_url}}#policy
 
 <!--== Tutorials ==-->
 {% capture tutorials_url %}{{root_url}}Tutorials/{% endcapture %}
@@ -360,6 +378,7 @@
 [openid]: https://openid.net/connect/
 [uma]: https://en.wikipedia.org/wiki/User-Managed_Access
 [python download]: https://www.python.org/downloads/
+[gjson]: https://github.com/tidwall/gjson
 
 <!--== General ==-->
 [42]: https://en.wikipedia.org/wiki/42_(number)#The_Hitchhiker's_Guide_to_the_Galaxy

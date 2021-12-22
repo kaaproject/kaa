@@ -18,7 +18,8 @@
   ],
   "Configuration-management": [
     "CMX",
-    "ECR"
+    "ECR",
+    "ADX"
   ],
   "Command-invocation": [
     "CEX"
