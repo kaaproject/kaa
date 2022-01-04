@@ -188,7 +188,7 @@ Read more about the ADX service [here][ADX].
 * [**[WD]**][WD] Raw HTML widget supports internal links navigation without a page refresh
 * [**[CEX]**][CEX] "Expired" command status added.
   Commands expire when failed to complete execution within the `commandTtl` period.
-* [**[CEX]**][CEX] `createdAt` and `updatedAt` command related fields now has ISO 8601 format in UTC timezone in [REST API][CEX REST API] responses. 
+* [**[CEX]**][CEX] `createdAt` and `updatedAt` command related fields now has ISO 8601 format in UTC timezone in [REST API][CEX REST API] responses.
   <!-- TODO: Time format in `CommandDescriptorDto` was changed to universal format for EPR-CEX API - Timestamp in ISO 8601 format (UTC timezone). -->
 * [**[CM]**][CM] [**[CMX]**][CMX] [**[EPMX]**][EPMX] [**[EPR]**][EPR] [**[EPL]**][EPL] [**[KDCA]**][KDCA] [**[ECR]**][ECR] [**[CEX]**][CEX] [**[OTAO]**][OTAO] Added PAT token cache to speed up inter-service communication.
 * [**[CM]**][CM] Added Grafana dashboard with HTTP server error responses, REST API request processing time, application-specific configuration update time, and JVM threads state monitoring.
@@ -196,6 +196,7 @@ Read more about the ADX service [here][ADX].
 * [**[DCX]**][DCX] is now able to handle plain text data like `21`, `55%`, `2061m`, etc. on `/plain/${metric-name}` resource path.
   Devices are no longer required to send telemetry in JSON format.
   More info [here]({{dcx_url}}#/Plain-data-handling).
+* [**[DCX]**][DCX] now reports message processing time to Prometheus excluding the message queuing wait time, which makes it easier to track the two metrics in isolation.
 * [**[CM]**][CM] [**[CMX]**][CMX] [**[EPMX]**][EPMX] [**[EPR]**][EPR] [**[EPL]**][EPL] [**[KDCA]**][KDCA] [**[ECR]**][ECR] [**[CEX]**][CEX] [**[OTAO]**][OTAO] [**[CCM]**][CCM] [**[KPC]**][KPC] [**[DXC]**][DCX] [**[EPTS]**][EPTS] [**[BCX]**][BCX] [**[Tekton]**][Tekton] services now use cluster internal Keycloak DNS name to issue PAT tokens.
   This allows platform services to start without depending on KeyCloak's public DNS.
 * [**[EPR]**][EPR] Fixed `Location` header with duplicated endpoint resource location link.
