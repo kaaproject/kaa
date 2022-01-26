@@ -338,9 +338,11 @@
 [k8s]: https://kubernetes.io/
 [k8s image pull secret]: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
 [k8s docs home]: https://kubernetes.io/docs/home/
+[k8s config map]: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 [helm]: https://helm.sh/
 [helm3]: https://helm.sh/blog/helm-3-released/
 [helm3-changes]: https://helm.sh/docs/faq/#changes-since-helm-2
+[helm client]: https://helm.sh/docs/using_helm/#installing-the-helm-client
 [Helmfile]: https://github.com/roboll/helmfile
 [install helm]: https://helm.sh/docs/intro/install/
 [prometheus]: https://prometheus.io/

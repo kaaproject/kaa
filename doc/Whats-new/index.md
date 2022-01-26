@@ -82,17 +82,17 @@ Kaa 1.4 allows dashboards to be publicly available so that users can access them
 Users can select applications and endpoints to be public and assign additional roles and permissions to a public user.
 You can even build in public Kaa dashboads on your own website to showcase the work you have done using Kaa.
 
-![Public dashboard sharing](attach/v1.4/public–dashboard–sharing.png)
+![Public dashboard sharing](attach/v1.4/share-public–dashboard.png)
 
 Check out our [public dashboard tutorial][public dashboard tutorial] for more information.
 
 
 ### API usage statistics
 
-Kaa 1.4 introduces reports on the amount of sent and received data to / from devices.
+Kaa 1.4 introduces reports on the amount of sent and received data to/from [endpoints][endpoint].
 Reports can be viewed on the tenant, application, and endpoint levels for the total, 24-hour, and 7-days periods.
 
-You can find more information this feature in the [Traffic Analytics Service documentation][TSA], which listens to traffic events and sends them to [OpenDistro][open distro].
+You can find more information on this feature in the [Traffic Statistics Appender documentation][TSA], which listens to traffic events and sends them to [OpenDistro][open distro].
 
 ![Device traffic stats](attach/v1.4/api-usage-device.png)
 
