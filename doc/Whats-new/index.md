@@ -82,7 +82,7 @@ Kaa 1.4 allows dashboards to be publicly available so that users can access them
 Users can select applications and endpoints to be public and assign additional roles and permissions to a public user.
 You can even build in public Kaa dashboads on your own website to showcase the work you have done using Kaa.
 
-![Public dashboard sharing](attach/v1.4/share-public–dashboard.png)
+![Public dashboard sharing](attach/v1.4/dashboard-sharing.png)
 
 Check out our [public dashboard tutorial][public dashboard tutorial] for more information.
 
@@ -140,7 +140,7 @@ New widgets support aggregations, math operations, and rich customization thanks
 
 ![Analytics chart](attach/v1.4/analytics-chart.png)
 
-![Analytics gauge and polar widgets](attach/v1.4/analytics-gauge-and-polar–widgets.png)
+![Analytics gauge and polar widgets](attach/v1.4/analytics-gauge-and-polar.png)
 
 
 ### Batch command execution based on endpoint filters
