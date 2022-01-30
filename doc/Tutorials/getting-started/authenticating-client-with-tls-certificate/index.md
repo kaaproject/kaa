@@ -177,4 +177,4 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 </div>
 </div>
 
-[code url]: https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/tls-certificate-client-communication/attach/code
+[code url]: https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/authenticating-client-with-tls-certificate/attach/code
