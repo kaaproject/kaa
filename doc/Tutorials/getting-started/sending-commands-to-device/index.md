@@ -196,4 +196,4 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 </div>
 </div>
 
-[code url]: https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/sending-commands-to-your-device/attach/code
+[code url]: https://github.com/kaaproject/kaa/tree/rel_1.2.0/doc/Tutorials/getting-started/sending-commands-to-device/attach/code
