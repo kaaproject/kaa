@@ -279,6 +279,7 @@ Now, let's retrieve the device configuration on the widget mount event:
 
 Now, after we have already retrieved the device configuration and viewed it in the widget, let's output the **CircularSlider** component:
 
+{% raw %}
 ```tsx
   return (
     <div className="root">
@@ -310,6 +311,7 @@ Now, after we have already retrieved the device configuration and viewed it in t
     </div>
   )
 ```
+{% endraw %}
 
 Also, let's update styles in `/src/App.css` with [these ones](https://github.com/kaaproject/kaa-custom-widget-tutorial/blob/master/src/App.css).
 
