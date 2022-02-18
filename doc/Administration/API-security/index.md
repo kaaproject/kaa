@@ -498,3 +498,12 @@ The UI settings management scope is enforced by Kaa [Web Dashboard][WD].
 | **Scope**       | **Description**                                                 |
 | --------------- | --------------------------------------------------------------- |
 | `kaa:ui:update` | Management of UI settings for all tenants (banner, logos, etc). |
+
+
+#### API usage statistics scope
+
+Enforced by the [Traffic Statistics Appender][TSA].
+
+| **Scope**                | **Description**                                                    |
+| ------------------------ | ------------------------------------------------------------------ |
+| `traffic-statistic:read` | Reports on the amount of sent and received data to/from endpoints. |
