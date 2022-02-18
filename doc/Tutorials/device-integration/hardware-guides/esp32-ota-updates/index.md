@@ -99,3 +99,12 @@ Specify your WiFi SSID, password, and token and application version of your endp
 Upload the sketch and check the Serial Monitor in Arduino IDE.
 
 ![ESP32 OTA logs](attach/img/es32-ota-logs.png)
+
+
+### Troubleshooting
+
+We provide the below script written in Python that you can use to troubleshoot software exchange between a client and the Kaa platform.
+
+```python
+{% include_relative attach/code/debug.py %}
+```  
