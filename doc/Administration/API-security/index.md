@@ -498,3 +498,19 @@ The UI settings management scope is enforced by Kaa [Web Dashboard][WD].
 | **Scope**       | **Description**                                                 |
 | --------------- | --------------------------------------------------------------- |
 | `kaa:ui:update` | Management of UI settings for all tenants (banner, logos, etc). |
+
+
+#### The Things Network integrations management scopes
+
+Enforced by the [TTNC][TTNC].
+
+| **Scope**                     | **Description**                                        |
+| ----------------------------- | ------------------------------------------------------ |
+| `application:ttn-app-integration:create` | Creation of a new TTN application integration connected with given application. |
+| `ttn-app-integration:read` | Read access to TTN application integration. |
+| `ttn-app-integration:update` | Update access to TTN application integration. |
+| `ttn-app-integration:delete` | Delete access to TTN application integration. |
+| `ttn-app-integration:ttn-device-integration:create` | Creation of a new TTN device integration connected with given application integration. |
+| `ttn-device-integration:read` | Read access to TTN device integration. |
+| `ttn-device-integration:update` | Update access to TTN device integration. |
+| `ttn-device-integration:delete` | Delete access to TTN device integration. |
