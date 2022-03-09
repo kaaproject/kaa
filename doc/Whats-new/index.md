@@ -618,9 +618,3 @@ Kaa 1.0 is the initial general release of the Kaa Enterprise IoT platform.
 Prior to the 1.0 version, every Kaa component was versioned independently.
 Such independent versioning still exists for each of the Kaa microservices, while the Kaa 1.0 release is a "meta-package" that includes a set of component versions.
 All of the microservices in Kaa 1.0 have been tested for interoperation and can be installed in one shot to a Kubernetes cluster of your choice with a new Kaa installer.
-
-
-[elastic mapping]:              https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html
-[elastic pipeline processors]:  https://www.elastic.co/guide/en/elasticsearch/reference/master/processors.html
-[elastic script processor]:     https://www.elastic.co/guide/en/elasticsearch/reference/master/script-processor.html
-[echarts]:                      https://echarts.apache.org/en/index.html
