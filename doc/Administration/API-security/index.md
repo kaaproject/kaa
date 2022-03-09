@@ -508,3 +508,19 @@ Enforced by the [Traffic Statistics Appender][TSA].
 | **Scope**                | **Description**                                                    |
 | ------------------------ | ------------------------------------------------------------------ |
 | `traffic-statistic:read` | Reports on the amount of sent and received data to/from endpoints. |
+
+
+#### The Things Network integration management scopes
+
+Enforced by the [The Things Network Connector][TTNC].
+
+| **Scope**                                           | **Description**                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------- |
+| `application:ttn-app-integration:create`            | Creation of a new integration between TTN and Kaa applications.     |
+| `ttn-app-integration:read`                          | Read access to TTN application integration.                         |
+| `ttn-app-integration:update`                        | Write access to TTN application integration.                        |
+| `ttn-app-integration:delete`                        | Delete access to TTN application integration.                       |
+| `ttn-app-integration:ttn-device-integration:create` | Creation of a new integration between TTN device and Kaa endpoint.  |
+| `ttn-device-integration:read`                       | Read access to TTN device integration.                              |
+| `ttn-device-integration:update`                     | Write access to TTN device integration.                             |
+| `ttn-device-integration:delete`                     | Delete access to TTN device integration.                            |
