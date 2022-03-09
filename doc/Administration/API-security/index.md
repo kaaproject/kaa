@@ -172,10 +172,11 @@ Enforced by the [ECR][ECR].
 
 Enforced by the [OTAO][OTAO].
 
-| **Scope**                     | **Description**                                                           |
-| ----------------------------- | ------------------------------------------------------------------------- |
-| `application:software:read`   | Read access to over-the-air software definitions in a given application.  |
-| `application:software:update` | Write access to over-the-air software definitions in a given application. |
+| **Scope**                     | **Description**                                                               |
+| ----------------------------- | ----------------------------------------------------------------------------- |
+| `application:software:read`   | Read access to over-the-air software definitions in a given application.      |
+| `application:software:update` | Write access to over-the-air software definitions in a given application.     |
+| `application:software:delete` | Delete operation on over-the-air software definitions in a given application. |
 
 
 
