@@ -357,13 +357,17 @@
 [redis]: https://redis.io
 [postgresql]: https://www.postgresql.org/
 [elastic stack]: https://www.elastic.co/elastic-stack
-[elasticsearch]: https://www.elastic.co/elasticsearch/
 [kibana]: https://www.elastic.co/kibana
 [vault]: https://www.vaultproject.io/
+[echarts]: https://echarts.apache.org/en/index.html
 [open distro]: https://opendistro.github.io/
 [open distro security]: https://opendistro.github.io/for-elasticsearch-docs/docs/security/
 [open distro kibana]: https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/
 [open distro alerting]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/
+[elasticsearch]: https://www.elastic.co/elasticsearch/
+[elastic mapping]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/mapping.html
+[elastic pipeline processors]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/processors.html
+[elastic script processor]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/script-processor.html
 [curl]: https://en.wikipedia.org/wiki/CURL
 [minio]: https://min.io/
 
