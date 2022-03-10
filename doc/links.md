@@ -209,6 +209,13 @@
 {% capture tsx_url %}{{feature_miscellaneous_url}}TSX/{% endcapture %}
 [TSX]: {{tsx_url}}
 
+<!-- Integration -->
+{% capture feature_integration_url %}{{kaa_features_url}}Integration/{% endcapture %}
+[integration]: {{feature_integration_url}}
+
+{% capture ttnc_url %}{{feature_integration_url}}TTNC/{% endcapture %}
+[TTNC]: {{ttnc_url}}
+
 
 <!--== Kaa RFCs ==-->
 [RFCs]:     {{rfc_url}}#kaa-rfcs
@@ -356,7 +363,6 @@
 [maria]: https://mariadb.org/
 [redis]: https://redis.io
 [postgresql]: https://www.postgresql.org/
-[elastic stack]: https://www.elastic.co/elastic-stack
 [kibana]: https://www.elastic.co/kibana
 [vault]: https://www.vaultproject.io/
 [echarts]: https://echarts.apache.org/en/index.html
@@ -364,12 +370,15 @@
 [open distro security]: https://opendistro.github.io/for-elasticsearch-docs/docs/security/
 [open distro kibana]: https://opendistro.github.io/for-elasticsearch-docs/docs/kibana/
 [open distro alerting]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/
+[curl]: https://en.wikipedia.org/wiki/CURL
+[minio]: https://min.io/
+[elastic stack]: https://www.elastic.co/elastic-stack
 [elasticsearch]: https://www.elastic.co/elasticsearch/
 [elastic mapping]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/mapping.html
 [elastic pipeline processors]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/processors.html
 [elastic script processor]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/script-processor.html
-[curl]: https://en.wikipedia.org/wiki/CURL
-[minio]: https://min.io/
+[elastic index template]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-templates.html
+[elastic ingest pipeline]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/ingest.html
 
 <!--== Technologies ==-->
 [mqtt]: http://mqtt.org/
