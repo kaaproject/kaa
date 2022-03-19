@@ -14,7 +14,7 @@ sort_idx: 1
 
 This webinar provides an overview on our latest Kaa IoT platform release 1.4 and its features:
 
-* [Custom widgets]({{whats_new_url}#custom-widgets)
+* [Custom widgets]({{whats_new_url}}#custom-widgets)
 * [Public dashboards]({{whats_new_url}}#public-dashboards)
 * [API usage statistics]({{whats_new_url}}#api-usage-statistics)
 * [Identity and Access Management (IAM)]({{whats_new_url}}#identity-and-access-management-iam)
