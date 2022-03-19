@@ -516,6 +516,8 @@ Enforced by the [The Things Network Connector][TTNC].
 
 | **Scope**                                           | **Description**                                                     |
 | --------------------------------------------------- | ------------------------------------------------------------------- |
+| `tenant:ttn-app-integration:create`                 | Display TTN integration creation button on Kaa UI.                  |
+| `tenant:ttn-app-integration:read`                   | Display TTN integration dashboard on Kaa UI.                        |
 | `application:ttn-app-integration:create`            | Creation of a new integration between TTN and Kaa applications.     |
 | `ttn-app-integration:read`                          | Read access to TTN application integration.                         |
 | `ttn-app-integration:update`                        | Write access to TTN application integration.                        |
