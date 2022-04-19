@@ -421,3 +421,6 @@
 <!--== Hardware ==-->
 [MKR-1010]:       https://www.arduino.cc/en/Guide/MKRWiFi1010/
 [MKR-ENV-Shield]: https://www.arduino.cc/en/Guide/MKRENVShield/
+
+<!--== AWS ==-->
+[AWS S3 presigned URL]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html

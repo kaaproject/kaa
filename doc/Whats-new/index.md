@@ -12,6 +12,17 @@ sort_idx: 7
 {:toc}
 
 
+## Kaa 1.5
+
+
+### Software file management
+
+Over-the-air Orchestrator service ([OTAO][OTAO]) can handle software files upload via [REST API][OTAO REST API] and store these files in a configured AWS S3 bucket.
+When an endpoint requests its software update, [presigned file download URL][AWS S3 presigned URL] is generated and added into software specification JSON object.
+
+Check out [OTAO][OTAO] documentation for more information.
+
+
 ## Kaa 1.4 (January 31-th, 2022)
 
 
