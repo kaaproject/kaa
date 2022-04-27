@@ -155,5 +155,5 @@ All tutorial resources are located on [GitHub][code_url].
 [epts ts transmitters]: {{epts_url}}Configuration/#time-series-transmitters
 [epts config]: {{epts_url}}Configuration/#service-configuration-structure
 
-[code_url]:  https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/custom-microservice/attach/code
-[schema_js]: https://github.com/kaaproject/kaa/tree/master/doc/Tutorials/custom-microservice/attach/code/schema.js
+[code_url]:  https://github.com/kaaproject/kaa/tree/rel_1.0.0/doc/Tutorials/custom-microservice/attach/code
+[schema_js]: https://github.com/kaaproject/kaa/tree/rel_1.0.0/doc/Tutorials/custom-microservice/attach/code/schema.js
