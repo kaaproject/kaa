@@ -15,6 +15,13 @@ sort_idx: 7
 ## Kaa 1.5
 
 
+### The Things Network integration
+
+The Things Network Integration service ([TTNC][TTNC]) enables integration between the Kaa platform and [The Things Network (TTN)][the-things-network]. 
+These integrations make it possible to connect LoRa devices to the Kaa platform with help of The Things Network.
+
+Check out [TTNC][TTNC] documentation for more information.
+
 ### Software file management
 
 Over-the-air Orchestrator service ([OTAO][OTAO]) can handle software files upload via [REST API][OTAO REST API] and store these files in a configured AWS S3 bucket.

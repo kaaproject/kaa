@@ -424,3 +424,6 @@
 
 <!--== AWS ==-->
 [AWS S3 presigned URL]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html
+
+<!--== 3-rd party integrations ==-->
+[the-things-network]: https://www.thethingsnetwork.org
