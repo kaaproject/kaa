@@ -14,7 +14,6 @@ sort_idx: 7
 
 ## Kaa 1.5
 
-
 ### The Things Network integration
 
 The Things Network Integration service ([TTNC][TTNC]) enables integration between the Kaa platform and [The Things Network (TTN)][the-things-network]. 
@@ -28,6 +27,11 @@ Over-the-air Orchestrator service ([OTAO][OTAO]) can handle software files uploa
 When an endpoint requests its software update, [presigned file download URL][AWS S3 presigned URL] is generated and added into software specification JSON object.
 
 Check out [OTAO][OTAO] documentation for more information.
+
+
+### Other highlights of Kaa 1.5
+
+* [**[EPMX]**][EPMX] Added Grafana dashboard for service metrics monitoring - the state of the JVM machine (threads, memory, CPU), number of processed NATS messages, etc.
 
 
 ## Kaa 1.4 (January 31-th, 2022)
