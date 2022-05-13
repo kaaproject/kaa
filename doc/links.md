@@ -215,6 +215,7 @@
 
 {% capture ttnc_url %}{{feature_integration_url}}TTNC/{% endcapture %}
 [TTNC]: {{ttnc_url}}
+[TTNC REST API]:                     {{ttnc_url}}REST-API/
 
 
 <!--== Kaa RFCs ==-->
@@ -381,6 +382,8 @@
 [elastic script processor]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/script-processor.html
 [elastic index template]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-templates.html
 [elastic ingest pipeline]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/ingest.html
+[spring data]: https://docs.spring.io/spring-data/jpa/docs/2.5.4/reference/html/#reference
+[logback]: https://logback.qos.ch/
 
 <!--== Technologies ==-->
 [mqtt]: http://mqtt.org/
