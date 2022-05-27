@@ -309,6 +309,7 @@
 [how to connect an STM32]:                {{tutorials_url}}device-integration/hardware-guides/connect-stm32-to-kaa-platform/
 [how to connect a Raspberry Pi]:          {{tutorials_url}}device-integration/hardware-guides/connect-raspberry-to-kaa-platform/
 [connecting node-red to kaa]:             {{tutorials_url}}device-integration/connecting-node-red-to-kaa/
+[connecting ttn lora device to kaa]:      {{tutorials_url}}device-integration/connecting-ttn-lora-device-to-kaa/
 
 <!--== Solutions ==-->
 [solutions tutorials]:                                    {{tutorials_url}}solutions/
@@ -382,7 +383,7 @@
 [elastic script processor]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/script-processor.html
 [elastic index template]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index-templates.html
 [elastic ingest pipeline]: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/ingest.html
-[spring data]: https://docs.spring.io/spring-data/jpa/docs/2.5.4/reference/html/#reference
+[spring data]: https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference
 [logback]: https://logback.qos.ch/
 
 <!--== Technologies ==-->
@@ -413,6 +414,8 @@
 [kaaproject.org]:         https://www.kaaiot.com
 {% capture kaa_museum %}https://museum.kaaiot.net/{% endcapture %}
 [kaa museum]:             {{kaa_museum}}
+[Kaa cloud application]:  https://cloud.kaaiot.com/devices/applications
+[Kaa cloud integration]:  https://cloud.kaaiot.com/devices/integrations
 
 <!--== Replit.com ==-->
 [connecting your first device repl]:                        https://replit.com/@KaaIoT/ConnectingYourFirstDevice120
@@ -430,3 +433,10 @@
 
 <!--== 3-rd party integrations ==-->
 [the-things-network]: https://www.thethingsnetwork.org
+[the-things-stack-community-edition]: https://www.thethingsindustries.com/docs/getting-started/console/#the-things-stack-community-edition
+[the-things-stack-cloud-hosted]: https://www.thethingsindustries.com/docs/getting-started/cloud-hosted
+[ttn-applications]: https://eu1.cloud.thethings.network/console/applications
+[ttn-note-on-using-the-tenant-id]: https://www.thethingsindustries.com/docs/integrations/mqtt/#note-on-using-the-tenant-id
+[ttn-api-key-creation]: https://www.thethingsindustries.com/docs/integrations/mqtt/#creating-an-api-key
+[ttn-addresses-community]: https://www.thethingsindustries.com/docs/getting-started/ttn/addresses/#api-endpoints
+[ttn-addresses-industries]: https://www.thethingsindustries.com/docs/getting-started/cloud-hosted/addresses/
