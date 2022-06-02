@@ -272,6 +272,7 @@
 [tutorials]:                              {{tutorials_url}}
 
 <!--== Getting Started ==-->
+<!-- Captures for the Getting Started tutorials navigation -->
 [getting started tutorials]:                             {{tutorials_url}}getting-started/
 {% capture connecting_your_first_device %}               {{tutorials_url}}getting-started/connecting-your-first-device/{% endcapture %}
 [connecting your first device]:                          {{connecting_your_first_device}}
@@ -312,9 +313,8 @@
 [connecting ttn lora device to kaa]:      {{tutorials_url}}device-integration/connecting-ttn-lora-device-to-kaa/
 
 <!--== Solutions ==-->
-[solutions tutorials]:                                    {{tutorials_url}}solutions/
-{% capture air_quality_monitoring_tutorial %}             {{tutorials_url}}solutions/air-quality-monitoring/{% endcapture %}
-[air quality monitoring]:                                 {{air_quality_monitoring_tutorial}}
+[solutions tutorials]:                    {{tutorials_url}}solutions/
+[air quality monitoring]:                 {{tutorials_url}}solutions/air-quality-monitoring/
 
 <!-- Administration -->
 {% capture administration_url %}{{root_url}}Administration/{% endcapture %}
@@ -412,8 +412,7 @@
 [Kaa cloud registration]: https://www.kaaiot.com/free-trial
 [Kaa user chat]:          https://gitter.im/KaaIoT/community
 [kaaproject.org]:         https://www.kaaiot.com
-{% capture kaa_museum %}https://museum.kaaiot.net/{% endcapture %}
-[kaa museum]:             {{kaa_museum}}
+[kaa museum]:             https://museum.kaaiot.net
 [Kaa cloud application]:  https://cloud.kaaiot.com/devices/applications
 [Kaa cloud integration]:  https://cloud.kaaiot.com/devices/integrations
 
@@ -433,10 +432,3 @@
 
 <!--== 3-rd party integrations ==-->
 [the-things-network]: https://www.thethingsnetwork.org
-[the-things-stack-community-edition]: https://www.thethingsindustries.com/docs/getting-started/console/#the-things-stack-community-edition
-[the-things-stack-cloud-hosted]: https://www.thethingsindustries.com/docs/getting-started/cloud-hosted
-[ttn-applications]: https://eu1.cloud.thethings.network/console/applications
-[ttn-note-on-using-the-tenant-id]: https://www.thethingsindustries.com/docs/integrations/mqtt/#note-on-using-the-tenant-id
-[ttn-api-key-creation]: https://www.thethingsindustries.com/docs/integrations/mqtt/#creating-an-api-key
-[ttn-addresses-community]: https://www.thethingsindustries.com/docs/getting-started/ttn/addresses/#api-endpoints
-[ttn-addresses-industries]: https://www.thethingsindustries.com/docs/getting-started/cloud-hosted/addresses/
