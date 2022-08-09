@@ -196,7 +196,7 @@ Let's simulate that the device sends temperature measurements.
 For example:
 
 ```json
-{"temperature":20}
+{"temp":20}
 ```
 
 As we've set up a "Custom Javascript formatter", our JSON data is a byte array.

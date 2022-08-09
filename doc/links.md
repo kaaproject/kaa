@@ -241,6 +241,7 @@
 [20/EFMP]:  {{rfc_url}}blob/master/0020/README.md
 [21/TLE]:   {{rfc_url}}blob/master/0021/README.md
 [22/CAP]:   {{rfc_url}}blob/master/0022/README.md
+[23/AIP]:   {{rfc_url}}blob/master/0023/README.md
 
 
 <!--== Kaa terminology ==-->

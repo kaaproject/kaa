@@ -41,6 +41,10 @@
   "Integration": [
     "TTNC"
   ],
+  "Automation": [
+    "AAC",
+    "AA"
+  ],
   "Miscellaneous": [
     "TSX"
   ],
