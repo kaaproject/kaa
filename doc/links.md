@@ -97,6 +97,18 @@
 {% capture asf_url %}{{feature_data_analytics_url}}ASF/{% endcapture %}
 [ASF]: {{asf_url}}
 
+<!-- Automation -->
+{% capture feature_automation_url %}{{kaa_features_url}}Automation/{% endcapture %}
+[automation]: {{feature_automation_url}}
+
+{% capture aa_url %}{{feature_automation_url}}AA/{% endcapture %}
+[AA]:           {{aa_url}}
+[AA REST API]:  {{aa_url}}REST-API/
+
+{% capture aac_url %}{{feature_automation_url}}AAC/{% endcapture %}
+[AAC]:          {{aac_url}}
+[AAC REST API]: {{aac_url}}REST-API/
+
 <!-- Configuration management -->
 {% capture feature_config_mgmt_url %}{{kaa_features_url}}Configuration-management/{% endcapture %}
 [configuration]: {{feature_config_mgmt_url}}
@@ -433,3 +445,4 @@
 
 <!--== 3-rd party integrations ==-->
 [the-things-network]: https://www.thethingsnetwork.org
+[redmine]:            https://www.redmine.org/

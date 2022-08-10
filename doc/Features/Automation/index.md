@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Integration
+title: Automation
 permalink: /:path/
 sort_idx: 50
 ---
@@ -19,7 +19,8 @@ sort_idx: 50
 
 ## Basic concept
 
-Kaa integration services power the Kaa platform to communicate with other platforms.
+Kaa automation services power the Kaa platform to run various automation types on in-platform events.
+Examples of such automation could be sending an email or mobile push notification, ticket creation in [Redmine][redmine], sending a command to a device, and so on once a specific event was fired.  
 
 
 ## Components
@@ -28,4 +29,5 @@ The table below summarizes the list of Kaa platform components that contribute t
 
 | Service                                               | Version          |
 |-------------------------------------------------------|------------------|
-| [The Things Network Connector Service (TTNC)][TTNC]   | {{ttnc_version}} |
+| [Action Automation (AA)][AA]                          | {{aa_version}}   |
+| [Action Automation Connector (AAC)][AAC]              | {{aac_version}}  |
