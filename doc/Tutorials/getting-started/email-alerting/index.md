@@ -11,8 +11,6 @@ sort_idx: 4
 * TOC
 {:toc}
 
-Based on the [*Kaa v1.2*][whats new in 1.2].
-
 Time to complete: *17 min*.
 
 
@@ -21,36 +19,51 @@ Time to complete: *17 min*.
 Welcome to the fifth tutorial in the Kaa getting started guide!
 We assume that you have successfully [connected your first device][connecting your first device] to Kaa, [collected data from a device][collecting data from a device], and [sent alerts with Open Distro][open distro alerting tutorial] so make sure to review those tutorials before proceeding here.
 
-From this tutorial, you will learn how to configure an webhook destination for Open Distro that will be triggered to send an email when a certain telemetry value from the endpoint exceeds a defined threshold.
+From this tutorial, you will learn how to configure a webhook destination for Open Distro that will be triggered to send an email when a certain telemetry value from the endpoint exceeds a defined threshold.
 
-We will use [automate.io](https://automate.io) for email sending.
+We will use Kaa SMTP server.
 
 
 ## Open Distro integration
 
 We assume that you have successfully completed [Open Distro Alerting][open distro alerting tutorial] tutorial and remember the theory but let's recap what is Open Distro.
-Open Distro is open-source distribution of Elasticsearch with advanced security, alerting, SQL support, automated index management, deep performance analysis, and [more][open distro documentation].
+Open Distro is an open-source distribution of Elasticsearch with advanced security, alerting, SQL support, automated index management, deep performance analysis, and [more][open distro documentation].
 Kaa forwards all telemetry data from your endpoints into [Elasticsearch index](https://www.elastic.co/blog/what-is-an-elasticsearch-index) attached to your tenant.
 
 
 ## Playbook
 
 
-### Create bot on automate.io
+### Create a device action
 
-Register an account on [automate.io](https://automate.io) then go to **Bots** and click **Create a Bot** button.
-Search and select **Webhooks** for the Trigger app and **Incoming Hook** for the trigger event.
-Search and select **Email** for the Action app and **Send an Email** for the Action to be done.
+The first you need to do - is to create a device action.
+ 
+Go to the ["Device actions" dashboard][device actions dashboard] and choose your application.
 
-![Setup webhook first phase](attach/img/setup-bot-1.png)
+![Device actions](attach/img/device-actions.png)
 
-Click **Setup Webhook** on the left and and you will be redirected to the **Setup Webhook** page with the webhook URL.
-Leave this page opened, we will return to it in a moment.
+Here you can create the webhooks that perform some actions when triggered.  
+You can add these webhooks as triggers in Open Distro - and the action you choose will be executed as soon as the condition specified in Open Distro is met.
+
+Click the "Add action" button.
+
+![Add action](attach/img/add-action.png)
+
+Here you can choose an automation type.  
+In our case, it is an **email-notification**.  
+Specify the required parameters of the automation type you have chosen.
+
+
+![Webhook link](attach/img/webhook-link.png)
+
+In order to test that the webhook works and emails are sent, you can call the provided webhook directly, for example, using Postman, cURL, or any other HTTP client you like.
+
+![Webhook test](attach/img/webhook-test.png)
 
 
 ### Create webhook destination
 
-We assume that you have already created CO2 monitor and trigger during completing the previous [Open Distro Alerting][open distro alerting tutorial] tutorial so that your monitor looks next:
+We assume that you have already created a CO2 monitor and trigger during completing the previous [Open Distro Alerting][open distro alerting tutorial] tutorial so that your monitor looks next:
 
 ```sql
 WHEN max()
@@ -64,52 +77,34 @@ and trigger is `IS ABOVE 1,000`.
 
 If you don't have the above monitor and trigger, go to the [Open Distro Alerting][open distro alerting tutorial] and create them.
 It won't take much time.
-Meantime, we will wait you here ;)
+Meantime, we will wait for you here ;)
 
 <br/>
 
-To create a webhook destination, go to the **Alerting**, **Destination** and click **Add destination** button.
+To create a webhook destination, go to **Alerting**, **Destination**, and click **Add destination** button.
 
 ![Add destination button](attach/img/add-destination-button.png)
 
 Enter "Email destination" into the **Name** field.
 Select **Custom webhook** for the **Type** field.
-Go the the earlier opened page with the URL on the [automate.io](https://automate.io), copy the URL and paste it into the **Webhook URL** field.
+Go to the device actions page and copy the link to the webhook, you created earlier.
+Paste the link in the **Webhook URL** placeholder.
 
-![Setup destination](attach/img/setup-destination.png)
+![Setup destination](attach/img/define-webhook-url.png)
 
 Click **Create**.
 
-Go to **Monitors**, click on your monitor (it was named **CO2 level monitor** in the previous tutorial), find **CO2 level trigger**, select it and click **Edit**.
+Go to **Monitors**, click on your monitor (it was named **CO2 level monitor** in the previous tutorial), find  the **CO2 level trigger**, select it and click **Edit**.
 Scroll to the bottom and click and click **Add action**.
 
 Enter "Email action" for the **Action name** field.
-<!--== We use such trick since Jekyll treats pair of curly braces as variable ==-->
-{% assign co2var = "{{ctx.results.0.aggregations.when.value}}" %}
-Select just created **Email destination** for the destination field and paste the next text for the **Message** field: `{"message": "CO2 level is {{co2var}} ppm"}`.
+Select just created **Email destination** for the destination field.
 
-Now complete bot setup on [automate.io](https://automate.io).
-For that, click **Send test message**
+Click **Send test message** to test the integration.
 
 ![Send test message button](attach/img/send-test-message-button.png)
 
-return back to the page with webhook URL on the [automate.io](https://automate.io) and click **I'm Done**.
-Just sent test message must appear.
-
-![Webhook test](attach/img/webhook-test.png)
-
-Click **Looks Good** and the current page will close.
-Return to the action configuration page on Kibana and save changes.
-
-Go the bot setup page and fill in **From Name**, **To Addresses**, **Subject** and drag and drop **message** output field into the **Email Body** 
-
-![Setup webhook second phase](attach/img/setup-bot-2.png)
-
-Save your changes, enable the bot, click **Enter Sample Data** and click **Run Test** button.
-
-![Run bot test](attach/img/run-bot-test.png)
-
-The mail must arrive to the specified **To Address** email.
+The mail must arrive at the email address, you've specified in the device action.
 
 ![Test mail](attach/img/test-mail.png)
 
@@ -130,12 +125,9 @@ curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-ve
 
 Within a minute you should receive an alerting mail.
 
-![Alert mail](attach/img/alert-mail.png)
-
-
 ### View alerts history
 
-To view alerts history, go to the alerting dashboard.
+To view alert history, go to the alerting dashboard.
 
 ![Alerts history](attach/img/alert-history.png)
 
@@ -148,7 +140,7 @@ To view alerts history, go to the alerting dashboard.
 
 ## Feedback
 
-This tutorial is based on Kaa 1.2 released on July 6-th, 2020.
+This tutorial is based on Kaa 1.5.
 If you, our reader from the future, spot some major discrepancies with your current version of the Kaa platform, or if anything does not work for you, please [give us a shout][Kaa user chat] and we will help!
 
 And if the tutorial served you well, we'd still love to hear your feedback, so [join the community][Kaa user chat]!
@@ -170,3 +162,4 @@ And if the tutorial served you well, we'd still love to hear your feedback, so [
 [create destination]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/monitors/#create-destinations
 [create action]: https://opendistro.github.io/for-elasticsearch-docs/docs/alerting/monitors/#add-actions
 [slack webhook]: https://api.slack.com/messaging/webhooks
+[device actions dashboard]:  https://cloud.kaaiot.com/devices/device-actions

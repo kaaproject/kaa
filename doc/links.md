@@ -104,6 +104,7 @@
 {% capture aa_url %}{{feature_automation_url}}AA/{% endcapture %}
 [AA]:           {{aa_url}}
 [AA REST API]:  {{aa_url}}REST-API/
+[AA webhook trigger REST API]:  {{aa_url}}REST-API/#applications__appname__actions__actiontype___actionid__webhooks__webhookid__post
 
 {% capture aac_url %}{{feature_automation_url}}AAC/{% endcapture %}
 [AAC]:          {{aac_url}}
