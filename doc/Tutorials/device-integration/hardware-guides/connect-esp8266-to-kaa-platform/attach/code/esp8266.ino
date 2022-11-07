@@ -43,24 +43,30 @@ void loop() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.printf("\nHandling command message on topic: %s\n", topic);
+  Serial.printf("\nHandling message on topic: %s\n", topic);
 
-  DynamicJsonDocument doc(1023);
-  deserializeJson(doc, payload, length);
-  JsonVariant json_var = doc.as<JsonVariant>();
-
-  DynamicJsonDocument commandResponse(1023);
-  for (int i = 0; i < json_var.size(); i++) {
-    unsigned int command_id = json_var[i]["id"].as<unsigned int>();
-    commandResponse.createNestedObject();
-    commandResponse[i]["id"] = command_id;
-    commandResponse[i]["statusCode"] = 200;
-    commandResponse[i]["payload"] = "done";
+  for (int i = 0; i < length; i++) {
+    Serial.print((char) payload[i]);
   }
 
-  String responseTopic = "kp1/" + APP_VERSION + "/cex/" + TOKEN + "/result/SWITCH";
-  client.publish(responseTopic.c_str(), commandResponse.as<String>().c_str());
-  Serial.println("Published response to SWITCH command on topic: " + responseTopic);
+  if (String(topic).endsWith("/command/SWITCH/status")) {
+    DynamicJsonDocument doc(1023);
+    deserializeJson(doc, payload, length);
+    JsonVariant json_var = doc.as<JsonVariant>();
+
+    DynamicJsonDocument commandResponse(1023);
+    for (int i = 0; i < json_var.size(); i++) {
+      unsigned int command_id = json_var[i]["id"].as<unsigned int>();
+      commandResponse.createNestedObject();
+      commandResponse[i]["id"] = command_id;
+      commandResponse[i]["statusCode"] = 200;
+      commandResponse[i]["payload"] = "done";
+    }
+
+    String responseTopic = "kp1/" + APP_VERSION + "/cex/" + TOKEN + "/result/SWITCH";
+    client.publish(responseTopic.c_str(), commandResponse.as<String>().c_str());
+    Serial.println("Published response to SWITCH command on topic: " + responseTopic);
+  }
 }
 
 void setup_wifi() {
