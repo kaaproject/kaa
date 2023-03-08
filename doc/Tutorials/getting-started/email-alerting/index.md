@@ -26,7 +26,6 @@ We will use Kaa SMTP server.
 
 ## Open Distro integration
 
-We assume that you have successfully completed [Open Distro Alerting][open distro alerting tutorial] tutorial and remember the theory but let's recap what is Open Distro.
 Open Distro is an open-source distribution of Elasticsearch with advanced security, alerting, SQL support, automated index management, deep performance analysis, and [more][open distro documentation].
 Kaa forwards all telemetry data from your endpoints into [Elasticsearch index](https://www.elastic.co/blog/what-is-an-elasticsearch-index) attached to your tenant.
 
@@ -77,7 +76,14 @@ and trigger is `IS ABOVE 1,000`.
 
 If you don't have the above monitor and trigger, go to the [Open Distro Alerting][open distro alerting tutorial] and create them.
 It won't take much time.
-Meantime, we will wait for you here ;)
+
+> Note that we use the message template from the [Open Distro Alerting][open distro alerting tutorial] the message text will contain just the message that was entered during the webhook creation.
+But for the email alerting, there is a possibility to add dynamic information about endpoints that triggered an alert.
+{:.note}
+
+To use this feature, return to the monitor configuration and select **Define using extraction query** for the **How do you want to define the monitor?** field.
+If the **size** query parameter doesn't have a zero value then the query result contains information that will be used by the message template to create a message text.
+It is desirable to set the **size** value not less than the expected count of events that could be covered in the current query.
 
 <br/>
 
@@ -94,13 +100,54 @@ Paste the link in the **Webhook URL** placeholder.
 
 Click **Create**.
 
-Go to **Monitors**, click on your monitor (it was named **CO2 level monitor** in the previous tutorial), find  the **CO2 level trigger**, select it and click **Edit**.
-Scroll to the bottom and click and click **Add action**.
+Go to **Monitors**, click on your monitor (it was named **CO2 level monitor** in the previous tutorial), find the **CO2 level trigger**, select it, and click **Edit**.
+Scroll to the bottom and click **Add action**.
 
 Enter "Email action" for the **Action name** field.
 Select just created **Email destination** for the destination field.
 
-Click **Send test message** to test the integration.
+If you didn't change the **size** query parameter, and we want to have just a simple notification message then we can use the next message template: 
+
+```json
+{"message":"CO2 level is {{ctx.results.0.aggregations.when.value}} ppm"}
+```
+
+Otherwise, if the **size** query parameter is not zero it is possible to add some additional information to the email message. 
+In such a case we could use the following message template:
+
+```json
+{ 
+    "params": {
+        "Monitor": "{{ctx.monitor.name}}", 
+        "Trigger": "{{ctx.trigger.name}}",
+        "Severity": "{{ctx.trigger.severity}}",
+        "Period_start": "{{ctx.periodStart}}",
+        "Period_end": "{{ctx.periodEnd}}"
+	},
+    "endpointIds": [
+        {{#ctx.results.0.hits.hits}}
+        {
+            "endpoint_id": "{{_source.endpointId}}",
+            "params": {
+                "link": "https://cloud.kaaiot.com/devices/device-management/{{_source.appName}}/devices/{{_source.endpointId}}",
+                "metadata": "{{_source.dataSample.~ep-metadata}}"
+            }
+        },
+        {{/ctx.results.0.hits.hits}}
+	]
+} 
+``` 
+
+In such a case, the email message will contain more detailed information about the event and a list of endpoints that relate to the event.
+
+> Note that fields under the "endpointIds.params" path are optional. 
+This example contains the direct link to the endpoint and the endpoint metadata.
+For the endpoint metadata to be available enable the data sample enrichment with endpoint metadata for the application as in the screenshot below.
+{:.note}
+
+![Data sample enrichment with metadata](attach/img/data-sample-metadata-enrichment.png)
+
+Now that setup is done, click **Send test message** to test the integration.
 
 ![Send test message button](attach/img/send-test-message-button.png)
 
@@ -122,6 +169,23 @@ curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-ve
   "co2": 1200
 }'
 ``` 
+
+In case you configured the destination with additional context, you can test it with the following example.
+
+```bash
+curl --location --request POST 'https://connect.cloud.kaaiot.com:443/kp1/<app-version-name>/dcx/<endpoint-token>/json' \
+--data-raw '{
+    "endpointIds": [
+      {
+        "endpoint_id": "0e12e834-3f0e-43c6-abb6-49e11cd121a7",
+        "params": {
+          "deviceState": "RUNNING",
+          "co2": "1200"
+        }
+      }
+    ]
+}'
+```
 
 Within a minute you should receive an alerting mail.
 
