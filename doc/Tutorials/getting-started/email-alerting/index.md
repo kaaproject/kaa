@@ -116,14 +116,14 @@ Otherwise, if the **size** query parameter is not zero it is possible to add som
 In such a case we could use the following message template:
 
 ```json
-{ 
+{
     "params": {
-        "Monitor": "{{ctx.monitor.name}}", 
+        "Monitor": "{{ctx.monitor.name}}",
         "Trigger": "{{ctx.trigger.name}}",
         "Severity": "{{ctx.trigger.severity}}",
         "Period_start": "{{ctx.periodStart}}",
         "Period_end": "{{ctx.periodEnd}}"
-	},
+    },
     "endpointIds": [
         {{#ctx.results.0.hits.hits}}
         {
@@ -134,7 +134,8 @@ In such a case we could use the following message template:
             }
         },
         {{/ctx.results.0.hits.hits}}
-	]
+        {"endpoint_id": "", "params": {}}
+    ]
 } 
 ``` 
 
