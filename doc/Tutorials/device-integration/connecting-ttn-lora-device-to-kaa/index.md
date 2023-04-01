@@ -60,19 +60,75 @@ Next, in the MQTT integration, we need to generate an API key to access this app
 > Remember to copy and save the created API key.
 {:.important}
 
-![Generate API key](attach/img/ttn-edit-integration.png)
+![Edit TTN integration](attach/img/ttn-edit-integration.png)
 
 Then set the rights for this key by selecting "Grand all current and future rights".
 This level of access is required by the Kaa platform in order to be able to query The Things Network for application parameters and registered devices.
 
 More details about TTN API Keys [here][ttn-api-key-creation].
 
-![Generate API key](attach/img/ttn-edit-api-key.png)
+![Edit TTN API key](attach/img/ttn-edit-api-key.png)
 
-Finally, we need to configure the uplink payload formatter by selecting the "Custom Javascript formatter".
-The default formatter implementation will show up; you don't need to edit it.
+Also, we need to configure the uplink payload formatter.
+
+> NOTE: Pay attention that the Kaa platform works with the data represented in JSON format.
+{:.note}
+
+To do it we have to switch to the "Custom Javascript formatter" and remake a code to convert the binary data received from the device to the JSON message that will be sent to the Kaa platform.
+
+It is preferable to check that the payload formatter code is correct by pasting the device payload into the *Byte payload* input field of the Test form and pressing the *Test decoder* button.
+If the formatter is correct the *Decoded test payload* field will contain the result JSON.
 
 ![Uplink payload formatter](attach/img/ttn-set-uplink-formatter.png)
+
+If we also want to use LoRaWAN downlink commands we have to configure the Downlink formatter.
+
+![Downlink payload formatter](attach/img/ttn-set-downlink-formatter.png)
+
+An example of the downlink formatter code:
+
+```js
+function encodeDownlink(input) {
+	const CONFIGURE_PORT = 50; // set your fPort number
+
+	var fPort = null;
+	var result = [];
+	if (input.data.command === "switch") {
+		fPort = CONFIGURE_PORT;
+		result = new Array(3);
+		result[0] = 0x01;
+		result[1] = Number(input.data.addr);
+		result[2] = Number(input.data.value);
+	}
+
+	if ((fPort !== null) && (result !== null)) {
+	    return {
+			bytes: result,
+			fPort: fPort,
+			warnings: [],
+			errors: []
+		};
+	} else {
+		return {
+			bytes: [],
+			warnings: [],
+			errors: []
+		};
+	}
+}
+
+function decodeDownlink(input) {
+	return {
+		data: {
+			bytes: input.bytes
+		},
+		warnings: [],
+		errors: []
+	}
+}
+```
+
+We can similarly test the formatter code as we did it for the uplink formatter.
 
 Now we can start setting up the test LoRa device.
 Go to the "Manually" tab and set up the following parameters:
