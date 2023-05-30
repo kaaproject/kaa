@@ -1,0 +1,412 @@
+[
+  {
+    "id": "0f74c4179fdeaf10",
+    "type": "tab",
+    "label": "Teltonika_codec8ext UDP",
+    "disabled": false,
+    "info": "",
+    "env": []
+  },
+  {
+    "id": "fadfce7baadf9ec5",
+    "type": "udp in",
+    "z": "0f74c4179fdeaf10",
+    "name": "",
+    "iface": "",
+    "port": "8890",
+    "ipv": "udp4",
+    "multicast": "false",
+    "group": "",
+    "datatype": "buffer",
+    "x": 100,
+    "y": 360,
+    "wires": [
+      [
+        "dd0c4c878ca0a094"
+      ]
+    ]
+  },
+  {
+    "id": "dd0c4c878ca0a094",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "Filter PING",
+    "func": "var inputMsg = msg.payload;\nif (inputMsg.length == 1) {\n    msg.payload = \"PING. \" + msg.ip + \":\" + msg.port;\n    return [null, msg];\n}\n\nreturn [msg, null];",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 290,
+    "y": 360,
+    "wires": [
+      [
+        "9cec26d2a37717b0"
+      ],
+      [
+        "97b384a986a4c232"
+      ]
+    ]
+  },
+  {
+    "id": "97b384a986a4c232",
+    "type": "debug",
+    "z": "0f74c4179fdeaf10",
+    "name": "PING packets",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 500,
+    "y": 360,
+    "wires": []
+  },
+  {
+    "id": "9cec26d2a37717b0",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "PARSE codec8_ext UDP",
+    "func": "var inputMsg = msg.payload;\n\nvar inputDataPtr = 0;\nvar fullPacketLength = 0;\n\nvar parsedMsg = {};\nparsedMsg.avl = [];\nvar avl = {};\n\nparseAVLfull();\n\nmsg.payload = parsedMsg;\nmsg.token = parsedMsg.moduleIMEI;\n\nvar response = [];\nresponse.push(0, 5);\nresponse.push(Math.floor(parsedMsg.packetId / 256), parsedMsg.packetId % 256);\nresponse.push(1);\nresponse.push(parsedMsg.avlPacketId);\nresponse.push(parsedMsg.numberOfData);\n\nvar responseMsg = {};\nresponseMsg.ip = msg.ip;\nresponseMsg.port = msg.port;\nresponseMsg.payload = new Buffer(response);\n\n// return parsed message and UDP response\nreturn [msg, responseMsg];\n\n//**********************************************************************************************\n// parseAVLfull\n//**********************************************************************************************\nfunction parseAVLfull() {\n    // get packet length\n    parsedMsg.fullPacketLength = getNextInt16();\n\n    // get packet ID\n    parsedMsg.packetId = getNextInt16();\n\n    // unused byte\n    getNextInt8();\n\n    // get AVL packet ID, IMEI, codec ID\n    parsedMsg.avlPacketId = getNextInt8();\n\n    // IMEI length & IMEI\n    var imeiLength = getNextInt16();\n    if (imeiLength != 15) {\n        node.error(\"Wrong imei length: \" + imeiLength);\n        return [null, null];\n    }\n    parsedMsg.moduleIMEI = toImeiString(getNextSubArray(imeiLength));\n\n    // AVL Data array\n\n    // AVL codec ID\n    parsedMsg.codecId = getNextInt8();\n    if (parsedMsg.codecId != 0x8E) {\n        node.warn(\"Wrong codecId: \" + parsedMsg.codecId);\n        return [null, null];\n    }\n\n    // AVL number of data\n    parsedMsg.numberOfData = getNextInt8();\n\n    // payload start\n    for (var i = 0; i < parsedMsg.numberOfData; i++) {\n        parseAVLpacketDataArrayElement();\n    }\n\n    // read AVL packets\n    parsedMsg.numberOfRecords = getNextInt8();\n}\n\n//**********************************************************************************************\n// toImeiString\n//**********************************************************************************************\nfunction toImeiString(IMEIarray) {\n    var result = \"\";\n    for (var i = 0; i < IMEIarray.length; i++) {\n        result += String.fromCharCode(IMEIarray[i]);\n    }\n    return result;\n}\n\n//**********************************************************************************************\n// parseAVLpacketDataArrayElement\n//**********************************************************************************************\nfunction parseAVLpacketDataArrayElement() {\n    avl = {};\n    avl.timestamp = getTimestamp();\n    avl.priority = getNextInt8();\n    avl.GPS = parseGPSelement();\n    parseIOelement();\n    parsedMsg.avl.push(avl);\n}\n\n//**********************************************************************************************\n// parseAVLpacket\n//**********************************************************************************************\nfunction getTimestamp() {\n    var timestampArray = getNextSubArray(8);\n    var value = 0;\n    for (var i = 0; i < timestampArray.length; i++) {\n        value = (value * 256) + timestampArray[i];\n    }\n    return value;\n}\n\n//**********************************************************************************************\n// parseGPSelement\n//**********************************************************************************************\nfunction parseGPSelement() {\n    var GPS = {};\n    GPS.longitude = getCoordinate(getNextSubArray(4));\n    GPS.latitude = getCoordinate(getNextSubArray(4));\n    GPS.altitude = getNextInt16();\n    GPS.angle = getNextInt16();\n    GPS.satellites = getNextInt8();\n    GPS.speed = getNextInt16();\n\n    return GPS;\n}\n\n//**********************************************************************************************\n// getCoordinate\n//**********************************************************************************************\nfunction getCoordinate(array) {\n    var value = 0;\n    if (array[0] > 127) { //negative\n        value = (array[0] << 24) + (array[1] << 16) + (array[2] << 8) + array[3];\n        value -= parseInt(\"ffffffff\", 16);\n    } else { //positive\n        value = (array[0] << 24) + (array[1] << 16) + (array[2] << 8) + array[3];\n    }\n    return value / 10000000;\n}\n\n//**********************************************************************************************\n// parseIOelement\n//**********************************************************************************************\nfunction parseIOelement() {\n    avl.eventIoID = getNextInt16();\n\n    //if (avl.eventIoID == 385) {\n    //    parseBeacon();\n    //    getNextInt8();\n    //} else {\n    parseUsualIOelements();\n    decodeUsualIOelements();\n    //}\n}\n\n//**********************************************************************************************\n// parseBeacon\n//**********************************************************************************************\nfunction parseBeacon(array) {\n    const BEACON_LENGTH = 20;\n    const EDDY_LENGTH = 16;\n\n    var avl = {};\n\n    avl.beaconLength = array.length;\n\n    var ptr = 0;\n\n    // dataPart\n    avl.dataPart = array[ptr++];\n    avl.beaconRecordsCount = avl.dataPart & 0x0F;\n    avl.recordNumber = (avl.dataPart & 0xF0) >> 4;\n\n    if (avl.beaconLength < EDDY_LENGTH) {\n        return avl;\n    }\n\n    // flags\n    avl.flag = array[ptr++];\n    avl.sygnalStrenghAvailable = ((avl.flag & 0x01) > 0) ? 1 : 0;\n    avl.beaconDataSent = ((avl.flag & 0x20) > 0) ? 1 : 0;\n\n    // beacons\n    if (avl.beaconDataSent != 0) {\n        // beacon data\n        avl.beaconId = array.slice(ptr, ptr + BEACON_LENGTH);\n        ptr += BEACON_LENGTH;\n        if (avl.sygnalStrenghAvailable != 0) {\n            avl.BeaconRssi = array[ptr++];\n        }\n    }\n\n    return avl;\n}\n\n//**********************************************************************************************\n// parseUsualIOelements\n//**********************************************************************************************\nfunction parseUsualIOelements() {\n    avl.nTotalIo = getNextInt16();\n    avl.n1Io = getNextInt16();\n    avl.ioData = new Map();\n    var i = 0;\n    for (i = 0; i < avl.n1Io; i++) {\n        var n1IoId = getNextInt16();\n        var n1IoValue = getNextInt8();\n        if (n1IoValue >= 128) {\n            n1IoValue = n1IoValue - 256;\n        }\n        avl.ioData.set(n1IoId, n1IoValue);\n    }\n\n    if (inputDataPtr >= parsedMsg.fullPacketLength) { return [null, null]; }\n    avl.n2Io = getNextInt16();\n    for (i = 0; i < avl.n2Io; i++) {\n        var n2IoId = getNextInt16();\n        var n2IoValue = getNextInt16();\n        if (n2IoValue >= 0x8000) {\n            n2IoValue = n2IoValue - 0x8000;\n        }\n        avl.ioData.set(n2IoId, n2IoValue);\n    }\n\n    if (inputDataPtr >= parsedMsg.fullPacketLength) { return [null, null]; }\n    avl.n4Io = getNextInt16();\n    for (i = 0; i < avl.n4Io; i++) {\n        var n4IoId = getNextInt16();\n        var n4IoValue = getNextInt32();\n        if (n4IoValue >= 0x80000000) {\n            n4IoValue = n4IoValue - 0x80000000;\n        }\n        avl.ioData.set(n4IoId, n4IoValue);\n    }\n\n    if (inputDataPtr >= parsedMsg.fullPacketLength) { return [null, null]; }\n    avl.n8Io = getNextInt16();\n    for (i = 0; i < avl.n8Io; i++) {\n        var n8IoId = getNextInt16();\n        //var n8IoSubArray = getNextSubArray(8);\n        var n8IoValue = getNextInt64();\n        if (n8IoValue >= 0x8000000000000000) {\n            n8IoValue = n8IoValue - 0x8000000000000000;\n        }\n        //node.warn(n8IoValue);\n        avl.ioData.set(n8IoId, n8IoValue);\n    }\n    avl.nxIo = getNextInt16();\n    for (i = 0; i < avl.nxIo; i++) {\n        var nxIoId = getNextInt16();\n        var nxIoLength = getNextInt16();\n        if (nxIoId == 385) {\n            avl.ioData.set(nxIoId, parseBeacon(getNextSubArray(nxIoLength)));\n        } else {\n            avl.ioData.set(nxIoId, getNextSubArray(nxIoLength));\n        }\n    }\n}\n\n//**********************************************************************************************\n// decodeUsualIOelements\n//**********************************************************************************************\nfunction decodeUsualIOelements() {\n    avl.axis = {};\n    avl.axis.x = avl.ioData.get(17);\n    avl.axis.y = avl.ioData.get(18);\n    avl.axis.z = avl.ioData.get(19);\n}\n\n//**********************************************************************************************\n// getCharArray\n//**********************************************************************************************\nfunction getCharArray(array) {\n    const result = [];\n    for (var i = 0; i < array.length; i++) {\n        result.push(String.fromCharCode(array[i]));\n    }\n    return result;\n}\n\n//**********************************************************************************************\n// getNextSubArray\n//**********************************************************************************************\nfunction getNextSubArray(length) {\n    var subarray = inputMsg.slice(inputDataPtr, inputDataPtr + length);\n    inputDataPtr += length;\n    return subarray;\n}\n\n//**********************************************************************************************\n// getNextInt8\n//**********************************************************************************************\nfunction getNextInt8() {\n    return inputMsg[inputDataPtr++];\n}\n\n//**********************************************************************************************\n// getNextInt16\n//**********************************************************************************************\nfunction getNextInt16() {\n    var value = inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    return value;\n}\n\n//**********************************************************************************************\n// getNextInt32\n//**********************************************************************************************\nfunction getNextInt32() {\n    var value = inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    return value;\n}\n\n//**********************************************************************************************\n// getNextInt64\n//**********************************************************************************************\nfunction getNextInt64() {\n    var value = inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    value = (value << 8) + inputMsg[inputDataPtr++];\n    return value;\n}\n\n//**********************************************************************************************\n// Calculates the buffers CRC-16/IBM.\n//**********************************************************************************************\nfunction crc16(buffer, startPtr, length) {\n    var crc = 0;\n    var odd;\n\n    for (var i = 0; i < length; i++) {\n        crc = crc ^ buffer[i + startPtr];\n\n        var numBit = 0;\n        do {\n            odd = crc & 0x0001;\n            crc = crc >> 1;\n            if (odd == 1) {\n                crc = crc ^ 0xA001;\n            }\n            numBit++;\n        } while (numBit < 8);\n    }\n\n    return crc;\n};",
+    "outputs": 2,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 310,
+    "y": 240,
+    "wires": [
+      [
+        "61033611f2912a2a",
+        "175125a2967af1a9"
+      ],
+      [
+        "b22bdeee1574fd42",
+        "efd2b14198a2014f"
+      ]
+    ]
+  },
+  {
+    "id": "61033611f2912a2a",
+    "type": "debug",
+    "z": "0f74c4179fdeaf10",
+    "name": "PARSED data",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 560,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "b22bdeee1574fd42",
+    "type": "debug",
+    "z": "0f74c4179fdeaf10",
+    "name": "REPLY monitor",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 560,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "efd2b14198a2014f",
+    "type": "udp out",
+    "z": "0f74c4179fdeaf10",
+    "name": "UDP reply",
+    "addr": "",
+    "iface": "",
+    "port": "",
+    "ipv": "udp4",
+    "outport": "",
+    "base64": false,
+    "multicast": "false",
+    "x": 540,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "679d984ea3d099ad",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "PARSE AVL IO data",
+    "func": "var avl = msg.avl;\n\nvar payload = {};\npayload.timestamp = avl.timestamp;\npayload.altitude = avl.GPS.altitude;\npayload.angle = avl.GPS.angle;\npayload.satellites = avl.GPS.satellites;\npayload.latitude = avl.GPS.latitude;\npayload.longitude = avl.GPS.longitude;\n\nif (avl.axis != undefined) {\n    payload.axis_x = avl.axis.x;\n    payload.axis_y = avl.axis.y;\n    payload.axis_z = avl.axis.z;\n}\n\n// fuel Used GPS\nvar fuelUsedGps = getIoData(12);\nif (fuelUsedGps != null) {\n    payload.fuelUsedGps = fuelUsedGps;\n}\n\n// fuel Rate GPS\nvar fuelRateGps = getIoData(13);\nif (fuelRateGps != null) {\n    payload.fuelRateGps = fuelRateGps;\n}\n\n// total odometer\nvar totalOdometer = getIoData(16);\nif (totalOdometer != null) {\n    payload.totalOdometer = totalOdometer / 1000;\n}\n\n// gsmSignal\nvar gsmSignal = getIoData(21);\nif (gsmSignal != null) {\n    payload.gsmSignal = gsmSignal;\n}\n\n// speed\nvar speed = getIoData(24);\nif (speed != null) {\n    payload.speed = speed;\n}\n\n// obdDtcNumber\nvar obdDtcNumber = getIoData(30);\nif (obdDtcNumber != null) {\n    payload.obdDtcNumber = obdDtcNumber;\n}\n\n// obdEngineLoad\nvar obdEngineLoad = getIoData(31);\nif (obdEngineLoad != null) {\n    payload.obdEngineLoad = obdEngineLoad;\n}\n\n// obdCoolantTemperature\nvar obdCoolantTemperature = getIoData(32);\nif (obdCoolantTemperature != null) {\n    payload.obdCoolantTemperature = obdCoolantTemperature;\n}\n\n// obdShortFuelTrim\nvar obdShortFuelTrim = getIoData(33);\nif (obdShortFuelTrim != null) {\n    payload.obdShortFuelTrim = obdShortFuelTrim;\n}\n\n// obdFuelPressure\nvar obdFuelPressure = getIoData(34);\nif (obdFuelPressure != null) {\n    payload.obdFuelPressure = obdFuelPressure;\n}\n\n// obdIntakeMAP\nvar obdIntakeMAP = getIoData(35);\nif (obdIntakeMAP != null) {\n    payload.obdIntakeMAP = obdIntakeMAP;\n}\n\n// obdEngineRPM\nvar obdEngineRPM = getIoData(36);\nif (obdEngineRPM != null) {\n    payload.obdEngineRPM = obdEngineRPM;\n}\n\n// obdVehicleSpeed\nvar obdVehicleSpeed = getIoData(37);\nif (obdVehicleSpeed != null) {\n    payload.obdVehicleSpeed = obdVehicleSpeed;\n}\n\n// obdTimingAdvance\nvar obdTimingAdvance = getIoData(38);\nif (obdTimingAdvance != null) {\n    payload.obdTimingAdvance = obdTimingAdvance;\n}\n\n// obdIntakeAirTemperature\nvar obdIntakeAirTemperature = getIoData(39);\nif (obdIntakeAirTemperature != null) {\n    payload.obdIntakeAirTemperature = obdIntakeAirTemperature;\n}\n\n// obdThrottlePosition\nvar obdThrottlePosition = getIoData(41);\nif (obdThrottlePosition != null) {\n    payload.obdThrottlePosition = obdThrottlePosition;\n}\n\n// obdDistanceTraveledMILon\nvar obdDistanceTraveledMILon = getIoData(43);\nif (obdDistanceTraveledMILon != null) {\n    payload.obdDistanceTraveledMILon = obdDistanceTraveledMILon;\n}\n\n// obdFuelLevel\nvar obdFuelLevel = getIoData(48);\nif (obdFuelLevel != null) {\n    payload.obdFuelLevel = obdFuelLevel;\n} else {\n    payload.obdFuelLevel = 50;\n}\n\n// engineOilTemperature\nvar engineOilTemperature = getIoData(58);\nif (engineOilTemperature != null) {\n    payload.engineOilTemperature = engineOilTemperature;\n}\n\n// fuelRate\nvar fuelRate = getIoData(60);\nif (fuelRate != null) {\n    payload.fuelRate = fuelRate;\n}\n\n// externalVoltage\nvar externalVoltage = getIoData(66);\nif (externalVoltage != null) {\n    payload.externalVoltage = externalVoltage;\n}\n\n// batteryVoltage\nvar batteryVoltage = getIoData(67);\nif (batteryVoltage != null) {\n    payload.batteryVoltage = batteryVoltage;\n}\n\n// batteryCurrent\nvar batteryCurrent = getIoData(68);\nif (batteryCurrent != null) {\n    payload.batteryCurrent = batteryCurrent;\n}\n\n// gnssStatus\nvar gnssStatus = getIoData(69);\nif (gnssStatus != null) {\n    payload.gnssStatus = gnssStatus;\n}\n\n// batteryLevel\nvar batteryLevel = getIoData(113);\nif (batteryLevel != null) {\n    payload.batteryLevel = batteryLevel;\n}\n\n// tripOdometer\nvar tripOdometer = getIoData(199);\nif (tripOdometer != null) {\n    payload.tripOdometer = tripOdometer;\n}\n\n// gsmCellId\nvar gsmCellId = getIoData(205);\nif (gsmCellId != null) {\n    payload.gsmCellId = gsmCellId;\n}\n\n// gsmAreaCode\nvar gsmAreaCode = getIoData(206);\nif (gsmAreaCode != null) {\n    payload.gsmAreaCode = gsmAreaCode;\n}\n\n// ignition\nvar ignition = getIoData(239);\nif (ignition != null) {\n    payload.ignition = ignition;\n}\n\n// movement\nvar movement = getIoData(240);\nif (movement != null) {\n    payload.movement = movement;\n}\n\n// btStatus\nvar btStatus = getIoData(263);\nif (btStatus != null) {\n    payload.btStatus = btStatus;\n}\n\n// instantMovement\nvar instantMovement = getIoData(303);\nif (instantMovement != null) {\n    payload.instantMovement = instantMovement;\n}\n\n// obdOemTotalMileage\nvar obdOemTotalMileage = getIoData(389);\nif (obdOemTotalMileage != null) {\n    payload.obdOemTotalMileage = obdOemTotalMileage;\n}\n\n// obdOemFuelLevel\nvar obdOemFuelLevel = getIoData(390);\nif (obdOemFuelLevel != null) {\n    payload.obdOemFuelLevel = obdOemFuelLevel / 10;\n} else {\n    payload.obdOemFuelLevel = 50;\n}\n\n// creates message to send\nvar result = {};\nresult.payload = payload;\nresult.token = msg.token;\nresult.applicationVersion = msg.applicationVersion;\n\nreturn result;\n\n//**********************************************************************************************\n// getIoData\n// Get IO data with specified AVL ID\n//**********************************************************************************************\nfunction getIoData(id) {\n    if (avl.ioData.get(id) != null) {\n        return avl.ioData.get(id);\n    } else {\n        return avl.ioData.get(id.toString());\n    }\n}",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 740,
+    "y": 120,
+    "wires": [
+      [
+        "bc31621b62531515"
+      ]
+    ]
+  },
+  {
+    "id": "175125a2967af1a9",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "TO msgs",
+    "func": "var avl = msg.payload.avl[msg.numberOfData - 1];\n\nvar messages = [];\nfor (var i=0; i<msg.payload.avl.length; i++) {\n    var message = {};\n    message.avl = msg.payload.avl[i];\n    message.token = msg.token;\n    message.applicationVersion = flow.get(\"TRACKER_APP_VERSION\");;\n    messages.push(message);\n}\n\nreturn [messages];\n",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 540,
+    "y": 120,
+    "wires": [
+      [
+        "679d984ea3d099ad"
+      ]
+    ]
+  },
+  {
+    "id": "bc31621b62531515",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "EXTRACT params to display",
+    "func": "var result = {};\n\nresult.token = msg.token;\nresult.applicationVersion = msg.applicationVersion;\n\nresult.payload = {};\n\nresult.payload.timestamp = msg.payload.timestamp;\n\n// check if params exist and add validity flags\n\n// position\nif (msg.payload.latitude !== undefined && msg.payload.longitude !== undefined) {\n    result.payload.latitude = msg.payload.latitude;\n    result.payload.longitude = msg.payload.longitude;\n}\n\n// Vehicle Speed\nif (msg.payload.obdVehicleSpeed !== undefined) {\n    result.payload.obdVehicleSpeed = msg.payload.obdVehicleSpeed;\n    result.payload.obdVehicleSpeedValid = 1;\n} else {\n    result.payload.obdVehicleSpeed = 0;\n    result.payload.obdVehicleSpeedValid = 0;\n}\n\n// Engine RPM\nif (msg.payload.obdEngineRPM !== undefined) {\n    result.payload.obdEngineRPM = msg.payload.obdEngineRPM;\n    result.payload.obdEngineRpmValid = 1;\n} else {\n    result.payload.obdEngineRPM = 0;\n    result.payload.obdEngineRpmValid = 0;\n}\n\n// Engine Load\nif (msg.payload.obdEngineLoad !== undefined) {\n    result.payload.obdEngineLoad = msg.payload.obdEngineLoad;\n    result.payload.obdEngineLoadValid = 1;\n} else {\n    result.payload.obdEngineLoad = 0;\n    result.payload.obdEngineLoadValid = 0;\n}\n\n// Fuel Level\nif (msg.payload.obdOemFuelLevel !== undefined) {\n    result.payload.obdOemFuelLevel = msg.payload.obdOemFuelLevel;\n    result.payload.obdOemFuelLevelValid = 1;\n} else {\n    // result.payload.obdOemFuelLevel = 0;\n    result.payload.obdOemFuelLevelValid = 0;\n}\n\n// Total Odometer\nif (msg.payload.totalOdometer !== undefined) {\n    result.payload.totalOdometer = msg.payload.totalOdometer;\n    result.payload.totalOdometerValid = 1;\n} else {\n    result.payload.totalOdometerValid = 0;\n}\n\n// Coolant Temperature\nif (msg.payload.obdCoolantTemperature !== undefined) {\n    result.payload.obdCoolantTemperature = msg.payload.obdCoolantTemperature;\n    result.payload.obdCoolantTemperatureValid = 1;\n} else {\n    result.payload.obdCoolantTemperature = 0;\n    result.payload.obdCoolantTemperatureValid = 0;\n}\n\n// GSM signal\nresult.payload.gsmSignal = msg.payload.gsmSignal;\n\n// battery\nif (msg.payload.externalVoltage !== undefined) {\n    result.payload.externalVoltage = msg.payload.externalVoltage / 1000; \n    result.payload.externalVoltageValid = 1;\n} else {\n    result.payload.externalVoltage = 0;\n    result.payload.externalVoltageValid = 0;\n}\n\n// GPS coordinates\nif (msg.location !== undefined) {\n    result.payload.lat = msg.payload.location.lat;\n    result.payload.lon = msg.payload.location.lon;\n    result.payload.locationValid = 1;\n} else {\n    result.payload.locationValid = 0;\n}\n\nreturn result;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 860,
+    "y": 180,
+    "wires": [
+      [
+        "7a7c23d58f73c079",
+        "c2c99d128ebec814"
+      ]
+    ]
+  },
+  {
+    "id": "c2c99d128ebec814",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "SEND msg to EPMX",
+    "func": "var requestId = Math.floor(Math.random()*100);\n\n// creates message to send\nmsg.topic = \"kp1/\" + msg.applicationVersion + \"/epmx/\" + msg.token +  \"/update/keys/\" + requestId;\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1140,
+    "y": 180,
+    "wires": [
+      [
+        "2ea1969cc02db44e",
+        "24def1ba0809e198"
+      ]
+    ]
+  },
+  {
+    "id": "7a7c23d58f73c079",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "SEND msg to DCX",
+    "func": "msg.topic = \"kp1/\" + msg.applicationVersion + \"/dcx/\" + msg.token + \"/json\";\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 1150,
+    "y": 260,
+    "wires": [
+      [
+        "0185d63ec63fbdc5",
+        "24def1ba0809e198"
+      ]
+    ]
+  },
+  {
+    "id": "0185d63ec63fbdc5",
+    "type": "debug",
+    "z": "0f74c4179fdeaf10",
+    "name": "",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1330,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "2ea1969cc02db44e",
+    "type": "debug",
+    "z": "0f74c4179fdeaf10",
+    "name": "",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1330,
+    "y": 160,
+    "wires": []
+  },
+  {
+    "id": "1a137d6dca6e8c3c",
+    "type": "inject",
+    "z": "0f74c4179fdeaf10",
+    "name": "Trigger",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "",
+    "topic": "",
+    "payload": "",
+    "payloadType": "date",
+    "x": 120,
+    "y": 120,
+    "wires": [
+      [
+        "71f1c64797c9267c"
+      ]
+    ]
+  },
+  {
+    "id": "71f1c64797c9267c",
+    "type": "function",
+    "z": "0f74c4179fdeaf10",
+    "name": "USER config",
+    "func": "/*\n    Fill before using:\n    - application version\n*/\n\nconst TRACKER_APP_VERSION = \"chfq5afsj3ic738hqpd0-v1\";\nflow.set(\"TRACKER_APP_VERSION\", TRACKER_APP_VERSION);\n\nreturn msg;",
+    "outputs": 1,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 290,
+    "y": 120,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "cd18ac0f8626553a",
+    "type": "comment",
+    "z": "0f74c4179fdeaf10",
+    "name": "Please, fill USER config before using!!!",
+    "info": "",
+    "x": 210,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "24def1ba0809e198",
+    "type": "mqtt out",
+    "z": "0f74c4179fdeaf10",
+    "name": "kaaiot_MQTT",
+    "topic": "",
+    "qos": "0",
+    "retain": "true",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "ee2953f4d003cb3e",
+    "x": 1360,
+    "y": 220,
+    "wires": []
+  },
+  {
+    "id": "119f980c942bd58b",
+    "type": "mqtt in",
+    "z": "0f74c4179fdeaf10",
+    "name": "kaa_IN",
+    "topic": "kp1/#",
+    "qos": "0",
+    "datatype": "utf8",
+    "broker": "ee2953f4d003cb3e",
+    "nl": false,
+    "rap": false,
+    "inputs": 0,
+    "x": 1190,
+    "y": 360,
+    "wires": [
+      [
+        "abd8efd5f3546ae3"
+      ]
+    ]
+  },
+  {
+    "id": "abd8efd5f3546ae3",
+    "type": "debug",
+    "z": "0f74c4179fdeaf10",
+    "name": "",
+    "active": false,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1330,
+    "y": 360,
+    "wires": []
+  },
+  {
+    "id": "ee2953f4d003cb3e",
+    "type": "mqtt-broker",
+    "name": "",
+    "broker": "mqtt.cloud.kaaiot.com",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  }
+]

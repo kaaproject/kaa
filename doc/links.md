@@ -325,6 +325,7 @@
 [how to connect a Raspberry Pi]:          {{tutorials_url}}device-integration/hardware-guides/connect-raspberry-to-kaa-platform/
 [connecting node-red to kaa]:             {{tutorials_url}}device-integration/connecting-node-red-to-kaa/
 [connecting ttn lora device to kaa]:      {{tutorials_url}}device-integration/connecting-ttn-lora-device-to-kaa/
+[connect Teltonika FMB003]:             {{tutorials_url}}device-integration/hardware-guides/connect-teltonika-to-kaa-platform/
 
 <!--== Solutions ==-->
 [solutions tutorials]:                    {{tutorials_url}}solutions/
