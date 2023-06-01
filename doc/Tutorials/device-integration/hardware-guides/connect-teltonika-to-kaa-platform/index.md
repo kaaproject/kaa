@@ -19,7 +19,7 @@ You will learn how to create a digital twin of your tracking device, connect the
 
 ## Prerequisites
 
-1. You have the installed [The Node-RED][the-node-red] (you can use the Raspberry Pi board to install the Node-RED, install it on the PC or use some service that provide the access to the Node-RED)
+1. You have the installed the [Node-RED][the-node-red] (you can use the Raspberry Pi board to install the Node-RED, install it on the PC or use some service that provide the access to the Node-RED)
 2. You have an account in the [Kaa cloud][Kaa cloud]
 
 
@@ -70,7 +70,7 @@ Now we need to create an application and the endpoint in the [Kaa cloud][Kaa clo
 
 We will use the tracking device's IMEI as a token.
 
-We will use [The Node-RED][the-node-red] as the gateway transforming raw TCP or UDP payloads into the format consumable by the Kaa platform.
+We will use the [Node-RED][the-node-red] as the gateway transforming raw TCP or UDP payloads into the format consumable by the Kaa platform.
 
 ### The Node-RED UDP flow configuration
 
@@ -128,7 +128,7 @@ We have to reconfigure out tracking device to use the TCP protocol.
 ![Configure server settings](attach/img/teltonika-tcp-server.png)
 
 It is preferable to use Ping packets to prevent connection from closing.
-See the ["Records Settings"][fmb003-gprs-settings] on how to configure the ping timeout.
+See the [Records Settings][fmb003-gprs-settings] on how to configure the ping timeout.
 
 ### The Node-RED TCP flow configuration
 
