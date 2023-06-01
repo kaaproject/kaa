@@ -2,7 +2,7 @@
 layout: page
 title: ESP32 Over-the-air (OTA) updates
 permalink: /:path/
-sort_idx: 3
+sort_idx: 4
 ---
 
 {% include variables.md %}

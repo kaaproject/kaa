@@ -308,6 +308,7 @@
 [how to connect an STM32]:                {{tutorials_url}}device-integration/hardware-guides/connect-stm32-to-kaa-platform/
 [how to connect a Raspberry Pi]:          {{tutorials_url}}device-integration/hardware-guides/connect-raspberry-to-kaa-platform/
 [connecting node-red to kaa]:             {{tutorials_url}}device-integration/connecting-node-red-to-kaa/
+[connect Teltonika FMB003]:               {{tutorials_url}}device-integration/hardware-guides/connect-teltonika-to-kaa-platform/
 
 <!--== Solutions ==-->
 [solutions tutorials]:                                    {{tutorials_url}}solutions/
@@ -421,3 +422,4 @@
 <!--== Hardware ==-->
 [MKR-1010]:       https://www.arduino.cc/en/Guide/MKRWiFi1010/
 [MKR-ENV-Shield]: https://www.arduino.cc/en/Guide/MKRENVShield/
+[FMB003]:         https://teltonika-gps.com/products/trackers/fmb003
