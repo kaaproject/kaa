@@ -2,7 +2,7 @@
 layout: page
 title: Connecting Teltonika tracking device FMB003 to Kaa
 permalink: /:path/
-sort_idx: 5
+sort_idx: 6
 ---
 
 {% include variables.md %}
@@ -25,10 +25,11 @@ You will learn how to create a digital twin of your tracking device, connect the
 
 ## Playbook
 
+### UDP connection
 
-### Configure your tracking device (UDP)
+#### Configure your tracking device (UDP)
 
-For the tutorial, we will use the [FMB003][fmb003] tracker - is the smallest [Teltonika][teltonika] 2G tracker with OBDII socket that fits perfectly in any car.
+For the tutorial, we will use the [FMB003][FMB003] tracker - is the smallest [Teltonika][teltonika] 2G tracker with OBDII socket that fits perfectly in any car.
 
 FMB003 supports [Codec 8][codec-8] and [Codec 8 Extended][codec-8-extended] data protocols.
 We will use the [Codec 8 Extended][codec-8-extended] protocol.
@@ -61,7 +62,7 @@ Because Tracker FMB003 has the ability to connect via ODB, you also need to conf
 ![Configure OBD parameters](attach/img/teltonika-obd-parameters.png)
 
 
-### Configure the Kaa platform
+#### Configure the Kaa platform
 
 Now we need to create an application and the endpoint in the [Kaa cloud][Kaa cloud].
 
@@ -72,7 +73,7 @@ We will use the tracking device's IMEI as a token.
 
 We will use the [Node-RED][the-node-red] as the gateway transforming raw TCP or UDP payloads into the format consumable by the Kaa platform.
 
-### The Node-RED UDP flow configuration
+#### The Node-RED UDP flow configuration
 
 Let's take a look at our Node-RED flow.
 
@@ -106,7 +107,7 @@ If the tracking device is on and is configured correctly then we can see in Node
 
 ![Node-RED debug packets](attach/img/teltonika-node-red-debug.png)
 
-### The Kaa widget configuration
+#### The Kaa widget configuration
 
 Let's return to our solution and add **Endpoint location** widget.
 
@@ -119,7 +120,9 @@ Now we can see the location of the tracking device on the widget's map.
 
 Congratulations, you have successfully received telemetry from a Teltonika tracking device via UDP and visualized it in the Kaa UI!
 
-### Configure your tracking device (TCP)
+### TCP connection
+
+#### Configure your tracking device (TCP)
 
 Let's try to use TCP as a transport protocol for tracking device connection.
 
@@ -130,7 +133,7 @@ We have to reconfigure out tracking device to use the TCP protocol.
 It is preferable to use Ping packets to prevent connection from closing.
 See the [Records Settings][fmb003-gprs-settings] on how to configure the ping timeout.
 
-### The Node-RED TCP flow configuration
+#### The Node-RED TCP flow configuration
 
 Let's take a look at our Node-red TCP flow.
 
@@ -165,7 +168,7 @@ If all works fine we have to see the packets in the debug Node-RED window and th
 * Join the discussion at our [community chat][Kaa user chat] and share feedback!
 
 
-[fmb003]:                             https://teltonika-gps.com/products/trackers/fmb003
+[FMB003]:                             https://teltonika-gps.com/products/trackers/fmb003
 [teltonika]:                          https://teltonika-gps.com
 [the-node-red]:                       https://nodered.org
 [codec-8]:                            https://wiki.teltonika-gps.com/view/Codec#Codec_8

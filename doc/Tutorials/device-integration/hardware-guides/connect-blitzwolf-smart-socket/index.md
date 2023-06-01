@@ -2,7 +2,7 @@
 layout: page
 title: Connecting the BlitzWolf® BW-SHP6 WIFI smart socket
 permalink: /:path/
-sort_idx: 10
+sort_idx: 5
 ---
 
 {% include variables.md %}
