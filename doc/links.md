@@ -449,3 +449,7 @@
 <!--== 3-rd party integrations ==-->
 [the-things-network]: https://www.thethingsnetwork.org
 [redmine]:            https://www.redmine.org/
+
+<!--== iamcore ==-->
+[iamcore]:          https://iamcore.io/
+[iamcore-cloud]:    https://cloud.iamcore.io/
