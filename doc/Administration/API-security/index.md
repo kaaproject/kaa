@@ -526,3 +526,38 @@ Enforced by the [The Things Network Connector][TTNC].
 | `ttn-device-integration:read`                       | Read access to TTN device integration.                              |
 | `ttn-device-integration:update`                     | Write access to TTN device integration.                             |
 | `ttn-device-integration:delete`                     | Delete access to TTN device integration.                            |
+
+
+#### The Rule Engine management scopes
+
+Enforced by the [Rule Engine][RE].
+
+| **Scope**                                          | **Description**                                     |
+|----------------------------------------------------|-----------------------------------------------------|
+| `tenant:rule:create`                               | Creation of Rule.                                   |
+| `tenant:rule-execution-action:create`              | Creation of Rule Execution Action.                  |
+| `tenant:command-invocation-action:create`          | Creation of Command Invocation Action.              |
+| `tenant:metadata-update-action:create`             | Creation of Metadata Update Action.                 |
+| `tenant:webhook-action:create`                     | Creation of Webhook Action.                         |
+| `tenant:endpoint-metadata-updated-trigger:create`  | Creation of Endpoint Metadata Updated Trigger.      |
+| `rule:read`                                        | Read access to Rules.                               |
+| `rule:update`                                      | Write access to Rule.                               |
+| `rule:delete`                                      | Rule delete operation.                              |
+| `rule:execute`                                     | Access to the execution of Rule.                    |
+| `rule-execution-action:read`                       | Read access to Rule Execution Action.               |
+| `rule-execution-action:update`                     | Write access to Rule Execution Action.              |
+| `rule-execution-action:delete`                     | Rule Execution Action delete operation.             |
+| `command-invocation-action:read`                   | Read access to Command Invocation Action.           |
+| `command-invocation-action:update`                 | Write access to Command Invocation Action.          |
+| `command-invocation-action:delete`                 | Command Invocation Action delete operation.         |
+| `metadata-update-action:read`                      | Read access to Metadata Update Action.              |
+| `metadata-update-action:update`                    | Write access to Metadata Update Action.             |
+| `metadata-update-action:delete`                    | Metadata Update Action delete operation.            |
+| `webhook-action:read`                              | Read access to Webhook Action.                      |
+| `webhook-action:update`                            | Write access to Webhook Action.                     |
+| `webhook-action:delete`                            | Webhook Action delete operation.                    |
+| `endpoint-metadata-updated-trigger:read`           | Read access to Endpoint Metadata Updated Trigger.   |
+| `endpoint-metadata-updated-trigger:update`         | Write access to Endpoint Metadata Updated Trigger.  |
+| `endpoint-metadata-updated-trigger:delete`         | Endpoint Metadata Updated Trigger delete operation. |
+| `trigger:read`                                     | Read access to Trigger.                             |
+
