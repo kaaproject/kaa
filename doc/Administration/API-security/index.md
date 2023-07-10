@@ -528,6 +528,28 @@ Enforced by the [The Things Network Connector][TTNC].
 | `ttn-device-integration:delete`                     | Delete access to TTN device integration.                            |
 
 
+#### The Action Automation management scopes
+
+Enforced by the [Action Automation][AA].
+
+| **Scope**                       | **Description**                         |
+|---------------------------------|-----------------------------------------|
+| `application:action:create`     | Creation of Action in Application.      |
+| `application:action:read`       | Read access to Action in Application.   |
+| `application:action:delete`     | Action in Application delete operation. |
+
+
+#### The Action Automation Connector management scopes
+
+Enforced by the [Action Automation Connector][AAC].
+
+| **Scope**                                | **Description**                        |
+|------------------------------------------|----------------------------------------|
+| `tenant:notification-recipient:create`   | Creation of Notification Recipient.    |
+| `tenant:notification-recipient:read`     | Read access to Notification Recipient. |
+| `tenant:notification-recipient:update`   | Write access to Rule.                  |
+
+
 #### The Rule Engine management scopes
 
 Enforced by the [Rule Engine][RE].
