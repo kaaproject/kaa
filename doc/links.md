@@ -110,6 +110,10 @@
 [AAC]:          {{aac_url}}
 [AAC REST API]: {{aac_url}}REST-API/
 
+{% capture re_url %}{{feature_automation_url}}RE/{% endcapture %}
+[RE]:          {{re_url}}
+[RE REST API]: {{re_url}}REST-API/
+
 <!-- Configuration management -->
 {% capture feature_config_mgmt_url %}{{kaa_features_url}}Configuration-management/{% endcapture %}
 [configuration]: {{feature_config_mgmt_url}}

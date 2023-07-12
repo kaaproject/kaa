@@ -179,6 +179,25 @@ Enforced by the [OTAO][OTAO].
 | `application:software:delete` | Delete operation on over-the-air software definitions in a given application. |
 
 
+#### Action Automation management scopes
+
+Enforced by the [AAC][AAC].
+
+| **Scope**                     | **Description**                         |
+|-------------------------------|-----------------------------------------|
+| `application:action:create`   | Creation of Action in Application.      |
+| `application:action:read`     | Read access to Action in Application.   |
+| `application:action:delete`   | Action in Application delete operation. |
+
+
+#### The Things Network Connector management scopes
+
+Enforced by the [TTNC][TTNC].
+
+| **Scope**                                | **Description**                                                 |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `application:ttn-app-integration:create` | Creation of a new integration between TTN and Kaa applications. |
+
 
 ### Dashboard resource type
 
@@ -224,6 +243,40 @@ The following scopes restrict access to X.509 (TLS certificate) credentials, enf
 | `tenant:x509-credentials:read`   | Read access to X.509 client credentials.  |
 | `tenant:x509-credentials:update` | X.509 client credentials management.      |
 
+
+#### Automation email notification recipient management scopes
+
+The following scopes restrict access to operations with notification recipients, enforced by the [AAC][AAC].
+
+| **Scope**                                | **Description**                        |
+|------------------------------------------|----------------------------------------|
+| `tenant:notification-recipient:create`   | Creation of Notification Recipient.    |
+| `tenant:notification-recipient:read`     | Read access to Notification Recipient. |
+| `tenant:notification-recipient:update`   | Write access to Rule.                  |
+
+
+#### The Rule Engine management scopes
+
+Enforced by the [RE][RE].
+
+| **Scope**                                          | **Description**                                     |
+|----------------------------------------------------|-----------------------------------------------------|
+| `tenant:rule:create`                               | Creation of Rule.                                   |
+| `tenant:rule-execution-action:create`              | Creation of Rule Execution Action.                  |
+| `tenant:command-invocation-action:create`          | Creation of Command Invocation Action.              |
+| `tenant:metadata-update-action:create`             | Creation of Metadata Update Action.                 |
+| `tenant:webhook-action:create`                     | Creation of Webhook Action.                         |
+| `tenant:endpoint-metadata-updated-trigger:create`  | Creation of Endpoint Metadata Updated Trigger.      |
+
+
+#### The Things Network Connector management scopes
+
+Enforced by the [TTNC][TTNC].
+
+| **Scope**                            | **Description**                                     |
+| ------------------------------------ | --------------------------------------------------- |
+| `tenant:ttn-app-integration:create`  | Display TTN integration creation button on Kaa UI.  |
+| `tenant:ttn-app-integration:read`    | Display TTN integration dashboard on Kaa UI.        |
 
 
 ### Kaa resource type
@@ -510,19 +563,98 @@ Enforced by the [Traffic Statistics Appender][TSA].
 | `traffic-statistic:read` | Reports on the amount of sent and received data to/from endpoints. |
 
 
-#### The Things Network integration management scopes
+### ttn-app-integration resource type
 
-Enforced by the [The Things Network Connector][TTNC].
+`ttn-app-integration` resource type is used for restricting access to Kaa TTN application integrations.
+These resources are managed by the [TTNC][TTNC].
 
 | **Scope**                                           | **Description**                                                     |
 | --------------------------------------------------- | ------------------------------------------------------------------- |
-| `tenant:ttn-app-integration:create`                 | Display TTN integration creation button on Kaa UI.                  |
-| `tenant:ttn-app-integration:read`                   | Display TTN integration dashboard on Kaa UI.                        |
-| `application:ttn-app-integration:create`            | Creation of a new integration between TTN and Kaa applications.     |
 | `ttn-app-integration:read`                          | Read access to TTN application integration.                         |
 | `ttn-app-integration:update`                        | Write access to TTN application integration.                        |
 | `ttn-app-integration:delete`                        | Delete access to TTN application integration.                       |
 | `ttn-app-integration:ttn-device-integration:create` | Creation of a new integration between TTN device and Kaa endpoint.  |
-| `ttn-device-integration:read`                       | Read access to TTN device integration.                              |
-| `ttn-device-integration:update`                     | Write access to TTN device integration.                             |
-| `ttn-device-integration:delete`                     | Delete access to TTN device integration.                            |
+
+
+### ttn-device-integration resource type
+
+`ttn-device-integration` resource type is used for restricting access to Kaa TTN device integrations.
+These resources are managed by the [TTNC][TTNC].
+
+| **Scope**                         | **Description**                            |
+| --------------------------------- | ------------------------------------------ |
+| `ttn-device-integration:read`     | Read access to TTN device integration.     |
+| `ttn-device-integration:update`   | Write access to TTN device integration.    |
+| `ttn-device-integration:delete`   | Delete access to TTN device integration.   |
+
+### Rule resource type
+
+`rule` resource type is used for restricting access to Kaa Rules.
+These resources are managed by the [RE][RE].
+
+| **Scope**       | **Description**                   |
+|-----------------|-----------------------------------|
+| `rule:read`     | Read access to Rules.             |
+| `rule:update`   | Write access to Rule.             |
+| `rule:delete`   | Rule delete operation.            |
+| `rule:execute`  | Access to the execution of Rule.  |
+
+
+### rule-execution-action resource type
+
+`rule-execution-action` resource type is used for restricting access to Kaa Rule Execution Actions.
+These resources are managed by the [RE][RE].
+
+| **Scope**                           | **Description**                             |
+|-------------------------------------|---------------------------------------------|
+| `rule-execution-action:read`        | Read access to Rule Execution Action.       |
+| `rule-execution-action:update`      | Write access to Rule Execution Action.      |
+| `rule-execution-action:delete`      | Rule Execution Action delete operation.     |
+
+
+### command-invocation-action resource type
+
+`command-invocation-action` resource type is used for restricting access to Kaa Command Invocation Actions.
+These resources are managed by the [RE][RE].
+
+| **Scope**                           | **Description**                             |
+|-------------------------------------|---------------------------------------------|
+| `command-invocation-action:read`    | Read access to Command Invocation Action.   |
+| `command-invocation-action:update`  | Write access to Command Invocation Action.  |
+| `command-invocation-action:delete`  | Command Invocation Action delete operation. |
+
+
+### metadata-update-action resource type
+
+`metadata-update-action` resource type is used for restricting access to Kaa Metadata Update Actions.
+These resources are managed by the [RE][RE].
+
+| **Scope**                         | **Description**                            |
+|-----------------------------------|--------------------------------------------|
+| `metadata-update-action:read`     | Read access to Metadata Update Action.     |
+| `metadata-update-action:update`   | Write access to Metadata Update Action.    |
+| `metadata-update-action:delete`   | Metadata Update Action delete operation.   |
+
+
+### webhook-action resource type
+
+`webhook-action` resource type is used for restricting access to Kaa Webhook Actions.
+These resources are managed by the [RE][RE].
+
+| **Scope**                | **Description**                   |
+|--------------------------|-----------------------------------|
+| `webhook-action:read`    | Read access to Webhook Action.    |
+| `webhook-action:update`  | Write access to Webhook Action.   |
+| `webhook-action:delete`  | Webhook Action delete operation.  |
+
+
+### endpoint-metadata-updated-trigger resource type
+
+`endpoint-metadata-updated-trigger` resource type is used for restricting access to Kaa Endpoint Metadata Updated Triggers.
+These resources are managed by the [RE][RE].
+
+| **Scope**                                   | **Description**                                     |
+|---------------------------------------------|-----------------------------------------------------|
+| `endpoint-metadata-updated-trigger:read`    | Read access to Endpoint Metadata Updated Trigger.   |
+| `endpoint-metadata-updated-trigger:update`  | Write access to Endpoint Metadata Updated Trigger.  |
+| `endpoint-metadata-updated-trigger:delete`  | Endpoint Metadata Updated Trigger delete operation. |
