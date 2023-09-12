@@ -33,31 +33,157 @@ Kaa forwards all telemetry data from your endpoints into [Elasticsearch index](h
 ## Playbook
 
 
+### Create an email recipient
+
+The device action we will create is a sending email notification.
+But before the beginning creation of this action, we have to add and verify the recipients we are going to use in the action.
+This procedure allows us to be sure that the email notification will be delivered to the recipient who is waiting for it.
+
+To add the recipients go to the Recipients and press the **Add recipient** button. 
+After that please enter the desired recipient and press **Add recipient** button.
+
+![Add email notification recipient](attach/img/email-notification-add-recipient.png)
+
+Now you can see that the email notification recipient was added, but it has unverified status.
+
+![Unverified email-notification recipient](attach/img/unverified-email-recipient.png)
+
+Please check your email. The email to verify your mailbox as email recipient must arrive.
+
+> Note: if the verification email is absent please check that you add the correct email recipient and please check your Spam email folder. 
+{:.note}
+
+![mailbox verification email.png](attach/img/mailbox-verification-email.png)
+
+The verification email looks like:
+
+![vefirication email.png](attach/img/vefirication-email.png)
+
+Please press the link **Verify your email address** to verify your email and check that the email recipient is verified.
+
+![img.png](attach/img/verified-email-recipient.png)
+
 ### Create a device action
 
-The first you need to do - is to create a device action.
+After the previous step can create a device action.
  
 Go to the ["Device actions" dashboard][device actions dashboard] and choose your application.
 
 ![Device actions](attach/img/device-actions.png)
 
-Here you can create the webhooks that perform some actions when triggered.  
+Here you can create the action - the webhooks that perform some actions when triggered.  
 You can add these webhooks as triggers in Open Distro - and the action you choose will be executed as soon as the condition specified in Open Distro is met.
 
 Click the "Add action" button.
 
-![Add action](attach/img/add-action.png)
+![img.png](attach/img/add-email-notification-action.png)
 
 Here you can choose an automation type.  
 In our case, it is an **email-notification**.  
 Specify the required parameters of the automation type you have chosen.
 
+> - the **sender** hostname must be the SMTP server hostname. 
+> In our case when we use the Kaaiot cloud hostname must be **kaaiot.com**
+> - as a recipients we can use only previously verified recipients
 
 ![Webhook link](attach/img/webhook-link.png)
 
+### Webhook body
+
+The webhook message body is JSON. There are some variants:
+
+- webhook body can contain empty JSON. For example:
+```json
+{}
+```
+
 In order to test that the webhook works and emails are sent, you can call the provided webhook directly, for example, using Postman, cURL, or any other HTTP client you like.
 
-![Webhook test](attach/img/webhook-test.png)
+![Webhook with empty body.png](attach/img/webhook-empty-body.png)
+
+The received message looks like:
+
+![Webhook empty body email.png](attach/img/webhook-empty-body-email.png)
+
+- webhook body can contain just the message. For example:
+
+```json
+{
+  "message": "The sensor in the machine room has high CO2 level"
+}
+```
+
+The received message looks like:
+
+![Webhook with message email.png](attach/img/webhook-msg-body-email.png)
+
+- webhook body can contain the message with parameters. For example:
+
+```json
+{
+  "params": {
+    "Monitor": "CO2 level monitor",
+    "Trigger": "Notification",
+    "Severity": "2",
+    "Period_start": "2023-03-13T13:07:39.665Z",
+    "Period_end": "2023-03-13T13:06:39.665Z"
+  },
+  "message": "The sensor in the machine room has high CO2 level"
+}
+```
+
+The received message looks like:
+
+![Webhook message with parameters.png](attach/img/webhook-msg-with-params-email)
+
+- webhook body can contain information about endpoints that were the reason of webhook execution (the most expanded message). For example:
+
+```json
+{
+  "endpointIds": [
+    {
+      "endpoint_id": "12e0e834-3f0e-43c6-b6ab-491a71cde112",
+      "params": {
+        "name": "machine room CO2 sensor",
+        "value": "73",
+        "link": "https://cloud.kaaiot.io/devices/device-management/bsil512ikfmmfgrjhvog/devices/12e0e834-3f0e-43c6-b6ab-491a71cde112"
+      }
+    }
+  ]
+}
+```
+
+The received message looks like:
+
+![Webhook message with endpoints.png](attach/img/webhook-endpoints-email.png)
+
+- webhook body can contain information about endpoints that were the reason of webhook execution and parameters (the most expanded message). For example:
+
+```json
+{
+  "params": {
+    "Monitor": "CO2 level monitor",
+    "Trigger": "Notification",
+    "Severity": "2",
+    "Period_start": "2023-03-13T13:07:39.665Z",
+    "Period_end": "2023-03-13T13:06:39.665Z"
+  },
+  "endpointIds": [
+    {
+      "endpoint_id": "12e0e834-3f0e-43c6-b6ab-491a71cde112",
+      "params": {
+        "name": "machine room CO2 sensor",
+        "value": "73",
+        "link": "https://cloud.kaaiot.io/devices/device-management/bsil512ikfmmfgrjhvog/devices/12e0e834-3f0e-43c6-b6ab-491a71cde112"
+      }
+    }
+  ]
+}
+```
+
+The received message looks like:
+
+![Webhook message with endpoints and parameters.png](attach/img/webhook-endpoints-with-msg-email.png)
 
 
 ### Create webhook destination
@@ -78,7 +204,7 @@ If you don't have the above monitor and trigger, go to the [Open Distro Alerting
 It won't take much time.
 
 > Note that we use the message template from the [Open Distro Alerting][open distro alerting tutorial] the message text will contain just the message that was entered during the webhook creation.
-But for the email alerting, there is a possibility to add dynamic information about endpoints that triggered an alert.
+But for the email alerting, there is a possibility to add dynamic information about endpoints that triggered an alert (read above about webhook body).
 {:.note}
 
 To use this feature, return to the monitor configuration and select **Define using extraction query** for the **How do you want to define the monitor?** field.
