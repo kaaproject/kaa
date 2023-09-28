@@ -354,6 +354,10 @@
 [webinar kaa 1.2 release]: {{root_url}}Webinars/2020-08-11-Kaa-1.2/
 [webinar kaa 1.3 release]: {{root_url}}Webinars/2021-04-07-Kaa-1.3/
 [webinar kaa 1.4 release]: {{root_url}}Webinars/2022-02-24-Kaa-1.4/
+[webinar Kaa Identity Access Management (IAM)]: {{root_url}}Webinars/2022-08-09-IoT-security-and-authorization/
+[webinar Harness IoT-based smart asset management with KaaIoT]: {{root_url}}Webinars/2023-03-21-Harness-IoT-based-smart-asset-management/
+[webinar IoT Energy Management with KaaIoT's Automation Flow]: {{root_url}}Webinars/2023-05-11-IoT-Energy-Management-with-KaaIoT/
+[webinar Smart City Automation with KaaIoT Platform and RFS Smart Pole]: {{root_url}}Webinars/2023-09-07-Smart-City-Automation/
 
 <!-- What's new -->
 {% capture whats_new_url %}{{root_url}}Whats-new/{% endcapture %}
