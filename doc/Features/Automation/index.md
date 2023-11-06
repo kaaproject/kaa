@@ -31,4 +31,4 @@ The table below summarizes the list of Kaa platform components that contribute t
 | ---------------------------------------- | --------------- |
 | [Action Automation (AA)][AA]             | {{aa_version}}  |
 | [Action Automation Connector (AAC)][AAC] | {{aac_version}} |
-| [Rule engine (AAC)][AAC]                 | {{re_version}}  |
+| [Rule engine (RE)][RE]                   | {{re_version}}  |
