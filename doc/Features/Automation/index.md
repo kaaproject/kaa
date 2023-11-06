@@ -27,7 +27,8 @@ Examples of such automation could be sending an email or mobile push notificatio
 
 The table below summarizes the list of Kaa platform components that contribute to this feature:
 
-| Service                                               | Version          |
-|-------------------------------------------------------|------------------|
-| [Action Automation (AA)][AA]                          | {{aa_version}}   |
-| [Action Automation Connector (AAC)][AAC]              | {{aac_version}}  |
+| Service                                  | Version         |
+| ---------------------------------------- | --------------- |
+| [Action Automation (AA)][AA]             | {{aa_version}}  |
+| [Action Automation Connector (AAC)][AAC] | {{aac_version}} |
+| [Rule engine (AAC)][AAC]                 | {{re_version}}  |

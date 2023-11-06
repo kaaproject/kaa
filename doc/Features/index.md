@@ -18,11 +18,12 @@ Explore the nested subsections to learn more about the various Kaa features and 
 | [**Communication**][communication]            | **Devices and gateways communication** enablement. **Authentication, access authorization, data exchange and multiplexing.** |
 | [**Data collection**][data collection]        | Device **telemetry data collection** and storage. **Time series data, device logs, alerts. Connecting external systems.**    |
 | [**Configuration management**][configuration] | Management and **distribution of the device configuration data**: individually or in bulk.                                   |
+| [**Automation**][automation]                   | The **rule engine** powers **automation** for initiating **alerts**, launching **webhooks**, and sending commands. It also allows for incoming data transformation and augmentation, activated by metadata changes, time series, or **cron-based triggers**. |
 | [**Command invocation**][commands]            | **Remote control** of connected devices. Immediate and delayed **command invocation**.                                       |
 | [**Data analytics**][data analytics]          | Device data **storage, querying, analysis, and visualization.** Trigger-based **alerting and notifications** delivery.       |
+| [**Integration**][integration]                | The integration services facilitate seamless communication with external systems, including **LoRaWAN** connectivity for expanded IoT networking. |
 | [**Software updates**][ota]                   | **Software version management** and upgrade orchestration. Targeted, gradual, and scheduled software roll-out.               |
 | [**Visualization**][visualization]            | **Web interface** for data visualization, device management, platform administration, and more.                              |
 | [**Multi-tenancy**][multi-tenancy]            | Components that enables **multi-tenancy**.                                                                                   |
 | [**Infrastructure**][infrastructure]          | **Infrastructure** components for the Kaa platform **clusters operation and administration**.                                |
 | [**Miscellaneous**][misc]                     | **Miscellaneous** additional Kaa platform functionality.                                                                     |
-| [**Integration**][integration]                | **Integration** with other platforms.                                                                                        |
