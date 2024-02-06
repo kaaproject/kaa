@@ -11,15 +11,32 @@ sort_idx: 8
 * TOC
 {:toc}
 
+## Base connection
+
+Topics can be tested on the public [Kaa Cloud](https://www.kaaiot.com/free-trial) installation.
+
+Plain MQTT can be accessed at mqtt://mqtt.cloud.kaaiot.com. The default port is 1883.
+
+TLS MQTT can be accessed at mqtts://mqtt.cloud.kaaiot.com. The default port is 8883.
+
+In topics, the possible parameters are:
+- {appversion_name} - The application version name where the endpoint is registered.
+- {token} - The endpoint token.
+- {request ID} - This could be a random number between 1 and 99.
+- {metric_name} - The name of the metric that will be used as the time series name, for example, **temperature**.
+- {command_type} - The command type to be handled by the device, for example, **turn_off**, **turn_on**.
+
+The full `kp1` protocol description and specification can be found on [Github](https://github.com/kaaproject/kaa-rfcs).
+
 ## Data collection
 
 ### Send data samples
 
 **PUB kp1/{appversion_name}/dcx/{token}/json[/{request ID}]**
 
-Publish telemetry data to the platform in JSON format. Supports single and batched messages sent as an array. Historical data is stored in the two databases. For fast access of the raw data it's stored in the InfluxDB and accessible via EPTS service API and can be customized in EPTS settings. For the aggregated data it's stored in OpenSearch which works on top of ElasticSearch and can be accessed via ASF API or Kibana.
+Publish telemetry data to the platform in JSON format. This supports both single and batched messages sent as an array. Historical data is stored in two databases. For fast access to raw data, it's stored in InfluxDB and is accessible via the [EPTS][EPTS] service API. This can be customized in EPTS settings. Aggregated data is stored in OpenSearch, which operates on top of ElasticSearch, and can be accessed via the [ASF][ASF] API or Kibana.
 
-When used with MQTT optionally specify the "Request ID" to subscribe on /status or /error topic to get the operation status. Alternatively subscribe to "kp1/<appversion_name>/dcx/<token>/json/#" to receieve both status and error responses.
+When used with MQTT, you can optionally specify the "Request ID" to subscribe to the /status or /error topic to get the operation status. Alternatively, subscribe to "kp1/{appversion_name}/dcx/{token}/json/#" to receive both status and error responses.
 
 Payload schema
 
@@ -44,7 +61,7 @@ Payload example for single data sample:
 }
 ```
 
-Batched payload with predefined timestamp and nested location object. Pay attention to the "ts" field that is timestamp for a sample and should be configured in EPTS service. "location" object should be configured as custom Time series to value mapping in EPTS settings. Analytics storage may require to specify the mappping to parse the string as a date and can be configured in Data transformation -> Mappings
+This is a batched payload with a predefined timestamp and a nested location object. Pay attention to the "ts" field, which is the timestamp for a sample and should be configured in the [EPTS][EPTS] service. The "location" object should be configured as a custom Time series to value mapping in the [EPTS][EPTS] settings. The analytics storage may require you to specify the mapping to parse the string as a date. This can be configured in Data transformation -> Mappings.
 
 Payload example for batch payload:
 
@@ -73,14 +90,14 @@ Payload example for batch payload:
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/bspu542ikfmmfgrk47s0-v1/dcx/<token>/json[/<request ID>]/status
-- **SUB** kp1/bspu542ikfmmfgrk47s0-v1/dcx/<token>/json[/<request ID>]/error
+- **SUB** kp1/bspu542ikfmmfgrk47s0-v1/dcx/{token}/json[/{request ID}]/status
+- **SUB** kp1/bspu542ikfmmfgrk47s0-v1/dcx/{token}/json[/{request ID}]/error
 
 ### Send plain data samples
 
-**PUB kp1/<appversion_name>/dcx/<token>/plain/<metric_name>**
+**PUB kp1/{appversion_name}/dcx/{token}/plain/{metric_name}**
 
-Publish telemetry data to the platform in plain format. Optionally you can specify units in the value that will be mapped under ${metric-name}-unit key. **NOTE:** It's required to enable **Relaxed resource path validation** in [Data collection extension][DCX] service settings at the application level
+Publish telemetry data to the platform in a plain format. Optionally, you can specify units in the value that will be mapped under the `${metric-name}-unit` key. **NOTE:** It is required to enable **Relaxed resource path validation** in the [Data collection extension][DCX] service settings at the application level.
 
 Payload schema:
 
@@ -104,9 +121,9 @@ Payload example:
 
 ### Get all metadata keys request
 
-**PUB kp1/<appversion_name>/epmx/<token>/get/keys/<request ID>**
+**PUB kp1/{appversion_name}/epmx/{token}/get/keys/{request ID}**
 
-Publish the message to request all endpoint metadata keys. Response available at topics /status and error at /error ending relative to this topic. Alternatively subscribe to "kp1/<appversion_name>/epmx/<token>/get/keys/#" to receieve both status and error responses.
+Publish a message to request all endpoint metadata keys. Responses are available at the /status topic, and errors at the /error topic, both relative to this topic. Alternatively, subscribe to "kp1/{appversion_name}/epmx/{token}/get/keys/#" to receive both status and error responses.
 
 Response schema:
 
@@ -136,16 +153,16 @@ Response example:
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/epmx/<token>/get/keys/<request ID>/status
-- **SUB** kp1/<appversion_name>/epmx/<token>/get/keys/<request ID>/error
+- **SUB** kp1/{appversion_name}/epmx/{token}/get/keys/{request ID}/status
+- **SUB** kp1/{appversion_name}/epmx/{token}/get/keys/{request ID}/error
 
 
 
 ### Get metadata request
 
-**PUB kp1/<appversion_name>/epmx/<token>/get/<request ID>**
+**PUB kp1/{appversion_name}/epmx/{token}/get/{request ID}**
 
-Publish the message to request all endpoint metadata. You need to subscribe to the response topic to get the result at /status ending relative to this topic.
+Publish the message to request all endpoint metadata. You need to subscribe to the response topic to get the result, which is at the /status ending relative to this topic.
 
 Response schema
 
@@ -172,14 +189,14 @@ Response example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/epmx/<token>/get/<request ID>/status
-- **SUB** kp1/<appversion_name>/epmx/<token>/get/<request ID>/error
+- **SUB** kp1/{appversion_name}/epmx/{token}/get/{request ID}/status
+- **SUB** kp1/{appversion_name}/epmx/{token}/get/{request ID}/error
 
 ### Full metadata update
 
-**PUB kp1/<appversion_name>/epmx/<token>/update[/<request ID>]**
+**PUB kp1/{appversion_name}/epmx/{token}/update[/{request ID}]**
 
-Update endpoint metadata with a set of key-value pairs in JSON object representation. When using with MQTT optionaliy sepcify the "Request ID" to subscribe on /status or /error topic to get the operation status.
+Update endpoint metadata with a set of key-value pairs in JSON object representation. When using with MQTT, optionally specify the "Request ID" to subscribe to the /status or /error topic to get the operation status.
 
 Payload schema
 
@@ -207,13 +224,13 @@ Payload example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/epmx/<token>/update[/<request ID>]/status
-- **SUB** kp1/<appversion_name>/epmx/<token>/update[/<request ID>]/error
+- **SUB** kp1/{appversion_name}/epmx/{token}/update[/{request ID}]/status
+- **SUB** kp1/{appversion_name}/epmx/{token}/update[/{request ID}]/error
 
 
 ### Partial metadata update
 
-**PUB kp1/<appversion_name>/epmx/<token>/update/keys[/<request ID>]**
+**PUB kp1/{appversion_name}/epmx/{token}/update/keys[/{request ID}]**
 
 Update endpoint metadata with a set of key-value pairs in JSON object representation. When using with MQTT optionaliy sepcify the "Request ID" to subscribe on /status or /error topic to get the operation status.
 
@@ -242,12 +259,12 @@ Payload example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/epmx/<token>/update/keys[/<request ID>]/status
-- **SUB** kp1/<appversion_name>/epmx/<token>/update/keys[/<request ID>]/error
+- **SUB** kp1/{appversion_name}/epmx/{token}/update/keys[/{request ID}]/status
+- **SUB** kp1/{appversion_name}/epmx/{token}/update/keys[/{request ID}]/error
 
 ### Delete metadata keys
 
-**PUB kp1/<appversion_name>/epmx/<token>/delete/keys[/<request ID>]**
+**PUB kp1/{appversion_name}/epmx/{token}/delete/keys[/{request ID}]**
 
 Delete endpoint metadata keys. When using with MQTT optionaliy sepcify the "Request ID" to subscribe on /status or /error topic to get the operation status.
 
@@ -279,13 +296,13 @@ Payload example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/epmx/<token>/delete/keys[/<request ID>]/status
-- **SUB** kp1/<appversion_name>/epmx/<token>/delete/keys[/<request ID>]/error
+- **SUB** kp1/{appversion_name}/epmx/{token}/delete/keys[/{request ID}]/status
+- **SUB** kp1/{appversion_name}/epmx/{token}/delete/keys[/{request ID}]/error
 
 ## Command execution
 
 ### Request pending commands
-**PUB kp1/<appversion_name>/cex/<token>/command/<command_type>[/<request ID>]**
+**PUB kp1/{appversion_name}/cex/{token}/command/{command_type}[/{request ID}]**
 
 Request pending commands for the endpoint.
 
@@ -316,8 +333,8 @@ Payload example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/cex/<token>/command/<command_type>[/<request ID>]/status
-- **SUB** kp1/<appversion_name>/cex/<token>/command/<command_type>[/<request ID>]/error
+- **SUB** kp1/{appversion_name}/cex/{token}/command/{command_type}[/{request ID}]/status
+- **SUB** kp1/{appversion_name}/cex/{token}/command/{command_type}[/{request ID}]/error
 
 Response schema
 
@@ -346,7 +363,7 @@ Response example
 
 ### Report command execution result
 
-**PUB kp1/<appversion_name>/cex/<token>/result/<command_type>[/<request ID>]**
+**PUB kp1/{appversion_name}/cex/{token}/result/{command_type}[/{request ID}]**
 
 Report command execution result to the platform. Optionally specify the "Request ID" to subscribe on /error topic to get the operation status.
 
@@ -402,14 +419,14 @@ Payload example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/cex/<token>/result/<command_type>[/<request ID>]/status
-- **SUB** kp1/<appversion_name>/cex/<token>/result/<command_type>[/<request ID>]/error
+- **SUB** kp1/{appversion_name}/cex/{token}/result/{command_type}[/{request ID}]/status
+- **SUB** kp1/{appversion_name}/cex/{token}/result/{command_type}[/{request ID}]/error
 
 ## Configuration
 
 ### Configuration resource request
 
-**PUB kp1/<appversion_name>/cmx/<token>/config/json/<request ID>**
+**PUB kp1/{appversion_name}/cmx/{token}/config/json/{request ID}**
 
 Request configuration by ID. When using with MQTT you need to subscribe to the response topic to get the result at /status ending relative to this topic.
 
@@ -442,8 +459,8 @@ Payload example
 
 Subscribe status / error topics:
 
-- **SUB** kp1/<appversion_name>/cmx/<token>/config/json/<request ID>/status
-- **SUB** kp1/<appversion_name>/cmx/<token>/config/json/<request ID>/error
+- **SUB** kp1/{appversion_name}/cmx/{token}/config/json/{request ID}/status
+- **SUB** kp1/{appversion_name}/cmx/{token}/config/json/{request ID}/error
 
 Response schema
 
@@ -485,7 +502,7 @@ Response example
 
 ### Report applied configuration request
 
-**PUB kp1/<appversion_name>/cmx/<token>/applied/json/<request ID>**
+**PUB kp1/{appversion_name}/cmx/{token}/applied/json/{request ID}**
 
 Report applied configuration to the platform. Configuration can be rejected by sending the status code 400 or higher. When using MQTT you can subscribe to the response topic to get the result at /status ending relative to this topic.
 
@@ -528,14 +545,14 @@ Payload example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/cmx/<token>/applied/json/<request ID>/status
-- **SUB** kp1/<appversion_name>/cmx/<token>/applied/json/<request ID>/error
+- **SUB** kp1/{appversion_name}/cmx/{token}/applied/json/{request ID}/status
+- **SUB** kp1/{appversion_name}/cmx/{token}/applied/json/{request ID}/error
 
 ## Software OTA
 
 ### Software resource request
 
-**PUB kp1/<appversion_name>/cmx_ota/<token>/config/json/<request ID>**
+**PUB kp1/{appversion_name}/cmx_ota/{token}/config/json/{request ID}**
 
 Request the new firmware version for the endpoint. You need to subscribe to the response topic to get the result at /status ending relative to this topic.
 
@@ -565,8 +582,8 @@ Payload example
 
 Subscribe status / error topics:
 
-- **SUB** kp1/<appversion_name>/cmx_ota/<token>/config/json/<request ID>/status
-- **SUB** kp1/<appversion_name>/cmx_ota/<token>/config/json/<request ID>/error
+- **SUB** kp1/{appversion_name}/cmx_ota/{token}/config/json/{request ID}/status
+- **SUB** kp1/{appversion_name}/cmx_ota/{token}/config/json/{request ID}/error
 
 Response schema
 
@@ -593,7 +610,7 @@ Response example
 ```
 
 ### Report applied software update request
-**SUBkp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>
+**SUBkp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}
 Report applied software update to the platform. Software update can be rejected by sending the status code 400 or higher. You need to subscribe to the response topic to get the result at /status ending relative to this topic.
 
 Payload schema
@@ -635,13 +652,13 @@ Payload example
 
 Subscribe status / error topics:
 
-- **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/status
-- **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/error
+- **SUB** kp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}/status
+- **SUB** kp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}/error
 
 
 ### Report applied software update request
 
-**PUB kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>**
+**PUB kp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}**
 
 Report applied software update to the platform. Software update can be rejected by sending the status code 400 or higher. You need to subscribe to the response topic to get the result at /status ending relative to this topic.
 
@@ -684,21 +701,21 @@ Payload example
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/status
-- **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/error
+- **SUB** kp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}/status
+- **SUB** kp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}/error
 
 ## Binary data upload
 
 ### Get upload token
 
-**PUB kp1/<appversion_name>/bcx/<token>/token[/<request ID>]**
+**PUB kp1/{appversion_name}/bcx/{token}/token[/{request ID}]**
 
 Request the upload token for the endpoint to be used in "x-auth-token" header for upload binary blob data.
 
 **Subscribe status / error topics:**
 
-- **SUB** kp1/<appversion_name>/bcx/<token>/token[/<request ID>]/status
-- **SUB** kp1/<appversion_name>/bcx/<token>/token[/<request ID>]/error
+- **SUB** kp1/{appversion_name}/bcx/{token}/token[/{request ID}]/status
+- **SUB** kp1/{appversion_name}/bcx/{token}/token[/{request ID}]/error
 
 Response schema
 
