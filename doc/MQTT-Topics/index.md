@@ -282,6 +282,8 @@ Payload example
 - **SUB** kp1/<appversion_name>/epmx/<token>/delete/keys[/<request ID>]/status
 - **SUB** kp1/<appversion_name>/epmx/<token>/delete/keys[/<request ID>]/error
 
+## Command execution
+
 ### Request pending commands
 **PUB kp1/<appversion_name>/cex/<token>/command/<command_type>[/<request ID>]**
 
@@ -402,6 +404,8 @@ Payload example
 
 - **SUB** kp1/<appversion_name>/cex/<token>/result/<command_type>[/<request ID>]/status
 - **SUB** kp1/<appversion_name>/cex/<token>/result/<command_type>[/<request ID>]/error
+
+## Configuration
 
 ### Configuration resource request
 
@@ -527,6 +531,7 @@ Payload example
 - **SUB** kp1/<appversion_name>/cmx/<token>/applied/json/<request ID>/status
 - **SUB** kp1/<appversion_name>/cmx/<token>/applied/json/<request ID>/error
 
+## Software OTA
 
 ### Software resource request
 
@@ -633,6 +638,7 @@ Subscribe status / error topics:
 - **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/status
 - **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/error
 
+
 ### Report applied software update request
 
 **PUB kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>**
@@ -680,6 +686,8 @@ Payload example
 
 - **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/status
 - **SUB** kp1/<appversion_name>/cmx_ota/<token>/applied/json/<request ID>/error
+
+## Binary data upload
 
 ### Get upload token
 
