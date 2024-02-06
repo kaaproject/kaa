@@ -15,7 +15,7 @@ sort_idx: 8
 
 ### Send data samples
 
-**PUB kp1/<appversion_name>/dcx/<token>/json[/<request ID>]**
+**PUB kp1/{appversion_name}/dcx/{token}/json[/{request ID}]**
 
 Publish telemetry data to the platform in JSON format. Supports single and batched messages sent as an array. Historical data is stored in the two databases. For fast access of the raw data it's stored in the InfluxDB and accessible via EPTS service API and can be customized in EPTS settings. For the aggregated data it's stored in OpenSearch which works on top of ElasticSearch and can be accessed via ASF API or Kibana.
 
