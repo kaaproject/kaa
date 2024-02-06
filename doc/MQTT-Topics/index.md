@@ -22,7 +22,7 @@ TLS MQTT can be accessed at mqtts://mqtt.cloud.kaaiot.com. The default port is 8
 In topics, the possible parameters are:
 - {appversion_name} - The application version name where the endpoint is registered.
 - {token} - The endpoint token.
-- {request ID} - This could be a random number between 1 and 99.
+- {request ID} - This could be a random number between 1 and 99. [/{request ID}] means that it's optional
 - {metric_name} - The name of the metric that will be used as the time series name, for example, **temperature**.
 - {command_type} - The command type to be handled by the device, for example, **turn_off**, **turn_on**.
 
@@ -610,7 +610,9 @@ Response example
 ```
 
 ### Report applied software update request
-**SUBkp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}
+
+**SUB kp1/{appversion_name}/cmx_ota/{token}/applied/json/{request ID}**
+
 Report applied software update to the platform. Software update can be rejected by sending the status code 400 or higher. You need to subscribe to the response topic to get the result at /status ending relative to this topic.
 
 Payload schema
