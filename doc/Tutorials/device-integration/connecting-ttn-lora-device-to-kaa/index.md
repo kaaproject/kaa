@@ -3,6 +3,7 @@ layout: page
 title: Connecting LoRa devices to Kaa with TTN
 permalink: /:path/
 sort_idx: 2
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/connecting-ttn-lora-device-to-kaa'
 ---
 
 {% include variables.md %}

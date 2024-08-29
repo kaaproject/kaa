@@ -3,6 +3,7 @@ layout: page
 title: Smart City Automation with KaaIoT Platform and RFS Smart Pole
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/webinars/2023-09-07-smart-city-automation'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: Kaa 1.4 release
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/webinars/2022-02-24-kaa-1-4'
 ---
 
 {% include variables.md %}

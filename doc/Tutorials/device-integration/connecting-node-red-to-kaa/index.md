@@ -3,6 +3,7 @@ layout: page
 title: Connecting Node-RED to Kaa
 permalink: /:path/
 sort_idx: 2
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/connecting-node-red-to-kaa'
 ---
 
 {% include variables.md %}

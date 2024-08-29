@@ -3,6 +3,7 @@ layout: page
 title: User management
 permalink: /:path/
 sort_idx: 7
+canonical: 'https://www.kaaiot.com/docs/tutorials/getting-started/user-management'
 ---
 
 {% include variables.md %}

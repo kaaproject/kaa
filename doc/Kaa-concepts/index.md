@@ -3,6 +3,7 @@ layout: page
 title: Kaa concepts
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/terms-and-concepts'
 ---
 
 {% include variables.md %}

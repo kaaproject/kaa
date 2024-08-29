@@ -3,6 +3,7 @@ layout: page
 title: Connecting Teltonika tracking device FMB003 to Kaa
 permalink: /:path/
 sort_idx: 6
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/hardware-guides/connect-teltonika-to-kaa-platform'
 ---
 
 {% include variables.md %}

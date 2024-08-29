@@ -3,6 +3,7 @@ layout: page
 title: Kaa Identity Access Management (IAM)
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/webinars/2022-08-09-iot-security-and-authorization'
 ---
 
 {% include variables.md %}

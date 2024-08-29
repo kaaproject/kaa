@@ -3,6 +3,7 @@ layout: page
 title: Authenticating client with SSL/TLS certificate
 permalink: /:path/
 sort_idx: 5
+canonical: 'https://www.kaaiot.com/docs/tutorials/getting-started/authenticating-client-with-tls-certificate'
 ---
 
 {% include variables.md %}

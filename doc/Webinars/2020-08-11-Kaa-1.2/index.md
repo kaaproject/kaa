@@ -3,6 +3,7 @@ layout: page
 title: Kaa 1.2 release
 permalink: /:path/
 sort_idx: 3
+canonical: 'https://www.kaaiot.com/docs/webinars/2020-08-11-kaa-1-2'
 ---
 
 {% include variables.md %}

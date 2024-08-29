@@ -3,6 +3,7 @@ layout: page
 title: Custom web dashboard
 permalink: /:path/
 sort_idx: 7
+canonical: 'https://www.kaaiot.com/docs/tutorials/getting-started/custom-ui-web-dashboard'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: Data Analytics and Notifications
 permalink: /:path/
 sort_idx: 4
+canonical: 'https://www.kaaiot.com/docs/webinars/2020-04-02-data-analytics-and-notifications'
 ---
 
 {% include variables.md %}

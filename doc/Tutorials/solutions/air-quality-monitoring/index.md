@@ -3,6 +3,7 @@ layout: page
 title: Air Quality Monitoring
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/tutorials/solutions/air-quality-monitoring'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: Harness IoT-based smart asset management with KaaIoT
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/webinars/2023-03-21-harness-iot-based-smart-asset-management'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: How to connect Arduino (MKR-1010 + MKR-ENV)
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/hardware-guides/connect-arduino-mkr-1010-to-kaa-platform'
 ---
 
 {% include variables.md %}

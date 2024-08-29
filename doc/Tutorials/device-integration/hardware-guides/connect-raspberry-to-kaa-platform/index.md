@@ -3,6 +3,7 @@ layout: page
 title: How to connect Raspberry Pi
 permalink: /:path/
 sort_idx: 2
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/hardware-guides/connect-raspberry-to-kaa-platform'
 ---
 
 {% include variables.md %}

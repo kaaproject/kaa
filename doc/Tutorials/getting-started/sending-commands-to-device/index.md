@@ -3,6 +3,7 @@ layout: page
 title: Sending commands to device
 permalink: /:path/
 sort_idx: 2
+canonical: 'https://www.kaaiot.com/docs/tutorials/getting-started/sending-command-to-device'
 ---
 
 {% include variables.md %}

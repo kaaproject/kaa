@@ -3,6 +3,7 @@ layout: page
 title: Architecture overview
 permalink: /:path/
 sort_idx: 2
+canonical: 'https://www.kaaiot.com/docs/platform-architecture'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: How to connect ESP8266
 permalink: /:path/
 sort_idx: 0
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/hardware-guides/connect-esp8266-to-kaa-platform'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: How to connect STM32
 permalink: /:path/
 sort_idx: 3
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/hardware-guides/connect-stm32-to-kaa-platform'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: Collecting data from a device
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/tutorials/getting-started/collecting-data-from-a-device'
 ---
 
 {% include variables.md %}

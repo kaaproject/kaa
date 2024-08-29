@@ -3,6 +3,7 @@ layout: page
 title: Connecting the BlitzWolf® BW-SHP6 WIFI smart socket
 permalink: /:path/
 sort_idx: 5
+canonical: 'https://www.kaaiot.com/docs/tutorials/device-integration/hardware-guides/connect-blitzwolf-smart-socket'
 ---
 
 {% include variables.md %}

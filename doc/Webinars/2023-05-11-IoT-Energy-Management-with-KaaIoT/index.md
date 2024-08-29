@@ -3,6 +3,7 @@ layout: page
 title: IoT Energy Management with KaaIoT's Automation Flow
 permalink: /:path/
 sort_idx: 1
+canonical: 'https://www.kaaiot.com/docs/webinars/2023-05-11-iot-energy-management-with-kaaiot'
 ---
 
 {% include variables.md %}

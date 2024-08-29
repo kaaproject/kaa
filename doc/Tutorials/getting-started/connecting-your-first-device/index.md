@@ -3,6 +3,7 @@ layout: page
 title: Connecting your first device
 permalink: /:path/
 sort_idx: 0
+canonical: 'https://www.kaaiot.com/docs/tutorials/getting-started/connecting-your-first-device'
 ---
 
 {% include variables.md %}

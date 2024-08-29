@@ -3,6 +3,7 @@ layout: page
 title: Kaa IoT Cloud and Kaa 1.1
 permalink: /:path/
 sort_idx: 5
+canonical: 'https://www.kaaiot.com/docs/webinars/2019-12-11-kaa-iot-cloud-and-kaa-1-1'
 ---
 
 {% include variables.md %}

@@ -3,6 +3,7 @@ layout: page
 title: Custom widget
 permalink: /:path/
 sort_idx: 8
+canonical: 'https://www.kaaiot.com/docs/tutorials/getting-started/custom-widget'
 ---
 
 {% include variables.md %}
